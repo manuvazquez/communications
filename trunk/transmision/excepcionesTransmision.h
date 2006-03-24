@@ -25,6 +25,7 @@
 
 using namespace std;
 
+//excepcion generica que solo contiene el mensaje de error
 class RuntimeException : public runtime_error
 {
 	public:
