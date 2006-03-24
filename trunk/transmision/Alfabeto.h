@@ -15,11 +15,11 @@ class Alfabeto
 		double media,varianza;
 	public:
 		Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSimbolo> simbolos);
-		int NbitsPorSimbolo();
-		double Varianza();
+		int NbitsPorSimbolo() { return nBitsPorSimbolo;}
+		double Varianza() { return varianza;}
 		tSimbolo operator [](vector<tBit> secuenciaBitsBuscada);
 		vector<tBit> operator [](tSimbolo simbolo);
-		int Longitud();
+		int Longitud() { return longitud;}
 		void IntToArraySimbolos(int numero, vector<tSimbolo> *res);
 };
 #endif

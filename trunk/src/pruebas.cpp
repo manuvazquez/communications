@@ -1,8 +1,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include "Alfabeto.h"
 #include "tipos.h"
+#include "Alfabeto.h"
+#include <Bits.h>
 // #include <lapackpp/gmd.h>
 // #include <lapackpp/blas3pp.h>
 
@@ -47,5 +48,8 @@ int main(int argc,char* argv[])
 	for(int i=0;i<secuenciaSimbolos.size();i++)
 		cout << secuenciaSimbolos[i];
 	cout << endl;
+
+	Bits bits(4,2);
+	bits.Print();
     return 0;
 }

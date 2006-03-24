@@ -3,4 +3,5 @@
 
 typedef double tSimbolo;
 typedef unsigned short int tBit;
+
 #endif

@@ -17,28 +17,3 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include "tipos.h"
-#include <Random.h>
-
-class Bits{
-
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
-public:
-    Bits(int nStreams, int nBitsByStream);
-	void Print();
-
-    ~Bits();
-
-};
-
-#endif

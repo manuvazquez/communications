@@ -37,7 +37,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-subdir = transmision
+subdir = randomutil
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -57,11 +57,10 @@ am__installdirs = "$(DESTDIR)$(libdir)"
 libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
-libtransmision_a_AR = $(AR) $(ARFLAGS)
-libtransmision_a_DEPENDENCIES =  \
-	$(top_builddir)/randomutil/librandomutil.a
-am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT)
-libtransmision_a_OBJECTS = $(am_libtransmision_a_OBJECTS)
+librandomutil_a_AR = $(AR) $(ARFLAGS)
+librandomutil_a_LIBADD =
+am_librandomutil_a_OBJECTS = Random.$(OBJEXT)
+librandomutil_a_OBJECTS = $(am_librandomutil_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -73,16 +72,8 @@ LTCXXCOMPILE = $(LIBTOOL) --tag=CXX --mode=compile $(CXX) $(DEFS) \
 CXXLD = $(CXX)
 CXXLINK = $(LIBTOOL) --tag=CXX --mode=link $(CXXLD) $(AM_CXXFLAGS) \
 	$(CXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libtransmision_a_SOURCES)
-DIST_SOURCES = $(libtransmision_a_SOURCES)
+SOURCES = $(librandomutil_a_SOURCES)
+DIST_SOURCES = $(librandomutil_a_SOURCES)
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -183,14 +174,10 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/transmision \
-	-I$(top_srcdir)/randomutil
-
 METASOURCES = AUTO
-lib_LIBRARIES = libtransmision.a
-libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp
-noinst_HEADERS = Bits.h tipos.h Alfabeto.h
-libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a
+lib_LIBRARIES = librandomutil.a
+librandomutil_a_SOURCES = Random.cpp
+noinst_HEADERS = Random.h
 all: all-am
 
 .SUFFIXES:
@@ -204,9 +191,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  transmision/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  randomutil/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  transmision/Makefile
+	  $(AUTOMAKE) --gnu  randomutil/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -253,10 +240,10 @@ uninstall-libLIBRARIES:
 
 clean-libLIBRARIES:
 	-test -z "$(lib_LIBRARIES)" || rm -f $(lib_LIBRARIES)
-libtransmision.a: $(libtransmision_a_OBJECTS) $(libtransmision_a_DEPENDENCIES) 
-	-rm -f libtransmision.a
-	$(libtransmision_a_AR) libtransmision.a $(libtransmision_a_OBJECTS) $(libtransmision_a_LIBADD)
-	$(RANLIB) libtransmision.a
+librandomutil.a: $(librandomutil_a_OBJECTS) $(librandomutil_a_DEPENDENCIES) 
+	-rm -f librandomutil.a
+	$(librandomutil_a_AR) librandomutil.a $(librandomutil_a_OBJECTS) $(librandomutil_a_LIBADD)
+	$(RANLIB) librandomutil.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -264,8 +251,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alfabeto.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bits.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Random.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

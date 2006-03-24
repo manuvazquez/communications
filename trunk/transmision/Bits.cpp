@@ -17,12 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include <iostream>
+#include <time.h>
 #include "Bits.h"
 
-Bits::Bits(int nFlujos, int nElementosPorFlujo)
+Bits::Bits(int nStreams, int nBitsByStream)
 {
+	this->nStreams = nStreams;
+	this->nBitsByStream = nBitsByStream;
+	
+	Random randomGenerator(1234);
+
+	matrix = new tBit[nStreams*nBitsByStream];
+	int aux;
+	float numGenerado;
+	for(int i=nStreams*nBitsByStream;i--;)
+		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
 }
 
+void Bits::Print()
+{
+	int i,j;
+
+	for(i=0;i<nStreams;i++)
+	{
+		for(j=0;j<nBitsByStream;j++)
+			cout << matrix[i*nBitsByStream+j];
+		cout << endl;
+	}
+}
 
 Bits::~Bits()
 {

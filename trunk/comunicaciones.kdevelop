@@ -13,12 +13,12 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>src/comunicaciones</activetarget>
+      <activetarget>randomutil/librandomutil.a</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -140,9 +140,7 @@
     <dest>/home/manu/c++/comunicaciones</dest>
   </substmap>
   <kdevcppsupport>
-    <references>
-      <pcs>usr_include_no_recursivo</pcs>
-    </references>
+    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>
@@ -161,7 +159,7 @@
       <root>/usr/qt/3</root>
     </qt>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -177,12 +175,12 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <programargs/>
-      <gdbpath/>
-      <dbgshell/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
+      <dbgshell></dbgshell>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
