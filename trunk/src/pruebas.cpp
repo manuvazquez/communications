@@ -1,11 +1,12 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include "tipos.h"
+#include "types.h"
 #include "Alfabeto.h"
 #include <Bits.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
+#include <mylapack.h>
 
 using namespace std;
 // using namespace la;
@@ -24,25 +25,25 @@ int main(int argc,char* argv[])
 
 //     cout << "El primer argumento " << argv[1] << "\n";
 //     tBit secuenciasBits[][2] = {{0,0},{0,1},{1,0},{1,1}};
-//     tSimbolo simbolos[] = {-3,-1,1,3};
+//     tSymbol simbolos[] = {-3,-1,1,3};
     vector<vector<tBit> > secuenciasBits(4,vector<tBit>(2));
     secuenciasBits[0][0] = 0; secuenciasBits[0][1] = 0;
     secuenciasBits[1][0] = 0; secuenciasBits[1][1] = 1;
     secuenciasBits[2][0] = 1; secuenciasBits[2][1] = 0;
     secuenciasBits[3][0] = 1; secuenciasBits[3][1] = 1;
-    vector<tSimbolo> simbolos(4);
+    vector<tSymbol> simbolos(4);
     simbolos[0] = -3; simbolos[1] = -1; simbolos[2] = 1; simbolos[3] = 3;
     Alfabeto pam4(2,4,secuenciasBits,simbolos);
     vector<tBit> secuenciaAbuscar(2);
     secuenciaAbuscar[0] = 1; secuenciaAbuscar[1] = 1;
-    tSimbolo simboloDevuelto = pam4[secuenciaAbuscar];
+    tSymbol simboloDevuelto = pam4[secuenciaAbuscar];
 
 	vector<tBit> secuenciaDevuelta;
 	secuenciaDevuelta = pam4[-1];
 	cout << simboloDevuelto << endl;
 // 	cout << "el tamaño de la secuencia es " << secuenciaDevuelta[0];
 	secuenciaDevuelta.resize(6);
-	vector<tSimbolo> secuenciaSimbolos(8);
+	vector<tSymbol> secuenciaSimbolos(8);
 	pam4.IntToArraySimbolos(13,&secuenciaSimbolos);
 	cout << "Secuencia devuelta" << endl;
 	for(int i=0;i<secuenciaSimbolos.size();i++)
@@ -62,6 +63,14 @@ int main(int argc,char* argv[])
 	cout << "-----------" << endl;
 	Bits diffDecodBits = diffEncodBits.DifferentialDecoding();
 	diffDecodBits.Print();
-// 	cin >> caracter;
+
+	tMatrix A(2,4);
+	A = 1;
+	tMatrix B(4,3);
+	B = 2;
+
+	tMatrix C = A*B;
+	cout << A << endl << B << endl << C << endl;
+
     return 0;
 }

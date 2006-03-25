@@ -17,33 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+#include <types.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/larvd.h>
+#include <lapackpp/lacvd.h>
+#include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
-
-class Bits{
-
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
-public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
-
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-};
-
-#endif
+inline tMatrix operator *(tMatrix A,tMatrix B)
+{
+	tMatrix res(A.rows(),B.cols());
+	Blas_Mat_Mat_Mult(A,B,res);
+	return res;
+}

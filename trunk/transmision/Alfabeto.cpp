@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSimbolo> simbolos)
+Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
 {
     cout << "La longitud del alfabeto es: " << secuenciasBits.size() << endl;
     cout << "y el numero de bits por simbolo " << secuenciasBits[0].size() << endl;
@@ -25,7 +25,7 @@ Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> 
     //se calcula la media y la varianza
     double media = 0;
     double mediaSimbolosCuadrado = 0;
-    vector<tSimbolo>::iterator iterador;
+    vector<tSymbol>::iterator iterador;
     for(iterador=simbolos.begin();iterador !=simbolos.end();iterador++)
     {
         media += (double) *iterador;
@@ -37,7 +37,7 @@ Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> 
 //     cout << "La media es " << media << " y la varianza " << varianza << endl;
 }
 
-tSimbolo Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)
+tSymbol Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)
 {
     vector<vector<tBit> >::iterator iterador;
     iterador = find(secuenciasBits.begin(),secuenciasBits.end(),secuenciaBitsBuscada);
@@ -49,9 +49,9 @@ tSimbolo Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)
 	return simbolos[iterador - secuenciasBits.begin()];
 }
 
-vector<tBit> Alfabeto::operator [ ](tSimbolo simbolo)
+vector<tBit> Alfabeto::operator [ ](tSymbol simbolo)
 {
-	vector<tSimbolo>::iterator iterador;
+	vector<tSymbol>::iterator iterador;
 	iterador = find(simbolos.begin(),simbolos.end(),simbolo);
 	if(iterador==simbolos.end())
 	{
@@ -62,7 +62,7 @@ vector<tBit> Alfabeto::operator [ ](tSimbolo simbolo)
 	return secuenciasBits[iterador - simbolos.begin()];
 }
 
-void Alfabeto::IntToArraySimbolos(int numero, vector<tSimbolo> *res)
+void Alfabeto::IntToArraySimbolos(int numero, vector<tSymbol> *res)
 {
 	int tamVector = res->size();
 

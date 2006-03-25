@@ -17,33 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#ifndef MIMOCHANNEL_H
+#define MIMOCHANNEL_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
+#include <lapackpp/gmd.h>
+#include <types.h>
 
-class Bits{
+using namespace la;
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
+class MIMOChannel{
+protected:
+	int nTx, nRx, memory,length;
 
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+    MIMOChannel();
+	MIMOChannel(int nTx,int nRx, int memory, int length);
+    ~MIMOChannel();
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
+	virtual tMatrix ChannelMatrixAt(int n) = 0;
 };
 
 #endif

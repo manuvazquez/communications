@@ -17,33 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#ifndef UTIL_H
+#define UTIL_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
-
-class Bits{
-
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
+class Util{
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+    Util();
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
+    ~Util();
+
 };
 
 #endif

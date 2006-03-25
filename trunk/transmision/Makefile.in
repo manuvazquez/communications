@@ -193,7 +193,7 @@ lib_LIBRARIES = libtransmision.a
 libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
 	MIMOChannel.cpp
 
-noinst_HEADERS = Bits.h tipos.h Alfabeto.h MIMOChannel.h
+noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h
 libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
 
@@ -210,9 +210,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  transmision/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  transmision/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  transmision/Makefile
+	  $(AUTOMAKE) --foreign  transmision/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

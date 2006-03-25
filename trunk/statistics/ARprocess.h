@@ -17,33 +17,48 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#ifndef ARPROCESS_H
+#define ARPROCESS_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
+// #include <iostream>
+#include <vector>
+#include <types.h>
+#include <lapackpp/gmd.h>
 
-class Bits{
+using namespace std;
+
+// 	{
+// 		private double[] coeficientesAR;
+// 		private double varianzaRuido,mediaRuido;
+// 		private int nCoeficientes;
+// 		private int nFilas,nColumnas;
+// 		private int nIteracionesHastaConvergencia = 5;
+// 		private int iSiguienteMatriz;
+//
+// 		// se utilizara este array para almacenar elementos como indique
+// 		// el orden del proceso AR
+// 		Matrix[] buffer= null;
+
+class ARprocess{
 
 private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
+	vector<double> coefficients;
+	double noiseVariance;
+	double noiseMean;
+	int nCoefficients, rows, columns, nextMatrix;
+	int iterationsForConvergence;
+	tMatrix *buffer;
 
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+    ARprocess();
+	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
+    ~ARprocess();
+
 };
 
 #endif
