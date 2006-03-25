@@ -77,8 +77,12 @@ int main(int argc,char* argv[])
 	Util::Add(A,A2,A3);
 
 // 	Util::Add(A2,A3,A);
+	Random generador(2142);
+	double* arrayNormal = generador.randnArray(12);
+	tMatrix matrizAleatoria(arrayNormal,4,3);
+	cout << "Matriz aleatoria" << endl << matrizAleatoria;
 
-	cout << A << endl << A2 << endl << A3 << endl;
+// 	cout << A << endl << A2 << endl << A3 << endl;
 
     return 0;
 }

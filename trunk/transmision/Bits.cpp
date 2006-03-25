@@ -32,11 +32,10 @@ Bits::Bits(int nStreams, int nBitsByStream)
 {
 	this->nStreams = nStreams;
 	this->nBitsByStream = nBitsByStream;
-	
+
 	Random randomGenerator(1234);
 
 	matrix = new tBit[nStreams*nBitsByStream];
-	float numGenerado;
 	for(int i=nStreams*nBitsByStream;i--;)
 		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
 }
@@ -121,17 +120,17 @@ Bits Bits::DifferentialDecoding()
 			res.matrix[i*res.nBitsByStream+j-1] = (matrix[i*nBitsByStream+j-1] + matrix[i*nBitsByStream+j]) % 2;
 		}
 	}
-	return res;	
+	return res;
 }
 
-// 		
+//
 // 		public Bits DemodulacionDiferencial()
 // 		{
 // 			byte[,] res = new byte[nFilas,nColumnas-1];
-// 			
+//
 // 			for(int i=0;i<nFilas;i++)
 // 				for(int j=0;j<nColumnas-1;j++)
 // 					res[i,j] = (byte)((matrizBits[i,j] + matrizBits[i,j+1]) % 2);
-// 			return new Bits(res);						
+// 			return new Bits(res);
 // 		}
 

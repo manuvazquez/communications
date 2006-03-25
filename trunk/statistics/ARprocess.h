@@ -41,6 +41,7 @@ private:
 	int nCoefficients, rows, columns, nextMatrix;
 	int iterationsForConvergence;
 	tMatrix *buffer;
+	Random *randomGenerator;
 
 public:
     ARprocess();

@@ -27,10 +27,12 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 {
 	this->coefficients = coefficients;
 	this->noiseVariance = noiseVariance;
+	this->noiseMean = 0;
 	this->rows = seed.rows();
 	this->columns = seed.cols();
 	this->nCoefficients = coefficients.size();
 	this->buffer = new tMatrix[nCoefficients];
+	this->randomGenerator = new Random(46576);
 
 // 			for(i=1;i<nCoeficientes;i++)
 // 			{
@@ -59,7 +61,14 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 		buffer[i] = *(new tMatrix(rows,columns));
 		buffer[i] = 0;
 		for(j=0;j<i;j++)
+			// buffer[i] = buffer[i] + buffer[j]*coefficients[j];
 			Util::Add(buffer[i],buffer[j],buffer[i],1.0,coefficients[j]);
+
+		tMatrix noise(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns);
+
+		//buffer[i] = buffer[i] + noise;
+		Util::Add(buffer[i],noise,buffer[i]);
+
 	}
 }
 

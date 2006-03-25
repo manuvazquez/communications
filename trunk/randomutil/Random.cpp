@@ -3,11 +3,11 @@
 
 using namespace std;
 
-float Random::randn ()
+double Random::randn ()
 {
   static bool havesmpl = false;
-  static float smpl;
-	
+  static double smpl;
+
   if(havesmpl)
   {
 	  havesmpl = false;
@@ -16,7 +16,7 @@ float Random::randn ()
   else
   {
 	  double x1, x2, w;
-	
+
 	  do
 		{
 		  x1 = 2.0 * (rand_r (&_seed) / (double) RAND_MAX) - 1.0;
@@ -24,18 +24,26 @@ float Random::randn ()
 		  w = x1 * x1 + x2 * x2;
 		}
 	  while (w >= 1.0);
-	
+
 	  w = sqrt (-2.0 * log (w) / w);
-	  
+
 	  smpl = x2 * w;
 	  havesmpl = true;
-	
+
 	  return x1 * w;
   }
 }
 
+double* Random::randnArray(int n,double mean,double variance)
+{
+	double* array = new double[n];
+	double stdDv = sqrt(variance);
+	for(int i=0;i<n;i++)
+		array[i] = randn()*stdDv + mean;
+	return array;
+}
 
-complex<float> Random::complexRandn()
+complex<double> Random::complexRandn()
 {
   double x1, x2, w, y1, y2;
 
@@ -51,7 +59,7 @@ complex<float> Random::complexRandn()
   y1 = x1 * w;
   y2 = x2 * w;
 
-  return complex<float> (y1, y2);
+  return complex<double> (y1, y2);
 }
 
 
