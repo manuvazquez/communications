@@ -4,8 +4,8 @@
 #include "tipos.h"
 #include "Alfabeto.h"
 #include <Bits.h>
-// #include <lapackpp/gmd.h>
-// #include <lapackpp/blas3pp.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas3pp.h>
 
 using namespace std;
 // using namespace la;

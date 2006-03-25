@@ -59,8 +59,10 @@ LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libtransmision_a_AR = $(AR) $(ARFLAGS)
 libtransmision_a_DEPENDENCIES =  \
-	$(top_builddir)/randomutil/librandomutil.a
-am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT)
+	$(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
+am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT) \
+	MIMOChannel.$(OBJEXT)
 libtransmision_a_OBJECTS = $(am_libtransmision_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -183,14 +185,18 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/transmision \
-	-I$(top_srcdir)/randomutil
+INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
+	-I$(top_srcdir)/transmision -I/usr/local/include
 
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
-libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp
-noinst_HEADERS = Bits.h tipos.h Alfabeto.h
-libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a
+libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
+	MIMOChannel.cpp
+
+noinst_HEADERS = Bits.h tipos.h Alfabeto.h MIMOChannel.h
+libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
+
 all: all-am
 
 .SUFFIXES:
@@ -266,6 +272,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alfabeto.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bits.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MIMOChannel.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
