@@ -21,6 +21,13 @@
 #include <time.h>
 #include "Bits.h"
 
+Bits::Bits()
+{
+	nStreams = 0;
+	nBitsByStream = 0;
+	matrix = NULL;
+}
+
 Bits::Bits(int nStreams, int nBitsByStream)
 {
 	this->nStreams = nStreams;
@@ -29,10 +36,39 @@ Bits::Bits(int nStreams, int nBitsByStream)
 	Random randomGenerator(1234);
 
 	matrix = new tBit[nStreams*nBitsByStream];
-	int aux;
 	float numGenerado;
 	for(int i=nStreams*nBitsByStream;i--;)
 		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
+}
+
+Bits& Bits::operator=(const Bits& bits)
+{
+	cout << "Calling = operator..." << endl;
+	nStreams = bits.nStreams;
+	nBitsByStream = bits.nBitsByStream;
+	if(matrix!=NULL)
+	{
+		delete[] matrix;
+// 		cout << "Not null!!" << endl;
+	}
+	matrix = new tBit[bits.nStreams*bits.nBitsByStream];
+	for(int i=nStreams*nBitsByStream;i--;)
+		matrix[i] = bits.matrix[i];
+	return *this;
+}
+
+Bits::Bits(const Bits& bits):
+nStreams(bits.nStreams),nBitsByStream(bits.nBitsByStream)
+{
+	cout << "Calling copy constructor..." << endl;
+	matrix = new tBit[bits.nStreams*bits.nBitsByStream];
+	for(int i=nStreams*nBitsByStream;i--;)
+		matrix[i] = bits.matrix[i];
+}
+
+Bits::~Bits()
+{
+	delete[] matrix;
 }
 
 void Bits::Print()
@@ -47,8 +83,55 @@ void Bits::Print()
 	}
 }
 
-Bits::~Bits()
+Bits Bits::DifferentialEncoding()
 {
+	//Bits res(nStreams,nBitsByStream+1);
+	Bits res;
+	res.nStreams = nStreams;
+	res.nBitsByStream = nBitsByStream+1;
+	res.matrix = new tBit[res.nStreams*res.nBitsByStream];
+
+	int i,j;
+	for(i=0;i<nStreams;i++)
+	{
+		// differential encoding assumes the first bits equals 0
+		res.matrix[i*res.nBitsByStream] = 0;
+		for(j=0;j<nBitsByStream;j++)
+			res.matrix[i*res.nBitsByStream+j+1] = (res.matrix[i*res.nBitsByStream+j] + matrix[i*nBitsByStream+j]) % 2;
+	}
+	return res;
 }
 
+Bits Bits::DifferentialDecoding()
+{
+	if(nBitsByStream<2)
+		throw RuntimeException("2 bits by stream needed at least for differential decoding.");
+
+	Bits res;
+	res.nStreams = nStreams;
+	res.nBitsByStream = nBitsByStream-1;
+	res.matrix = new tBit[res.nStreams*res.nBitsByStream];
+
+	int i,j;
+	for(i=0;i<nStreams;i++)
+	{
+		for(j=1;j<nBitsByStream;j++)
+		{
+// 			cout << "i " << i << " j " << j << " res.nBitsByStream=" << res.nBitsByStream << endl;
+			res.matrix[i*res.nBitsByStream+j-1] = (matrix[i*nBitsByStream+j-1] + matrix[i*nBitsByStream+j]) % 2;
+		}
+	}
+	return res;	
+}
+
+// 		
+// 		public Bits DemodulacionDiferencial()
+// 		{
+// 			byte[,] res = new byte[nFilas,nColumnas-1];
+// 			
+// 			for(int i=0;i<nFilas;i++)
+// 				for(int j=0;j<nColumnas-1;j++)
+// 					res[i,j] = (byte)((matrizBits[i,j] + matrizBits[i,j+1]) % 2);
+// 			return new Bits(res);						
+// 		}
 

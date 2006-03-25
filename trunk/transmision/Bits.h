@@ -25,6 +25,7 @@
 */
 
 #include "tipos.h"
+#include "excepcionesTransmision.h"
 #include <Random.h>
 
 class Bits{
@@ -34,11 +35,15 @@ private:
 	tBit *matrix;
 
 public:
-    Bits(int nStreams, int nBitsByStream);
+	Bits();
+	Bits(int nStreams, int nBitsByStream);
+	Bits& Bits::operator=(const Bits& bits);
+	Bits::Bits(const Bits& bits);
+	~Bits();
+
 	void Print();
-
-    ~Bits();
-
+	Bits DifferentialEncoding();
+	Bits DifferentialDecoding();
 };
 
 #endif

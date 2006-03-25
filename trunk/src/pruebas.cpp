@@ -48,8 +48,20 @@ int main(int argc,char* argv[])
 	for(int i=0;i<secuenciaSimbolos.size();i++)
 		cout << secuenciaSimbolos[i];
 	cout << endl;
-
 	Bits bits(4,2);
 	bits.Print();
+	cout << "-----------" << endl;
+	Bits bits2;
+
+// 	bits2 = bits;
+// 	bits2 = bits;
+// 	bits2.Print();
+
+	Bits diffEncodBits = bits.DifferentialEncoding();
+	diffEncodBits.Print();
+	cout << "-----------" << endl;
+	Bits diffDecodBits = diffEncodBits.DifferentialDecoding();
+	diffDecodBits.Print();
+// 	cin >> caracter;
     return 0;
 }
