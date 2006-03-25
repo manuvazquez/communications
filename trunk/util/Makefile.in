@@ -58,7 +58,8 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libutil_a_AR = $(AR) $(ARFLAGS)
-libutil_a_LIBADD =
+libutil_a_DEPENDENCIES = $(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
 am_libutil_a_OBJECTS = Util.$(OBJEXT)
 libutil_a_OBJECTS = $(am_libutil_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -174,11 +175,13 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-METASOURCES = AUTO
 lib_LIBRARIES = libutil.a
 libutil_a_SOURCES = Util.cpp
 noinst_HEADERS = mylapack.h
-INCLUDES = -I$(top_srcdir)/src
+INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src -I/usr/local/include
+libutil_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
+
 all: all-am
 
 .SUFFIXES:
@@ -192,9 +195,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  util/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  util/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  util/Makefile
+	  $(AUTOMAKE) --gnu  util/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

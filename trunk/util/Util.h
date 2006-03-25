@@ -23,12 +23,18 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <types.h>
+#include <Random.h>
+#include <lapackpp/gmd.h>
+
 class Util{
 public:
     Util();
-
     ~Util();
 
+	static void Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double = 1.0,double = 1.0);
+	static void GaussianMatrix(tMatrix& matrix,double = 0,double = 1);
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "types.h"
 #include "Alfabeto.h"
 #include <Bits.h>
+#include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
 #include <mylapack.h>
@@ -64,13 +65,20 @@ int main(int argc,char* argv[])
 	Bits diffDecodBits = diffEncodBits.DifferentialDecoding();
 	diffDecodBits.Print();
 
-	tMatrix A(2,4);
-	A = 1;
+	tMatrix A(2,4); A = 1;
+	tMatrix A2(2,4); A2 = 4.1;
+	tMatrix A3(2,4);
 	tMatrix B(4,3);
 	B = 2;
 
 	tMatrix C = A*B;
 	cout << A << endl << B << endl << C << endl;
+
+	Util::Add(A,A2,A3);
+
+// 	Util::Add(A2,A3,A);
+
+	cout << A << endl << A2 << endl << A3 << endl;
 
     return 0;
 }

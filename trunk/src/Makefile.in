@@ -53,7 +53,7 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_comunicaciones_OBJECTS = pruebas.$(OBJEXT)
 comunicaciones_OBJECTS = $(am_comunicaciones_OBJECTS)
-comunicaciones_DEPENDENCIES =  \
+comunicaciones_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
@@ -179,8 +179,9 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/randomutil \
 # the library search path.
 comunicaciones_LDFLAGS = $(all_libraries) 
 comunicaciones_SOURCES = pruebas.cpp
-comunicaciones_LDADD = $(top_builddir)/transmision/libtransmision.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
+comunicaciones_LDADD = $(top_builddir)/util/libutil.a \
+	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
 
 noinst_HEADERS = types.h
 all: all-am
@@ -196,9 +197,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/Makefile
+	  $(AUTOMAKE) --gnu  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

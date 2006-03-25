@@ -32,15 +32,12 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 	this->nCoefficients = coefficients.size();
 	this->buffer = new tMatrix[nCoefficients];
 
-// 			int i,j;
-// 			buffer[0] = matrizInicial;
 // 			for(i=1;i<nCoeficientes;i++)
 // 			{
 // 				for(j=0;j<i;j++)
 // 					buffer[i] = buffer[i] + buffer[j]*coeficientesAR[j];
 // 				buffer[i] = buffer[i] + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
 // 			}
-//
 // 			// ... y comienza el proceso iterativo
 // 			Matrix aux = MatrixBuilder.CreateMatrix(nFilas,nColumnas);
 // 			for(i=0;i<nIteracionesHastaConvergencia;i++)
@@ -57,8 +54,13 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 	//the buffer is filled
 	int i,j;
 	buffer[0] = seed;
-// 	for(i=1;i<nCoefficients;i++)
-// 		for(j=0;j<
+	for(i=1;i<nCoefficients;i++)
+	{
+		buffer[i] = *(new tMatrix(rows,columns));
+		buffer[i] = 0;
+		for(j=0;j<i;j++)
+			Util::Add(buffer[i],buffer[j],buffer[i],1.0,coefficients[j]);
+	}
 }
 
 ARprocess::~ARprocess()

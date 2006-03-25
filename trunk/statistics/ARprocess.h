@@ -27,21 +27,10 @@
 // #include <iostream>
 #include <vector>
 #include <types.h>
+#include <Util.h>
 #include <lapackpp/gmd.h>
 
 using namespace std;
-
-// 	{
-// 		private double[] coeficientesAR;
-// 		private double varianzaRuido,mediaRuido;
-// 		private int nCoeficientes;
-// 		private int nFilas,nColumnas;
-// 		private int nIteracionesHastaConvergencia = 5;
-// 		private int iSiguienteMatriz;
-//
-// 		// se utilizara este array para almacenar elementos como indique
-// 		// el orden del proceso AR
-// 		Matrix[] buffer= null;
 
 class ARprocess{
 

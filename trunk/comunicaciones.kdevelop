@@ -26,7 +26,7 @@
       <terminal>true</terminal>
       <directoryradio>executable</directoryradio>
       <runarguments>
-        <comunicaciones/>
+        <comunicaciones></comunicaciones>
       </runarguments>
     </run>
     <configurations>

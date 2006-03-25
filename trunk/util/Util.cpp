@@ -18,7 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "Util.h"
-#include "mylapack.h"
 
 Util::Util()
 {
@@ -30,3 +29,16 @@ Util::~Util()
 }
 
 
+void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
+{
+	int i,j;
+	int rows = A.rows(), cols = A.cols();
+	for(i=0;i<rows;i++)
+		for(j=0;j<cols;j++)
+			C(i,j) = alpha*A(i,j) + beta*B(i,j);
+}
+
+void Util::GaussianMatrix(tMatrix& matrix,double mean,double variance)
+{
+
+}
