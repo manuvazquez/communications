@@ -29,12 +29,16 @@
 #include <lapackpp/gmd.h>
 
 class Util{
+
+private:
+// 	static Random randomGenerator(234234);
+
 public:
-    Util();
-    ~Util();
+    Util() {};
+    ~Util() {};
 
 	static void Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double = 1.0,double = 1.0);
-	static void GaussianMatrix(tMatrix& matrix,double = 0,double = 1);
+// 	static void GaussianMatrix(tMatrix& matrix,double = 0,double = 1);
 };
 
 #endif

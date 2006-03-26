@@ -4,6 +4,8 @@
 #include "types.h"
 #include "Alfabeto.h"
 #include <Bits.h>
+#include <ARprocess.h>
+#include <ARchannel.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
@@ -80,9 +82,27 @@ int main(int argc,char* argv[])
 	Random generador(2142);
 	double* arrayNormal = generador.randnArray(12);
 	tMatrix matrizAleatoria(arrayNormal,4,3);
-	cout << "Matriz aleatoria" << endl << matrizAleatoria;
+	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
 
 // 	cout << A << endl << A2 << endl << A3 << endl;
+
+// 	// ------------------------------ proceso AR ---------------------------------------
+	vector<double> coeficientes(1);
+	coeficientes[0] = 0.99999;
+// 	tMatrix matrizInicial(generador.randnArray(2*3),2,3);
+// 	ARprocess procesoAR(matrizInicial,coeficientes,0.001);
+// 	for(int i=0;i<200;i++)
+// 	{
+// 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
+// 	}
+// 	// ---------------------------------------------------------------------------------
+
+	ARchannel canal(2,3,2,5,0,0.1,coeficientes,0.001);
+	for(int i=canal.Memory()-1;i<canal.Length();i++)
+		cout << canal[i] << endl << "****************" << endl;
+
+// 	Random r;
+// 	cout << r.randn() << endl;
 
     return 0;
 }

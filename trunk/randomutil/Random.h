@@ -2,6 +2,7 @@
 #define RANDOM_H 1
 
 #include <stdint.h>
+#include <sys/time.h>
 // #include <cstdlib>
 #include <complex>
 
@@ -14,6 +15,7 @@ class Random
 		uint32_t _seed;
 
 	public:
+		Random () {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}
 		Random (uint32_t seed) : _seed(seed) { };
 		double randn();
 		double* Random::randnArray(int n,double = 0,double =1);

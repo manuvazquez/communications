@@ -17,32 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef NOISE_H
+#define NOISE_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <lapackpp/gmd.h>
 #include <types.h>
+#include <Random.h>
 
-using namespace la;
-
-class MIMOChannel{
+class Noise{
 protected:
-	int nTx, nRx, memory,length;
-
+	int nRx,length;
+	tMatrix matrix;
 public:
-    MIMOChannel();
-	MIMOChannel(int nTx,int nRx, int memory, int length);
-    ~MIMOChannel();
+    Noise(int nRx,int length,Random &randomGenerator = *(new Random()));
 
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	virtual tMatrix operator[](int n) = 0;
+    ~Noise();
+
+	virtual double StdDvAt(int n) = 0;
 };
 
 #endif

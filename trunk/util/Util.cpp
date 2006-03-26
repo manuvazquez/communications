@@ -19,16 +19,6 @@
  ***************************************************************************/
 #include "Util.h"
 
-Util::Util()
-{
-}
-
-
-Util::~Util()
-{
-}
-
-
 void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
 	int i,j;
@@ -38,7 +28,7 @@ void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double 
 			C(i,j) = alpha*A(i,j) + beta*B(i,j);
 }
 
-void Util::GaussianMatrix(tMatrix& matrix,double mean,double variance)
-{
-
-}
+// void Util::GaussianMatrix(tMatrix& matrix,double mean,double variance)
+// {
+//
+// }

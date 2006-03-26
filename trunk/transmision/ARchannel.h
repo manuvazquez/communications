@@ -17,32 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef ARCHANNEL_H
+#define ARCHANNEL_H
+
+#include <MIMOChannel.h>
+#include <vector>
+#include <ARprocess.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <lapackpp/gmd.h>
-#include <types.h>
+using namespace std;
 
-using namespace la;
+class ARchannel : public MIMOChannel
+{
+private:
+// 	double mean,variance;
+// 	vector<double> ARcoefficients;
+// 	double ARvariance;
+	tMatrix* channelMatrices;
+	ARprocess ARproc;
 
-class MIMOChannel{
-protected:
-	int nTx, nRx, memory,length;
 
 public:
-    MIMOChannel();
-	MIMOChannel(int nTx,int nRx, int memory, int length);
-    ~MIMOChannel();
+    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator = *(new Random()));
+    ~ARchannel();
 
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	virtual tMatrix operator[](int n) = 0;
+	tMatrix operator[](int n) { return channelMatrices[n];};
 };
 
 #endif

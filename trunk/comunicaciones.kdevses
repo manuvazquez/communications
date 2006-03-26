@@ -2,14 +2,14 @@
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="3" >
-  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/ARprocess.cpp" >
-   <View0 line="68" Type="Source" />
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
+   <View0 line="99" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="79" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/Noise.h" >
+   <View0 line="38" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/ARprocess.h" >
-   <View0 line="43" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/Noise.cpp" >
+   <View0 line="22" Type="Source" />
   </Doc2>
  </DocsAndViews>
  <pluginList>

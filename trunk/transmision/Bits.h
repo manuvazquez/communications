@@ -36,7 +36,7 @@ private:
 
 public:
 	Bits();
-	Bits(int nStreams, int nBitsByStream);
+	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
 	Bits& Bits::operator=(const Bits& bits);
 	Bits::Bits(const Bits& bits);
 	~Bits();

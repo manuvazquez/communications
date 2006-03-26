@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "ARprocess.h"
 
-ARprocess::ARprocess()
-{
-}
+// ARprocess::ARprocess()
+// {
+// }
 
 ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance)
 {
@@ -33,28 +33,11 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 	this->nCoefficients = coefficients.size();
 	this->buffer = new tMatrix[nCoefficients];
 	this->randomGenerator = new Random(46576);
+	this->iterationsForConvergence = 200;
 
-// 			for(i=1;i<nCoeficientes;i++)
-// 			{
-// 				for(j=0;j<i;j++)
-// 					buffer[i] = buffer[i] + buffer[j]*coeficientesAR[j];
-// 				buffer[i] = buffer[i] + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
-// 			}
-// 			// ... y comienza el proceso iterativo
-// 			Matrix aux = MatrixBuilder.CreateMatrix(nFilas,nColumnas);
-// 			for(i=0;i<nIteracionesHastaConvergencia;i++)
-// 			{
-// 				aux.Clear();
-// 				for(j=0;j<nCoeficientes;j++)
-// 					aux = aux + buffer[(i+nCoeficientes-1-j) % (nCoeficientes)];
-// 				buffer[i%nCoeficientes] = aux + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
-// 				//System.Console.WriteLine("{0}\n",buffer[i%nCoeficientes]);
-// 			}
-//
-// 			// se guarda el indice de ultima matriz generada
-// 			iSiguienteMatriz = i;
 	//the buffer is filled
 	int i,j;
+	tMatrix noise;
 	buffer[0] = seed;
 	for(i=1;i<nCoefficients;i++)
 	{
@@ -64,60 +47,61 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 			// buffer[i] = buffer[i] + buffer[j]*coefficients[j];
 			Util::Add(buffer[i],buffer[j],buffer[i],1.0,coefficients[j]);
 
-		tMatrix noise(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns);
+// 		tMatrix noise(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns);
+		noise = *(new tMatrix(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns));
 
 		//buffer[i] = buffer[i] + noise;
 		Util::Add(buffer[i],noise,buffer[i]);
-
 	}
+
+	//convergence
+	tMatrix aux(rows,columns);
+	for(i=0;i<iterationsForConvergence;i++)
+	{
+		aux = 0;
+		for(j=0;j<nCoefficients;j++)
+			// aux = aux + coefficients[j]*buffer[(i+nCoefficientes-1-j) % nCoefficientes];
+			Util::Add(aux,buffer[(i+nCoefficients-1-j) % nCoefficients],aux,1.0,coefficients[j]);
+
+		noise = *(new tMatrix(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns));
+
+		// buffer[i % nCoefficients] = aux + noise;
+		Util::Add(aux,noise,buffer[i % nCoefficients]);
+
+// 		cout << buffer[i % nCoefficients] << endl;
+	}
+
+	// the index of the next matrix is gonna be returned is kept
+	iNextMatrix = i;
 }
 
 ARprocess::~ARprocess()
 {
 }
 
-// 	public class ProcesoAR
-// 	{
-// 	vector<double> coefficients;
-// 	double noiseVariance;
-// 	double noiseMean;
-// 	int nCoefficients, rows, columns, nextMatrix;
-// 	int iterationsForConvergence;
-// 	tMatrix *buffer;
-// //
-// 		public ProcesoAR(Matrix matrizInicial,double[] coeficientesAR,double varianzaRuido)
-// 		{
-// 			this.coeficientesAR = coeficientesAR;
-// 			this.varianzaRuido = varianzaRuido;
-// 			nFilas = matrizInicial.Rows;
-// 			nColumnas = matrizInicial.Columns;
+tMatrix ARprocess::NextMatrix()
+{
+// 	Matrix resultado = MatrixBuilder.CreateMatrix(nFilas,nColumnas);
 //
-// 			nCoeficientes = coeficientesAR.Length;
-//
-// 			// se incializa el buffer...
-// 			buffer = new Matrix[nCoeficientes];
-//
-// 			// ... se llena...
-// 			int i,j;
-// 			buffer[0] = matrizInicial;
-// 			for(i=1;i<nCoeficientes;i++)
-// 			{
-// 				for(j=0;j<i;j++)
-// 					buffer[i] = buffer[i] + buffer[j]*coeficientesAR[j];
-// 				buffer[i] = buffer[i] + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
-// 			}
-//
-// 			// ... y comienza el proceso iterativo
-// 			Matrix aux = MatrixBuilder.CreateMatrix(nFilas,nColumnas);
-// 			for(i=0;i<nIteracionesHastaConvergencia;i++)
-// 			{
-// 				aux.Clear();
-// 				for(j=0;j<nCoeficientes;j++)
-// 					aux = aux + buffer[(i+nCoeficientes-1-j) % (nCoeficientes)];
-// 				buffer[i%nCoeficientes] = aux + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
-// 				//System.Console.WriteLine("{0}\n",buffer[i%nCoeficientes]);
-// 			}
-//
-// 			// se guarda el indice de ultima matriz generada
-// 			iSiguienteMatriz = i;
-// 		}
+// 	resultado.Clear();
+// 	for(int j=0;j<nCoeficientes;j++)
+// 		resultado = resultado + buffer[(iSiguienteMatriz+nCoeficientes-1-j) % (nCoeficientes)];
+// 	resultado = resultado + RandomUtil.MatrizGaussiana(nFilas,nColumnas,mediaRuido,varianzaRuido);
+// 	buffer[iSiguienteMatriz%nCoeficientes] = resultado;
+// 	return resultado;
+	tMatrix aux(rows,columns);
+
+	aux = 0;
+	for(int j=0;j<nCoefficients;j++)
+		// aux = aux + coefficients[j]*buffer[(i+nCoefficientes-1-j) % nCoefficientes];
+		Util::Add(aux,buffer[(iNextMatrix+nCoefficients-1-j) % nCoefficients],aux,1.0,coefficients[j]);
+
+	tMatrix noise(randomGenerator->randnArray(rows*columns,noiseMean,noiseVariance),rows,columns);
+
+	// buffer[i % nCoefficients] = aux + noise;
+	Util::Add(aux,noise,buffer[iNextMatrix % nCoefficients]);
+
+	return buffer[iNextMatrix % nCoefficients];
+}
+
+

@@ -17,32 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#include "ARchannel.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator): MIMOChannel(nTx, nRx, memory, length),
+//ARprocess constructor call
+ARproc(*(new tMatrix(randomGenerator.randnArray(nTx*nRx*memory,mean,variance),nRx,nTx*memory)),
+ARcoefficients,ARvariance)
+{
+	channelMatrices = new tMatrix[length];
 
-#include <lapackpp/gmd.h>
-#include <types.h>
+	//initialization
+	for(int i=memory-1;i<length;i++)
+		channelMatrices[i] = ARproc.NextMatrix();
+}
 
-using namespace la;
+ARchannel::~ARchannel()
+{
+}
 
-class MIMOChannel{
-protected:
-	int nTx, nRx, memory,length;
-
-public:
-    MIMOChannel();
-	MIMOChannel(int nTx,int nRx, int memory, int length);
-    ~MIMOChannel();
-
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	virtual tMatrix operator[](int n) = 0;
-};
-
-#endif
+// tMatrix ARchannel::operator[](int n)
+// {
+// }

@@ -20,6 +20,7 @@
 #include <iostream>
 #include <time.h>
 #include "Bits.h"
+// #include <Random.h>
 
 Bits::Bits()
 {
@@ -28,12 +29,12 @@ Bits::Bits()
 	matrix = NULL;
 }
 
-Bits::Bits(int nStreams, int nBitsByStream)
+Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
 {
 	this->nStreams = nStreams;
 	this->nBitsByStream = nBitsByStream;
 
-	Random randomGenerator(1234);
+// 	Random randomGenerator(1234);
 
 	matrix = new tBit[nStreams*nBitsByStream];
 	for(int i=nStreams*nBitsByStream;i--;)

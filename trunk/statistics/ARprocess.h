@@ -38,14 +38,15 @@ private:
 	vector<double> coefficients;
 	double noiseVariance;
 	double noiseMean;
-	int nCoefficients, rows, columns, nextMatrix;
+	int nCoefficients, rows, columns, iNextMatrix;
 	int iterationsForConvergence;
 	tMatrix *buffer;
 	Random *randomGenerator;
 
 public:
-    ARprocess();
+//     ARprocess();
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
+	tMatrix NextMatrix();
 
     ~ARprocess();
 
