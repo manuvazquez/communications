@@ -17,34 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "MIMOChannel.h"
+#ifndef CHANNELDEPENDENTNOISE_H
+#define CHANNELDEPENDENTNOISE_H
 
-using namespace la;
+#include <Noise.h>
+#include <math.h>
+#include <MIMOChannel.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/larvd.h>
+#include <lapackpp/lacvd.h>
+#include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
 
-MIMOChannel::MIMOChannel()
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class ChannelDependentNoise : public Noise
 {
-	nTx = 0;
-	nRx = 0;
-	memory = 0;
-	length = 0;
-	nTx_nRx = 0;
-	nTx_nRx_memory = 0;
-	nTx_memory = 0;
-}
+private:
+	MIMOChannel &channel;
+	double *stdDevs;
+public:
+    ChannelDependentNoise(MIMOChannel &channel);
 
-MIMOChannel::MIMOChannel(int nTx,int nRx, int memory, int length)
-{
-	this->nTx = nTx;
-	this->nRx = nRx;
-	this->memory = memory;
-	this->length = length;
-	this->nTx_nRx = nTx*nRx;
-	this->nTx_nRx_memory = nTx*nRx*memory;
-	this->nTx_memory = nTx*memory;
-}
+    ~ChannelDependentNoise();
+	void SetSNR(int SNR,double alphabetVariance);
+	double StdDevAt(int n);
+};
 
-MIMOChannel::~MIMOChannel()
-{
-}
-
-
+#endif

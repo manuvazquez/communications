@@ -36,7 +36,8 @@ public:
 
     ~Noise();
 
-	virtual double StdDvAt(int n) = 0;
+	void Print() { cout << matrix;};
+	virtual double StdDevAt(int n) = 0;
 };
 
 #endif

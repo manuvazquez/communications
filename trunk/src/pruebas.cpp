@@ -6,6 +6,7 @@
 #include <Bits.h>
 #include <ARprocess.h>
 #include <ARchannel.h>
+#include <ChannelDependentNoise.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
@@ -103,6 +104,15 @@ int main(int argc,char* argv[])
 
 // 	Random r;
 // 	cout << r.randn() << endl;
+
+	ChannelDependentNoise ruido(canal);
+	ruido.SetSNR(12,1);
+
+	cout << "Ruido" << endl;
+	ruido.Print();
+	cout << "-----------" <<endl;
+	ruido.SetSNR(3,1);
+	ruido.Print();
 
     return 0;
 }
