@@ -9,6 +9,7 @@
 #include <ChannelDependentNoise.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
+#include <lapackpp/blas2pp.h>
 #include <lapackpp/blas3pp.h>
 #include <mylapack.h>
 
@@ -80,10 +81,6 @@ int main(int argc,char* argv[])
 	Util::Add(A,A2,A3);
 
 // 	Util::Add(A2,A3,A);
-	Random generador(2142);
-	double* arrayNormal = generador.randnArray(12);
-	tMatrix matrizAleatoria(arrayNormal,4,3);
-	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
 
 // 	cout << A << endl << A2 << endl << A3 << endl;
 
@@ -113,6 +110,31 @@ int main(int argc,char* argv[])
 	cout << "-----------" <<endl;
 	ruido.SetSNR(3,1);
 	ruido.Print();
+	vector<double> varianzas = ruido.Variances();
+	for(int i=0;i<ruido.Length();i++)
+		cout << varianzas[i] << endl;
+
+	cout << "una columna del ruido" << endl << ruido[3] << endl;
+
+
+	Random generador(2142);
+	double* arrayNormal = generador.randnArray(12);
+	tMatrix matrizAleatoria(arrayNormal,4,3);
+	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
+
+	tMatrix sub = matrizAleatoria(*(new tRange(1,2)),*(new tRange(1,2)));
+	cout << "------- (is submatrix view" << sub.is_submatrixview() << ")" << endl << sub << endl;
+
+	tMatrix otra(3,3);
+	otra = 1;
+	tVector v = otra.col(2);
+
+	cout << "El vector es " << endl << v;	
+
+	tVector res(4);
+	Blas_Mat_Vec_Mult(matrizAleatoria,v,res);
+
+	cout << "matriz por vector" << endl << res;
 
     return 0;
 }

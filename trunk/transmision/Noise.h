@@ -24,8 +24,11 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <vector>
 #include <types.h>
 #include <Random.h>
+
+using namespace std;
 
 class Noise{
 protected:
@@ -36,8 +39,13 @@ public:
 
     ~Noise();
 
+	int Length() { return length;}
+	int Nr() { return nRx;}
 	void Print() { cout << matrix;};
 	virtual double StdDevAt(int n) = 0;
+	virtual tVector operator[](int n) = 0;
+	double VarianceAt(int n){ double stdDev = StdDevAt(n); return stdDev*stdDev;};
+	vector<double> Variances();
 };
 
 #endif

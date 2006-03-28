@@ -150,7 +150,7 @@
   </substmap>
   <kdevcppsupport>
     <references>
-      <pcs>lapackcpp</pcs>
+      <pcs>lapackpp</pcs>
     </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>

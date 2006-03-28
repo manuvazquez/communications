@@ -81,4 +81,13 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 
 double ChannelDependentNoise::StdDevAt(int n)
 {
+	return stdDevs[n];
+}
+
+tVector ChannelDependentNoise::operator[](int n)
+{
+	tVector res(nRx);
+	for(int i=0;i<nRx;i++)
+		res(i) = matrix(i,n);
+	return res;
 }

@@ -28,6 +28,13 @@ void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double 
 			C(i,j) = alpha*A(i,j) + beta*B(i,j);
 }
 
+void Util::Add(const tVector &a,const tVector &b,tVector c,double alpha,double beta)
+{
+	int nElements = a.size();
+
+	for(int i=0;i<nElements;i++)
+		c(i) = alpha*a(i) + beta*b(i);
+}
 // void Util::GaussianMatrix(tMatrix& matrix,double mean,double variance)
 // {
 //

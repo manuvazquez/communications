@@ -58,7 +58,7 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libtransmision_a_AR = $(AR) $(ARFLAGS)
-libtransmision_a_DEPENDENCIES =  \
+libtransmision_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
 am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT) \
@@ -197,8 +197,8 @@ libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
 noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
 	ChannelDependentNoise.h
 
-libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
-	/usr/local/lib/liblapackpp.la
+libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
+	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
 
 all: all-am
 

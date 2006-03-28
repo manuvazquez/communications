@@ -24,9 +24,14 @@ matrix(randomGenerator.randnArray(nRx*length,0,1),nRx,length)
 {
 }
 
-
 Noise::~Noise()
 {
 }
 
-
+vector<double> Noise::Variances()
+{
+	vector<double> res(length);
+	for(int i=0;i<length;i++)
+		res[i] = VarianceAt(i);
+	return res;
+}

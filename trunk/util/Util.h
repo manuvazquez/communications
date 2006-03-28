@@ -38,6 +38,7 @@ public:
     ~Util() {};
 
 	static void Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double = 1.0,double = 1.0);
+	static void Add(const tVector &a,const tVector &b,tVector c,double alpha,double beta);
 // 	static void GaussianMatrix(tMatrix& matrix,double = 0,double = 1);
 };
 

@@ -24,8 +24,11 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <lapackpp/gmd.h>
+// #include <lapackpp/gmd.h>
 #include <types.h>
+#include <Noise.h>
+#include <excepcionesTransmision.h>
+#include <Util.h>
 
 using namespace la;
 
@@ -45,7 +48,8 @@ public:
 	int NtNr() {return nTx_nRx;};
 	int NtNrMemory() {return nTx_nRx_memory;};
 	int NtMemory() {return nTx_memory;};
-	virtual tMatrix operator[](int n) = 0;
+	virtual tMatrix& operator[](int n) = 0;
+	tMatrix Transmit(tMatrix &symbols,Noise &noise);
 };
 
 #endif

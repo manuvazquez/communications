@@ -7,5 +7,5 @@ libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
 
 noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
 	ChannelDependentNoise.h
-libtransmision_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
-	/usr/local/lib/liblapackpp.la
+libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
+	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
