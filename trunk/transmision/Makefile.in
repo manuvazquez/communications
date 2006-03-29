@@ -63,7 +63,8 @@ libtransmision_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	/usr/local/lib/liblapackpp.la
 am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT) \
 	MIMOChannel.$(OBJEXT) ARchannel.$(OBJEXT) Noise.$(OBJEXT) \
-	ChannelDependentNoise.$(OBJEXT)
+	ChannelDependentNoise.$(OBJEXT) Modulator.$(OBJEXT) \
+	Demodulator.$(OBJEXT)
 libtransmision_a_OBJECTS = $(am_libtransmision_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -192,10 +193,11 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
 libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
-		MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp
+				MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp \
+	Demodulator.cpp
 
 noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
-	ChannelDependentNoise.h
+		ChannelDependentNoise.h Demodulator.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
@@ -277,7 +279,9 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alfabeto.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelDependentNoise.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Demodulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MIMOChannel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Modulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Noise.Po@am__quote@
 
 .cpp.o:

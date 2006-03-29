@@ -3,9 +3,10 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
 libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
-		MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp
+				MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp \
+	Demodulator.cpp
 
 noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
-	ChannelDependentNoise.h
+		ChannelDependentNoise.h Demodulator.h
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la

@@ -41,6 +41,10 @@ Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
 		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
 }
 
+Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): nStreams(nStreams),nBitsByStream(nBitsByStream),matrix(matrix)
+{
+}
+
 Bits& Bits::operator=(const Bits& bits)
 {
 	cout << "Calling = operator..." << endl;
@@ -124,14 +128,19 @@ Bits Bits::DifferentialDecoding()
 	return res;
 }
 
-//
-// 		public Bits DemodulacionDiferencial()
-// 		{
-// 			byte[,] res = new byte[nFilas,nColumnas-1];
-//
-// 			for(int i=0;i<nFilas;i++)
-// 				for(int j=0;j<nColumnas-1;j++)
-// 					res[i,j] = (byte)((matrizBits[i,j] + matrizBits[i,j+1]) % 2);
-// 			return new Bits(res);
-// 		}
+bool Bits::operator==(const Bits &bits) const
+{
+	for(int i=nStreams*nBitsByStream;i--;)
+		if(matrix[i]!=bits.matrix[i])
+			return false;
+	return true;
+}
 
+int Bits::operator-(const Bits &bits) const
+{
+	int res = 0;
+	for(int i=nStreams*nBitsByStream;i--;)
+		if(matrix[i]!=bits.matrix[i])
+			res++;
+	return res;	
+}

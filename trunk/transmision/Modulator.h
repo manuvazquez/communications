@@ -17,42 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#ifndef MODULATOR_H
+#define MODULATOR_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
+#include <vector>
+#include <types.h>
+#include <Bits.h>
+#include <Alfabeto.h>
 
-class Bits{
+using namespace std;
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
+class Modulator{
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+    Modulator();
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
-	bool operator==(const Bits &bits) const;
-
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
+    ~Modulator();
+	static tMatrix Modulate(const Bits &bits,Alfabeto alfabeto);
 };
 
 #endif

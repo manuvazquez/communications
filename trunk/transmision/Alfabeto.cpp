@@ -45,7 +45,7 @@ tSymbol Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)
     {
 			throw RuntimeException("Alfabeto::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
     }
-    cout << "Esta en la posicion " << iterador - secuenciasBits.begin() << endl;
+//     cout << "Esta en la posicion " << iterador - secuenciasBits.begin() << endl;
 	return simbolos[iterador - secuenciasBits.begin()];
 }
 
@@ -57,8 +57,8 @@ vector<tBit> Alfabeto::operator [ ](tSymbol simbolo)
 	{
 		throw RuntimeException("Alfabeto::operator[]: Este simbolo no forma parte del alfabeto.");
 	}
-	cout << "Esta en la posicion" << (iterador - simbolos.begin()) << endl;
-	printf("Secuencia Bits 0=%d,1=%d\n",secuenciasBits[iterador - simbolos.begin()][0],secuenciasBits[iterador - simbolos.begin()][1]);
+// 	cout << "Esta en la posicion" << (iterador - simbolos.begin()) << endl;
+// 	printf("Secuencia Bits 0=%d,1=%d\n",secuenciasBits[iterador - simbolos.begin()][0],secuenciasBits[iterador - simbolos.begin()][1]);
 	return secuenciasBits[iterador - simbolos.begin()];
 }
 

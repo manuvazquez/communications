@@ -17,42 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#ifndef DEMODULATOR_H
+#define DEMODULATOR_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
 
-class Bits{
+#include <types.h>
+#include <Alfabeto.h>
+#include <Bits.h>
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
+class Demodulator{
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+    Demodulator();
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
-	bool operator==(const Bits &bits) const;
-
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
+    ~Demodulator();
+	static Bits Demodulate(const tMatrix &simbolos,Alfabeto alfabeto);
 };
 
 #endif

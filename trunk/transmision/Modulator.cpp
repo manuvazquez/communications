@@ -17,42 +17,42 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#include "Modulator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+Modulator::Modulator()
+{
+}
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
 
-class Bits{
+Modulator::~Modulator()
+{
+}
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
+tMatrix Modulator::Modulate(const Bits &bits, Alfabeto alphabet)
+{
+	if((bits.NbitsByStream()% alphabet.NbitsPorSimbolo())!=0)
+		cout << "Too many bits." << endl;
+	int nSymbolsByStream = bits.NbitsByStream()/ alphabet.NbitsPorSimbolo();
 
-public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+	tMatrix res(bits.Nstreams(),nSymbolsByStream);
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
-	bool operator==(const Bits &bits) const;
+	// once filled, it will converted to a symbol by alphabet
+	vector<tBit> currentBitSequence(alphabet.NbitsPorSimbolo());
 
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
-};
+	int processedBits,j,iSymbol;
+	for(int i=0;i<bits.Nstreams();i++)
+	{
+		processedBits = 0;
+		iSymbol = 0;
+		while((processedBits+alphabet.NbitsPorSimbolo()-1)<bits.NbitsByStream())
+		{
+			for(j=0;j<alphabet.NbitsPorSimbolo();j++)
+				currentBitSequence[j] = bits(i,processedBits+j);
 
-#endif
+			processedBits += alphabet.NbitsPorSimbolo();
+
+			res(i,iSymbol++) = (double) alphabet[currentBitSequence];
+		}
+	}
+	return res;
+}

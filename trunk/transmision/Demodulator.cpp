@@ -17,42 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
+#include "Demodulator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+Demodulator::Demodulator()
+{
+}
 
-#include "types.h"
-#include "excepcionesTransmision.h"
-#include <Random.h>
 
-class Bits{
+Demodulator::~Demodulator()
+{
+}
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
+Bits Demodulator::Demodulate(const tMatrix &symbols,Alfabeto alphabet)
+{
+	int nBitsByStream = symbols.cols()*alphabet.NbitsPorSimbolo();
+	int nStreams = symbols.rows();
+	tBit *matrix = new tBit[nStreams*nBitsByStream];
 
-public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
+	int iBit,j,k;
 
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
-	bool operator==(const Bits &bits) const;
-
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
-};
-
-#endif
+	for(int i=0;i<nStreams;i++)
+	{
+		iBit = 0;
+		for(j=0;j<symbols.cols();j++)
+		{
+			vector<tBit> bitsSequence = alphabet[(tSymbol)symbols(i,j)];
+			for(k=0;k<alphabet.NbitsPorSimbolo();k++,iBit++)
+				matrix[i*nBitsByStream+iBit] = bitsSequence[k];
+		}
+	}
+	return Bits(matrix,nStreams,nBitsByStream);
+	
+}
