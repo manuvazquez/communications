@@ -28,6 +28,7 @@
 #include <vector>
 #include <types.h>
 #include <Util.h>
+#include <Random.h>
 #include <lapackpp/gmd.h>
 
 using namespace std;

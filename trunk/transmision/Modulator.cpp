@@ -30,26 +30,26 @@ Modulator::~Modulator()
 
 tMatrix Modulator::Modulate(const Bits &bits, Alphabet alphabet)
 {
-	if((bits.NbitsByStream()% alphabet.NbitsPorSimbolo())!=0)
+	if((bits.NbitsByStream()% alphabet.NbitsBySymbol())!=0)
 		cout << "Too many bits." << endl;
-	int nSymbolsByStream = bits.NbitsByStream()/ alphabet.NbitsPorSimbolo();
+	int nSymbolsByStream = bits.NbitsByStream()/ alphabet.NbitsBySymbol();
 
 	tMatrix res(bits.Nstreams(),nSymbolsByStream);
 
 	// once filled, it will converted to a symbol by alphabet
-	vector<tBit> currentBitSequence(alphabet.NbitsPorSimbolo());
+	vector<tBit> currentBitSequence(alphabet.NbitsBySymbol());
 
 	int processedBits,j,iSymbol;
 	for(int i=0;i<bits.Nstreams();i++)
 	{
 		processedBits = 0;
 		iSymbol = 0;
-		while((processedBits+alphabet.NbitsPorSimbolo()-1)<bits.NbitsByStream())
+		while((processedBits+alphabet.NbitsBySymbol()-1)<bits.NbitsByStream())
 		{
-			for(j=0;j<alphabet.NbitsPorSimbolo();j++)
+			for(j=0;j<alphabet.NbitsBySymbol();j++)
 				currentBitSequence[j] = bits(i,processedBits+j);
 
-			processedBits += alphabet.NbitsPorSimbolo();
+			processedBits += alphabet.NbitsBySymbol();
 
 			res(i,iSymbol++) = (double) alphabet[currentBitSequence];
 		}

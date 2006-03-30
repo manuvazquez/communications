@@ -26,6 +26,12 @@
 
 #include <types.h>
 #include <exceptions.h>
+#include <Util.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
+#include <lapackpp/laslv.h>
+#include <lapackpp/lavli.h>
 
 class KalmanFilter{
 private:
@@ -33,11 +39,15 @@ private:
 	int _nElementsToEstimate;
 	tVector _predictiveMean,_filteredMean;
 	tMatrix _predictiveCovariance,_filteredCovariance;
+	int _observationVectorLength;
+
+	// auxiliar variables
+	tMatrix _predictiveCovarianceF,_auxMatrix;
 public:
-    KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance);
+    KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength);
 
     ~KalmanFilter();
-
+	void Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance);
 };
 
 #endif

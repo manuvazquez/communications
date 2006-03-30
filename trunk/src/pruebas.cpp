@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include "types.h"
-#include "Alphabet.h"
+#include <Alphabet.h>
 #include <Bits.h>
 #include <ARprocess.h>
 #include <ARchannel.h>
@@ -13,6 +13,8 @@
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas2pp.h>
 #include <lapackpp/blas3pp.h>
+#include <lapackpp/laslv.h>
+#include <lapackpp/lavli.h>
 #include <mylapack.h>
 
 using namespace std;
@@ -62,7 +64,7 @@ int main(int argc,char* argv[])
 // 	cout << "el tamaño de la secuencia es " << secuenciaDevuelta[0];
 	secuenciaDevuelta.resize(6);
 	vector<tSymbol> secuenciaSimbolos(8);
-	pam4.IntToArraySimbolos(13,&secuenciaSimbolos);
+	pam4.IntToSymbolsArray(13,&secuenciaSimbolos);
 	cout << "Secuencia devuelta" << endl;
 	for(int i=0;i<secuenciaSimbolos.size();i++)
 		cout << secuenciaSimbolos[i];
@@ -160,10 +162,6 @@ int main(int argc,char* argv[])
 // 	cout << "una columna del ruido" << endl << ruido[3] << endl;
 // 
 // 
-// 	Random generador(2142);
-// 	double* arrayNormal = generador.randnArray(12);
-// 	tMatrix matrizAleatoria(arrayNormal,4,3);
-// 	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
 // 
 // 	tMatrix sub = matrizAleatoria(*(new tRange(1,2)),*(new tRange(1,2)));
 // 	cout << "------- (is submatrix view" << sub.is_submatrixview() << ")" << endl << sub << endl;
@@ -178,6 +176,18 @@ int main(int argc,char* argv[])
 // 	Blas_Mat_Vec_Mult(matrizAleatoria,v,res);
 // 
 // 	cout << "matriz por vector" << endl << res;
+
+
+	Random generador;
+	double* arrayNormal = generador.randnArray(16);
+	tMatrix matrizAleatoria(arrayNormal,4,4);
+	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
+
+	tLongIntVector pivotes(matrizAleatoria.size(0));
+	LUFactorizeIP(matrizAleatoria,pivotes);
+	LaLUInverseIP(matrizAleatoria,pivotes);
+
+	cout << "La inversa" << endl << matrizAleatoria;
 
     return 0;
 }
