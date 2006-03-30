@@ -27,7 +27,7 @@
 // #include <lapackpp/gmd.h>
 #include <types.h>
 #include <Noise.h>
-#include <excepcionesTransmision.h>
+#include <exceptions.h>
 #include <Util.h>
 
 using namespace la;

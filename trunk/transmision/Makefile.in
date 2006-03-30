@@ -62,7 +62,7 @@ libtransmision_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
-am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT) \
+am_libtransmision_a_OBJECTS = Alphabet.$(OBJEXT) Bits.$(OBJEXT) \
 	MIMOChannel.$(OBJEXT) ARchannel.$(OBJEXT) Noise.$(OBJEXT) \
 	ChannelDependentNoise.$(OBJEXT) Modulator.$(OBJEXT) \
 	Demodulator.$(OBJEXT)
@@ -193,12 +193,12 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
-libtransmision_a_SOURCES = Alfabeto.cpp excepcionesTransmision.h Bits.cpp \
+libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp \
 				MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp \
 	Demodulator.cpp
 
-noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
-		ChannelDependentNoise.h Demodulator.h
+noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
+	ChannelDependentNoise.h Demodulator.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a \
@@ -217,9 +217,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  transmision/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  transmision/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  transmision/Makefile
+	  $(AUTOMAKE) --gnu  transmision/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -278,7 +278,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ARchannel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alfabeto.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alphabet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelDependentNoise.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Demodulator.Po@am__quote@

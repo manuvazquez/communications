@@ -17,42 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef BITS_H
-#define BITS_H
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+#ifndef EXCEPCIONESTRANSMISION_H
+#define EXCEPCIONESTRANSMISION_H
 
-#include "types.h"
-#include "exceptions.h"
-#include <Random.h>
+#include <stdexcept>
 
-class Bits{
+using namespace std;
 
-private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
-
-public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& Bits::operator=(const Bits& bits);
-	Bits::Bits(const Bits& bits);
-	~Bits();
-
-	void Print();
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
-	bool operator==(const Bits &bits) const;
-
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
+//excepcion generica que solo contiene el mensaje de error
+class RuntimeException : public runtime_error
+{
+	public:
+		RuntimeException(string s) : runtime_error(s) { }
 };
-
 #endif

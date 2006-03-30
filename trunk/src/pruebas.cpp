@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <vector>
 #include "types.h"
-#include "Alfabeto.h"
+#include "Alphabet.h"
 #include <Bits.h>
 #include <ARprocess.h>
 #include <ARchannel.h>
@@ -19,7 +19,7 @@ using namespace std;
 // using namespace la;
 int main(int argc,char* argv[])
 {
-    int longitudAlfabeto = 2;
+    int longitudAlphabet = 2;
 //     LaGenMatDouble matriz(4,2);
 //     LaGenMatDouble matriz2(2,3);
 //     LaGenMatDouble res(4,3);
@@ -40,7 +40,7 @@ int main(int argc,char* argv[])
     secuenciasBits[3][0] = 1; secuenciasBits[3][1] = 1;
     vector<tSymbol> simbolos(4);
     simbolos[0] = -3; simbolos[1] = -1; simbolos[2] = 1; simbolos[3] = 3;
-    Alfabeto pam4(2,4,secuenciasBits,simbolos);
+    Alphabet pam4(2,4,secuenciasBits,simbolos);
 
     vector<tBit> secuenciaAbuscar(2);
     secuenciaAbuscar[0] = 1; secuenciaAbuscar[1] = 1;
@@ -53,7 +53,7 @@ int main(int argc,char* argv[])
 //     vector<tSymbol> simbolos(2);
 	simbolos = *(new vector<tSymbol>(2));
     simbolos[0] = -1; simbolos[1] = 1;
-    Alfabeto pam2(1,2,secuenciasBits,simbolos);
+    Alphabet pam2(1,2,secuenciasBits,simbolos);
 	
 
 	vector<tBit> secuenciaDevuelta;

@@ -32,7 +32,7 @@ ChannelDependentNoise::~ChannelDependentNoise()
 {
 }
 
-// 		public void EstablecerSNR(int SNR,double varianzaAlfabeto)
+// 		public void EstablecerSNR(int SNR,double varianzaAlphabet)
 // 		{
 // 			int i,j,memoriaCanal;
 // 			double cteVarianza = Math.Pow(10d,((double)-SNR)/10d);
@@ -43,7 +43,7 @@ ChannelDependentNoise::~ChannelDependentNoise()
 // 			for(j=memoriaCanal-1;j<nInstantesTiempo;j++)
 // 			{
 // 				varianza = cteVarianza*((canal[j].Transpose()*canal[j]).Diagonal()).Sum()*//
-// 						   varianzaAlfabeto/nAntenasReceptoras;
+// 						   varianzaAlphabet/nAntenasReceptoras;
 // 				desviacionTipica = Math.Sqrt(varianza);
 // 				for(i=0;i<nAntenasReceptoras;i++)
 // 				{

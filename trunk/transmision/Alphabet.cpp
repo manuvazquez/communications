@@ -1,11 +1,11 @@
 #include <iostream>
 #include <math.h>
-#include "Alfabeto.h"
-#include "excepcionesTransmision.h"
+#include "Alphabet.h"
+#include "exceptions.h"
 
 using namespace std;
 
-Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
+Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
 {
     cout << "La longitud del alfabeto es: " << secuenciasBits.size() << endl;
     cout << "y el numero de bits por simbolo " << secuenciasBits[0].size() << endl;
@@ -13,7 +13,7 @@ Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> 
     // si no coincide el numero de simbolos con el numero de secuencias de bits
     if(secuenciasBits.size()!=simbolos.size())
     {
-			throw RuntimeException("Alfabeto.cpp: el numero de secuencias de bits es distinto al de simbolos.");
+			throw RuntimeException("Alphabet.cpp: el numero de secuencias de bits es distinto al de simbolos.");
 			
     }
 
@@ -37,32 +37,32 @@ Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> 
 //     cout << "La media es " << media << " y la varianza " << varianza << endl;
 }
 
-tSymbol Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)
+tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)
 {
     vector<vector<tBit> >::iterator iterador;
     iterador = find(secuenciasBits.begin(),secuenciasBits.end(),secuenciaBitsBuscada);
     if(iterador==secuenciasBits.end())
     {
-			throw RuntimeException("Alfabeto::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
+			throw RuntimeException("Alphabet::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
     }
 //     cout << "Esta en la posicion " << iterador - secuenciasBits.begin() << endl;
 	return simbolos[iterador - secuenciasBits.begin()];
 }
 
-vector<tBit> Alfabeto::operator [ ](tSymbol simbolo)
+vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 {
 	vector<tSymbol>::iterator iterador;
 	iterador = find(simbolos.begin(),simbolos.end(),simbolo);
 	if(iterador==simbolos.end())
 	{
-		throw RuntimeException("Alfabeto::operator[]: Este simbolo no forma parte del alfabeto.");
+		throw RuntimeException("Alphabet::operator[]: Este simbolo no forma parte del alfabeto.");
 	}
 // 	cout << "Esta en la posicion" << (iterador - simbolos.begin()) << endl;
 // 	printf("Secuencia Bits 0=%d,1=%d\n",secuenciasBits[iterador - simbolos.begin()][0],secuenciasBits[iterador - simbolos.begin()][1]);
 	return secuenciasBits[iterador - simbolos.begin()];
 }
 
-void Alfabeto::IntToArraySimbolos(int numero, vector<tSymbol> *res)
+void Alphabet::IntToArraySimbolos(int numero, vector<tSymbol> *res)
 {
 	int tamVector = res->size();
 

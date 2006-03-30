@@ -185,7 +185,7 @@ comunicaciones_LDADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
 
-noinst_HEADERS = types.h
+noinst_HEADERS = types.h exceptions.h
 all: all-am
 
 .SUFFIXES:
@@ -199,9 +199,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  src/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  src/Makefile
+	  $(AUTOMAKE) --gnu  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

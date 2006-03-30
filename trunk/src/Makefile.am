@@ -12,4 +12,4 @@ comunicaciones_SOURCES = pruebas.cpp
 comunicaciones_LDADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
-noinst_HEADERS = types.h
+noinst_HEADERS = types.h exceptions.h

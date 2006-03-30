@@ -28,7 +28,7 @@ Demodulator::~Demodulator()
 {
 }
 
-Bits Demodulator::Demodulate(const tMatrix &symbols,Alfabeto alphabet)
+Bits Demodulator::Demodulate(const tMatrix &symbols,Alphabet alphabet)
 {
 	int nBitsByStream = symbols.cols()*alphabet.NbitsPorSimbolo();
 	int nStreams = symbols.rows();

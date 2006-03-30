@@ -27,7 +27,7 @@
 #include <vector>
 #include <types.h>
 #include <Bits.h>
-#include <Alfabeto.h>
+#include <Alphabet.h>
 
 using namespace std;
 
@@ -36,7 +36,7 @@ public:
     Modulator();
 
     ~Modulator();
-	static tMatrix Modulate(const Bits &bits,Alfabeto alfabeto);
+	static tMatrix Modulate(const Bits &bits,Alphabet alfabeto);
 };
 
 #endif

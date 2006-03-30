@@ -6,7 +6,7 @@
 #include "types.h"
 
 using namespace std;
-class Alfabeto
+class Alphabet
 {
 	private:
 		vector<tSymbol> simbolos;
@@ -14,7 +14,7 @@ class Alfabeto
 		int nBitsPorSimbolo,longitud;
 		double media,varianza;
 	public:
-		Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos);
+		Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos);
 		int NbitsPorSimbolo() { return nBitsPorSimbolo;}
 		double Varianza() { return varianza;}
 		tSymbol operator [](vector<tBit> secuenciaBitsBuscada);

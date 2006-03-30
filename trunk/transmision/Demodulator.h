@@ -26,7 +26,7 @@
 
 
 #include <types.h>
-#include <Alfabeto.h>
+#include <Alphabet.h>
 #include <Bits.h>
 
 class Demodulator{
@@ -34,7 +34,7 @@ public:
     Demodulator();
 
     ~Demodulator();
-	static Bits Demodulate(const tMatrix &simbolos,Alfabeto alfabeto);
+	static Bits Demodulate(const tMatrix &simbolos,Alphabet alfabeto);
 };
 
 #endif

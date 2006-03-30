@@ -25,7 +25,7 @@
 */
 
 #include <types.h>
-#include <excepcionesTransmision.h>
+#include <exceptions.h>
 
 class KalmanFilter{
 private:
