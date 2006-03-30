@@ -17,22 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "Util.h"
+#include "KalmanFilter.h"
 
-void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
+KalmanFilter::KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance):
+_nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_filteredMean(initialMean),_filteredCovariance(initialCovariance)
 {
-	int i,j;
-	int rows = A.rows(), cols = A.cols();
-	for(i=0;i<rows;i++)
-		for(j=0;j<cols;j++)
-			C(i,j) = alpha*A(i,j) + beta*B(i,j);
+	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
+		throw RuntimeException("Matrices R and F dimensions are not coherent with those of the vector to be estimated.");
+	
 }
 
-void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)
-{
-	int nElements = a.size();
 
-	for(int i=0;i<nElements;i++)
-		c(i) = alpha*a(i) + beta*b(i);
+KalmanFilter::~KalmanFilter()
+{
 }
+
 

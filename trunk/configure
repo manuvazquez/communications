@@ -18714,7 +18714,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 
 
-                                                            ac_config_files="$ac_config_files Makefile src/Makefile transmision/Makefile randomutil/Makefile statistics/Makefile util/Makefile"
+                                                                      ac_config_files="$ac_config_files Makefile src/Makefile transmision/Makefile randomutil/Makefile statistics/Makefile util/Makefile filters/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -19277,6 +19277,7 @@ do
   "randomutil/Makefile" ) CONFIG_FILES="$CONFIG_FILES randomutil/Makefile" ;;
   "statistics/Makefile" ) CONFIG_FILES="$CONFIG_FILES statistics/Makefile" ;;
   "util/Makefile" ) CONFIG_FILES="$CONFIG_FILES util/Makefile" ;;
+  "filters/Makefile" ) CONFIG_FILES="$CONFIG_FILES filters/Makefile" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5

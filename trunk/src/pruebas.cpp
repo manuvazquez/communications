@@ -41,9 +41,20 @@ int main(int argc,char* argv[])
     vector<tSymbol> simbolos(4);
     simbolos[0] = -3; simbolos[1] = -1; simbolos[2] = 1; simbolos[3] = 3;
     Alfabeto pam4(2,4,secuenciasBits,simbolos);
+
     vector<tBit> secuenciaAbuscar(2);
     secuenciaAbuscar[0] = 1; secuenciaAbuscar[1] = 1;
     tSymbol simboloDevuelto = pam4[secuenciaAbuscar];
+
+	// -------------- PAM2 -------------------
+//     vector<vector<tBit> > secuenciasBits(2,vector<tBit>(1));
+	secuenciasBits = *(new vector<vector<tBit> >(2,vector<tBit>(1)));
+    secuenciasBits[0][0] = 0; secuenciasBits[1][0] = 1;
+//     vector<tSymbol> simbolos(2);
+	simbolos = *(new vector<tSymbol>(2));
+    simbolos[0] = -1; simbolos[1] = 1;
+    Alfabeto pam2(1,2,secuenciasBits,simbolos);
+	
 
 	vector<tBit> secuenciaDevuelta;
 	secuenciaDevuelta = pam4[-1];
@@ -56,25 +67,54 @@ int main(int argc,char* argv[])
 	for(int i=0;i<secuenciaSimbolos.size();i++)
 		cout << secuenciaSimbolos[i];
 	cout << endl;
-	Bits bits(4,50);
+	Bits bits(2,4);
 	bits.Print();
 	cout << "-----------" << endl;
 	Bits bits2;
 
-	tMatrix simbs = Modulator::Modulate(bits,pam4);
+	tMatrix simbs = Modulator::Modulate(bits,pam2);
 
 	cout << "Simbolos" << endl << simbs << "-------" << endl;
 
-	Bits bitsDemodulados = Demodulator::Demodulate(simbs,pam4);
+	Bits bitsDemodulados = Demodulator::Demodulate(simbs,pam2);
 
 	cout << "Bits demodulados..." << endl;
 
 	bitsDemodulados.Print();
 
-	Bits otrosBits(4,50);
-	cout << "igual a los demodulados: "<< (bitsDemodulados==bits) << "a los otros: " << (bits==otrosBits) << endl;
 
-	cout << "Diferencia: " << (bitsDemodulados-bits) << "a los otros: " << (bits-otrosBits) << endl;
+
+// 	// ------------------------------ proceso AR ---------------------------------------
+	vector<double> coeficientes(1);
+	coeficientes[0] = 0.99999;
+// 	tMatrix matrizInicial(generador.randnArray(2*3),2,3);
+// 	ARprocess procesoAR(matrizInicial,coeficientes,0.001);
+// 	for(int i=0;i<200;i++)
+// 	{
+// 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
+// 	}
+// 	// ---------------------------------------------------------------------------------
+
+	ARchannel canal(2,3,2,5,0,0.1,coeficientes,0.001);
+	for(int i=canal.Memory()-1;i<canal.Length();i++)
+		cout << canal[i] << endl << "****************" << endl;
+
+	ChannelDependentNoise ruido(canal);
+	ruido.SetSNR(12,1);
+
+	cout << "El ruido" << endl;
+	ruido.Print();
+
+	tMatrix observaciones = canal.Transmit(simbs,ruido);
+
+	cout << "Las observaciones" << endl << observaciones;
+
+// 	// ----------- operaciones entre objetos Bits ------------------------
+// 	Bits otrosBits(4,50);
+// 	cout << "igual a los demodulados: "<< (bitsDemodulados==bits) << "a los otros: " << (bits==otrosBits) << endl;
+// 
+// 	cout << "Diferencia: " << (bitsDemodulados-bits) << "a los otros: " << (bits-otrosBits) << endl;
+// 	// -------------------------------------------------------------------
 
 // 	bits2 = bits;
 // 	bits2 = bits;
@@ -100,26 +140,13 @@ int main(int argc,char* argv[])
 // // 	cout << A << endl << A2 << endl << A3 << endl;
 // 	// ----------------------------------------------------------------
 
-// 	// ------------------------------ proceso AR ---------------------------------------
-	vector<double> coeficientes(1);
-	coeficientes[0] = 0.99999;
-// 	tMatrix matrizInicial(generador.randnArray(2*3),2,3);
-// 	ARprocess procesoAR(matrizInicial,coeficientes,0.001);
-// 	for(int i=0;i<200;i++)
-// 	{
-// 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
-// 	}
-// 	// ---------------------------------------------------------------------------------
 
-// 	ARchannel canal(2,3,2,5,0,0.1,coeficientes,0.001);
-// 	for(int i=canal.Memory()-1;i<canal.Length();i++)
-// 		cout << canal[i] << endl << "****************" << endl;
+
 // 
 // // 	Random r;
 // // 	cout << r.randn() << endl;
 // 
-// 	ChannelDependentNoise ruido(canal);
-// 	ruido.SetSNR(12,1);
+
 // 
 // 	cout << "Ruido" << endl;
 // 	ruido.Print();

@@ -59,6 +59,7 @@ LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libtransmision_a_AR = $(AR) $(ARFLAGS)
 libtransmision_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
+	$(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
 am_libtransmision_a_OBJECTS = Alfabeto.$(OBJEXT) Bits.$(OBJEXT) \
@@ -200,7 +201,8 @@ noinst_HEADERS = Bits.h Alfabeto.h MIMOChannel.h ARchannel.h Noise.h \
 		ChannelDependentNoise.h Demodulator.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a \
+	/usr/local/lib/liblapackpp.la
 
 all: all-am
 
@@ -215,9 +217,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  transmision/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  transmision/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  transmision/Makefile
+	  $(AUTOMAKE) --foreign  transmision/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

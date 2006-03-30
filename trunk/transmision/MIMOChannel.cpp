@@ -81,6 +81,8 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 		// just for the sake of clarity
 		tMatrix &currentChannelMatrix = (*this)[iSymbolVector];
 
+// 		cout << "Matriz procesada" << endl << currentChannelMatrix;
+
 		//currentObservationVector will accumulate the contributions of the
 		// different symbol vectors that participate in the current observation
 		// (memory >= 1)

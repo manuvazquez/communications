@@ -17,22 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "Util.h"
+#ifndef KALMANFILTER_H
+#define KALMANFILTER_H
 
-void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
-{
-	int i,j;
-	int rows = A.rows(), cols = A.cols();
-	for(i=0;i<rows;i++)
-		for(j=0;j<cols;j++)
-			C(i,j) = alpha*A(i,j) + beta*B(i,j);
-}
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)
-{
-	int nElements = a.size();
+#include <types.h>
+#include <excepcionesTransmision.h>
 
-	for(int i=0;i<nElements;i++)
-		c(i) = alpha*a(i) + beta*b(i);
-}
+class KalmanFilter{
+private:
+	tMatrix _R, _Rtranspose, _stateEquationCovariance;
+	int _nElementsToEstimate;
+	tVector _predictiveMean,_filteredMean;
+	tMatrix _predictiveCovariance,_filteredCovariance;
+public:
+    KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance);
 
+    ~KalmanFilter();
+
+};
+
+#endif

@@ -1,0 +1,223 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+ARCHANNEL_H	transmision/ARchannel.h	/^#define ARCHANNEL_H$/;"	d
+ARPROCESS_H	statistics/ARprocess.h	/^#define ARPROCESS_H$/;"	d
+ARRAY_H	transmision/Alfabeto.h	/^#define ARRAY_H$/;"	d
+ARchannel	transmision/ARchannel.cpp	/^ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator): MIMOChannel(nTx, nRx, memory, length),$/;"	f	class:ARchannel
+ARchannel	transmision/ARchannel.h	/^    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator = *(new Random()));$/;"	p	class:ARchannel
+ARchannel	transmision/ARchannel.h	/^class ARchannel : public MIMOChannel$/;"	c
+ARproc	transmision/ARchannel.h	/^	ARprocess ARproc;$/;"	m	class:ARchannel
+ARprocess	statistics/ARprocess.cpp	/^ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance)$/;"	f	class:ARprocess
+ARprocess	statistics/ARprocess.h	/^	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);$/;"	p	class:ARprocess
+ARprocess	statistics/ARprocess.h	/^class ARprocess{$/;"	c
+Add	util/Util.cpp	/^void Util::Add(tMatrix& A,tMatrix& B,tMatrix& C,double alpha,double beta)$/;"	f	class:Util
+Add	util/Util.cpp	/^void Util::Add(tVector &a,tVector &b,tVector &c,double alpha,double beta)$/;"	f	class:Util
+Add	util/Util.h	/^	static void Add(tMatrix& A,tMatrix& B,tMatrix& C,double = 1.0,double = 1.0);$/;"	p	class:Util
+Add	util/Util.h	/^	static void Add(tVector &a,tVector &b,tVector &c,double alpha,double beta);$/;"	p	class:Util
+Alfabeto	transmision/Alfabeto.cpp	/^Alfabeto::Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)$/;"	f	class:Alfabeto
+Alfabeto	transmision/Alfabeto.h	/^		Alfabeto(int nBitsPorSimbolo,int longitudAlfabeto,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos);$/;"	p	class:Alfabeto
+Alfabeto	transmision/Alfabeto.h	/^class Alfabeto$/;"	c
+BITS_H	transmision/Bits.h	/^#define BITS_H$/;"	d
+Bits	transmision/Bits.cpp	/^Bits::Bits()$/;"	f	class:Bits
+Bits	transmision/Bits.cpp	/^Bits::Bits(const Bits& bits):$/;"	f	class:Bits
+Bits	transmision/Bits.cpp	/^Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)$/;"	f	class:Bits
+Bits	transmision/Bits.cpp	/^Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): nStreams(nStreams),nBitsByStream(nBitsByStream),matrix(matrix)$/;"	f	class:Bits
+Bits	transmision/Bits.h	/^	Bits();$/;"	p	class:Bits
+Bits	transmision/Bits.h	/^	Bits(int nStreams, int nBitsByStream,Random &randomGenerator = *(new Random()));$/;"	p	class:Bits
+Bits	transmision/Bits.h	/^	Bits(tBit *matrix,int nStreams,int nBitsByStream);$/;"	p	class:Bits
+Bits	transmision/Bits.h	/^	Bits::Bits(const Bits& bits);$/;"	p	class:Bits::Bits
+Bits	transmision/Bits.h	/^class Bits{$/;"	c
+CHANNELDEPENDENTNOISE_H	transmision/ChannelDependentNoise.h	/^#define CHANNELDEPENDENTNOISE_H$/;"	d
+ChannelDependentNoise	transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::ChannelDependentNoise(MIMOChannel &channel)$/;"	f	class:ChannelDependentNoise
+ChannelDependentNoise	transmision/ChannelDependentNoise.h	/^    ChannelDependentNoise(MIMOChannel &channel);$/;"	p	class:ChannelDependentNoise
+ChannelDependentNoise	transmision/ChannelDependentNoise.h	/^class ChannelDependentNoise : public Noise$/;"	c
+DEMODULATOR_H	transmision/Demodulator.h	/^#define DEMODULATOR_H$/;"	d
+Demodulate	transmision/Demodulator.cpp	/^Bits Demodulator::Demodulate(const tMatrix &symbols,Alfabeto alphabet)$/;"	f	class:Demodulator
+Demodulate	transmision/Demodulator.h	/^	static Bits Demodulate(const tMatrix &simbolos,Alfabeto alfabeto);$/;"	p	class:Demodulator
+Demodulator	transmision/Demodulator.cpp	/^Demodulator::Demodulator()$/;"	f	class:Demodulator
+Demodulator	transmision/Demodulator.h	/^    Demodulator();$/;"	p	class:Demodulator
+Demodulator	transmision/Demodulator.h	/^class Demodulator{$/;"	c
+DifferentialDecoding	transmision/Bits.cpp	/^Bits Bits::DifferentialDecoding()$/;"	f	class:Bits
+DifferentialDecoding	transmision/Bits.h	/^	Bits DifferentialDecoding();$/;"	p	class:Bits
+DifferentialEncoding	transmision/Bits.cpp	/^Bits Bits::DifferentialEncoding()$/;"	f	class:Bits
+DifferentialEncoding	transmision/Bits.h	/^	Bits DifferentialEncoding();$/;"	p	class:Bits
+EXCEPCIONESTRANSMISION_H	transmision/excepcionesTransmision.h	/^#define EXCEPCIONESTRANSMISION_H$/;"	d
+HAVE_DLFCN_H	debug/config.h	/^#define HAVE_DLFCN_H /;"	d
+HAVE_INTTYPES_H	debug/config.h	/^#define HAVE_INTTYPES_H /;"	d
+HAVE_MEMORY_H	debug/config.h	/^#define HAVE_MEMORY_H /;"	d
+HAVE_STDINT_H	debug/config.h	/^#define HAVE_STDINT_H /;"	d
+HAVE_STDLIB_H	debug/config.h	/^#define HAVE_STDLIB_H /;"	d
+HAVE_STRINGS_H	debug/config.h	/^#define HAVE_STRINGS_H /;"	d
+HAVE_STRING_H	debug/config.h	/^#define HAVE_STRING_H /;"	d
+HAVE_SYS_STAT_H	debug/config.h	/^#define HAVE_SYS_STAT_H /;"	d
+HAVE_SYS_TYPES_H	debug/config.h	/^#define HAVE_SYS_TYPES_H /;"	d
+HAVE_UNISTD_H	debug/config.h	/^#define HAVE_UNISTD_H /;"	d
+IntToArraySimbolos	transmision/Alfabeto.cpp	/^void Alfabeto::IntToArraySimbolos(int numero, vector<tSymbol> *res)$/;"	f	class:Alfabeto
+IntToArraySimbolos	transmision/Alfabeto.h	/^		void IntToArraySimbolos(int numero, vector<tSymbol> *res);$/;"	p	class:Alfabeto
+Length	transmision/MIMOChannel.h	/^	int Length() {return length;};$/;"	f	class:MIMOChannel
+Length	transmision/Noise.h	/^	int Length() { return length;}$/;"	f	class:Noise
+Longitud	transmision/Alfabeto.h	/^		int Longitud() { return longitud;}$/;"	f	class:Alfabeto
+MIMOCHANNEL_H	transmision/MIMOChannel.h	/^#define MIMOCHANNEL_H$/;"	d
+MIMOChannel	transmision/MIMOChannel.cpp	/^MIMOChannel::MIMOChannel()$/;"	f	class:MIMOChannel
+MIMOChannel	transmision/MIMOChannel.cpp	/^MIMOChannel::MIMOChannel(int nTx,int nRx, int memory, int length)$/;"	f	class:MIMOChannel
+MIMOChannel	transmision/MIMOChannel.h	/^	MIMOChannel(int nTx,int nRx, int memory, int length);$/;"	p	class:MIMOChannel
+MIMOChannel	transmision/MIMOChannel.h	/^    MIMOChannel();$/;"	p	class:MIMOChannel
+MIMOChannel	transmision/MIMOChannel.h	/^class MIMOChannel{$/;"	c
+MODULATOR_H	transmision/Modulator.h	/^#define MODULATOR_H$/;"	d
+Memory	transmision/MIMOChannel.h	/^	int Memory() {return memory;};$/;"	f	class:MIMOChannel
+Modulate	transmision/Modulator.cpp	/^tMatrix Modulator::Modulate(const Bits &bits, Alfabeto alphabet)$/;"	f	class:Modulator
+Modulate	transmision/Modulator.h	/^	static tMatrix Modulate(const Bits &bits,Alfabeto alfabeto);$/;"	p	class:Modulator
+Modulator	transmision/Modulator.cpp	/^Modulator::Modulator()$/;"	f	class:Modulator
+Modulator	transmision/Modulator.h	/^    Modulator();$/;"	p	class:Modulator
+Modulator	transmision/Modulator.h	/^class Modulator{$/;"	c
+NOISE_H	transmision/Noise.h	/^#define NOISE_H$/;"	d
+NbitsByStream	transmision/Bits.h	/^	int NbitsByStream() const {return nBitsByStream;}$/;"	f	class:Bits
+NbitsPorSimbolo	transmision/Alfabeto.h	/^		int NbitsPorSimbolo() { return nBitsPorSimbolo;}$/;"	f	class:Alfabeto
+NextMatrix	statistics/ARprocess.cpp	/^tMatrix ARprocess::NextMatrix()$/;"	f	class:ARprocess
+NextMatrix	statistics/ARprocess.h	/^	tMatrix NextMatrix();$/;"	p	class:ARprocess
+Noise	transmision/Noise.cpp	/^Noise::Noise(int nRx,int length,Random &randomGenerator): nRx(nRx),length(length),$/;"	f	class:Noise
+Noise	transmision/Noise.h	/^    Noise(int nRx,int length,Random &randomGenerator = *(new Random()));$/;"	p	class:Noise
+Noise	transmision/Noise.h	/^class Noise{$/;"	c
+Nr	transmision/MIMOChannel.h	/^	int Nr() { return nRx;};$/;"	f	class:MIMOChannel
+Nr	transmision/Noise.h	/^	int Nr() { return nRx;}$/;"	f	class:Noise
+Nstreams	transmision/Bits.h	/^	int Nstreams() const { return nStreams;}$/;"	f	class:Bits
+Nt	transmision/MIMOChannel.h	/^	int Nt() { return nTx;};$/;"	f	class:MIMOChannel
+NtMemory	transmision/MIMOChannel.h	/^	int NtMemory() {return nTx_memory;};$/;"	f	class:MIMOChannel
+NtNr	transmision/MIMOChannel.h	/^	int NtNr() {return nTx_nRx;};$/;"	f	class:MIMOChannel
+NtNrMemory	transmision/MIMOChannel.h	/^	int NtNrMemory() {return nTx_nRx_memory;};$/;"	f	class:MIMOChannel
+PACKAGE	debug/config.h	/^#define PACKAGE /;"	d
+PACKAGE_BUGREPORT	debug/config.h	/^#define PACKAGE_BUGREPORT /;"	d
+PACKAGE_NAME	debug/config.h	/^#define PACKAGE_NAME /;"	d
+PACKAGE_STRING	debug/config.h	/^#define PACKAGE_STRING /;"	d
+PACKAGE_TARNAME	debug/config.h	/^#define PACKAGE_TARNAME /;"	d
+PACKAGE_VERSION	debug/config.h	/^#define PACKAGE_VERSION /;"	d
+Print	transmision/Bits.cpp	/^void Bits::Print()$/;"	f	class:Bits
+Print	transmision/Bits.h	/^	void Print();$/;"	p	class:Bits
+Print	transmision/Noise.h	/^	void Print() { cout << matrix;};$/;"	f	class:Noise
+RANDOM_H	randomutil/Random.h	/^#define RANDOM_H /;"	d
+Random	randomutil/Random.h	/^		Random () {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}$/;"	f	class:Random
+Random	randomutil/Random.h	/^		Random (uint32_t seed) : _seed(seed) { };$/;"	f	class:Random
+Random	randomutil/Random.h	/^class Random$/;"	c
+RuntimeException	transmision/excepcionesTransmision.h	/^		RuntimeException(string s) : runtime_error(s) { }$/;"	f	class:RuntimeException
+RuntimeException	transmision/excepcionesTransmision.h	/^class RuntimeException : public runtime_error$/;"	c
+STDC_HEADERS	debug/config.h	/^#define STDC_HEADERS /;"	d
+SetSNR	transmision/ChannelDependentNoise.cpp	/^void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)$/;"	f	class:ChannelDependentNoise
+SetSNR	transmision/ChannelDependentNoise.h	/^	void SetSNR(int SNR,double alphabetVariance);$/;"	p	class:ChannelDependentNoise
+StdDevAt	transmision/ChannelDependentNoise.cpp	/^double ChannelDependentNoise::StdDevAt(int n)$/;"	f	class:ChannelDependentNoise
+StdDevAt	transmision/ChannelDependentNoise.h	/^	double StdDevAt(int n);$/;"	p	class:ChannelDependentNoise
+StdDevAt	transmision/Noise.h	/^	virtual double StdDevAt(int n) = 0;$/;"	p	class:Noise
+TIPOS_H	src/types.h	/^#define TIPOS_H$/;"	d
+Transmit	transmision/MIMOChannel.cpp	/^tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)$/;"	f	class:MIMOChannel
+Transmit	transmision/MIMOChannel.h	/^	tMatrix Transmit(tMatrix &symbols,Noise &noise);$/;"	p	class:MIMOChannel
+UTIL_H	util/Util.h	/^#define UTIL_H$/;"	d
+Util	util/Util.h	/^    Util() {};$/;"	f	class:Util
+Util	util/Util.h	/^class Util{$/;"	c
+VERSION	debug/config.h	/^#define VERSION /;"	d
+VarianceAt	transmision/Noise.h	/^	double VarianceAt(int n){ double stdDev = StdDevAt(n); return stdDev*stdDev;};$/;"	f	class:Noise
+Variances	transmision/Noise.cpp	/^vector<double> Noise::Variances()$/;"	f	class:Noise
+Variances	transmision/Noise.h	/^	vector<double> Variances();$/;"	p	class:Noise
+Varianza	transmision/Alfabeto.h	/^		double Varianza() { return varianza;}$/;"	f	class:Alfabeto
+_seed	randomutil/Random.h	/^		uint32_t _seed;$/;"	m	class:Random
+buffer	statistics/ARprocess.h	/^	tMatrix *buffer;$/;"	m	class:ARprocess
+channel	transmision/ChannelDependentNoise.h	/^	MIMOChannel &channel;$/;"	m	class:ChannelDependentNoise
+channelMatrices	transmision/ARchannel.h	/^	tMatrix* channelMatrices;$/;"	m	class:ARchannel
+coefficients	statistics/ARprocess.h	/^	vector<double> coefficients;$/;"	m	class:ARprocess
+columns	statistics/ARprocess.h	/^	int nCoefficients, rows, columns, iNextMatrix;$/;"	m	class:ARprocess
+complexRandn	randomutil/Random.cpp	/^complex<double> Random::complexRandn()$/;"	f	class:Random
+complexRandn	randomutil/Random.h	/^		complex<double> complexRandn();$/;"	p	class:Random
+dld_link	configure	/^dld_link ();$/;"	f
+dlopen	configure	/^dlopen ();$/;"	f
+func_extract_an_archive	debug/libtool	/^func_extract_an_archive ()$/;"	f
+func_extract_an_archive	ltmain.sh	/^func_extract_an_archive ()$/;"	f
+func_extract_archives	debug/libtool	/^func_extract_archives ()$/;"	f
+func_extract_archives	ltmain.sh	/^func_extract_archives ()$/;"	f
+func_infer_tag	debug/libtool	/^func_infer_tag ()$/;"	f
+func_infer_tag	ltmain.sh	/^func_infer_tag ()$/;"	f
+func_mktempdir	debug/libtool	/^func_mktempdir ()$/;"	f
+func_mktempdir	ltmain.sh	/^func_mktempdir ()$/;"	f
+func_win32_libid	debug/libtool	/^func_win32_libid ()$/;"	f
+func_win32_libid	ltmain.sh	/^func_win32_libid ()$/;"	f
+getSeed	randomutil/Random.h	/^		uint32_t getSeed() { return _seed; }$/;"	f	class:Random
+iNextMatrix	statistics/ARprocess.h	/^	int nCoefficients, rows, columns, iNextMatrix;$/;"	m	class:ARprocess
+iterationsForConvergence	statistics/ARprocess.h	/^	int iterationsForConvergence;$/;"	m	class:ARprocess
+length	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+length	transmision/Noise.h	/^	int nRx,length;$/;"	m	class:Noise
+longitud	transmision/Alfabeto.h	/^		int nBitsPorSimbolo,longitud;$/;"	m	class:Alfabeto
+main	config.guess	/^		main()$/;"	f
+main	config.guess	/^	main ()$/;"	f
+main	config.guess	/^main ()$/;"	f
+main	src/pruebas.cpp	/^int main(int argc,char* argv[])$/;"	f
+matrix	transmision/Bits.h	/^	tBit *matrix;$/;"	m	class:Bits
+matrix	transmision/Noise.h	/^	tMatrix matrix;$/;"	m	class:Noise
+media	transmision/Alfabeto.h	/^		double media,varianza;$/;"	m	class:Alfabeto
+memory	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+nBitsByStream	transmision/Bits.h	/^	int nStreams, nBitsByStream;$/;"	m	class:Bits
+nBitsPorSimbolo	transmision/Alfabeto.h	/^		int nBitsPorSimbolo,longitud;$/;"	m	class:Alfabeto
+nCoefficients	statistics/ARprocess.h	/^	int nCoefficients, rows, columns, iNextMatrix;$/;"	m	class:ARprocess
+nRx	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+nRx	transmision/Noise.h	/^	int nRx,length;$/;"	m	class:Noise
+nStreams	transmision/Bits.h	/^	int nStreams, nBitsByStream;$/;"	m	class:Bits
+nTx	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+nTx_memory	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+nTx_nRx	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+nTx_nRx_memory	transmision/MIMOChannel.h	/^	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;$/;"	m	class:MIMOChannel
+noiseMean	statistics/ARprocess.h	/^	double noiseMean;$/;"	m	class:ARprocess
+noiseVariance	statistics/ARprocess.h	/^	double noiseVariance;$/;"	m	class:ARprocess
+operator ()	transmision/Bits.h	/^	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}$/;"	f	class:Bits
+operator *	util/mylapack.h	/^inline tMatrix operator *(tMatrix A,tMatrix B)$/;"	f
+operator -	transmision/Bits.cpp	/^int Bits::operator-(const Bits &bits) const$/;"	f	class:Bits
+operator -	transmision/Bits.h	/^	int operator-(const Bits &bits) const;$/;"	p	class:Bits
+operator =	transmision/Bits.cpp	/^Bits& Bits::operator=(const Bits& bits)$/;"	f	class:Bits
+operator =	transmision/Bits.h	/^	Bits& Bits::operator=(const Bits& bits);$/;"	p	class:Bits::Bits
+operator ==	transmision/Bits.cpp	/^bool Bits::operator==(const Bits &bits) const$/;"	f	class:Bits
+operator ==	transmision/Bits.h	/^	bool operator==(const Bits &bits) const;$/;"	p	class:Bits
+operator [	transmision/Alfabeto.cpp	/^tSymbol Alfabeto::operator [ ](vector<tBit> secuenciaBitsBuscada)$/;"	f	class:Alfabeto
+operator [	transmision/Alfabeto.cpp	/^vector<tBit> Alfabeto::operator [ ](tSymbol simbolo)$/;"	f	class:Alfabeto
+operator []	transmision/ARchannel.h	/^	tMatrix& operator[](int n) { return channelMatrices[n];};$/;"	f	class:ARchannel
+operator []	transmision/Alfabeto.h	/^		tSymbol operator [](vector<tBit> secuenciaBitsBuscada);$/;"	p	class:Alfabeto
+operator []	transmision/Alfabeto.h	/^		vector<tBit> operator [](tSymbol simbolo);$/;"	p	class:Alfabeto
+operator []	transmision/ChannelDependentNoise.cpp	/^tVector ChannelDependentNoise::operator[](int n)$/;"	f	class:ChannelDependentNoise
+operator []	transmision/ChannelDependentNoise.h	/^	tVector operator[](int n);$/;"	p	class:ChannelDependentNoise
+operator []	transmision/MIMOChannel.h	/^	virtual tMatrix& operator[](int n) = 0;$/;"	p	class:MIMOChannel
+operator []	transmision/Noise.h	/^	virtual tVector operator[](int n) = 0;$/;"	p	class:Noise
+prototypes	configure	/^   function prototypes and stuff, but not '\\xHH' hex character constants.$/;"	f
+rand	randomutil/Random.h	/^		double rand() { return ((double) rand_r(&_seed))\/((double) RAND_MAX); }$/;"	f	class:Random
+randab	randomutil/Random.h	/^		int randab(int a, int b) { return (a+(int) ((double) b*rand_r(&_seed)\/(RAND_MAX+1.0))); };$/;"	f	class:Random
+randn	randomutil/Random.cpp	/^double Random::randn ()$/;"	f	class:Random
+randn	randomutil/Random.h	/^		double randn();$/;"	p	class:Random
+randnArray	randomutil/Random.cpp	/^double* Random::randnArray(int n,double mean,double variance)$/;"	f	class:Random
+randnArray	randomutil/Random.h	/^		double* Random::randnArray(int n,double = 0,double =1);$/;"	p	class:Random::Random
+randomGenerator	statistics/ARprocess.h	/^	Random *randomGenerator;$/;"	m	class:ARprocess
+rows	statistics/ARprocess.h	/^	int nCoefficients, rows, columns, iNextMatrix;$/;"	m	class:ARprocess
+secuenciasBits	transmision/Alfabeto.h	/^		vector<vector<tBit> > secuenciasBits;$/;"	m	class:Alfabeto
+setSeed	randomutil/Random.h	/^		void setSeed(uint32_t seed) { _seed = seed; }$/;"	f	class:Random
+shl_load	configure	/^shl_load ();$/;"	f
+simbolos	transmision/Alfabeto.h	/^		vector<tSymbol> simbolos;$/;"	m	class:Alfabeto
+stdDevs	transmision/ChannelDependentNoise.h	/^	double *stdDevs;$/;"	m	class:ChannelDependentNoise
+tBit	src/types.h	/^typedef unsigned short int tBit;$/;"	t
+tMatrix	src/types.h	/^typedef LaGenMatDouble tMatrix;$/;"	t
+tRange	src/types.h	/^typedef LaIndex tRange;$/;"	t
+tSymbol	src/types.h	/^typedef double tSymbol;$/;"	t
+tVector	src/types.h	/^typedef LaVectorDouble tVector;$/;"	t
+varianza	transmision/Alfabeto.h	/^		double media,varianza;$/;"	m	class:Alfabeto
+~ARchannel	transmision/ARchannel.cpp	/^ARchannel::~ARchannel()$/;"	f	class:ARchannel
+~ARchannel	transmision/ARchannel.h	/^    ~ARchannel();$/;"	p	class:ARchannel
+~ARprocess	statistics/ARprocess.cpp	/^ARprocess::~ARprocess()$/;"	f	class:ARprocess
+~ARprocess	statistics/ARprocess.h	/^    ~ARprocess();$/;"	p	class:ARprocess
+~Bits	transmision/Bits.cpp	/^Bits::~Bits()$/;"	f	class:Bits
+~Bits	transmision/Bits.h	/^	~Bits();$/;"	p	class:Bits
+~ChannelDependentNoise	transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::~ChannelDependentNoise()$/;"	f	class:ChannelDependentNoise
+~ChannelDependentNoise	transmision/ChannelDependentNoise.h	/^    ~ChannelDependentNoise();$/;"	p	class:ChannelDependentNoise
+~Demodulator	transmision/Demodulator.cpp	/^Demodulator::~Demodulator()$/;"	f	class:Demodulator
+~Demodulator	transmision/Demodulator.h	/^    ~Demodulator();$/;"	p	class:Demodulator
+~MIMOChannel	transmision/MIMOChannel.cpp	/^MIMOChannel::~MIMOChannel()$/;"	f	class:MIMOChannel
+~MIMOChannel	transmision/MIMOChannel.h	/^    ~MIMOChannel();$/;"	p	class:MIMOChannel
+~Modulator	transmision/Modulator.cpp	/^Modulator::~Modulator()$/;"	f	class:Modulator
+~Modulator	transmision/Modulator.h	/^    ~Modulator();$/;"	p	class:Modulator
+~Noise	transmision/Noise.cpp	/^Noise::~Noise()$/;"	f	class:Noise
+~Noise	transmision/Noise.h	/^    ~Noise();$/;"	p	class:Noise
+~Util	util/Util.h	/^    ~Util() {};$/;"	f	class:Util

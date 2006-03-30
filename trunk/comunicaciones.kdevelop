@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>transmision/libtransmision.a</activetarget>
+      <activetarget>filters/libfilters.a</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
