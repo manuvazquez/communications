@@ -20,7 +20,9 @@
 #include "KalmanFilter.h"
 
 KalmanFilter::KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength):
-_nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_filteredMean(initialMean),_filteredCovariance(initialCovariance),_predictiveMean(R.rows()),_predictiveCovariance(R.rows(),R.rows()),_observationVectorLength(observationVectorLength)
+_nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_filteredMean(initialMean),_filteredCovariance(initialCovariance),_predictiveMean(R.rows()),_predictiveCovariance(R.rows(),R.rows()),_observationVectorLength(observationVectorLength),
+// auxiliary variables
+_RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovarianceRtrans(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength),_auxMatrix(_observationVectorLength,_observationVectorLength),_KalmanGain(_nElementsToEstimate,_observationVectorLength),_auxVector(_observationVectorLength),_KalmanGainByNotPredicted(_nElementsToEstimate),_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate),_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate)
 {
 	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
 		throw RuntimeException("Matrices R and F dimensions are not coherent with those of the vector to be estimated.");
@@ -28,19 +30,32 @@ _nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEqu
 	// _predictiveMean = _R*_filteredMean
 	Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);
 
-	tMatrix aux(_R.rows(),_R.rows());
-	// aux = _R*_filteredCovariance
-	Blas_Mat_Mat_Mult(_R,_filteredCovariance,aux);
+	// _RfilteredCovariance = _R*_filteredCovariance
+	Blas_Mat_Mat_Mult(_R,_filteredCovariance,_RfilteredCovariance);
 
-	// aux = _R*_filteredCovariance*_R^T
-	Blas_Mat_Mat_Trans_Mult(aux,_R,aux);
+	// _RfilteredCovarianceRtrans = _RfilteredCovariance*_R'
+	Blas_Mat_Mat_Trans_Mult(_RfilteredCovariance,_R,_RfilteredCovarianceRtrans);
 
-	// _predictiveCovariance = aux + _stateEquationCovariance;
-	Util::Add(aux,_stateEquationCovariance,_predictiveCovariance);
+	// _predictiveCovariance = _RfilteredCovarianceRtrans + _stateEquationCovariance;
+	Util::Add(_RfilteredCovarianceRtrans,_stateEquationCovariance,_predictiveCovariance);
+
+// 	cout << "Media filtrada" << endl << _filteredMean << endl;
+// 	cout << "Media predictiva" << endl << _predictiveMean << endl;
+// 	cout << "Covarianza estado" << endl << _stateEquationCovariance << endl;
+// 	cout << "R" << endl << _R << endl;
+// 
+// 	char c;
+// 	cin >> c;
 	
-	// memory for several auxiliar matrices is allocated
-	_predictiveCovarianceF(_nElementsToEstimate,_observationVectorLength);
-	_auxMatrix(_observationVectorLength,_observationVectorLength);
+// 	// memory for several auxiliar matrices is allocated
+// 	_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength);
+// 	_auxMatrix(_observationVectorLength,_observationVectorLength);
+// 	_KalmanGain(_nElementsToEstimate,_observationVectorLength);
+// 	_auxVector(_observationVectorLength);
+// 	_KalmanGainByNotPredicted(_nElementsToEstimate);
+// 	_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate);
+// 	_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate);
+// 	_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate);
 }
 
 
@@ -53,18 +68,77 @@ void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquati
 	if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size() || observation.size()!=_observationVectorLength)
 		throw RuntimeException("The matrix F or observation vector dimensions are wrong.");
 
-// 	tVector auxVector(observation.size());
-		
-	// _predictiveCovarianceF = _predictiveCovariance * F'
-	Blas_Mat_Mat_Trans_Mult(_predictiveCovariance,F,_predictiveCovarianceF);
+// 	cout << "F" << endl << F << endl;
+// 	cout << "observation" << endl << observation << endl;
+// 	cout << "observationEquationCovariance" << endl << observationEquationCovariance << endl;
+// 	char c;
+// 	cin >> c;
 
-	// _auxMatrix = F * _predictiveCovarianceF
-	Blas_Mat_Mat_Mult(F,_predictiveCovarianceF,_auxMatrix);
+	// _predictiveCovarianceFtrans = _predictiveCovariance * F'
+	Blas_Mat_Mat_Trans_Mult(_predictiveCovariance,F,_predictiveCovarianceFtrans);
+
+	// _auxMatrix = F * _predictiveCovarianceFtrans
+	Blas_Mat_Mat_Mult(F,_predictiveCovarianceFtrans,_auxMatrix);
 
 	// _auxMatrix = _auxMatrix + observationEquationCovariance
 	Util::Add(_auxMatrix,observationEquationCovariance,_auxMatrix);
 	
-// 	tLongIntVector pivotes(matrizAleatoria.size(0));
-// 	LUFactorizeIP(matrizAleatoria,pivotes);
-// 	LaLUInverseIP(matrizAleatoria,pivotes);
+	// _auxMatrix = inverse(_auxMatrix)
+	tLongIntVector pivotes(_auxMatrix.size(0));
+	LUFactorizeIP(_auxMatrix,pivotes);
+	LaLUInverseIP(_auxMatrix,pivotes);
+
+	// _KalmanGain = _predictiveCovarianceFtrans * _auxMatrix
+	Blas_Mat_Mat_Mult(_predictiveCovarianceFtrans,_auxMatrix,_KalmanGain);
+
+	// _auxVector = F * _predictiveMean
+	Blas_Mat_Vec_Mult(F,_predictiveMean,_auxVector);
+
+	// _auxVector = observation - _auxVector
+	Util::Add(observation,_auxVector,_auxVector,1.0,-1.0);
+
+	// 	_KalmanGainByNotPredicted = _KalmanGain * _auxVector
+	Blas_Mat_Vec_Mult(_KalmanGain,_auxVector,_KalmanGainByNotPredicted);
+
+	// _filteredMean = _predictiveMean * _KalmanGainByNotPredicted
+	Util::Add(_predictiveMean,_KalmanGainByNotPredicted,_filteredMean);
+
+	// _FpredictiveCovariance = F * _predictiveCovariance
+	Blas_Mat_Mat_Mult(F,_predictiveCovariance,_FpredictiveCovariance);
+
+	// _KalmanGainFpredictiveCovariance = _KalmanGain * _FpredictiveCovariance
+	Blas_Mat_Mat_Mult(_KalmanGain,_FpredictiveCovariance,_KalmanGainFpredictiveCovariance);
+
+	// _filteredCovariance = _predictiveCovariance - _KalmanGainFpredictiveCovariance
+	Util::Add(_predictiveCovariance,_KalmanGainFpredictiveCovariance,_filteredCovariance,1.0,-1.0);
+
+	// **************** PREDICTIVES **********************
+
+	// _predictiveMean = _R * _filteredMean
+	Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);
+
+	// _RfilteredCovariance = _R*_filteredCovariance
+	Blas_Mat_Mat_Mult(_R,_filteredCovariance,_RfilteredCovariance);
+
+	// _RfilteredCovarianceRtrans = _R*_filteredCovariance*_R'
+	Blas_Mat_Mat_Trans_Mult(_RfilteredCovariance,_R,_RfilteredCovarianceRtrans);
+
+	// _predictiveCovariance = _RfilteredCovarianceRtrans + _stateEquationCovariance;
+	Util::Add(_RfilteredCovarianceRtrans,_stateEquationCovariance,_predictiveCovariance);
 }
+
+//   		public virtual FiltroKalman Clone()
+//   		{		  		
+//   			FiltroKalman clon = this.MemberwiseClone() as FiltroKalman;
+//   			
+//   			//clon.R = R.Clone();
+//   			//clon.covarEcuacionEstado = covarEcuacionEstado.Clone();
+//   			clon.mediaPredictiva = mediaPredictiva.Clone();
+//   			clon.mediaFiltrada = mediaFiltrada.Clone();
+//   			clon.covarPredictiva = covarPredictiva.Clone();
+//   			clon.covarFiltrada = covarFiltrada.Clone();
+// //  			Console.WriteLine("Holita\n");
+// //  			covarPredictiva[0,1] = -100;
+// //  			Console.WriteLine("No clon\n{0}\nClon\n{1}\n",covarPredictiva,clon.CovarianzaPredictiva);
+//   			return clon;
+//   		}

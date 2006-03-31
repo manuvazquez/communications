@@ -9,6 +9,7 @@
 #include <ChannelDependentNoise.h>
 #include <Modulator.h>
 #include <Demodulator.h>
+#include <KalmanFilter.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas2pp.h>
@@ -84,32 +85,77 @@ int main(int argc,char* argv[])
 
 	bitsDemodulados.Print();
 
+	
+// 	int L=3,N=2,m=2,K;
+// 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
+// 	vector<double> ARcoefficients(1);
+// 	ARcoefficients[0] = 0.99999;
+// 
+// 	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
+// 	for(int i=canal.Memory()-1;i<canal.Length();i++)
+// 		cout << canal[i] << endl << "****************" << endl;
+// 
+// 	ChannelDependentNoise ruido(canal);
+// 	ruido.SetSNR(12,1);
+// 
+// 	cout << "El ruido" << endl;
+// 	ruido.Print();
+// 
+// 	tMatrix observaciones = canal.Transmit(simbs,ruido);
+// 
+// 	cout << "Las observaciones" << endl << observaciones;
 
 
-// 	// ------------------------------ proceso AR ---------------------------------------
-	vector<double> coeficientes(1);
-	coeficientes[0] = 0.99999;
-// 	tMatrix matrizInicial(generador.randnArray(2*3),2,3);
-// 	ARprocess procesoAR(matrizInicial,coeficientes,0.001);
-// 	for(int i=0;i<200;i++)
-// 	{
-// 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
-// 	}
-// 	// ---------------------------------------------------------------------------------
+// 	tVector a(4);
+// 	tVector b(4);
+// 	tVector c(4);
+// 	a = 3;
+// 	b = 5;
+// 	Util::Add(a,b,c,1.0,-1.0);
+// 	cout << "a-b" << endl << c;
 
-	ARchannel canal(2,3,2,5,0,0.1,coeficientes,0.001);
-	for(int i=canal.Memory()-1;i<canal.Length();i++)
-		cout << canal[i] << endl << "****************" << endl;
 
-	ChannelDependentNoise ruido(canal);
-	ruido.SetSNR(12,1);
+	int longVectorAestimar = 4;
+	int longVectorObservaciones = 3;
+	double varEcEstado = 0.0001,varRuido = 0.2;
+	double mediaVector=0.0,varVector=1.0;
+	Random generador;
+// 	double* arrayNormal = generador.randnArray(longVectorAestimar*longVectorAestimar);
+// 	tMatrix R(arrayNormal,longVectorAestimar,longVectorAestimar);
+	tMatrix R = LaGenMatDouble::eye(longVectorAestimar);
+	R*=0.9999;
+	double* arrayNormalF = generador.randnArray(longVectorObservaciones*longVectorAestimar);
+	tMatrix F(arrayNormalF,longVectorObservaciones,longVectorAestimar);
+	tMatrix covarianzaEcObservaciones = LaGenMatDouble::eye(longVectorObservaciones);
+	covarianzaEcObservaciones*=varRuido;
+	tMatrix covarianzaEcEstado = LaGenMatDouble::eye(longVectorAestimar);
+	covarianzaEcEstado*=varEcEstado;
+	tVector estado(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
 
-	cout << "El ruido" << endl;
-	ruido.Print();
+	tVector estadoInicialKalman(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
+	KalmanFilter kf(R,covarianzaEcEstado,estadoInicialKalman,LaGenMatDouble::eye(longVectorAestimar),longVectorObservaciones);
+	tVector observacion(longVectorObservaciones);
+	tVector nuevoEstado(longVectorAestimar);
+	cout << "Estado al principio" << endl << estado << "---------" << endl;
+	for(int i=0;i<30;i++)
+	{
+		Blas_Mat_Vec_Mult(R,estado,nuevoEstado);
+		cout << "nuevoEstado" << endl << nuevoEstado << endl;		
+		for(int j=0;j<longVectorAestimar;j++)
+			nuevoEstado(j) = nuevoEstado(j) + generador.randn()*varEcEstado;
+		Blas_Mat_Vec_Mult(F,nuevoEstado,observacion);
+		for(int j=0;j<longVectorObservaciones;j++)
+			observacion(j) = observacion(j) + generador.randn()*varRuido;
+		estado = nuevoEstado;
+		kf.Step(F,observacion,covarianzaEcObservaciones);
+		cout << "El filtro de Kalman obtiene:" << endl << kf.PredictiveMean();
+		cout << endl << "---------------" << endl;
+// 		cout << estado;
+	}
 
-	tMatrix observaciones = canal.Transmit(simbs,ruido);
 
-	cout << "Las observaciones" << endl << observaciones;
+
+
 
 // 	// ----------- operaciones entre objetos Bits ------------------------
 // 	Bits otrosBits(4,50);
@@ -131,11 +177,13 @@ int main(int argc,char* argv[])
 // 	// --------------------------------------------------------------
 // 
 // 	// -------------- Operaciones con matrices ----------------------
-// 	tMatrix A(2,4); A = 1;
+// 	tMatrix A(4,4); A = 1;
 // 	tMatrix A2(2,4); A2 = 4.1;
 // 	tMatrix A3(2,4);
-// 	tMatrix B(4,3);
+// 	tMatrix B(4,4);
 // 	B = 2;
+// 	Blas_Mat_Mat_Mult(A,B,A);
+// 	cout << "Las matrices A y B" << endl << A << endl << B;
 // 	tMatrix C = A*B;
 // 	cout << A << endl << B << endl << C << endl;
 // 	Util::Add(A,A2,A3);
@@ -178,16 +226,30 @@ int main(int argc,char* argv[])
 // 	cout << "matriz por vector" << endl << res;
 
 
-	Random generador;
-	double* arrayNormal = generador.randnArray(16);
-	tMatrix matrizAleatoria(arrayNormal,4,4);
-	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
+	// ----------------- INVERSA -----------------------
+// 	Random generador;
+// 	double* arrayNormal = generador.randnArray(16);
+// 	tMatrix matrizAleatoria(arrayNormal,4,4);
+// 	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
+// 
+// 	tLongIntVector pivotes(matrizAleatoria.size(0));
+// 	LUFactorizeIP(matrizAleatoria,pivotes);
+// 	LaLUInverseIP(matrizAleatoria,pivotes);
+// 
+// 	cout << "La inversa" << endl << matrizAleatoria;
+	// ------------------------------------------------
 
-	tLongIntVector pivotes(matrizAleatoria.size(0));
-	LUFactorizeIP(matrizAleatoria,pivotes);
-	LaLUInverseIP(matrizAleatoria,pivotes);
 
-	cout << "La inversa" << endl << matrizAleatoria;
+// 	// ------------------------------ proceso AR ---------------------------------------
+// 	vector<double> coeficientes(1);
+// 	coeficientes[0] = 0.99999;
+// 	tMatrix matrizInicial(generador.randnArray(2*3),2,3);
+// 	ARprocess procesoAR(matrizInicial,coeficientes,0.001);
+// 	for(int i=0;i<200;i++)
+// 	{
+// 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
+// 	}
+// 	// ---------------------------------------------------------------------------------	
 
     return 0;
 }

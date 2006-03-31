@@ -42,12 +42,19 @@ private:
 	int _observationVectorLength;
 
 	// auxiliar variables
-	tMatrix _predictiveCovarianceF,_auxMatrix;
+	tMatrix _predictiveCovarianceFtrans,_auxMatrix,_KalmanGain,_FpredictiveCovariance;
+	tMatrix _KalmanGainFpredictiveCovariance,_predictiveCovarianceAux;
+	tMatrix _RfilteredCovariance,_RfilteredCovarianceRtrans;
+	tVector _auxVector,_KalmanGainByNotPredicted;
 public:
     KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength);
 
     ~KalmanFilter();
 	void Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance);
+	tVector PredictiveMean() { return _predictiveMean;}
+	tVector FilteredMean() {return _filteredMean;}
+	tMatrix PredictiveCovariance() {return _predictiveCovariance;}
+	tMatrix FilteredCovariance() {return _filteredCovariance;}
 };
 
 #endif
