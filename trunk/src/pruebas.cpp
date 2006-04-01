@@ -10,6 +10,7 @@
 #include <Modulator.h>
 #include <Demodulator.h>
 #include <KalmanFilter.h>
+#include <KalmanEstimator.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas2pp.h>
@@ -86,77 +87,78 @@ int main(int argc,char* argv[])
 	bitsDemodulados.Print();
 
 
-// 	int L=3,N=2,m=2,K;
-// 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
-// 	vector<double> ARcoefficients(1);
-// 	ARcoefficients[0] = 0.99999;
-//
-// 	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
-// 	for(int i=canal.Memory()-1;i<canal.Length();i++)
-// 		cout << canal[i] << endl << "****************" << endl;
-//
-// 	ChannelDependentNoise ruido(canal);
-// 	ruido.SetSNR(12,1);
-//
-// 	cout << "El ruido" << endl;
-// 	ruido.Print();
-//
-// 	tMatrix observaciones = canal.Transmit(simbs,ruido);
-//
-// 	cout << "Las observaciones" << endl << observaciones;
+	int L=3,N=2,m=2,K=5;
+	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
+	vector<double> ARcoefficients(1);
+	ARcoefficients[0] = 0.99999;
+
+	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
+	for(int i=canal.Memory()-1;i<canal.Length();i++)
+		cout << canal[i] << endl << "****************" << endl;
+
+	ChannelDependentNoise ruido(canal);
+	ruido.SetSNR(12,1);
+
+	cout << "El ruido" << endl;
+	ruido.Print();
+
+	tMatrix observaciones = canal.Transmit(simbs,ruido);
+
+	cout << "Las observaciones" << endl << observaciones;
+
+	tMatrix mediaInicial(L,N*m);
+	mediaInicial = 0.0;
+	KalmanEstimator estimador(ARcoefficients[0],ARvariance,mediaInicial);
 
 
-// 	tVector a(4);
-// 	tVector b(4);
-// 	tVector c(4);
-// 	a = 3;
-// 	b = 5;
-// 	Util::Add(a,b,c,1.0,-1.0);
-// 	cout << "a-b" << endl << c;
-
-
-	int longVectorAestimar = 4;
-	int longVectorObservaciones = 3;
-	double varEcEstado = 0.0001,varRuido = 0.2;
-	double mediaVector=0.0,varVector=1.0;
-	Random generador;
-// 	double* arrayNormal = generador.randnArray(longVectorAestimar*longVectorAestimar);
-// 	tMatrix R(arrayNormal,longVectorAestimar,longVectorAestimar);
-	tMatrix R = LaGenMatDouble::eye(longVectorAestimar);
-	R*=0.9999;
-	double* arrayNormalF = generador.randnArray(longVectorObservaciones*longVectorAestimar);
-	tMatrix F(arrayNormalF,longVectorObservaciones,longVectorAestimar);
-	tMatrix covarianzaEcObservaciones = LaGenMatDouble::eye(longVectorObservaciones);
-	covarianzaEcObservaciones*=varRuido;
-	tMatrix covarianzaEcEstado = LaGenMatDouble::eye(longVectorAestimar);
-	covarianzaEcEstado*=varEcEstado;
-	tVector estado(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
-
-	tVector estadoInicialKalman(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
-	KalmanFilter kf(R,covarianzaEcEstado,estadoInicialKalman,LaGenMatDouble::eye(longVectorAestimar),longVectorObservaciones);
-	tVector observacion(longVectorObservaciones);
-	tVector nuevoEstado(longVectorAestimar);
-	cout << "Estado al principio" << endl << estado << "---------" << endl;
-	for(int i=0;i<30;i++)
-	{
-		Blas_Mat_Vec_Mult(R,estado,nuevoEstado);
-		cout << "nuevoEstado" << endl << nuevoEstado << endl;
-		for(int j=0;j<longVectorAestimar;j++)
-			nuevoEstado(j) = nuevoEstado(j) + generador.randn()*varEcEstado;
-		Blas_Mat_Vec_Mult(F,nuevoEstado,observacion);
-		for(int j=0;j<longVectorObservaciones;j++)
-			observacion(j) = observacion(j) + generador.randn()*varRuido;
-		estado = nuevoEstado;
-		kf.Step(F,observacion,covarianzaEcObservaciones);
-		cout << "El filtro de Kalman obtiene:" << endl << kf.PredictiveMean();
-		cout << endl << "---------------" << endl;
+	// ------------------------- Filtro de Kalman --------------------------------------------------------
+// 	int longVectorAestimar = 4;
+// 	int longVectorObservaciones = 3;
+// 	double varEcEstado = 0.0001,varRuido = 0.2;
+// 	double mediaVector=0.0,varVector=1.0;
+// 	Random generador;
+// // 	double* arrayNormal = generador.randnArray(longVectorAestimar*longVectorAestimar);
+// // 	tMatrix R(arrayNormal,longVectorAestimar,longVectorAestimar);
+// 	tMatrix R = LaGenMatDouble::eye(longVectorAestimar);
+// 	R*=0.9999;
+// 	double* arrayNormalF = generador.randnArray(longVectorObservaciones*longVectorAestimar);
+// 	tMatrix F(arrayNormalF,longVectorObservaciones,longVectorAestimar);
+// 	tMatrix covarianzaEcObservaciones = LaGenMatDouble::eye(longVectorObservaciones);
+// 	covarianzaEcObservaciones*=varRuido;
+// 	tMatrix covarianzaEcEstado = LaGenMatDouble::eye(longVectorAestimar);
+// 	covarianzaEcEstado*=varEcEstado;
+// 	tVector estado(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
+//
+// 	tVector estadoInicialKalman(generador.randnArray(longVectorAestimar,mediaVector,varVector),longVectorAestimar);
+// 	KalmanFilter kf(R,covarianzaEcEstado,estadoInicialKalman,LaGenMatDouble::eye(longVectorAestimar),longVectorObservaciones);
+// 	tVector observacion(longVectorObservaciones);
+// 	tVector nuevoEstado(longVectorAestimar);
+// 	cout << "Estado al principio" << endl << estado << "---------" << endl;
+// 	for(int i=0;i<30;i++)
+// 	{
+// 		Blas_Mat_Vec_Mult(R,estado,nuevoEstado);
+// 		cout << "nuevoEstado" << endl << nuevoEstado << endl;
+// 		for(int j=0;j<longVectorAestimar;j++)
+// 			nuevoEstado(j) = nuevoEstado(j) + generador.randn()*varEcEstado;
+// 		Blas_Mat_Vec_Mult(F,nuevoEstado,observacion);
+// 		for(int j=0;j<longVectorObservaciones;j++)
+// 			observacion(j) = observacion(j) + generador.randn()*varRuido;
+// 		estado = nuevoEstado;
+// 		kf.Step(F,observacion,covarianzaEcObservaciones);
+// 		cout << "El filtro de Kalman obtiene:" << endl << kf.PredictiveMean();
+// 		cout << endl << "---------------" << endl;
 // 		cout << estado;
-	}
+// 	}
+	//-------------------------------------------------------------------------------------------------------------
 
-	cout << "F es" << endl << F;
-	tVector veci = Util::ToVector(F,rowwise);
-	cout << "En forma de vector" << endl << veci << endl;
-	cout << "De vuelta a la matrix" << endl << Util::ToMatrix(veci,rowwise,F.rows(),F.cols()) << endl;
+
+	// ------------------- De vector a Matrix ------------------------
+// 	cout << "F es" << endl << F;
+// 	tVector veci = Util::ToVector(F,rowwise);
+// 	cout << "En forma de vector" << endl << veci << endl;
+// 	cout << "De vuelta a la matrix" << endl << Util::ToMatrix(veci,rowwise,F.rows(),F.cols()) << endl;
+	// -------------------------------------------------------------------
+
 	// --------------------- Constructor copia de KalmanFilter --------------------------
 // 	cout << kf.PredictiveCovariance() << endl;
 // 	KalmanFilter kf2 = kf;

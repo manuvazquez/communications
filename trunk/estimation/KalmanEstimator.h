@@ -39,10 +39,15 @@ private:
 	KalmanFilter *_kalmanFilter;
 	int _nChannelCoefficients;
 	tMatrix _identityL;
+
+	// just for efficiency purposes
+	tMatrix _F;
+
+private:
+	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
 public:
     KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
-
-
+	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
 };
 
 #endif

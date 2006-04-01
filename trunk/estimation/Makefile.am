@@ -3,4 +3,6 @@ METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h
 libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp
-libestimation_a_LIBADD = /usr/local/lib/liblapackpp.la
+libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
+	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la

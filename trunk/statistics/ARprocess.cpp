@@ -25,6 +25,7 @@
 
 ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance)
 {
+
 	this->coefficients = coefficients;
 	this->noiseVariance = noiseVariance;
 	this->noiseMean = 0;

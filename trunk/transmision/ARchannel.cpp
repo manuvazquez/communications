@@ -31,6 +31,7 @@ ARcoefficients,ARvariance)
 		channelMatrices[i] = ARproc.NextMatrix();
 }
 
-// tMatrix ARchannel::operator[](int n)
-// {
-// }
+ARchannel::~ ARchannel()
+{
+	delete[] channelMatrices;
+}

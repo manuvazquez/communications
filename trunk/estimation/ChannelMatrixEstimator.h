@@ -32,8 +32,8 @@ protected:
 public:
     ChannelMatrixEstimator(int nRows,int nColumns);
 
-	virtual tMatrix NextMatrix(tVector observations,tMatrix symbols,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator Clone() = 0;
+	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
+// 	virtual ChannelMatrixEstimator Clone() = 0;
 	int Cols() { return _Nm;}
 	int Rows() { return _L;}
 
