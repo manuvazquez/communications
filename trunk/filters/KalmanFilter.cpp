@@ -26,7 +26,7 @@ _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovari
 {
 	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
 		throw RuntimeException("Matrices R and F dimensions are not coherent with those of the vector to be estimated.");
-	
+
 	// _predictiveMean = _R*_filteredMean
 	Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);
 
@@ -43,10 +43,10 @@ _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovari
 // 	cout << "Media predictiva" << endl << _predictiveMean << endl;
 // 	cout << "Covarianza estado" << endl << _stateEquationCovariance << endl;
 // 	cout << "R" << endl << _R << endl;
-// 
+//
 // 	char c;
 // 	cin >> c;
-	
+
 // 	// memory for several auxiliar matrices is allocated
 // 	_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength);
 // 	_auxMatrix(_observationVectorLength,_observationVectorLength);
@@ -56,11 +56,6 @@ _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovari
 // 	_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate);
 // 	_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate);
 // 	_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate);
-}
-
-
-KalmanFilter::~KalmanFilter()
-{
 }
 
 void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance)
@@ -82,7 +77,7 @@ void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquati
 
 	// _auxMatrix = _auxMatrix + observationEquationCovariance
 	Util::Add(_auxMatrix,observationEquationCovariance,_auxMatrix);
-	
+
 	// _auxMatrix = inverse(_auxMatrix)
 	tLongIntVector pivotes(_auxMatrix.size(0));
 	LUFactorizeIP(_auxMatrix,pivotes);
@@ -128,9 +123,9 @@ void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquati
 }
 
 //   		public virtual FiltroKalman Clone()
-//   		{		  		
+//   		{
 //   			FiltroKalman clon = this.MemberwiseClone() as FiltroKalman;
-//   			
+//
 //   			//clon.R = R.Clone();
 //   			//clon.covarEcuacionEstado = covarEcuacionEstado.Clone();
 //   			clon.mediaPredictiva = mediaPredictiva.Clone();

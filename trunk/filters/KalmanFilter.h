@@ -49,7 +49,6 @@ private:
 public:
     KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength);
 
-    ~KalmanFilter();
 	void Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance);
 	tVector PredictiveMean() { return _predictiveMean;}
 	tVector FilteredMean() {return _filteredMean;}

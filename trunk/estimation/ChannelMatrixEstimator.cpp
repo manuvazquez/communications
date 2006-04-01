@@ -17,38 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#include "ChannelMatrixEstimator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+ChannelMatrixEstimator::ChannelMatrixEstimator(int nRows,int nColumns):_L(nRows),_Nm(nColumns)
+{
+}
 
-// #include <lapackpp/gmd.h>
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
 
-using namespace la;
 
-class MIMOChannel{
-protected:
-	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;
-
-public:
-    MIMOChannel();
-	MIMOChannel(int nTx,int nRx, int memory, int length);
-
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	int NtNr() {return nTx_nRx;};
-	int NtNrMemory() {return nTx_nRx_memory;};
-	int NtMemory() {return nTx_memory;};
-	virtual tMatrix& operator[](int n) = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-};
-
-#endif

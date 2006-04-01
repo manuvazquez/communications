@@ -36,3 +36,43 @@ void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double 
 		c(i) = alpha*a(i) + beta*b(i);
 }
 
+tVector Util::ToVector(const tMatrix &matrix,tOrder order)
+{
+	int i,nElements;
+
+	nElements = matrix.rows()*matrix.cols();
+	tVector vector(nElements);
+
+	if(order==rowwise)
+		for(i=0;i<nElements;i++)
+			vector(i) = matrix(i/matrix.cols(),i%matrix.cols());
+	else
+		for(i=0;i<nElements;i++)
+			vector(i) = matrix(i%matrix.rows(),i/matrix.rows());
+	return vector;
+}
+
+tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
+{
+	if(vector.size()!=rows*cols)
+		throw RuntimeException("The length of the vector is not equal to rows by cols.");
+
+	tMatrix matrix(rows,cols);
+
+	if(order==rowwise)
+		for(int iVector=vector.size();iVector--;)
+			matrix(iVector/cols,iVector%cols) = vector(iVector);
+	else
+		for(int iVector=vector.size();iVector--;)
+			matrix(iVector%rows,iVector/rows) = vector(iVector);
+	return matrix;
+}
+
+tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows)
+{
+	int remainder = vector.size() % rows;
+	if(remainder!=0)
+		throw RuntimeException("Resultant number of columns is not integer.");
+	int cols = vector.size()/rows;
+	return ToMatrix(vector,order,rows,cols);
+}

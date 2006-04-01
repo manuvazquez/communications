@@ -35,7 +35,6 @@ class Modulator{
 public:
     Modulator();
 
-    ~Modulator();
 	static tMatrix Modulate(const Bits &bits,Alphabet alfabeto);
 };
 

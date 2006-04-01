@@ -48,9 +48,6 @@ public:
 //     ARprocess();
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
 	tMatrix NextMatrix();
-
-    ~ARprocess();
-
 };
 
 #endif

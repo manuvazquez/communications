@@ -28,10 +28,6 @@ ChannelDependentNoise::ChannelDependentNoise(MIMOChannel &channel)
 }
 
 
-ChannelDependentNoise::~ChannelDependentNoise()
-{
-}
-
 // 		public void EstablecerSNR(int SNR,double varianzaAlphabet)
 // 		{
 // 			int i,j,memoriaCanal;

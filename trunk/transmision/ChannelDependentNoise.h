@@ -41,7 +41,6 @@ private:
 public:
     ChannelDependentNoise(MIMOChannel &channel);
 
-    ~ChannelDependentNoise();
 	void SetSNR(int SNR,double alphabetVariance);
 	double StdDevAt(int n);
 	tVector operator[](int n);

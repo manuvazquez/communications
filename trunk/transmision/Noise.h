@@ -37,8 +37,6 @@ protected:
 public:
     Noise(int nRx,int length,Random &randomGenerator = *(new Random()));
 
-    ~Noise();
-
 	int Length() { return length;}
 	int Nr() { return nRx;}
 	void Print() { cout << matrix;};

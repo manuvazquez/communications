@@ -17,38 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#include "KalmanEstimator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+KalmanEstimator::KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix)
+ : ChannelMatrixEstimator(initialMeanMatrix.rows(),initialMeanMatrix.cols()),_nChannelCoefficients(_L*_Nm)
+{
+	tMatrix stateEquationCovariance;
 
-// #include <lapackpp/gmd.h>
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
+	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
+	R *= ARcoefficient;
+	stateEquationCovariance = R;
+	stateEquationCovariance *= ARvariance;
+	tVector initialMeanVector = Util::ToVector(initialMeanMatrix,rowwise);
+	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 
-using namespace la;
+	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
+}
 
-class MIMOChannel{
-protected:
-	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;
 
-public:
-    MIMOChannel();
-	MIMOChannel(int nTx,int nRx, int memory, int length);
 
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	int NtNr() {return nTx_nRx;};
-	int NtNrMemory() {return nTx_nRx_memory;};
-	int NtMemory() {return nTx_memory;};
-	virtual tMatrix& operator[](int n) = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-};
-
-#endif

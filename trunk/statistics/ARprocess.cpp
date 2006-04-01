@@ -75,10 +75,6 @@ ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVarian
 	iNextMatrix = i;
 }
 
-ARprocess::~ARprocess()
-{
-}
-
 tMatrix ARprocess::NextMatrix()
 {
 // 	Matrix resultado = MatrixBuilder.CreateMatrix(nFilas,nColumnas);

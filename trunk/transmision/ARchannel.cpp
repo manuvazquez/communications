@@ -31,10 +31,6 @@ ARcoefficients,ARvariance)
 		channelMatrices[i] = ARproc.NextMatrix();
 }
 
-ARchannel::~ARchannel()
-{
-}
-
 // tMatrix ARchannel::operator[](int n)
 // {
 // }

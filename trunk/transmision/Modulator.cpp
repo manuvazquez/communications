@@ -23,11 +23,6 @@ Modulator::Modulator()
 {
 }
 
-
-Modulator::~Modulator()
-{
-}
-
 tMatrix Modulator::Modulate(const Bits &bits, Alphabet alphabet)
 {
 	if((bits.NbitsByStream()% alphabet.NbitsBySymbol())!=0)

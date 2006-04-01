@@ -57,7 +57,7 @@ int main(int argc,char* argv[])
 	simbolos = *(new vector<tSymbol>(2));
     simbolos[0] = -1; simbolos[1] = 1;
     Alphabet pam2(1,2,secuenciasBits,simbolos);
-	
+
 
 	vector<tBit> secuenciaDevuelta;
 	secuenciaDevuelta = pam4[-1];
@@ -85,24 +85,24 @@ int main(int argc,char* argv[])
 
 	bitsDemodulados.Print();
 
-	
+
 // 	int L=3,N=2,m=2,K;
 // 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
 // 	vector<double> ARcoefficients(1);
 // 	ARcoefficients[0] = 0.99999;
-// 
+//
 // 	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
 // 	for(int i=canal.Memory()-1;i<canal.Length();i++)
 // 		cout << canal[i] << endl << "****************" << endl;
-// 
+//
 // 	ChannelDependentNoise ruido(canal);
 // 	ruido.SetSNR(12,1);
-// 
+//
 // 	cout << "El ruido" << endl;
 // 	ruido.Print();
-// 
+//
 // 	tMatrix observaciones = canal.Transmit(simbs,ruido);
-// 
+//
 // 	cout << "Las observaciones" << endl << observaciones;
 
 
@@ -140,7 +140,7 @@ int main(int argc,char* argv[])
 	for(int i=0;i<30;i++)
 	{
 		Blas_Mat_Vec_Mult(R,estado,nuevoEstado);
-		cout << "nuevoEstado" << endl << nuevoEstado << endl;		
+		cout << "nuevoEstado" << endl << nuevoEstado << endl;
 		for(int j=0;j<longVectorAestimar;j++)
 			nuevoEstado(j) = nuevoEstado(j) + generador.randn()*varEcEstado;
 		Blas_Mat_Vec_Mult(F,nuevoEstado,observacion);
@@ -153,6 +153,19 @@ int main(int argc,char* argv[])
 // 		cout << estado;
 	}
 
+	cout << "F es" << endl << F;
+	tVector veci = Util::ToVector(F,rowwise);
+	cout << "En forma de vector" << endl << veci << endl;
+	cout << "De vuelta a la matrix" << endl << Util::ToMatrix(veci,rowwise,F.rows(),F.cols()) << endl;
+	// --------------------- Constructor copia de KalmanFilter --------------------------
+// 	cout << kf.PredictiveCovariance() << endl;
+// 	KalmanFilter kf2 = kf;
+// 	kf2.Step(F,observacion,covarianzaEcObservaciones);
+// 	cout << "------" << endl << kf.PredictiveCovariance() << endl;
+// 	cout << "El modificado" << endl << kf2.PredictiveCovariance() << endl;
+	// ---------------------------------------------------------------------------------
+
+
 
 
 
@@ -160,14 +173,14 @@ int main(int argc,char* argv[])
 // 	// ----------- operaciones entre objetos Bits ------------------------
 // 	Bits otrosBits(4,50);
 // 	cout << "igual a los demodulados: "<< (bitsDemodulados==bits) << "a los otros: " << (bits==otrosBits) << endl;
-// 
+//
 // 	cout << "Diferencia: " << (bitsDemodulados-bits) << "a los otros: " << (bits-otrosBits) << endl;
 // 	// -------------------------------------------------------------------
 
 // 	bits2 = bits;
 // 	bits2 = bits;
 // 	bits2.Print();
-	
+
 // 	// ------------ Modulacion y demodulacion diferencial ------------
 // 	Bits diffEncodBits = bits.DifferentialEncoding();
 // 	diffEncodBits.Print();
@@ -175,7 +188,7 @@ int main(int argc,char* argv[])
 // 	Bits diffDecodBits = diffEncodBits.DifferentialDecoding();
 // 	diffDecodBits.Print();
 // 	// --------------------------------------------------------------
-// 
+//
 // 	// -------------- Operaciones con matrices ----------------------
 // 	tMatrix A(4,4); A = 1;
 // 	tMatrix A2(2,4); A2 = 4.1;
@@ -192,12 +205,12 @@ int main(int argc,char* argv[])
 
 
 
-// 
+//
 // // 	Random r;
 // // 	cout << r.randn() << endl;
-// 
+//
 
-// 
+//
 // 	cout << "Ruido" << endl;
 // 	ruido.Print();
 // 	cout << "-----------" <<endl;
@@ -206,23 +219,23 @@ int main(int argc,char* argv[])
 // 	vector<double> varianzas = ruido.Variances();
 // 	for(int i=0;i<ruido.Length();i++)
 // 		cout << varianzas[i] << endl;
-// 
+//
 // 	cout << "una columna del ruido" << endl << ruido[3] << endl;
-// 
-// 
-// 
+//
+//
+//
 // 	tMatrix sub = matrizAleatoria(*(new tRange(1,2)),*(new tRange(1,2)));
 // 	cout << "------- (is submatrix view" << sub.is_submatrixview() << ")" << endl << sub << endl;
-// 
+//
 // 	tMatrix otra(3,3);
 // 	otra = 1;
 // 	tVector v = otra.col(2);
-// 
-// 	cout << "El vector es " << endl << v;	
-// 
+//
+// 	cout << "El vector es " << endl << v;
+//
 // 	tVector res(4);
 // 	Blas_Mat_Vec_Mult(matrizAleatoria,v,res);
-// 
+//
 // 	cout << "matriz por vector" << endl << res;
 
 
@@ -231,11 +244,11 @@ int main(int argc,char* argv[])
 // 	double* arrayNormal = generador.randnArray(16);
 // 	tMatrix matrizAleatoria(arrayNormal,4,4);
 // 	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
-// 
+//
 // 	tLongIntVector pivotes(matrizAleatoria.size(0));
 // 	LUFactorizeIP(matrizAleatoria,pivotes);
 // 	LaLUInverseIP(matrizAleatoria,pivotes);
-// 
+//
 // 	cout << "La inversa" << endl << matrizAleatoria;
 	// ------------------------------------------------
 
@@ -249,7 +262,7 @@ int main(int argc,char* argv[])
 // 	{
 // 		cout << procesoAR.NextMatrix() << endl << "----------" << endl;
 // 	}
-// 	// ---------------------------------------------------------------------------------	
+// 	// ---------------------------------------------------------------------------------
 
     return 0;
 }
