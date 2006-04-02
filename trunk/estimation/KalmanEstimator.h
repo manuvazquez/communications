@@ -48,6 +48,7 @@ private:
 public:
     KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
 	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
+	double Verosimilitud(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 };
 
 #endif

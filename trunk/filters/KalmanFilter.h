@@ -46,6 +46,7 @@ private:
 	tMatrix _KalmanGainFpredictiveCovariance,_predictiveCovarianceAux;
 	tMatrix _RfilteredCovariance,_RfilteredCovarianceRtrans;
 	tVector _auxVector,_KalmanGainByNotPredicted;
+	tLongIntVector _piv;
 public:
     KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength);
 

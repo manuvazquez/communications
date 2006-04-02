@@ -21,6 +21,9 @@
 
 void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
+	if(A.rows()!=B.rows() || A.cols()!=B.cols())
+		throw RuntimeException("Matrices can't be added.");
+
 	int i,j;
 	int rows = A.rows(), cols = A.cols();
 	for(i=0;i<rows;i++)
@@ -31,6 +34,9 @@ void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double 
 void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)
 {
 	int nElements = a.size();
+
+	if(nElements!=b.size())
+		throw RuntimeException("Vectors can't be added.");
 
 	for(int i=0;i<nElements;i++)
 		c(i) = alpha*a(i) + beta*b(i);

@@ -87,12 +87,18 @@ int main(int argc,char* argv[])
 	bitsDemodulados.Print();
 
 
-	int L=3,N=2,m=2,K=5;
+	// ------------------------ Estimador de Kalman ------------------------------------
+	int L=3,N=2,m=2,K=15;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
 
+	Bits bitsTransmitir(N,K);
+
+	tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
+
 	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
+	cout << "longitud canal " << canal.Length() << " simbolos.co " << simbolosTransmitir.cols() << endl;
 	for(int i=canal.Memory()-1;i<canal.Length();i++)
 		cout << canal[i] << endl << "****************" << endl;
 
@@ -102,7 +108,7 @@ int main(int argc,char* argv[])
 	cout << "El ruido" << endl;
 	ruido.Print();
 
-	tMatrix observaciones = canal.Transmit(simbs,ruido);
+	tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
 
 	cout << "Las observaciones" << endl << observaciones;
 
@@ -110,6 +116,45 @@ int main(int argc,char* argv[])
 	mediaInicial = 0.0;
 	KalmanEstimator estimador(ARcoefficients[0],ARvariance,mediaInicial);
 
+	// ----------------------------- Depuracion EstimadorKalman ---------------------------------------
+// 	tMatrix matrizInicial(3,4);
+// 	matrizInicial = 0.0;
+// 	matrizInicial(0,0) = 0.1;matrizInicial(0,1) = 0.1342;matrizInicial(0,2) = 0.525;
+// 	matrizInicial(1,0) = 1.1;matrizInicial(1,1) = -0.1342;matrizInicial(1,2) = 2.525;
+// 	double coefAR = 0.99999;
+// 	double varAR = 0.0001;
+//
+//
+// 	KalmanEstimator estPrueba(coefAR,varAR,matrizInicial);
+//
+// 	cout << "Los parametros" << endl << coefAR << "," << varAR << "," << endl << matrizInicial << endl;
+//
+// 	tVector obs(3);
+// 	obs(0) = 1.1; obs(1) = 1.3; obs(2) = 1.22;
+// 	tMatrix simbolitos(2,2);
+// 	simbolitos = 0.0;
+// 	double vari = 0.52;
+// 	tMatrix est = estPrueba.NextMatrix(obs,simbolitos,vari);
+// 	cout << "los parametros de next: obs, simbolitos, vari" << endl << obs << endl << simbolitos << endl << vari << endl;
+// 	cout << endl << "****mec mec******" << endl << est << endl << "**********" << endl;
+// 	obs(0) = 3.1; obs(1) = 22.3; obs(2) = 0.22;
+// 	simbolitos(0,1) = -1; simbolitos(0,0) = 13; simbolitos(1,0) = 4.0;
+// 	est = estPrueba.NextMatrix(obs,simbolitos,14);
+// 	cout << "los parametros de next: obs, simbolitos, vari" << endl << obs << endl << simbolitos << endl << vari << endl;
+// 	cout << endl << "****mec mec******" << endl << est << endl << "**********" << endl;
+	// -----------------------------------------------------------------------------------------------
+
+	tRange todasFilasSimbolos(0,N-1);
+	for(int i=m-1;i<observaciones.cols();i++)
+	{
+		tRange rangoColumnas(i-m+1,i);
+		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
+		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+// 		cout << "El ruido" << endl << ruido
+		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+	}
+	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman --------------------------------------------------------
 // 	int longVectorAestimar = 4;
@@ -145,6 +190,7 @@ int main(int argc,char* argv[])
 // 			observacion(j) = observacion(j) + generador.randn()*varRuido;
 // 		estado = nuevoEstado;
 // 		kf.Step(F,observacion,covarianzaEcObservaciones);
+// 		cout << "F,observacion,covarianzaEcObservaciones" << endl << F << endl << observacion << endl << covarianzaEcObservaciones << endl;
 // 		cout << "El filtro de Kalman obtiene:" << endl << kf.PredictiveMean();
 // 		cout << endl << "---------------" << endl;
 // 		cout << estado;
