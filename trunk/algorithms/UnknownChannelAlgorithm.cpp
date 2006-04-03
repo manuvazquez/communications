@@ -17,43 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
+#include "UnknownChannelAlgorithm.h"
 
-#include <ChannelMatrixEstimator.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <math.h>
-#include <KalmanFilter.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-
-class KalmanEstimator : public ChannelMatrixEstimator
+UnknownChannelAlgorithm::UnknownChannelAlgorithm(string name, Alphabet  alphabet,ChannelMatrixEstimator &channelEstimator)
+ : Algorithm(name,alphabet),_channelEstimator(channelEstimator)
 {
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
-	tMatrix _identityL;
+}
 
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
 
-private:
-	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
-public:
-    KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-};
-
-#endif

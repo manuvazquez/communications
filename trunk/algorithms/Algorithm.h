@@ -17,43 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
-
-#include <ChannelMatrixEstimator.h>
+#ifndef ALGORITHM_H
+#define ALGORITHM_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <math.h>
-#include <KalmanFilter.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
+#include <string>
+#include <vector>
+#include <types.h>
+#include <Alphabet.h>
 
-class KalmanEstimator : public ChannelMatrixEstimator
-{
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
-	tMatrix _identityL;
-
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
-
-private:
-	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
+class Algorithm{
+protected:
+	string _name;
+	Alphabet _alphabet;
 public:
-    KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+    Algorithm(string name, Alphabet  alphabet);
+	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
 };
 
 #endif

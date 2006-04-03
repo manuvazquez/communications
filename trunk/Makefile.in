@@ -172,7 +172,9 @@ target_alias = @target_alias@
 # not a GNU package. You can remove this line, if
 # have all needed files, that a GNU package needs
 AUTOMAKE_OPTIONS = foreign 1.4
-SUBDIRS = randomutil util statistics transmision filters estimation src
+SUBDIRS = randomutil util statistics transmision filters estimation algorithms \
+	src
+
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

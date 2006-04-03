@@ -123,12 +123,12 @@ int main(int argc,char* argv[])
 // 	matrizInicial(1,0) = 1.1;matrizInicial(1,1) = -0.1342;matrizInicial(1,2) = 2.525;
 // 	double coefAR = 0.99999;
 // 	double varAR = 0.0001;
-//
-//
+// 
+// 
 // 	KalmanEstimator estPrueba(coefAR,varAR,matrizInicial);
-//
+// 
 // 	cout << "Los parametros" << endl << coefAR << "," << varAR << "," << endl << matrizInicial << endl;
-//
+// 
 // 	tVector obs(3);
 // 	obs(0) = 1.1; obs(1) = 1.3; obs(2) = 1.22;
 // 	tMatrix simbolitos(2,2);
@@ -139,21 +139,32 @@ int main(int argc,char* argv[])
 // 	cout << endl << "****mec mec******" << endl << est << endl << "**********" << endl;
 // 	obs(0) = 3.1; obs(1) = 22.3; obs(2) = 0.22;
 // 	simbolitos(0,1) = -1; simbolitos(0,0) = 13; simbolitos(1,0) = 4.0;
-// 	est = estPrueba.NextMatrix(obs,simbolitos,14);
+// 	est = estPrueba.NextMatrix(obs,simbolitos,1.0);
 // 	cout << "los parametros de next: obs, simbolitos, vari" << endl << obs << endl << simbolitos << endl << vari << endl;
 // 	cout << endl << "****mec mec******" << endl << est << endl << "**********" << endl;
+// 	cout << "La verosimilitud es " << estPrueba.Likelihood(obs,simbolitos,1.0) << endl;
+// 	simbolitos = 13.0;
+// 	cout << "La verosimilitud es " << estPrueba.Likelihood(obs,simbolitos,1.0) << endl;
 	// -----------------------------------------------------------------------------------------------
 
-	tRange todasFilasSimbolos(0,N-1);
-	for(int i=m-1;i<observaciones.cols();i++)
-	{
-		tRange rangoColumnas(i-m+1,i);
-		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
-		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
-// 		cout << "El ruido" << endl << ruido
-		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
-	}
+// 	tRange todasFilasSimbolos(0,N-1);
+// 	for(int i=m-1;i<observaciones.cols();i++)
+// 	{
+// 		tRange rangoColumnas(i-m+1,i);
+// 		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
+// 		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+// 		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+// // 		cout << "El ruido" << endl << ruido
+// 		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+// 
+// 		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+// 		cout << "La verosimilitud=" << verosimil << endl;
+// 
+// 		tMatrix simbolosChungos(N,m);
+// 		simbolosChungos = -11;
+// 		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
+// 		cout << "La verosimilitud chunga=" << verosimilChunga << endl;		
+// 	}
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman --------------------------------------------------------
@@ -292,11 +303,15 @@ int main(int argc,char* argv[])
 // 	double* arrayNormal = generador.randnArray(16);
 // 	tMatrix matrizAleatoria(arrayNormal,4,4);
 // 	cout << "Matriz aleatoria" << endl << matrizAleatoria << endl;
-//
+// 
 // 	tLongIntVector pivotes(matrizAleatoria.size(0));
 // 	LUFactorizeIP(matrizAleatoria,pivotes);
+// 	double determinante = 1.0;
+// 	for(int hola=0;hola<4;hola++)
+// 		determinante *= matrizAleatoria(hola,hola);
+// 	cout << "El determinante es " << determinante << endl;
 // 	LaLUInverseIP(matrizAleatoria,pivotes);
-//
+// 
 // 	cout << "La inversa" << endl << matrizAleatoria;
 	// ------------------------------------------------
 

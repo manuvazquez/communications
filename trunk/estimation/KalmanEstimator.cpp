@@ -20,7 +20,9 @@
 #include "KalmanEstimator.h"
 
 KalmanEstimator::KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix)
- : ChannelMatrixEstimator(initialMeanMatrix.rows(),initialMeanMatrix.cols()),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),_F(_L,_L*_Nm)
+ : ChannelMatrixEstimator(initialMeanMatrix.rows(),initialMeanMatrix.cols()),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
+//auxiliary variables initialization
+_F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
 	R *= ARcoefficient;
@@ -65,7 +67,7 @@ void KalmanEstimator::FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix)
 // 	cout << "F despues" << _F << endl;
 }
 
-double KalmanEstimator::Verosimilitud(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
 		throw RuntimeException("observations vector length or symbols matrix length are wrong.");
@@ -75,44 +77,64 @@ double KalmanEstimator::Verosimilitud(const tVector &observations,const tMatrix 
 	tMatrix invNoiseCovariance = LaGenMatDouble::eye(_L);
 	invNoiseCovariance *= (1/noiseVariance);
 
-	// _invPredictiveCovariance = inv(_kalmanFilter->PredictiveCovariance())
-	tMatrix _invPredictiveCovariance = _kalmanFilter->PredictiveCovariance();
-	tLongIntVector _piv(_nChannelCoefficients);
-	LUFactorizeIP(_invPredictiveCovariance,_piv);
-	LaLUInverseIP(_invPredictiveCovariance,_piv);
+	tMatrix invPredictiveCovariance = _kalmanFilter->PredictiveCovariance();
+	LUFactorizeIP(invPredictiveCovariance,_piv);	
+	// detPredictiveCovariance = det(_kalmanFilter->PredictiveCovariance())
+	double detPredictiveCovariance = 1.0;
+	for(int i=0;i<_nChannelCoefficients;i++)
+		detPredictiveCovariance *= invPredictiveCovariance(i,i);
+
+	// invPredictiveCovariance = inv(_kalmanFilter->PredictiveCovariance())
+	LaLUInverseIP(invPredictiveCovariance,_piv);
 
 	FillFfromSymbolsMatrix(symbolsMatrix);
 
-	tMatrix _FtransInvNoiseCovariance(_nChannelCoefficients,_L);
 	// _FtransInvNoiseCovariance = _F' * invNoiseCovariance
 	Blas_Mat_Trans_Mat_Mult(_F,invNoiseCovariance,_FtransInvNoiseCovariance);
 
-	tMatrix _B(_nChannelCoefficients,_nChannelCoefficients);
 	// _B = _FtransInvNoiseCovariance * _F
 	Blas_Mat_Mat_Mult(_FtransInvNoiseCovariance,_F,_B);
 
-	// _B = _B + _invPredictiveCovariance
-	Util::Add(_B,_invPredictiveCovariance,_B);
+	// _B = _B + invPredictiveCovariance
+	Util::Add(_B,invPredictiveCovariance,_B);
 
 	// invB = inv(_B)
 	tMatrix invB = _B;
-	LUFactorizeIP(invB,_piv);
+	LUFactorizeIP(invB,_piv);	
 	LaLUInverseIP(invB,_piv);
 
-	tVector _invPredictiveCovariancePredictiveMean(_nChannelCoefficients);
-	// _invPredictiveCovariancePredictiveMean = _invPredictiveCovariance * _kalmanFilter->PredictiveMean()
-	Blas_Mat_Vec_Mult(_invPredictiveCovariance,_kalmanFilter->PredictiveMean(),_invPredictiveCovariancePredictiveMean);
+	// _invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->PredictiveMean()
+	Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->PredictiveMean(),_invPredictiveCovariancePredictiveMean);
 
-	tVector _auxAuxArgExp(_nChannelCoefficients);
 	// _auxAuxArgExp = _FtransInvNoiseCovariance * observations
 	Blas_Mat_Vec_Mult(_FtransInvNoiseCovariance,observations,_auxAuxArgExp);
 
 	// _auxAuxArgExp = _auxAuxArgExp + _invPredictiveCovariancePredictiveMean
 	Util::Add(_auxAuxArgExp,_invPredictiveCovariancePredictiveMean,_auxAuxArgExp);
 
-	tVector _auxAuxArgExpInvB(_nChannelCoefficients);
 	// _auxAuxArgExpInvB = invB' * _auxAuxArgExp = _auxAuxArgExp * invB
 	Blas_Mat_Trans_Vec_Mult(invB,_auxAuxArgExp,_auxAuxArgExpInvB);
 
+	// _auxArgExp = _auxAuxArgExpInvB . _auxAuxArgExp
+	double auxArgExp = Blas_Dot_Prod(_auxAuxArgExpInvB,_auxAuxArgExp);
+
+// _observationsNoiseCovariance = noiseCovariance' * observations = observations * noiseCovariance
+	Blas_Mat_Trans_Vec_Mult(noiseCovariance,observations,_observationsNoiseCovariance);
+
+	// _observationsNoiseCovarianceObservations = _observationsNoiseCovariance . observations
+	double observationsNoiseCovarianceObservations = Blas_Dot_Prod(_observationsNoiseCovariance,observations);
+
+	// predictiveMeanInvPredictiveCovariancePredictiveMean = _kalmanFilter->PredictiveMean() . _invPredictiveCovariancePredictiveMean
+	double predictiveMeanInvPredictiveCovariancePredictiveMean = Blas_Dot_Prod(_kalmanFilter->PredictiveMean(),_invPredictiveCovariancePredictiveMean);
+
+	double argExp = -0.5*(observationsNoiseCovarianceObservations + predictiveMeanInvPredictiveCovariancePredictiveMean - auxArgExp);
+
+	//detInvB = inv(invB)
+	LUFactorizeIP(invB,_piv);
+	double detInvB = 1.0;
+	for(int i=0;i<_nChannelCoefficients;i++)
+		detInvB *= invB(i,i);
+
+	return sqrt(fabs(detInvB))/(pow(2*M_PI*noiseVariance,_L/2)*sqrt(fabs(detPredictiveCovariance)))*exp(argExp);
 }
 
