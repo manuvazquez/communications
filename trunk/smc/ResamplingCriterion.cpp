@@ -17,27 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNCHANNELORDERALGORITHM_H
-#define KNOWNCHANNELORDERALGORITHM_H
+#include "ResamplingCriterion.h"
 
-#include <UnknownChannelAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <vector>
-#include <types.h>
-#include <Util.h>
-
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRatio(resamplingRatio)
 {
-protected:
-	int _L,_N,_m,_Nm;
-	tMatrix _preamble;
-public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble);
-	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
-};
+}
 
-#endif
+bool ResamplingCriterion::ResamplingNeeded(tVector weights)
+{
+	double weights2Sum,nEffectiveParticles;
+	int nParticles;
+
+	nParticles = weights.size();
+	weights2Sum = 0;
+	for(int i=0;i<nParticles;i++)
+		weights2Sum += weights(i)*weights(i);
+
+	if(weights2Sum==0)
+		throw NullWeightsException("All weights are zero.");
+
+	nEffectiveParticles = 1.0/weights2Sum;
+	if(nEffectiveParticles<(_resamplingRatio*((double)nParticles)))
+		return true;
+	else
+		return false;
+}
+
+

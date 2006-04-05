@@ -17,27 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNCHANNELORDERALGORITHM_H
-#define KNOWNCHANNELORDERALGORITHM_H
+#ifndef SMCALGORITHM_H
+#define SMCALGORITHM_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <KnownChannelOrderAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
-#include <types.h>
-#include <Util.h>
+#include <ResamplingCriterion.h>
 
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
-	int _L,_N,_m,_Nm;
-	tMatrix _preamble;
+	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
+	ResamplingCriterion _resamplingCriterion;
+	vector<tMatrix>  *estimatedChannelMatrices;
+	tMatrix *detectedSymbols;
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble);
-	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion);
+
 };
 
 #endif

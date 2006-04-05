@@ -40,6 +40,7 @@ public:
 	static tVector ToVector(const tMatrix &matrix,tOrder order);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
+	static tMatrix Append(const tMatrix &A,const tMatrix &B);
 };
 
 #endif

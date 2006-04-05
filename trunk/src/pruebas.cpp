@@ -249,17 +249,18 @@ int main(int argc,char* argv[])
 // 	// --------------------------------------------------------------
 //
 // 	// -------------- Operaciones con matrices ----------------------
-// 	tMatrix A(4,4); A = 1;
-// 	tMatrix A2(2,4); A2 = 4.1;
-// 	tMatrix A3(2,4);
-// 	tMatrix B(4,4);
-// 	B = 2;
-// 	Blas_Mat_Mat_Mult(A,B,A);
-// 	cout << "Las matrices A y B" << endl << A << endl << B;
-// 	tMatrix C = A*B;
-// 	cout << A << endl << B << endl << C << endl;
+	tMatrix A(4,4); A = 1;
+	tMatrix A2(2,4); A2 = 4.1;
+	tMatrix A3(2,4);
+	tMatrix B(4,4);
+	B = 2;
+	Blas_Mat_Mat_Mult(A,B,A);
+	cout << "Las matrices A y B" << endl << A << endl << B;
+	tMatrix C = A*B;
+	cout << A << endl << B << endl << C << endl;
 // 	Util::Add(A,A2,A3);
-// // 	cout << A << endl << A2 << endl << A3 << endl;
+// 	cout << A << endl << A2 << endl << A3 << endl;
+	cout << "Apenddado" << endl << Util::Append(A,B) << endl;
 // 	// ----------------------------------------------------------------
 
 

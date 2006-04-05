@@ -17,27 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNCHANNELORDERALGORITHM_H
-#define KNOWNCHANNELORDERALGORITHM_H
-
-#include <UnknownChannelAlgorithm.h>
+#ifndef RESAMPLINGCRITERION_H
+#define RESAMPLINGCRITERION_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
 #include <types.h>
-#include <Util.h>
+#include "smcExceptions.h"
 
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
-{
-protected:
-	int _L,_N,_m,_Nm;
-	tMatrix _preamble;
+class ResamplingCriterion{
+private:
+	double _resamplingRatio;
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble);
-	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    ResamplingCriterion(double resamplingRatio);
+
+	bool ResamplingNeeded(tVector weights);
+
 };
 
 #endif

@@ -26,11 +26,29 @@ KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alp
 		_m = 1;
 	else
 		_m = _preamble.cols() + 1;
+
+	_N = _Nm/_m;
 }
 
-
-KnownChannelOrderAlgorithm::~KnownChannelOrderAlgorithm()
+vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
+// 	int lengthSequenceToProcess = trainingSequence.cols() + _preamble.cols();
+	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
+	int lengthToProcessSequence = toProcessSequence.cols();
+	
+	if(observations.cols()<lengthToProcessSequence)
+		throw RuntimeException("Insufficient number of observations.");
+	
+	vector<tMatrix> estimatedMatrices(lengthToProcessSequence);
+
+	// selects all the rows from a symbols matrix
+	tRange allSymbolRows(0,_N-1);
+
+	for(int i=_m-1;i<lengthToProcessSequence;i++)
+	{
+		estimatedMatrices[i] = _channelEstimator.NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,*(new tRange(i-_m+1,i))),noiseVariances[i]);
+	}
+	return estimatedMatrices;
 }
 
 

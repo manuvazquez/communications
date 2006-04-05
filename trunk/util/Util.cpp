@@ -82,3 +82,20 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows)
 	int cols = vector.size()/rows;
 	return ToMatrix(vector,order,rows,cols);
 }
+
+tMatrix Util::Append(const tMatrix &A,const tMatrix &B)
+{
+	if(A.rows()!=B.rows())
+		throw RuntimeException("Matrices have different number of rows.");
+
+	tMatrix res(A.rows(),A.cols()+B.cols());
+	int i,j;
+	for(i=0;i<res.rows();i++)
+	{
+		for(j=0;j<A.cols();j++)
+			res(i,j) = A(i,j);
+		for(j=0;j<B.cols();j++)
+			res(i,A.cols()+j) = B(i,j);
+	}
+	return res;
+}
