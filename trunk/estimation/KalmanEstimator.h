@@ -42,6 +42,11 @@ private:
 	int _nChannelCoefficients;
 	tMatrix _identityL;
 
+
+	// variables need for Clone
+	double _ARcoefficient,_ARvariance;
+	tMatrix &_initialMeanMatrix;
+
 	// auxiliary variables (just for efficiency's sake)
 	tMatrix _F;
 	tLongIntVector _piv;
@@ -52,8 +57,11 @@ private:
 	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
 public:
     KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
+	~KalmanEstimator();
+
 	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
 	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+	KalmanEstimator *Clone();
 };
 
 #endif

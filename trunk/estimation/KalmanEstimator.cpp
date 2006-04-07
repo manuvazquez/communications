@@ -21,6 +21,8 @@
 
 KalmanEstimator::KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix)
  : ChannelMatrixEstimator(initialMeanMatrix.rows(),initialMeanMatrix.cols()),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
+// variables needed for Clone
+_ARcoefficient(ARcoefficient),_ARvariance(ARvariance),_initialMeanMatrix(initialMeanMatrix),
 //auxiliary variables initialization
 _F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
@@ -34,6 +36,11 @@ _F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoe
 	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
 	_F = 0.0;
 // 	_identityL = LaGenMatDouble::eye(_L);
+}
+
+KalmanEstimator::~KalmanEstimator()
+{
+	delete _kalmanFilter;
 }
 
 tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
@@ -138,3 +145,10 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 	return sqrt(fabs(detInvB))/(pow(2*M_PI*noiseVariance,_L/2)*sqrt(fabs(detPredictiveCovariance)))*exp(argExp);
 }
 
+KalmanEstimator *KalmanEstimator::Clone()
+{
+	KalmanEstimator *res = new KalmanEstimator(_ARcoefficient,_ARvariance,_initialMeanMatrix);
+	res->_kalmanFilter = new KalmanFilter(*_kalmanFilter);
+
+	return res;
+}

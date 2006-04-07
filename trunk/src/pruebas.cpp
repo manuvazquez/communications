@@ -88,7 +88,7 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------ Estimador de Kalman ------------------------------------
-	int L=3,N=2,m=2,K=15;
+	int L=3,N=2,m=2,K=3;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
@@ -147,27 +147,29 @@ int main(int argc,char* argv[])
 // 	cout << "La verosimilitud es " << estPrueba.Likelihood(obs,simbolitos,1.0) << endl;
 	// -----------------------------------------------------------------------------------------------
 
-// 	tRange todasFilasSimbolos(0,N-1);
-// 	for(int i=m-1;i<observaciones.cols();i++)
-// 	{
-// 		tRange rangoColumnas(i-m+1,i);
-// 		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
-// 		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-// 		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
-// // 		cout << "El ruido" << endl << ruido
-// 		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
-// 
-// 		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-// 		cout << "La verosimilitud=" << verosimil << endl;
-// 
-// 		tMatrix simbolosChungos(N,m);
-// 		simbolosChungos = -11;
-// 		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
-// 		cout << "La verosimilitud chunga=" << verosimilChunga << endl;		
-// 	}
+	KalmanEstimator estimador2 = *estimador.Clone();
+
+	tRange todasFilasSimbolos(0,N-1);
+	for(int i=m-1;i<observaciones.cols();i++)
+	{
+		tRange rangoColumnas(i-m+1,i);
+		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
+		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+// 		cout << "El ruido" << endl << ruido
+		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+
+		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "La verosimilitud=" << verosimil << endl;
+
+		tMatrix simbolosChungos(N,m);
+		simbolosChungos = -11;
+		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
+		cout << "La verosimilitud chunga=" << verosimilChunga << endl;		
+	}
 	// --------------------------------------------------------------------------------------
 
-	// ------------------------- Filtro de Kalman --------------------------------------------------------
+	// ------------------------- Filtro de Kalman ------------------------------------------
 // 	int longVectorAestimar = 4;
 // 	int longVectorObservaciones = 3;
 // 	double varEcEstado = 0.0001,varRuido = 0.2;
@@ -249,18 +251,18 @@ int main(int argc,char* argv[])
 // 	// --------------------------------------------------------------
 //
 // 	// -------------- Operaciones con matrices ----------------------
-	tMatrix A(4,4); A = 1;
-	tMatrix A2(2,4); A2 = 4.1;
-	tMatrix A3(2,4);
-	tMatrix B(4,4);
-	B = 2;
-	Blas_Mat_Mat_Mult(A,B,A);
-	cout << "Las matrices A y B" << endl << A << endl << B;
-	tMatrix C = A*B;
-	cout << A << endl << B << endl << C << endl;
-// 	Util::Add(A,A2,A3);
-// 	cout << A << endl << A2 << endl << A3 << endl;
-	cout << "Apenddado" << endl << Util::Append(A,B) << endl;
+// 	tMatrix A(4,4); A = 1;
+// 	tMatrix A2(2,4); A2 = 4.1;
+// 	tMatrix A3(2,4);
+// 	tMatrix B(4,4);
+// 	B = 2;
+// 	Blas_Mat_Mat_Mult(A,B,A);
+// 	cout << "Las matrices A y B" << endl << A << endl << B;
+// 	tMatrix C = A*B;
+// 	cout << A << endl << B << endl << C << endl;
+// // 	Util::Add(A,A2,A3);
+// // 	cout << A << endl << A2 << endl << A3 << endl;
+// 	cout << "Apenddado" << endl << Util::Append(A,B) << endl;
 // 	// ----------------------------------------------------------------
 
 
