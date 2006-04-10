@@ -149,10 +149,7 @@
     <dest>/home/manu/c++/comunicaciones</dest>
   </substmap>
   <kdevcppsupport>
-    <references>
-      <pcs>usr_src_noRecursivo</pcs>
-      <pcs>usr_local_lapackpp</pcs>
-    </references>
+    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

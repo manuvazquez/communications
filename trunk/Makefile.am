@@ -2,6 +2,6 @@
 # have all needed files, that a GNU package needs
 AUTOMAKE_OPTIONS = foreign 1.4
 
-SUBDIRS = randomutil util statistics transmision filters estimation algorithms \
-		src smc
+SUBDIRS = randomutil util statistics transmision filters estimation smc \
+	algorithms src
 

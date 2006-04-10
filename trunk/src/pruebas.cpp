@@ -11,6 +11,8 @@
 #include <Demodulator.h>
 #include <KalmanFilter.h>
 #include <KalmanEstimator.h>
+#include <ML_SMCAlgorithm.h>
+#include <ResamplingCriterion.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas2pp.h>
@@ -97,7 +99,11 @@ int main(int argc,char* argv[])
 
 	tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
 
-	ARchannel canal(N,L,m,K,channelMean,channelVariance,ARcoefficients,ARvariance);
+	tMatrix preambulo(N,m-1);
+	preambulo = -1.0;
+	simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
+
+	ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 	cout << "longitud canal " << canal.Length() << " simbolos.co " << simbolosTransmitir.cols() << endl;
 	for(int i=canal.Memory()-1;i<canal.Length();i++)
 		cout << canal[i] << endl << "****************" << endl;
@@ -116,7 +122,7 @@ int main(int argc,char* argv[])
 	mediaInicial = 0.0;
 	KalmanEstimator estimador(ARcoefficients[0],ARvariance,mediaInicial);
 
-	// ----------------------------- Depuracion EstimadorKalman ---------------------------------------
+	// ----------------------------- Depuracion EstimadorKalman ----------------------------
 // 	tMatrix matrizInicial(3,4);
 // 	matrizInicial = 0.0;
 // 	matrizInicial(0,0) = 0.1;matrizInicial(0,1) = 0.1342;matrizInicial(0,2) = 0.525;
@@ -145,7 +151,7 @@ int main(int argc,char* argv[])
 // 	cout << "La verosimilitud es " << estPrueba.Likelihood(obs,simbolitos,1.0) << endl;
 // 	simbolitos = 13.0;
 // 	cout << "La verosimilitud es " << estPrueba.Likelihood(obs,simbolitos,1.0) << endl;
-	// -----------------------------------------------------------------------------------------------
+	// ------------------------------------------------------------------------------------
 
 	KalmanEstimator estimador2 = *estimador.Clone();
 
@@ -167,6 +173,14 @@ int main(int argc,char* argv[])
 		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
 		cout << "La verosimilitud chunga=" << verosimilChunga << endl;		
 	}
+
+// ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion)
+
+// 	tMatrix preambulo(N,m-1);
+// 	preambulo = -1.0;
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,10,*(new ResamplingCriterion(0.9)));
+
+	algoritmo.Run(observaciones,ruido.Variances());
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------

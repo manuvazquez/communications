@@ -3,7 +3,7 @@ INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/smc -I$(top_srcdir)/src \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h UnknownChannelAlgorithm.h \
-		KnownChannelOrderAlgorithm.h SMCAlgorithm.h
+	KnownChannelOrderAlgorithm.h SMCAlgorithm.h ML_SMCAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp UnknownChannelAlgorithm.cpp \
-		KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp
+	KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a

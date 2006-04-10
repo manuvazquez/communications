@@ -25,7 +25,7 @@ _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterio
 {
 // 	_estimatedChannelMatrices = new tMatrix*[_nParticles];
 
-	// at first, we assume that all observations from the preamble need to processed
+	// at first, we assume that all observations from the preamble need to be processed
 	_startDetectionTime = _m - 1;
 
 	for(int i=0;i<_nParticles;i++)
