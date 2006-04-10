@@ -150,7 +150,8 @@
   </substmap>
   <kdevcppsupport>
     <references>
-      <pcs>lapackpp</pcs>
+      <pcs>usr_src_noRecursivo</pcs>
+      <pcs>usr_local_lapackpp</pcs>
     </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
@@ -202,4 +203,8 @@
       <outputradix>10</outputradix>
     </display>
   </kdevdebugger>
+  <ctagspart>
+    <customArguments/>
+    <customTagfilePath/>
+  </ctagspart>
 </kdevelop>

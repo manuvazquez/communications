@@ -255,6 +255,7 @@ int main(int argc,char* argv[])
 // 	tMatrix A2(2,4); A2 = 4.1;
 // 	tMatrix A3(2,4);
 // 	tMatrix B(4,4);
+// 	tMatrix subA(2,2); subA = 0.1213;
 // 	B = 2;
 // 	Blas_Mat_Mat_Mult(A,B,A);
 // 	cout << "Las matrices A y B" << endl << A << endl << B;
@@ -263,6 +264,8 @@ int main(int argc,char* argv[])
 // // 	Util::Add(A,A2,A3);
 // // 	cout << A << endl << A2 << endl << A3 << endl;
 // 	cout << "Apenddado" << endl << Util::Append(A,B) << endl;
+// 	A(*(new tRange(1,2)),*(new tRange(2,3))).inject(subA);
+// 	cout << "La nueva A" << endl << A << endl;
 // 	// ----------------------------------------------------------------
 
 

@@ -73,10 +73,21 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
 		_detectedSymbols[iParticle] = *(new tMatrix(_N,_endDetectionTime));
 
-		//the channel estimation given by the training sequence is copied into each particle
+		//the channel estimation given by the training sequence is copied into each particle...
 		for(j=_m-1;j<trainingSequenceChannelMatrices.size();j++)
 		{
-// 			_estimatedChannelMatrices[iParticle][j]
+			_estimatedChannelMatrices[iParticle][j] = trainingSequenceChannelMatrices[j];
 		}
+
+		//... the symbols are considered detected...
+		_detectedSymbols[iParticle](*(new tRange(0,_N-1)),*(new tRange(0,preambleTrainingSequence.cols()-1))).inject(preambleTrainingSequence);
+
+		// ... and the channel estimators of all the particles are updated
+		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
 	}
+
+	// the Process method must start in
+	_startDetectionTime = trainingSequenceChannelMatrices.size();
+
+	this->Process(observations,noiseVariances);
 }
