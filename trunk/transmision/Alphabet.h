@@ -20,7 +20,7 @@ class Alphabet
 		tSymbol operator [](vector<tBit> secuenciaBitsBuscada);
 		vector<tBit> operator [](tSymbol simbolo);
 		int Length() { return _length;}
-		void IntToSymbolsArray(int numero, vector<tSymbol> *res);
+		void IntToSymbolsArray(int numero, vector<tSymbol> &res);
 };
 #endif
 

@@ -34,6 +34,15 @@ _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterio
 	_weights = 1.0/_nParticles;
 }
 
+SMCAlgorithm::~ SMCAlgorithm()
+{
+	for(int i=0;i<_nParticles;i++)
+	{
+		delete _particlesChannelMatrixEstimators[i];
+		delete _estimatedChannelMatrices[i];
+	}
+}
+
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
 	int nObservations = observations.cols();

@@ -26,6 +26,51 @@ ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEs
 
 void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVariances)
 {
-	cout << "En Process" << endl;
+// 	cout << "En Process" << endl;
+	int k,iSmoothingVector;
+	int iSmoothingLag,iParticle,iSampledVector;
+	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
+	double auxLikelihoodsProd;
+	KalmanEstimator *channelEstimatorClone;
+	
+
+	// it selects all rows in the symbols Matrix
+	tRange allSymbolRows(0,_N-1);
+
+	// it includes all symbol vectors involved in the smoothing
+	tMatrix smoothingSymbolVectors(_N,_m+_d);
+
+	int nObservations = observations.cols();
+	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+	int nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*_d));
+	
+	// a likelihood is computed for every possible symbol vector
+	tVector likelihoods(nSymbolVectors);
+
+	// and from it, a probability
+	tVector probabilities(nSymbolVectors);
+
+	// for each time instant
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
+	{
+		for(iParticle=0;iParticle<_nParticles;iParticle++)
+		{
+			// the m-1 already detected symbol vectors are copied into the matrix
+			smoothingSymbolVectors(allSymbolRows,*(new tRange(0,_m-1))).inject(_detectedSymbols[iParticle](allSymbolRows,*(new tRange(iObservationToBeProcessed-_m+1,iObservationToBeProcessed))));
+
+			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+			{
+				// the corresponding testing vector is generated from the index
+				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+				
+				// current tested vector is copied in the m-th position
+				for(k=0;k<_N;k++)
+					smoothingSymbolVectors(k,_m-1) = testedVector[k];
+
+			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+
+		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
+		
+	} // for each time instant
 }
 

@@ -20,7 +20,10 @@
 #ifndef ML_SMCALGORITHM_H
 #define ML_SMCALGORITHM_H
 
+#include <math.h>
+#include <vector>
 #include <SMCAlgorithm.h>
+#include <KalmanEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>

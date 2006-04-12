@@ -68,7 +68,7 @@ int main(int argc,char* argv[])
 // 	cout << "el tamaño de la secuencia es " << secuenciaDevuelta[0];
 	secuenciaDevuelta.resize(6);
 	vector<tSymbol> secuenciaSimbolos(8);
-	pam4.IntToSymbolsArray(13,&secuenciaSimbolos);
+	pam4.IntToSymbolsArray(13,secuenciaSimbolos);
 	cout << "Secuencia devuelta" << endl;
 	for(int i=0;i<secuenciaSimbolos.size();i++)
 		cout << secuenciaSimbolos[i];

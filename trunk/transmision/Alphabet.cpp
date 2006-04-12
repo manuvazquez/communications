@@ -62,9 +62,9 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 	return _bitsSequences[iterador - _symbols.begin()];
 }
 
-void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> *res)
+void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 {
-	int tamVector = res->size();
+	int tamVector = res.size();
 
 	if(numero>=pow((double)_length,(double)tamVector))
 		throw RuntimeException("El tamaño del vector es demasiado pequeño.");
@@ -79,18 +79,18 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> *res)
 	{
 		resto = numero % _length;
 		cout << resto << "y" <<  _symbols[resto];
-		(*res)[tamVector-i] =  _symbols[resto];
+		res[tamVector-i] =  _symbols[resto];
 		numero /= _length;
 		i++;
 	}while(numero!=0);
 
 	for(;tamVector>=i;i++)
-		(*res)[tamVector-i] = _symbols[0];
+		res[tamVector-i] = _symbols[0];
 	cout << _symbols[0];
 	
 	cout << endl << "dentro" << endl;
-	for(int j=0;j<(*res).size();j++)
-		cout << (*res)[j];
+	for(int j=0;j<res.size();j++)
+		cout << res[j];
 	cout << endl;
 }
 
