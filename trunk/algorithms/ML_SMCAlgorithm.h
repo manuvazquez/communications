@@ -24,6 +24,7 @@
 #include <vector>
 #include <SMCAlgorithm.h>
 #include <KalmanEstimator.h>
+#include <StatUtil.h>
 
 /**
 	@author Manu <manu@rustneversleeps>

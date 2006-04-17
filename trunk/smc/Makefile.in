@@ -59,7 +59,8 @@ LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libsmc_a_AR = $(AR) $(ARFLAGS)
 libsmc_a_LIBADD =
-am_libsmc_a_OBJECTS = ResamplingCriterion.$(OBJEXT)
+am_libsmc_a_OBJECTS = ResamplingCriterion.$(OBJEXT) \
+	StdResamplingAlgorithm.$(OBJEXT)
 libsmc_a_OBJECTS = $(am_libsmc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -174,11 +175,11 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/src
+INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/src
 METASOURCES = AUTO
 lib_LIBRARIES = libsmc.a
-noinst_HEADERS = ResamplingCriterion.h smcExceptions.h
-libsmc_a_SOURCES = ResamplingCriterion.cpp
+noinst_HEADERS = ResamplingCriterion.h smcExceptions.h StdResamplingAlgorithm.h
+libsmc_a_SOURCES = ResamplingCriterion.cpp StdResamplingAlgorithm.cpp
 all: all-am
 
 .SUFFIXES:
@@ -253,6 +254,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ResamplingCriterion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StdResamplingAlgorithm.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

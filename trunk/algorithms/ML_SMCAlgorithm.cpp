@@ -86,6 +86,9 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
+
+// 						cout << "los simbolos pasados" << endl << smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1)));
+
 						// the likelihood is computed and accumulated
 						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1))),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
@@ -105,7 +108,24 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 			// probabilities are computed by normalizing the likelihoods
 			tVector probabilities = Util::Normalize(likelihoods);
 
+			// one sample from the discrete distribution is taken
+			int iSampledVector = (StatUtil::Discrete_rnd(1,probabilities))[0];
+
+			// the above index is turned into a vector
+			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
+
+			// sampled symbols are copied into the corresponding particle
+			for(k=0;k<_N;k++)
+				_detectedSymbols[iParticle](k,iObservationToBeProcessed) = sampledVector[k];
+			
+			// channel matrix is estimated by means of the particle channel estimator
+			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbols[iParticle](allSymbolRows,*(new tRange(iObservationToBeProcessed-_m+1,iObservationToBeProcessed))),noiseVariances[iObservationToBeProcessed]);
+
+			_weights(iParticle) *= Util::Sum(likelihoods);
+
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
+
+		_weights = Util::Normalize(_weights);
 		
 	} // for each time instant
 }

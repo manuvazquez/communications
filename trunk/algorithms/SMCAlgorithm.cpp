@@ -29,7 +29,10 @@ _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterio
 	_startDetectionTime = _m - 1;
 
 	for(int i=0;i<_nParticles;i++)
+	{
 		_particlesChannelMatrixEstimators[i] = _channelEstimator.Clone();
+		_estimatedChannelMatrices[i] = NULL;
+	}
 
 	_weights = 1.0/_nParticles;
 }
@@ -41,6 +44,7 @@ SMCAlgorithm::~ SMCAlgorithm()
 		delete _particlesChannelMatrixEstimators[i];
 		delete _estimatedChannelMatrices[i];
 	}
+	delete[] _detectedSymbols;
 }
 
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
@@ -49,7 +53,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	_endDetectionTime = nObservations - _d;
 
 	if(nObservations<(_startDetectionTime+1+_d))
-		throw RuntimeException("Not enough observations.");
+		throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
 	
 	// memory is reserved
 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
@@ -64,7 +68,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
 	if(observations.rows()!=_L || trainingSequence.rows()!=_N)
-		throw RuntimeException("Observations matrix or training sequence dimensions are wrong.");
+		throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 
 	int iParticle,j,nObservations;
 

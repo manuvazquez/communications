@@ -17,36 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "StatUtil.h"
+#ifndef STDRESAMPLINGALGORITHM_H
+#define STDRESAMPLINGALGORITHM_H
 
-vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator)
-{
-    int i,j;
-	double uniform;
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-    tVector normalizedProbabilities = Util::Normalize(probabilities);
-    int nProbabilities = probabilities.size();
-	cout << "probs normalizadas" << endl << normalizedProbabilities << endl;
-    
-    double *distributionFunction = new double[nProbabilities];
-    double acum = 0.0;
-    for(i=0;i<nProbabilities;i++)
-    {
-        acum += normalizedProbabilities(i);
-        distributionFunction[i] = acum;
-    }
+#include <vector>
+#include <types.h>
+#include <ChannelMatrixEstimator.h>
 
-    vector<int> res(nSamples);
+using namespace std;
 
-    for(i=0;i<nSamples;i++)
-    {
-		uniform = randomGenerator.rand();
-		j=0;
-		while(uniform>distributionFunction[j])
-			j++;
-		res[i] = j;
-    }
-	return res;
-}
+class StdResamplingAlgorithm{
+public:
+	static void Resampling(tMatrix  **_estimatedChannelMatrices,tMatrix *_detectedSymbols,ChannelMatrixEstimator **_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime);
+};
 
-
+#endif

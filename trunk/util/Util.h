@@ -46,6 +46,7 @@ public:
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
 	static tMatrix Append(const tMatrix &A,const tMatrix &B);
 	static tVector Normalize(const tVector &v);
+	static double Sum(const tVector &v);
 };
 
 #endif

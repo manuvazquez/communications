@@ -43,10 +43,10 @@ public:
     SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion);
 	~SMCAlgorithm();
 	
-
 	void Run(tMatrix observations,vector<double> noiseVariances);
 	virtual void Process(tMatrix observations,vector<double> noiseVariances) = 0;
 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+// 	virtual void Resampling(
 };
 
 #endif
