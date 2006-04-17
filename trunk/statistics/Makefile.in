@@ -61,7 +61,7 @@ libstatistics_a_AR = $(AR) $(ARFLAGS)
 libstatistics_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
-am_libstatistics_a_OBJECTS = ARprocess.$(OBJEXT)
+am_libstatistics_a_OBJECTS = ARprocess.$(OBJEXT) StatUtil.$(OBJEXT)
 libstatistics_a_OBJECTS = $(am_libstatistics_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -181,8 +181,8 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 
 METASOURCES = AUTO
 lib_LIBRARIES = libstatistics.a
-noinst_HEADERS = ARprocess.h
-libstatistics_a_SOURCES = ARprocess.cpp
+noinst_HEADERS = ARprocess.h StatUtil.h
+libstatistics_a_SOURCES = ARprocess.cpp StatUtil.cpp
 libstatistics_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
 
@@ -260,6 +260,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ARprocess.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StatUtil.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

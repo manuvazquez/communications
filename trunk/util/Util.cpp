@@ -99,3 +99,22 @@ tMatrix Util::Append(const tMatrix &A,const tMatrix &B)
 	}
 	return res;
 }
+
+tVector Util::Normalize(const tVector &v)
+{
+	int k;
+
+	int nElements = v.size();
+	double sum;
+	
+	for(k=0;k<nElements;k++)
+		sum += v(k);
+
+	if(sum==0)
+		throw AllElementsNullException("A vector of zeros can't be normalized.");
+	
+	tVector res(nElements);
+	for(k=0;k<nElements;k++)
+		res(k) = v(k)/sum;
+	return res;
+}

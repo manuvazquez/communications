@@ -17,35 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef STATUTIL_H
+#define STATUTIL_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+@author Manu
 */
 
 #include <vector>
-#include <types.h>
-#include <exceptions.h>
-#include "utilExceptions.h"
-#include <lapackpp/gmd.h>
-
+#include <Random.h>
+#include <Util.h>
 
 using namespace std;
 
-enum tOrder {rowwise,columnwise};
-
-class Util{
-
+class StatUtil{
 public:
-
-	static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-	static void Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta);
-	static tVector ToVector(const tMatrix &matrix,tOrder order);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
-	static tMatrix Append(const tMatrix &A,const tMatrix &B);
-	static tVector Normalize(const tVector &v);
+    static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator = *(new Random()));
 };
 
 #endif

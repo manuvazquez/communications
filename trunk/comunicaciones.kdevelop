@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>algorithms/libalgorithms.a</activetarget>
+      <activetarget>statistics/libstatistics.a</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -26,7 +26,7 @@
       <terminal>true</terminal>
       <directoryradio>executable</directoryradio>
       <runarguments>
-        <comunicaciones></comunicaciones>
+        <comunicaciones/>
       </runarguments>
     </run>
     <configurations>
@@ -149,7 +149,10 @@
     <dest>/home/manu/c++/comunicaciones</dest>
   </substmap>
   <kdevcppsupport>
-    <references/>
+    <references>
+      <pcs>usr_src_noRecursivo</pcs>
+      <pcs>usr_local_lapackpp</pcs>
+    </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

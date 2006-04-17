@@ -17,35 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTIL_H
-#define UTIL_H
+#include "StatUtil.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator)
+{
+    int i,j;
 
-#include <vector>
-#include <types.h>
-#include <exceptions.h>
-#include "utilExceptions.h"
-#include <lapackpp/gmd.h>
+    tVector normalizedProbabilities = Util::Normalize(probabilities);
+    int nProbabilities = probabilities.size();
+    
+    double *distributionFunction = new double[nProbabilities];
+    double acum = 0.0;
+    for(i=0;i<nProbabilities;i++)
+    {
+        acum += normalizedProbabilities(i);
+        distributionFunction[i] = acum;
+    }
+
+    vector<int> res(nSamples);
+
+    for(i=0;i<nSamples;i++)
+    {
+        
+    }
+}
 
 
-using namespace std;
-
-enum tOrder {rowwise,columnwise};
-
-class Util{
-
-public:
-
-	static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-	static void Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta);
-	static tVector ToVector(const tMatrix &matrix,tOrder order);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
-	static tMatrix Append(const tMatrix &A,const tMatrix &B);
-	static tVector Normalize(const tVector &v);
-};
-
-#endif

@@ -48,7 +48,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 	tVector likelihoods(nSymbolVectors);
 
 	// and from it, a probability
-	tVector probabilities(nSymbolVectors);
+// 	tVector probabilities(nSymbolVectors);
 
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
@@ -67,7 +67,43 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 				for(k=0;k<_N;k++)
 					smoothingSymbolVectors(k,_m-1) = testedVector[k];
 
+				likelihoods(iTestedVector) = 0.0;
+
+				// every possible smoothing sequence is tested
+				for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
+				{
+					// a testing smoothing vector is generated for the index
+					_alphabet.IntToSymbolsArray(iSmoothingVector,testedSmoothingVector);
+
+					// symbols used for smoothing are copied into "smoothingSymbolVectors"
+					for(k=0;k<testedSmoothingVector.size();k++)
+						smoothingSymbolVectors((_Nm+k)%_N,(_Nm+k)/_N) = testedSmoothingVector[k];
+
+					auxLikelihoodsProd = 1.0;
+
+					// a clone of the channel estimator is generated because this must not be modified
+					channelEstimatorClone = (KalmanEstimator *) (_particlesChannelMatrixEstimators[iParticle])->Clone();
+
+					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
+					{
+						// the likelihood is computed and accumulated
+						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1))),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+
+						// a step in the Kalman Filter
+						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1))),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+					} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
+
+					// memory of the clone is freed
+					delete channelEstimatorClone;
+
+					// the likelihood is accumulated in the proper position of vector:
+					likelihoods(iTestedVector) += auxLikelihoodsProd;
+				} // for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
+
 			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+
+			// probabilities are computed by normalizing the likelihoods
+			tVector probabilities = Util::Normalize(likelihoods);
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 		

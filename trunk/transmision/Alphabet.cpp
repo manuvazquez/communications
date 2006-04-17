@@ -78,7 +78,7 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 	do
 	{
 		resto = numero % _length;
-		cout << resto << "y" <<  _symbols[resto];
+// 		cout << resto << "y" <<  _symbols[resto];
 		res[tamVector-i] =  _symbols[resto];
 		numero /= _length;
 		i++;
@@ -86,11 +86,11 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 
 	for(;tamVector>=i;i++)
 		res[tamVector-i] = _symbols[0];
-	cout << _symbols[0];
+// 	cout << _symbols[0];
 	
-	cout << endl << "dentro" << endl;
-	for(int j=0;j<res.size();j++)
-		cout << res[j];
-	cout << endl;
+// 	cout << endl << "dentro" << endl;
+// 	for(int j=0;j<res.size();j++)
+// 		cout << res[j];
+// 	cout << endl;
 }
 
