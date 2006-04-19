@@ -13,6 +13,7 @@
 #include <KalmanEstimator.h>
 #include <ML_SMCAlgorithm.h>
 #include <ResamplingCriterion.h>
+#include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
@@ -179,9 +180,9 @@ int main(int argc,char* argv[])
 
 // 	tMatrix preambulo(N,m-1);
 // 	preambulo = -1.0;
-	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,10,*(new ResamplingCriterion(0.9)));
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,10,*(new ResamplingCriterion(0.9)),(*new StdResamplingAlgorithm()));
 
-// 	algoritmo.Run(observaciones,ruido.Variances());
+	algoritmo.Run(observaciones,ruido.Variances());
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------
@@ -359,6 +360,77 @@ int main(int argc,char* argv[])
 // 	for(int i=0;i<indices.size();i++)
 // 		cout << indices[i] << "---";
 	// -------------------------------------------------------------------------------
+
+	// -------------- ordenacion ------------------------
+// 	vector<int> indexes(4);
+// 	indexes[0] = 4;indexes[1] = 2;indexes[2] = 9;indexes[3] = -1;
+// 	for(int holita=0;holita<indexes.size();holita++)
+// 		cout << indexes[holita] << "," ;
+// 	cout << endl;
+// 	vector<int>::iterator startIterator = indexes.begin();
+// 	vector<int>::iterator endIterator = indexes.end();
+// 	sort(startIterator,endIterator);
+// 	for(int holita=0;holita<indexes.size();holita++)
+// 		cout << indexes[holita] << "," ;
+// 	cout << endl;
+	// ----------------------------------------------------
+
+	// --------------------- Remuestreo -------------------------------
+// 	tMatrix **estimatedChannelMatrices;
+// 	tMatrix *detectedSymbols;
+// 	ChannelMatrixEstimator **particlesChannelMatrixEstimators;
+// 	
+// 	estimatedChannelMatrices = new tMatrix*[3];
+// 	detectedSymbols = new tMatrix[3];
+// 	particlesChannelMatrixEstimators = new ChannelMatrixEstimator*[3];
+// 	for(int i=0;i<3;i++)
+// 	{
+// 		estimatedChannelMatrices[i] = new tMatrix[5];
+// 		particlesChannelMatrixEstimators[i] = new KalmanEstimator(ARcoefficients[0],ARvariance,*(new tMatrix(i+1,4)));
+// 		for(int j=0;j<5;j++)
+// 		{
+// 			estimatedChannelMatrices[i][j] = *(new tMatrix(2,2));
+// 		}
+// 		detectedSymbols[i] = *(new tMatrix(2,4));
+// 		detectedSymbols[i](0,0) = i;
+// 		estimatedChannelMatrices[i][0](0,0) = i;
+// 	}
+// 
+// 	estimatedChannelMatrices[0][0](0,0) = 1.1;
+// 
+// 	//impresion
+// 	for(int i=0;i<3;i++)
+// 	{
+// 		cout << "Matrices de canal estimadas" << endl;
+// 		for(int j=0;j<5;j++)
+// 		{
+// 			cout << estimatedChannelMatrices[i][j];
+// 		}
+// 		cout << "Simbolos" << endl << detectedSymbols[i] << endl;
+// 		cout << "Filas del estimador=" << (particlesChannelMatrixEstimators[i])->Rows() << endl;
+// 		cout << "---------" << endl;
+// 	}
+// 
+// 	vector<int> indices(3);
+// 	indices[0] = 1;indices[1] = 0;indices[2] = 2;
+// 
+// 	StdResamplingAlgorithm::Resampling(&estimatedChannelMatrices,&detectedSymbols,&particlesChannelMatrixEstimators,indices,3,0,4,5);
+// 
+// 	cout << "Despues del remuestreo..." << endl << endl;
+// 
+// 	//impresion
+// 	for(int i=0;i<3;i++)
+// 	{
+// 		cout << "Matrices de canal estimadas" << endl;
+// 		for(int j=0;j<5;j++)
+// 		{
+// 			cout << estimatedChannelMatrices[i][j];
+// 		}
+// 		cout << "Simbolos" << endl << detectedSymbols[i] << endl;
+// 		cout << "Filas del estimador=" << (particlesChannelMatrixEstimators[i])->Rows() << endl;
+// 		cout << "---------" << endl;
+// 	}
+	//----------------------------------------------------------------------
 
     return 0;
 }

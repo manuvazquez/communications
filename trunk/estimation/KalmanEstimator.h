@@ -43,7 +43,7 @@ private:
 	tMatrix _identityL;
 
 
-	// variables need for Clone
+	// variables needed for Clone
 	double _ARcoefficient,_ARvariance;
 	tMatrix &_initialMeanMatrix;
 

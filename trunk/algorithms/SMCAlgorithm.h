@@ -27,26 +27,30 @@
 */
 
 #include <ResamplingCriterion.h>
+#include <StdResamplingAlgorithm.h>
+#include <StatUtil.h>
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
 	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
 	ResamplingCriterion _resamplingCriterion;
+	StdResamplingAlgorithm _resamplingAlgorithm;
 // 	vector<tMatrix>  *estimatedChannelMatrices;
 	tMatrix  **_estimatedChannelMatrices;
 	tMatrix *_detectedSymbols;
 	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;
 	tVector _weights;
 	bool _reservedMemory;
+
+	virtual void Resampling(int endResamplingTime);
+	virtual void Process(tMatrix observations,vector<double> noiseVariances) = 0;
 public:
-    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion);
+    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 	~SMCAlgorithm();
 	
 	void Run(tMatrix observations,vector<double> noiseVariances);
-	virtual void Process(tMatrix observations,vector<double> noiseVariances) = 0;
 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-// 	virtual void Resampling(
 };
 
 #endif

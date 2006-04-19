@@ -8,4 +8,4 @@ noinst_HEADERS = Algorithm.h UnknownChannelAlgorithm.h \
 libalgorithms_a_SOURCES = Algorithm.cpp UnknownChannelAlgorithm.cpp \
 	KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a

@@ -26,7 +26,6 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &r
 
     tVector normalizedProbabilities = Util::Normalize(probabilities);
     int nProbabilities = probabilities.size();
-	cout << "probs normalizadas" << endl << normalizedProbabilities << endl;
     
     double *distributionFunction = new double[nProbabilities];
     double acum = 0.0;

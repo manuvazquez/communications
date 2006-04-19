@@ -32,7 +32,7 @@ using namespace std;
 
 class StdResamplingAlgorithm{
 public:
-	static void Resampling(tMatrix  **_estimatedChannelMatrices,tMatrix *_detectedSymbols,ChannelMatrixEstimator **_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime);
+	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix **_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
 };
 
 #endif

@@ -19,13 +19,60 @@
  ***************************************************************************/
 #include "StdResamplingAlgorithm.h"
 
-void StdResamplingAlgorithm::Resampling(tMatrix  **estimatedChannelMatrices,tMatrix *detectedSymbols,ChannelMatrixEstimator **particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime)
+void StdResamplingAlgorithm::Resampling(tMatrix  ***estimatedChannelMatrices,tMatrix **detectedSymbols,ChannelMatrixEstimator ***particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants)
 {
-	int i,j;
+	int iParticle,j;
 
-	for(i=0;i<nParticles;i++)
+// 	// for efficiency's sake, the indexes are ordered
+// 	vector<int>::iterator startIterator = indexes.begin();
+// 	vector<int>::iterator endIterator = indexes.end();
+// 	sort(startIterator,endIterator);
+
+	tMatrix **resEstimatedChannelMatrices;
+	tMatrix *resDetectedSymbols;
+	ChannelMatrixEstimator **resParticlesChannelMatrixEstimators;
+
+	// new memory is allocated
+	resEstimatedChannelMatrices = new tMatrix*[nParticles];
+	resDetectedSymbols = new tMatrix[nParticles];
+	resParticlesChannelMatrixEstimators = new ChannelMatrixEstimator*[nParticles];
+
+	for(iParticle=0;iParticle<nParticles;iParticle++)
 	{
-		
+// 		// it doesn't make sense to copy a particle into itself
+// 		if(indexes[iParticle]==iParticle)
+// 			continue;
+
+		// memory is allocated for each trajectory within a particle
+		resEstimatedChannelMatrices[iParticle] = new tMatrix[nTimeInstants];
+// 		resDetectedSymbols = *(new tMatrix(detectedSymbols[iParticle].size(0),
+
+		// channel matrices
+		for(j=startResamplingTime;j<endResamplingTime;j++)
+		{
+// 			if(estimatedChannelMatrices[iParticle]
+			resEstimatedChannelMatrices[iParticle][j] = (*estimatedChannelMatrices)[indexes[iParticle]][j];
+		}
+
+		// symbol vectors
+		resDetectedSymbols[iParticle] = (*detectedSymbols)[indexes[iParticle]];
+
+		// channel matrix estimators
+		resParticlesChannelMatrixEstimators[iParticle] = ((*particlesChannelMatrixEstimators)[indexes[iParticle]])->Clone();
 	}
+
+	// old memory is freed
+	delete[] (*detectedSymbols);
+	for(iParticle=0;iParticle<nParticles;iParticle++)
+	{
+		delete[] (*estimatedChannelMatrices)[iParticle];
+		delete (*particlesChannelMatrixEstimators)[iParticle];
+	}
+	delete[] (*estimatedChannelMatrices);
+	delete[] (*particlesChannelMatrixEstimators);
+
+	*estimatedChannelMatrices = resEstimatedChannelMatrices;
+	*detectedSymbols = resDetectedSymbols;
+	*particlesChannelMatrixEstimators = resParticlesChannelMatrixEstimators;
 }
 
