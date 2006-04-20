@@ -32,7 +32,7 @@
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
-protected:
+public:
 	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
 	ResamplingCriterion _resamplingCriterion;
 	StdResamplingAlgorithm _resamplingAlgorithm;
@@ -51,6 +51,7 @@ public:
 	
 	void Run(tMatrix observations,vector<double> noiseVariances);
 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+	double SER(tMatrix symbols);
 };
 
 #endif

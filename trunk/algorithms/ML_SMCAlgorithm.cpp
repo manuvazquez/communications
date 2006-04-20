@@ -128,8 +128,8 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 		_weights = Util::Normalize(_weights);
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_endDetectionTime-1))
-			this->Resampling(iObservationToBeProcessed);
+// 		if(iObservationToBeProcessed<(_endDetectionTime-1))
+// 			this->Resampling(iObservationToBeProcessed);
 		
 	} // for each time instant
 }

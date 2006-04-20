@@ -127,3 +127,15 @@ double Util::Sum(const tVector &v)
 		res += v(i);
 	return res;		
 }
+
+void Util::Max(const tVector &v,int &index)
+{
+	double max = v(0);
+	index = 0;
+	for(int i=1;i<v.size();i++)
+		if(v(i)>max)
+		{
+			max = v(i);
+			index = i;
+		}
+}

@@ -41,40 +41,45 @@ int main(int argc,char* argv[])
 //     cout << "El primer argumento " << argv[1] << "\n";
 //     tBit secuenciasBits[][2] = {{0,0},{0,1},{1,0},{1,1}};
 //     tSymbol simbolos[] = {-3,-1,1,3};
-    vector<vector<tBit> > secuenciasBits(4,vector<tBit>(2));
-    secuenciasBits[0][0] = 0; secuenciasBits[0][1] = 0;
-    secuenciasBits[1][0] = 0; secuenciasBits[1][1] = 1;
-    secuenciasBits[2][0] = 1; secuenciasBits[2][1] = 0;
-    secuenciasBits[3][0] = 1; secuenciasBits[3][1] = 1;
-    vector<tSymbol> simbolos(4);
-    simbolos[0] = -3; simbolos[1] = -1; simbolos[2] = 1; simbolos[3] = 3;
-    Alphabet pam4(2,4,secuenciasBits,simbolos);
 
-    vector<tBit> secuenciaAbuscar(2);
-    secuenciaAbuscar[0] = 1; secuenciaAbuscar[1] = 1;
-    tSymbol simboloDevuelto = pam4[secuenciaAbuscar];
+	// --------------------- PAM4 ---------------------------
+//     vector<vector<tBit> > secuenciasBits(4,vector<tBit>(2));
+//     secuenciasBits[0][0] = 0; secuenciasBits[0][1] = 0;
+//     secuenciasBits[1][0] = 0; secuenciasBits[1][1] = 1;
+//     secuenciasBits[2][0] = 1; secuenciasBits[2][1] = 0;
+//     secuenciasBits[3][0] = 1; secuenciasBits[3][1] = 1;
+//     vector<tSymbol> simbolos(4);
+//     simbolos[0] = -3; simbolos[1] = -1; simbolos[2] = 1; simbolos[3] = 3;
+//     Alphabet pam4(2,4,secuenciasBits,simbolos);
+// 
+//     vector<tBit> secuenciaAbuscar(2);
+//     secuenciaAbuscar[0] = 1; secuenciaAbuscar[1] = 1;
+//     tSymbol simboloDevuelto = pam4[secuenciaAbuscar];
+	// ----------------------------------------------------------
 
 	// -------------- PAM2 -------------------
 //     vector<vector<tBit> > secuenciasBits(2,vector<tBit>(1));
-	secuenciasBits = *(new vector<vector<tBit> >(2,vector<tBit>(1)));
+// 	secuenciasBits = *(new vector<vector<tBit> >(2,vector<tBit>(1)));
+	vector<vector<tBit> > secuenciasBits(2,vector<tBit>(1));
     secuenciasBits[0][0] = 0; secuenciasBits[1][0] = 1;
 //     vector<tSymbol> simbolos(2);
-	simbolos = *(new vector<tSymbol>(2));
+// 	simbolos = *(new vector<tSymbol>(2));
+	vector<tSymbol> simbolos(2);
     simbolos[0] = -1; simbolos[1] = 1;
     Alphabet pam2(1,2,secuenciasBits,simbolos);
 
 
 	vector<tBit> secuenciaDevuelta;
-	secuenciaDevuelta = pam4[-1];
-	cout << simboloDevuelto << endl;
+// 	secuenciaDevuelta = pam4[-1];
+// 	cout << simboloDevuelto << endl;
 // 	cout << "el tamaño de la secuencia es " << secuenciaDevuelta[0];
-	secuenciaDevuelta.resize(6);
-	vector<tSymbol> secuenciaSimbolos(8);
-	pam4.IntToSymbolsArray(13,secuenciaSimbolos);
-	cout << "Secuencia devuelta" << endl;
-	for(int i=0;i<secuenciaSimbolos.size();i++)
-		cout << secuenciaSimbolos[i];
-	cout << endl;
+// 	secuenciaDevuelta.resize(6);
+// 	vector<tSymbol> secuenciaSimbolos(8);
+// 	pam4.IntToSymbolsArray(13,secuenciaSimbolos);
+// 	cout << "Secuencia devuelta" << endl;
+// 	for(int i=0;i<secuenciaSimbolos.size();i++)
+// 		cout << secuenciaSimbolos[i];
+// 	cout << endl;
 	Bits bits(2,4);
 	bits.Print();
 	cout << "-----------" << endl;
@@ -92,7 +97,10 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------ Estimador de Kalman ------------------------------------
-	int L=3,N=2,m=2,K=3;
+	int L=3,N=2,m=2,K=300;
+	int longSecEntr = 30;
+	int nParticles = 30;
+	int d = m -1;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
@@ -111,7 +119,7 @@ int main(int argc,char* argv[])
 		cout << canal[i] << endl << "****************" << endl;
 
 	ChannelDependentNoise ruido(canal);
-	ruido.SetSNR(12,1);
+	ruido.SetSNR(3,1);
 
 	cout << "El ruido" << endl;
 	ruido.Print();
@@ -180,9 +188,22 @@ int main(int argc,char* argv[])
 
 // 	tMatrix preambulo(N,m-1);
 // 	preambulo = -1.0;
-	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,10,*(new ResamplingCriterion(0.9)),(*new StdResamplingAlgorithm()));
 
-	algoritmo.Run(observaciones,ruido.Variances());
+	tRange todasFilasSimbolos(0,N-1);
+
+	ResamplingCriterion criterioRemuestreo(0.9);
+	StdResamplingAlgorithm algoritmoRemuestreo;
+
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+
+	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
+	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
+// 	algoritmo.Run(observaciones,ruido.Variances());
+// 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
+
+	// ojo: los ultimos simbolos no se detectan
+	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+	cout << "La probabilidad de error es " << pe << endl;
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------
@@ -432,5 +453,16 @@ int main(int argc,char* argv[])
 // 	}
 	//----------------------------------------------------------------------
 
+
+	// ---------------------- Maximo --------------------------------
+// 	tVector pruebaMaximo(4);
+// 	pruebaMaximo(0) = -10.2;pruebaMaximo(1)=2.132;pruebaMaximo(2)=234.1;pruebaMaximo(3) = -12.1;
+// 	int imax;
+// 	Util::Max(pruebaMaximo,imax);
+// 	cout << "El vector" << endl << pruebaMaximo << endl;
+// 	cout << "max=" << pruebaMaximo(imax) << " indice=" << imax << endl;
+	// --------------------------------------------------------------
+
+	cout << "Al final del programa" << endl << endl;
     return 0;
 }

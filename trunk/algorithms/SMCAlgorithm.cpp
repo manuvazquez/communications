@@ -34,7 +34,7 @@ _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterio
 		_estimatedChannelMatrices[i] = NULL;
 	}
 
-	_weights = 1.0/_nParticles;
+	_weights = 1.0/(double)_nParticles;
 }
 
 SMCAlgorithm::~ SMCAlgorithm()
@@ -42,9 +42,11 @@ SMCAlgorithm::~ SMCAlgorithm()
 	for(int i=0;i<_nParticles;i++)
 	{
 		delete _particlesChannelMatrixEstimators[i];
-		delete _estimatedChannelMatrices[i];
+		delete[] _estimatedChannelMatrices[i]; // <----------------
 	}
 	delete[] _detectedSymbols;
+	delete[] _particlesChannelMatrixEstimators;
+	delete[] _estimatedChannelMatrices;
 }
 
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
@@ -61,6 +63,10 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
 		_detectedSymbols[iParticle] = *(new tMatrix(_N,_endDetectionTime));
 	}
+
+// 	_estimatedChannelMatrices[0][0] = *(new tMatrix(2,2));
+// 	_estimatedChannelMatrices[0][0](0,0) = 1;_estimatedChannelMatrices[0][0](0,1) = 2;	
+// 	cout << "No llamo a process" << endl;
 
 	this->Process(observations,noiseVariances);
 }
@@ -111,6 +117,37 @@ void SMCAlgorithm::Resampling(int endResamplingTime)
 	{
 		vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,_weights);
 		_resamplingAlgorithm.Resampling(&_estimatedChannelMatrices,&_detectedSymbols,&_particlesChannelMatrixEstimators,indexes,_nParticles,_startDetectionTime,endResamplingTime,_endDetectionTime);
-		cout << "Resampling...";
+		_weights = 1.0/(double)_nParticles;
+// 		cout << "Resampling..." << endl;
 	}
 }
+
+double SMCAlgorithm::SER(tMatrix symbols)
+{
+	int windowSize = symbols.cols();
+	int nDetectedVectors = _detectedSymbols[0].cols();
+
+	if(windowSize>nDetectedVectors)
+		throw RuntimeException("SMCAlgorithm::SER: more symbol vectors passed than detected.");
+	
+	// best particle is chosen
+	int iBestParticle;
+	Util::Max(_weights,iBestParticle);
+
+	int nErrors = 0;
+	int windowStart = nDetectedVectors - windowSize;
+	int j;
+
+	for(int i=windowStart;i<nDetectedVectors;i++)
+	{
+		j=0;
+		while(j<_N)
+		{
+			if(_detectedSymbols[iBestParticle](j,i)!=symbols(j,i-windowStart))
+				nErrors++;
+			j++;
+		}
+	}
+	return ((double)nErrors)/(double)(windowSize*_N);
+}
+

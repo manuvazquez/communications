@@ -47,6 +47,7 @@ public:
 	static tMatrix Append(const tMatrix &A,const tMatrix &B);
 	static tVector Normalize(const tVector &v);
 	static double Sum(const tVector &v);
+	static void Max(const tVector &v,int &index);
 };
 
 #endif

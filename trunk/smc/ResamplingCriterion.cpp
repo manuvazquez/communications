@@ -34,7 +34,7 @@ bool ResamplingCriterion::ResamplingNeeded(tVector weights)
 		weights2Sum += weights(i)*weights(i);
 
 	if(weights2Sum==0)
-		throw NullWeightsException("All weights are zero.");
+		throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");
 
 	nEffectiveParticles = 1.0/weights2Sum;
 	if(nEffectiveParticles<(_resamplingRatio*((double)nParticles)))
