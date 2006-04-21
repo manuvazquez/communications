@@ -58,7 +58,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 		for(iParticle=0;iParticle<_nParticles;iParticle++)
 		{
 			// the m-1 already detected symbol vectors are copied into the matrix
-			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(_detectedSymbols[iParticle](allSymbolRows,mPrecedentColumns));
+			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject((*_detectedSymbols[iParticle])(allSymbolRows,mPrecedentColumns));
 
 			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
@@ -117,10 +117,10 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 
 			// sampled symbols are copied into the corresponding particle
 			for(k=0;k<_N;k++)
-				_detectedSymbols[iParticle](k,iObservationToBeProcessed) = sampledVector[k];
+				(*_detectedSymbols[iParticle])(k,iObservationToBeProcessed) = sampledVector[k];
 			
 			// channel matrix is estimated by means of the particle channel estimator
-			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbols[iParticle](allSymbolRows,mPrecedentColumns),noiseVariances[iObservationToBeProcessed]);
+			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),(*_detectedSymbols[iParticle])(allSymbolRows,mPrecedentColumns),noiseVariances[iObservationToBeProcessed]);
 
 			_weights(iParticle) *= Util::Sum(likelihoods);
 
@@ -129,8 +129,8 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 		_weights = Util::Normalize(_weights);
 
 		// if it's not the last time instant
-// 		if(iObservationToBeProcessed<(_endDetectionTime-1))
-// 			this->Resampling(iObservationToBeProcessed);
+		if(iObservationToBeProcessed<(_endDetectionTime-1))
+			this->Resampling(iObservationToBeProcessed);
 		
 	} // for each time instant
 }

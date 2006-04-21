@@ -1,22 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="5" >
+ <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="99" Type="Source" />
-  </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/filters/KalmanFilter.cpp" >
    <View0 line="25" Type="Source" />
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.h" >
+   <View0 line="29" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
-   <View0 line="112" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.cpp" >
+   <View0 line="34" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.cpp" >
-   <View0 line="153" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.h" >
-   <View0 line="47" Type="Source" />
-  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

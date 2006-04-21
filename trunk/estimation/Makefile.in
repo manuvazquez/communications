@@ -64,7 +64,7 @@ libestimation_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/local/lib/liblapackpp.la
 am_libestimation_a_OBJECTS = ChannelMatrixEstimator.$(OBJEXT) \
-	KalmanEstimator.$(OBJEXT)
+	KalmanEstimator.$(OBJEXT) RLSEstimator.$(OBJEXT)
 libestimation_a_OBJECTS = $(am_libestimation_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -182,8 +182,10 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/src -I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
-noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h
-libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp
+noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h RLSEstimator.h
+libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp \
+	RLSEstimator.cpp
+
 libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
@@ -263,6 +265,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelMatrixEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KalmanEstimator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RLSEstimator.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

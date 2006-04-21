@@ -21,7 +21,7 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, channelEstimator, preamble),
 // _variables initialization
-_d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_estimatedChannelMatrices(new tMatrix*[_nParticles]),_detectedSymbols(new tMatrix[_nParticles]),_particlesChannelMatrixEstimators(new ChannelMatrixEstimator*[_nParticles]),_weights(_nParticles),_allSymbolsRows(0,_N-1),_reservedMemory(false)
+_d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_estimatedChannelMatrices(new tMatrix*[_nParticles]),_detectedSymbols(new tMatrix*[_nParticles]),_particlesChannelMatrixEstimators(new ChannelMatrixEstimator*[_nParticles]),_weights(_nParticles),_allSymbolsRows(0,_N-1),_reservedMemory(false)
 {
 	// at first, we assume that all observations from the preamble need to be processed
 	_startDetectionTime = _m - 1;
@@ -30,6 +30,7 @@ _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterio
 	{
 		_particlesChannelMatrixEstimators[i] = NULL;
 		_estimatedChannelMatrices[i] = NULL;
+		_detectedSymbols[i] = NULL;
 	}
 
 	_weights = 1.0/(double)_nParticles;
@@ -41,6 +42,7 @@ SMCAlgorithm::~SMCAlgorithm()
 	{
 		delete _particlesChannelMatrixEstimators[i];
 		delete[] _estimatedChannelMatrices[i]; // <----------------
+		delete _detectedSymbols[i];
 	}
 	delete[] _detectedSymbols;
 	delete[] _particlesChannelMatrixEstimators;
@@ -59,7 +61,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
 	{
 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
-		_detectedSymbols[iParticle] = *(new tMatrix(_N,_endDetectionTime));
+		_detectedSymbols[iParticle] = new tMatrix(_N,_endDetectionTime);
 		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
 	}
 
@@ -85,7 +87,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 	{
 		// memory is reserved for the current particle
 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
-		_detectedSymbols[iParticle] = *(new tMatrix(_N,_endDetectionTime));
+		_detectedSymbols[iParticle] = new tMatrix(_N,_endDetectionTime);
 
 		//the channel estimation given by the training sequence is copied into each particle...
 		for(j=_m-1;j<trainingSequenceChannelMatrices.size();j++)
@@ -95,7 +97,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
 		//... the symbols are considered detected...
 		tRange columnsRange(0,preambleTrainingSequence.cols()-1);
-		_detectedSymbols[iParticle](_allSymbolsRows,columnsRange).inject(preambleTrainingSequence);
+		(*_detectedSymbols[iParticle])(_allSymbolsRows,columnsRange).inject(preambleTrainingSequence);
 
 		// ... and the channel estimators of all the particles are updated
 		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
@@ -121,7 +123,7 @@ void SMCAlgorithm::Resampling(int endResamplingTime)
 double SMCAlgorithm::SER(tMatrix symbols)
 {
 	int windowSize = symbols.cols();
-	int nDetectedVectors = _detectedSymbols[0].cols();
+	int nDetectedVectors = (_detectedSymbols[0])->cols();
 
 	if(windowSize>nDetectedVectors)
 		throw RuntimeException("SMCAlgorithm::SER: more symbol vectors passed than detected.");
@@ -139,7 +141,7 @@ double SMCAlgorithm::SER(tMatrix symbols)
 		j=0;
 		while(j<_N)
 		{
-			if(_detectedSymbols[iBestParticle](j,i)!=symbols(j,i-windowStart))
+			if((*_detectedSymbols[iBestParticle])(j,i)!=symbols(j,i-windowStart))
 				nErrors++;
 			j++;
 		}

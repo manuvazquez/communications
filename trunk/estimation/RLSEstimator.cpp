@@ -17,22 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STDRESAMPLINGALGORITHM_H
-#define STDRESAMPLINGALGORITHM_H
+#include "RLSEstimator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+RLSEstimator::RLSEstimator(int nRows, int nColumns,double forgettingFactor): ChannelMatrixEstimator(nRows, nColumns),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm))
+{
+}
 
-#include <vector>
-#include <types.h>
-#include <ChannelMatrixEstimator.h>
+ChannelMatrixEstimator* RLSEstimator::Clone()
+{
+}
 
-using namespace std;
+tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+{
+	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
+		throw RuntimeException("Observations vector length or symbols matrix dimensions are wrong.");
 
-class StdResamplingAlgorithm{
-public:
-	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
-};
+	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
+}
 
-#endif

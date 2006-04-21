@@ -119,7 +119,7 @@ int main(int argc,char* argv[])
 		cout << canal[i] << endl << "****************" << endl;
 
 	ChannelDependentNoise ruido(canal);
-	ruido.SetSNR(3,1);
+	ruido.SetSNR(6,1);
 
 	cout << "El ruido" << endl;
 	ruido.Print();
@@ -398,11 +398,11 @@ int main(int argc,char* argv[])
 
 	// --------------------- Remuestreo -------------------------------
 // 	tMatrix **estimatedChannelMatrices;
-// 	tMatrix *detectedSymbols;
+// 	tMatrix **detectedSymbols;
 // 	ChannelMatrixEstimator **particlesChannelMatrixEstimators;
 // 	
 // 	estimatedChannelMatrices = new tMatrix*[3];
-// 	detectedSymbols = new tMatrix[3];
+// 	detectedSymbols = new tMatrix*[3];
 // 	particlesChannelMatrixEstimators = new ChannelMatrixEstimator*[3];
 // 	for(int i=0;i<3;i++)
 // 	{
@@ -412,8 +412,8 @@ int main(int argc,char* argv[])
 // 		{
 // 			estimatedChannelMatrices[i][j] = *(new tMatrix(2,2));
 // 		}
-// 		detectedSymbols[i] = *(new tMatrix(2,4));
-// 		detectedSymbols[i](0,0) = i;
+// 		detectedSymbols[i] = new tMatrix(2,4);
+// 		(*detectedSymbols[i])(0,0) = i;
 // 		estimatedChannelMatrices[i][0](0,0) = i;
 // 	}
 // 
@@ -427,7 +427,7 @@ int main(int argc,char* argv[])
 // 		{
 // 			cout << estimatedChannelMatrices[i][j];
 // 		}
-// 		cout << "Simbolos" << endl << detectedSymbols[i] << endl;
+// 		cout << "Simbolos" << endl << *detectedSymbols[i] << endl;
 // 		cout << "Filas del estimador=" << (particlesChannelMatrixEstimators[i])->Rows() << endl;
 // 		cout << "---------" << endl;
 // 	}
@@ -447,7 +447,7 @@ int main(int argc,char* argv[])
 // 		{
 // 			cout << estimatedChannelMatrices[i][j];
 // 		}
-// 		cout << "Simbolos" << endl << detectedSymbols[i] << endl;
+// 		cout << "Simbolos" << endl << *detectedSymbols[i] << endl;
 // 		cout << "Filas del estimador=" << (particlesChannelMatrixEstimators[i])->Rows() << endl;
 // 		cout << "---------" << endl;
 // 	}

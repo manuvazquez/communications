@@ -17,22 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STDRESAMPLINGALGORITHM_H
-#define STDRESAMPLINGALGORITHM_H
+#ifndef RLSESTIMATOR_H
+#define RLSESTIMATOR_H
+
+#include <ChannelMatrixEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
-#include <types.h>
-#include <ChannelMatrixEstimator.h>
+#include <exceptions.h>
+#include <Util.h>
 
-using namespace std;
-
-class StdResamplingAlgorithm{
+class RLSEstimator : public ChannelMatrixEstimator
+{
+protected:
+	double _forgettingFactor,_invForgettingFactor;
+	tMatrix _invRtilde,_pTilde;
 public:
-	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
+    RLSEstimator(int nRows, int nColumns,double forgettingFactor);
+
+    virtual ChannelMatrixEstimator* Clone();
+    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+
 };
 
 #endif
