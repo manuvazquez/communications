@@ -46,7 +46,8 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(tMatrix obse
 
 	for(int i=_m-1;i<lengthToProcessSequence;i++)
 	{
-		estimatedMatrices[i] = _channelEstimator.NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,*(new tRange(i-_m+1,i))),noiseVariances[i]);
+		tRange mColumns(i-_m+1,i);
+		estimatedMatrices[i] = _channelEstimator.NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
 	}
 	return estimatedMatrices;
 }

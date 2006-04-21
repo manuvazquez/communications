@@ -20,7 +20,8 @@
 #include "Noise.h"
 
 Noise::Noise(int nRx,int length,Random &randomGenerator): nRx(nRx),length(length),
-matrix(randomGenerator.randnArray(nRx*length,0,1),nRx,length)
+// matrix(randomGenerator.randnArray(nRx*length,0,1),nRx,length)
+matrix(StatUtil::RandnMatrix(nRx,length,0.0,1.0,randomGenerator))
 {
 }
 

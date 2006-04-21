@@ -35,6 +35,7 @@ protected:
 	Alphabet _alphabet;
 public:
     Algorithm(string name, Alphabet  alphabet);
+	virtual ~Algorithm() {};
 	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
 };
 

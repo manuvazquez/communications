@@ -45,7 +45,7 @@ private:
 
 	// variables needed for Clone
 	double _ARcoefficient,_ARvariance;
-	tMatrix &_initialMeanMatrix;
+	tMatrix _initialMeanMatrix;
 
 	// auxiliary variables (just for efficiency's sake)
 	tMatrix _F;

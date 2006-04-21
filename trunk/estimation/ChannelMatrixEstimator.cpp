@@ -24,4 +24,3 @@ ChannelMatrixEstimator::ChannelMatrixEstimator(int nRows,int nColumns):_L(nRows)
 }
 
 
-

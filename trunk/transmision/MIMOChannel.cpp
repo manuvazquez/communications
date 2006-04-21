@@ -87,7 +87,8 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 		for(j=0;j<memory;j++)
 		{
 			// currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*nTx,(j+1)*nTx-1)))*symbols.col(iSymbolVector-memory+1+j)
-			Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*nTx,(j+1)*nTx-1))),symbols.col(iSymbolVector-memory+1+j), currentObservationVector,1.0,1.0);
+			tRange rowsRange(j*nTx,(j+1)*nTx-1);
+			Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-memory+1+j), currentObservationVector,1.0,1.0);
 		}
 
 		// the noise is added:

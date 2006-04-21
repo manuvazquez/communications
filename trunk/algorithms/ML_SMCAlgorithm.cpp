@@ -32,7 +32,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
 	double auxLikelihoodsProd;
 	KalmanEstimator *channelEstimatorClone;
-	
+	tRange mFirstColumns(0,_m-1);
 
 	// it selects all rows in the symbols Matrix
 	tRange allSymbolRows(0,_N-1);
@@ -53,10 +53,12 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
 	{
+		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_nParticles;iParticle++)
 		{
 			// the m-1 already detected symbol vectors are copied into the matrix
-			smoothingSymbolVectors(allSymbolRows,*(new tRange(0,_m-1))).inject(_detectedSymbols[iParticle](allSymbolRows,*(new tRange(iObservationToBeProcessed-_m+1,iObservationToBeProcessed))));
+			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(_detectedSymbols[iParticle](allSymbolRows,mPrecedentColumns));
 
 			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
@@ -82,18 +84,17 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 					auxLikelihoodsProd = 1.0;
 
 					// a clone of the channel estimator is generated because this must not be modified
-					channelEstimatorClone = (KalmanEstimator *) (_particlesChannelMatrixEstimators[iParticle])->Clone();
+					channelEstimatorClone = (dynamic_cast < KalmanEstimator * > (_particlesChannelMatrixEstimators[iParticle]))->Clone();
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
-
-// 						cout << "los simbolos pasados" << endl << smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1)));
+						tRange mColumns(iSmoothingLag,iSmoothingLag+_m-1);
 
 						// the likelihood is computed and accumulated
-						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1))),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 						// a step in the Kalman Filter
-						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,*(new tRange(iSmoothingLag,iSmoothingLag+_m-1))),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 					} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 
 					// memory of the clone is freed
@@ -119,7 +120,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 				_detectedSymbols[iParticle](k,iObservationToBeProcessed) = sampledVector[k];
 			
 			// channel matrix is estimated by means of the particle channel estimator
-			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbols[iParticle](allSymbolRows,*(new tRange(iObservationToBeProcessed-_m+1,iObservationToBeProcessed))),noiseVariances[iObservationToBeProcessed]);
+			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbols[iParticle](allSymbolRows,mPrecedentColumns),noiseVariances[iObservationToBeProcessed]);
 
 			_weights(iParticle) *= Util::Sum(likelihoods);
 

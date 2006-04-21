@@ -39,23 +39,6 @@ _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovari
 	// _predictiveCovariance = _RfilteredCovarianceRtrans + _stateEquationCovariance;
 	Util::Add(_RfilteredCovarianceRtrans,_stateEquationCovariance,_predictiveCovariance);
 
-// 	cout << "Media filtrada" << endl << _filteredMean << endl;
-// 	cout << "Media predictiva" << endl << _predictiveMean << endl;
-// 	cout << "Covarianza estado" << endl << _stateEquationCovariance << endl;
-// 	cout << "R" << endl << _R << endl;
-//
-// 	char c;
-// 	cin >> c;
-
-// 	// memory for several auxiliar matrices is allocated
-// 	_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength);
-// 	_auxMatrix(_observationVectorLength,_observationVectorLength);
-// 	_KalmanGain(_nElementsToEstimate,_observationVectorLength);
-// 	_auxVector(_observationVectorLength);
-// 	_KalmanGainByNotPredicted(_nElementsToEstimate);
-// 	_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate);
-// 	_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate);
-// 	_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate);
 }
 
 void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance)
@@ -114,19 +97,3 @@ void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquati
 	// _predictiveCovariance = _RfilteredCovarianceRtrans + _stateEquationCovariance;
 	Util::Add(_RfilteredCovarianceRtrans,_stateEquationCovariance,_predictiveCovariance);
 }
-
-//   		public virtual FiltroKalman Clone()
-//   		{
-//   			FiltroKalman clon = this.MemberwiseClone() as FiltroKalman;
-//
-//   			//clon.R = R.Clone();
-//   			//clon.covarEcuacionEstado = covarEcuacionEstado.Clone();
-//   			clon.mediaPredictiva = mediaPredictiva.Clone();
-//   			clon.mediaFiltrada = mediaFiltrada.Clone();
-//   			clon.covarPredictiva = covarPredictiva.Clone();
-//   			clon.covarFiltrada = covarFiltrada.Clone();
-// //  			Console.WriteLine("Holita\n");
-// //  			covarPredictiva[0,1] = -100;
-// //  			Console.WriteLine("No clon\n{0}\nClon\n{1}\n",covarPredictiva,clon.CovarianzaPredictiva);
-//   			return clon;
-//   		}

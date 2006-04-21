@@ -45,7 +45,21 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &r
 			j++;
 		res[i] = j;
     }
+	
+	// memory release
+	delete[] distributionFunction;
 	return res;
 }
 
+tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
+{
+	tMatrix res(rows,cols);
+	double stdDv = sqrt(variance);
 
+	int j;
+	for(int i=0;i<rows;i++)
+		for(j=0;j<cols;j++)
+			res(i,j) = 	randomGenerator.randn()*stdDv + mean;
+
+	return res;
+}

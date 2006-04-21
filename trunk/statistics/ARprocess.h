@@ -29,6 +29,7 @@
 #include <types.h>
 #include <Util.h>
 #include <Random.h>
+#include <StatUtil.h>
 #include <lapackpp/gmd.h>
 
 using namespace std;
@@ -41,12 +42,13 @@ private:
 	double noiseMean;
 	int nCoefficients, rows, columns, iNextMatrix;
 	int iterationsForConvergence;
-	tMatrix *buffer;
+	tMatrix **buffer;
 	Random *randomGenerator;
 
 public:
 //     ARprocess();
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
+	~ARprocess();
 	tMatrix NextMatrix();
 };
 

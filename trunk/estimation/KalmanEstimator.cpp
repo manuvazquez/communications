@@ -147,7 +147,12 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 
 KalmanEstimator *KalmanEstimator::Clone()
 {
-	KalmanEstimator *res = new KalmanEstimator(_ARcoefficient,_ARvariance,_initialMeanMatrix);
+// 	KalmanEstimator *res = new KalmanEstimator(_ARcoefficient,_ARvariance,_initialMeanMatrix);
+	KalmanEstimator *res = new KalmanEstimator(*this);
+	
+	// the Kalman Filter initialized during construction is erased
+// 	delete res->_kalmanFilter;
+
 	res->_kalmanFilter = new KalmanFilter(*_kalmanFilter);
 
 	return res;

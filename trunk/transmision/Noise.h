@@ -27,6 +27,7 @@
 #include <vector>
 #include <types.h>
 #include <Random.h>
+#include <StatUtil.h>
 
 using namespace std;
 
@@ -36,6 +37,7 @@ protected:
 	tMatrix matrix;
 public:
     Noise(int nRx,int length,Random &randomGenerator = *(new Random()));
+	virtual ~Noise() {};
 
 	int Length() { return length;}
 	int Nr() { return nRx;}

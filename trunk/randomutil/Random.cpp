@@ -34,14 +34,14 @@ double Random::randn ()
   }
 }
 
-double* Random::randnArray(int n,double mean,double variance)
-{
-	double* array = new double[n];
-	double stdDv = sqrt(variance);
-	for(int i=0;i<n;i++)
-		array[i] = randn()*stdDv + mean;
-	return array;
-}
+// double* Random::randnArray(int n,double mean,double variance)
+// {
+// 	double* array = new double[n];
+// 	double stdDv = sqrt(variance);
+// 	for(int i=0;i<n;i++)
+// 		array[i] = randn()*stdDv + mean;
+// 	return array;
+// }
 
 complex<double> Random::complexRandn()
 {

@@ -105,13 +105,13 @@ tVector Util::Normalize(const tVector &v)
 	int k;
 
 	int nElements = v.size();
-	double sum;
+	double sum = 0.0;
 	
 	for(k=0;k<nElements;k++)
 		sum += v(k);
 
 	if(sum==0)
-		throw AllElementsNullException("Normalize: A vector of zeros can't be normalized.");
+		throw AllElementsNullException("Util::Normalize: A vector of zeros can't be normalized.");
 	
 	tVector res(nElements);
 	for(k=0;k<nElements;k++)

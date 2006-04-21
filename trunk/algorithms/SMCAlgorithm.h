@@ -41,6 +41,7 @@ public:
 	tMatrix *_detectedSymbols;
 	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;
 	tVector _weights;
+	tRange _allSymbolsRows;
 	bool _reservedMemory;
 
 	virtual void Resampling(int endResamplingTime);

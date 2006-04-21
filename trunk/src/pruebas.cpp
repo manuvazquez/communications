@@ -463,6 +463,11 @@ int main(int argc,char* argv[])
 // 	cout << "max=" << pruebaMaximo(imax) << " indice=" << imax << endl;
 	// --------------------------------------------------------------
 
+	// --------------- RandnArray ----------------------------
+// 	Random r;
+// 	cout << "La matriz aleatoria" << endl << StatUtil::RandnMatrix(2,3,0.0,1.0,r) << endl;
+	// --------------------------------------------------------
+
 	cout << "Al final del programa" << endl << endl;
     return 0;
 }

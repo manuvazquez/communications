@@ -18,7 +18,7 @@ class Random
 		Random () {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}
 		Random (uint32_t seed) : _seed(seed) { };
 		double randn();
-		double* Random::randnArray(int n,double = 0,double =1);
+// 		double* Random::randnArray(int n,double = 0,double =1);
 		complex<double> complexRandn();
 		int randab(int a, int b) { return (a+(int) ((double) b*rand_r(&_seed)/(RAND_MAX+1.0))); };
 		double rand() { return ((double) rand_r(&_seed))/((double) RAND_MAX); }

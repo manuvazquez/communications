@@ -34,6 +34,8 @@ using namespace std;
 class StatUtil{
 public:
     static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator = *(new Random()));
+
+	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator);
 };
 
 #endif

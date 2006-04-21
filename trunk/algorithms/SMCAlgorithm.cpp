@@ -21,23 +21,21 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, channelEstimator, preamble),
 // _variables initialization
-_d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_estimatedChannelMatrices(new tMatrix*[_nParticles]),_detectedSymbols(new tMatrix[_nParticles]),_particlesChannelMatrixEstimators(new ChannelMatrixEstimator*[_nParticles]),_weights(_nParticles),_reservedMemory(false)
+_d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_estimatedChannelMatrices(new tMatrix*[_nParticles]),_detectedSymbols(new tMatrix[_nParticles]),_particlesChannelMatrixEstimators(new ChannelMatrixEstimator*[_nParticles]),_weights(_nParticles),_allSymbolsRows(0,_N-1),_reservedMemory(false)
 {
-// 	_estimatedChannelMatrices = new tMatrix*[_nParticles];
-
 	// at first, we assume that all observations from the preamble need to be processed
 	_startDetectionTime = _m - 1;
 
 	for(int i=0;i<_nParticles;i++)
 	{
-		_particlesChannelMatrixEstimators[i] = _channelEstimator.Clone();
+		_particlesChannelMatrixEstimators[i] = NULL;
 		_estimatedChannelMatrices[i] = NULL;
 	}
 
 	_weights = 1.0/(double)_nParticles;
 }
 
-SMCAlgorithm::~ SMCAlgorithm()
+SMCAlgorithm::~SMCAlgorithm()
 {
 	for(int i=0;i<_nParticles;i++)
 	{
@@ -62,11 +60,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	{
 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
 		_detectedSymbols[iParticle] = *(new tMatrix(_N,_endDetectionTime));
+		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
 	}
-
-// 	_estimatedChannelMatrices[0][0] = *(new tMatrix(2,2));
-// 	_estimatedChannelMatrices[0][0](0,0) = 1;_estimatedChannelMatrices[0][0](0,1) = 2;	
-// 	cout << "No llamo a process" << endl;
 
 	this->Process(observations,noiseVariances);
 }
@@ -99,7 +94,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 		}
 
 		//... the symbols are considered detected...
-		_detectedSymbols[iParticle](*(new tRange(0,_N-1)),*(new tRange(0,preambleTrainingSequence.cols()-1))).inject(preambleTrainingSequence);
+		tRange columnsRange(0,preambleTrainingSequence.cols()-1);
+		_detectedSymbols[iParticle](_allSymbolsRows,columnsRange).inject(preambleTrainingSequence);
 
 		// ... and the channel estimators of all the particles are updated
 		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
@@ -118,7 +114,7 @@ void SMCAlgorithm::Resampling(int endResamplingTime)
 		vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,_weights);
 		_resamplingAlgorithm.Resampling(&_estimatedChannelMatrices,&_detectedSymbols,&_particlesChannelMatrixEstimators,indexes,_nParticles,_startDetectionTime,endResamplingTime,_endDetectionTime);
 		_weights = 1.0/(double)_nParticles;
-// 		cout << "Resampling..." << endl;
+		cout << "Resampling..." << endl;
 	}
 }
 

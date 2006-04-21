@@ -27,29 +27,10 @@ ChannelDependentNoise::ChannelDependentNoise(MIMOChannel &channel)
 		stdDevs[i] = 1;
 }
 
-
-// 		public void EstablecerSNR(int SNR,double varianzaAlphabet)
-// 		{
-// 			int i,j,memoriaCanal;
-// 			double cteVarianza = Math.Pow(10d,((double)-SNR)/10d);
-// 			double desviacionTipica,varianza;
-//
-// 			memoriaCanal = canal.Memoria;
-//
-// 			for(j=memoriaCanal-1;j<nInstantesTiempo;j++)
-// 			{
-// 				varianza = cteVarianza*((canal[j].Transpose()*canal[j]).Diagonal()).Sum()*//
-// 						   varianzaAlphabet/nAntenasReceptoras;
-// 				desviacionTipica = Math.Sqrt(varianza);
-// 				for(i=0;i<nAntenasReceptoras;i++)
-// 				{
-// 					// normaliza dividiendo por la desviacion tipica anterior, y multiplica
-// 					// por la nueva
-// 					ruido[i,j] = ruido[i,j]/desviacionesTipicas[j]*desviacionTipica;
-// 				}
-// 				desviacionesTipicas[j] = desviacionTipica;
-// 			}
-// 		}
+ChannelDependentNoise::~ChannelDependentNoise()
+{
+	delete[] stdDevs;
+}
 
 void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 {
