@@ -42,6 +42,20 @@ void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double 
 		c(i) = alpha*a(i) + beta*b(i);
 }
 
+void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
+{
+    if(a.size()!=b.size() || a.size()!=C.rows() || C.rows()!=C.cols())
+        throw RuntimeException("Util::Mult: Vectors can't be multiplied.");
+
+    int j;
+    int nElements = a.size();
+    for(int i=0;i<nElements;i++)
+    {
+        for(j=0;j<nElements;j++)
+            C(i,j) = alpha*a(i)*b(j);
+    }
+}
+
 tVector Util::ToVector(const tMatrix &matrix,tOrder order)
 {
 	int i,nElements;

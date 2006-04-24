@@ -28,12 +28,22 @@
 
 #include <exceptions.h>
 #include <Util.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
+#include <lapackpp/laslv.h>
+#include <lapackpp/lavli.h>
 
 class RLSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _forgettingFactor,_invForgettingFactor;
 	tMatrix _invRtilde,_pTilde;
+
+    // auxiliary variables
+    tVector _symbolsVectorInvRtilde,_g,_invRtildeSymbolsVector;
+//     tMatrix 
 public:
     RLSEstimator(int nRows, int nColumns,double forgettingFactor);
 

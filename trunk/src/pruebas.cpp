@@ -197,13 +197,13 @@ int main(int argc,char* argv[])
 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
-	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
+// 	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
 // 	algoritmo.Run(observaciones,ruido.Variances());
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
 
 	// ojo: los ultimos simbolos no se detectan
-	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-	cout << "La probabilidad de error es " << pe << endl;
+// 	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+// 	cout << "La probabilidad de error es " << pe << endl;
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------
@@ -303,6 +303,15 @@ int main(int argc,char* argv[])
 // 	cout << "Apenddado" << endl << Util::Append(A,B) << endl;
 // 	A(*(new tRange(1,2)),*(new tRange(2,3))).inject(subA);
 // 	cout << "La nueva A" << endl << A << endl;
+
+//     tVector v1(4),v2(4);
+//     tMatrix C(4,4);
+//     v1 = 1.2;
+//     v2 = 2.3;
+//     Util::Mult(v1,v2,C);
+// 
+//     cout << "Res es" << endl << C << endl;
+
 // 	// ----------------------------------------------------------------
 
 
