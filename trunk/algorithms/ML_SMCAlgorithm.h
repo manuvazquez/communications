@@ -21,6 +21,7 @@
 #define ML_SMCALGORITHM_H
 
 #include <math.h>
+#include <typeinfo>
 #include <vector>
 #include <SMCAlgorithm.h>
 #include <KalmanEstimator.h>

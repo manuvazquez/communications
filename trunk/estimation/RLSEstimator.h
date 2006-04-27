@@ -42,8 +42,8 @@ protected:
 	tMatrix _invRtilde,_pTilde;
 
     // auxiliary variables
-    tVector _symbolsVectorInvRtilde,_g,_invRtildeSymbolsVector;
-//     tMatrix 
+    tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
+    tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
 public:
     RLSEstimator(int nRows, int nColumns,double forgettingFactor);
 

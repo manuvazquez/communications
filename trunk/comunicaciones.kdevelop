@@ -13,12 +13,12 @@
     <ignoreparts/>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <versioncontrol>kdevsubversion</versioncontrol>
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>smc/libsmc.a</activetarget>
+      <activetarget>detection/libdetection.a</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -177,8 +177,7 @@
   </substmap>
   <kdevcppsupport>
     <references>
-      <pcs>usr_src_noRecursivo</pcs>
-      <pcs>usr_local_lapackpp</pcs>
+      <pcs>lapackpp</pcs>
     </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
@@ -214,12 +213,12 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <programargs/>
-      <gdbpath/>
-      <dbgshell/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
+      <dbgshell></dbgshell>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

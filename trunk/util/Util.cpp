@@ -44,8 +44,9 @@ void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double 
 
 void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
 {
-    if(a.size()!=b.size() || a.size()!=C.rows() || C.rows()!=C.cols())
-        throw RuntimeException("Util::Mult: Vectors can't be multiplied.");
+//     if(a.size()!=b.size() || a.size()!=C.rows() || C.rows()!=C.cols())
+	if(C.rows()!=a.size() || C.cols()!=b.size())
+        throw RuntimeException("Util::Mult: Resultant matrix dimensions are wrong.");
 
     int j;
     int nElements = a.size();

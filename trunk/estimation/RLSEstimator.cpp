@@ -21,12 +21,14 @@
 
 RLSEstimator::RLSEstimator(int nRows, int nColumns,double forgettingFactor): ChannelMatrixEstimator(nRows, nColumns),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
 // auxiliary variables initialization
-_symbolsVectorInvRtilde(_Nm),_g(_Nm),_invRtildeSymbolsVector(_Nm)
+_invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm),_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm),_pTildeInvRtilde(_L,_Nm)
 {
 }
 
 ChannelMatrixEstimator* RLSEstimator::Clone()
 {
+	// it relies on copy constructor
+	return new RLSEstimator(*this);
 }
 
 tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
@@ -36,17 +38,32 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-    // _symbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
-    Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,_symbolsVectorInvRtilde,_invForgettingFactor);
+    // _invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
+    Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,_invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
 
-    double auxDenominator = 1.0 + Blas_Dot_Prod(_symbolsVectorInvRtilde,symbolsVector);
+    double auxDenominator = 1.0 + Blas_Dot_Prod(_invForgettingFactorSymbolsVectorInvRtilde,symbolsVector);
 
-    _g = _symbolsVectorInvRtilde;
+    _g = _invForgettingFactorSymbolsVectorInvRtilde;
     _g *= (1.0/auxDenominator);
 
-    // _invRtildeSymbolsVector = _invRtilde*symbolsVector
-    Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,_invRtildeSymbolsVector,_invForgettingFactor);
+    // _invForgettingFactorInvRtildeSymbolsVector = _invRtilde*symbolsVector
+    Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,_invForgettingFactorInvRtildeSymbolsVector,_invForgettingFactor);
 
-//     Blas_
+	// _invRtilde = _invForgettingFactorInvRtildeSymbolsVector*_g'
+	Util::Mult(_invForgettingFactorInvRtildeSymbolsVector,_g,_invForgettingFactorInvRtildeSymbolsVectorg);
+
+	// _invRtilde = _invForgettingFactor*_invRtilde - _invForgettingFactorInvRtildeSymbolsVectorg
+	Util::Add(_invRtilde,_invForgettingFactorInvRtildeSymbolsVectorg,_invRtilde,_invForgettingFactor,-1.0);
+
+	// _observationsSymbolsVector = observations*symbolsVector'
+	Util::Mult(observations,symbolsVector,_observationsSymbolsVector);
+
+	// _pTilde = _forgettingFactor*_pTilde + _observationsSymbolsVector
+	Util::Add(_pTilde,_observationsSymbolsVector,_pTilde,_forgettingFactor);
+
+	// _pTildeInvRtilde = _pTilde*_invRtilde
+	Blas_Mat_Mat_Mult(_pTilde,_invRtilde,_pTildeInvRtilde);
+
+	return _pTildeInvRtilde;
 }
 

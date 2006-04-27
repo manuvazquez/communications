@@ -3,13 +3,13 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 Type="Source" />
+   <View0 line="19" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.h" >
-   <View0 line="44" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/RMMSEDetector.h" >
+   <View0 line="46" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.cpp" >
-   <View0 line="49" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/RMMSEDetector.cpp" >
+   <View0 line="59" Type="Source" />
   </Doc2>
  </DocsAndViews>
  <pluginList>
@@ -23,9 +23,10 @@
      <mark line="23" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
-     <mark line="310" />
-     <mark line="196" />
-     <mark line="99" />
+     <mark line="172" />
+     <mark line="314" />
+     <mark line="200" />
+     <mark line="100" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

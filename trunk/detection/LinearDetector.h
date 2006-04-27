@@ -17,38 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef LINEARDETECTOR_H
+#define LINEARDETECTOR_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
 #include <types.h>
-#include <exceptions.h>
-#include "utilExceptions.h"
-#include <lapackpp/gmd.h>
 
-
-using namespace std;
-
-enum tOrder {rowwise,columnwise};
-
-class Util{
-
+class LinearDetector{
+protected:
+	int _channelMatrixRows, _channelMatrixCols;
+	double _alphabetVariance;
 public:
-
-	static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-	static void Add(const tVector &a,const tVector &b,tVector &c,double alpha = 1.0,double beta = 1.0);
-    static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
-	static tVector ToVector(const tMatrix &matrix,tOrder order);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
-	static tMatrix Append(const tMatrix &A,const tMatrix &B);
-	static tVector Normalize(const tVector &v);
-	static double Sum(const tVector &v);
-	static void Max(const tVector &v,int &index);
+    LinearDetector(int rows,int cols,double alphabetVariance);
+	virtual tVector Detect(tVector observations,tMatrix channelMatrix) = 0;
+	virtual ~LinearDetector() {};
 };
 
 #endif

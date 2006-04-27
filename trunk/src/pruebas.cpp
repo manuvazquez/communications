@@ -11,6 +11,7 @@
 #include <Demodulator.h>
 #include <KalmanFilter.h>
 #include <KalmanEstimator.h>
+#include <RLSEstimator.h>
 #include <ML_SMCAlgorithm.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -101,9 +102,11 @@ int main(int argc,char* argv[])
 	int longSecEntr = 30;
 	int nParticles = 30;
 	int d = m -1;
+	double forgettingFactor = 0.9;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
+	tRange todasFilasSimbolos(0,N-1);
 
 	Bits bitsTransmitir(N,K);
 
@@ -131,6 +134,7 @@ int main(int argc,char* argv[])
 	tMatrix mediaInicial(L,N*m);
 	mediaInicial = 0.0;
 	KalmanEstimator estimador(ARcoefficients[0],ARvariance,mediaInicial);
+	RLSEstimator estimadorRLS(L,N*m,forgettingFactor);
 
 	// ----------------------------- Depuracion EstimadorKalman ----------------------------
 // 	tMatrix matrizInicial(3,4);
@@ -165,31 +169,28 @@ int main(int argc,char* argv[])
 
 // 	KalmanEstimator estimador2 = *estimador.Clone();
 // 
-// 	tRange todasFilasSimbolos(0,N-1);
-// 	for(int i=m-1;i<observaciones.cols();i++)
-// 	{
-// 		tRange rangoColumnas(i-m+1,i);
-// 		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
-// 		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-// 		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
-// // 		cout << "El ruido" << endl << ruido
-// 		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
-// 
-// 		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-// 		cout << "La verosimilitud=" << verosimil << endl;
-// 
-// 		tMatrix simbolosChungos(N,m);
-// 		simbolosChungos = -11;
-// 		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
-// 		cout << "La verosimilitud chunga=" << verosimilChunga << endl;		
-// 	}
+	for(int i=m-1;i<observaciones.cols();i++)
+	{
+		tRange rangoColumnas(i-m+1,i);
+		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
+		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+// 		cout << "El ruido" << endl << ruido
+		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+
+/*		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "La verosimilitud=" << verosimil << endl;
+
+		tMatrix simbolosChungos(N,m);
+		simbolosChungos = -11;
+		double verosimilChunga = estimador.Likelihood(observaciones.col(i),simbolosChungos,ruido.VarianceAt(i));
+		cout << "La verosimilitud chunga=" << verosimilChunga << endl;	*/	
+	}
 
 // ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion)
 
 // 	tMatrix preambulo(N,m-1);
 // 	preambulo = -1.0;
-
-	tRange todasFilasSimbolos(0,N-1);
 
 	ResamplingCriterion criterioRemuestreo(0.9);
 	StdResamplingAlgorithm algoritmoRemuestreo;
