@@ -26,6 +26,29 @@
 
 using namespace std;
 // using namespace la;
+
+
+tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
+{
+	
+	if((matrices[0].cols() % m)!=0)
+		throw RuntimeException("m parameter (memory of the channel) is wrong.");
+	int L = matrices[0].rows();
+	int N = matrices[0].cols()/m;
+	int d = matrices.size()-1;
+	
+	tMatrix res(matrices[0].rows()*(d+1),N*(m+d));
+
+	for(int i=0;i<=d;i++)
+	{
+		tRange rowsRange(i*L,(i+1)*L-1);
+		tRange colsRange(i*N,i*N+N*m-1);
+		res(rowsRange,colsRange).inject(matrices[i]);
+	}
+
+	return res;
+}
+
 int main(int argc,char* argv[])
 {
     int longitudAlphabet = 2;
@@ -121,15 +144,27 @@ int main(int argc,char* argv[])
 	for(int i=canal.Memory()-1;i<canal.Length();i++)
 		cout << canal[i] << endl << "****************" << endl;
 
+	// ---------- modelo apilado -----------
+	vector<tMatrix> conjuntoMatrices(d+1);
+	for(int i=0;i<=d;i++)
+	{
+		conjuntoMatrices[i] = canal[canal.Memory()-1+i];
+		cout << "++++++++++++" << endl << conjuntoMatrices[i] << endl << "++++++++++++++" << endl ;
+	}
+
+	tMatrix matrizApilada = HsToStackedH(conjuntoMatrices,m);
+	cout << "La matriz apilada es" << endl << matrizApilada << endl;
+	// -------------------------------------
+
 	ChannelDependentNoise ruido(canal);
 	ruido.SetSNR(6,1);
 
-	cout << "El ruido" << endl;
-	ruido.Print();
+// 	cout << "El ruido" << endl;
+// 	ruido.Print();
 
 	tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
 
-	cout << "Las observaciones" << endl << observaciones;
+// 	cout << "Las observaciones" << endl << observaciones;
 
 	tMatrix mediaInicial(L,N*m);
 	mediaInicial = 0.0;
@@ -169,14 +204,25 @@ int main(int argc,char* argv[])
 
 // 	KalmanEstimator estimador2 = *estimador.Clone();
 // 
-	for(int i=m-1;i<observaciones.cols();i++)
+	for(int i=m-1;i<observaciones.cols()-d;i++)
 	{
+		cout << "OOOOOOOOOOOOO i es " << i << " 000000000000000000" << endl;
 		tRange rangoColumnas(i-m+1,i);
 		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
 		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+// 		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
 // 		cout << "El ruido" << endl << ruido
-		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+// 		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+
+		tRange rangoSuavizado(i,i+d);
+		tRange filasObservaciones(0,L-1);
+		tVector observacionesApiladas = Util::ToVector(observaciones(filasObservaciones,rangoSuavizado),columnwise);
+		cout << observaciones.col(i) << endl << "----------" << endl;
+		cout << observacionesApiladas << endl << "oooooooooooooo" << endl;
+		tMatrix canalApilado = HsToStackedH(canal.Range(i,i+d),m);
+// 		vector<tMatrix> conjMatrices = canal.Range(i,i+d);
+// 		for(int auxI=0;auxI<conjMatrices.size();auxI++)
+// 			cout << conjMatrices[auxI] << "d es " << d << " auxI es " << auxI << " numero de matrices " << conjMatrices.size() << endl;
 
 /*		double verosimil = estimador.Likelihood(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
 		cout << "La verosimilitud=" << verosimil << endl;

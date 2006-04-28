@@ -38,3 +38,20 @@ ARchannel::~ ARchannel()
 {
 	delete[] channelMatrices;
 }
+
+vector<tMatrix> ARchannel::Range(int a,int b)
+{
+	int nMatrices = b - a + 1;
+
+	if(nMatrices<1)
+		throw RuntimeException("Selected range of time is invalid.");
+	vector<tMatrix> res(nMatrices);
+
+	for(int i=0;i<nMatrices;i++)
+	{
+		res[i] = channelMatrices[a+i];
+// 		cout << "en ARChannel" << endl << channelMatrices[i] << endl;
+	}
+
+	return res;
+}
