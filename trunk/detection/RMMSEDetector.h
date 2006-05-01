@@ -44,7 +44,6 @@ protected:
 	tVector _g;
 	tMatrix _invRtilde;
 	tMatrix _filter;
-	tVector _softEstimations;
 
 	// auxiliary
 	tMatrix _identityL,_gObservations;

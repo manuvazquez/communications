@@ -21,7 +21,7 @@
 
 RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected)
 // auxiliary
-,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows),_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols),_filter(_nSymbolsToBeDetected,_channelMatrixRows),_softEstimations(nSymbolsToBeDetected)
+,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows),_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols),_filter(_channelMatrixRows,_nSymbolsToBeDetected)
 {
 	tRange rowsRange(_channelMatrixCols-_nSymbolsToBeDetected,_channelMatrixCols-1);
 	tRange colsRange(0,_nSymbolsToBeDetected-1);
@@ -49,15 +49,26 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix)
 	// _auxInvRtilde = _invForgettingFactor*_identityMinusgObservations*_invRtilde
 	Blas_Mat_Mat_Mult(_identityMinusgObservations,_invRtilde,_auxInvRtilde,_invForgettingFactor);
 
+    cout << "pasó el primero" << endl;
+
 	_invRtilde = _auxInvRtilde;
 
 	// _varianceInvRtildeChannelMatrix = _alphabetVariance*_invRtilde*channelMatrix
 	Blas_Mat_Mat_Mult(_invRtilde,channelMatrix,_varianceInvRtildeChannelMatrix,_alphabetVariance);
 
+    cout << "pasó el segundo" << endl;
+
 	// _filter = _varianceInvRtildeChannelMatrix*_E
 	Blas_Mat_Mat_Mult(_varianceInvRtildeChannelMatrix,_E,_filter);
 
+    cout << "pasó el tercero" << endl;
+
+
+    tVector res(_nSymbolsToBeDetected);
+
 	// _softEstimations = _filter'*observations
-	Blas_Mat_Trans_Vec_Mult(_filter,observations,_softEstimations);
+	Blas_Mat_Trans_Vec_Mult(_filter,observations,res);
+
+    return res;
 }
 

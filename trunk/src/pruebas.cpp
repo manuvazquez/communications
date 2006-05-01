@@ -12,6 +12,7 @@
 #include <KalmanFilter.h>
 #include <KalmanEstimator.h>
 #include <RLSEstimator.h>
+#include <RMMSEDetector.h>
 #include <ML_SMCAlgorithm.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -38,6 +39,7 @@ tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 	int d = matrices.size()-1;
 	
 	tMatrix res(matrices[0].rows()*(d+1),N*(m+d));
+    res = 0.0;
 
 	for(int i=0;i<=d;i++)
 	{
@@ -204,6 +206,9 @@ int main(int argc,char* argv[])
 
 // 	KalmanEstimator estimador2 = *estimador.Clone();
 // 
+
+    RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
+
 	for(int i=m-1;i<observaciones.cols()-d;i++)
 	{
 		cout << "OOOOOOOOOOOOO i es " << i << " 000000000000000000" << endl;
@@ -217,9 +222,46 @@ int main(int argc,char* argv[])
 		tRange rangoSuavizado(i,i+d);
 		tRange filasObservaciones(0,L-1);
 		tVector observacionesApiladas = Util::ToVector(observaciones(filasObservaciones,rangoSuavizado),columnwise);
-		cout << observaciones.col(i) << endl << "----------" << endl;
-		cout << observacionesApiladas << endl << "oooooooooooooo" << endl;
+		cout << "El vector de observacioes apilado concatenado" << endl << observacionesApiladas << endl << "oooooooooooooo" << endl;
+        cout << "correspondiente a las observaciones" << endl;
+        for(int ii=i;ii<=i+d;ii++)
+            cout << observaciones.col(ii) << endl;
 		tMatrix canalApilado = HsToStackedH(canal.Range(i,i+d),m);
+//         cout << "La matriz de canal apilada es" << endl << canalApilado << endl;
+//         cout << "correspondiente a las matrices" << endl;
+//         for(int ii=i;ii<=i+d;ii++)
+//             cout << canal[ii] << endl;        
+
+
+        tVector estimacionesBlandas = rmmseDetector.Detect(observacionesApiladas,canalApilado);
+        cout << "Las estimacionees blandas" << endl << estimacionesBlandas << endl;
+
+        tMatrix matrizRuidoApilado(L,d+1);
+        for(int aux = i;aux<=i+d;aux++)
+        {
+            tVector auxRuido = ruido[aux];
+            for(int aux2=0;aux2<L;aux2++)
+                matrizRuidoApilado(aux2,aux-i) = auxRuido(aux2);
+        }
+        tVector ruidoApilado = Util::ToVector(matrizRuidoApilado,columnwise);
+//         cout << "El ruido apilado" << endl << ruidoApilado << endl;
+//         cout << "correspondiente a" << endl;
+//         for(int aux=i;aux<=i+d;aux++)
+//             cout << ruido[aux] << endl;
+
+        tRange rangoSimbolosObservacionApilada(i-m+1,i+d);
+        tVector simbolosObservacionApilada = Util::ToVector(simbolosTransmitir(todasFilasSimbolos,rangoSimbolosObservacionApilada),columnwise);
+        cout << "Los simbolos apilados" << endl << simbolosObservacionApilada << endl;
+//         cout << "correspondiente a" << endl;
+//         for(int aux=i-m+1;aux<=i+d;aux++)
+//             cout << simbolosTransmitir.col(aux) << endl;
+
+        tVector observacionApiladaConstruida(L*(d+1));
+        Blas_Mat_Vec_Mult(canalApilado,simbolosObservacionApilada,observacionApiladaConstruida);
+        Util::Add(observacionApiladaConstruida,ruidoApilado,observacionApiladaConstruida);
+
+        cout << "El vector de observaciones construido" << endl << observacionApiladaConstruida << endl;
+
 // 		vector<tMatrix> conjMatrices = canal.Range(i,i+d);
 // 		for(int auxI=0;auxI<conjMatrices.size();auxI++)
 // 			cout << conjMatrices[auxI] << "d es " << d << " auxI es " << auxI << " numero de matrices " << conjMatrices.size() << endl;
