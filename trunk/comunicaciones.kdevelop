@@ -177,8 +177,7 @@
   </substmap>
   <kdevcppsupport>
     <references>
-      <pcs>usr_src_noRecursivo</pcs>
-      <pcs>usr_local_lapackpp</pcs>
+      <pcs>lapackpp</pcs>
     </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>

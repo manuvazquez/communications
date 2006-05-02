@@ -37,6 +37,15 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 	delete[] _particlesLinearDetectors;
 }
 
+void LinearFilterBasedSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+{
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+	{
+		_particlesLinearDetectors[iParticle] = _linearDetector->Clone();
+	}
+
+	SMCAlgorithm::Run(observations,noiseVariances);
+}
 
 void LinearFilterBasedSMCAlgorithm::Process(tMatrix observations, vector< double > noiseVariances)
 {
@@ -45,16 +54,18 @@ void LinearFilterBasedSMCAlgorithm::Process(tMatrix observations, vector< double
 vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
-	tRange allObservationsRows(0,_L-1);
-
-	// the channel matrix received by the method Detect doesn't affect the state of the detector
-	tMatrix nullChannelMatrix(_L*(_d+1),_N*(_m+_d));
+	tRange allObservationRows(0,_L-1);
 
 	for(int i=_m-1;i<lengthSequenceToProcess;i++)
 	{
 		tRange smoothingRange(i,i+_d);
-// 		tVector stackedObservationsVector = Util::ToVector(observations(allObservationsRows,smoothingRange),columnwise);
-// 		_linearDetector->Detect(stackedObservationsVector,nullChannelMatrix);
-// 		_linearDetector->Detect(observations.col(i),
+		tVector stackedObservationsVector = Util::ToVector(observations(allObservationRows,smoothingRange),columnwise);
+		_linearDetector->StateStep(stackedObservationsVector);
 	}
+
+	// the resultant linear detector is copied into each particle
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+		_particlesLinearDetectors[iParticle] = _linearDetector->Clone();
+
+	return SMCAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 }

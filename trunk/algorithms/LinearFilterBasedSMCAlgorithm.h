@@ -35,11 +35,13 @@ public:
 
     ~LinearFilterBasedSMCAlgorithm();
 
+	void Run(tMatrix observations,vector<double> noiseVariances);
+
 protected:
 	LinearDetector **_particlesLinearDetectors;
 	LinearDetector *_linearDetector;
 
-    virtual void Process(tMatrix observations, vector< double > noiseVariances);
+    void Process(tMatrix observations, vector< double > noiseVariances);
 	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
 
 };
