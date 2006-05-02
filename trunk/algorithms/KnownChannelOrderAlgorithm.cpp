@@ -52,4 +52,25 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(tMatrix obse
 	return estimatedMatrices;
 }
 
+tMatrix KnownChannelOrderAlgorithm::HsToStackedH(vector<tMatrix> matrices)
+{
+	
+	if((matrices[0].cols() % _m)!=0)
+		throw RuntimeException("KnownChannelOrderAlgorithm::HsToStackedH: Incorrect number of columns in the matrices.");
+	int L = matrices[0].rows();
+	int N = matrices[0].cols()/_m;
+	int d = matrices.size()-1;
+	
+	tMatrix res(matrices[0].rows()*(d+1),N*(_m+d));
+    res = 0.0;
+
+	for(int i=0;i<=d;i++)
+	{
+		tRange rowsRange(i*L,(i+1)*L-1);
+		tRange colsRange(i*N,i*N+N*_m-1);
+		res(rowsRange,colsRange).inject(matrices[i]);
+	}
+
+	return res;
+}
 

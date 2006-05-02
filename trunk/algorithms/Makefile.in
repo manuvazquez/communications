@@ -66,7 +66,8 @@ libalgorithms_a_DEPENDENCIES =  \
 am_libalgorithms_a_OBJECTS = Algorithm.$(OBJEXT) \
 	UnknownChannelAlgorithm.$(OBJEXT) \
 	KnownChannelOrderAlgorithm.$(OBJEXT) SMCAlgorithm.$(OBJEXT) \
-	ML_SMCAlgorithm.$(OBJEXT)
+	ML_SMCAlgorithm.$(OBJEXT) \
+	LinearFilterBasedSMCAlgorithm.$(OBJEXT)
 libalgorithms_a_OBJECTS = $(am_libalgorithms_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -181,17 +182,17 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/filters \
-	-I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src -I$(top_srcdir)/statistics \
-	-I$(top_srcdir)/transmision -I$(top_srcdir)/util
+INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
+	-I$(top_srcdir)/filters -I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src \
+	-I$(top_srcdir)/statistics -I$(top_srcdir)/transmision -I$(top_srcdir)/util
 
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h UnknownChannelAlgorithm.h \
-	KnownChannelOrderAlgorithm.h SMCAlgorithm.h ML_SMCAlgorithm.h
+		KnownChannelOrderAlgorithm.h SMCAlgorithm.h ML_SMCAlgorithm.h LinearFilterBasedSMCAlgorithm.h
 
 libalgorithms_a_SOURCES = Algorithm.cpp UnknownChannelAlgorithm.cpp \
-	KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp
+		KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp
 
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a
@@ -271,6 +272,7 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Algorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnownChannelOrderAlgorithm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LinearFilterBasedSMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ML_SMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnknownChannelAlgorithm.Po@am__quote@

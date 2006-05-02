@@ -72,3 +72,7 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix)
     return res;
 }
 
+RMMSEDetector *RMMSEDetector::Clone()
+{
+	return new RMMSEDetector(*this);
+}

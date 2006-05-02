@@ -17,30 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNCHANNELORDERALGORITHM_H
-#define KNOWNCHANNELORDERALGORITHM_H
+#ifndef LINEARFILTERBASEDSMCALGORITHM_H
+#define LINEARFILTERBASEDSMCALGORITHM_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <SMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
-#include <types.h>
-#include <Util.h>
+#include <LinearDetector.h>
 
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
-protected:
-	int _L,_N,_m,_Nm;
-	tMatrix _preamble;
-
-	virtual vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble);
-	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
-	tMatrix HsToStackedH(vector<tMatrix> matrices);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,LinearDetector &linearDetector);
+
+    ~LinearFilterBasedSMCAlgorithm();
+
+protected:
+	LinearDetector **_particlesLinearDetectors;
+	LinearDetector *_linearDetector;
+
+    virtual void Process(tMatrix observations, vector< double > noiseVariances);
+	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
+
 };
 
 #endif
