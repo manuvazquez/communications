@@ -49,6 +49,9 @@ void LinearFilterBasedSMCAlgorithm::Run(tMatrix observations,vector<double> nois
 
 void LinearFilterBasedSMCAlgorithm::Process(tMatrix observations, vector< double > noiseVariances)
 {
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
+	{
+	}
 }
 
 vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)

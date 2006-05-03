@@ -27,12 +27,15 @@
 #include <vector>
 #include <types.h>
 #include <ChannelMatrixEstimator.h>
+#include <LinearDetector.h>
 
 using namespace std;
 
 class StdResamplingAlgorithm{
 public:
 	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
+
+	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,LinearDetector ***_particlesLinearDetectors,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
 };
 
 #endif
