@@ -45,7 +45,6 @@ private:
 
 	// variables needed for Clone
 	double _ARcoefficient,_ARvariance;
-	tMatrix _initialMeanMatrix;
 
 	// auxiliary variables (just for efficiency's sake)
 	tMatrix _F;
@@ -56,7 +55,7 @@ private:
 private:
 	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
 public:
-    KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix);
+    KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance);
 	~KalmanEstimator();
 
 	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);

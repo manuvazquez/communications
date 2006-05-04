@@ -29,14 +29,16 @@
 class ChannelMatrixEstimator{
 protected:
 	int _L,_Nm;
+	tMatrix _lastEstimatedChannelMatrix;
 public:
-    ChannelMatrixEstimator(int nRows,int nColumns);
+    ChannelMatrixEstimator(tMatrix &initialEstimation);
 	virtual ~ChannelMatrixEstimator() {};
 
 	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
 	virtual ChannelMatrixEstimator *Clone() = 0;
 	int Cols() { return _Nm;}
 	int Rows() { return _L;}
+	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
 
 };
 

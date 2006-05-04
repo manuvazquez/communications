@@ -34,6 +34,7 @@ protected:
 	ChannelMatrixEstimator &_channelEstimator;
 public:
     UnknownChannelAlgorithm(string name, Alphabet  alphabet,ChannelMatrixEstimator &channelEstimator);
+	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
 };
 

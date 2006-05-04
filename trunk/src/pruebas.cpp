@@ -14,6 +14,7 @@
 #include <RLSEstimator.h>
 #include <RMMSEDetector.h>
 #include <ML_SMCAlgorithm.h>
+#include <LinearFilterBasedSMCAlgorithm.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
@@ -129,6 +130,7 @@ int main(int argc,char* argv[])
 	int d = m -1;
 	double forgettingFactor = 0.9;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
+	double samplingVariance = 0.001;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
 	tRange todasFilasSimbolos(0,N-1);
@@ -170,8 +172,8 @@ int main(int argc,char* argv[])
 
 	tMatrix mediaInicial(L,N*m);
 	mediaInicial = 0.0;
-	KalmanEstimator estimador(ARcoefficients[0],ARvariance,mediaInicial);
-	RLSEstimator estimadorRLS(L,N*m,forgettingFactor);
+	KalmanEstimator estimador(mediaInicial,ARcoefficients[0],ARvariance);
+	RLSEstimator estimadorRLS(mediaInicial,forgettingFactor);
 
 	// ----------------------------- Depuracion EstimadorKalman ----------------------------
 // 	tMatrix matrizInicial(3,4);
@@ -285,9 +287,16 @@ int main(int argc,char* argv[])
 
 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
+	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
+
+
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
 // 	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
 // 	algoritmo.Run(observaciones,ruido.Variances());
+
+	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
+
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
 
 	// ojo: los ultimos simbolos no se detectan

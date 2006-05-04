@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-KalmanEstimator::KalmanEstimator(double ARcoefficient,double ARvariance,tMatrix &initialMeanMatrix)
- : ChannelMatrixEstimator(initialMeanMatrix.rows(),initialMeanMatrix.cols()),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
+KalmanEstimator::KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance)
+ : ChannelMatrixEstimator(initialEstimation),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
 // variables needed for Clone
-_ARcoefficient(ARcoefficient),_ARvariance(ARvariance),_initialMeanMatrix(initialMeanMatrix),
+_ARcoefficient(ARcoefficient),_ARvariance(ARvariance),
 //auxiliary variables initialization
 _F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
@@ -30,7 +30,7 @@ _F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoe
 	R *= ARcoefficient;
 	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 	stateEquationCovariance *= ARvariance;
-	tVector initialMeanVector = Util::ToVector(initialMeanMatrix,rowwise);
+	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
 	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 
 	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
@@ -52,7 +52,10 @@ tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &s
 	tMatrix observationEquationCovariance = LaGenMatDouble::eye(_L);
 	observationEquationCovariance *= noiseVariance;
 	_kalmanFilter->Step(_F,observations,observationEquationCovariance);
-	return Util::ToMatrix(_kalmanFilter->FilteredMean(),rowwise,_L);
+
+	_lastEstimatedChannelMatrix = Util::ToMatrix(_kalmanFilter->FilteredMean(),rowwise,_L);
+		
+	return  _lastEstimatedChannelMatrix;
 }
 
 void KalmanEstimator::FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix)
@@ -147,11 +150,7 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 
 KalmanEstimator *KalmanEstimator::Clone()
 {
-// 	KalmanEstimator *res = new KalmanEstimator(_ARcoefficient,_ARvariance,_initialMeanMatrix);
 	KalmanEstimator *res = new KalmanEstimator(*this);
-	
-	// the Kalman Filter initialized during construction is erased
-// 	delete res->_kalmanFilter;
 
 	res->_kalmanFilter = new KalmanFilter(*_kalmanFilter);
 

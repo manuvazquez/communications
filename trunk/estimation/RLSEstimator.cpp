@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(int nRows, int nColumns,double forgettingFactor): ChannelMatrixEstimator(nRows, nColumns),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
+RLSEstimator::RLSEstimator(tMatrix &initialEstimation,double forgettingFactor): ChannelMatrixEstimator(initialEstimation),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
 // auxiliary variables initialization
 _invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm),_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm),_pTildeInvRtilde(_L,_Nm)
 {
@@ -64,6 +64,8 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 	// _pTildeInvRtilde = _pTilde*_invRtilde
 	Blas_Mat_Mat_Mult(_pTilde,_invRtilde,_pTildeInvRtilde);
 
-	return _pTildeInvRtilde;
+	_lastEstimatedChannelMatrix = _pTildeInvRtilde;
+
+	return _lastEstimatedChannelMatrix;
 }
 

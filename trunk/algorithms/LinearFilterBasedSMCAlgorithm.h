@@ -31,15 +31,18 @@
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,LinearDetector &linearDetector);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
 
     ~LinearFilterBasedSMCAlgorithm();
 
+	using SMCAlgorithm::Run;
 	void Run(tMatrix observations,vector<double> noiseVariances);
+// 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
 protected:
 	LinearDetector **_particlesLinearDetectors;
 	LinearDetector *_linearDetector;
+	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
 
     void Process(tMatrix observations, vector< double > noiseVariances);
 	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);

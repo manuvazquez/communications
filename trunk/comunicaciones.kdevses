@@ -1,19 +1,22 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="4" >
+ <DocsAndViews NumberOfDocuments="5" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="221" Type="Source" />
+   <View0 line="296" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
-   <View0 line="53" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h" >
+   <View0 line="0" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h" >
-   <View0 line="38" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+   <View0 line="51" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
-   <View0 line="57" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelAlgorithm.h" >
+   <View0 line="36" Type="Source" />
   </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h" >
+   <View0 line="40" Type="Source" />
+  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -25,12 +28,15 @@
      <mark line="35" />
      <mark line="23" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
+     <mark line="124" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
+     <mark line="34" />
      <mark line="290" />
-     <mark line="209" />
-     <mark line="125" />
-     <mark line="404" />
-     <mark line="33" />
+     <mark line="414" />
+     <mark line="126" />
+     <mark line="211" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

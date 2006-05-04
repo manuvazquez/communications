@@ -39,7 +39,6 @@ protected:
 	virtual vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble);
-	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 	tMatrix HsToStackedH(vector<tMatrix> matrices);
 };
 
