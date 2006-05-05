@@ -28,6 +28,12 @@
 #include <vector>
 #include <Random.h>
 #include <Util.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
+#include <lapackpp/laslv.h>
+#include <lapackpp/lavli.h>
 
 using namespace std;
 
@@ -36,6 +42,10 @@ public:
     static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator = *(new Random()));
 
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator= *(new Random()));
+
+	static double NormalPdf(double x,double mean,double variance);
+
+	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
 };
 
 #endif

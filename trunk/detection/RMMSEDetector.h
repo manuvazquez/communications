@@ -78,6 +78,8 @@ public:
 		_invRtilde = _auxInvRtilde;
 	}
 
+	tMatrix ComputedFilter() { return _filter;}
+
 };
 
 #endif

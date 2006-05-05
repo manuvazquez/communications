@@ -18,6 +18,7 @@ class Alphabet
 		int NbitsBySymbol() { return _nBitsBySymbol;}
 		double Variance() { return _variance;}
 		tSymbol operator [](vector<tBit> secuenciaBitsBuscada);
+		tSymbol operator [](int index) { return _symbols[index];}
 		vector<tBit> operator [](tSymbol simbolo);
 		int Length() { return _length;}
 		void IntToSymbolsArray(int numero, vector<tSymbol> &res);

@@ -288,7 +288,7 @@ int main(int argc,char* argv[])
 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
 	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir);
 
 
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
@@ -574,6 +574,17 @@ int main(int argc,char* argv[])
 // 	Random r;
 // 	cout << "La matriz aleatoria" << endl << StatUtil::RandnMatrix(2,3,0.0,1.0,r) << endl;
 	// --------------------------------------------------------
+
+// 	cout << "1º simbolo: " << pam2[0] << " 2º: " << pam2[1] << endl;
+// 	cout << "Normal= " << StatUtil::NormalPdf(3.1,2.0,1.0) << endl;
+// 	int tam = 8;
+// 	tVector x(tam);
+// 	x = 2.0;
+// 	tVector mean(tam);
+// 	mean = 1.0;
+// 	tMatrix covarianza = StatUtil::RandnMatrix(tam,tam,0.0,1.0);
+// 	cout << "la covarianza es" << endl << covarianza << endl;
+// 	cout << "El resultado=" << StatUtil::NormalPdf(x,mean,covarianza);
 
 	cout << "Al final del programa" << endl << endl;
     return 0;

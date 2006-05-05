@@ -27,26 +27,29 @@
 */
 
 #include <LinearDetector.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
 
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance,tMatrix simbolos);
 
     ~LinearFilterBasedSMCAlgorithm();
 
 	using SMCAlgorithm::Run;
 	void Run(tMatrix observations,vector<double> noiseVariances);
-// 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
 protected:
 	LinearDetector **_particlesLinearDetectors;
 	LinearDetector *_linearDetector;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+	tMatrix _simbolos;
 
     void Process(tMatrix observations, vector< double > noiseVariances);
 	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
-
 };
 
 #endif

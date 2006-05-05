@@ -63,3 +63,39 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Rand
 
 	return res;
 }
+
+double StatUtil::NormalPdf(double x,double mean,double variance)
+{
+	//densidad = 1/sqrt(2*pi*var)*exp( -(abs(x-media))^2/(2*var) );
+	double distance = fabs(x - mean);
+
+	return 1.0/sqrt(2.0*M_PI*variance)*exp(-(distance*distance)/(2.0*variance));
+}
+
+double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance)
+{
+// densidad = 1/(sqrt(abs(det(coVar)))*(2*pi)^(N/2))*exp(-0.5*real((x-mu)'*inv(coVar)*(x-mu)));
+
+	int N = x.size();
+	// the received covariance matrix can't be modified
+	tMatrix invCovariance = covariance;
+
+	tLongIntVector piv(N);
+	LUFactorizeIP(invCovariance,piv);
+	double detCovariance = 1.0;
+	for(int i=0;i<N;i++)
+		detCovariance *= invCovariance(i,i);
+
+	// invCovariance = inv(covariance)
+	LaLUInverseIP(invCovariance,piv);
+
+	tVector xMinusMean(N);
+	// xMinusMean = x - mean
+	Util::Add(x,mean,xMinusMean,1.0,-1.0);
+
+	tVector invCovarianceXminusMean(N);
+	// invCovarianceXminusMean = -0.5 * invCovariance * xMinusMean
+	Blas_Mat_Vec_Mult(invCovariance,xMinusMean,invCovarianceXminusMean,-0.5);
+
+	return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
+}

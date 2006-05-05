@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "RMMSEDetector.h"
 
-RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected)
+RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_filter(_channelMatrixRows,_nSymbolsToBeDetected)
 // auxiliary
-,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows),_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols),_filter(_channelMatrixRows,_nSymbolsToBeDetected)
+,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows),_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols)
 {
 	tRange rowsRange(_channelMatrixCols-_nSymbolsToBeDetected,_channelMatrixCols-1);
 	tRange colsRange(0,_nSymbolsToBeDetected-1);
