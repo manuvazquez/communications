@@ -37,17 +37,18 @@ using namespace std;
 class ARprocess{
 
 private:
-	vector<double> coefficients;
-	double noiseVariance;
-	double noiseMean;
-	int nCoefficients, rows, columns, iNextMatrix;
-	int iterationsForConvergence;
-	tMatrix **buffer;
-	Random *randomGenerator;
+	vector<double> _coefficients;
+	double _noiseVariance;
+	double _noiseMean;
+	int _nCoefficients, _rows, _columns, _iNextMatrix;
+	int _iterationsForConvergence;
+	tMatrix **_buffer;
+	Random _randomGenerator;
 
 public:
 //     ARprocess();
-	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
+	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance,Random randomGenerator = Random(0));
+	ARprocess(const ARprocess &arprocess);
 	~ARprocess();
 	tMatrix NextMatrix();
 };

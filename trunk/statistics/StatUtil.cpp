@@ -19,10 +19,17 @@
  ***************************************************************************/
 #include "StatUtil.h"
 
-vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator)
+vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
+// vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator)
 {
     int i,j;
 	double uniform;
+	static Random randomGenerator(1);
+
+	cout << "La semilla es " << randomGenerator.getSeed() << endl;
+
+	char c;
+// 	cin >> c;
 
     tVector normalizedProbabilities = Util::Normalize(probabilities);
     int nProbabilities = probabilities.size();
@@ -40,6 +47,7 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &r
     for(i=0;i<nSamples;i++)
     {
 		uniform = randomGenerator.rand();
+// 		cout << "la uniforme generada " << uniform << endl;
 		j=0;
 		while(uniform>distributionFunction[j])
 			j++;
@@ -48,10 +56,11 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random &r
 	
 	// memory release
 	delete[] distributionFunction;
+
 	return res;
 }
 
-tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
+tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random randomGenerator)
 {
 	tMatrix res(rows,cols);
 	double stdDv = sqrt(variance);

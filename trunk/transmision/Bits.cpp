@@ -29,7 +29,7 @@ Bits::Bits()
 	matrix = NULL;
 }
 
-Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
+Bits::Bits(int nStreams, int nBitsByStream,Random randomGenerator)
 {
 	this->nStreams = nStreams;
 	this->nBitsByStream = nBitsByStream;

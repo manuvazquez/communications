@@ -31,11 +31,13 @@
 #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
 #include <lapackpp/blas3pp.h>
+#include <ARchannel.h>
+#include <ChannelDependentNoise.h>
 
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance,tMatrix simbolos);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance,const tMatrix simbolos,const ARchannel &canal,const ChannelDependentNoise &ruido);
 
     ~LinearFilterBasedSMCAlgorithm();
 
@@ -47,9 +49,12 @@ protected:
 	LinearDetector *_linearDetector;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
 	tMatrix _simbolos;
+	ARchannel _canal;
+	ChannelDependentNoise _ruido;
 
     void Process(tMatrix observations, vector< double > noiseVariances);
 	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
+	void Resampling(int endResamplingTime);
 };
 
 #endif

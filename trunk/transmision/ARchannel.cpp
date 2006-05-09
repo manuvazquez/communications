@@ -19,20 +19,21 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator): MIMOChannel(nTx, nRx, memory, length),
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): MIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
-// ARproc(*(new tMatrix(randomGenerator.randnArray(nTx*nRx*memory,mean,variance),nRx,nTx*memory)),
-// ARcoefficients,ARvariance)
 ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance,randomGenerator),
-ARcoefficients,ARvariance)
-
+ARcoefficients,ARvariance,randomGenerator)
 {
 	channelMatrices = new tMatrix[length];
 
 	//initialization
 	for(int i=memory-1;i<length;i++)
-		channelMatrices[i] = ARproc.NextMatrix();
+			channelMatrices[i] = ARproc.NextMatrix();
 }
+
+// ARchannel::ARchannel(const ARchannel &archannel)
+// {
+// }
 
 ARchannel::~ ARchannel()
 {

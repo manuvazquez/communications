@@ -52,6 +52,12 @@ tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 	return res;
 }
 
+/**
+ * 
+ * @param argc 
+ * @param argv[] 
+ * @return 
+ */
 int main(int argc,char* argv[])
 {
     int longitudAlphabet = 2;
@@ -130,7 +136,7 @@ int main(int argc,char* argv[])
 	int d = m -1;
 	double forgettingFactor = 0.9;
 	double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
-	double samplingVariance = 0.001;
+	double samplingVariance = 0.0625;
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
 	tRange todasFilasSimbolos(0,N-1);
@@ -161,7 +167,13 @@ int main(int argc,char* argv[])
 	// -------------------------------------
 
 	ChannelDependentNoise ruido(canal);
-	ruido.SetSNR(6,1);
+	ruido.SetSNR(9,1);
+
+// 	for(int iVarianza=31;iVarianza<300;iVarianza++)
+// 	{
+// 	cout << "varianza = " << ruido.VarianceAt(iVarianza) << " ruido en " << iVarianza << endl << ruido[iVarianza] << endl;
+// 	}
+// 	exit(1);
 
 // 	cout << "El ruido" << endl;
 // 	ruido.Print();
@@ -216,16 +228,16 @@ int main(int argc,char* argv[])
 		cout << "OOOOOOOOOOOOO i es " << i << " 000000000000000000" << endl;
 		tRange rangoColumnas(i-m+1,i);
 		tMatrix subMatrizSimbolos = simbolosTransmitir(todasFilasSimbolos,rangoColumnas);
-		tMatrix est = estimador.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
-// 		cout << "Estimacion de Kalman (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
+		tMatrix est = estimadorRLS.NextMatrix(observaciones.col(i),subMatrizSimbolos,ruido.VarianceAt(i));
+		cout << "Estimacion (varianza es " << ruido.VarianceAt(i) << ")" << endl << est << endl;
 // 		cout << "El ruido" << endl << ruido
-// 		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
-
+		cout << "Canal de verdad" << endl << canal[i] << endl << "-------------" << endl;
+   
 		tRange rangoSuavizado(i,i+d);
 		tRange filasObservaciones(0,L-1);
 		tVector observacionesApiladas = Util::ToVector(observaciones(filasObservaciones,rangoSuavizado),columnwise);
-		cout << "El vector de observacioes apilado concatenado" << endl << observacionesApiladas << endl << "oooooooooooooo" << endl;
-        cout << "correspondiente a las observaciones" << endl;
+// 		cout << "El vector de observacioes apilado concatenado" << endl << observacionesApiladas << endl << "oooooooooooooo" << endl;
+//         cout << "correspondiente a las observaciones" << endl;
         for(int ii=i;ii<=i+d;ii++)
             cout << observaciones.col(ii) << endl;
 		tMatrix canalApilado = HsToStackedH(canal.Range(i,i+d),m);
@@ -236,7 +248,7 @@ int main(int argc,char* argv[])
 
 
         tVector estimacionesBlandas = rmmseDetector.Detect(observacionesApiladas,canalApilado);
-        cout << "Las estimacionees blandas" << endl << estimacionesBlandas << endl;
+//         cout << "Las estimacionees blandas" << endl << estimacionesBlandas << endl;
 
         tMatrix matrizRuidoApilado(L,d+1);
         for(int aux = i;aux<=i+d;aux++)
@@ -253,7 +265,7 @@ int main(int argc,char* argv[])
 
         tRange rangoSimbolosObservacionApilada(i-m+1,i+d);
         tVector simbolosObservacionApilada = Util::ToVector(simbolosTransmitir(todasFilasSimbolos,rangoSimbolosObservacionApilada),columnwise);
-        cout << "Los simbolos apilados" << endl << simbolosObservacionApilada << endl;
+//         cout << "Los simbolos apilados" << endl << simbolosObservacionApilada << endl;
 //         cout << "correspondiente a" << endl;
 //         for(int aux=i-m+1;aux<=i+d;aux++)
 //             cout << simbolosTransmitir.col(aux) << endl;
@@ -262,7 +274,7 @@ int main(int argc,char* argv[])
         Blas_Mat_Vec_Mult(canalApilado,simbolosObservacionApilada,observacionApiladaConstruida);
         Util::Add(observacionApiladaConstruida,ruidoApilado,observacionApiladaConstruida);
 
-        cout << "El vector de observaciones construido" << endl << observacionApiladaConstruida << endl;
+//         cout << "El vector de observaciones construido" << endl << observacionApiladaConstruida << endl;
 
 // 		vector<tMatrix> conjMatrices = canal.Range(i,i+d);
 // 		for(int auxI=0;auxI<conjMatrices.size();auxI++)
@@ -277,6 +289,20 @@ int main(int argc,char* argv[])
 		cout << "La verosimilitud chunga=" << verosimilChunga << endl;	*/	
 	}
 
+// 	tVector hola1(2);
+// 	hola1(0) = 1.2; hola1(1) = 0.3;
+// 
+// 	tVector hola2(4);
+// 	hola2(0) = 11.2; hola2(1) = 3.1; hola2(2) = 0.1; hola2(3) = 0.1001;
+// 
+// 	tMatrix resHola(2,4);
+// 	
+// 	Util::Mult(hola1,hola2,resHola);
+// 
+// 	cout << "hola1" << endl << hola1 << endl << "hola2" << endl << hola2 << endl;
+// 	cout << "res" << endl << resHola << endl;
+	
+
 // ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion)
 
 // 	tMatrix preambulo(N,m-1);
@@ -287,8 +313,14 @@ int main(int argc,char* argv[])
 
 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
+	cout << "El canal en pruebas" << endl << canal[105] << endl;
+
+cout << "El canal en pruebas" << endl << canal[105] << endl;
+
 	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
+
+	cout << "El canal en pruebas" << endl << canal[105] << endl;
 
 
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
@@ -296,6 +328,9 @@ int main(int argc,char* argv[])
 // 	algoritmo.Run(observaciones,ruido.Variances());
 
 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
+	// ojo: los ultimos simbolos no se detectan
+	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+	cout << "La probabilidad de error es " << pe << endl;
 
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
 
@@ -585,6 +620,12 @@ int main(int argc,char* argv[])
 // 	tMatrix covarianza = StatUtil::RandnMatrix(tam,tam,0.0,1.0);
 // 	cout << "la covarianza es" << endl << covarianza << endl;
 // 	cout << "El resultado=" << StatUtil::NormalPdf(x,mean,covarianza);
+
+// 	tMatrix holita = StatUtil::RandnMatrix(2,4,0.0,1.0);
+// 	cout << "holita es" << endl << holita << endl;
+// 	tVector holitaVector = Util::ToVector(holita,columnwise);
+// 	cout << "como vector" << endl << holitaVector << endl;
+// 	cout << "vuelve a matriz" << endl << Util::ToMatrix(holitaVector,columnwise,2,8) << endl;
 
 	cout << "Al final del programa" << endl << endl;
     return 0;

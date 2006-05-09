@@ -41,7 +41,8 @@ private:
 
 
 public:
-    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random &randomGenerator = *(new Random()));
+    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
+// 	ARchannel(const ARchannel &archannel);
 	~ARchannel();
 
 	tMatrix& operator[](int n) { return channelMatrices[n];};

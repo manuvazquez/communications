@@ -39,9 +39,11 @@ using namespace std;
 
 class StatUtil{
 public:
-    static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random &randomGenerator = *(new Random()));
+//     static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator= Random(0));
 
-	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator= *(new Random()));
+    static vector<int> Discrete_rnd(int nSamples, tVector probabilities);
+// 
+	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random randomGenerator= Random(0));
 
 	static double NormalPdf(double x,double mean,double variance);
 

@@ -50,9 +50,9 @@ void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
 
     int j;
     int nElements = a.size();
-    for(int i=0;i<nElements;i++)
+    for(int i=0;i<a.size();i++)
     {
-        for(j=0;j<nElements;j++)
+        for(j=0;j<b.size();j++)
             C(i,j) = alpha*a(i)*b(j);
     }
 }
@@ -75,10 +75,10 @@ tVector Util::ToVector(const tMatrix &matrix,tOrder order)
 
 tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
 {
-	if(vector.size()!=rows*cols)
-		throw RuntimeException("The length of the vector is not equal to rows by cols.");
+	if(vector.size()> (rows*cols))
+		throw RuntimeException("Util::ToMatrix: The length of the vector is greater than rows by cols.");
 
-	tMatrix matrix(rows,cols);
+	tMatrix matrix = LaGenMatDouble::zeros(rows,cols);
 
 	if(order==rowwise)
 		for(int iVector=vector.size();iVector--;)
