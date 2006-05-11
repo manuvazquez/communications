@@ -31,6 +31,7 @@ protected:
 	int _L,_Nm;
 	tMatrix _lastEstimatedChannelMatrix;
 public:
+	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
     ChannelMatrixEstimator(tMatrix &initialEstimation);
 	virtual ~ChannelMatrixEstimator() {};
 

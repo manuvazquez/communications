@@ -19,16 +19,16 @@
  ***************************************************************************/
 #include "Noise.h"
 
-Noise::Noise(int nRx,int length,Random randomGenerator): nRx(nRx),length(length),
-// matrix(randomGenerator.randnArray(nRx*length,0,1),nRx,length)
-matrix(StatUtil::RandnMatrix(nRx,length,0.0,1.0,randomGenerator))
+Noise::Noise(int nRx,int length,Random randomGenerator): _nRx(nRx),_length(length),
+// _matrix(randomGenerator.randnArray(_nRx*_length,0,1),_nRx,_length)
+_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0,randomGenerator))
 {
 }
 
 vector<double> Noise::Variances()
 {
-	vector<double> res(length);
-	for(int i=0;i<length;i++)
+	vector<double> res(_length);
+	for(int i=0;i<_length;i++)
 		res[i] = VarianceAt(i);
 	return res;
 }

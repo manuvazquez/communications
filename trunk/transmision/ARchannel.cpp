@@ -21,23 +21,25 @@
 
 ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): MIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
-ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance,randomGenerator),
+_ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance,randomGenerator),
 ARcoefficients,ARvariance,randomGenerator)
 {
-	channelMatrices = new tMatrix[length];
+	_channelMatrices = new tMatrix[length];
 
 	//initialization
-	for(int i=memory-1;i<length;i++)
-			channelMatrices[i] = ARproc.NextMatrix();
+	for(int i=_memory-1;i<_length;i++)
+			_channelMatrices[i] = _ARproc.NextMatrix();
 }
 
-// ARchannel::ARchannel(const ARchannel &archannel)
-// {
-// }
+ARchannel::ARchannel(const ARchannel &archannel):MIMOChannel(archannel),_ARproc(archannel._ARproc),_channelMatrices(new tMatrix[_length])
+{
+	for(int i=_memory-1;i<_length;i++)
+			_channelMatrices[i] = archannel._channelMatrices[i];
+}
 
 ARchannel::~ ARchannel()
 {
-	delete[] channelMatrices;
+	delete[] _channelMatrices;
 }
 
 vector<tMatrix> ARchannel::Range(int a,int b)
@@ -50,8 +52,8 @@ vector<tMatrix> ARchannel::Range(int a,int b)
 
 	for(int i=0;i<nMatrices;i++)
 	{
-		res[i] = channelMatrices[a+i];
-// 		cout << "en ARChannel" << endl << channelMatrices[i] << endl;
+		res[i] = _channelMatrices[a+i];
+// 		cout << "en ARChannel" << endl << _channelMatrices[i] << endl;
 	}
 
 	return res;

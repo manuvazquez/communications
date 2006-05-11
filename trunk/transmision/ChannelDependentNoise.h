@@ -36,10 +36,11 @@
 class ChannelDependentNoise : public Noise
 {
 private:
-	MIMOChannel &channel;
-	double *stdDevs;
+	MIMOChannel *_channel;
+	double *_stdDevs;
 public:
-    ChannelDependentNoise(MIMOChannel &channel);
+    ChannelDependentNoise(MIMOChannel *channel);
+    ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise);
 	~ChannelDependentNoise();
 
 	void SetSNR(int SNR,double alphabetVariance);

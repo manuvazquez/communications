@@ -34,19 +34,19 @@ using namespace la;
 
 class MIMOChannel{
 protected:
-	int nTx, nRx, memory,length,nTx_nRx,nTx_nRx_memory,nTx_memory;
+	int _nTx, _nRx, _memory,_length,_nTxnRx,_nTxnRxMemory,_nTxMemory;
 
 public:
     MIMOChannel();
 	MIMOChannel(int nTx,int nRx, int memory, int length);
 
-	int Nt() { return nTx;};
-	int Nr() { return nRx;};
-	int Memory() {return memory;};
-	int Length() {return length;};
-	int NtNr() {return nTx_nRx;};
-	int NtNrMemory() {return nTx_nRx_memory;};
-	int NtMemory() {return nTx_memory;};
+	int Nt() { return _nTx;};
+	int Nr() { return _nRx;};
+	int Memory() {return _memory;};
+	int Length() {return _length;};
+	int NtNr() {return _nTxnRx;};
+	int NtNrMemory() {return _nTxnRxMemory;};
+	int NtMemory() {return _nTxMemory;};
 	virtual tMatrix& operator[](int n) = 0;
 	tMatrix Transmit(tMatrix &symbols,Noise &noise);
 };

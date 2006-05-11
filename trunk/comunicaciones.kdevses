@@ -1,10 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
+ <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="0" Type="Source" />
+   <View0 line="134" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
+   <View0 line="39" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc2>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -16,15 +22,20 @@
      <mark line="142" />
      <mark line="23" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
+     <mark line="70" />
+     <mark line="21" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
      <mark line="124" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
+     <mark line="187" />
      <mark line="34" />
-     <mark line="431" />
-     <mark line="211" />
+     <mark line="329" />
      <mark line="126" />
-     <mark line="320" />
+     <mark line="440" />
+     <mark line="220" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

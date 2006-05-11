@@ -32,20 +32,17 @@ using namespace std;
 
 class ARchannel : public MIMOChannel
 {
-private:
-// 	double mean,variance;
-// 	vector<double> ARcoefficients;
-// 	double ARvariance;
-	tMatrix* channelMatrices;
-	ARprocess ARproc;
+protected:
+	tMatrix* _channelMatrices;
+	ARprocess _ARproc;
 
 
 public:
     ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
-// 	ARchannel(const ARchannel &archannel);
+	ARchannel(const ARchannel &archannel);
 	~ARchannel();
 
-	tMatrix& operator[](int n) { return channelMatrices[n];};
+	tMatrix& operator[](int n) { return _channelMatrices[n];};
 	vector<tMatrix> Range(int a,int b);
 };
 

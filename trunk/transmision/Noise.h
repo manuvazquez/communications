@@ -33,15 +33,15 @@ using namespace std;
 
 class Noise{
 protected:
-	int nRx,length;
-	tMatrix matrix;
+	int _nRx,_length;
+	tMatrix _matrix;
 public:
     Noise(int nRx,int length,Random randomGenerator = Random(0));
 	virtual ~Noise() {};
 
-	int Length() { return length;}
-	int Nr() { return nRx;}
-	void Print() { cout << matrix;};
+	int Length() { return _length;}
+	int Nr() { return _nRx;}
+	void Print() { cout << _matrix;};
 	virtual double StdDevAt(int n) = 0;
 	virtual tVector operator[](int n) = 0;
 	double VarianceAt(int n){ double stdDev = StdDevAt(n); return stdDev*stdDev;};

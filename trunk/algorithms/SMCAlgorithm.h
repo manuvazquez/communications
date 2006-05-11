@@ -36,7 +36,6 @@ protected:
 	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
 	ResamplingCriterion _resamplingCriterion;
 	StdResamplingAlgorithm _resamplingAlgorithm;
-// 	vector<tMatrix>  *estimatedChannelMatrices;
 	tMatrix  **_estimatedChannelMatrices;
 	tMatrix **_detectedSymbols;
 	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;

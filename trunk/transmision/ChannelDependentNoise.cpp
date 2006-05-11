@@ -19,52 +19,58 @@
  ***************************************************************************/
 #include "ChannelDependentNoise.h"
 
-ChannelDependentNoise::ChannelDependentNoise(MIMOChannel &channel)
- : Noise(channel.Nr(),channel.Length()),channel(channel)
+ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
+ : Noise(channel->Nr(),channel->Length()),_channel(channel)
 {
-	stdDevs = new double[length];
-	for(int i=0;i<length;i++)
-		stdDevs[i] = 1;
+	_stdDevs = new double[_length];
+	for(int i=0;i<_length;i++)
+		_stdDevs[i] = 1;
+}
+
+ChannelDependentNoise::ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise):Noise(channelDependentNoise),_channel(channelDependentNoise._channel),_stdDevs(new double[_length])
+{
+	for(int i=0;i<_length;i++)
+		_stdDevs[i] = channelDependentNoise._stdDevs[i];
 }
 
 ChannelDependentNoise::~ChannelDependentNoise()
 {
-	delete[] stdDevs;
+	delete[] _stdDevs;
 }
 
 void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 {
-	int i,j,channelMemory;
+	int i,j,_channelMemory;
 	double varianceConstant = pow(10.0,((double)-SNR)/10.0);
 	double stdDev,variance;
 
-	channelMemory = channel.Memory();
+	_channelMemory = _channel->Memory();
 
-	tMatrix channelTranspChannel(channel.NtMemory(),channel.NtMemory());
-	for(j=channelMemory-1;j<length;j++)
+	tMatrix channelTranspChannel(_channel->NtMemory(),_channel->NtMemory());
+	for(j=_channelMemory-1;j<_length;j++)
 	{
-		//channelTranspChannel = varianceConstant*alphabetVariance/Nr*channel[j]'*channel[j];
-		Blas_Mat_Trans_Mat_Mult(channel[j],channel[j],channelTranspChannel,varianceConstant*alphabetVariance/nRx);
+		//channelTranspChannel = varianceConstant*alphabetVariance/Nr*_channel[j]'*_channel[j];
+		Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant*alphabetVariance/_nRx);
 
 		variance = channelTranspChannel.trace();
 		stdDev = sqrt(variance);
 
-		for(i=0;i<nRx;i++)
+		for(i=0;i<_nRx;i++)
 			// normalize by dividing by the old standard deviation and multiplying by the new one
-			matrix(i,j) = matrix(i,j)/stdDevs[j]*stdDev;
-		stdDevs[j] = stdDev;
+			_matrix(i,j) = _matrix(i,j)/_stdDevs[j]*stdDev;
+		_stdDevs[j] = stdDev;
 	}
 }
 
 double ChannelDependentNoise::StdDevAt(int n)
 {
-	return stdDevs[n];
+	return _stdDevs[n];
 }
 
 tVector ChannelDependentNoise::operator[](int n)
 {
-	tVector res(nRx);
-	for(int i=0;i<nRx;i++)
-		res(i) = matrix(i,n);
+	tVector res(_nRx);
+	for(int i=0;i<_nRx;i++)
+		res(i) = _matrix(i,n);
 	return res;
 }

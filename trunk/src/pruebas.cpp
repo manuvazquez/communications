@@ -166,7 +166,7 @@ int main(int argc,char* argv[])
 	cout << "La matriz apilada es" << endl << matrizApilada << endl;
 	// -------------------------------------
 
-	ChannelDependentNoise ruido(canal);
+	ChannelDependentNoise ruido(&canal);
 	ruido.SetSNR(9,1);
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
@@ -178,9 +178,17 @@ int main(int argc,char* argv[])
 // 	cout << "El ruido" << endl;
 // 	ruido.Print();
 
-	tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
+	ChannelDependentNoise ruidoCopia = ruido;
 
-// 	cout << "Las observaciones" << endl << observaciones;
+	tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruidoCopia);
+
+// 	ARchannel canalCopia = canal;
+
+// 	tMatrix observacionesCopia = canalCopia.Transmit(simbolosTransmitir,ruido);
+
+// 	cout << "Las observaciones" << endl << observaciones << endl;
+// 
+// 	cout << "Las observaciones copia" << endl << observacionesCopia << endl;
 
 	tMatrix mediaInicial(L,N*m);
 	mediaInicial = 0.0;

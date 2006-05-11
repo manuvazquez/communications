@@ -42,6 +42,7 @@ public:
 	static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
 	static void Add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
     static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
+	static void Transpose(const tMatrix &A,tMatrix &B);
 	static tVector ToVector(const tMatrix &matrix,tOrder order);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
