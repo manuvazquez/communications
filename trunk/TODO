@@ -1,0 +1,3 @@
+- en Particle.h: SetSymbolVectors: El rango const &
+- optimizar las Particles para que en el constructor copia solo se copien las matrices ocupadas
+- en ParticleWithCh... eliminar atributos channelRows y columns

@@ -53,3 +53,8 @@ void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimatio
 			_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];		
 	}
 }
+
+ParticleWithChannelEstimation *ParticleWithChannelEstimation::Clone()
+{
+	return new ParticleWithChannelEstimation(*this);
+}

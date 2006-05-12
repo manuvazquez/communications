@@ -29,6 +29,7 @@
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
+#include <ParticleWithChannelEstimation.h>
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
@@ -36,15 +37,24 @@ protected:
 	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
 	ResamplingCriterion _resamplingCriterion;
 	StdResamplingAlgorithm _resamplingAlgorithm;
-	tMatrix  **_estimatedChannelMatrices;
-	tMatrix **_detectedSymbols;
-	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;
-	tVector _weights;
+// 	tMatrix  **_estimatedChannelMatrices;
+// 	tMatrix **_detectedSymbols;
+// 	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;
+// 	tVector _weights;
+	ParticleWithChannelEstimation **_particles;
 	tRange _allSymbolsRows;
-	bool _reservedMemory;
 
 	virtual void Resampling(int endResamplingTime);
+	virtual void InitializeParticles();
 	virtual void Process(tMatrix observations,vector<double> noiseVariances) = 0;
+
+	tVector GetWeightsVector() 
+	{
+		tVector weights(_nParticles);
+		for(int i=0;i<_nParticles;i++)
+			weights(i) = _particles[i]->GetWeight();
+	}	
+	
 public:
     SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 	~SMCAlgorithm();

@@ -44,6 +44,7 @@ public:
 	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
 
 	void operator=(const ParticleWithChannelEstimation &particle);
+	virtual ParticleWithChannelEstimation *Clone();
 };
 
 #endif

@@ -23,15 +23,16 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 {
 }
 
-bool ResamplingCriterion::ResamplingNeeded(tVector weights)
+bool ResamplingCriterion::ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles)
 {
 	double weights2Sum,nEffectiveParticles;
-	int nParticles;
+// 	int nParticles;
 
-	nParticles = weights.size();
+// 	nParticles = weights.size();
 	weights2Sum = 0;
 	for(int i=0;i<nParticles;i++)
-		weights2Sum += weights(i)*weights(i);
+// 		weights2Sum += weights(i)*weights(i);
+		weights2Sum += particles[i]->GetWeight();
 
 	if(weights2Sum==0)
 		throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");

@@ -122,3 +122,17 @@ void StdResamplingAlgorithm::Resampling(tMatrix  ***estimatedChannelMatrices,tMa
 	*particlesChannelMatrixEstimators = resParticlesChannelMatrixEstimators;
 	*particlesLinearDetectors = resParticlesLinearDetectors;
 }
+
+void StdResamplingAlgorithm::Resampling(ParticleWithChannelEstimation ***particles,int nParticles,vector<int> indexes)
+{
+	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[nParticles];
+
+	for(int iParticle=0;iParticle<nParticles;iParticle++)
+	{
+		resParticles[iParticle] = ((*particles)[indexes[iParticle]])->Clone();
+		resParticles[iParticle]->SetWeight(1.0/(double)nParticles);
+	}
+
+	delete[] (*particles);
+	*particles = resParticles;
+}

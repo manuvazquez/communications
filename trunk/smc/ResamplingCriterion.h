@@ -26,6 +26,7 @@
 
 #include <types.h>
 #include "smcExceptions.h"
+#include <ParticleWithChannelEstimation.h>
 
 class ResamplingCriterion{
 private:
@@ -33,7 +34,7 @@ private:
 public:
     ResamplingCriterion(double resamplingRatio);
 
-	bool ResamplingNeeded(tVector weights);
+	bool ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles);
 
 };
 

@@ -328,7 +328,7 @@ int main(int argc,char* argv[])
 	ResamplingCriterion criterioRemuestreo(0.9);
 	StdResamplingAlgorithm algoritmoRemuestreo;
 
-	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+// 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
 	cout << "El canal en pruebas" << endl << canal[105] << endl;
 

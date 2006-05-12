@@ -42,6 +42,8 @@ public:
     Particle(double weight,int symbolVectorLength,int nTimeInstants);
     virtual ~Particle();
 
+	int TrajectoryLength() { return _nTimeInstants;}
+
 	double GetWeight() { return _weight;}
 	void SetWeight(double weight) { _weight = weight;}
 
@@ -50,10 +52,13 @@ public:
 
 	tMatrix GetSymbolVectors(tRange range) { return _symbolVectors(_rAllSymbolRows,range);}
 	tMatrix GetSymbolVectors(int a,int b) { return _symbolVectors(_rAllSymbolRows,tRange(a,b));}
+	void SetSymbolVectors(tRange range,tMatrix symbolVectors) { _symbolVectors(_rAllSymbolRows,range).inject(symbolVectors);}
+	void SetSymbolVectors(int a,int b,tMatrix symbolVectors) { _symbolVectors(_rAllSymbolRows,tRange(a,b)).inject(symbolVectors);}
 
 	void Print() { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 
 	void operator=(const Particle &particle);
+	virtual Particle *Clone();
 };
 
 #endif

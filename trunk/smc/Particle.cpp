@@ -42,3 +42,8 @@ void Particle::operator=(const Particle &particle)
 		_rAllSymbolRows = particle._rAllSymbolRows;
 	}
 }
+
+Particle *Particle::Clone()
+{
+	return new Particle(*this);
+}
