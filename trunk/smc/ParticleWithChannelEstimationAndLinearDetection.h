@@ -17,35 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATION_H
-#define PARTICLEWITHCHANNELESTIMATION_H
+#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
+#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
 
-#include <Particle.h>
+#include <ParticleWithChannelEstimation.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ChannelMatrixEstimator.h>
+#include <LinearDetector.h>
 
-class ParticleWithChannelEstimation : public Particle
+class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation
 {
 protected:
-	ChannelMatrixEstimator *_channelMatrixEstimator;
-	tMatrix *_estimatedChannelMatrices;
+	LinearDetector *_linearDetector;
 public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
-	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
+    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
 
-    ~ParticleWithChannelEstimation();
+	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
 
-	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
-	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
+    ~ParticleWithChannelEstimationAndLinearDetection();
 
-	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
+	ParticleWithChannelEstimationAndLinearDetection *Clone();
 
-	void operator=(const ParticleWithChannelEstimation &particle);
-	ParticleWithChannelEstimation *Clone();
+	LinearDetector *GetLinearDetector() { return _linearDetector;}
 };
 
 #endif

@@ -17,35 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATION_H
-#define PARTICLEWITHCHANNELESTIMATION_H
+#include "ParticleWithChannelEstimationAndLinearDetector.h"
 
-#include <Particle.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <ChannelMatrixEstimator.h>
-
-class ParticleWithChannelEstimation : public Particle
+ParticleWithChannelEstimationAndLinearDetector::ParticleWithChannelEstimationAndLinearDetector(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator)
 {
-protected:
-	ChannelMatrixEstimator *_channelMatrixEstimator;
-	tMatrix *_estimatedChannelMatrices;
-public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
-	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
+}
 
-    ~ParticleWithChannelEstimation();
 
-	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
-	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
+ParticleWithChannelEstimationAndLinearDetector::~ParticleWithChannelEstimationAndLinearDetector()
+{
+}
 
-	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
 
-	void operator=(const ParticleWithChannelEstimation &particle);
-	ParticleWithChannelEstimation *Clone();
-};
-
-#endif

@@ -17,35 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATION_H
-#define PARTICLEWITHCHANNELESTIMATION_H
+#include "ParticleWithChannelEstimationAndLinearDetection.h"
 
-#include <Particle.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <ChannelMatrixEstimator.h>
-
-class ParticleWithChannelEstimation : public Particle
+ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),_linearDetector(linearDetector)
 {
-protected:
-	ChannelMatrixEstimator *_channelMatrixEstimator;
-	tMatrix *_estimatedChannelMatrices;
-public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
-	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
+}
 
-    ~ParticleWithChannelEstimation();
+ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),_linearDetector((particle._linearDetector)->Clone())
+{
+}
 
-	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
-	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
+ParticleWithChannelEstimationAndLinearDetection::~ParticleWithChannelEstimationAndLinearDetection()
+{
+	delete _linearDetector;
+}
 
-	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
-
-	void operator=(const ParticleWithChannelEstimation &particle);
-	ParticleWithChannelEstimation *Clone();
-};
-
-#endif
+ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
+{
+	return new ParticleWithChannelEstimationAndLinearDetection(*this);
+}

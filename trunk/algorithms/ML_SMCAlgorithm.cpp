@@ -53,9 +53,6 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
-	// and from it, a probability
-// 	tVector probabilities(nSymbolVectors);
-
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
 	{
@@ -63,9 +60,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_nParticles;iParticle++)
 		{
-			// the m-1 already detected symbol vectors are copied into the matrix
-// 			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject((*_detectedSymbols[iParticle])(allSymbolRows,mPrecedentColumns));
-
+			// the m-1 already detected symbol vectors are copied into the matrix:
 			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(_particles[iParticle]->GetSymbolVectors(mPrecedentColumns));
 
 			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -92,13 +87,7 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 					auxLikelihoodsProd = 1.0;
 
 					// a clone of the channel estimator is generated because this must not be modified
-// 					channelEstimatorClone = (dynamic_cast < KalmanEstimator * > (_particlesChannelMatrixEstimators[iParticle]))->Clone();
-
-// 					cout << "Llamando a ChanelMatrixEstimatorClone" << endl;
-
 					channelEstimatorClone = dynamic_cast < KalmanEstimator * > (_particles[iParticle]->GetChannelMatrixEstimator()->Clone());
-
-// 					channelEstimatorClone = dynamic_cast < KalmanEstimator * > (_particles[iParticle]->_channelMatrixEstimator->Clone());
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
@@ -106,8 +95,6 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 
 						// the likelihood is computed and accumulated
 						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
-
-// 						cout << "da = " << auxLikelihoodsProd; char c; cin >> c;
 
 						// a step in the Kalman Filter
 						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
@@ -118,27 +105,12 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 
 					// the likelihood is accumulated in the proper position of vector:
 					likelihoods(iTestedVector) += auxLikelihoodsProd;
-
-// 					cout << "verosimilitud = " << likelihoods(iTestedVector) << endl;
-// 					char c;
-// 					cin >> c;
 				} // for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
 
 			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-// 			cout << "simbolos verdaderos" << endl << _simbolos.col(iObservationToBeProcessed) << endl;
-			for(int iPrueba = 0;iPrueba<nSymbolVectors;iPrueba++)
-			{
-// 				cout << "verosimilitud = " << likelihoods(iPrueba) << endl;
-			}
-// 			cout << "***************************************************" << endl;
-
-// 			cout << "Antes de llamar a normalize (particula " << iParticle << " )" << endl;
-
 			// probabilities are computed by normalizing the likelihoods
 			tVector probabilities = Util::Normalize(likelihoods);
-
-// 			cout << "Despues" << endl;
 
 			// one sample from the discrete distribution is taken
 			int iSampledVector = (StatUtil::Discrete_rnd(1,probabilities))[0];
@@ -147,34 +119,21 @@ void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVarian
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
 
 			// sampled symbols are copied into the corresponding particle
-// 			for(k=0;k<_N;k++)
-// 				(*_detectedSymbols[iParticle])(k,iObservationToBeProcessed) = sampledVector[k];
-
 			_particles[iParticle]->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 						
 			// channel matrix is estimated by means of the particle channel estimator
-// 			_estimatedChannelMatrices[iParticle][iObservationToBeProcessed] = (_particlesChannelMatrixEstimators[iParticle])->NextMatrix(observations.col(iObservationToBeProcessed),(*_detectedSymbols[iParticle])(allSymbolRows,mPrecedentColumns),noiseVariances[iObservationToBeProcessed]);
-
 			_particles[iParticle]->SetChannelMatrix(iObservationToBeProcessed,(_particles[iParticle]->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),_particles[iParticle]->GetSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
-
-// 			_weights(iParticle) *= Util::Sum(likelihoods);
 
 			_particles[iParticle]->SetWeight(_particles[iParticle]->GetWeight()* Util::Sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-// 		_weights = Util::Normalize(_weights);
 		NormalizeWeights();
-
-// 		cout << "Antes de resampling" << endl;
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_endDetectionTime-1))
 			this->Resampling(iObservationToBeProcessed);
 
-// 		cout << "Despues" << endl;
-
 	} // for each time instant
-	cout << "pesos finales" << endl << GetWeightsVector() << endl;
 }
 

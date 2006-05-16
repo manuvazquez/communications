@@ -125,9 +125,6 @@ void StdResamplingAlgorithm::Resampling(tMatrix  ***estimatedChannelMatrices,tMa
 
 void StdResamplingAlgorithm::Resampling(ParticleWithChannelEstimation ***particles,int nParticles,vector<int> indexes)
 {
-
-	cout << "Remuestreando " << endl; 
-// 	char c; cin >> c;
 	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[nParticles];
 
 	for(int iParticle=0;iParticle<nParticles;iParticle++)
