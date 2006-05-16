@@ -24,6 +24,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <vector>
 #include <types.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
@@ -31,6 +32,8 @@
 #include <lapackpp/blas3pp.h>
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
+
+using namespace std;
 
 class Particle{
 protected:
@@ -47,8 +50,14 @@ public:
 	double GetWeight() { return _weight;}
 	void SetWeight(double weight) { _weight = weight;}
 
+	tMatrix GetAllSymbolVectors() { return _symbolVectors;}
 	tVector GetSymbolVector(int n) { return _symbolVectors.col(n);}
-	void SetSymbolVector(int n,tVector vector) { _symbolVectors.col(n).inject(vector);}
+	void SetSymbolVector(int n,tVector v) { _symbolVectors.col(n).inject(v);}
+	void SetSymbolVector(int n,vector<tSymbol> v)
+	{
+		for(int i=0;i<_symbolVectorLength;i++)
+			_symbolVectors(i,n) = v[i];
+	}
 
 	tMatrix GetSymbolVectors(tRange range) { return _symbolVectors(_rAllSymbolRows,range);}
 	tMatrix GetSymbolVectors(int a,int b) { return _symbolVectors(_rAllSymbolRows,tRange(a,b));}

@@ -25,6 +25,7 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 
 bool ResamplingCriterion::ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles)
 {
+// 	cout << "Al principio de resampling criteriorn" << endl;
 	double weights2Sum,nEffectiveParticles;
 // 	int nParticles;
 
@@ -32,12 +33,15 @@ bool ResamplingCriterion::ResamplingNeeded(ParticleWithChannelEstimation **parti
 	weights2Sum = 0;
 	for(int i=0;i<nParticles;i++)
 // 		weights2Sum += weights(i)*weights(i);
-		weights2Sum += particles[i]->GetWeight();
+		weights2Sum += particles[i]->GetWeight()*particles[i]->GetWeight();
 
 	if(weights2Sum==0)
 		throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");
 
 	nEffectiveParticles = 1.0/weights2Sum;
+
+// 	cout << "Al final de resampling criteriorn" << endl;
+
 	if(nEffectiveParticles<(_resamplingRatio*((double)nParticles)))
 		return true;
 	else

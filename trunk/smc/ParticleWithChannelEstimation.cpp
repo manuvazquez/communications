@@ -19,11 +19,17 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimation.h"
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,int channelMatrixRows,int channelMatrixColumns,ChannelMatrixEstimator *channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants),_channelMatrixRows(channelMatrixRows),_channelMatrixColumns(channelMatrixColumns),_channelMatrixEstimator(channelMatrixEstimator),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants
+// ,int channelMatrixRows,int channelMatrixColumns
+,ChannelMatrixEstimator *channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants)
+// ,_channelMatrixRows(channelMatrixRows),_channelMatrixColumns(channelMatrixColumns)
+,_channelMatrixEstimator(channelMatrixEstimator),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
 {
 }
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle._weight,particle._symbolVectorLength,particle._nTimeInstants),_channelMatrixRows(particle._channelMatrixRows),_channelMatrixColumns(particle._channelMatrixColumns),_channelMatrixEstimator((particle._channelMatrixEstimator)->Clone()),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle)
+// ,_channelMatrixRows(particle._channelMatrixRows),_channelMatrixColumns(particle._channelMatrixColumns)
+,_channelMatrixEstimator((particle._channelMatrixEstimator)->Clone()),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
 {
 	for(int i=0;i<_nTimeInstants;i++)
 		_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
@@ -41,8 +47,8 @@ void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimatio
 	{
 		Particle::operator =(particle);
 
-		_channelMatrixRows = particle._channelMatrixRows;
-		_channelMatrixColumns = particle._channelMatrixColumns;
+// 		_channelMatrixRows = particle._channelMatrixRows;
+// 		_channelMatrixColumns = particle._channelMatrixColumns;
 
 		delete _channelMatrixEstimator;
 		_channelMatrixEstimator = (particle._channelMatrixEstimator)->Clone();

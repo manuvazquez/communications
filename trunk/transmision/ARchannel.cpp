@@ -21,7 +21,7 @@
 
 ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): MIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
-_ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance,randomGenerator),
+_ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance),
 ARcoefficients,ARvariance,randomGenerator)
 {
 	_channelMatrices = new tMatrix[length];

@@ -64,7 +64,7 @@ void SMCAlgorithm::InitializeParticles()
 // 		_estimatedChannelMatrices[iParticle] = new tMatrix[_endDetectionTime];
 // 		_detectedSymbols[iParticle] = new tMatrix(_N,_endDetectionTime);
 // 		_particlesChannelMatrixEstimators[iParticle] = _channelEstimator.Clone();
-		_particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_endDetectionTime,_L,_Nm,_channelEstimator.Clone());
+		_particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_endDetectionTime,_channelEstimator.Clone());
 	}
 }
 
@@ -137,13 +137,17 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
 void SMCAlgorithm::Resampling(int endResamplingTime)
 {
+// 	cout << "Dentro de Resampling" << endl;
 	if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
 	{
 // 		tVector weights(_nParticles);
 // 		for(int i=0;i<_nParticles;i++)
 // 			weights(i) = _particles[i]->GetWeight();
 
+// 		cout << "Antes de Discrete" << endl;
+// 		cout << "El vector de probabilidades que le pasa" << endl << GetWeightsVector() << endl;
 		vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
+// 		cout << "Despues de Discrete" << endl;
 // 		_resamplingAlgorithm.Resampling(&_estimatedChannelMatrices,&_detectedSymbols,&_particlesChannelMatrixEstimators,indexes,_nParticles,_startDetectionTime,endResamplingTime,_endDetectionTime);
 // 		_weights = 1.0/(double)_nParticles;
 		_resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
@@ -164,6 +168,8 @@ double SMCAlgorithm::SER(tMatrix symbols)
 	int iBestParticle;
 // 	Util::Max(_weights,iBestParticle);
 	Util::Max(GetWeightsVector(),iBestParticle);
+
+	cout << "La particula elegida es la " << iBestParticle << " y es" << endl << _particles[iBestParticle]->GetAllSymbolVectors() << endl;
 
 	int nErrors = 0;
 	int windowStart = nDetectedVectors - windowSize;

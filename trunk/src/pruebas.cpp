@@ -170,7 +170,7 @@ int main(int argc,char* argv[])
 	// -------------------------------------
 
 	ChannelDependentNoise ruido(&canal);
-	ruido.SetSNR(9,1);
+	ruido.SetSNR(3,1);
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
@@ -328,20 +328,22 @@ int main(int argc,char* argv[])
 	ResamplingCriterion criterioRemuestreo(0.9);
 	StdResamplingAlgorithm algoritmoRemuestreo;
 
-// 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir);
 
-	cout << "El canal en pruebas" << endl << canal[105] << endl;
+	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
-cout << "El canal en pruebas" << endl << canal[105] << endl;
+cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
 // 	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
 
-	cout << "El canal en pruebas" << endl << canal[105] << endl;
+	cout << "El canal en pruebas" << endl << canal[55] << endl;
+
+// 	char c; cin >> c;
 
 
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
-// 	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
+	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
 // 	algoritmo.Run(observaciones,ruido.Variances());
 
 // 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
@@ -352,8 +354,8 @@ cout << "El canal en pruebas" << endl << canal[105] << endl;
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
 
 	// ojo: los ultimos simbolos no se detectan
-// 	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-// 	cout << "La probabilidad de error es " << pe << endl;
+	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+	cout << "La probabilidad de error es " << pe << endl;
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------
@@ -644,44 +646,46 @@ cout << "El canal en pruebas" << endl << canal[105] << endl;
 // 	cout << "como vector" << endl << holitaVector << endl;
 // 	cout << "vuelve a matriz" << endl << Util::ToMatrix(holitaVector,columnwise,2,8) << endl;
 
-	Particle particula(0.3,3,5);
-	Particle particula2(0.3,3,5);
-
-	particula2 = particula;
-
-	tVector v(3);
-	v(0) = 1.1; v(1) = 2.123413; v(2) = 3.00001;
-
-	particula.Print();
-
-	particula.SetWeight(0.314);
-
-	particula.SetSymbolVector(2,v);
-
-	tMatrix pruebita = particula.GetSymbolVectors(1,3);
-
-	particula.Print();
-
-	cout << "un rango" << endl << pruebita << endl;
-
-	ParticleWithChannelEstimation part(0.1,2,10,3,4,copiaEstimadorRLS);
-
-	tMatrix matrizInsertar = StatUtil::RandnMatrix(3,4,0.0,1.0);
-
-	cout << "Matriz que se va a insertar" << endl << matrizInsertar << endl;
-
-	part.SetChannelMatrix(6,matrizInsertar);
-
-	cout << part.GetChannelMatrix(6) << endl;
-
-	ParticleWithChannelEstimation part2 = part;
-	cout << part2.GetChannelMatrix(6) << endl;
-
-	part2.SetChannelMatrix(3,matrizInsertar);
-
-	part = part2;
-
-	cout << "despues del igual" << endl << part.GetChannelMatrix(3) << endl;
+	// ********************* Pruebas con particulas ****************************
+// 	Particle particula(0.3,3,5);
+// 	Particle particula2(0.3,3,5);
+// 
+// 	particula2 = particula;
+// 
+// 	tVector v(3);
+// 	v(0) = 1.1; v(1) = 2.123413; v(2) = 3.00001;
+// 
+// 	particula.Print();
+// 
+// 	particula.SetWeight(0.314);
+// 
+// 	particula.SetSymbolVector(2,v);
+// 
+// 	tMatrix pruebita = particula.GetSymbolVectors(1,3);
+// 
+// 	particula.Print();
+// 
+// 	cout << "un rango" << endl << pruebita << endl;
+// 
+// 	ParticleWithChannelEstimation part(0.1,2,10,3,4,copiaEstimadorRLS);
+// 
+// 	tMatrix matrizInsertar = StatUtil::RandnMatrix(3,4,0.0,1.0);
+// 
+// 	cout << "Matriz que se va a insertar" << endl << matrizInsertar << endl;
+// 
+// 	part.SetChannelMatrix(6,matrizInsertar);
+// 
+// 	cout << part.GetChannelMatrix(6) << endl;
+// 
+// 	ParticleWithChannelEstimation part2 = part;
+// 	cout << part2.GetChannelMatrix(6) << endl;
+// 
+// 	part2.SetChannelMatrix(3,matrizInsertar);
+// 
+// 	part = part2;
+// 
+// 	cout << "despues del igual" << endl << part.GetChannelMatrix(3) << endl;
+	// ***********************************************************************
 
 	cout << "Al final del programa" << endl << endl;
     return 0;

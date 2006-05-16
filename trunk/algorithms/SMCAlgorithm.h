@@ -53,7 +53,20 @@ protected:
 		tVector weights(_nParticles);
 		for(int i=0;i<_nParticles;i++)
 			weights(i) = _particles[i]->GetWeight();
-	}	
+		return weights;
+	}
+
+	void NormalizeWeights()
+	{
+		double sum = 0.0;
+		int i;
+
+		for(i=0;i<_nParticles;i++)
+			sum += _particles[i]->GetWeight();
+
+		for(i=0;i<_nParticles;i++)
+			_particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
+	}
 	
 public:
     SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);

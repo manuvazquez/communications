@@ -31,17 +31,23 @@
 class ParticleWithChannelEstimation : public Particle
 {
 protected:
-	int _channelMatrixRows,_channelMatrixColumns;
+// 	int _channelMatrixRows,_channelMatrixColumns;
 	ChannelMatrixEstimator *_channelMatrixEstimator;
 	tMatrix *_estimatedChannelMatrices;
 public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,int channelMatrixRows,int channelMatrixColumns,ChannelMatrixEstimator *channelMatrixEstimator);
+// 	ChannelMatrixEstimator *_channelMatrixEstimator;
+    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants
+// ,int channelMatrixRows,
+// int channelMatrixColumns
+,ChannelMatrixEstimator *channelMatrixEstimator);
 	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
 
     ~ParticleWithChannelEstimation();
 
 	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
 	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
+
+	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
 
 	void operator=(const ParticleWithChannelEstimation &particle);
 	virtual ParticleWithChannelEstimation *Clone();

@@ -26,9 +26,9 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 	double uniform;
 	static Random randomGenerator(1);
 
-	cout << "La semilla es " << randomGenerator.getSeed() << endl;
+// 	cout << "La semilla es " << randomGenerator.getSeed() << endl;
 
-	char c;
+// 	char c;
 // 	cin >> c;
 
     tVector normalizedProbabilities = Util::Normalize(probabilities);
@@ -60,10 +60,11 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 	return res;
 }
 
-tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random randomGenerator)
+tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
 {
 	tMatrix res(rows,cols);
 	double stdDv = sqrt(variance);
+	static Random randomGenerator(0);
 
 	int j;
 	for(int i=0;i<rows;i++)

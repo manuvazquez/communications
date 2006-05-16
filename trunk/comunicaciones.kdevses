@@ -1,22 +1,28 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="5" >
+ <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="330" Type="Source" />
+   <View0 line="178" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
-   <View0 line="49" Type="Source" />
+   <View0 line="48" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-   <View0 line="177" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
+   <View0 line="135" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/Particle.h" >
-   <View0 line="44" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+   <View0 line="66" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
-   <View0 line="5" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.h" >
+   <View0 line="39" Type="Source" />
   </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.h" >
+   <View0 line="43" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.cpp" >
+   <View0 line="49" Type="Source" />
+  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -33,18 +39,13 @@
      <mark line="21" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
-     <mark line="124" />
+     <mark line="126" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
      <mark line="68" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
-     <mark line="223" />
-     <mark line="190" />
-     <mark line="37" />
-     <mark line="449" />
-     <mark line="129" />
-     <mark line="338" />
+     <mark line="135" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

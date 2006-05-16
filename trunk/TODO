@@ -1,3 +1,4 @@
 - en Particle.h: SetSymbolVectors: El rango const &
 - optimizar las Particles para que en el constructor copia solo se copien las matrices ocupadas
-- en ParticleWithCh... eliminar atributos channelRows y columns
+- en ParticleWithCh... comprobar que la matriz pasada en los metodos Set tiene el tamaño adecuado
+- mas comprobaciones en los métodos de Particle y derivados
