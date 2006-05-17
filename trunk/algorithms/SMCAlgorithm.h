@@ -37,10 +37,6 @@ protected:
 	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
 	ResamplingCriterion _resamplingCriterion;
 	StdResamplingAlgorithm _resamplingAlgorithm;
-// 	tMatrix  **_estimatedChannelMatrices;
-// 	tMatrix **_detectedSymbols;
-// 	ChannelMatrixEstimator **_particlesChannelMatrixEstimators;
-// 	tVector _weights;
 	ParticleWithChannelEstimation **_particles;
 	tRange _allSymbolsRows;
 
@@ -69,7 +65,7 @@ protected:
 	}
 	
 public:
-    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 	~SMCAlgorithm();
 	
 	void Run(tMatrix observations,vector<double> noiseVariances);

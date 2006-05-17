@@ -39,7 +39,7 @@ class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 public:
     LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,LinearDetector &linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance,const tMatrix simbolos,const ARchannel &canal,const ChannelDependentNoise &ruido);
 
-    ~LinearFilterBasedSMCAlgorithm();
+//     ~LinearFilterBasedSMCAlgorithm();
 
 // 	using SMCAlgorithm::Run;
 // 	void Run(tMatrix observations,vector<double> noiseVariances);

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet, channelEstimator),_preamble(preamble),_L(channelEstimator.Rows()),_Nm(channelEstimator.Cols())
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet, channelEstimator),_preamble(preamble),_L(channelEstimator->Rows()),_Nm(channelEstimator->Cols())
 {
 	// if there is no preamble
 	if(_preamble.rows()==0)
@@ -47,7 +47,7 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(tMatrix obse
 	for(int i=_m-1;i<lengthToProcessSequence;i++)
 	{
 		tRange mColumns(i-_m+1,i);
-		estimatedMatrices[i] = _channelEstimator.NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
+		estimatedMatrices[i] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
 	}
 	return estimatedMatrices;
 }

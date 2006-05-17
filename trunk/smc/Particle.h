@@ -52,17 +52,17 @@ public:
 
 	tMatrix GetAllSymbolVectors() { return _symbolVectors;}
 	tVector GetSymbolVector(int n) { return _symbolVectors.col(n);}
-	void SetSymbolVector(int n,tVector v) { _symbolVectors.col(n).inject(v);}
-	void SetSymbolVector(int n,vector<tSymbol> v)
+	void SetSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
+	void SetSymbolVector(int n,const vector<tSymbol> &v)
 	{
 		for(int i=0;i<_symbolVectorLength;i++)
 			_symbolVectors(i,n) = v[i];
 	}
 
-	tMatrix GetSymbolVectors(tRange range) { return _symbolVectors(_rAllSymbolRows,range);}
+	tMatrix GetSymbolVectors(const tRange &range) { return _symbolVectors(_rAllSymbolRows,range);}
 	tMatrix GetSymbolVectors(int a,int b) { return _symbolVectors(_rAllSymbolRows,tRange(a,b));}
-	void SetSymbolVectors(tRange range,tMatrix symbolVectors) { _symbolVectors(_rAllSymbolRows,range).inject(symbolVectors);}
-	void SetSymbolVectors(int a,int b,tMatrix symbolVectors) { _symbolVectors(_rAllSymbolRows,tRange(a,b)).inject(symbolVectors);}
+	void SetSymbolVectors(const tRange &range,const tMatrix &symbolVectors) { _symbolVectors(_rAllSymbolRows,range).inject(symbolVectors);}
+	void SetSymbolVectors(int a,int b,const tMatrix &symbolVectors) { _symbolVectors(_rAllSymbolRows,tRange(a,b)).inject(symbolVectors);}
 
 	void Print() { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 

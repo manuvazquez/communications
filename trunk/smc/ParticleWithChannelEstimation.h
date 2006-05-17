@@ -40,7 +40,7 @@ public:
     ~ParticleWithChannelEstimation();
 
 	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
-	void SetChannelMatrix(int n,tMatrix matrix) { _estimatedChannelMatrices[n] = matrix;}
+	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[n] = matrix;}
 
 	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
 

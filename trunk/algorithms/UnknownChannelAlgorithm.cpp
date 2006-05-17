@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownChannelAlgorithm.h"
 
-UnknownChannelAlgorithm::UnknownChannelAlgorithm(string name, Alphabet  alphabet,ChannelMatrixEstimator &channelEstimator)
+UnknownChannelAlgorithm::UnknownChannelAlgorithm(string name, Alphabet  alphabet,ChannelMatrixEstimator *channelEstimator)
  : Algorithm(name,alphabet),_channelEstimator(channelEstimator)
 {
 }

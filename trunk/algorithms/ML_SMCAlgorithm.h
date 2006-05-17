@@ -33,7 +33,7 @@
 class ML_SMCAlgorithm : public SMCAlgorithm
 {
 public:
-    ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm,tMatrix simbolos);
+    ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm,tMatrix simbolos);
 
 protected:
     void Process(tMatrix observations, vector< double > noiseVariances);
