@@ -17,47 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
+#include "LMSEstimator.h"
 
-#include <ChannelMatrixEstimator.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <math.h>
-#include <KalmanFilter.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-
-class KalmanEstimator : public ChannelMatrixEstimator
+LMSEstimator::LMSEstimator(tMatrix& initialEstimation,double mu): ChannelMatrixEstimator(initialEstimation),_mu(mu),_predictedObservations(_L),_error(_L),_deltaMatrix(_L,_Nm)
 {
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
-	tMatrix _identityL;
+}
 
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
+LMSEstimator* LMSEstimator::Clone()
+{
+	return new LMSEstimator(*this);
+}
 
-private:
-	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
-public:
-    KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance);
-	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
-	~KalmanEstimator();
+tMatrix LMSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+{
+	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone();
-};
+	// _predictedObservations = _lastEstimatedChannelMatrix * symbolsVector
+	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,_predictedObservations);
 
-#endif
+	// _error = _predictedObservations - observations
+	Util::Add(_predictedObservations,observations,_error,1.0,-1.0);
+
+	// _deltaMatrix = _mu * _error * symbolsVector'
+	Util::Mult(_error,symbolsVector,_deltaMatrix,_mu);
+
+	// _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix - _deltaMatrix
+	Util::Add(_lastEstimatedChannelMatrix,_deltaMatrix,_lastEstimatedChannelMatrix,1.0,-1.0);
+
+	return _lastEstimatedChannelMatrix;
+}
+

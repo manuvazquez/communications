@@ -21,10 +21,8 @@
 
 KalmanEstimator::KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
-// variables needed for Clone
-_ARcoefficient(ARcoefficient),_ARvariance(ARvariance),
 //auxiliary variables initialization
-_F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
+_F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
 	R *= ARcoefficient;
@@ -34,8 +32,10 @@ _F(_L,_L*_Nm),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoe
 	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 
 	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
-	_F = 0.0;
-// 	_identityL = LaGenMatDouble::eye(_L);
+}
+
+KalmanEstimator::KalmanEstimator(const KalmanEstimator &kalmanEstimator):ChannelMatrixEstimator(kalmanEstimator),_kalmanFilter(new KalmanFilter(*(kalmanEstimator._kalmanFilter))),_nChannelCoefficients(kalmanEstimator._nChannelCoefficients),_identityL(kalmanEstimator._identityL),_F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
+{
 }
 
 KalmanEstimator::~KalmanEstimator()
@@ -150,9 +150,6 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 
 KalmanEstimator *KalmanEstimator::Clone()
 {
-	KalmanEstimator *res = new KalmanEstimator(*this);
-
-	res->_kalmanFilter = new KalmanFilter(*_kalmanFilter);
-
-	return res;
+	// it relies on copy constructor
+	return new KalmanEstimator(*this);
 }

@@ -1,3 +1,4 @@
+- comprobar de alguna manera que ML_SMCAlgorithm recibe como estimador de canal un KalmanEstimator
 - optimizar las Particles para que en el constructor copia solo se copien las matrices ocupadas
 - en ParticleWithCh... comprobar que la matriz pasada en los metodos Set tiene el tamaño adecuado
 - mas comprobaciones en los métodos de Particle y derivados

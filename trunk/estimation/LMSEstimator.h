@@ -17,46 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDSMCALGORITHM_H
-#define LINEARFILTERBASEDSMCALGORITHM_H
+#ifndef LMSESTIMATOR_H
+#define LMSESTIMATOR_H
 
-#include <SMCAlgorithm.h>
+#include <ChannelMatrixEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <LinearDetector.h>
+#include <Util.h>
 #include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
+// #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <ARchannel.h>
-#include <ChannelDependentNoise.h>
-#include <ParticleWithChannelEstimationAndLinearDetection.h>
+// #include <lapackpp/blas3pp.h>
+// #include <lapackpp/laslv.h>
+// #include <lapackpp/lavli.h>
 
-class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
+class LMSEstimator : public ChannelMatrixEstimator
 {
-public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance,const tMatrix simbolos,const ARchannel &canal,const ChannelDependentNoise &ruido);
-
-//     ~LinearFilterBasedSMCAlgorithm();
-
-// 	using SMCAlgorithm::Run;
-// 	void Run(tMatrix observations,vector<double> noiseVariances);
-
 protected:
-// 	LinearDetector **_particlesLinearDetectors;
-	LinearDetector *_linearDetector;
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-	tMatrix _simbolos;
-	ARchannel _canal;
-	ChannelDependentNoise _ruido;
+	double _mu;
+	tVector _predictedObservations,_error;
+	tMatrix _deltaMatrix;
+public:
+    LMSEstimator(tMatrix& initialEstimation,double mu);
 
-	void InitializeParticles();
-    void Process(tMatrix observations, vector< double > noiseVariances);
-	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
-// 	void Resampling(int endResamplingTime);
+    virtual LMSEstimator* Clone();
+    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+
 };
 
 #endif

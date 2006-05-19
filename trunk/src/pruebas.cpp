@@ -12,6 +12,7 @@
 #include <KalmanFilter.h>
 #include <KalmanEstimator.h>
 #include <RLSEstimator.h>
+#include <LMSEstimator.h>
 #include <RMMSEDetector.h>
 #include <ML_SMCAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
@@ -143,6 +144,7 @@ int main(int argc,char* argv[])
 	vector<double> ARcoefficients(1);
 	ARcoefficients[0] = 0.99999;
 	tRange todasFilasSimbolos(0,N-1);
+	double muLMS = 0.05;
 
 	Bits bitsTransmitir(N,K);
 
@@ -170,7 +172,7 @@ int main(int argc,char* argv[])
 	// -------------------------------------
 
 	ChannelDependentNoise ruido(&canal);
-	ruido.SetSNR(3,1);
+	ruido.SetSNR(12,1);
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
@@ -335,7 +337,11 @@ int main(int argc,char* argv[])
 cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
-// 	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,estimadorRLS,detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
+
+	RLSEstimator estimadorRLSfiltroLineal(mediaInicial,forgettingFactor);
+	LMSEstimator estimadorLMSfiltroLineal(mediaInicial,muLMS);
+
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
 
 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
@@ -343,23 +349,25 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 
 	tMatrix secEntrenamiento = simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1,m+longSecEntr-2)));
-	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
 // 	algoritmo.Run(observaciones,ruido.Variances());
 
-// 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
-	// ojo: los ultimos simbolos no se detectan
-// 	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+// 	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
+// 	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
 // 	cout << "La probabilidad de error es " << pe << endl;
+	// ojo: los ultimos simbolos no se detectan
+
+	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
+	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+	cout << "La probabilidad de error es " << pe << endl;
+	// ojo: los ultimos simbolos no se detectan
 
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
 
-	// ojo: los ultimos simbolos no se detectan
-	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-	cout << "La probabilidad de error es " << pe << endl;
+
 	// --------------------------------------------------------------------------------------
 
 	// ------------------------- Filtro de Kalman ------------------------------------------
-// 	int longVectorAestimar = 4;
+ // 	int longVectorAestimar = 4;
 // 	int longVectorObservaciones = 3;
 // 	double varEcEstado = 0.0001,varRuido = 0.2;
 // 	double mediaVector=0.0,varVector=1.0;
