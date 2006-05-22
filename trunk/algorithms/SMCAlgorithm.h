@@ -42,7 +42,7 @@ protected:
 
 	virtual void Resampling(int endResamplingTime);
 	virtual void InitializeParticles();
-	virtual void Process(tMatrix observations,vector<double> noiseVariances) = 0;
+	virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 
 	tVector GetWeightsVector() 
 	{
@@ -68,8 +68,8 @@ public:
     SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 	~SMCAlgorithm();
 	
-	void Run(tMatrix observations,vector<double> noiseVariances);
-	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+	void Run(const tMatrix &observations,vector<double> noiseVariances);
+	void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
 	double SER(tMatrix symbols);
 };
 

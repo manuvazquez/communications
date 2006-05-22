@@ -17,29 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNCHANNELORDERALGORITHM_H
-#define KNOWNCHANNELORDERALGORITHM_H
+#ifndef VITERBIALGORITHM_H
+#define VITERBIALGORITHM_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <KnownChannelAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
-#include <types.h>
-#include <Util.h>
+#include <math.h>
 
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 protected:
-	int _L,_N,_m,_Nm;
-	tMatrix _preamble;
+	int _detectionLag,_nStates,_nPossibleInputs;
+	int **_stateTransitionMatrix;
 
-	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+	void BuildStateTransitionMatrix();
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
-	tMatrix HsToStackedH(vector<tMatrix> matrices);
+    ViterbiAlgorithm(string name, Alphabet alphabet, const MIMOChannel& channel,int detectionLag);
+
+    ~ViterbiAlgorithm();
+
+	void Run(const tMatrix &observations,vector<double> noiseVariances);
 };
 
 #endif

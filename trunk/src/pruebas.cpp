@@ -16,6 +16,7 @@
 #include <RMMSEDetector.h>
 #include <ML_SMCAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
+#include <ViterbiAlgorithm.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
@@ -341,7 +342,7 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 	RLSEstimator estimadorRLSfiltroLineal(mediaInicial,forgettingFactor);
 	LMSEstimator estimadorLMSfiltroLineal(mediaInicial,muLMS);
 
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorLMSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
 
 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
@@ -354,11 +355,11 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 // 	algoritmo.Run(observaciones,ruido.Variances(),secEntrenamiento);
 // 	double pe = algoritmo.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
 // 	cout << "La probabilidad de error es " << pe << endl;
-	// ojo: los ultimos simbolos no se detectan
+// 	ojo: los ultimos simbolos no se detectan
 
-	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
-	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-	cout << "La probabilidad de error es " << pe << endl;
+// 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
+// 	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+// 	cout << "La probabilidad de error es " << pe << endl;
 	// ojo: los ultimos simbolos no se detectan
 
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
@@ -695,6 +696,13 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 // 	cout << "despues del igual" << endl << part.GetChannelMatrix(3) << endl;
 	// ***********************************************************************
 
+// 	int a** = new int[][4];
+// 	int a = 4;
+// 	vector< vector<int> > hola(a);
+
 	cout << "Al final del programa" << endl << endl;
+
+	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,canal,3);
+
     return 0;
 }

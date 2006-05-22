@@ -36,7 +36,7 @@ public:
     ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm,tMatrix simbolos);
 
 protected:
-    void Process(tMatrix observations, vector< double > noiseVariances);
+    void Process(const tMatrix &observations, vector< double > noiseVariances);
 	tMatrix _simbolos;
 };
 

@@ -43,7 +43,7 @@ public:
 //     ~LinearFilterBasedSMCAlgorithm();
 
 // 	using SMCAlgorithm::Run;
-// 	void Run(tMatrix observations,vector<double> noiseVariances);
+// 	void Run(const tMatrix &observations,vector<double> noiseVariances);
 
 protected:
 // 	LinearDetector **_particlesLinearDetectors;
@@ -54,8 +54,8 @@ protected:
 	ChannelDependentNoise _ruido;
 
 	void InitializeParticles();
-    void Process(tMatrix observations, vector< double > noiseVariances);
-	vector<tMatrix> ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    void Process(const tMatrix &observations, vector< double > noiseVariances);
+	vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 // 	void Resampling(int endResamplingTime);
 };
 

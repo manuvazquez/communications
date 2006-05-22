@@ -40,13 +40,13 @@ public:
     MIMOChannel();
 	MIMOChannel(int nTx,int nRx, int memory, int length);
 
-	int Nt() { return _nTx;};
-	int Nr() { return _nRx;};
-	int Memory() {return _memory;};
-	int Length() {return _length;};
-	int NtNr() {return _nTxnRx;};
-	int NtNrMemory() {return _nTxnRxMemory;};
-	int NtMemory() {return _nTxMemory;};
+	int Nt() const { return _nTx;};
+	int Nr() const { return _nRx;};
+	int Memory() const {return _memory;};
+	int Length() const {return _length;};
+	int NtNr() const {return _nTxnRx;};
+	int NtNrMemory() const {return _nTxnRxMemory;};
+	int NtMemory() const {return _nTxMemory;};
 	virtual tMatrix& operator[](int n) = 0;
 	tMatrix Transmit(tMatrix &symbols,Noise &noise);
 };

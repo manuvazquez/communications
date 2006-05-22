@@ -30,7 +30,7 @@ KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alp
 	_N = _Nm/_m;
 }
 
-vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 // 	int lengthSequenceToProcess = trainingSequence.cols() + _preamble.cols();
 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);

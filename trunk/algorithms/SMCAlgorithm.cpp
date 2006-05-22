@@ -53,7 +53,7 @@ void SMCAlgorithm::InitializeParticles()
 	}
 }
 
-void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
 {
 	int nObservations = observations.cols();
 	_endDetectionTime = nObservations - _d;
@@ -66,7 +66,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	this->Process(observations,noiseVariances);
 }
 
-void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
 	cout << "Running with training sequence..." << endl;
 	if(observations.rows()!=_L || trainingSequence.rows()!=_N)

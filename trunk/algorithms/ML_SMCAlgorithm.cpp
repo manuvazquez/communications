@@ -30,7 +30,7 @@ ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEs
 }
 
 
-void ML_SMCAlgorithm::Process(tMatrix observations, vector< double > noiseVariances)
+void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	cout << "En Process" << endl;
 	int k,iSmoothingVector;

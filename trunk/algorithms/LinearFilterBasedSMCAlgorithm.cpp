@@ -40,7 +40,7 @@ LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphab
 // 	delete[] _particlesLinearDetectors;
 // }
 
-// void LinearFilterBasedSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+// void LinearFilterBasedSMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
 // {
 // 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
 // 	{
@@ -59,7 +59,7 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 	}
 }
 
-void LinearFilterBasedSMCAlgorithm::Process(tMatrix observations, vector< double > noiseVariances)
+void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	cout << "Processing in LinearFilterBasedSMCAlgorithm..." << endl;
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
@@ -213,7 +213,7 @@ void LinearFilterBasedSMCAlgorithm::Process(tMatrix observations, vector< double
 	}
 }
 
-vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
 	tRange allObservationRows(0,_L-1);
