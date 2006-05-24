@@ -57,8 +57,6 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 	{
 		throw RuntimeException("Alphabet::operator[]: Este simbolo no forma parte del alfabeto.");
 	}
-// 	cout << "Esta en la posicion" << (iterador - _symbols.begin()) << endl;
-// 	printf("Secuencia Bits 0=%d,1=%d\n",_bitsSequences[iterador - _symbols.begin()][0],_bitsSequences[iterador - _symbols.begin()][1]);
 	return _bitsSequences[iterador - _symbols.begin()];
 }
 
@@ -78,7 +76,6 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 	do
 	{
 		resto = numero % _length;
-// 		cout << resto << "y" <<  _symbols[resto];
 		res[tamVector-i] =  _symbols[resto];
 		numero /= _length;
 		i++;
@@ -86,11 +83,23 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 
 	for(;tamVector>=i;i++)
 		res[tamVector-i] = _symbols[0];
-// 	cout << _symbols[0];
-	
-// 	cout << endl << "dentro" << endl;
-// 	for(int j=0;j<res.size();j++)
-// 		cout << res[j];
-// 	cout << endl;
 }
 
+int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
+{
+	int size = symbolsVector.size();
+	
+	int res = 0, base = 1;
+	vector<tSymbol>::iterator iterator;	
+	for(int i=size-1;i>=0;i--)
+	{
+		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
+		if(iterator==_symbols.end())
+		{
+			throw RuntimeException("Alphabet::SymbolsArrayToInt: Symbol not found.");
+		}
+		res += base*(iterator - _symbols.begin());
+		base *= _length;
+	}
+	return res;
+}

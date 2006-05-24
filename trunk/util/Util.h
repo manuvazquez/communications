@@ -24,6 +24,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <math.h>
 #include <vector>
 #include <types.h>
 #include <exceptions.h>

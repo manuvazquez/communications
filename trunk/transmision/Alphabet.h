@@ -22,6 +22,7 @@ class Alphabet
 		vector<tBit> operator [](tSymbol simbolo);
 		int Length() { return _length;}
 		void IntToSymbolsArray(int numero, vector<tSymbol> &res);
+		int SymbolsArrayToInt(vector<tSymbol> symbolsVector);
 };
 #endif
 

@@ -333,9 +333,9 @@ int main(int argc,char* argv[])
 
 	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,&estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir);
 
-	cout << "El canal en pruebas" << endl << canal[55] << endl;
-
-cout << "El canal en pruebas" << endl << canal[55] << endl;
+// 	cout << "El canal en pruebas" << endl << canal[55] << endl;
+// 
+// cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 	RMMSEDetector detectorMMSE(L*(d+1),N*(m+d),1.0,0.98,N*(d+1));
 
@@ -344,7 +344,7 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorLMSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
 
-	cout << "El canal en pruebas" << endl << canal[55] << endl;
+// 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 // 	char c; cin >> c;
 
@@ -702,7 +702,21 @@ cout << "El canal en pruebas" << endl << canal[55] << endl;
 
 	cout << "Al final del programa" << endl << endl;
 
-	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,canal,3);
+	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,canal,preambulo);
+	algoritmoViterbi.Run(observaciones,ruido.Variances());
+// 	algoritmoViterbi.PrintStage(exitStage);
+	cout << "Prob error es " << algoritmoViterbi.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-1)))) << endl;
+
+	// ********************** SymbolsArrayToInt **********************
+// 	vector<tSymbol> vectorSimb(4,1);
+// 	pam2.IntToSymbolsArray(7,vectorSimb);
+// 	for(int holita=0;holita<4;holita++)
+// 		cout << vectorSimb[holita] << " ";
+// 	cout << endl;
+// 	cout << "Covertido a numero " << pam2.SymbolsArrayToInt(vectorSimb) << endl;
+	// **********************************************************
+
+// 	cout << simbolosTransmitir(tRange(0,N-1),tRange(0,3)) << endl;
 
     return 0;
 }

@@ -47,7 +47,7 @@ public:
 	int NtNr() const {return _nTxnRx;};
 	int NtNrMemory() const {return _nTxnRxMemory;};
 	int NtMemory() const {return _nTxMemory;};
-	virtual tMatrix& operator[](int n) = 0;
+	virtual tMatrix& operator[](int n) const = 0;
 	tMatrix Transmit(tMatrix &symbols,Noise &noise);
 };
 
