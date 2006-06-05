@@ -23,7 +23,7 @@
 #include <KnownChannelAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <math.h>
@@ -37,42 +37,44 @@ enum tStage {exitStage,arrivalStage};
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 protected:
-	int _nStates,_nPossibleInputs;
-	int **_stateTransitionMatrix;
+    int _nStates,_nPossibleInputs,_d;
+    int **_stateTransitionMatrix;
 
-	typedef struct {
-		double cost;
-		tMatrix *sequence;
-	} tState;
+    typedef struct {
+        double cost;
+        tMatrix *sequence;
+    } tState;
 
-	tState *_exitStage, *_arrivalStage;
-	tMatrix _preamble;
-	tRange rAllSymbolRows,rmMinus1FirstColumns;
+    tState *_exitStage, *_arrivalStage;
+    tMatrix _preamble,*_detectedSymbolVectors;
+    tRange rAllSymbolRows,rmMinus1FirstColumns;
 
-	void BuildStateTransitionMatrix();
-	void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
+    void BuildStateTransitionMatrix();
+    void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet, const MIMOChannel& channel,const tMatrix &preamble);
+    ViterbiAlgorithm(string name, Alphabet alphabet, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
 
     ~ViterbiAlgorithm();
 
-	int BestState()
-	{
-		int bestState = 0;
-		double bestCost = _exitStage[0].cost;
-	
-		for(int iState=1;iState<_nStates;iState++)
-			if(_exitStage[iState].cost < bestCost)
-			{
-				bestState = iState;
-				bestCost = _exitStage[iState].cost;
-			}
-		return bestState;
-	}
-	void Run(const tMatrix &observations,vector<double> noiseVariances);
-	void Run(const tMatrix &observations,vector<double> noiseVariances,int detectionLag);
-	void PrintStage(tStage exitOrArrival);
-	double SER(tMatrix symbols);
+    int BestState()
+    {
+        int bestState = 0;
+        double bestCost = _exitStage[0].cost;
+    
+        for(int iState=1;iState<_nStates;iState++)
+            if(_exitStage[iState].cost < bestCost)
+            {
+                bestState = iState;
+                bestCost = _exitStage[iState].cost;
+            }
+        return bestState;
+    }
+    void Run(const tMatrix &observations,vector<double> noiseVariances);
+
+    // detection will not start until the "firstSymbolVectorDetectedAt" observation
+    void Run(const tMatrix &observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    void PrintStage(tStage exitOrArrival);
+    double SER(tMatrix symbols);
 };
 
 #endif
