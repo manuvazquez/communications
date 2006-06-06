@@ -58,7 +58,7 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 2;
-    int L=3,N=2,m=2,K=20;
+    int L=3,N=2,m=2,K=30;
     int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
@@ -94,7 +94,6 @@ int main(int argc,char* argv[])
 
     tRange rAllSymbolRows(0,N-1);
     tRange rTrainingSequenceSymbolVectors(m-1,m+longSecEntr-2);
-    tRange rSymbolVectorsToComputePe(m-1+longSecEntr,simbolosTransmitir.cols()-d-1);
 
     // channel estimators are constructed for the different algorithms
     KalmanEstimator kalmanEstimator(mediaInicial,ARcoefficients[0],ARvariance);
@@ -123,6 +122,8 @@ int main(int argc,char* argv[])
         // ...and set before the symbols to be transmitted
         simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
 
+        tRange rSymbolVectorsToComputePe(m-1+longSecEntr,simbolosTransmitir.cols()-d-1);
+
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
 
         // an AR channel is generated
@@ -138,18 +139,25 @@ int main(int argc,char* argv[])
             tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
 
             // algorithms are created
-            Algorithm **algorithms = new Algorithm*[3];
+//             Algorithm **algorithms = new Algorithm*[3];
+            vector<Algorithm *> algorithms(3);
 
             algorithms[0] = new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir);
             algorithms[1] = new LinearFilterBasedSMCAlgorithm("Filtro lineal",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
             algorithms[2] = new ViterbiAlgorithm("Viterbi",pam2,canal,preambulo,d);
 
             // now executed
-            for(int iAlgorithm=0;iAlgorithm<3;iAlgorithm++)
+            for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
+
+                cout << "La probabilidad obtenida por " << algorithms[iAlgorithm]->GetName() << " para una SNR = " << SNRs[iSNR] << " es " << pe << endl;
+
+                delete algorithms[iAlgorithm];
             }
+
+//             delete[] algorithms;
         }
     }
 }

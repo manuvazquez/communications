@@ -68,7 +68,8 @@ void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances
 
 void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-	cout << "Running with training sequence..." << endl;
+// 	cout << "Running with training sequence..." << endl;
+
 	if(observations.rows()!=_L || trainingSequence.rows()!=_N)
 		throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 
@@ -114,36 +115,45 @@ void SMCAlgorithm::Resampling(int endResamplingTime)
 
 		_resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
 
-		cout << "Resampling..." << endl;
+// 		cout << "Resampling..." << endl;
 	}
 }
 
-double SMCAlgorithm::SER(tMatrix symbols)
+tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
 {
-	int windowSize = symbols.cols();
-	int nDetectedVectors = _particles[0]->TrajectoryLength();
+    // best particle is chosen
+    int iBestParticle;
+    Util::Max(GetWeightsVector(),iBestParticle);
 
-	if(windowSize>nDetectedVectors)
-		throw RuntimeException("SMCAlgorithm::SER: more symbol vectors passed than detected.");
-	
-	// best particle is chosen
-	int iBestParticle;
-	Util::Max(GetWeightsVector(),iBestParticle);
-
-	int nErrors = 0;
-	int windowStart = nDetectedVectors - windowSize;
-	int j;
-
-	for(int i=windowStart;i<nDetectedVectors;i++)
-	{
-		j=0;
-		while(j<_N)
-		{
-			if((_particles[iBestParticle]->GetSymbolVector(i))(j)!=symbols(j,i-windowStart))
-				nErrors++;
-			j++;
-		}
-	}
-	return ((double)nErrors)/(double)(windowSize*_N);
+    return (_particles[iBestParticle]->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_endDetectionTime-1));
 }
+
+// double SMCAlgorithm::SER(tMatrix symbols)
+// {
+// 	int windowSize = symbols.cols();
+// 	int nDetectedVectors = _particles[0]->TrajectoryLength();
+// 
+// 	if(windowSize>nDetectedVectors)
+// 		throw RuntimeException("SMCAlgorithm::SER: more symbol vectors passed than detected.");
+// 	
+// 	// best particle is chosen
+// 	int iBestParticle;
+// 	Util::Max(GetWeightsVector(),iBestParticle);
+// 
+// 	int nErrors = 0;
+// 	int windowStart = nDetectedVectors - windowSize;
+// 	int j;
+// 
+// 	for(int i=windowStart;i<nDetectedVectors;i++)
+// 	{
+// 		j=0;
+// 		while(j<_N)
+// 		{
+// 			if((_particles[iBestParticle]->GetSymbolVector(i))(j)!=symbols(j,i-windowStart))
+// 				nErrors++;
+// 			j++;
+// 		}
+// 	}
+// 	return ((double)nErrors)/(double)(windowSize*_N);
+// }
 

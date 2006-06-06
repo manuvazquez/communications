@@ -173,7 +173,7 @@ int main(int argc,char* argv[])
 	// -------------------------------------
 
 	ChannelDependentNoise ruido(&canal);
-	ruido.SetSNR(12,1);
+	ruido.SetSNR(1,1);
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
@@ -357,9 +357,13 @@ int main(int argc,char* argv[])
 // 	cout << "La probabilidad de error es " << pe << endl;
 // 	ojo: los ultimos simbolos no se detectan
 
-// 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
-// 	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-// 	cout << "La probabilidad de error es " << pe << endl;
+	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
+	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
+	cout << "La probabilidad de error es " << pe << endl;
+//     cout << "La probabilidad de error es (con SER2) " << algoritmoFiltroLineal.SER2(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)))) << endl;
+
+//     cout << "Los simbolos detectados son" << endl << algoritmoFiltroLineal.GetDetectedSymbolVectors() << endl;
+//     cout << "Los voy a comparar con" << endl << simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))) << endl;
 	// ojo: los ultimos simbolos no se detectan
 
 // 	cout << "ahi va" << algoritmo._estimatedChannelMatrices[0][0] << endl;
@@ -708,6 +712,11 @@ int main(int argc,char* argv[])
 // 	cout << "Prob error es " << algoritmoViterbi.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-1)))) << endl;
 
     cout << "Prob error es " << algoritmoViterbi.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)))) << endl;
+
+//     cout << "Prob error es (con SER2) " << algoritmoViterbi.SER2(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)))) << endl;
+
+//     cout << "Los simbolos detectados son" << endl << algoritmoViterbi.GetDetectedSymbolVectors() << endl;
+//     cout << "Los voy a comparar con" << endl << simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))) << endl;
 
 // m-1+longSecEntr,simbolosTransmitir.cols()-d-1
 

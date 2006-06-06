@@ -32,7 +32,8 @@ ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEs
 
 void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
-	cout << "En Process" << endl;
+// 	cout << "En Process" << endl;
+
 	int k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
@@ -56,7 +57,8 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
 	{
-		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+// 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_nParticles;iParticle++)
 		{

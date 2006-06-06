@@ -23,5 +23,30 @@ Algorithm::Algorithm(string name, Alphabet  alphabet):_name(name),_alphabet(alph
 {
 }
 
+double Algorithm::SER(tMatrix symbols)
+{
+    int windowSize = symbols.cols();
 
+    tMatrix detectedSymbolVectors = GetDetectedSymbolVectors();
+    int nDetectedVectors = detectedSymbolVectors.cols();
+
+    if(windowSize>nDetectedVectors)
+        throw RuntimeException("Algorithm::SER: more symbol vectors passed than detected.");
+
+    int nErrors = 0;
+    int windowStart = nDetectedVectors - windowSize;
+    int j;
+
+    for(int i=windowStart;i<nDetectedVectors;i++)
+    {
+        j=0;
+        while(j<symbols.rows())
+        {
+            if(detectedSymbolVectors(j,i)!=symbols(j,i-windowStart))
+                nErrors++;
+            j++;
+        }
+    }
+    return ((double)nErrors)/(double)(windowSize*symbols.rows());    
+}
 

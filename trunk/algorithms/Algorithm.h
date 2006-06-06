@@ -27,6 +27,7 @@
 #include <string>
 #include <vector>
 #include <types.h>
+#include <exceptions.h>
 #include <Alphabet.h>
 
 class Algorithm{
@@ -38,6 +39,15 @@ public:
 	virtual ~Algorithm() {};
 	virtual void Run(const tMatrix &observations,vector<double> noiseVariances) = 0;   
     virtual void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
+
+    string GetName() {return _name;}
+
+    /**
+    * It also returns the symbol vectors corresponding to the training sequence (if exists)
+    * @return 
+    */
+    virtual tMatrix GetDetectedSymbolVectors() = 0;
+    double SER(tMatrix symbols);
 };
 
 #endif

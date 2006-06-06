@@ -27,7 +27,7 @@
       <directoryradio>executable</directoryradio>
       <runarguments>
         <comunicaciones/>
-        <com></com>
+        <com/>
       </runarguments>
     </run>
     <configurations>

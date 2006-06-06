@@ -247,6 +247,11 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     
 }
 
+tMatrix ViterbiAlgorithm::GetDetectedSymbolVectors()
+{
+    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_detectedSymbolVectors->cols()-_d-1));
+}
+
 void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
 {
     tState *stage;
@@ -269,30 +274,30 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
     }
 }
 
-double ViterbiAlgorithm::SER(tMatrix symbols)
-{
-    int windowSize = symbols.cols();
-    int nDetectedVectors = _detectedSymbolVectors->cols()-_d;
-
-    if(windowSize>nDetectedVectors)
-        throw RuntimeException("ViterbiAlgorithm::SER: more symbol vectors passed than detected.");
-
-    int nErrors = 0;
-    int windowStart = nDetectedVectors - windowSize;
-    int j;
-
-    for(int i=windowStart;i<nDetectedVectors;i++)
-    {
-        j=0;
-        while(j<_channel.Nt())
-        {
-            if((*_detectedSymbolVectors)(j,i)!=symbols(j,i-windowStart))
-                nErrors++;
-            j++;
-        }
-    }
-    return ((double)nErrors)/(double)(windowSize*_channel.Nt());
-}
+// double ViterbiAlgorithm::SER(tMatrix symbols)
+// {
+//     int windowSize = symbols.cols();
+//     int nDetectedVectors = _detectedSymbolVectors->cols()-_d;
+// 
+//     if(windowSize>nDetectedVectors)
+//         throw RuntimeException("ViterbiAlgorithm::SER: more symbol vectors passed than detected.");
+// 
+//     int nErrors = 0;
+//     int windowStart = nDetectedVectors - windowSize;
+//     int j;
+// 
+//     for(int i=windowStart;i<nDetectedVectors;i++)
+//     {
+//         j=0;
+//         while(j<_channel.Nt())
+//         {
+//             if((*_detectedSymbolVectors)(j,i)!=symbols(j,i-windowStart))
+//                 nErrors++;
+//             j++;
+//         }
+//     }
+//     return ((double)nErrors)/(double)(windowSize*_channel.Nt());
+// }
 
 // double ViterbiAlgorithm::SER(tMatrix symbols)
 // {

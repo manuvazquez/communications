@@ -73,8 +73,10 @@ public:
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
     void Run(const tMatrix &observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    tMatrix GetDetectedSymbolVectors();
     void PrintStage(tStage exitOrArrival);
-    double SER(tMatrix symbols);
+
+//     double SER(tMatrix symbols);
 };
 
 #endif

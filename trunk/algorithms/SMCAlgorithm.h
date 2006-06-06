@@ -70,7 +70,8 @@ public:
 	
 	void Run(const tMatrix &observations,vector<double> noiseVariances);
 	void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
-	double SER(tMatrix symbols);
+    tMatrix GetDetectedSymbolVectors();
+// 	double SER(tMatrix symbols);
 };
 
 #endif

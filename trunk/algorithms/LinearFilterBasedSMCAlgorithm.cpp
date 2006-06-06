@@ -57,7 +57,8 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 
 void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
-	cout << "Processing in LinearFilterBasedSMCAlgorithm..." << endl;
+// 	cout << "Processing in LinearFilterBasedSMCAlgorithm..." << endl;
+
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
 	vector<tMatrix> matricesToStack(_d+1,tMatrix(_L,_Nm));
 	tRange allObservationsRows(0,_L-1),allSymbolRows(0,_N-1);
@@ -73,7 +74,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
 	{
-		cout << "Observacion procesada " << iObservationToBeProcessed << endl;
+// 		cout << "Observacion procesada " << iObservationToBeProcessed << endl;
+
 		// already detected symbol vectors involved in the current detection
 		tRange alreadyDetectedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 
