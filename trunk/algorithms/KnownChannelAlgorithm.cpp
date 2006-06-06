@@ -28,3 +28,7 @@ KnownChannelAlgorithm::~KnownChannelAlgorithm()
 {
 }
 
+void KnownChannelAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
+{
+    this->Run(observations,noiseVariances);
+}

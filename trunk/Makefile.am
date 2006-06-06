@@ -3,5 +3,5 @@
 AUTOMAKE_OPTIONS = foreign 1.4
 
 SUBDIRS = randomutil util statistics transmision filters estimation detection \
-	smc algorithms src
+		smc algorithms src com
 

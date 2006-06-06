@@ -131,7 +131,7 @@ void ViterbiAlgorithm::Run(const tMatrix &observations,vector<double> noiseVaria
         iBestState = BestState();
         _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()));
 
-        cout << "Detectado el vector" << endl << (_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()) << endl;
+//         cout << "Detectado el vector" << endl << (_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()) << endl;
 
     }
 
@@ -156,12 +156,12 @@ void ViterbiAlgorithm::BuildStateTransitionMatrix()
             _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
     }
 
-    for(int iState=0;iState<_nStates;iState++)
-    {
-        for(iInput=0;iInput<_nPossibleInputs;iInput++)
-            cout << _stateTransitionMatrix[iState][iInput] << " ";
-        cout << endl;
-    }
+//     for(int iState=0;iState<_nStates;iState++)
+//     {
+//         for(iInput=0;iInput<_nPossibleInputs;iInput++)
+//             cout << _stateTransitionMatrix[iState][iInput] << " ";
+//         cout << endl;
+//     }
     
 }
 

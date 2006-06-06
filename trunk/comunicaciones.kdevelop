@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>algorithms/libalgorithms.a</activetarget>
+      <activetarget>src/comunicaciones</activetarget>
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
@@ -27,6 +27,7 @@
       <directoryradio>executable</directoryradio>
       <runarguments>
         <comunicaciones/>
+        <com></com>
       </runarguments>
     </run>
     <configurations>

@@ -135,8 +135,8 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------ Estimador de Kalman ------------------------------------
-	int L=3,N=2,m=2,K=20;
-	int longSecEntr = 10;
+	int L=3,N=2,m=2,K=300;
+	int longSecEntr = 30;
 	int nParticles = 30;
 	int d = m -1;
 	double forgettingFactor = 0.9;
@@ -703,7 +703,7 @@ int main(int argc,char* argv[])
 	cout << "Al final del programa" << endl << endl;
 
 	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,canal,preambulo,d);
-	algoritmoViterbi.Run(observaciones,ruido.Variances(),2);
+	algoritmoViterbi.Run(observaciones,ruido.Variances());
 // 	algoritmoViterbi.PrintStage(exitStage);
 // 	cout << "Prob error es " << algoritmoViterbi.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-1)))) << endl;
 
@@ -720,7 +720,7 @@ int main(int argc,char* argv[])
 // 	cout << "Covertido a numero " << pam2.SymbolsArrayToInt(vectorSimb) << endl;
 	// **********************************************************
 
-	cout << simbolosTransmitir << endl;
+// 	cout << simbolosTransmitir << endl;
 
     return 0;
 }

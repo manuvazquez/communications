@@ -7,9 +7,6 @@ using namespace std;
 
 Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
 {
-    cout << "La longitud del alfabeto es: " << secuenciasBits.size() << endl;
-    cout << "y el numero de bits por simbolo " << secuenciasBits[0].size() << endl;
-
     // si no coincide el numero de simbolos con el numero de secuencias de bits
     if(secuenciasBits.size()!=simbolos.size())
     {

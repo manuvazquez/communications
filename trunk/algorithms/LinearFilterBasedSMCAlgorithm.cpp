@@ -21,7 +21,7 @@
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const tMatrix simbolos,const ARchannel &canal,const ChannelDependentNoise &ruido): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm)
 // ,_particlesLinearDetectors(new LinearDetector*[_nParticles])
-,_linearDetector(linearDetector),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 ,_simbolos(simbolos),_canal(canal),_ruido(ruido)
 {
 // 	for(int i=0;i<_nParticles;i++)
@@ -31,14 +31,10 @@ LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphab
 }
 
 
-// LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
-// {
-// 	for(int i=0;i<_nParticles;i++)
-// 	{
-// 		delete _particlesLinearDetectors[i];
-// 	}
-// 	delete[] _particlesLinearDetectors;
-// }
+LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
+{
+    delete _linearDetector;
+}
 
 // void LinearFilterBasedSMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
 // {

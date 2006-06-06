@@ -36,7 +36,8 @@ protected:
 public:
     Algorithm(string name, Alphabet  alphabet);
 	virtual ~Algorithm() {};
-	virtual void Run(const tMatrix &observations,vector<double> noiseVariances) = 0;
+	virtual void Run(const tMatrix &observations,vector<double> noiseVariances) = 0;   
+    virtual void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 };
 
 #endif

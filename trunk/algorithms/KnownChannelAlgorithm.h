@@ -35,6 +35,11 @@ public:
     KnownChannelAlgorithm(string name, Alphabet alphabet,const MIMOChannel &channel);
 
     ~KnownChannelAlgorithm();
+
+    
+    using Algorithm::Run;
+
+    void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
 };
 
 #endif
