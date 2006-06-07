@@ -173,7 +173,7 @@ int main(int argc,char* argv[])
 	// -------------------------------------
 
 	ChannelDependentNoise ruido(&canal);
-	ruido.SetSNR(1,1);
+	ruido.SetSNR(12,1);
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
@@ -342,7 +342,7 @@ int main(int argc,char* argv[])
 	RLSEstimator estimadorRLSfiltroLineal(mediaInicial,forgettingFactor);
 	LMSEstimator estimadorLMSfiltroLineal(mediaInicial,muLMS);
 
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorLMSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
 
 // 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
@@ -360,6 +360,12 @@ int main(int argc,char* argv[])
 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
 	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
 	cout << "La probabilidad de error es " << pe << endl;
+
+    vector<tMatrix> matricesDetectadas = algoritmoFiltroLineal.GetDetectedChannelMatrices();
+    for(int i2=0;i2<matricesDetectadas.size();i2++)
+        cout << "Instante " << i2 << " matriz estimada: " << endl << matricesDetectadas[i2] << endl;
+
+    cout << "Canal de verdad" << endl << canal[observaciones.cols()-d] << endl;
 //     cout << "La probabilidad de error es (con SER2) " << algoritmoFiltroLineal.SER2(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)))) << endl;
 
 //     cout << "Los simbolos detectados son" << endl << algoritmoFiltroLineal.GetDetectedSymbolVectors() << endl;

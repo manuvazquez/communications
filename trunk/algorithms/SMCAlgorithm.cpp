@@ -128,32 +128,17 @@ tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
     return (_particles[iBestParticle]->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_endDetectionTime-1));
 }
 
-// double SMCAlgorithm::SER(tMatrix symbols)
-// {
-// 	int windowSize = symbols.cols();
-// 	int nDetectedVectors = _particles[0]->TrajectoryLength();
-// 
-// 	if(windowSize>nDetectedVectors)
-// 		throw RuntimeException("SMCAlgorithm::SER: more symbol vectors passed than detected.");
-// 	
-// 	// best particle is chosen
-// 	int iBestParticle;
-// 	Util::Max(GetWeightsVector(),iBestParticle);
-// 
-// 	int nErrors = 0;
-// 	int windowStart = nDetectedVectors - windowSize;
-// 	int j;
-// 
-// 	for(int i=windowStart;i<nDetectedVectors;i++)
-// 	{
-// 		j=0;
-// 		while(j<_N)
-// 		{
-// 			if((_particles[iBestParticle]->GetSymbolVector(i))(j)!=symbols(j,i-windowStart))
-// 				nErrors++;
-// 			j++;
-// 		}
-// 	}
-// 	return ((double)nErrors)/(double)(windowSize*_N);
-// }
+vector<tMatrix> SMCAlgorithm::GetDetectedChannelMatrices()
+{
+    vector<tMatrix> channelMatrices;
+    channelMatrices.reserve(_endDetectionTime-_m+1);
 
+    // best particle is chosen
+    int iBestParticle;
+    Util::Max(GetWeightsVector(),iBestParticle);
+    
+    for(int i=_m-1;i<_endDetectionTime;i++)
+        channelMatrices.push_back(_particles[iBestParticle]->GetChannelMatrix(i));
+
+    return channelMatrices;
+}

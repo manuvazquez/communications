@@ -50,11 +50,16 @@
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
 
+
+#define MAX_NUMBER_ALGORITHMS 50
+#define EXPECTED_NUMBER_FRAMES 20
+
 using namespace std;
 
 int main(int argc,char* argv[])
 {
     double pe;
+    int nAlgorithms;
 
     // PARAMETERS
     int nFrames = 2;
@@ -64,8 +69,8 @@ int main(int argc,char* argv[])
     int d = m -1;
 
     // SNRs to be processed
-    vector<int> SNRs(3);
-    SNRs[0] = 3;SNRs[1] = 6; SNRs[2] = 9;
+    vector<int> SNRs;
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -107,6 +112,11 @@ int main(int argc,char* argv[])
     ResamplingCriterion criterioRemuestreo(0.9);
     StdResamplingAlgorithm algoritmoRemuestreo;
 
+    // matrices for results
+    tMatrix peMatrix(SNRs.size(),MAX_NUMBER_ALGORITHMS);
+    // pe for this frame is set to zero
+    peMatrix = 0.0;
+
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
         // bits are generated ...
@@ -127,7 +137,7 @@ int main(int argc,char* argv[])
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
 
         // an AR channel is generated
-        ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);    
+        ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
         for(int iSNR=0;iSNR<SNRs.size();iSNR++)
         {
@@ -139,12 +149,17 @@ int main(int argc,char* argv[])
             tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
 
             // algorithms are created
-//             Algorithm **algorithms = new Algorithm*[3];
-            vector<Algorithm *> algorithms(3);
+            vector<Algorithm *> algorithms;
 
-            algorithms[0] = new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir);
-            algorithms[1] = new LinearFilterBasedSMCAlgorithm("Filtro lineal",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido);
-            algorithms[2] = new ViterbiAlgorithm("Viterbi",pam2,canal,preambulo,d);
+            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir));
+
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido));
+
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido));
+
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,canal,preambulo,d));
+
+            nAlgorithms = algorithms.size();
 
             // now executed
             for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
@@ -154,10 +169,16 @@ int main(int argc,char* argv[])
 
                 cout << "La probabilidad obtenida por " << algorithms[iAlgorithm]->GetName() << " para una SNR = " << SNRs[iSNR] << " es " << pe << endl;
 
+                // the error probability is accumulated
+                peMatrix(iSNR,iAlgorithm) += pe;
+
                 delete algorithms[iAlgorithm];
             }
 
 //             delete[] algorithms;
         }
     }
+
+    peMatrix *= 1.0/nFrames;
+    cout << "Resultado final" << endl << peMatrix(tRange(0,SNRs.size()-1),tRange(0,nAlgorithms-1)) << endl;
 }
