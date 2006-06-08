@@ -128,7 +128,7 @@ tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
     return (_particles[iBestParticle]->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_endDetectionTime-1));
 }
 
-vector<tMatrix> SMCAlgorithm::GetDetectedChannelMatrices()
+vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
     channelMatrices.reserve(_endDetectionTime-_m+1);

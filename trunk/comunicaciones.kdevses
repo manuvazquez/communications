@@ -3,22 +3,22 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="6" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="174" Type="Source" />
+   <View0 line="137" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="80" Type="Source" />
+   <View0 line="177" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.h" >
-   <View0 line="19" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.cpp" >
+   <View0 line="77" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelAlgorithm.h" >
-   <View0 line="0" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.h" >
+   <View0 line="56" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelAlgorithm.cpp" >
-   <View0 line="0" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/ARchannel.h" >
+   <View0 line="46" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.h" >
-   <View0 line="36" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/ARchannel.cpp" >
+   <View0 line="43" Type="Source" />
   </Doc5>
  </DocsAndViews>
  <pluginList>
@@ -42,8 +42,8 @@
      <mark line="63" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
-     <mark line="714" />
      <mark line="137" />
+     <mark line="716" />
      <mark line="344" />
      <mark line="175" />
     </bookmark>

@@ -23,7 +23,7 @@ Algorithm::Algorithm(string name, Alphabet  alphabet):_name(name),_alphabet(alph
 {
 }
 
-double Algorithm::SER(tMatrix symbols)
+double Algorithm::SER(const tMatrix &symbols)
 {
     int windowSize = symbols.cols();
 
@@ -50,3 +50,32 @@ double Algorithm::SER(tMatrix symbols)
     return ((double)nErrors)/(double)(windowSize*symbols.rows());    
 }
 
+double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
+{
+    int windowSize = channelMatrices.size();
+
+    vector<tMatrix> estimatedChannelMatrices = GetEstimatedChannelMatrices();
+    int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
+
+    // if the algorithm didn't make channel estimation
+    if(nEstimatedChannelMatrices==0)
+        return 0.0;
+
+    if(windowSize>nEstimatedChannelMatrices)
+        throw RuntimeException("Algorithm::MMSE: more channel matrices passed than detected.");
+
+    double mse = 0;
+    int windowStart = nEstimatedChannelMatrices - windowSize;
+    int j;
+
+    for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+    {
+        // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
+        mse += Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
+
+        cout << "sumando: " << Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0) << ",";
+    }
+    cout << endl;
+
+    return mse/(double)windowSize;
+}

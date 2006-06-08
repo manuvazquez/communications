@@ -40,6 +40,7 @@ public:
     using Algorithm::Run;
 
     void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
 #endif

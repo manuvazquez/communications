@@ -88,3 +88,20 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 
 	return observations;
 }
+
+vector<tMatrix> MIMOChannel::Range(int a,int b)
+{
+    int nMatrices = b - a + 1;
+
+    if(nMatrices<1)
+        throw RuntimeException("MIMOChannel::Range: selected range of time is invalid.");
+    vector<tMatrix> res(nMatrices);
+
+    for(int i=0;i<nMatrices;i++)
+    {
+        res[i] = operator[](a+i);
+//      cout << "en ARChannel" << endl << _channelMatrices[i] << endl;
+    }
+
+    return res;
+}

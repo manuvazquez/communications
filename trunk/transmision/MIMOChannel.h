@@ -49,6 +49,7 @@ public:
 	int NtMemory() const {return _nTxMemory;};
 	virtual tMatrix& operator[](int n) const = 0;
 	tMatrix Transmit(tMatrix &symbols,Noise &noise);
+    vector<tMatrix> Range(int a,int b);
 };
 
 #endif

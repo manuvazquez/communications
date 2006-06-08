@@ -71,7 +71,7 @@ public:
 	void Run(const tMatrix &observations,vector<double> noiseVariances);
 	void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
     tMatrix GetDetectedSymbolVectors();
-    vector<tMatrix> GetDetectedChannelMatrices();
+    vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
 #endif

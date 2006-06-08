@@ -32,3 +32,11 @@ void KnownChannelAlgorithm::Run(const tMatrix &observations,vector<double> noise
 {
     this->Run(observations,noiseVariances);
 }
+
+vector<tMatrix> KnownChannelAlgorithm::GetEstimatedChannelMatrices()
+{
+    vector<tMatrix> res;
+
+    // returns an empty vector
+    return res;
+}

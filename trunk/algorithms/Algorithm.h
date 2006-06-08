@@ -29,6 +29,11 @@
 #include <types.h>
 #include <exceptions.h>
 #include <Alphabet.h>
+#include <MIMOChannel.h>
+#include <lapackpp/gmd.h>
+// #include <lapackpp/blas1pp.h>
+// #include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
 
 class Algorithm{
 protected:
@@ -47,7 +52,9 @@ public:
     * @return 
     */
     virtual tMatrix GetDetectedSymbolVectors() = 0;
-    double SER(tMatrix symbols);
+    virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
+    double SER(const tMatrix &symbols);
+    double MSE(const vector<tMatrix> &channelMatrices);
 };
 
 #endif

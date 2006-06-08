@@ -4,4 +4,3 @@
 - mas comprobaciones en los métodos de Particle y derivados
 - pasar todo lo que sea posible por referencia (los preamble a los algoritmos)
 - subir el preambulo a una superclase
-- tener en cuenta hasta donde detecta Viterbi (que tambien haga suavizado o no dependiendo de la d...)

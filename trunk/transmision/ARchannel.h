@@ -43,7 +43,6 @@ public:
 	~ARchannel();
 
 	tMatrix& operator[](int n) const { return _channelMatrices[n];};
-	vector<tMatrix> Range(int a,int b);
 };
 
 #endif

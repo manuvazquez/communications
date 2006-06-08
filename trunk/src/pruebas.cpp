@@ -135,8 +135,8 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------ Estimador de Kalman ------------------------------------
-	int L=3,N=2,m=2,K=300;
-	int longSecEntr = 30;
+	int L=3,N=2,m=2,K=20;
+	int longSecEntr = 10;
 	int nParticles = 30;
 	int d = m -1;
 	double forgettingFactor = 0.9;
@@ -359,13 +359,15 @@ int main(int argc,char* argv[])
 
 	algoritmoFiltroLineal.Run(observaciones,ruido.Variances(),secEntrenamiento);
 	double pe = algoritmoFiltroLineal.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1))));
-	cout << "La probabilidad de error es " << pe << endl;
+	cout << "La probabilidad de error es " << pe << " y el MSE " << algoritmoFiltroLineal.MSE(canal.Range(K*9/10,simbolosTransmitir.cols()-d-1)) << endl;
 
-    vector<tMatrix> matricesDetectadas = algoritmoFiltroLineal.GetDetectedChannelMatrices();
-    for(int i2=0;i2<matricesDetectadas.size();i2++)
-        cout << "Instante " << i2 << " matriz estimada: " << endl << matricesDetectadas[i2] << endl;
+    cout << "La probabilidad de error es " << pe << " y el MSE " << algoritmoFiltroLineal.MSE(canal.Range(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)) << endl;
 
-    cout << "Canal de verdad" << endl << canal[observaciones.cols()-d] << endl;
+//     vector<tMatrix> matricesDetectadas = algoritmoFiltroLineal.GetEstimatedChannelMatrices();
+//     for(int i2=0;i2<matricesDetectadas.size();i2++)
+//         cout << "Instante " << i2 << " matriz estimada: " << endl << matricesDetectadas[i2] << endl;
+// 
+//     cout << "Canal de verdad" << endl << canal[observaciones.cols()-d] << endl;
 //     cout << "La probabilidad de error es (con SER2) " << algoritmoFiltroLineal.SER2(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-d-1)))) << endl;
 
 //     cout << "Los simbolos detectados son" << endl << algoritmoFiltroLineal.GetDetectedSymbolVectors() << endl;
@@ -736,6 +738,17 @@ int main(int argc,char* argv[])
 	// **********************************************************
 
 // 	cout << simbolosTransmitir << endl;
+
+//     vector<tMatrix> holita;
+//     cout << "El tamaño de holita es " << holita.size() << endl;
+// 
+//     tMatrix prueba1(2,2);
+//     prueba1(0,0) = 1.0;prueba1(0,1) = 2.0;prueba1(1,0) = 3.0;prueba1(1,1) = 4.0;
+// 
+//     tMatrix prueba2 = prueba1;
+//     prueba2(0,0) = 3.0;
+// 
+//     cout << Util::SquareError(prueba1,prueba2) << endl;
 
     return 0;
 }

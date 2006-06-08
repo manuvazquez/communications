@@ -166,3 +166,15 @@ void Util::Max(const tVector &v,int &index)
 		}
 }
 
+double Util::SquareError(const tMatrix &A,const tMatrix &B)
+{
+    if(A.cols()!=B.cols() || A.rows()!=B.rows())
+        throw RuntimeException("Util::SquareError: matrix dimensions are different.");
+
+    double res = 0.0;
+    int j;
+    for(int i=0;i<A.rows();i++)
+        for(j=0;j<A.cols();j++)
+            res += (A(i,j)-B(i,j))*(A(i,j)-B(i,j));
+    return res;
+}
