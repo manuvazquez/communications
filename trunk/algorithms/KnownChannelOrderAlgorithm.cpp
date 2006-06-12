@@ -21,10 +21,10 @@
 
 KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet, channelEstimator),_preamble(preamble),_L(channelEstimator->Rows()),_Nm(channelEstimator->Cols())
 {
-	// if there is no preamble
-	if(_preamble.rows()==0)
-		_m = 1;
-	else
+// 	// if there is no preamble
+// 	if(_preamble.rows()==0)
+// 		_m = 1;
+// 	else
 		_m = _preamble.cols() + 1;
 
 	_N = _Nm/_m;

@@ -17,29 +17,43 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ARchannel.h"
+#ifndef KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATOR_H
+#define KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATOR_H
 
-using namespace std;
+#include <KnownChannelOrderAlgorithm.h>
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): MIMOChannel(nTx, nRx, memory, length),
-//ARprocess constructor call
-_ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance),
-ARcoefficients,ARvariance,randomGenerator)
+/**
+@author Manu
+*/
+
+#include <KalmanEstimator.h>
+
+class KnownSymbolsKalmanBasedChannelEstimator : public KnownChannelOrderAlgorithm
 {
-	_channelMatrices = new tMatrix[length];
+protected:
+    tMatrix _symbolVectors;
+//     const tMatrix &_symbolVectors;
+    vector<tMatrix> _estimatedChannelMatrices;
+public:
 
-	//initialization
-	for(int i=_memory-1;i<_length;i++)
-			_channelMatrices[i] = _ARproc.NextMatrix();
-}
+    /**
+     * 
+     * @param name 
+     * @param alphabet 
+     * @param channelEstimator 
+     * @param preamble 
+     * @param symbolVectors includes the preamble
+     * @return 
+     */
+    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
 
-ARchannel::ARchannel(const ARchannel &archannel):MIMOChannel(archannel),_ARproc(archannel._ARproc),_channelMatrices(new tMatrix[_length])
-{
-	for(int i=_memory-1;i<_length;i++)
-			_channelMatrices[i] = archannel._channelMatrices[i];
-}
+    ~KnownSymbolsKalmanBasedChannelEstimator();
 
-ARchannel::~ ARchannel()
-{
-	delete[] _channelMatrices;
-}
+    void Run(const tMatrix &observations,vector<double> noiseVariances);
+    void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+
+    tMatrix GetDetectedSymbolVectors();
+    vector<tMatrix> GetEstimatedChannelMatrices();
+};
+
+#endif

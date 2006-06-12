@@ -32,8 +32,6 @@
 #include <StatUtil.h>
 #include <lapackpp/gmd.h>
 
-using namespace std;
-
 class ARprocess{
 
 private:

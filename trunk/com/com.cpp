@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #include <iostream>
+#include <iomanip>
 #include <cstdlib>
 #include <vector>
 #include "types.h"
@@ -37,6 +38,7 @@
 #include <ML_SMCAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
 #include <ViterbiAlgorithm.h>
+#include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
@@ -58,11 +60,10 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
-    double pe;
-    int nAlgorithms;
+    double pe,mse;
 
     // PARAMETERS
-    int nFrames = 2;
+    int nFrames = 1;
     int L=3,N=2,m=2,K=30;
     int longSecEntr = 10;
     int nParticles = 30;
@@ -83,7 +84,7 @@ int main(int argc,char* argv[])
     double samplingVariance = 0.0625;
     tMatrix mediaInicial(L,N*m);
     mediaInicial = 0.0;
-    double forgettingFactor = 0.9;
+    double forgettingFactor = 0.99;
     double muLMS = 0.05;
 
     // linear detectors parameters
@@ -113,9 +114,8 @@ int main(int argc,char* argv[])
     StdResamplingAlgorithm algoritmoRemuestreo;
 
     // matrices for results
-    tMatrix peMatrix(SNRs.size(),MAX_NUMBER_ALGORITHMS);
-    // pe for this frame is set to zero
-    peMatrix = 0.0;
+    tMatrix peMatrix;
+    tMatrix mseMatrix;
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -132,6 +132,7 @@ int main(int argc,char* argv[])
         // ...and set before the symbols to be transmitted
         simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
 
+        // notice that the last "d" observations are used only for smoothing and don't result in any detected vector
         tRange rSymbolVectorsToComputePe(m-1+longSecEntr,simbolosTransmitir.cols()-d-1);
 
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
@@ -141,6 +142,8 @@ int main(int argc,char* argv[])
 
         for(int iSNR=0;iSNR<SNRs.size();iSNR++)
         {
+            cout << "SNR = " << SNRs[iSNR] << " [Trama " << iFrame << "]..." << endl;
+            
             // noise is generated
             ChannelDependentNoise ruido(&canal);
             ruido.SetSNR(SNRs[iSNR],pam2.Variance());
@@ -151,34 +154,59 @@ int main(int argc,char* argv[])
             // algorithms are created
             vector<Algorithm *> algorithms;
 
-            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir));
+            // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido));
+            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,simbolosTransmitir,canal,ruido));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,canal,preambulo,d));
 
-            nAlgorithms = algorithms.size();
+            // we don't want the channel matrices corresponding to the smoothing observations to be detected, so we don't pass all the transmitted symbol vectors to the constructor
+            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,&kalmanEstimator,preambulo,simbolosTransmitir(rAllSymbolRows,tRange(0,simbolosTransmitir.cols()-d-1))));
+
+            // ----------------------------------------------------------------------
+
+            KalmanEstimator kalmanEstimatorCopy(kalmanEstimator);
+
+            // here the number of algoriths is known. So, the first iteration:
+            if(iSNR==0)
+            {
+                peMatrix.resize(SNRs.size(),algorithms.size());
+                peMatrix = 0.0;
+
+                mseMatrix.resize(SNRs.size(),algorithms.size());
+                mseMatrix = 0.0;
+            }
 
             // now executed
             for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
+                mse = algorithms[iAlgorithm]->MSE(canal.Range(m-1+longSecEntr,simbolosTransmitir.cols()-d-1));
 
-                cout << "La probabilidad obtenida por " << algorithms[iAlgorithm]->GetName() << " para una SNR = " << SNRs[iSNR] << " es " << pe << endl;
+                cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
                 // the error probability is accumulated
                 peMatrix(iSNR,iAlgorithm) += pe;
 
+                // and the MSE
+                mseMatrix(iSNR,iAlgorithm) += mse;
+
                 delete algorithms[iAlgorithm];
             }
-
-//             delete[] algorithms;
         }
     }
 
     peMatrix *= 1.0/nFrames;
-    cout << "Resultado final" << endl << peMatrix(tRange(0,SNRs.size()-1),tRange(0,nAlgorithms-1)) << endl;
+    mseMatrix *= 1.0/nFrames;
+
+    cout << "Overall SER:" << endl;
+    Util::Print(peMatrix);
+
+    cout << "Overall MSE:" << endl;
+    Util::Print(mseMatrix);
 }

@@ -33,8 +33,6 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
-using namespace std;
-
 class Particle{
 protected:
 	double _weight;
@@ -45,6 +43,10 @@ public:
     Particle(double weight,int symbolVectorLength,int nTimeInstants);
     virtual ~Particle();
 
+    /**
+     * 
+     * @return the number of time instants
+     */
 	int TrajectoryLength() { return _nTimeInstants;}
 
 	double GetWeight() { return _weight;}
@@ -53,7 +55,7 @@ public:
 	tMatrix GetAllSymbolVectors() { return _symbolVectors;}
 	tVector GetSymbolVector(int n) { return _symbolVectors.col(n);}
 	void SetSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
-	void SetSymbolVector(int n,const vector<tSymbol> &v)
+	void SetSymbolVector(int n,const std::vector<tSymbol> &v)
 	{
 		for(int i=0;i<_symbolVectorLength;i++)
 			_symbolVectors(i,n) = v[i];

@@ -30,6 +30,10 @@ double Algorithm::SER(const tMatrix &symbols)
     tMatrix detectedSymbolVectors = GetDetectedSymbolVectors();
     int nDetectedVectors = detectedSymbolVectors.cols();
 
+    // if the algorithm did know the symbols
+    if(detectedSymbolVectors.cols()==0)
+        return 0.0;
+
     if(windowSize>nDetectedVectors)
         throw RuntimeException("Algorithm::SER: more symbol vectors passed than detected.");
 
@@ -73,9 +77,9 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
         // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
         mse += Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
 
-        cout << "sumando: " << Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0) << ",";
+//         cout << "sumando: " << Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0) << ",";
     }
-    cout << endl;
+//     cout << endl;
 
     return mse/(double)windowSize;
 }

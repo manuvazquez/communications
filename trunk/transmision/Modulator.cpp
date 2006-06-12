@@ -19,6 +19,9 @@
  ***************************************************************************/
 #include "Modulator.h"
 
+
+using namespace std;
+
 Modulator::Modulator()
 {
 }

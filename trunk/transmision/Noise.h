@@ -29,8 +29,6 @@
 #include <Random.h>
 #include <StatUtil.h>
 
-using namespace std;
-
 class Noise{
 protected:
 	int _nRx,_length;

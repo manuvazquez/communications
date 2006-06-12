@@ -35,8 +35,6 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
-using namespace std;
-
 class StatUtil{
 public:
 //     static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator= Random(0));

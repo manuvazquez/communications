@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "Util.h"
 
+using namespace std;
+
 void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
 	if(A.rows()!=B.rows() || A.cols()!=B.cols())
@@ -177,4 +179,15 @@ double Util::SquareError(const tMatrix &A,const tMatrix &B)
         for(j=0;j<A.cols();j++)
             res += (A(i,j)-B(i,j))*(A(i,j)-B(i,j));
     return res;
+}
+
+void Util::Print(const tMatrix &A)
+{
+    int j;
+    for(int i=0;i<A.rows();i++)
+    {
+        for(j=0;j<A.cols();j++)
+            cout << setprecision(6) << setw(12) << left << A(i,j);
+        cout << endl;
+    }    
 }

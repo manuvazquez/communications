@@ -29,8 +29,6 @@
 #include <Bits.h>
 #include <Alphabet.h>
 
-using namespace std;
-
 class Modulator{
 public:
     Modulator();

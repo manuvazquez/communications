@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ARprocess.h"
 
+using namespace std;
+
 // ARprocess::ARprocess()
 // {
 // }

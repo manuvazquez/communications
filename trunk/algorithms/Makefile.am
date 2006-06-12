@@ -4,10 +4,10 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h UnknownChannelAlgorithm.h \
-		KnownChannelOrderAlgorithm.h SMCAlgorithm.h ML_SMCAlgorithm.h KnownChannelAlgorithm.h \
-	ViterbiAlgorithm.h
+			KnownChannelOrderAlgorithm.h SMCAlgorithm.h ML_SMCAlgorithm.h KnownChannelAlgorithm.h \
+		ViterbiAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h
 libalgorithms_a_SOURCES = Algorithm.cpp UnknownChannelAlgorithm.cpp \
-			KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
-	KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp
+				KnownChannelOrderAlgorithm.cpp SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+		KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimator.cpp
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a

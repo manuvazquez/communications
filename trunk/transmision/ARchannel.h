@@ -28,8 +28,6 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-using namespace std;
-
 class ARchannel : public MIMOChannel
 {
 protected:

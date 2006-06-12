@@ -24,15 +24,13 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <iomanip>
 #include <math.h>
 #include <vector>
 #include <types.h>
 #include <exceptions.h>
 #include "utilExceptions.h"
 #include <lapackpp/gmd.h>
-
-
-using namespace std;
 
 enum tOrder {rowwise,columnwise};
 
@@ -52,6 +50,7 @@ public:
 	static double Sum(const tVector &v);
 	static void Max(const tVector &v,int &index);
     static double SquareError(const tMatrix &A,const tMatrix &B);
+    static void Print(const tMatrix &A);
 };
 
 #endif

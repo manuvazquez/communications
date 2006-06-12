@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "Particle.h"
 
+using namespace std;
+
 Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectorLength(symbolVectorLength),_nTimeInstants(nTimeInstants),_symbolVectors(_symbolVectorLength,_nTimeInstants),_rAllSymbolRows(0,_symbolVectorLength-1)
 {
 }

@@ -30,8 +30,6 @@
 #include <exceptions.h>
 #include <Util.h>
 
-using namespace la;
-
 class MIMOChannel{
 protected:
 	int _nTx, _nRx, _memory,_length,_nTxnRx,_nTxnRxMemory,_nTxMemory;

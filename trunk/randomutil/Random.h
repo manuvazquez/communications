@@ -6,8 +6,6 @@
 // #include <cstdlib>
 #include <complex>
 
-using namespace std;
-
 class Random
 {
 
@@ -19,7 +17,7 @@ class Random
 		Random (uint32_t seed) : _seed(seed) { };
 		double randn();
 // 		double* Random::randnArray(int n,double = 0,double =1);
-		complex<double> complexRandn();
+		std::complex<double> complexRandn();
 		int randab(int a, int b) { return (a+(int) ((double) b*rand_r(&_seed)/(RAND_MAX+1.0))); };
 		double rand() { return ((double) rand_r(&_seed))/((double) RAND_MAX); }
 		uint32_t getSeed() { return _seed; }

@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "StatUtil.h"
 
+using namespace std;
+
 vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 // vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator)
 {
