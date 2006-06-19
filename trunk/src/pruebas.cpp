@@ -30,6 +30,8 @@
 #include <mylapack.h>
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
+#include <fstream>
+#include <cstdlib>
 
 using namespace std;
 // using namespace la;
@@ -55,6 +57,21 @@ tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 	}
 
 	return res;
+}
+
+void Matrix2File(tMatrix A,string name,ofstream f)
+{
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << NSNR * NIA << endl << "# columns: 3" << endl;
+    
+    for (int isnr = 0; isnr < NSNR; isnr++)
+    {
+        exitDet.getIe(ie,ia,snr(isnr),ITERS,2);
+                
+        for(int iia=0;iia<NIA;iia++)
+            f << snr(isnr) << " " << ia(iia) << " " << ie(iia) << endl;
+        
+        f.flush();
+    }
 }
 
 /**
@@ -135,8 +152,8 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------ Estimador de Kalman ------------------------------------
-	int L=3,N=2,m=2,K=20;
-	int longSecEntr = 10;
+	int L=3,N=2,m=2,K=10;
+	int longSecEntr = 5;
 	int nParticles = 30;
 	int d = m -1;
 	double forgettingFactor = 0.9;
@@ -175,6 +192,8 @@ int main(int argc,char* argv[])
 	ChannelDependentNoise ruido(&canal);
 	ruido.SetSNR(12,1);
 
+
+
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
 // 	cout << "varianza = " << ruido.VarianceAt(iVarianza) << " ruido en " << iVarianza << endl << ruido[iVarianza] << endl;
@@ -183,6 +202,35 @@ int main(int argc,char* argv[])
 
 // 	cout << "El ruido" << endl;
 // 	ruido.Print();
+// 
+//  for(int iVarianza=0;iVarianza<ruido.Length();iVarianza++)
+//  {
+//  cout << ruido.VarianceAt(iVarianza) << " , ";
+//  }
+// 
+//     ruido.SetSNR(3,1);
+// 
+//     cout << "El ruido" << endl;
+//     ruido.Print();
+// 
+//  for(int iVarianza=0;iVarianza<ruido.Length();iVarianza++)
+//  {
+//  cout << ruido.VarianceAt(iVarianza) << " , ";
+//  }
+// 
+//     ruido.SetSNR(12,1);
+// 
+//     cout << "El ruido" << endl;
+//     ruido.Print();
+// 
+//  for(int iVarianza=0;iVarianza<ruido.Length();iVarianza++)
+//  {
+//  cout << ruido.VarianceAt(iVarianza) << " , ";
+//  }
+
+    
+    ofstream f("salida",ofstream::trunc);
+    return 0;
 
 	ChannelDependentNoise ruidoCopia = ruido;
 

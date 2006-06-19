@@ -63,9 +63,9 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 1;
-    int L=3,N=2,m=2,K=30;
-    int longSecEntr = 10;
+    int nFrames = 100;
+    int L=3,N=2,m=2,K=300;
+    int longSecEntr = 30;
     int nParticles = 30;
     int d = m -1;
 
@@ -76,9 +76,10 @@ int main(int argc,char* argv[])
     // AR process parameters
     vector<double> ARcoefficients(1);
     ARcoefficients[0] = 0.99999;
+    double ARvariance=0.0001;
 
     // channel parameters
-    double channelMean=0.0,channelVariance=1.0,ARvariance=0.0001;
+    double channelMean=0.0,channelVariance=1.0;
 
     // channel estimator parameters
     double samplingVariance = 0.0625;
@@ -114,8 +115,8 @@ int main(int argc,char* argv[])
     StdResamplingAlgorithm algoritmoRemuestreo;
 
     // matrices for results
-    tMatrix peMatrix;
-    tMatrix mseMatrix;
+    tMatrix overallPeMatrix;
+    tMatrix overallMseMatrix;
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -172,13 +173,13 @@ int main(int argc,char* argv[])
             KalmanEstimator kalmanEstimatorCopy(kalmanEstimator);
 
             // here the number of algoriths is known. So, the first iteration:
-            if(iSNR==0)
+            if(iFrame==0 && iSNR==0)
             {
-                peMatrix.resize(SNRs.size(),algorithms.size());
-                peMatrix = 0.0;
+                overallPeMatrix.resize(SNRs.size(),algorithms.size());
+                overallPeMatrix = 0.0;
 
-                mseMatrix.resize(SNRs.size(),algorithms.size());
-                mseMatrix = 0.0;
+                overallMseMatrix.resize(SNRs.size(),algorithms.size());
+                overallMseMatrix = 0.0;
             }
 
             // now executed
@@ -191,22 +192,22 @@ int main(int argc,char* argv[])
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
                 // the error probability is accumulated
-                peMatrix(iSNR,iAlgorithm) += pe;
+                overallPeMatrix(iSNR,iAlgorithm) += pe;
 
                 // and the MSE
-                mseMatrix(iSNR,iAlgorithm) += mse;
+                overallMseMatrix(iSNR,iAlgorithm) += mse;
 
                 delete algorithms[iAlgorithm];
             }
         }
     }
 
-    peMatrix *= 1.0/nFrames;
-    mseMatrix *= 1.0/nFrames;
+    overallPeMatrix *= 1.0/nFrames;
+    overallMseMatrix *= 1.0/nFrames;
 
     cout << "Overall SER:" << endl;
-    Util::Print(peMatrix);
+    Util::Print(overallPeMatrix);
 
     cout << "Overall MSE:" << endl;
-    Util::Print(mseMatrix);
+    Util::Print(overallMseMatrix);
 }
