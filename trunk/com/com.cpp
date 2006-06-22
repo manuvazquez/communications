@@ -63,9 +63,9 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 10;
-    int L=3,N=2,m=2,K=30;
-    int longSecEntr = 10;
+    int nFrames = 5;
+    int L=3,N=2,m=2,K=300;
+    int longSecEntr = 30;
     int nParticles = 30;
     int d = m -1;
 
@@ -186,6 +186,7 @@ int main(int argc,char* argv[])
             for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
+
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(m-1+longSecEntr,simbolosTransmitir.cols()-d-1));
 

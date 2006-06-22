@@ -179,10 +179,13 @@ int main(int argc,char* argv[])
 	ruido.SetSNR(12,1);
 
 	ofstream fid("sal", ofstream::out);
+	ofstream fid2("sal2", ofstream::out);
 
 	Util::MatrixToStream(preambulo,"preambulo",fid);
+	Util::MatricesVectorToStream(conjuntoMatrices,"matrices",fid2);
 
 	fid.close();
+	fid2.close();
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{

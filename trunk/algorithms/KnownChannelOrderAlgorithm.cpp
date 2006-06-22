@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet, channelEstimator),_preamble(preamble),_L(channelEstimator->Rows()),_Nm(channelEstimator->Cols())
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): Algorithm(name, alphabet),_channelEstimator(channelEstimator->Clone()),_preamble(preamble),_L(channelEstimator->Rows()),_Nm(channelEstimator->Cols())
 {
 // 	// if there is no preamble
 // 	if(_preamble.rows()==0)
@@ -28,6 +28,11 @@ KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alp
 		_m = _preamble.cols() + 1;
 
 	_N = _Nm/_m;
+}
+
+KnownChannelOrderAlgorithm::~ KnownChannelOrderAlgorithm()
+{
+	delete _channelEstimator;
 }
 
 vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)

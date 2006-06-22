@@ -30,15 +30,17 @@
 #include <types.h>
 #include <Util.h>
 
-class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class KnownChannelOrderAlgorithm : public Algorithm
 {
 protected:
+	ChannelMatrixEstimator *_channelEstimator;
 	int _L,_N,_m,_Nm;
 	tMatrix _preamble;
 
 	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
+	~KnownChannelOrderAlgorithm();
 	tMatrix HsToStackedH(vector<tMatrix> matrices);
 };
 

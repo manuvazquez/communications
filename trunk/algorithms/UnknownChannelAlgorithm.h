@@ -30,8 +30,6 @@
 
 class UnknownChannelAlgorithm : public Algorithm
 {
-protected: 
-	ChannelMatrixEstimator *_channelEstimator;
 public:
     UnknownChannelAlgorithm(string name, Alphabet  alphabet,ChannelMatrixEstimator *channelEstimator);
     ~UnknownChannelAlgorithm();

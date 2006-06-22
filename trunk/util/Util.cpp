@@ -203,3 +203,14 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
         f << endl;
     }
 }
+
+void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)
+{
+	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << endl;
+
+	int i,j;
+	for(int iMatrix=0;iMatrix<matrices.size();iMatrix++)
+		for(j=0;j<(matrices.at(iMatrix)).cols();j++)
+			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
+				f << " " << (matrices.at(iMatrix))(i,j) << endl;
+}
