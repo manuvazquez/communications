@@ -191,3 +191,15 @@ void Util::Print(const tMatrix &A)
         cout << endl;
     }    
 }
+
+void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
+{
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
+    
+    for(int i=0;i<A.rows();i++)
+    {           
+        for(int j=0;j<A.cols();j++)
+            f << A(i,j) << " "; 
+        f << endl;
+    }
+}

@@ -27,6 +27,7 @@
 #include <iomanip>
 #include <math.h>
 #include <vector>
+#include <fstream>
 #include <types.h>
 #include <exceptions.h>
 #include "utilExceptions.h"
@@ -51,6 +52,7 @@ public:
 	static void Max(const tVector &v,int &index);
     static double SquareError(const tMatrix &A,const tMatrix &B);
     static void Print(const tMatrix &A);
+	static void MatrixToStream(tMatrix A,string name,ofstream &f);
 };
 
 #endif

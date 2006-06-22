@@ -36,6 +36,7 @@
 using namespace std;
 // using namespace la;
 
+// void Matrix2File(tMatrix A,string name,ofstream f);
 
 tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 {
@@ -57,21 +58,6 @@ tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 	}
 
 	return res;
-}
-
-void Matrix2File(tMatrix A,string name,ofstream f)
-{
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << NSNR * NIA << endl << "# columns: 3" << endl;
-    
-    for (int isnr = 0; isnr < NSNR; isnr++)
-    {
-        exitDet.getIe(ie,ia,snr(isnr),ITERS,2);
-                
-        for(int iia=0;iia<NIA;iia++)
-            f << snr(isnr) << " " << ia(iia) << " " << ie(iia) << endl;
-        
-        f.flush();
-    }
 }
 
 /**
@@ -192,7 +178,11 @@ int main(int argc,char* argv[])
 	ChannelDependentNoise ruido(&canal);
 	ruido.SetSNR(12,1);
 
+	ofstream fid("sal", ofstream::out);
 
+	Util::MatrixToStream(preambulo,"preambulo",fid);
+
+	fid.close();
 
 // 	for(int iVarianza=31;iVarianza<300;iVarianza++)
 // 	{
