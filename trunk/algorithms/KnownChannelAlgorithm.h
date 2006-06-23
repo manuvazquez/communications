@@ -32,14 +32,14 @@ class KnownChannelAlgorithm : public Algorithm
 protected:
 	const MIMOChannel &_channel;
 public:
-    KnownChannelAlgorithm(string name, Alphabet alphabet,const MIMOChannel &channel);
+    KnownChannelAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel &channel);
 
     ~KnownChannelAlgorithm();
 
     
     using Algorithm::Run;
 
-    void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
     vector<tMatrix> GetEstimatedChannelMatrices();
 };
 

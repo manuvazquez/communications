@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelAlgorithm.h"
 
-KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,const MIMOChannel &channel): Algorithm(name, alphabet),_channel(channel)
+KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel &channel): Algorithm(name, alphabet, K),_channel(channel)
 {
 }
 
@@ -28,7 +28,7 @@ KnownChannelAlgorithm::~KnownChannelAlgorithm()
 {
 }
 
-void KnownChannelAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void KnownChannelAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     this->Run(observations,noiseVariances);
 }

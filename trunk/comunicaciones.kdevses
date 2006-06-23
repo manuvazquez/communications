@@ -1,22 +1,19 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="5" >
+ <DocsAndViews NumberOfDocuments="4" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="184" Type="Source" />
+   <View0 Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="67" Type="Source" />
+   <View0 line="159" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelAlgorithm.h" >
-   <View0 line="30" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.h" >
    <View0 line="0" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
+   <View0 line="256" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/util/Util.cpp" >
-   <View0 line="195" Type="Source" />
-  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -29,13 +26,14 @@
      <mark line="144" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
-     <mark line="251" />
+     <mark line="255" />
+     <mark line="142" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
      <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-     <mark line="63" />
+     <mark line="0" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/src/pruebas.cpp" >
      <mark line="140" />

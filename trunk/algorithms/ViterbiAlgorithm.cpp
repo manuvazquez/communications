@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ViterbiAlgorithm.h"
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
 {
     if(preamble.cols() != (_channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
@@ -57,17 +57,19 @@ ViterbiAlgorithm::~ViterbiAlgorithm()
     delete[] _arrivalStage;
 }
 
-void ViterbiAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
+void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-    Run(observations,noiseVariances,observations.cols());
+//     Run(observations,noiseVariances,observations.cols());
+    Run(observations,noiseVariances,_K+_d);
 }
 
-void ViterbiAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
-    _detectedSymbolVectors = new tMatrix(_channel.Nt(),observations.cols());
+//     _detectedSymbolVectors = new tMatrix(_channel.Nt(),observations.cols());
+    _detectedSymbolVectors = new tMatrix(_channel.Nt(),_K+_d);
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
@@ -108,7 +110,8 @@ void ViterbiAlgorithm::Run(const tMatrix &observations,vector<double> noiseVaria
     // the first detected vector is copied into "_detectedSymbolVectors"
     _detectedSymbolVectors->col(_channel.Memory()-1).inject((_exitStage[iBestState].sequence)->col(_channel.Memory()-1));
 
-    for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<observations.cols();iProcessedObservation++)
+//     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<observations.cols();iProcessedObservation++)
+    for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
         for(iState=0;iState<_nStates;iState++)
         {
@@ -135,8 +138,9 @@ void ViterbiAlgorithm::Run(const tMatrix &observations,vector<double> noiseVaria
 
     }
 
+//     for(iProcessedObservation=observations.cols()-firstSymbolVectorDetectedAt+_channel.Memory();iProcessedObservation<observations.cols();iProcessedObservation++)
     // last detected symbol vectors are processed
-    for(iProcessedObservation=observations.cols()-firstSymbolVectorDetectedAt+_channel.Memory();iProcessedObservation<observations.cols();iProcessedObservation++)
+    for(iProcessedObservation=_K+_d-firstSymbolVectorDetectedAt+_channel.Memory();iProcessedObservation<_K+_d;iProcessedObservation++)
         _detectedSymbolVectors->col(iProcessedObservation).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation));
         
 }
@@ -249,7 +253,8 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
 tMatrix ViterbiAlgorithm::GetDetectedSymbolVectors()
 {
-    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_detectedSymbolVectors->cols()-_d-1));
+//     return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_detectedSymbolVectors->cols()-_d-1));
+    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_K-1));
 }
 
 void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)

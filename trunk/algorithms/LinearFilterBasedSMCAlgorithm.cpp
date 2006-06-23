@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedSMCAlgorithm.h"
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int K,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, K,  channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm)
 // ,_particlesLinearDetectors(new LinearDetector*[_nParticles])
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 {
@@ -35,7 +35,7 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
     delete _linearDetector;
 }
 
-// void LinearFilterBasedSMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
+// void LinearFilterBasedSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 // {
 // 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
 // 	{
@@ -73,8 +73,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
 	{
-// 		cout << "Observacion procesada " << iObservationToBeProcessed << endl;
-
 		// already detected symbol vectors involved in the current detection
 		tRange alreadyDetectedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 

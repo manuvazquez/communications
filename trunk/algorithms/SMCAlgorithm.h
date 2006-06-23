@@ -23,7 +23,7 @@
 #include <KnownChannelOrderAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <ResamplingCriterion.h>
@@ -34,42 +34,42 @@
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
-	int _d, _nParticles, _startDetectionTime, _endDetectionTime;
-	ResamplingCriterion _resamplingCriterion;
-	StdResamplingAlgorithm _resamplingAlgorithm;
-	ParticleWithChannelEstimation **_particles;
-	tRange _allSymbolsRows;
+    int _d, _nParticles, _startDetectionTime, _endDetectionTime;
+    ResamplingCriterion _resamplingCriterion;
+    StdResamplingAlgorithm _resamplingAlgorithm;
+    ParticleWithChannelEstimation **_particles;
+    tRange _allSymbolsRows;
 
-	virtual void Resampling(int endResamplingTime);
-	virtual void InitializeParticles();
-	virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    virtual void Resampling(int endResamplingTime);
+    virtual void InitializeParticles();
+    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 
-	tVector GetWeightsVector() 
-	{
-		tVector weights(_nParticles);
-		for(int i=0;i<_nParticles;i++)
-			weights(i) = _particles[i]->GetWeight();
-		return weights;
-	}
+    tVector GetWeightsVector() 
+    {
+        tVector weights(_nParticles);
+        for(int i=0;i<_nParticles;i++)
+            weights(i) = _particles[i]->GetWeight();
+        return weights;
+    }
 
-	void NormalizeWeights()
-	{
-		double sum = 0.0;
-		int i;
+    void NormalizeWeights()
+    {
+        double sum = 0.0;
+        int i;
 
-		for(i=0;i<_nParticles;i++)
-			sum += _particles[i]->GetWeight();
+        for(i=0;i<_nParticles;i++)
+            sum += _particles[i]->GetWeight();
 
-		for(i=0;i<_nParticles;i++)
-			_particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
-	}
-	
+        for(i=0;i<_nParticles;i++)
+            _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
+    }
+    
 public:
-    SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
-	~SMCAlgorithm();
-	
-	void Run(const tMatrix &observations,vector<double> noiseVariances);
-	void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    SMCAlgorithm(string name, Alphabet alphabet, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
+    ~SMCAlgorithm();
+    
+    void Run(tMatrix observations,vector<double> noiseVariances);
+    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
     tMatrix GetDetectedSymbolVectors();
     vector<tMatrix> GetEstimatedChannelMatrices();
 };

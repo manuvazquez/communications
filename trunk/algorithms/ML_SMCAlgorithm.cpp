@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ML_SMCAlgorithm.h"
 
-ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion,resamplingAlgorithm)
+ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, K,  channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion,resamplingAlgorithm)
 {
 // 	const type_info &info = typeid(channelEstimator);
 // 	cout << "El nombre del tipo es:" << typeid(channelEstimator).name() << endl;

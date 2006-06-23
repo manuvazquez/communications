@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Algorithm.h"
 
-Algorithm::Algorithm(string name, Alphabet  alphabet):_name(name),_alphabet(alphabet)
+Algorithm::Algorithm(string name, Alphabet  alphabet, int K):_name(name),_alphabet(alphabet),_K(K)
 {
 }
 

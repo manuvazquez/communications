@@ -19,104 +19,108 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, channelEstimator, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, K, channelEstimator, preamble),
 // _variables initialization
 _d(smoothingLag),_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),
 _particles(new ParticleWithChannelEstimation*[nParticles]),
 _allSymbolsRows(0,_N-1)
 {
-	// at first, we assume that all observations from the preamble need to be processed
-	_startDetectionTime = _m - 1;
+    // at first, we assume that all observations from the preamble need to be processed
+    _startDetectionTime = _m - 1;
 
-	for(int i=0;i<_nParticles;i++)
-	{
-		_particles[i] = NULL;
-	}
+    for(int i=0;i<_nParticles;i++)
+    {
+        _particles[i] = NULL;
+    }
 }
 
 SMCAlgorithm::~SMCAlgorithm()
 {
-	for(int i=0;i<_nParticles;i++)
-	{
-		delete _particles[i];
-	}
+    for(int i=0;i<_nParticles;i++)
+    {
+        delete _particles[i];
+    }
 
-	delete[] _particles;
+    delete[] _particles;
 }
 
 void SMCAlgorithm::InitializeParticles()
 {
-	// memory is reserved
-	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-	{
-		_particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_endDetectionTime,_channelEstimator->Clone());
-	}
+    // memory is reserved
+    for(int iParticle=0;iParticle<_nParticles;iParticle++)
+    {
+        _particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_endDetectionTime,_channelEstimator->Clone());
+    }
 }
 
-void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances)
+void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-	int nObservations = observations.cols();
-	_endDetectionTime = nObservations - _d;
+    int nObservations = observations.cols();
+//     _endDetectionTime = nObservations - _d;
+    _endDetectionTime = _K;
 
-	if(nObservations<(_startDetectionTime+1+_d))
-		throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
+    if(nObservations<(_startDetectionTime+1+_d))
+        throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
 
-	this->InitializeParticles();
+    this->InitializeParticles();
 
-	this->Process(observations,noiseVariances);
+    this->Process(observations,noiseVariances);
 }
 
-void SMCAlgorithm::Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-// 	cout << "Running with training sequence..." << endl;
+//  cout << "Running with training sequence..." << endl;
 
-	if(observations.rows()!=_L || trainingSequence.rows()!=_N)
-		throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
+    if(observations.rows()!=_L || trainingSequence.rows()!=_N)
+        throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 
-	int iParticle,j,nObservations;
+    int iParticle,j,nObservations;
 
-	nObservations = observations.cols();
-	_endDetectionTime = nObservations - _d;
+    nObservations = observations.cols();
+//     _endDetectionTime = nObservations - _d;
+    _endDetectionTime = _K;
 
-	// to process the training sequence, we need both the preamble and the symbol vectors related to it
-	tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
+//     cout << "nObservations es " << nObservations << " y _endDetectionTime " << _endDetectionTime << endl;
+
+    // to process the training sequence, we need both the preamble and the symbol vectors related to it
+    tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
 
 
-	tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
+    tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 
-	vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+    vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
-	this->InitializeParticles();
+    this->InitializeParticles();
 
-	for(iParticle=0;iParticle<_nParticles;iParticle++)
-	{
-		//the channel estimation given by the training sequence is copied into each particle...
-		for(j=_m-1;j<trainingSequenceChannelMatrices.size();j++)
-		{
-// 			_estimatedChannelMatrices[iParticle][j] = trainingSequenceChannelMatrices[j];
-			_particles[iParticle]->SetChannelMatrix(j,trainingSequenceChannelMatrices[j]);
-		}
+    for(iParticle=0;iParticle<_nParticles;iParticle++)
+    {
+        //the channel estimation given by the training sequence is copied into each particle...
+        for(j=_m-1;j<trainingSequenceChannelMatrices.size();j++)
+        {
+//          _estimatedChannelMatrices[iParticle][j] = trainingSequenceChannelMatrices[j];
+            _particles[iParticle]->SetChannelMatrix(j,trainingSequenceChannelMatrices[j]);
+        }
 
-		//... the symbols are considered detected...
-		_particles[iParticle]->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
-	}
+        //... the symbols are considered detected...
+        _particles[iParticle]->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
+    }
 
-	// the Process method must start in
-	_startDetectionTime = trainingSequenceChannelMatrices.size();
+    // the Process method must start in
+    _startDetectionTime = trainingSequenceChannelMatrices.size();
 
-	this->Process(observations,noiseVariances);
+    this->Process(observations,noiseVariances);
 }
 
 void SMCAlgorithm::Resampling(int endResamplingTime)
 {
-	if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
-	{
-		vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
+    if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
+    {
+        vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
 
-		_resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
+        _resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
 
-// 		cout << "Resampling..." << endl;
-	}
+//      cout << "Resampling..." << endl;
+    }
 }
 
 tMatrix SMCAlgorithm::GetDetectedSymbolVectors()

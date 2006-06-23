@@ -52,10 +52,6 @@
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
 
-
-// #define MAX_NUMBER_ALGORITHMS 50
-// #define EXPECTED_NUMBER_FRAMES 20
-
 using namespace std;
 
 int main(int argc,char* argv[])
@@ -63,9 +59,9 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 500;
-    int L=3,N=2,m=2,K=300;
-    int longSecEntr = 30;
+    int nFrames = 2;
+    int L=3,N=2,m=2,K=30;
+    int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
 
@@ -157,16 +153,17 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo));
+            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,K+m-1-d,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,K+m-1-d,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,K+m-1-d,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,canal,preambulo,d));
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,K+m-1-d,canal,preambulo,d));
 
             // we don't want the channel matrices corresponding to the smoothing observations to be detected, so we don't pass all the transmitted symbol vectors to the constructor
-            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,&kalmanEstimator,preambulo,simbolosTransmitir(rAllSymbolRows,tRange(0,simbolosTransmitir.cols()-d-1))));
+            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,K+m-1-d,&kalmanEstimator,preambulo,simbolosTransmitir));
+//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,K+m-1-d,&kalmanEstimator,preambulo,simbolosTransmitir(rAllSymbolRows,tRange(0,simbolosTransmitir.cols()-d-1))));
 
             // ----------------------------------------------------------------------
 

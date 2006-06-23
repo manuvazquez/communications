@@ -52,7 +52,7 @@ protected:
     void BuildStateTransitionMatrix();
     void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
+    ViterbiAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
 
     ~ViterbiAlgorithm();
 
@@ -69,10 +69,10 @@ public:
             }
         return bestState;
     }
-    void Run(const tMatrix &observations,vector<double> noiseVariances);
+    void Run(tMatrix observations,vector<double> noiseVariances);
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
-    void Run(const tMatrix &observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    void Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     tMatrix GetDetectedSymbolVectors();
     void PrintStage(tStage exitOrArrival);
 

@@ -39,11 +39,12 @@ class Algorithm{
 protected:
 	string _name;
 	Alphabet _alphabet;
+    int _K;
 public:
-    Algorithm(string name, Alphabet  alphabet);
+    Algorithm(string name, Alphabet  alphabet, int K);
 	virtual ~Algorithm() {};
-	virtual void Run(const tMatrix &observations,vector<double> noiseVariances) = 0;   
-    virtual void Run(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
+	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;   
+    virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
     string GetName() {return _name;}
 
