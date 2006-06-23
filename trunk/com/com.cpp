@@ -53,8 +53,8 @@
 #include <ParticleWithChannelEstimation.h>
 
 
-#define MAX_NUMBER_ALGORITHMS 50
-#define EXPECTED_NUMBER_FRAMES 20
+// #define MAX_NUMBER_ALGORITHMS 50
+// #define EXPECTED_NUMBER_FRAMES 20
 
 using namespace std;
 
@@ -63,7 +63,7 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 5;
+    int nFrames = 500;
     int L=3,N=2,m=2,K=300;
     int longSecEntr = 30;
     int nParticles = 30;
@@ -201,6 +201,17 @@ int main(int argc,char* argv[])
                 delete algorithms[iAlgorithm];
             }
         }
+		ofstream f("res",ofstream::trunc);
+
+		tMatrix auxOverallPe = overallPeMatrix;
+		auxOverallPe *= 1.0/(double)(iFrame+1);
+		Util::MatrixToStream(auxOverallPe,"pe",f);
+
+		tMatrix auxOverallMse = overallMseMatrix;
+		auxOverallMse *= 1.0/(double)(iFrame+1);
+		Util::MatrixToStream(auxOverallMse,"mse",f);
+
+		f.close();
     }
 
     overallPeMatrix *= 1.0/nFrames;
