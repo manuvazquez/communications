@@ -364,7 +364,7 @@ int main(int argc,char* argv[])
 // 	cout << "res" << endl << resHola << endl;
 	
 
-// ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion)
+// ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, ChannelMatrixEstimator& channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion): SMCAlgorithm(name, alphabet, channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion)
 
 // 	tMatrix preambulo(N,m-1);
 // 	preambulo = -1.0;
@@ -372,7 +372,7 @@ int main(int argc,char* argv[])
 	ResamplingCriterion criterioRemuestreo(0.9);
 	StdResamplingAlgorithm algoritmoRemuestreo;
 
-	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,K-d,&estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,L,N,K-d,&estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
 
 // 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 // 
@@ -383,7 +383,7 @@ int main(int argc,char* argv[])
 	RLSEstimator estimadorRLSfiltroLineal(mediaInicial,forgettingFactor);
 	LMSEstimator estimadorLMSfiltroLineal(mediaInicial,muLMS);
 
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,K-d,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,L,N,K-d,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
 
 // 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 
@@ -755,7 +755,7 @@ int main(int argc,char* argv[])
 
 	cout << "Al final del programa" << endl << endl;
 
-	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,K-d,canal,preambulo,d);
+	ViterbiAlgorithm algoritmoViterbi("Viterbi",pam2,L,N,K-d,canal,preambulo,d);
 	algoritmoViterbi.Run(observaciones,ruido.Variances());
 // 	algoritmoViterbi.PrintStage(exitStage);
 // 	cout << "Prob error es " << algoritmoViterbi.SER(simbolosTransmitir(todasFilasSimbolos,*(new tRange(m-1+longSecEntr,simbolosTransmitir.cols()-1)))) << endl;

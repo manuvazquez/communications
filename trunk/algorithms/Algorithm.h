@@ -39,9 +39,9 @@ class Algorithm{
 protected:
 	string _name;
 	Alphabet _alphabet;
-    int _K;
+    int _L,_N,_K;
 public:
-    Algorithm(string name, Alphabet  alphabet, int K);
+    Algorithm(string name, Alphabet  alphabet,int L,int N, int K);
 	virtual ~Algorithm() {};
 	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;   
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;

@@ -34,12 +34,12 @@ class KnownChannelOrderAlgorithm : public Algorithm
 {
 protected:
 	ChannelMatrixEstimator *_channelEstimator;
-	int _L,_N,_m,_Nm;
+	int _m,_Nm;
 	tMatrix _preamble;
 
 	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet, int K, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
 	~KnownChannelOrderAlgorithm();
 	tMatrix HsToStackedH(vector<tMatrix> matrices);
 };

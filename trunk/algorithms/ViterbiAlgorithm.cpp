@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ViterbiAlgorithm.h"
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
 {
     if(preamble.cols() != (_channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");

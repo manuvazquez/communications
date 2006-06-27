@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanBasedChannelEstimator.h"
 
-KnownSymbolsKalmanBasedChannelEstimator::KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, K, channelEstimator, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsKalmanBasedChannelEstimator::KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimator, preamble),_symbolVectors(symbolVectors)
 {
 //     cout << "Constructor: " << endl << _symbolVectors << endl; 
 //     cout << "Es submatrixview " << _symbolVectors.is_submatrixview() << endl;

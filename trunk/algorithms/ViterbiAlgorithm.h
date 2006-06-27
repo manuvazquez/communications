@@ -52,7 +52,7 @@ protected:
     void BuildStateTransitionMatrix();
     void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
+    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
 
     ~ViterbiAlgorithm();
 

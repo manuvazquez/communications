@@ -45,7 +45,7 @@ public:
      * @param symbolVectors includes the preamble
      * @return 
      */
-    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
+    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
 
     ~KnownSymbolsKalmanBasedChannelEstimator();
 
