@@ -26,6 +26,7 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include <ParticleFilter.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
@@ -34,39 +35,15 @@
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
-    int _d, _nParticles, _startDetectionTime;
-    ResamplingCriterion _resamplingCriterion;
-    StdResamplingAlgorithm _resamplingAlgorithm;
-    ParticleWithChannelEstimation **_particles;
+	ParticleFilter _particleFilter;
+    int _d,_startDetectionTime;
     tRange _allSymbolsRows;
 
-    virtual void Resampling(int endResamplingTime);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-
-    tVector GetWeightsVector() 
-    {
-        tVector weights(_nParticles);
-        for(int i=0;i<_nParticles;i++)
-            weights(i) = _particles[i]->GetWeight();
-        return weights;
-    }
-
-    void NormalizeWeights()
-    {
-        double sum = 0.0;
-        int i;
-
-        for(i=0;i<_nParticles;i++)
-            sum += _particles[i]->GetWeight();
-
-        for(i=0;i<_nParticles;i++)
-            _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
-    }
     
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
-    ~SMCAlgorithm();
     
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

@@ -57,6 +57,20 @@ public:
             weights(i) = _particles[i]->GetWeight();
         return weights;
     }
+
+    void NormalizeWeights()
+    {
+        double sum = 0.0;
+        int i;
+
+        for(i=0;i<_nParticles;i++)
+            sum += _particles[i]->GetWeight();
+
+        for(i=0;i<_nParticles;i++)
+            _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
+    }
+
+	int Nparticles() { return _nParticles;}
 };
 
 #endif
