@@ -62,7 +62,8 @@ libsmc_a_LIBADD =
 am_libsmc_a_OBJECTS = ResamplingCriterion.$(OBJEXT) \
 	StdResamplingAlgorithm.$(OBJEXT) Particle.$(OBJEXT) \
 	ParticleWithChannelEstimation.$(OBJEXT) \
-	ParticleWithChannelEstimationAndLinearDetection.$(OBJEXT)
+	ParticleWithChannelEstimationAndLinearDetection.$(OBJEXT) \
+	ParticleFilter.$(OBJEXT)
 libsmc_a_OBJECTS = $(am_libsmc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -178,17 +179,17 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
-	-I$(top_srcdir)/src
+	-I$(top_srcdir)/randomutil -I$(top_srcdir)/src -I$(top_srcdir)/statistics -I$(top_srcdir)/util
 
 METASOURCES = AUTO
 lib_LIBRARIES = libsmc.a
 noinst_HEADERS = ResamplingCriterion.h smcExceptions.h StdResamplingAlgorithm.h \
-	Particle.h ParticleWithChannelEstimation.h \
-	ParticleWithChannelEstimationAndLinearDetection.h
+		Particle.h ParticleWithChannelEstimation.h \
+		ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h
 
 libsmc_a_SOURCES = ResamplingCriterion.cpp StdResamplingAlgorithm.cpp \
-	Particle.cpp ParticleWithChannelEstimation.cpp \
-	ParticleWithChannelEstimationAndLinearDetection.cpp
+		Particle.cpp ParticleWithChannelEstimation.cpp \
+		ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp
 
 all: all-am
 
@@ -264,6 +265,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Particle.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndLinearDetection.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ResamplingCriterion.Po@am__quote@

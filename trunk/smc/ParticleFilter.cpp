@@ -17,24 +17,32 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELALGORITHM_H
-#define UNKNOWNCHANNELALGORITHM_H
+#include "ParticleFilter.h"
 
-#include <Algorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <ChannelMatrixEstimator.h>
-
-class UnknownChannelAlgorithm : public Algorithm
+ParticleFilter::ParticleFilter(int nParticles,const ResamplingCriterion &resamplingCriterion,const StdResamplingAlgorithm &resamplingAlgorithm):_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
-public:
-    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int K);
-    
-// 	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
+    for(int i=0;i<_nParticles;i++)
+    {
+        _particles[i] = NULL;
+    }
+}
 
-};
+ParticleFilter::~ParticleFilter()
+{
+    for(int i=0;i<_nParticles;i++)
+    {
+        delete _particles[i];
+    }
 
-#endif
+    delete[] _particles;
+}
+
+void ParticleFilter::Resampling()
+{
+    if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
+    {
+        vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
+
+        _resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
+    }
+}

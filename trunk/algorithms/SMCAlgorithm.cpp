@@ -32,6 +32,8 @@ _allSymbolsRows(0,_N-1)
     {
         _particles[i] = NULL;
     }
+
+// 	this->InitializeParticles();
 }
 
 SMCAlgorithm::~SMCAlgorithm()
@@ -49,15 +51,15 @@ void SMCAlgorithm::InitializeParticles()
     // memory is reserved
     for(int iParticle=0;iParticle<_nParticles;iParticle++)
     {
-        _particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_endDetectionTime,_channelEstimator->Clone());
+        _particles[iParticle] = new ParticleWithChannelEstimation(1.0/(double)_nParticles,_N,_K,_channelEstimator->Clone());
     }
 }
 
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
     int nObservations = observations.cols();
-//     _endDetectionTime = nObservations - _d;
-    _endDetectionTime = _K;
+//     _K = nObservations - _d;
+//     _K = _K;
 
     if(nObservations<(_startDetectionTime+1+_d))
         throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
@@ -74,13 +76,12 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
         throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 
-    int iParticle,j,nObservations;
+    int iParticle,j;
 
-    nObservations = observations.cols();
-//     _endDetectionTime = nObservations - _d;
-    _endDetectionTime = _K;
+//     _K = nObservations - _d;
+//     _K = _K;
 
-//     cout << "nObservations es " << nObservations << " y _endDetectionTime " << _endDetectionTime << endl;
+//     cout << "nObservations es " << nObservations << " y _K " << _K << endl;
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
@@ -129,19 +130,19 @@ tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
     int iBestParticle;
     Util::Max(GetWeightsVector(),iBestParticle);
 
-    return (_particles[iBestParticle]->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_endDetectionTime-1));
+    return (_particles[iBestParticle]->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_K-1));
 }
 
 vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
-    channelMatrices.reserve(_endDetectionTime-_m+1);
+    channelMatrices.reserve(_K-_m+1);
 
     // best particle is chosen
     int iBestParticle;
     Util::Max(GetWeightsVector(),iBestParticle);
     
-    for(int i=_m-1;i<_endDetectionTime;i++)
+    for(int i=_m-1;i<_K;i++)
         channelMatrices.push_back(_particles[iBestParticle]->GetChannelMatrix(i));
 
     return channelMatrices;

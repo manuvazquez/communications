@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,  ChannelMatrixEstimator *channelEstimator,tMatrix preamble): Algorithm(name, alphabet,L,N,K),_channelEstimator(channelEstimator->Clone()),_preamble(preamble),_Nm(channelEstimator->Cols())
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,  ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(channelEstimator->Clone()),_preamble(preamble),_Nm(channelEstimator->Cols())
 {
 		_m = _preamble.cols() + 1;
 }

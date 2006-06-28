@@ -17,24 +17,46 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELALGORITHM_H
-#define UNKNOWNCHANNELALGORITHM_H
-
-#include <Algorithm.h>
+#ifndef PARTICLEFILTER_H
+#define PARTICLEFILTER_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ChannelMatrixEstimator.h>
+#include <Particle.h>
+#include <ParticleWithChannelEstimation.h>
+#include <StdResamplingAlgorithm.h>
+#include <ResamplingCriterion.h>
+#include <StatUtil.h>
 
-class UnknownChannelAlgorithm : public Algorithm
-{
+class ParticleFilter{
+protected:
+    int _nParticles;
+    ResamplingCriterion _resamplingCriterion;
+    StdResamplingAlgorithm _resamplingAlgorithm;
+    ParticleWithChannelEstimation **_particles;
 public:
-    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int K);
-    
-// 	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
+    ParticleFilter(int nParticles,const ResamplingCriterion &resamplingCriterion,const StdResamplingAlgorithm &resamplingAlgorithm);
 
+    ~ParticleFilter();
+
+	void Resampling();
+	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
+
+	void SetParticle(ParticleWithChannelEstimation *particle,int n)
+	{
+		delete _particles[n];
+		_particles[n] = particle;
+	}
+	
+    tVector GetWeightsVector() 
+    {
+        tVector weights(_nParticles);
+        for(int i=0;i<_nParticles;i++)
+            weights(i) = _particles[i]->GetWeight();
+        return weights;
+    }
 };
 
 #endif

@@ -1,25 +1,28 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
-  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/src/pruebas.cpp" >
-   <View0 line="16" Type="Source" />
+ <DocsAndViews NumberOfDocuments="7" >
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 line="183" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="194" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
+   <View0 line="48" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-   <View0 line="104" Type="Source" />
+   <View0 line="114" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelAlgorithm.h" >
-   <View0 line="0" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleFilter.h" >
+   <View0 line="51" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimator.cpp" >
-   <View0 line="0" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleFilter.cpp" >
+   <View0 line="21" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimator.h" >
-   <View0 line="45" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ResamplingCriterion.h" >
+   <View0 line="0" Type="Source" />
   </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ResamplingCriterion.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

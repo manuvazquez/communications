@@ -53,7 +53,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 	tVector likelihoods(nSymbolVectors);
 
 	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_endDetectionTime;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 // 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
 
@@ -131,7 +131,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 		NormalizeWeights();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_endDetectionTime-1))
+		if(iObservationToBeProcessed<(_K-1))
 			this->Resampling(iObservationToBeProcessed);
 
 	} // for each time instant

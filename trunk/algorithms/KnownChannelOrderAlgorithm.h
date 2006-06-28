@@ -30,7 +30,7 @@
 #include <types.h>
 #include <Util.h>
 
-class KnownChannelOrderAlgorithm : public Algorithm
+class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
 	ChannelMatrixEstimator *_channelEstimator;
