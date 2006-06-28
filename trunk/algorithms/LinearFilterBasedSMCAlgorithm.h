@@ -42,18 +42,13 @@ public:
 
     ~LinearFilterBasedSMCAlgorithm();
 
-// 	using SMCAlgorithm::Run;
-// 	void Run(tMatrix observations,vector<double> noiseVariances);
-
 protected:
-// 	LinearDetector **_particlesLinearDetectors;
 	LinearDetector *_linearDetector;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
 
 	void InitializeParticles();
     void Process(const tMatrix &observations, vector< double > noiseVariances);
 	vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-// 	void Resampling(int endResamplingTime);
 };
 
 #endif

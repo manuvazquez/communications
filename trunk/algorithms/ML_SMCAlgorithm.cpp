@@ -23,7 +23,6 @@ ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int
 {
 }
 
-
 void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	int k,iSmoothingVector;

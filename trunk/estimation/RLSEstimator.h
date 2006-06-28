@@ -52,7 +52,7 @@ protected:
     tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
 public:
-    RLSEstimator(tMatrix &initialEstimation,double forgettingFactor);
+    RLSEstimator(tMatrix initialEstimation,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* Clone();
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);

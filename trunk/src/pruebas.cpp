@@ -32,6 +32,7 @@
 #include <ParticleWithChannelEstimation.h>
 #include <fstream>
 #include <cstdlib>
+#include <UnknownChannelOrderAlgorithm.h>
 
 using namespace std;
 // using namespace la;
@@ -221,9 +222,9 @@ int main(int argc,char* argv[])
 //  cout << ruido.VarianceAt(iVarianza) << " , ";
 //  }
 
-    
+    /*
     ofstream f("salida",ofstream::trunc);
-    return 0;
+    return 0;*/
 
 	ChannelDependentNoise ruidoCopia = ruido;
 
@@ -239,7 +240,25 @@ int main(int argc,char* argv[])
 
 	tMatrix mediaInicial(L,N*m);
 	mediaInicial = 0.0;
+
+	tMatrix mediaInicial3(L,N*3);
+	mediaInicial3 = 0.0;
+
+	tMatrix mediaInicial5(L,N*5);
+	mediaInicial3 = 0.0;
+
 	KalmanEstimator estimador(mediaInicial,ARcoefficients[0],ARvariance);
+
+	vector<ChannelMatrixEstimator *> estimadores;
+
+	estimadores.push_back(new KalmanEstimator(mediaInicial,ARcoefficients[0],ARvariance));
+	estimadores.push_back(new KalmanEstimator(mediaInicial3,ARcoefficients[0],ARvariance));
+	estimadores.push_back(new KalmanEstimator(mediaInicial5,ARcoefficients[0],ARvariance));
+
+	UnknownChannelOrderAlgorithm pr("Orden de canal desconocido",pam2,L,N,K,estimadores,tMatrix(N,10));	
+
+    return 0;
+	
 	RLSEstimator estimadorRLS(mediaInicial,forgettingFactor);
 
 	// ----------------------------- Depuracion EstimadorKalman ----------------------------

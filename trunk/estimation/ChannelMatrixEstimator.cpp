@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix &initialEstimation):_lastEstimatedChannelMatrix(initialEstimation),_L(initialEstimation.rows()),_Nm(initialEstimation.cols())
+ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation):_lastEstimatedChannelMatrix(initialEstimation),_L(initialEstimation.rows()),_Nm(initialEstimation.cols())
 {
 }
 

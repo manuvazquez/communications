@@ -69,7 +69,8 @@ am_libalgorithms_a_OBJECTS = Algorithm.$(OBJEXT) \
 	LinearFilterBasedSMCAlgorithm.$(OBJEXT) \
 	KnownChannelAlgorithm.$(OBJEXT) ViterbiAlgorithm.$(OBJEXT) \
 	KnownSymbolsKalmanBasedChannelEstimator.$(OBJEXT) \
-	UnknownChannelAlgorithm.$(OBJEXT)
+	UnknownChannelAlgorithm.$(OBJEXT) \
+	UnknownChannelOrderAlgorithm.$(OBJEXT)
 libalgorithms_a_OBJECTS = $(am_libalgorithms_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -191,13 +192,13 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h KnownChannelOrderAlgorithm.h SMCAlgorithm.h \
-	ML_SMCAlgorithm.h KnownChannelAlgorithm.h ViterbiAlgorithm.h \
-	KnownSymbolsKalmanBasedChannelEstimator.h
+		ML_SMCAlgorithm.h KnownChannelAlgorithm.h ViterbiAlgorithm.h \
+		KnownSymbolsKalmanBasedChannelEstimator.h UnknownChannelOrderAlgorithm.h
 
 libalgorithms_a_SOURCES = Algorithm.cpp KnownChannelOrderAlgorithm.cpp \
-		SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
-		KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimator.cpp \
-	UnknownChannelAlgorithm.cpp
+			SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+			KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimator.cpp \
+		UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp
 
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a
@@ -283,6 +284,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ML_SMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnknownChannelAlgorithm.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/UnknownChannelOrderAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ViterbiAlgorithm.Po@am__quote@
 
 .cpp.o:

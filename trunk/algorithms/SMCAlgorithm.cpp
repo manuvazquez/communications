@@ -50,8 +50,6 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-//  cout << "Running with training sequence..." << endl;
-
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
         throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 

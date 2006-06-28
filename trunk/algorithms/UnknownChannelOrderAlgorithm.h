@@ -17,30 +17,36 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELMATRIXESTIMATOR_H
-#define CHANNELMATRIXESTIMATOR_H
+#ifndef UNKNOWNCHANNELORDERALGORITHM_H
+#define UNKNOWNCHANNELORDERALGORITHM_H
+
+#include <UnknownChannelAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <types.h>
+#include <vector>
+#include <ChannelMatrixEstimator.h>
 
-class ChannelMatrixEstimator{
+class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+{
 protected:
-	int _L,_Nm;
-	tMatrix _lastEstimatedChannelMatrix;
+	vector<ChannelMatrixEstimator *> _channelEstimators;
+	int *_candidateOrders,_maxOrder;
+	tMatrix _preamble;
+
+	vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
-	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation);
-	virtual ~ChannelMatrixEstimator() {};
+    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble);
 
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() = 0;
-	int Cols() { return _Nm;}
-	int Rows() { return _L;}
-	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+    ~UnknownChannelOrderAlgorithm();
 
+
+	void Run(tMatrix observations,vector<double> noiseVariances) {}
+    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) {}
+	tMatrix GetDetectedSymbolVectors() {return tMatrix(0,0);}
+	vector<tMatrix> GetEstimatedChannelMatrices() {return vector<tMatrix>(2);}
 };
 
 #endif

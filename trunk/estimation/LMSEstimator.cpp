@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LMSEstimator.h"
 
-LMSEstimator::LMSEstimator(tMatrix& initialEstimation,double mu): ChannelMatrixEstimator(initialEstimation),_mu(mu),_predictedObservations(_L),_error(_L),_deltaMatrix(_L,_Nm)
+LMSEstimator::LMSEstimator(tMatrix initialEstimation,double mu): ChannelMatrixEstimator(initialEstimation),_mu(mu),_predictedObservations(_L),_error(_L),_deltaMatrix(_L,_Nm)
 {
 }
 

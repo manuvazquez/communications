@@ -51,7 +51,7 @@ private:
 private:
 	void FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix);
 public:
-    KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance);
+    KalmanEstimator(tMatrix initialEstimation,double ARcoefficient,double ARvariance);
 	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
 	~KalmanEstimator();
 

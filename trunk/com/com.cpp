@@ -35,10 +35,13 @@
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
 #include <RMMSEDetector.h>
+
 #include <ML_SMCAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
 #include <ViterbiAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
+#include <UnknownChannelOrderAlgorithm.h>
+
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <StatUtil.h>
@@ -84,6 +87,10 @@ int main(int argc,char* argv[])
     double forgettingFactor = 0.99;
     double muLMS = 0.05;
 
+	// unknown channel order
+	vector<int> candidateChannelOrders;
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
+
     // linear detectors parameters
     double forgettingFactorDetector = 0.98;
 
@@ -102,6 +109,11 @@ int main(int argc,char* argv[])
     KalmanEstimator kalmanEstimator(mediaInicial,ARcoefficients[0],ARvariance);
     RLSEstimator RLSestimator(mediaInicial,forgettingFactor);
     LMSEstimator LMSestimator(mediaInicial,muLMS);
+
+	// vector of channel estimators for unknown channel order algorithms
+	vector<ChannelMatrixEstimator *> differentOrderChannelEstimators;
+	for(int iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+		differentOrderChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
 
     // linear filters
     RMMSEDetector RMMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
@@ -161,13 +173,13 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+m-1-d,canal,preambulo,d));
 
-            // we don't want the channel matrices corresponding to the smoothing observations to be detected, so we don't pass all the transmitted symbol vectors to the constructor
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1-d,&kalmanEstimator,preambulo,simbolosTransmitir));
-//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1-d,&kalmanEstimator,preambulo,simbolosTransmitir(rAllSymbolRows,tRange(0,simbolosTransmitir.cols()-d-1))));
 
             // ----------------------------------------------------------------------
 
-            KalmanEstimator kalmanEstimatorCopy(kalmanEstimator);
+			tMatrix unknownChannelOrderPreamble(N,10);
+			unknownChannelOrderPreamble = -1.0;
+			UnknownChannelOrderAlgorithm("UnknownChannelOrderAlgorithm",pam2,L,N,K,differentOrderChannelEstimators,unknownChannelOrderPreamble);
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-KalmanEstimator::KalmanEstimator(tMatrix &initialEstimation,double ARcoefficient,double ARvariance)
+KalmanEstimator::KalmanEstimator(tMatrix initialEstimation,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
 //auxiliary variables initialization
 _F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
