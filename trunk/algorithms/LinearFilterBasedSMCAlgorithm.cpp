@@ -138,7 +138,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				try {
 					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 						symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
-				}catch(exception){
+				}catch(exception e){
 					cout << "The sum of the probabilities is null." << endl;
 					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 						symbolProb(iSampledSymbol,iAlphabet) = 0.5;

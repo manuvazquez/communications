@@ -104,8 +104,14 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 
 			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-			// probabilities are computed by normalizing the likelihoods
-			tVector probabilities = Util::Normalize(likelihoods);
+			tVector probabilities(nSymbolVectors);
+			try {
+				// probabilities are computed by normalizing the likelihoods
+				probabilities = Util::Normalize(likelihoods);
+			} catch (AllElementsNullException) {
+				// if all the likelihoods are null
+				probabilities = 1.0/(double)nSymbolVectors;
+			}
 
 			// one sample from the discrete distribution is taken
 			int iSampledVector = (StatUtil::Discrete_rnd(1,probabilities))[0];

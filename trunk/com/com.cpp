@@ -67,6 +67,8 @@ int main(int argc,char* argv[])
     int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
+	int nSmoothingInstants = d;
+
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -111,9 +113,9 @@ int main(int argc,char* argv[])
     LMSEstimator LMSestimator(mediaInicial,muLMS);
 
 	// vector of channel estimators for unknown channel order algorithms
-	vector<ChannelMatrixEstimator *> differentOrderChannelEstimators;
+	vector<ChannelMatrixEstimator *> UnknownChannelOrderEstimators;
 	for(int iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-		differentOrderChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
+		UnknownChannelOrderEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
 
     // linear filters
     RMMSEDetector RMMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
@@ -129,7 +131,7 @@ int main(int argc,char* argv[])
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
         // bits are generated ...
-        Bits bitsTransmitir(N,K);
+        Bits bitsTransmitir(N,K+nSmoothingInstants);
     
         // ... and then modulated by means of the alphabet
         tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
@@ -142,7 +144,8 @@ int main(int argc,char* argv[])
         simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
 
         // notice that the last "d" observations are used only for smoothing and don't result in any detected vector
-        tRange rSymbolVectorsToComputePe(m-1+longSecEntr,simbolosTransmitir.cols()-d-1);
+        tRange rSymbolVectorsToComputePe(m-1+longSecEntr,K+m-2);
+// simbolosTransmitir.cols()-nSmoothingInstants-1
 
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
 
@@ -165,21 +168,21 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+m-1-d,&kalmanEstimator,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo));
+            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,d,nParticles,criterioRemuestreo,algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+m-1-d,&LMSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+m-1,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+m-1-d,&RLSestimator,&RMMSEdetector,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+m-1,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+m-1-d,canal,preambulo,d));
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+m-1,canal,preambulo,d));
 
-            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1-d,&kalmanEstimator,preambulo,simbolosTransmitir));
+            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 
 			tMatrix unknownChannelOrderPreamble(N,10);
 			unknownChannelOrderPreamble = -1.0;
-			UnknownChannelOrderAlgorithm("UnknownChannelOrderAlgorithm",pam2,L,N,K,differentOrderChannelEstimators,unknownChannelOrderPreamble);
+			UnknownChannelOrderAlgorithm("UnknownChannelOrderAlgorithm",pam2,L,N,K,UnknownChannelOrderEstimators,unknownChannelOrderPreamble);
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)
@@ -197,7 +200,7 @@ int main(int argc,char* argv[])
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
 
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
-                mse = algorithms[iAlgorithm]->MSE(canal.Range(m-1+longSecEntr,simbolosTransmitir.cols()-d-1));
+                mse = algorithms[iAlgorithm]->MSE(canal.Range(m-1+longSecEntr,K+m-2));
 
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
