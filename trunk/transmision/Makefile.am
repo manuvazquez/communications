@@ -9,5 +9,4 @@ libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp \
 noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
 	ChannelDependentNoise.h Demodulator.h
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a \
-	/usr/local/lib/liblapackpp.la
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la

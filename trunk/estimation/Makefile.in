@@ -62,7 +62,7 @@ libestimation_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/randomutil/librandomutil.a \
-	/usr/local/lib/liblapackpp.la
+	/usr/lib/liblapackpp.la
 am_libestimation_a_OBJECTS = ChannelMatrixEstimator.$(OBJEXT) \
 	KalmanEstimator.$(OBJEXT) RLSEstimator.$(OBJEXT) \
 	LMSEstimator.$(OBJEXT)
@@ -191,7 +191,7 @@ libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp \
 
 libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
 
 all: all-am
 

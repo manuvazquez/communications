@@ -7,4 +7,4 @@ libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp \
 		RLSEstimator.cpp LMSEstimator.cpp
 libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la

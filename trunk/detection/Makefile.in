@@ -58,7 +58,7 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libdetection_a_AR = $(AR) $(ARFLAGS)
-libdetection_a_DEPENDENCIES = /usr/local/lib/liblapackpp.la
+libdetection_a_DEPENDENCIES = /usr/lib/liblapackpp.la
 am_libdetection_a_OBJECTS = LinearDetector.$(OBJEXT) \
 	RMMSEDetector.$(OBJEXT)
 libdetection_a_OBJECTS = $(am_libdetection_a_OBJECTS)
@@ -180,7 +180,7 @@ METASOURCES = AUTO
 lib_LIBRARIES = libdetection.a
 noinst_HEADERS = LinearDetector.h RMMSEDetector.h
 libdetection_a_SOURCES = LinearDetector.cpp RMMSEDetector.cpp
-libdetection_a_LIBADD = /usr/local/lib/liblapackpp.la
+libdetection_a_LIBADD = /usr/lib/liblapackpp.la
 all: all-am
 
 .SUFFIXES:

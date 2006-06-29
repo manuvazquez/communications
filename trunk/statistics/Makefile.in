@@ -60,7 +60,7 @@ ARFLAGS = cru
 libstatistics_a_AR = $(AR) $(ARFLAGS)
 libstatistics_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a \
-	/usr/local/lib/liblapackpp.la
+	/usr/lib/liblapackpp.la
 am_libstatistics_a_OBJECTS = ARprocess.$(OBJEXT) StatUtil.$(OBJEXT)
 libstatistics_a_OBJECTS = $(am_libstatistics_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -184,7 +184,7 @@ lib_LIBRARIES = libstatistics.a
 noinst_HEADERS = ARprocess.h StatUtil.h
 libstatistics_a_SOURCES = ARprocess.cpp StatUtil.cpp
 libstatistics_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
 
 all: all-am
 

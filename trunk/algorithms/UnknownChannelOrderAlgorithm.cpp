@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "UnknownChannelOrderAlgorithm.h"
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders(new int[channelEstimators.size()]),_maxOrder(-1)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders(new int[channelEstimators.size()]),_maxOrder(-1),_firstObservationIndex(firstObservationIndex),_nCandidateOrders(channelEstimators.size())
 {
-	for(int i=0;i<channelEstimators.size();i++)
+	for(int i=0;i<_nCandidateOrders;i++)
 	{
 		// the memory of this estimator is obtained from the number of columns of the channel matrix estimator and the algorithm parameter N
 		if((channelEstimators[i]->Cols() % _N) !=0)
@@ -53,23 +53,31 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 
 vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
-// // 	int lengthSequenceToProcess = trainingSequence.cols() + _preamble.cols();
-// 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
-// 	int lengthToProcessSequence = toProcessSequence.cols();
-// 	
-// 	if(observations.cols()<lengthToProcessSequence)
-// 		throw RuntimeException("Insufficient number of observations.");
-// 	
-// 	vector<tMatrix> estimatedMatrices(lengthToProcessSequence);
-// 
+	tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+	int lengthSequenceToProcess = sequenceToProcess.cols();
+	
+	if(observations.cols() < (_firstObservationIndex+trainingSequence.cols()))
+		throw RuntimeException("UnknownChannelOrderAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
+	
+	vector<vector<tMatrix> > estimatedMatrices(_nCandidateOrders);
+
 // 	// selects all the rows from a symbols matrix
-// 	tRange allSymbolRows(0,_N-1);
-// 
-// 	for(int i=_m-1;i<lengthToProcessSequence;i++)
-// 	{
-// 		tRange mColumns(i-_m+1,i);
-// 		estimatedMatrices[i] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
-// 	}
-// 	return estimatedMatrices;
+	tRange rAllSymbolRows(0,_N-1);
+
+	int iOrder;
+	for(int i=_firstObservationIndex;i<_firstObservationIndex+trainingSequence.cols();i++)
+	{
+		for(iOrder=0;iOrder<_nCandidateOrders;iOrder++)
+		{
+			tRange mColumns(_preamble.cols()+i-_firstObservationIndex-_candidateOrders[iOrder]+1,_preamble.cols()+i-_firstObservationIndex);
+//
+			estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
+		}
+	}
+
+// 	for(int j=0;j<_nCandidateOrders;j++)
+// 		cout << _channelEstimators[j]->LastEstimatedChannelMatrix();
+
+	return estimatedMatrices;
 }
 

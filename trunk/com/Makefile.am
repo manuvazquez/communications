@@ -9,5 +9,5 @@ com_LDADD = $(top_builddir)/estimation/libestimation.a \
 	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/smc/libsmc.a $(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/util/libutil.a $(top_builddir)/randomutil/librandomutil.a \
-	$(top_builddir)/detection/libdetection.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/detection/libdetection.a /usr/lib/liblapackpp.la
 com_SOURCES = com.cpp

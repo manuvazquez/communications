@@ -60,6 +60,8 @@ public:
     virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
+
+	tMatrix HsToStackedH(vector<tMatrix> matrices,int m);
 };
 
 #endif

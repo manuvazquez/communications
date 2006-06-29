@@ -180,9 +180,11 @@ int main(int argc,char* argv[])
 
             // ----------------------------------------------------------------------
 
-			tMatrix unknownChannelOrderPreamble(N,10);
+			tMatrix unknownChannelOrderPreamble(N,5);
 			unknownChannelOrderPreamble = -1.0;
-			UnknownChannelOrderAlgorithm("UnknownChannelOrderAlgorithm",pam2,L,N,K,UnknownChannelOrderEstimators,unknownChannelOrderPreamble);
+			UnknownChannelOrderAlgorithm prueba("UnknownChannelOrderAlgorithm",pam2,L,N,K,UnknownChannelOrderEstimators,unknownChannelOrderPreamble,m-1);
+
+			prueba.ProcessTrainingSequence(observaciones,ruido.Variances(),trainingSequence);
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)

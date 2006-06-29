@@ -60,7 +60,7 @@ com_DEPENDENCIES = $(top_builddir)/estimation/libestimation.a \
 	$(top_builddir)/util/libutil.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	$(top_builddir)/detection/libdetection.a \
-	/usr/local/lib/liblapackpp.la
+	/usr/lib/liblapackpp.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -183,7 +183,7 @@ com_LDADD = $(top_builddir)/estimation/libestimation.a \
 	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/smc/libsmc.a $(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/util/libutil.a $(top_builddir)/randomutil/librandomutil.a \
-	$(top_builddir)/detection/libdetection.a /usr/local/lib/liblapackpp.la
+	$(top_builddir)/detection/libdetection.a /usr/lib/liblapackpp.la
 
 com_SOURCES = com.cpp
 all: all-am

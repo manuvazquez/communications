@@ -41,7 +41,9 @@ protected:
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
 	~KnownChannelOrderAlgorithm();
-	tMatrix HsToStackedH(vector<tMatrix> matrices);
+
+	using Algorithm::HsToStackedH;
+	tMatrix HsToStackedH(vector<tMatrix> matrices) { return HsToStackedH(matrices,_m);}
 };
 
 #endif

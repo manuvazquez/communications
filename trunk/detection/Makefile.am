@@ -3,4 +3,4 @@ METASOURCES = AUTO
 lib_LIBRARIES = libdetection.a
 noinst_HEADERS = LinearDetector.h RMMSEDetector.h
 libdetection_a_SOURCES = LinearDetector.cpp RMMSEDetector.cpp
-libdetection_a_LIBADD = /usr/local/lib/liblapackpp.la
+libdetection_a_LIBADD = /usr/lib/liblapackpp.la

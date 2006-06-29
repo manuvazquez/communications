@@ -33,12 +33,13 @@ class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
 	vector<ChannelMatrixEstimator *> _channelEstimators;
-	int *_candidateOrders,_maxOrder;
+	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;
 	tMatrix _preamble;
 
-	vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-public:
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble);
+
+public:	
+vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex);
 
     ~UnknownChannelOrderAlgorithm();
 
