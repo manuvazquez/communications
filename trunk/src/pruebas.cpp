@@ -255,7 +255,7 @@ int main(int argc,char* argv[])
 	estimadores.push_back(new KalmanEstimator(mediaInicial3,ARcoefficients[0],ARvariance));
 	estimadores.push_back(new KalmanEstimator(mediaInicial5,ARcoefficients[0],ARvariance));
 
-	UnknownChannelOrderAlgorithm pr("Orden de canal desconocido",pam2,L,N,K,estimadores,tMatrix(N,10),m-1);	
+// 	UnknownChannelOrderSMCAlgorithm pr("Orden de canal desconocido",pam2,L,N,K,estimadores,tMatrix(N,10),m-1);	
 
     return 0;
 	

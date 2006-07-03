@@ -3,5 +3,5 @@
 - en ParticleWithCh... comprobar que la matriz pasada en los metodos Set tiene el tamaño adecuado
 - mas comprobaciones en los métodos de Particle y derivados
 - pasar todo lo que sea posible por referencia (los preamble a los algoritmos)
-- que el preambulo sea una referencia
 - variable endResamplingTime en SMCAlgorithm::Resampling
+- pasar las observaciones por referencia

@@ -17,37 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELORDERALGORITHM_H
-#define UNKNOWNCHANNELORDERALGORITHM_H
+#ifndef PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDER_H
+#define PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDER_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <ParticleWithChannelEstimation.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <vector>
-#include <ChannelMatrixEstimator.h>
-
-class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class ParticleWithChannelEstimationAndChannelOrder : public ParticleWithChannelEstimation
 {
 protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
-	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;
-	tMatrix _preamble;
+	int _m;
+public:
+    ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m);
 
+    ~ParticleWithChannelEstimationAndChannelOrder();
 
-public:	
-vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex);
+    ParticleWithChannelEstimationAndChannelOrder* Clone();
+     ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle);
 
-    ~UnknownChannelOrderAlgorithm();
+	int GetChannelOrder(){ return _m;}
 
-
-// 	void Run(tMatrix observations,vector<double> noiseVariances) {}
-//     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) {}
-// 	tMatrix GetDetectedSymbolVectors() {return tMatrix(0,0);}
-// 	vector<tMatrix> GetEstimatedChannelMatrices() {return vector<tMatrix>(2);}
 };
 
 #endif

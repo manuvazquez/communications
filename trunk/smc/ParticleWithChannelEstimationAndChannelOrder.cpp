@@ -17,37 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELORDERALGORITHM_H
-#define UNKNOWNCHANNELORDERALGORITHM_H
+#include "ParticleWithChannelEstimationAndChannelOrder.h"
 
-#include <UnknownChannelAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <vector>
-#include <ChannelMatrixEstimator.h>
-
-class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),_m(m)
 {
-protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
-	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;
-	tMatrix _preamble;
+}
 
 
-public:	
-vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex);
-
-    ~UnknownChannelOrderAlgorithm();
+ParticleWithChannelEstimationAndChannelOrder::~ParticleWithChannelEstimationAndChannelOrder()
+{
+}
 
 
-// 	void Run(tMatrix observations,vector<double> noiseVariances) {}
-//     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) {}
-// 	tMatrix GetDetectedSymbolVectors() {return tMatrix(0,0);}
-// 	vector<tMatrix> GetEstimatedChannelMatrices() {return vector<tMatrix>(2);}
-};
+ParticleWithChannelEstimationAndChannelOrder* ParticleWithChannelEstimationAndChannelOrder::Clone()
+{
+    return new ParticleWithChannelEstimationAndChannelOrder(*this);
+}
 
-#endif
+ ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle):ParticleWithChannelEstimation(particle),_m(particle._m)
+{
+}
+
