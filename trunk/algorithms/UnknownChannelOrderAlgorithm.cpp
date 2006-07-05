@@ -40,6 +40,11 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
 	if(_preamble.cols()<(_maxOrder-1))
 		throw RuntimeException("UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: the number of vectors contained in the preamble are not enough for the maximun channel order of all the channel matrix estimators.");
+
+	// a vector that associate a channel order with its corresponding index is generated
+	_channelOrder2index = new int[_maxOrder+1];
+	for(int iChannelOrder=0;iChannelOrder<_nCandidateOrders;iChannelOrder++)
+		_channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 }
 
 
@@ -49,6 +54,7 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 		delete _channelEstimators[i];
 
 	delete[] _candidateOrders;
+	delete[] _channelOrder2index;
 }
 
 vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)

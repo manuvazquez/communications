@@ -5,3 +5,6 @@
 - pasar todo lo que sea posible por referencia (los preamble a los algoritmos)
 - variable endResamplingTime en SMCAlgorithm::Resampling
 - pasar las observaciones por referencia
+- en ML_SMCAlgorithm 
+  - nObservations ya no vale para nada
+  - mFirstColumns pilla una columna de mas

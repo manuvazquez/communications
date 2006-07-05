@@ -41,7 +41,7 @@
 #include <ViterbiAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <UnknownChannelOrderAlgorithm.h>
-#include <UnknownChannelOrderSMCAlgorithm.h>
+#include <ML_UnknownChannelOrderSMCAlgorithm.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -129,14 +129,6 @@ int main(int argc,char* argv[])
     tMatrix overallPeMatrix;
     tMatrix overallMseMatrix;
 
-	tMatrix unknownChannelOrderPreamble(N,5);
-	unknownChannelOrderPreamble = -1.0;
-	UnknownChannelOrderSMCAlgorithm prueba("UnknownChannelOrderAlgorithm",pam2,L,N,K,UnknownChannelOrderEstimators,unknownChannelOrderPreamble,m-1,d,nParticles,criterioRemuestreo,algoritmoRemuestreo);
-
-	prueba.InitializeParticles();
-
-	return 0;
-
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
         // bits are generated ...
@@ -188,6 +180,17 @@ int main(int argc,char* argv[])
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
+
+
+			// ------------------ PRUEBA UNKNOWNCHANNELORDER... -----------------
+// 			tMatrix unknownChannelOrderPreamble(N,5);
+// 			unknownChannelOrderPreamble = -1.0;
+// 			ML_UnknownChannelOrderSMCAlgorithm prueba("UnknownChannelOrderAlgorithm",pam2,L,N,K,UnknownChannelOrderEstimators,unknownChannelOrderPreamble,m-1,d,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+// 
+// 			prueba.Run(observaciones,ruido.Variances(),trainingSequence);
+			// --------------------------------------------------------------------
+
+
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)

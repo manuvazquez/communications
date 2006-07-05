@@ -17,38 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELORDERALGORITHM_H
-#define UNKNOWNCHANNELORDERALGORITHM_H
+#ifndef ML_UNKNOWNCHANNELORDERSMCALGORITHM_H
+#define ML_UNKNOWNCHANNELORDERSMCALGORITHM_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <UnknownChannelOrderSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
-#include <ChannelMatrixEstimator.h>
+#include <KalmanEstimator.h>
 
-class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class ML_UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderSMCAlgorithm
 {
-protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
-	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;
-	int *_channelOrder2index;
-	tMatrix _preamble;
+public:
+    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm);
 
+    ~ML_UnknownChannelOrderSMCAlgorithm();
 
-public:	
-vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex);
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
-    ~UnknownChannelOrderAlgorithm();
-
-
-// 	void Run(tMatrix observations,vector<double> noiseVariances) {}
-//     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) {}
-// 	tMatrix GetDetectedSymbolVectors() {return tMatrix(0,0);}
-// 	vector<tMatrix> GetEstimatedChannelMatrices() {return vector<tMatrix>(2);}
 };
 
 #endif

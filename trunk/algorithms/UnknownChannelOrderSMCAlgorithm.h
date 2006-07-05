@@ -35,16 +35,18 @@ class UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
 	ParticleFilter _particleFilter;
-    int _d,_startDetectionTime;
+    int _d,_startDetectionObservation,_startDetectionSymbolVector;
+	double *_channelOrderWeightsSum;
     tRange _allSymbolsRows;
 	vector<int> _nParticlesPerChannelOrder;
+
+	virtual void InitializeParticles();
+    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+	void NormalizeParticleGroups();
 public:
     UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 
     ~UnknownChannelOrderSMCAlgorithm();
-
-	virtual void InitializeParticles();
-    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) {};
 
 	void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
