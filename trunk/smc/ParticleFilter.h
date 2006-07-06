@@ -33,16 +33,19 @@
 class ParticleFilter{
 protected:
     int _nParticles;
-    ResamplingCriterion _resamplingCriterion;
     StdResamplingAlgorithm _resamplingAlgorithm;
     ParticleWithChannelEstimation **_particles;
 public:
+    ResamplingCriterion _resamplingCriterion;
+
     ParticleFilter(int nParticles,const ResamplingCriterion &resamplingCriterion,const StdResamplingAlgorithm &resamplingAlgorithm);
 
     ~ParticleFilter();
 
-	void Resampling();
+// 	void Resampling();
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
+	void SelectParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+	void SelectParticles(std::vector<int> resamplingIndexes);
 
 	void SetParticle(ParticleWithChannelEstimation *particle,int n)
 	{
@@ -58,6 +61,14 @@ public:
         return weights;
     }
 
+//     void NormalizeWeights()
+//     {
+// 		std::vector<int> indexes(_nParticles);
+// 		for(int i=0;i<_nParticles;i++)
+// 			indexes[i] = i;
+// 		NormalizeWeights(indexes);
+//     }
+
     void NormalizeWeights()
     {
         double sum = 0.0;
@@ -68,6 +79,18 @@ public:
 
         for(i=0;i<_nParticles;i++)
             _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
+    }
+
+    void NormalizeWeights(std::vector<int> indexes)
+    {
+        double sum = 0.0;
+        int i,nParticles=indexes.size();
+
+        for(i=0;i<nParticles;i++)
+            sum += _particles[indexes[i]]->GetWeight();
+
+        for(i=0;i<nParticles;i++)
+            _particles[indexes[i]]->SetWeight(_particles[indexes[i]]->GetWeight()/sum);
     }
 
 	int Nparticles() { return _nParticles;}

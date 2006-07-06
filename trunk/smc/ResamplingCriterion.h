@@ -35,15 +35,26 @@ private:
 public:
     ResamplingCriterion(double resamplingRatio);
 
-	bool ResamplingNeeded(ParticleWithChannelEstimation **particles,std::vector<int> indexes);
+	bool ResamplingNeeded(tVector weights,std::vector<int> indexes);
 
-	bool ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles)
+	bool ResamplingNeeded(tVector weights)
 	{
+		int nParticles = weights.size();
 		std::vector<int> indexes(nParticles);
 		for(int i=0;i<nParticles;i++)
 			indexes[i] = i;
-		return ResamplingNeeded(particles,indexes);
+		return ResamplingNeeded(weights,indexes);
 	}
+
+// 	bool ResamplingNeeded(ParticleWithChannelEstimation **particles,std::vector<int> indexes);
+// 
+// 	bool ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles)
+// 	{
+// 		std::vector<int> indexes(nParticles);
+// 		for(int i=0;i<nParticles;i++)
+// 			indexes[i] = i;
+// 		return ResamplingNeeded(particles,indexes);
+// 	}
 
 };
 

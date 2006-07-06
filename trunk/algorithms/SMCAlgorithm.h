@@ -41,6 +41,7 @@ protected:
 
     virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+	virtual void Resampling();
     
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);

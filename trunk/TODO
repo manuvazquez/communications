@@ -8,3 +8,4 @@
 - en ML_SMCAlgorithm 
   - nObservations ya no vale para nada
   - mFirstColumns pilla una columna de mas
+- StdResamplingAlgorithm no tiene codigo

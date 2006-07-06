@@ -37,12 +37,70 @@ ParticleFilter::~ParticleFilter()
     delete[] _particles;
 }
 
-void ParticleFilter::Resampling()
+void ParticleFilter::SelectParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
 {
-    if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
-    {
-        vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
+	if(resamplingIndexes.size()!=indexes.size())
+		throw RuntimeException("StdResamplingAlgorithm::Resampling: the size of the indexes vector and resampling indexes vector don't match.");
 
-        _resamplingAlgorithm.Resampling(&_particles,_nParticles,indexes);
-    }
+	int nParticlesToBeResampled = indexes.size();
+
+	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
+
+	// the particles given by indexes are resampled
+	for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+	{
+		resParticles[indexes[iParticle]] = (_particles[resamplingIndexes[iParticle]])->Clone();
+		resParticles[indexes[iParticle]]->SetWeight(1.0/(double)nParticlesToBeResampled);
+	}
+
+	// the particles out of index are left the same. Their memory will not be released later
+	int previousResampledParticle = 0;
+	for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+	{
+		while(previousResampledParticle<indexes[iParticle])
+		{
+			resParticles[previousResampledParticle] = _particles[previousResampledParticle];
+			previousResampledParticle++;
+		}
+		previousResampledParticle++;
+	}
+	while(previousResampledParticle<_nParticles)
+	{
+		resParticles[previousResampledParticle] = _particles[previousResampledParticle];
+		previousResampledParticle++;		
+	}
+
+	// the memory of the particles given by index is released
+	for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+		delete _particles[indexes[iParticle]];
+
+	delete[] _particles;
+	_particles = resParticles;
 }
+
+void ParticleFilter::SelectParticles(vector<int> indexes)
+{
+        ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
+
+        for(int iParticle=0;iParticle<_nParticles;iParticle++)
+        {
+                resParticles[iParticle] = (_particles[indexes[iParticle]])->Clone();
+                resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
+        }
+
+        for(int iParticle=0;iParticle<_nParticles;iParticle++)
+                delete _particles[iParticle];
+
+        delete[] _particles;
+        _particles = resParticles;
+}
+
+// void ParticleFilter::Resampling()
+// {
+// //     if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
+//     if(_resamplingCriterion.ResamplingNeeded(GetWeightsVector()))
+//     {
+//         vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
+// 		SelectParticles(indexes);
+//     }
+// }

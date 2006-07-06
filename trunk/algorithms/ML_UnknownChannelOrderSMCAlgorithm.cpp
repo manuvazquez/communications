@@ -152,8 +152,8 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 		NormalizeParticleGroups();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
-			_particleFilter.Resampling();
+// 		if(iObservationToBeProcessed<(_K-1))
+// 			_particleFilter.Resampling();
 
 	} // for each time instant
 }

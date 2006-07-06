@@ -184,7 +184,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
-			_particleFilter.Resampling();
+			Resampling();
+// 			_particleFilter.Resampling();
 	}
 }
 

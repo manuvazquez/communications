@@ -33,9 +33,9 @@
 
 class StdResamplingAlgorithm{
 public:
-	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes,std::vector<int> indexes);
-
-	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes);
+// 	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes,std::vector<int> indexes);
+// 
+// 	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes);
 
 // 	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes)
 // 	{
