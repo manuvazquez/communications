@@ -23,17 +23,17 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 {
 }
 
-bool ResamplingCriterion::ResamplingNeeded(ParticleWithChannelEstimation **particles,int nParticles)
+bool ResamplingCriterion::ResamplingNeeded(ParticleWithChannelEstimation **particles,std::vector<int> indexes)
 {
 // 	cout << "Al principio de resampling criteriorn" << endl;
 	double weights2Sum,nEffectiveParticles;
-// 	int nParticles;
+	int nParticles = indexes.size();
 
 // 	nParticles = weights.size();
 	weights2Sum = 0;
 	for(int i=0;i<nParticles;i++)
 // 		weights2Sum += weights(i)*weights(i);
-		weights2Sum += particles[i]->GetWeight()*particles[i]->GetWeight();
+		weights2Sum += particles[indexes[i]]->GetWeight()*particles[indexes[i]]->GetWeight();
 
 	if(weights2Sum==0)
 		throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");

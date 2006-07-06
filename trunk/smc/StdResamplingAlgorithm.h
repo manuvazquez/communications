@@ -29,14 +29,21 @@
 #include <ChannelMatrixEstimator.h>
 #include <LinearDetector.h>
 #include <ParticleWithChannelEstimation.h>
+#include <exceptions.h>
 
 class StdResamplingAlgorithm{
 public:
-// 	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
-// 
-// 	static void Resampling(tMatrix  ***_estimatedChannelMatrices,tMatrix ***_detectedSymbols,ChannelMatrixEstimator ***_particlesChannelMatrixEstimators,LinearDetector ***_particlesLinearDetectors,vector<int> indexes,int nParticles,int startResamplingTime,int endResamplingTime,int nTimeInstants);
+	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes,std::vector<int> indexes);
 
-	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> indexes);
+	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes);
+
+// 	static void Resampling(ParticleWithChannelEstimation ***particles,int nParticles,std::vector<int> resamplingIndexes)
+// 	{
+// 		std::vector<int> indexes(nParticles);
+// 		for(int i=0;i<nParticles;i++)
+// 			indexes[i] = i;
+// 		Resampling(particles,nParticles,resamplingIndexes,indexes);
+// 	}
 };
 
 #endif
