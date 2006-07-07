@@ -42,6 +42,7 @@ protected:
 
 	virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+	virtual void Resampling();
 	void NormalizeParticleGroups();
 public:
     UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);

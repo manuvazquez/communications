@@ -52,14 +52,8 @@ void UnknownChannelOrderSMCAlgorithm::InitializeParticles()
 	for(int iChannelOrder=0;iChannelOrder<_nCandidateOrders;iChannelOrder++)
 		for(iParticlePresentOrder=0;iParticlePresentOrder<_nParticlesPerChannelOrder[iChannelOrder];iParticlePresentOrder++,iParticle++)
 		{
-        	_particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K,_channelEstimators[iChannelOrder]->Clone(),_candidateOrders[iChannelOrder]),iParticle);
+        	_particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K-_firstObservationIndex+_preamble.cols(),_channelEstimators[iChannelOrder]->Clone(),_candidateOrders[iChannelOrder]),iParticle);
 		}
-
-// 	for(int i=0;i<_particleFilter.Nparticles();i++)
-// 	{
-// 		ParticleWithChannelEstimation *part = _particleFilter.GetParticle(i);
-// 		cout << "Particula " << i << endl << (part->GetChannelMatrixEstimator())->LastEstimatedChannelMatrix() << endl;
-// 	}
 }
 
 void UnknownChannelOrderSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
@@ -147,4 +141,16 @@ void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()
 
 		processedParticle->SetWeight(processedParticle->GetWeight()/_channelOrderWeightsSum[processedParticle->GetChannelOrder()]);
 	}	
+}
+
+void UnknownChannelOrderSMCAlgorithm::Resampling()
+{
+	vector<vector<int> > channelOrderToIndexParticles(_nCandidateOrders);
+
+	for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+	{
+		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
+
+		
+	}
 }

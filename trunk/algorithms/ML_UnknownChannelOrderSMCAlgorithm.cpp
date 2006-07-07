@@ -31,6 +31,7 @@ ML_UnknownChannelOrderSMCAlgorithm::~ML_UnknownChannelOrderSMCAlgorithm()
 
 void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
+	cout << "En process..." << endl;
 	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
@@ -53,7 +54,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-// 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
 
 // 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
@@ -152,9 +153,10 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 		NormalizeParticleGroups();
 
 		// if it's not the last time instant
-// 		if(iObservationToBeProcessed<(_K-1))
-// 			_particleFilter.Resampling();
-
+		if(iObservationToBeProcessed<(_K-1))
+			Resampling();
 	} // for each time instant
+	cout << "Terminé" << endl;
+	exit(0);
 }
 
