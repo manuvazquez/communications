@@ -38,12 +38,15 @@ protected:
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
 	double *_channelOrderWeightsSum;
     tRange _allSymbolsRows;
-	vector<int> _nParticlesPerChannelOrder;
+	vector<int> _nParticlesPerChannelOrder;	
+	tMatrix _observations;
 
 	virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 	virtual void Resampling();
 	void NormalizeParticleGroups();
+	vector<vector<int> > GetIndexesOfChannelOrders();
+	int BestParticle();
 public:
     UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm);
 
@@ -51,8 +54,8 @@ public:
 
 	void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-	tMatrix GetDetectedSymbolVectors() {return tMatrix(0,0);}
-	vector<tMatrix> GetEstimatedChannelMatrices() {return vector<tMatrix>(2);}
+	tMatrix GetDetectedSymbolVectors();
+	vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
 #endif

@@ -168,6 +168,18 @@ void Util::Max(const tVector &v,int &index)
 		}
 }
 
+void Util::Min(const tVector &v,int &index)
+{
+	double min = v(0);
+	index = 0;
+	for(int i=1;i<v.size();i++)
+		if(v(i)<min)
+		{
+			min = v(i);
+			index = i;
+		}
+}
+
 double Util::SquareError(const tMatrix &A,const tMatrix &B)
 {
     if(A.cols()!=B.cols() || A.rows()!=B.rows())

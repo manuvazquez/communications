@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ML_UnknownChannelOrderSMCAlgorithm.h"
 
-ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm)
+ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, StdResamplingAlgorithm resamplingAlgorithm,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos)
 {
 }
 
@@ -31,22 +31,17 @@ ML_UnknownChannelOrderSMCAlgorithm::~ML_UnknownChannelOrderSMCAlgorithm()
 
 void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-	cout << "En process..." << endl;
 	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;
+	int iSymbolVectorToBeProcessed;
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
 	double auxLikelihoodsProd;
 	KalmanEstimator *channelEstimatorClone;
-// 	tRange mFirstColumns(0,_m-1);
 
 	// it selects all rows in the symbols Matrix
 	tRange allSymbolRows(0,_N-1);
 
-	// it includes all symbol vectors involved in the smoothing
-// 	tMatrix smoothingSymbolVectors(_N,_m+_d);
-
 	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
-// 	int nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*_d));
 	
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
@@ -54,9 +49,11 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
+
+		iSymbolVectorToBeProcessed = _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed;
+
 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
 
-// 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
 			ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iParticle));
@@ -72,7 +69,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			tMatrix smoothingSymbolVectors(_N,m+d);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
-			smoothingSymbolVectors(allSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-m+1,_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-1));
+			smoothingSymbolVectors(allSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(iSymbolVectorToBeProcessed-m+1,iSymbolVectorToBeProcessed-1));
 
 			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
@@ -136,27 +133,23 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
 
 			// sampled symbols are copied into the corresponding particle
-			processedParticle->SetSymbolVector(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed,sampledVector);
+			processedParticle->SetSymbolVector(iSymbolVectorToBeProcessed,sampledVector);
 						
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-m+1,_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(iSymbolVectorToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(iSymbolVectorToBeProcessed-m+1,iSymbolVectorToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-// 		cout << "Terminé" << endl;
-// 		for(int holita=0;holita<_nCandidateOrders;holita++)
-// 			cout << "orden " << _candidateOrders[holita] << " -> "  << "indice " << holita << endl;
-// 		exit(0);
-
 		NormalizeParticleGroups();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
+		{
 			Resampling();
+		}
+// 		cout << "Una tecla..."; char c; cin >> c;
 	} // for each time instant
-	cout << "Terminé" << endl;
-	exit(0);
 }
 

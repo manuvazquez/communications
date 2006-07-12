@@ -50,6 +50,8 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 
 bool ResamplingCriterion::ResamplingNeeded(tVector weights,std::vector<int> indexes)
 {
+// 	cout << "En resampling los pesos son" << endl << weights << endl;
+// 	cout << "y los indices" << indexes.size() << endl;
 	double weights2Sum,nEffectiveParticles;
 	int nParticles = indexes.size();
 

@@ -73,6 +73,9 @@ void UnknownChannelOrderSMCAlgorithm::Run(tMatrix observations,vector<double> no
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
         throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
 
+	// observations are going to be needed to find the best particle
+	_observations = observations;
+
     int iParticle,iParticlePresentOrder,j;
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
@@ -106,15 +109,6 @@ void UnknownChannelOrderSMCAlgorithm::Run(tMatrix observations,vector<double> no
     _startDetectionObservation = _firstObservationIndex + trainingSequence.cols();
 	_startDetectionSymbolVector = _preamble.cols() + trainingSequence.cols();
 
-//     for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
-//     {
-// 		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
-// 		cout << "Particula:  " << iParticle << endl;
-// 		for(j=_preamble.cols();j<_startDetectionSymbolVector;j++)
-// 			cout << processedParticle->GetChannelMatrix(j) << endl;
-// 	}
-
-
     this->Process(observations,noiseVariances);
 }
 
@@ -145,12 +139,168 @@ void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()
 
 void UnknownChannelOrderSMCAlgorithm::Resampling()
 {
-	vector<vector<int> > channelOrderToIndexParticles(_nCandidateOrders);
+	vector<vector <int> > indexesOfChannelOrders = GetIndexesOfChannelOrders();
+	tVector weights = _particleFilter.GetWeightsVector();
+
+	for(int iChannelOrder=0;iChannelOrder<_nCandidateOrders;iChannelOrder++)
+	{
+		// if there is no particles with this channel order
+		if(_nParticlesPerChannelOrder[iChannelOrder]==0)
+			continue;
+
+		if(_particleFilter._resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
+		{
+			// the weights corresponding to the channel order being processed are selected. Note that they all are adjacent
+			tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
+
+// 			cout << rWeightsOrder << endl;
+
+			vector<int> auxIndexes = StatUtil::Discrete_rnd(_nParticlesPerChannelOrder[iChannelOrder],weights(rWeightsOrder));
+
+			vector<int> indexes(_nParticlesPerChannelOrder[iChannelOrder]);
+			for(int i=0;i<auxIndexes.size();i++)
+					indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
+
+			_particleFilter.SelectParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
+		}	
+	}
+}
+
+/**
+ * It returns a vector of vectors of int, such that vector[i] contains the indexes of the particles of order _candidateOrders[i]
+ * @return 
+ */
+vector<vector<int> > UnknownChannelOrderSMCAlgorithm::GetIndexesOfChannelOrders()
+{
+	vector<vector<int> > res(_nCandidateOrders);
 
 	for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 	{
 		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
 
+		res[_channelOrder2index[processedParticle->GetChannelOrder()]].push_back(iParticle);
+	}
+	return res;
+}
+
+int UnknownChannelOrderSMCAlgorithm::BestParticle()
+{
+	int m,res;
+	tVector computedObservation(_L), realObservation(_L);
+	tVector errorVector(_L);
+	double norm;
+	int *iMaxWeights = new int[_nCandidateOrders];
+// 	tVector particleError(_particleFilter.Nparticles());
+	tVector particleError(_nCandidateOrders);
+	int iMinParticleError;
+
+// 	for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+// 	{
+// 		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iParticle));
+// 
+// 		m = processedParticle->GetChannelOrder();
+// 
+// 		particleError(iParticle) = 0.0;
+// 
+// 		for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+// 		{
+// 			tMatrix symbols = processedParticle->GetSymbolVectors(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-m+1,_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
+// 
+// 			tVector symbolsVector = Util::ToVector(symbols,columnwise);
+// 
+// 			tMatrix channelMatrix = processedParticle->GetChannelMatrix(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
+// 
+// 			// computedObservation = channelMatrix*symbols
+// 			Blas_Mat_Vec_Mult(channelMatrix,symbolsVector,computedObservation);
+// 
+// 			// needed because Util::Add receives a reference
+// 			realObservation = _observations.col(iObservationToBeProcessed);
+// 
+// 			// errorVector = realObservation - computedObservation
+// 			Util::Add(realObservation,computedObservation,errorVector,1.0,-1.0);
+// 
+// 			norm = Blas_Norm2(errorVector);
+// 
+// 			particleError(iParticle) += norm*norm;
+// 		}
+// 	}
+// 
+// 	cout << "Errores" << endl << particleError << endl;
+
+	vector<vector<int> > indexesOfChannelOrders = GetIndexesOfChannelOrders();
+	tVector weights = _particleFilter.GetWeightsVector();
+	for(int iChannelOrder=0;iChannelOrder<_nCandidateOrders;iChannelOrder++)
+	{
+		// if there is no particles with this channel order
+		if(_nParticlesPerChannelOrder[iChannelOrder]==0)
+			continue;
+		
+		tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
+
+		Util::Max(weights(rWeightsOrder),iMaxWeights[iChannelOrder]);
+
+// 		cout << _particleFilter.GetParticle(indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]])->GetAllSymbolVectors() << endl;
+
+		// the best particle for this channel order is chosen
+		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]]));
+
+		m = processedParticle->GetChannelOrder();
+
+		for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+		{
+			tMatrix symbols = processedParticle->GetSymbolVectors(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-m+1,_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
+
+			tVector symbolsVector = Util::ToVector(symbols,columnwise);
+
+			tMatrix channelMatrix = processedParticle->GetChannelMatrix(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
+
+			// computedObservation = channelMatrix*symbols
+			Blas_Mat_Vec_Mult(channelMatrix,symbolsVector,computedObservation);
+
+			// needed because Util::Add receives a reference
+			realObservation = _observations.col(iObservationToBeProcessed);
+
+			// errorVector = realObservation - computedObservation
+			Util::Add(realObservation,computedObservation,errorVector,1.0,-1.0);
+
+			norm = Blas_Norm2(errorVector);
+
+			particleError(iChannelOrder) += norm*norm;
+		}
+
+// 		cout << "Mejor particula de orden " << iChannelOrder << " es " << indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]] <<  "y su error " << particleError(iChannelOrder) << endl;
 		
 	}
+
+// 	res = indexesOfChannelOrders[1][iMaxWeights[1]];
+	Util::Min(particleError,res);
+
+// 	cout << "Los pesos son" << endl << weights << endl;
+
+	delete[] iMaxWeights;
+	return res;
+}
+
+tMatrix UnknownChannelOrderSMCAlgorithm::GetDetectedSymbolVectors()
+{
+    // best particle is chosen
+    int iBestParticle = BestParticle();
+// 	cout << "La mejor particula es " << iBestParticle << endl;
+
+    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-_firstObservationIndex+_preamble.cols()-1));
+}
+
+vector<tMatrix> UnknownChannelOrderSMCAlgorithm::GetEstimatedChannelMatrices()
+{
+//     vector<tMatrix> channelMatrices;
+//     channelMatrices.reserve(_K-_preamble.cols());
+// 
+//     // best particle is chosen
+//     int iBestParticle = BestParticle();
+//     
+//     for(int i=_preamble.cols();i<_K-_firstObservationIndex+_preamble.cols();i++)
+//         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(i));
+
+    vector<tMatrix> channelMatrices(0);
+    return channelMatrices;
 }
