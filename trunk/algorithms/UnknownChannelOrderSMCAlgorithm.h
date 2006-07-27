@@ -44,6 +44,7 @@ protected:
 	virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 	virtual void Resampling();
+	virtual void ResamplingByParticleGroups();
 	void NormalizeParticleGroups();
 	vector<vector<int> > GetIndexesOfChannelOrders();
 	int BestParticle();

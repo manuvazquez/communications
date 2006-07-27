@@ -52,7 +52,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 
 		iSymbolVectorToBeProcessed = _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed;
 
-		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+// 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
 
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
@@ -140,14 +140,26 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
 
+// 			cout << "Particula de orden " << processedParticle->GetChannelOrder() << "actualizada por " << Util::Sum(likelihoods) << endl;
+
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-		NormalizeParticleGroups();
+// 		NormalizeParticleGroups();
+		_particleFilter.NormalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 		{
-			Resampling();
+			cout << "Los pesos son" << endl << _particleFilter.GetWeightsVector() << endl;
+			if(iObservationToBeProcessed<15)			
+				ResamplingByParticleGroups();
+			else
+				Resampling();
+
+			cout << "Despues de resampling quedan:" << endl;
+			vector<vector<int> > indices = GetIndexesOfChannelOrders();
+			for(int i=0;i<indices.size();i++)
+				cout << indices[i].size() << "particulas de orden " << i << endl;
 		}
 // 		cout << "Una tecla..."; char c; cin >> c;
 	} // for each time instant

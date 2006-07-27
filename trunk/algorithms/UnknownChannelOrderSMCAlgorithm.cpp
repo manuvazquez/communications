@@ -139,6 +139,22 @@ void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()
 
 void UnknownChannelOrderSMCAlgorithm::Resampling()
 {
+// 	cout << "Antes de resampling quedan:" << endl;
+// 	vector<vector<int> > indices2 = GetIndexesOfChannelOrders();
+// 	for(int i=0;i<indices2.size();i++)
+// 		cout << indices2[i].size() << "particulas de orden " << i << endl;
+
+	tVector weigths = _particleFilter.GetWeightsVector();
+
+    if(_particleFilter._resamplingCriterion.ResamplingNeeded(weigths))
+    {
+        vector<int> indexes = StatUtil::Discrete_rnd(_particleFilter.Nparticles(),weigths);
+		_particleFilter.SelectParticles(indexes);
+    }
+}
+
+void UnknownChannelOrderSMCAlgorithm::ResamplingByParticleGroups()
+{
 	vector<vector <int> > indexesOfChannelOrders = GetIndexesOfChannelOrders();
 	tVector weights = _particleFilter.GetWeightsVector();
 
@@ -194,39 +210,6 @@ int UnknownChannelOrderSMCAlgorithm::BestParticle()
 	tVector particleError(_nCandidateOrders);
 	int iMinParticleError;
 
-// 	for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
-// 	{
-// 		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iParticle));
-// 
-// 		m = processedParticle->GetChannelOrder();
-// 
-// 		particleError(iParticle) = 0.0;
-// 
-// 		for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
-// 		{
-// 			tMatrix symbols = processedParticle->GetSymbolVectors(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed-m+1,_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
-// 
-// 			tVector symbolsVector = Util::ToVector(symbols,columnwise);
-// 
-// 			tMatrix channelMatrix = processedParticle->GetChannelMatrix(_startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed);
-// 
-// 			// computedObservation = channelMatrix*symbols
-// 			Blas_Mat_Vec_Mult(channelMatrix,symbolsVector,computedObservation);
-// 
-// 			// needed because Util::Add receives a reference
-// 			realObservation = _observations.col(iObservationToBeProcessed);
-// 
-// 			// errorVector = realObservation - computedObservation
-// 			Util::Add(realObservation,computedObservation,errorVector,1.0,-1.0);
-// 
-// 			norm = Blas_Norm2(errorVector);
-// 
-// 			particleError(iParticle) += norm*norm;
-// 		}
-// 	}
-// 
-// 	cout << "Errores" << endl << particleError << endl;
-
 	vector<vector<int> > indexesOfChannelOrders = GetIndexesOfChannelOrders();
 	tVector weights = _particleFilter.GetWeightsVector();
 	for(int iChannelOrder=0;iChannelOrder<_nCandidateOrders;iChannelOrder++)
@@ -238,8 +221,6 @@ int UnknownChannelOrderSMCAlgorithm::BestParticle()
 		tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
 
 		Util::Max(weights(rWeightsOrder),iMaxWeights[iChannelOrder]);
-
-// 		cout << _particleFilter.GetParticle(indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]])->GetAllSymbolVectors() << endl;
 
 		// the best particle for this channel order is chosen
 		ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]]));
@@ -267,15 +248,8 @@ int UnknownChannelOrderSMCAlgorithm::BestParticle()
 
 			particleError(iChannelOrder) += norm*norm;
 		}
-
-// 		cout << "Mejor particula de orden " << iChannelOrder << " es " << indexesOfChannelOrders[iChannelOrder][iMaxWeights[iChannelOrder]] <<  "y su error " << particleError(iChannelOrder) << endl;
-		
 	}
-
-// 	res = indexesOfChannelOrders[1][iMaxWeights[1]];
 	Util::Min(particleError,res);
-
-// 	cout << "Los pesos son" << endl << weights << endl;
 
 	delete[] iMaxWeights;
 	return res;
@@ -283,9 +257,15 @@ int UnknownChannelOrderSMCAlgorithm::BestParticle()
 
 tMatrix UnknownChannelOrderSMCAlgorithm::GetDetectedSymbolVectors()
 {
-    // best particle is chosen
-    int iBestParticle = BestParticle();
-// 	cout << "La mejor particula es " << iBestParticle << endl;
+//     // best particle is chosen
+//     int iBestParticle = BestParticle();
+
+    int iBestParticle;
+    Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
+
+	ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iBestParticle));
+
+	cout << "La particula seleccionada tiene orden " << processedParticle->GetChannelOrder() << endl;
 
     return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-_firstObservationIndex+_preamble.cols()-1));
 }

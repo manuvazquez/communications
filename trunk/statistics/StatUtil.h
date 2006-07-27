@@ -46,6 +46,8 @@ public:
 	static double NormalPdf(double x,double mean,double variance);
 
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
+
+	static double Variance(const tVector &v);
 };
 
 #endif

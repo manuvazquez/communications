@@ -69,6 +69,16 @@ tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
  */
 int main(int argc,char* argv[])
 {
+	tVector hola(4);
+
+	hola(0) = 1.2;
+	hola(1) = 122.1;
+	hola(2) = 0.123;
+	hola(3) = 0.1;
+
+	cout << "El vector" << endl << hola << endl;
+	cout << "La varianza es " << StatUtil::Variance(hola) << endl;
+	
     int longitudAlphabet = 2;
 //     LaGenMatDouble matriz(4,2);
 //     LaGenMatDouble matriz2(2,3);
@@ -274,8 +284,8 @@ int main(int argc,char* argv[])
 // 
 // 	cout << "Los parametros" << endl << coefAR << "," << varAR << "," << endl << matrizInicial << endl;
 // 
-// 	tVector obs(3);
-// 	obs(0) = 1.1; obs(1) = 1.3; obs(2) = 1.22;
+/*	tVector obs(3);
+	obs(0) = 1.1; obs(1) = 1.3; obs(2) = 1.*/22;
 // 	tMatrix simbolitos(2,2);
 // 	simbolitos = 0.0;
 // 	double vari = 0.52;

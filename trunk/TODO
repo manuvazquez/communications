@@ -11,3 +11,4 @@
 - StdResamplingAlgorithm no tiene codigo
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
+- añadir simbolos para suavizado, no bits

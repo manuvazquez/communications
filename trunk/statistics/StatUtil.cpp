@@ -111,3 +111,18 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &c
 
 	return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
 }
+
+double StatUtil::Variance(const tVector &v)
+{
+	double squareMean=0.0,mean=0.0;
+
+	for(int i=0;i<v.size();i++)
+	{
+		mean += v(i);
+		squareMean += v(i)*v(i);
+	}
+	mean /= v.size();
+	squareMean /= v.size();
+
+	return squareMean - mean*mean;
+}
