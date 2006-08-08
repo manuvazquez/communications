@@ -21,7 +21,7 @@
 
 UnknownChannelOrderSMCAlgorithm::UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex),
 //variables initialization
-_d(smoothingLag),_allSymbolsRows(0,_N-1),_particleFilter(nParticles,resamplingCriterion,resamplingAlgorithm),_nParticlesPerChannelOrder(_nCandidateOrders)
+_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles),_nParticlesPerChannelOrder(_nCandidateOrders)
 {
 	// at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionSymbolVector = _preamble.cols();
@@ -146,10 +146,10 @@ void UnknownChannelOrderSMCAlgorithm::Resampling()
 
 	tVector weigths = _particleFilter.GetWeightsVector();
 
-    if(_particleFilter._resamplingCriterion.ResamplingNeeded(weigths))
+    if(_resamplingCriterion.ResamplingNeeded(weigths))
     {
         vector<int> indexes = StatUtil::Discrete_rnd(_particleFilter.Nparticles(),weigths);
-		_particleFilter.SelectParticles(indexes);
+		_particleFilter.KeepParticles(indexes);
     }
 }
 
@@ -164,7 +164,7 @@ void UnknownChannelOrderSMCAlgorithm::ResamplingByParticleGroups()
 		if(_nParticlesPerChannelOrder[iChannelOrder]==0)
 			continue;
 
-		if(_particleFilter._resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
+		if(_resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
 		{
 			// the weights corresponding to the channel order being processed are selected. Note that they all are adjacent
 			tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
@@ -177,7 +177,7 @@ void UnknownChannelOrderSMCAlgorithm::ResamplingByParticleGroups()
 			for(int i=0;i<auxIndexes.size();i++)
 					indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
 
-			_particleFilter.SelectParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
+			_particleFilter.KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
 		}	
 	}
 }

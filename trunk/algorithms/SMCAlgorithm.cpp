@@ -21,7 +21,7 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimator, preamble),
 // _variables initialization
-_d(smoothingLag),_allSymbolsRows(0,_N-1),_particleFilter(nParticles,resamplingCriterion,resamplingAlgorithm)
+_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles)
 {
     // at first, we assume that all observations from the preamble need to be processed
     _startDetectionTime = _m - 1;
@@ -113,9 +113,9 @@ void SMCAlgorithm::Resampling()
 {
 	tVector weigths = _particleFilter.GetWeightsVector();
 
-    if(_particleFilter._resamplingCriterion.ResamplingNeeded(weigths))
+    if(_resamplingCriterion.ResamplingNeeded(weigths))
     {
         vector<int> indexes = StatUtil::Discrete_rnd(_particleFilter.Nparticles(),weigths);
-		_particleFilter.SelectParticles(indexes);
+		_particleFilter.KeepParticles(indexes);
     }
 }

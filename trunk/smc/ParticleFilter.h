@@ -33,19 +33,19 @@
 class ParticleFilter{
 protected:
     int _nParticles;
-    StdResamplingAlgorithm _resamplingAlgorithm;
+//     StdResamplingAlgorithm _resamplingAlgorithm;
     ParticleWithChannelEstimation **_particles;
 public:
-    ResamplingCriterion _resamplingCriterion;
+//     ResamplingCriterion _resamplingCriterion;
 
-    ParticleFilter(int nParticles,const ResamplingCriterion &resamplingCriterion,const StdResamplingAlgorithm &resamplingAlgorithm);
+    ParticleFilter(int nParticles);
 
     ~ParticleFilter();
 
 // 	void Resampling();
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
-	void SelectParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
-	void SelectParticles(std::vector<int> resamplingIndexes);
+	void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+	void KeepParticles(std::vector<int> resamplingIndexes);
 
 	void SetParticle(ParticleWithChannelEstimation *particle,int n)
 	{

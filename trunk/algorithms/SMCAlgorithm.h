@@ -36,6 +36,8 @@ class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
 	ParticleFilter _particleFilter;
+	ResamplingCriterion _resamplingCriterion;
+	StdResamplingAlgorithm _resamplingAlgorithm;
     int _d,_startDetectionTime;
     tRange _allSymbolsRows;
 

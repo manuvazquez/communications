@@ -3,19 +3,19 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="5" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="61" Type="Source" />
+   <View0 line="65" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.cpp" >
-   <View0 Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
+   <View0 line="169" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
-   <View0 Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.h" >
+   <View0 line="38" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/StdResamplingAlgorithm.cpp" >
-   <View0 Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+   <View0 line="87" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/StdResamplingAlgorithm.h" >
-   <View0 line="15" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
+   <View0 line="39" Type="Source" />
   </Doc4>
  </DocsAndViews>
  <pluginList>

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ParticleFilter.h"
 
-ParticleFilter::ParticleFilter(int nParticles,const ResamplingCriterion &resamplingCriterion,const StdResamplingAlgorithm &resamplingAlgorithm):_nParticles(nParticles),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particles(new ParticleWithChannelEstimation*[nParticles])
+ParticleFilter::ParticleFilter(int nParticles):_nParticles(nParticles),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
     for(int i=0;i<_nParticles;i++)
     {
@@ -37,7 +37,7 @@ ParticleFilter::~ParticleFilter()
     delete[] _particles;
 }
 
-void ParticleFilter::SelectParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
+void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
 {
 	if(resamplingIndexes.size()!=indexes.size())
 		throw RuntimeException("StdResamplingAlgorithm::Resampling: the size of the indexes vector and resampling indexes vector don't match.");
@@ -78,7 +78,7 @@ void ParticleFilter::SelectParticles(std::vector<int> resamplingIndexes,std::vec
 	_particles = resParticles;
 }
 
-void ParticleFilter::SelectParticles(vector<int> indexes)
+void ParticleFilter::KeepParticles(vector<int> indexes)
 {
         ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
 
@@ -101,6 +101,6 @@ void ParticleFilter::SelectParticles(vector<int> indexes)
 //     if(_resamplingCriterion.ResamplingNeeded(GetWeightsVector()))
 //     {
 //         vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
-// 		SelectParticles(indexes);
+// 		KeepParticles(indexes);
 //     }
 // }

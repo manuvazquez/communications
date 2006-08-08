@@ -128,8 +128,8 @@ int main(int argc,char* argv[])
 			maxCandidateOrder = candidateChannelOrders[i];
 
 	// the algorithms with the higher smoothing lag require
-	int nSmoothingInstants = maxCandidateOrder-1;
-// 	int nSmoothingInstants = d;
+// 	int nSmoothingInstants = maxCandidateOrder-1;
+	int nSmoothingInstants = d;
 
 	// the preamble that will be passed to the unknown channel order algorithms
 	tMatrix unknownChannelOrderAlgorithmsPreamble(N,maxCandidateOrder-1);
@@ -177,24 +177,6 @@ int main(int argc,char* argv[])
             // transmission
             tMatrix observaciones = canal.Transmit(simbolosTransmitir,ruido);
 
-
-			//------------------------- PRUEBA --------------------------------
-// 			tVector sumaObservaciones(observaciones.cols()-m+1);
-// 			sumaObservaciones = 0.0;
-// 
-// 			for(int i=m-1;i<observaciones.cols();i++)
-// 				cout << "La varianza es " << StatUtil::Variance(observaciones.col(i)) << endl;
-
-// 				for(int j=0;j<observaciones.rows();j++)
-// 					sumaObservaciones(i-m+1) += observaciones(j,i);
-// 			cout << "La varianza es " << StatUtil::Variance(sumaObservaciones) << endl;
-
-// 			continue;
-
-			
-			//-----------------------------------------------------------------
-
-
             // algorithms are created
             vector<Algorithm *> algorithms;
 
@@ -210,19 +192,9 @@ int main(int argc,char* argv[])
 // 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir));
+// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
-
-
-			// ------------------ PRUEBA UNKNOWNCHANNELORDER... -----------------
-// 			tMatrix unknownChannelOrderPreamble(N,5);
-// 			unknownChannelOrderPreamble = -1.0;
-// 			ML_UnknownChannelOrderSMCAlgorithm prueba("UnknownChannelOrderAlgorithm",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderPreamble,m-1,d,nParticles,criterioRemuestreo,algoritmoRemuestreo,simbolosTransmitir);
-// 
-// 			prueba.Run(observaciones,ruido.Variances(),trainingSequence);
-//             cout << "La prob de error obtenida es " << prueba.SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe)) << endl;
-			// --------------------------------------------------------------------
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)

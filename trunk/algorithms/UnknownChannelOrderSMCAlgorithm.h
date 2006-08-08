@@ -35,6 +35,8 @@ class UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
 	ParticleFilter _particleFilter;
+	ResamplingCriterion _resamplingCriterion;
+	StdResamplingAlgorithm _resamplingAlgorithm;
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
 	double *_channelOrderWeightsSum;
     tRange _allSymbolsRows;
