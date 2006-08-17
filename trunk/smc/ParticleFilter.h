@@ -26,23 +26,18 @@
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
-#include <StdResamplingAlgorithm.h>
-#include <ResamplingCriterion.h>
 #include <StatUtil.h>
 
 class ParticleFilter{
 protected:
     int _nParticles;
-//     StdResamplingAlgorithm _resamplingAlgorithm;
     ParticleWithChannelEstimation **_particles;
 public:
-//     ResamplingCriterion _resamplingCriterion;
 
     ParticleFilter(int nParticles);
 
     ~ParticleFilter();
 
-// 	void Resampling();
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
 	void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
 	void KeepParticles(std::vector<int> resamplingIndexes);

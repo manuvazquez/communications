@@ -399,9 +399,9 @@ int main(int argc,char* argv[])
 // 	preambulo = -1.0;
 
 	ResamplingCriterion criterioRemuestreo(0.9);
-	StdResamplingAlgorithm algoritmoRemuestreo;
+	StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
 
-	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,L,N,K-d,&estimador,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo);
+	ML_SMCAlgorithm algoritmo("Detector suavizado optimo",pam2,L,N,K-d,&estimador,preambulo,m-1,nParticles,algoritmoRemuestreo);
 
 // 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 // 
@@ -412,7 +412,7 @@ int main(int argc,char* argv[])
 	RLSEstimator estimadorRLSfiltroLineal(mediaInicial,forgettingFactor);
 	LMSEstimator estimadorLMSfiltroLineal(mediaInicial,muLMS);
 
-	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,L,N,K-d,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,criterioRemuestreo,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
+	LinearFilterBasedSMCAlgorithm algoritmoFiltroLineal("Filtro lineal",pam2,L,N,K-d,&estimadorRLSfiltroLineal,&detectorMMSE,preambulo,m-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance);
 
 // 	cout << "El canal en pruebas" << endl << canal[55] << endl;
 

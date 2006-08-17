@@ -3,8 +3,10 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libsmc.a
 noinst_HEADERS = ResamplingCriterion.h smcExceptions.h StdResamplingAlgorithm.h \
-	Particle.h ParticleWithChannelEstimation.h \
-	ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h
+			Particle.h ParticleWithChannelEstimation.h \
+			ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h \
+		ResamplingAlgorithm.h ParticleFilterWithChannelOrder.h
 libsmc_a_SOURCES = ResamplingCriterion.cpp StdResamplingAlgorithm.cpp \
-	Particle.cpp ParticleWithChannelEstimation.cpp \
-	ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp
+		Particle.cpp ParticleWithChannelEstimation.cpp \
+		ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp \
+	ParticleFilterWithChannelOrder.cpp

@@ -17,21 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "StdResamplingAlgorithm.h"
+#ifndef PARTICLEFILTERWITHCHANNELORDER_H
+#define PARTICLEFILTERWITHCHANNELORDER_H
 
-using namespace std;
+#include <ParticleFilter.h>
 
-StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class ParticleFilterWithChannelOrder : public ParticleFilter
 {
-}
+public:
+    ParticleFilterWithChannelOrder(int nParticles);
 
-void StdResamplingAlgorithm::Resample(ParticleFilter &particleFilter)
-{
-    tVector weigths = particleFilter.GetWeightsVector();
+};
 
-    if(_resamplingCriterion.ResamplingNeeded(weigths))
-    {
-        vector<int> indexes = StatUtil::Discrete_rnd(particleFilter.Nparticles(),weigths);
-        particleFilter.KeepParticles(indexes);
-    }
-}
+#endif

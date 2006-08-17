@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ML_SMCAlgorithm.h"
 
-ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,  channelEstimator, preamble, smoothingLag, nParticles, resamplingCriterion,resamplingAlgorithm)
+ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
 {
 }
 
@@ -133,8 +133,8 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
-			Resampling();
-// 			_particleFilter.Resampling();
+// 			Resampling();
+            _resamplingAlgorithm.Resample(_particleFilter);
 
 	} // for each time instant
 }

@@ -26,15 +26,17 @@
 
 #include <vector>
 #include <types.h>
-#include <ChannelMatrixEstimator.h>
-#include <LinearDetector.h>
-#include <ParticleFilter.h>
-#include <ParticleWithChannelEstimation.h>
-#include <exceptions.h>
+#include <ResamplingAlgorithm.h>
+// #include <ChannelMatrixEstimator.h>
+// #include <LinearDetector.h>
+// #include <ParticleFilter.h>
+// #include <ParticleWithChannelEstimation.h>
+// #include <exceptions.h>
 
-class StdResamplingAlgorithm{
+class StdResamplingAlgorithm : public ResamplingAlgorithm{
 public:
-// 	static void Resampling(ParticleFilter &particleFilter);
+    StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+	void Resample(ParticleFilter &particleFilter);
 };
 
 #endif

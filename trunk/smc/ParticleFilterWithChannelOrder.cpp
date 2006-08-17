@@ -17,21 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "StdResamplingAlgorithm.h"
+#include "ParticleFilterWithChannelOrder.h"
 
-using namespace std;
-
-StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
+ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles)
+ : ParticleFilter(nParticles)
 {
 }
 
-void StdResamplingAlgorithm::Resample(ParticleFilter &particleFilter)
-{
-    tVector weigths = particleFilter.GetWeightsVector();
-
-    if(_resamplingCriterion.ResamplingNeeded(weigths))
-    {
-        vector<int> indexes = StatUtil::Discrete_rnd(particleFilter.Nparticles(),weigths);
-        particleFilter.KeepParticles(indexes);
-    }
-}
+/**
+ * It returns a vector of vectors of int, such that vector[i] contains the indexes of the particles of order _candidateOrders[i]
+ * @return 
+ */
+// vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()
+// {
+//     vector<vector<int> > res(_nCandidateOrders);
+// 
+//     for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+//     {
+//         ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
+// 
+//         res[_channelOrder2index[processedParticle->GetChannelOrder()]].push_back(iParticle);
+//     }
+//     return res;
+// }
