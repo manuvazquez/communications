@@ -150,16 +150,16 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 		{
-			cout << "Los pesos son" << endl << _particleFilter.GetWeightsVector() << endl;
+// 			cout << "Los pesos son" << endl << _particleFilter.GetWeightsVector() << endl;
 			if(iObservationToBeProcessed<15)			
 				ResamplingByParticleGroups();
 			else
 				Resampling();
 
-			cout << "Despues de resampling quedan:" << endl;
-			vector<vector<int> > indices = GetIndexesOfChannelOrders();
-			for(int i=0;i<indices.size();i++)
-				cout << indices[i].size() << "particulas de orden " << i << endl;
+// 			cout << "Despues de resampling quedan:" << endl;
+// 			vector<vector<int> > indices = GetIndexesOfChannelOrders();
+// 			for(int i=0;i<indices.size();i++)
+// 				cout << indices[i].size() << "particulas de orden " << i << endl;
 		}
 // 		cout << "Una tecla..."; char c; cin >> c;
 	} // for each time instant

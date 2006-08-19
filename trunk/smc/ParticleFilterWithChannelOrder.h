@@ -25,10 +25,19 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <vector>
+#include <ParticleWithChannelEstimationAndChannelOrder.h>
+
 class ParticleFilterWithChannelOrder : public ParticleFilter
 {
+protected:
+    vector<int> _candidateOrders;
+    int _maxOrder,*_channelOrder2index;
 public:
-    ParticleFilterWithChannelOrder(int nParticles);
+    ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders);
+    ~ParticleFilterWithChannelOrder();
+    vector<vector<int> > GetIndexesOfChannelOrders();
 
 };
 

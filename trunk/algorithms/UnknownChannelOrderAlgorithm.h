@@ -33,7 +33,8 @@ class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
 	vector<ChannelMatrixEstimator *> _channelEstimators;
-	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;
+    vector<int> _candidateOrders;
+	int _maxOrder,_firstObservationIndex;
 	int *_channelOrder2index;
 	tMatrix _preamble;
 

@@ -19,24 +19,39 @@
  ***************************************************************************/
 #include "ParticleFilterWithChannelOrder.h"
 
-ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles)
- : ParticleFilter(nParticles)
+ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders)
+ : ParticleFilter(nParticles),_candidateOrders(candidateOrders),_maxOrder(-1)
 {
+    // it finds out the maximum channel order
+    for(int i=0;i<_candidateOrders.size();i++)
+        if(_candidateOrders[i]>_maxOrder)
+            _maxOrder = _candidateOrders[i];
+
+    // a vector that associate a channel order with its corresponding index is generated
+    _channelOrder2index = new int[_maxOrder+1];
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
+}
+
+
+ParticleFilterWithChannelOrder::~ParticleFilterWithChannelOrder()
+{
+    delete[] _channelOrder2index;
 }
 
 /**
  * It returns a vector of vectors of int, such that vector[i] contains the indexes of the particles of order _candidateOrders[i]
  * @return 
  */
-// vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()
-// {
-//     vector<vector<int> > res(_nCandidateOrders);
-// 
-//     for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
-//     {
-//         ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
-// 
-//         res[_channelOrder2index[processedParticle->GetChannelOrder()]].push_back(iParticle);
-//     }
-//     return res;
-// }
+vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()
+{
+    vector<vector<int> > res(_candidateOrders.size());
+
+    for(int iParticle=0;iParticle<_nParticles;iParticle++)
+    {
+        ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[iParticle]);
+
+        res[_channelOrder2index[processedParticle->GetChannelOrder()]].push_back(iParticle);
+    }
+    return res;
+}
