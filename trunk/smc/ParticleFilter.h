@@ -35,14 +35,13 @@ protected:
 public:
 
     ParticleFilter(int nParticles);
-
     ~ParticleFilter();
 
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
-	void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
-	void KeepParticles(std::vector<int> resamplingIndexes);
+	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+	virtual void KeepParticles(std::vector<int> resamplingIndexes);
 
-	void SetParticle(ParticleWithChannelEstimation *particle,int n)
+	virtual void SetParticle(ParticleWithChannelEstimation *particle,int n)
 	{
 		delete _particles[n];
 		_particles[n] = particle;

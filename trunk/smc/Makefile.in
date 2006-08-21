@@ -65,7 +65,8 @@ am_libsmc_a_OBJECTS = ResamplingCriterion.$(OBJEXT) \
 	ParticleWithChannelEstimationAndLinearDetection.$(OBJEXT) \
 	ParticleFilter.$(OBJEXT) \
 	ParticleWithChannelEstimationAndChannelOrder.$(OBJEXT) \
-	ParticleFilterWithChannelOrder.$(OBJEXT)
+	ParticleFilterWithChannelOrder.$(OBJEXT) \
+	ByChannelOrderResamplingAlgorithm.$(OBJEXT)
 libsmc_a_OBJECTS = $(am_libsmc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -186,14 +187,14 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libsmc.a
 noinst_HEADERS = ResamplingCriterion.h smcExceptions.h StdResamplingAlgorithm.h \
-			Particle.h ParticleWithChannelEstimation.h \
-			ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h \
-		ResamplingAlgorithm.h ParticleFilterWithChannelOrder.h
+				Particle.h ParticleWithChannelEstimation.h \
+				ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h \
+			ResamplingAlgorithm.h ParticleFilterWithChannelOrder.h ByChannelOrderResamplingAlgorithm.h
 
 libsmc_a_SOURCES = ResamplingCriterion.cpp StdResamplingAlgorithm.cpp \
-		Particle.cpp ParticleWithChannelEstimation.cpp \
-		ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp \
-	ParticleFilterWithChannelOrder.cpp
+			Particle.cpp ParticleWithChannelEstimation.cpp \
+			ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp \
+		ParticleFilterWithChannelOrder.cpp ByChannelOrderResamplingAlgorithm.cpp
 
 all: all-am
 
@@ -268,6 +269,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ByChannelOrderResamplingAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Particle.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleFilter.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleFilterWithChannelOrder.Po@am__quote@

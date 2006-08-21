@@ -36,7 +36,7 @@
 class StdResamplingAlgorithm : public ResamplingAlgorithm{
 public:
     StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
-	void Resample(ParticleFilter &particleFilter);
+	void Resample(ParticleFilter *particleFilter);
 };
 
 #endif

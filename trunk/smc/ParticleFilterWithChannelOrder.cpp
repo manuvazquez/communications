@@ -31,12 +31,17 @@ ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles,ve
     _channelOrder2index = new int[_maxOrder+1];
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
+
+    _nParticlesPerChannelOrder = new int[_candidateOrders.size()];
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        _nParticlesPerChannelOrder[iChannelOrder] = 0;
 }
 
 
 ParticleFilterWithChannelOrder::~ParticleFilterWithChannelOrder()
 {
     delete[] _channelOrder2index;
+    delete[] _nParticlesPerChannelOrder;
 }
 
 /**
@@ -54,4 +59,39 @@ vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()
         res[_channelOrder2index[processedParticle->GetChannelOrder()]].push_back(iParticle);
     }
     return res;
+}
+
+void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
+{
+    ParticleWithChannelEstimationAndChannelOrder *processedParticle;
+
+    for(int iParticle=0;iParticle<resamplingIndexes.size();iParticle++)
+    {
+        // particle to be replaced
+        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[indexes[iParticle]]);
+
+        _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]--;
+
+        // replacing particle
+        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[resamplingIndexes[iParticle]]);
+        _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
+    }
+
+    ParticleFilter::KeepParticles(resamplingIndexes,indexes);
+}
+
+void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIndexes)
+{
+    ParticleWithChannelEstimationAndChannelOrder *processedParticle;
+
+    for(int i=0;i<_candidateOrders.size();i++)        
+        _nParticlesPerChannelOrder[_channelOrder2index[_candidateOrders[i]]] = 0;
+
+    for(int iParticle=0;iParticle<_nParticles;iParticle++)
+    {
+        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[resamplingIndexes[iParticle]]);      
+        _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
+    }
+
+    ParticleFilter::KeepParticles(resamplingIndexes);
 }

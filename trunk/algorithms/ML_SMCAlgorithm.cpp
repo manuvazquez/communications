@@ -134,7 +134,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 // 			Resampling();
-            _resamplingAlgorithm.Resample(_particleFilter);
+            _resamplingAlgorithm.Resample(&_particleFilter);
 
 	} // for each time instant
 }

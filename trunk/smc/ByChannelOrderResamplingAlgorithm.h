@@ -17,22 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef RESAMPLINGALGORITHM_H
-#define RESAMPLINGALGORITHM_H
+#ifndef BYCHANNELORDERRESAMPLINGALGORITHM_H
+#define BYCHANNELORDERRESAMPLINGALGORITHM_H
+
+#include <ResamplingAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ParticleFilter.h>
-#include <ResamplingCriterion.h>
+#include <ParticleFilterWithChannelOrder.h>
 
-class ResamplingAlgorithm{
-protected:
-    ResamplingCriterion _resamplingCriterion;
+class ByChannelOrderResamplingAlgorithm : public ResamplingAlgorithm
+{
 public:
-    ResamplingAlgorithm(ResamplingCriterion resamplingCriterion): _resamplingCriterion(resamplingCriterion) {}
-    virtual void Resample(ParticleFilter *particleFilter) = 0;
+    ByChannelOrderResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+
+    ~ByChannelOrderResamplingAlgorithm();
+
+    virtual void Resample(ParticleFilter *particleFilter);
 
 };
 

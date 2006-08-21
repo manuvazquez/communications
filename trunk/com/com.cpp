@@ -192,7 +192,7 @@ int main(int argc,char* argv[])
 // 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,&algoritmoRemuestreo,simbolosTransmitir));
+// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 

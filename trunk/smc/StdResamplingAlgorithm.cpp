@@ -25,13 +25,13 @@ StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCri
 {
 }
 
-void StdResamplingAlgorithm::Resample(ParticleFilter &particleFilter)
+void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
 {
-    tVector weigths = particleFilter.GetWeightsVector();
+    tVector weigths = particleFilter->GetWeightsVector();
 
     if(_resamplingCriterion.ResamplingNeeded(weigths))
     {
-        vector<int> indexes = StatUtil::Discrete_rnd(particleFilter.Nparticles(),weigths);
-        particleFilter.KeepParticles(indexes);
+        vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weigths);
+        particleFilter->KeepParticles(indexes);
     }
 }
