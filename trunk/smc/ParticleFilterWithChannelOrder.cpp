@@ -35,6 +35,8 @@ ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles,ve
     _nParticlesPerChannelOrder = new int[_candidateOrders.size()];
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _nParticlesPerChannelOrder[iChannelOrder] = 0;
+
+    _channelOrderWeightsSum = new double[_maxOrder+1];
 }
 
 
@@ -42,11 +44,12 @@ ParticleFilterWithChannelOrder::~ParticleFilterWithChannelOrder()
 {
     delete[] _channelOrder2index;
     delete[] _nParticlesPerChannelOrder;
+    delete[] _channelOrderWeightsSum;
 }
 
 /**
  * It returns a vector of vectors of int, such that vector[i] contains the indexes of the particles of order _candidateOrders[i]
- * @return 
+ * @return
  */
 vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()
 {
@@ -84,14 +87,39 @@ void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIn
 {
     ParticleWithChannelEstimationAndChannelOrder *processedParticle;
 
-    for(int i=0;i<_candidateOrders.size();i++)        
+    for(int i=0;i<_candidateOrders.size();i++)
         _nParticlesPerChannelOrder[_channelOrder2index[_candidateOrders[i]]] = 0;
 
     for(int iParticle=0;iParticle<_nParticles;iParticle++)
     {
-        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[resamplingIndexes[iParticle]]);      
+        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[resamplingIndexes[iParticle]]);
         _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
     }
 
     ParticleFilter::KeepParticles(resamplingIndexes);
 }
+
+// void ParticleFilterWithChannelOrder::NormalizeParticlesByOrder()
+// {
+//     int iParticle;
+//
+//     // the sum of the weights of each group of particles is set to zero...
+//     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+//         _channelOrderWeightsSum[_candidateOrders[iChannelOrder]] = 0.0;
+//
+//     // ... to compute it here
+//     for(iParticle=0;iParticle<_nParticles;iParticle++)
+//     {
+//         ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[iParticle]);
+//
+//         _channelOrderWeightsSum[processedParticle->GetChannelOrder()] += processedParticle->GetWeight();
+//     }
+//
+//     // each particle is normalized according to its channel order
+//     for(iParticle=0;iParticle<_nParticles;iParticle++)
+//     {
+//         ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[iParticle]);
+//
+//         processedParticle->SetWeight(processedParticle->GetWeight()/_channelOrderWeightsSum[processedParticle->GetChannelOrder()]);
+//     }
+// }

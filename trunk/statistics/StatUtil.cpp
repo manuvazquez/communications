@@ -32,12 +32,9 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
     int nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
-    double acum = 0.0;
+    distributionFunction[0] = normalizedProbabilities(0);
     for(i=0;i<nProbabilities;i++)
-    {
-        acum += normalizedProbabilities(i); // <--------------- optimizar
-        distributionFunction[i] = acum;
-    }
+           distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
 
     vector<int> res(nSamples);
 

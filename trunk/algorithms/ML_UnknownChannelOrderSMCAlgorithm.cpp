@@ -19,15 +19,9 @@
  ***************************************************************************/
 #include "ML_UnknownChannelOrderSMCAlgorithm.h"
 
-ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos)
+ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles,resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos),_resamplingAlgorithm2(resamplingAlgorithm2)
 {
 }
-
-
-ML_UnknownChannelOrderSMCAlgorithm::~ML_UnknownChannelOrderSMCAlgorithm()
-{
-}
-
 
 void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
@@ -150,22 +144,15 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 		{
-// 			cout << "Los pesos son" << endl << _particleFilter.GetWeightsVector() << endl;
 			if(iObservationToBeProcessed<15)
-				ResamplingByParticleGroups();
-			else
-				Resampling();
-
-			cout << "Despues de resampling quedan:" << endl;
-//             vector<vector<int> > indices = _particleFilter.GetIndexesOfChannelOrders();
-			vector<vector<int> > indices = GetIndexesOfChannelOrders();
-			for(int i=0;i<indices.size();i++)
             {
-				cout << indices[i].size() << "particulas de orden " << i << endl;
-                cout << "con la nueva funcion" << _particleFilter.NparticlesOfChannelOrderIndex(i) << endl;
+// 				ResamplingByParticleGroups();
+                _resamplingAlgorithm->Resample(&_particleFilter);
             }
+			else
+                _resamplingAlgorithm2->Resample(&_particleFilter);
+// 				Resampling();
 		}
-// 		cout << "Una tecla..."; char c; cin >> c;
 	} // for each time instant
 }
 

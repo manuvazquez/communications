@@ -45,6 +45,7 @@
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
+#include <ByChannelOrderResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
@@ -139,6 +140,9 @@ int main(int argc,char* argv[])
     ResamplingCriterion criterioRemuestreo(0.9);
     StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
 
+    // resampling algorith for the case of unknown channel order
+    ByChannelOrderResamplingAlgorithm unknownChannelOrderResamplingAlgorithm(criterioRemuestreo);
+
     // matrices for results
     tMatrix overallPeMatrix;
     tMatrix overallMseMatrix;
@@ -192,7 +196,7 @@ int main(int argc,char* argv[])
 //
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,&algoritmoRemuestreo,simbolosTransmitir));
+			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 

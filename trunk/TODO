@@ -12,3 +12,4 @@
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
 - añadir simbolos para suavizado, no bits
+- quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm

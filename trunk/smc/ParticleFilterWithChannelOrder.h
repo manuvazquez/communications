@@ -34,6 +34,7 @@ class ParticleFilterWithChannelOrder : public ParticleFilter
 protected:
     vector<int> _candidateOrders;
     int _maxOrder,*_channelOrder2index,*_nParticlesPerChannelOrder;
+    double *_channelOrderWeightsSum;
 public:
     ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders);
     ~ParticleFilterWithChannelOrder();
@@ -66,6 +67,7 @@ public:
     vector<vector<int> > GetIndexesOfChannelOrders();
     void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
     void KeepParticles(std::vector<int> resamplingIndexes);
+//     void NormalizeParticlesByOrder();
 
 };
 

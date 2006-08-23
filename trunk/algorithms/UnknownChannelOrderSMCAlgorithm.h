@@ -35,25 +35,19 @@ class UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
 	ParticleFilterWithChannelOrder _particleFilter;
-	ResamplingCriterion _resamplingCriterion;
 	ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
-	double *_channelOrderWeightsSum;
     tRange _allSymbolsRows;
 	vector<int> _nParticlesPerChannelOrder;
 	tMatrix _observations;
 
 	virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-	virtual void Resampling();
-	virtual void ResamplingByParticleGroups();
 	void NormalizeParticleGroups();
 	vector<vector<int> > GetIndexesOfChannelOrders();
 	int BestParticle();
 public:
-    UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm);
-
-    ~UnknownChannelOrderSMCAlgorithm();
+    UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
 	void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

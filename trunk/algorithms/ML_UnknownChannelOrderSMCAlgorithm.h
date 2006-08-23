@@ -32,10 +32,9 @@ class ML_UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderSMCAlgorith
 {
 protected:
 	tMatrix _simbolosVerdaderos;
+    ResamplingAlgorithm *_resamplingAlgorithm2;
 public:
-    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, ResamplingAlgorithm *resamplingAlgorithm,tMatrix simbolosVerdaderos);
-
-    ~ML_UnknownChannelOrderSMCAlgorithm();
+    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos);
 
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
