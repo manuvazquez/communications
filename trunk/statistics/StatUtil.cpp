@@ -28,19 +28,14 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 	double uniform;
 	static Random randomGenerator(1);
 
-// 	cout << "La semilla es " << randomGenerator.getSeed() << endl;
-
-// 	char c;
-// 	cin >> c;
-
     tVector normalizedProbabilities = Util::Normalize(probabilities);
     int nProbabilities = probabilities.size();
-    
+
     double *distributionFunction = new double[nProbabilities];
     double acum = 0.0;
     for(i=0;i<nProbabilities;i++)
     {
-        acum += normalizedProbabilities(i);
+        acum += normalizedProbabilities(i); // <--------------- optimizar
         distributionFunction[i] = acum;
     }
 
@@ -55,7 +50,7 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 			j++;
 		res[i] = j;
     }
-	
+
 	// memory release
 	delete[] distributionFunction;
 

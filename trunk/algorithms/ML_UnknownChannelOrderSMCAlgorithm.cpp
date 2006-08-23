@@ -42,7 +42,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 	tRange allSymbolRows(0,_N-1);
 
 	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
-	
+
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
@@ -65,7 +65,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			d = m-1;
 			nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*d));
 			vector<tSymbol> testedSmoothingVector(_N*d);
-			// it includes all symbol vectors involved in the smoothing	
+			// it includes all symbol vectors involved in the smoothing
 			tMatrix smoothingSymbolVectors(_N,m+d);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
@@ -75,7 +75,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			{
 				// the corresponding testing vector is generated from the index
 				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
-				
+
 				// current tested vector is copied in the m-th position
 				for(k=0;k<_N;k++)
 					smoothingSymbolVectors(k,m-1) = testedVector[k];
@@ -134,7 +134,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iSymbolVectorToBeProcessed,sampledVector);
-						
+
 			// channel matrix is estimated by means of the particle channel estimator
 			processedParticle->SetChannelMatrix(iSymbolVectorToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(iSymbolVectorToBeProcessed-m+1,iSymbolVectorToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
@@ -151,15 +151,19 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 		if(iObservationToBeProcessed<(_K-1))
 		{
 // 			cout << "Los pesos son" << endl << _particleFilter.GetWeightsVector() << endl;
-			if(iObservationToBeProcessed<15)			
+			if(iObservationToBeProcessed<15)
 				ResamplingByParticleGroups();
 			else
 				Resampling();
 
-// 			cout << "Despues de resampling quedan:" << endl;
-// 			vector<vector<int> > indices = GetIndexesOfChannelOrders();
-// 			for(int i=0;i<indices.size();i++)
-// 				cout << indices[i].size() << "particulas de orden " << i << endl;
+			cout << "Despues de resampling quedan:" << endl;
+//             vector<vector<int> > indices = _particleFilter.GetIndexesOfChannelOrders();
+			vector<vector<int> > indices = GetIndexesOfChannelOrders();
+			for(int i=0;i<indices.size();i++)
+            {
+				cout << indices[i].size() << "particulas de orden " << i << endl;
+                cout << "con la nueva funcion" << _particleFilter.NparticlesOfChannelOrderIndex(i) << endl;
+            }
 		}
 // 		cout << "Una tecla..."; char c; cin >> c;
 	} // for each time instant

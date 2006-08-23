@@ -26,7 +26,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ParticleFilter.h>
+#include <ParticleFilterWithChannelOrder.h>
 #include <StdResamplingAlgorithm.h>
 #include <ResamplingCriterion.h>
 #include <ParticleWithChannelEstimationAndChannelOrder.h>
@@ -34,13 +34,13 @@
 class UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
-	ParticleFilter _particleFilter;
+	ParticleFilterWithChannelOrder _particleFilter;
 	ResamplingCriterion _resamplingCriterion;
 	ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
 	double *_channelOrderWeightsSum;
     tRange _allSymbolsRows;
-	vector<int> _nParticlesPerChannelOrder;	
+	vector<int> _nParticlesPerChannelOrder;
 	tMatrix _observations;
 
 	virtual void InitializeParticles();

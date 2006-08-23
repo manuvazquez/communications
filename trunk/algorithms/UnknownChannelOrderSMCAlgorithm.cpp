@@ -21,7 +21,7 @@
 
 UnknownChannelOrderSMCAlgorithm::UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex),
 //variables initialization
-_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles),_nParticlesPerChannelOrder(_candidateOrders.size())
+_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingCriterion(resamplingCriterion),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles,_candidateOrders),_nParticlesPerChannelOrder(_candidateOrders.size())
 {
     // at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionSymbolVector = _preamble.cols();
@@ -93,13 +93,13 @@ void UnknownChannelOrderSMCAlgorithm::Run(tMatrix observations,vector<double> no
         for(iParticlePresentOrder=0;iParticlePresentOrder<_nParticlesPerChannelOrder[iChannelOrder];iParticlePresentOrder++,iParticle++)
         {
             ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
-    
+
             //the channel estimation given by the training sequence is copied into each particle...
             for(j=0;j<trainingSequenceChannelMatrices[iChannelOrder].size();j++)
             {
                 processedParticle->SetChannelMatrix(_preamble.cols()+j,trainingSequenceChannelMatrices[iChannelOrder][j]);
             }
-    
+
             //... the symbols are considered detected...
             processedParticle->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
         }
@@ -119,7 +119,7 @@ void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()
     // the sum of the weight of each group of particles is set to zero...
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrderWeightsSum[_candidateOrders[iChannelOrder]] = 0.0;
-    
+
     // ... to compute it here
     for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
     {
@@ -134,7 +134,7 @@ void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()
         ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particleFilter.GetParticle(iParticle));
 
         processedParticle->SetWeight(processedParticle->GetWeight()/_channelOrderWeightsSum[processedParticle->GetChannelOrder()]);
-    }   
+    }
 }
 
 void UnknownChannelOrderSMCAlgorithm::Resampling()
@@ -178,13 +178,13 @@ void UnknownChannelOrderSMCAlgorithm::ResamplingByParticleGroups()
                     indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
 
             _particleFilter.KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
-        }   
+        }
     }
 }
 
 /**
  * It returns a vector of vectors of int, such that vector[i] contains the indexes of the particles of order _candidateOrders[i]
- * @return 
+ * @return
  */
 vector<vector<int> > UnknownChannelOrderSMCAlgorithm::GetIndexesOfChannelOrders()
 {
@@ -217,7 +217,7 @@ int UnknownChannelOrderSMCAlgorithm::BestParticle()
         // if there is no particles with this channel order
         if(_nParticlesPerChannelOrder[iChannelOrder]==0)
             continue;
-        
+
         tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
 
         Util::Max(weights(rWeightsOrder),iMaxWeights[iChannelOrder]);
@@ -274,10 +274,10 @@ vector<tMatrix> UnknownChannelOrderSMCAlgorithm::GetEstimatedChannelMatrices()
 {
 //     vector<tMatrix> channelMatrices;
 //     channelMatrices.reserve(_K-_preamble.cols());
-// 
+//
 //     // best particle is chosen
 //     int iBestParticle = BestParticle();
-//     
+//
 //     for(int i=_preamble.cols();i<_K-_firstObservationIndex+_preamble.cols();i++)
 //         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(i));
 

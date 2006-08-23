@@ -56,8 +56,11 @@ public:
         _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
 
         _particles[n] = particle;
-        
+
     }
+
+    int NparticlesOfChannelOrderIndex(int iChannelOrder) { return _nParticlesPerChannelOrder[iChannelOrder];}
+
     int NchannelOrders() {return _candidateOrders.size();}
 
     vector<vector<int> > GetIndexesOfChannelOrders();

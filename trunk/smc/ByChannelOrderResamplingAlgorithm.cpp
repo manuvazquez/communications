@@ -31,33 +31,37 @@ ByChannelOrderResamplingAlgorithm::~ByChannelOrderResamplingAlgorithm()
 
 void ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
 {
-//     ParticleFilterWithChannelOrder *pf = dynamic_cast <ParticleFilterWithChannelOrder *> (particleFilter);
+    ParticleFilterWithChannelOrder *pf = dynamic_cast <ParticleFilterWithChannelOrder *> (particleFilter);
 
-    ParticleFilterWithChannelOrder *pf = (ParticleFilterWithChannelOrder *) particleFilter;
-//     vector<vector <int> > indexesOfChannelOrders = GetIndexesOfChannelOrders();
-//     tVector weights = _particleFilter->GetWeightsVector();
-// 
-//     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-//     {
-//         // if there is no particles with this channel order
-//         if(_nParticlesPerChannelOrder[iChannelOrder]==0)
-//             continue;
-// 
-//         if(_resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
-//         {
-//             // the weights corresponding to the channel order being processed are selected. Note that they all are adjacent
+    vector<vector <int> > indexesOfChannelOrders = pf->GetIndexesOfChannelOrders();
+    tVector weights = pf->GetWeightsVector();
+
+    for(int iChannelOrder=0;iChannelOrder<pf->NchannelOrders();iChannelOrder++)
+    {
+        int nParticlesCurrentChannelOrder = pf->NparticlesOfChannelOrderIndex(iChannelOrder);
+        // if there is no particles with this channel order
+        if(nParticlesCurrentChannelOrder==0)
+            continue;
+
+        if(_resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
+        {
+            // the weights corresponding to the channel order being processed are selected. Note that they all are adjacent
 //             tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
-// 
+
+            tVector currentChannelOrderWeights(nParticlesCurrentChannelOrder);
+            for(int i=0;i<nParticlesCurrentChannelOrder;i++)
+                currentChannelOrderWeights(i) = weights(indexesOfChannelOrders[iChannelOrder][i]);
+//
 // //          cout << rWeightsOrder << endl;
-// 
-//             vector<int> auxIndexes = StatUtil::Discrete_rnd(_nParticlesPerChannelOrder[iChannelOrder],weights(rWeightsOrder));
-// 
-//             vector<int> indexes(_nParticlesPerChannelOrder[iChannelOrder]);
-//             for(int i=0;i<auxIndexes.size();i++)
-//                     indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
-// 
-//             _particleFilter.KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
-//         }   
-//     }
+//
+            vector<int> auxIndexes = StatUtil::Discrete_rnd(nParticlesCurrentChannelOrder,currentChannelOrderWeights);
+//
+            vector<int> indexes(nParticlesCurrentChannelOrder);
+            for(int i=0;i<nParticlesCurrentChannelOrder;i++)
+                    indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
+
+            pf->KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
+        }
+    }
 }
 

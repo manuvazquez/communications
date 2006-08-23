@@ -147,14 +147,14 @@ int main(int argc,char* argv[])
     {
         // bits are generated ...
         Bits bitsTransmitir(N,K+nSmoothingInstants);
-    
+
         // ... and then modulated by means of the alphabet
         tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
-    
+
         // a specific preamble is generated...
         tMatrix preambulo(N,m-1);
         preambulo = -1.0;
-    
+
         // ...and set before the symbols to be transmitted
         simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
 
@@ -169,7 +169,7 @@ int main(int argc,char* argv[])
         for(int iSNR=0;iSNR<SNRs.size();iSNR++)
         {
             cout << "SNR = " << SNRs[iSNR] << " [Trama " << iFrame << "]..." << endl;
-            
+
             // noise is generated
             ChannelDependentNoise ruido(&canal);
             ruido.SetSNR(SNRs[iSNR],pam2.Variance());
@@ -183,16 +183,16 @@ int main(int argc,char* argv[])
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
-// 
+//
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+m-1,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
-// 
+//
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+m-1,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
-// 
+//
             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+m-1,canal,preambulo,d));
-// 
+//
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,&algoritmoRemuestreo,simbolosTransmitir));
+			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,criterioRemuestreo,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 
