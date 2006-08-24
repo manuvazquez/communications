@@ -23,29 +23,25 @@ using namespace std;
 
 ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants
 ,ChannelMatrixEstimator *channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants)
-// ,_channelMatrixEstimator(channelMatrixEstimator),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+,_channelMatrixEstimators(1)
 {
-    _nChannelMatrixEstimators = 1;
-    _channelMatrixEstimators = new ChannelMatrixEstimator*[_nChannelMatrixEstimators];
     _channelMatrixEstimators[0] = channelMatrixEstimator;
 
-    _estimatedChannelMatrices = new tMatrix*[_nChannelMatrixEstimators];
+    _estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
     _estimatedChannelMatrices[0] = new tMatrix[_nTimeInstants];
 }
 
-// ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,vector <ChannelMatrixEstimator *> channelMatrixEstimators)
-// {
-//     _nChannelMatrixEstimators = channelMatrixEstimators.size();
-//
-// }
-
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle)
-// ,_channelMatrixEstimator((particle._channelMatrixEstimator)->Clone()),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
-,_nChannelMatrixEstimators(particle._nChannelMatrixEstimators)
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,vector <ChannelMatrixEstimator *> channelMatrixEstimators):Particle(weight, symbolVectorLength, nTimeInstants),_channelMatrixEstimators(channelMatrixEstimators)
 {
-    _channelMatrixEstimators = new ChannelMatrixEstimator*[particle._nChannelMatrixEstimators];
-    _estimatedChannelMatrices = new tMatrix*[particle._nChannelMatrixEstimators];
-    for(int iChannelMatrixEstimator=0;iChannelMatrixEstimator<particle._nChannelMatrixEstimators;iChannelMatrixEstimator++)
+    _estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
+    for(int i=0;i<_channelMatrixEstimators.size();i++)
+        _estimatedChannelMatrices[i] = new tMatrix[_nTimeInstants];
+}
+
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle),_channelMatrixEstimators(particle._channelMatrixEstimators.size())
+{
+    _estimatedChannelMatrices = new tMatrix*[particle._channelMatrixEstimators.size()];
+    for(int iChannelMatrixEstimator=0;iChannelMatrixEstimator<particle._channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
         _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
 
@@ -53,21 +49,15 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithC
         for(int i=0;i<_nTimeInstants;i++)
             _estimatedChannelMatrices[iChannelMatrixEstimator][i] = particle._estimatedChannelMatrices[iChannelMatrixEstimator][i];
     }
-// 	for(int i=0;i<_nTimeInstants;i++)
-// 		_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
 }
 
 ParticleWithChannelEstimation::~ParticleWithChannelEstimation()
 {
-// 	delete _channelMatrixEstimator;
-// 	delete[] _estimatedChannelMatrices;
-
-    for(int i=0;i<_nChannelMatrixEstimators;i++)
+    for(int i=0;i<_channelMatrixEstimators.size();i++)
     {
         delete _channelMatrixEstimators[i];
         delete[] _estimatedChannelMatrices[i];
     }
-    delete[] _channelMatrixEstimators;
     delete[] _estimatedChannelMatrices;
 }
 
