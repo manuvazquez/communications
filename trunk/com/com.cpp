@@ -64,9 +64,9 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 2;
-    int L=3,N=2,m=2,K=30;
-    int longSecEntr = 10;
+    int nFrames = 100;
+    int L=3,N=2,m=2,K=300;
+    int longSecEntr = 30;
     int nParticles = 30;
     int d = m -1;
 
@@ -196,7 +196,7 @@ int main(int argc,char* argv[])
 //
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
+// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 

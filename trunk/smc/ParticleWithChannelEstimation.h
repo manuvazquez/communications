@@ -26,25 +26,30 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <vector>
 #include <ChannelMatrixEstimator.h>
 
 class ParticleWithChannelEstimation : public Particle
 {
 protected:
-	ChannelMatrixEstimator *_channelMatrixEstimator;
-	tMatrix *_estimatedChannelMatrices;
+    int _nChannelMatrixEstimators;
+	ChannelMatrixEstimator **_channelMatrixEstimators;
+	tMatrix **_estimatedChannelMatrices;
 public:
     ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
+
+//     ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,std::vector <ChannelMatrixEstimator *> channelMatrixEstimators);
+
 	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
 
     ~ParticleWithChannelEstimation();
 
-	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}
-	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[n] = matrix;}
+	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[0][n];}
+	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[0][n] = matrix;}
 
-	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}
+	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimators[0];}
 
-	void operator=(const ParticleWithChannelEstimation &particle);
+// 	void operator=(const ParticleWithChannelEstimation &particle);
 	ParticleWithChannelEstimation *Clone();
 };
 

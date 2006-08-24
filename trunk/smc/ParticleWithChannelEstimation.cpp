@@ -19,40 +19,73 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimation.h"
 
+using namespace std;
+
 ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants
 ,ChannelMatrixEstimator *channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants)
-,_channelMatrixEstimator(channelMatrixEstimator),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+// ,_channelMatrixEstimator(channelMatrixEstimator),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
 {
+    _nChannelMatrixEstimators = 1;
+    _channelMatrixEstimators = new ChannelMatrixEstimator*[_nChannelMatrixEstimators];
+    _channelMatrixEstimators[0] = channelMatrixEstimator;
+
+    _estimatedChannelMatrices = new tMatrix*[_nChannelMatrixEstimators];
+    _estimatedChannelMatrices[0] = new tMatrix[_nTimeInstants];
 }
 
+// ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,vector <ChannelMatrixEstimator *> channelMatrixEstimators)
+// {
+//     _nChannelMatrixEstimators = channelMatrixEstimators.size();
+//
+// }
+
 ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle)
-,_channelMatrixEstimator((particle._channelMatrixEstimator)->Clone()),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+// ,_channelMatrixEstimator((particle._channelMatrixEstimator)->Clone()),_estimatedChannelMatrices(new tMatrix[_nTimeInstants])
+,_nChannelMatrixEstimators(particle._nChannelMatrixEstimators)
 {
-	for(int i=0;i<_nTimeInstants;i++)
-		_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
+    _channelMatrixEstimators = new ChannelMatrixEstimator*[particle._nChannelMatrixEstimators];
+    _estimatedChannelMatrices = new tMatrix*[particle._nChannelMatrixEstimators];
+    for(int iChannelMatrixEstimator=0;iChannelMatrixEstimator<particle._nChannelMatrixEstimators;iChannelMatrixEstimator++)
+    {
+        _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+
+        _estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[_nTimeInstants];
+        for(int i=0;i<_nTimeInstants;i++)
+            _estimatedChannelMatrices[iChannelMatrixEstimator][i] = particle._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+    }
+// 	for(int i=0;i<_nTimeInstants;i++)
+// 		_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
 }
 
 ParticleWithChannelEstimation::~ParticleWithChannelEstimation()
 {
-	delete _channelMatrixEstimator;
-	delete[] _estimatedChannelMatrices;
+// 	delete _channelMatrixEstimator;
+// 	delete[] _estimatedChannelMatrices;
+
+    for(int i=0;i<_nChannelMatrixEstimators;i++)
+    {
+        delete _channelMatrixEstimators[i];
+        delete[] _estimatedChannelMatrices[i];
+    }
+    delete[] _channelMatrixEstimators;
+    delete[] _estimatedChannelMatrices;
 }
 
-void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimation &particle)
-{
-	if(this!=&particle)
-	{
-		Particle::operator =(particle);
-
-		delete _channelMatrixEstimator;
-		_channelMatrixEstimator = (particle._channelMatrixEstimator)->Clone();
-
-		delete[] _estimatedChannelMatrices;
-		_estimatedChannelMatrices = new tMatrix[_nTimeInstants];
-		for(int i=0;i<_nTimeInstants;i++)
-			_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];		
-	}
-}
+// void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimation &particle)
+// {
+// 	if(this!=&particle)
+// 	{
+// 		Particle::operator =(particle);
+//
+// 		delete _channelMatrixEstimator;
+// 		_channelMatrixEstimator = (particle._channelMatrixEstimator)->Clone();
+//
+// 		delete[] _estimatedChannelMatrices;
+// 		_estimatedChannelMatrices = new tMatrix[_nTimeInstants];
+// 		for(int i=0;i<_nTimeInstants;i++)
+// 			_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
+// 	}
+// }
 
 ParticleWithChannelEstimation *ParticleWithChannelEstimation::Clone()
 {
