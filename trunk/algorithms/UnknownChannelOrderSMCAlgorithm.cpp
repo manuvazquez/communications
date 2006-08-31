@@ -26,8 +26,8 @@ _d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingAlgorithm(resamplingAlgorith
     // at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionSymbolVector = _preamble.cols();
 
-    // and all the observations from _firstObservationIndex
-    _startDetectionObservation = _firstObservationIndex;
+    // and all the observations from _iFirstObservation
+    _startDetectionObservation = _iFirstObservation;
 
     // we set the number of particles that will be assignated to each channel order
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -45,7 +45,7 @@ void UnknownChannelOrderSMCAlgorithm::InitializeParticles()
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         for(iParticlePresentOrder=0;iParticlePresentOrder<_nParticlesPerChannelOrder[iChannelOrder];iParticlePresentOrder++,iParticle++)
         {
-            _particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K-_firstObservationIndex+_preamble.cols(),_channelEstimators[iChannelOrder]->Clone(),_candidateOrders[iChannelOrder]),iParticle);
+            _particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K-_iFirstObservation+_preamble.cols(),_channelEstimators[iChannelOrder]->Clone(),_candidateOrders[iChannelOrder]),iParticle);
         }
 }
 
@@ -99,7 +99,7 @@ void UnknownChannelOrderSMCAlgorithm::Run(tMatrix observations,vector<double> no
     }
 
     // the Process method must start in
-    _startDetectionObservation = _firstObservationIndex + trainingSequence.cols();
+    _startDetectionObservation = _iFirstObservation + trainingSequence.cols();
     _startDetectionSymbolVector = _preamble.cols() + trainingSequence.cols();
 
     this->Process(observations,noiseVariances);
@@ -173,7 +173,7 @@ tMatrix UnknownChannelOrderSMCAlgorithm::GetDetectedSymbolVectors()
 
     cout << "La particula seleccionada tiene orden " << processedParticle->GetChannelOrder() << endl;
 
-    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-_firstObservationIndex+_preamble.cols()-1));
+    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-_iFirstObservation+_preamble.cols()-1));
 }
 
 vector<tMatrix> UnknownChannelOrderSMCAlgorithm::GetEstimatedChannelMatrices()
@@ -184,7 +184,7 @@ vector<tMatrix> UnknownChannelOrderSMCAlgorithm::GetEstimatedChannelMatrices()
 //     // best particle is chosen
 //     int iBestParticle = BestParticle();
 //
-//     for(int i=_preamble.cols();i<_K-_firstObservationIndex+_preamble.cols();i++)
+//     for(int i=_preamble.cols();i<_K-_iFirstObservation+_preamble.cols();i++)
 //         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(i));
 
     vector<tMatrix> channelMatrices(0);

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownChannelOrderAlgorithm.h"
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_firstObservationIndex(firstObservationIndex)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation)
 {
     for(int i=0;i<channelEstimators.size();i++)
     {
@@ -60,21 +60,21 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
 {
     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
     int lengthSequenceToProcess = sequenceToProcess.cols();
-    
-    if(observations.cols() < (_firstObservationIndex+trainingSequence.cols()))
+
+    if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("UnknownChannelOrderAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
-    
+
     vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
 
 //  // selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_N-1);
 
     int iOrder;
-    for(int i=_firstObservationIndex;i<_firstObservationIndex+trainingSequence.cols();i++)
+    for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
         for(iOrder=0;iOrder<_candidateOrders.size();iOrder++)
         {
-            tRange mColumns(_preamble.cols()+i-_firstObservationIndex-_candidateOrders[iOrder]+1,_preamble.cols()+i-_firstObservationIndex);
+            tRange mColumns(_preamble.cols()+i-_iFirstObservation-_candidateOrders[iOrder]+1,_preamble.cols()+i-_iFirstObservation);
 //
             estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
         }

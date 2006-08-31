@@ -23,6 +23,9 @@ ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndCh
 {
 }
 
+ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators),_m(m)
+{
+}
 
 ParticleWithChannelEstimationAndChannelOrder::~ParticleWithChannelEstimationAndChannelOrder()
 {

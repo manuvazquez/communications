@@ -25,12 +25,17 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <vector>
+
 class ParticleWithChannelEstimationAndChannelOrder : public ParticleWithChannelEstimation
 {
 protected:
 	int _m;
 public:
     ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m);
+
+    ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,int m);
 
     ~ParticleWithChannelEstimationAndChannelOrder();
 

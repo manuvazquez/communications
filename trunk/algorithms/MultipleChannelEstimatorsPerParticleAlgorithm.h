@@ -17,26 +17,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ML_UNKNOWNCHANNELORDERSMCALGORITHM_H
-#define ML_UNKNOWNCHANNELORDERSMCALGORITHM_H
+#ifndef MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H
+#define MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H
 
-#include <UnknownChannelOrderSMCAlgorithm.h>
+#include <UnknownChannelOrderAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <KalmanEstimator.h>
+#include <ParticleFilterWithChannelOrder.h>
+#include <ResamplingAlgorithm.h>
 
-class ML_UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderSMCAlgorithm
+class MultipleChannelEstimatorsPerParticleAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
-	tMatrix _simbolosVerdaderos;
-    ResamplingAlgorithm *_resamplingAlgorithm2;
-public:
-    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos);
+    ParticleFilterWithChannelOrder _particleFilter;
+    ResamplingAlgorithm *_resamplingAlgorithm;
+    int _d,_startDetectionObservation,_startDetectionSymbolVector;
+    tRange _allSymbolsRows;
+    vector<int> _nParticlesPerChannelOrder;
+//     tMatrix _observations;
 
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void InitializeParticles();
+    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    vector<vector<int> > GetIndexesOfChannelOrders();
+    int BestParticle();
+public:
+    MultipleChannelEstimatorsPerParticleAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+
+    ~MultipleChannelEstimatorsPerParticleAlgorithm();
+
+    void Run(tMatrix observations,vector<double> noiseVariances);
+    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    tMatrix GetDetectedSymbolVectors();
+    vector<tMatrix> GetEstimatedChannelMatrices();
 
 };
 

@@ -72,7 +72,7 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    /*SNRs.push_back(3);SNRs.push_back(6);*/SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -196,7 +196,9 @@ int main(int argc,char* argv[])
 //
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+m-1,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
+			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
+
+//             algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+unknownChannelOrderAlgorithmsPreamble.cols(),UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 
@@ -210,7 +212,7 @@ int main(int argc,char* argv[])
                 overallMseMatrix = 0.0;
             }
 
-            // now executed
+            // algorithms are executed
             for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);

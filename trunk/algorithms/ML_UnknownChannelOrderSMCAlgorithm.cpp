@@ -19,12 +19,13 @@
  ***************************************************************************/
 #include "ML_UnknownChannelOrderSMCAlgorithm.h"
 
-ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles,resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos),_resamplingAlgorithm2(resamplingAlgorithm2)
+ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles,resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos),_resamplingAlgorithm2(resamplingAlgorithm2)
 {
 }
 
 void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
+//     cout << "El tamaño de las observaciones es " << observations.cols() << endl;
 	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;
 	int iSymbolVectorToBeProcessed;
@@ -40,11 +41,13 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
+    cout << "_K es " << _K << endl;
+
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionObservation;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 
-		iSymbolVectorToBeProcessed = _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed;
+		iSymbolVectorToBeProcessed = _startDetectionSymbolVector+iObservationToBeProcessed-_startDetectionObservation;
 
 // 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
 
@@ -53,6 +56,8 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iParticle));
 
 			m = processedParticle->GetChannelOrder();
+
+//             cout << "El orden de la particula es " << m << endl;
 
 			// channel order dependent variables
 			Nm = _N*m;
@@ -136,7 +141,11 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 
 // 			cout << "Particula de orden " << processedParticle->GetChannelOrder() << "actualizada por " << Util::Sum(likelihoods) << endl;
 
+//             cout << "Terminada de procesar particula " << iParticle << endl;
+
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
+
+//         cout << "Instante " << iObservationToBeProcessed << endl;
 
 // 		NormalizeParticleGroups();
 		_particleFilter.NormalizeWeights();
@@ -153,6 +162,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
                 _resamplingAlgorithm2->Resample(&_particleFilter);
 // 				Resampling();
 		}
+
 	} // for each time instant
 }
 

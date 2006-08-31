@@ -34,6 +34,7 @@ Alphabet	transmision/Alphabet.h	/^class Alphabet$/;"	c
 Append	util/Util.cpp	/^tMatrix Util::Append(const tMatrix &A,const tMatrix &B)$/;"	f	class:Util
 Append	util/Util.h	/^	static tMatrix Append(const tMatrix &A,const tMatrix &B);$/;"	p	class:Util
 BITS_H	transmision/Bits.h	/^#define BITS_H$/;"	d
+BYCHANNELORDERRESAMPLINGALGORITHM_H	smc/ByChannelOrderResamplingAlgorithm.h	/^#define BYCHANNELORDERRESAMPLINGALGORITHM_H$/;"	d
 BestParticle	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^int UnknownChannelOrderSMCAlgorithm::BestParticle()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
 BestParticle	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	int BestParticle();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
 BestState	algorithms/ViterbiAlgorithm.h	/^    int BestState()$/;"	f	class:ViterbiAlgorithm
@@ -48,6 +49,9 @@ Bits	transmision/Bits.h	/^	Bits(tBit *matrix,int nStreams,int nBitsByStream);$/;
 Bits	transmision/Bits.h	/^class Bits{$/;"	c
 BuildStateTransitionMatrix	algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::BuildStateTransitionMatrix()$/;"	f	class:ViterbiAlgorithm
 BuildStateTransitionMatrix	algorithms/ViterbiAlgorithm.h	/^    void BuildStateTransitionMatrix();$/;"	p	class:ViterbiAlgorithm
+ByChannelOrderResamplingAlgorithm	smc/ByChannelOrderResamplingAlgorithm.cpp	/^ByChannelOrderResamplingAlgorithm::ByChannelOrderResamplingAlgorithm(ResamplingCriterion resamplingCriterion): ResamplingAlgorithm(resamplingCriterion)$/;"	f	class:ByChannelOrderResamplingAlgorithm
+ByChannelOrderResamplingAlgorithm	smc/ByChannelOrderResamplingAlgorithm.h	/^    ByChannelOrderResamplingAlgorithm(ResamplingCriterion resamplingCriterion);$/;"	p	class:ByChannelOrderResamplingAlgorithm
+ByChannelOrderResamplingAlgorithm	smc/ByChannelOrderResamplingAlgorithm.h	/^class ByChannelOrderResamplingAlgorithm : public ResamplingAlgorithm$/;"	c
 CHANNELDEPENDENTNOISE_H	transmision/ChannelDependentNoise.h	/^#define CHANNELDEPENDENTNOISE_H$/;"	d
 CHANNELMATRIXESTIMATOR_H	estimation/ChannelMatrixEstimator.h	/^#define CHANNELMATRIXESTIMATOR_H$/;"	d
 ChannelDependentNoise	transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)$/;"	f	class:ChannelDependentNoise
@@ -103,8 +107,10 @@ FillFfromSymbolsMatrix	estimation/KalmanEstimator.h	/^	void FillFfromSymbolsMatr
 FilteredCovariance	filters/KalmanFilter.h	/^	tMatrix FilteredCovariance() {return _filteredCovariance;}$/;"	f	class:KalmanFilter
 FilteredMean	filters/KalmanFilter.h	/^	tVector FilteredMean() {return _filteredMean;}$/;"	f	class:KalmanFilter
 GetAllSymbolVectors	smc/Particle.h	/^	tMatrix GetAllSymbolVectors() { return _symbolVectors;}$/;"	f	class:Particle
-GetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[n];}$/;"	f	class:ParticleWithChannelEstimation
-GetChannelMatrixEstimator	smc/ParticleWithChannelEstimation.h	/^	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimator;}$/;"	f	class:ParticleWithChannelEstimation
+GetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[0][n];}$/;"	f	class:ParticleWithChannelEstimation
+GetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^    tMatrix GetChannelMatrix(int iChannelOrder,int n) { return _estimatedChannelMatrices[iChannelOrder][n];}$/;"	f	class:ParticleWithChannelEstimation
+GetChannelMatrixEstimator	smc/ParticleWithChannelEstimation.h	/^	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimators[0];}$/;"	f	class:ParticleWithChannelEstimation
+GetChannelMatrixEstimator	smc/ParticleWithChannelEstimation.h	/^    ChannelMatrixEstimator *GetChannelMatrixEstimator(int iChannelOrder) { return _channelMatrixEstimators[iChannelOrder];}$/;"	f	class:ParticleWithChannelEstimation
 GetChannelOrder	smc/ParticleWithChannelEstimationAndChannelOrder.h	/^	int GetChannelOrder(){ return _m;}$/;"	f	class:ParticleWithChannelEstimationAndChannelOrder
 GetDetectedSymbolVectors	algorithms/Algorithm.h	/^    virtual tMatrix GetDetectedSymbolVectors() = 0;$/;"	p	class:Algorithm
 GetDetectedSymbolVectors	algorithms/KnownSymbolsKalmanBasedChannelEstimator.cpp	/^tMatrix KnownSymbolsKalmanBasedChannelEstimator::GetDetectedSymbolVectors()$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimator
@@ -124,8 +130,9 @@ GetEstimatedChannelMatrices	algorithms/SMCAlgorithm.cpp	/^vector<tMatrix> SMCAlg
 GetEstimatedChannelMatrices	algorithms/SMCAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:SMCAlgorithm
 GetEstimatedChannelMatrices	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^vector<tMatrix> UnknownChannelOrderSMCAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
 GetEstimatedChannelMatrices	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
-GetIndexesOfChannelOrders	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^vector<vector<int> > UnknownChannelOrderSMCAlgorithm::GetIndexesOfChannelOrders()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
 GetIndexesOfChannelOrders	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	vector<vector<int> > GetIndexesOfChannelOrders();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
+GetIndexesOfChannelOrders	smc/ParticleFilterWithChannelOrder.cpp	/^vector<vector<int> > ParticleFilterWithChannelOrder::GetIndexesOfChannelOrders()$/;"	f	class:ParticleFilterWithChannelOrder
+GetIndexesOfChannelOrders	smc/ParticleFilterWithChannelOrder.h	/^    vector<vector<int> > GetIndexesOfChannelOrders();$/;"	p	class:ParticleFilterWithChannelOrder
 GetLinearDetector	smc/ParticleWithChannelEstimationAndLinearDetection.h	/^	LinearDetector *GetLinearDetector() { return _linearDetector;}$/;"	f	class:ParticleWithChannelEstimationAndLinearDetection
 GetName	algorithms/Algorithm.h	/^    string GetName() {return _name;}$/;"	f	class:Algorithm
 GetParticle	smc/ParticleFilter.h	/^	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}$/;"	f	class:ParticleFilter
@@ -171,8 +178,12 @@ KalmanFilter	filters/KalmanFilter.h	/^    KalmanFilter(tMatrix R,tMatrix stateEq
 KalmanFilter	filters/KalmanFilter.h	/^class KalmanFilter{$/;"	c
 KeepParticles	smc/ParticleFilter.cpp	/^void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)$/;"	f	class:ParticleFilter
 KeepParticles	smc/ParticleFilter.cpp	/^void ParticleFilter::KeepParticles(vector<int> indexes)$/;"	f	class:ParticleFilter
-KeepParticles	smc/ParticleFilter.h	/^	void KeepParticles(std::vector<int> resamplingIndexes);$/;"	p	class:ParticleFilter
-KeepParticles	smc/ParticleFilter.h	/^	void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);$/;"	p	class:ParticleFilter
+KeepParticles	smc/ParticleFilter.h	/^	virtual void KeepParticles(std::vector<int> resamplingIndexes);$/;"	p	class:ParticleFilter
+KeepParticles	smc/ParticleFilter.h	/^	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);$/;"	p	class:ParticleFilter
+KeepParticles	smc/ParticleFilterWithChannelOrder.cpp	/^void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIndexes)$/;"	f	class:ParticleFilterWithChannelOrder
+KeepParticles	smc/ParticleFilterWithChannelOrder.cpp	/^void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)$/;"	f	class:ParticleFilterWithChannelOrder
+KeepParticles	smc/ParticleFilterWithChannelOrder.h	/^    void KeepParticles(std::vector<int> resamplingIndexes);$/;"	p	class:ParticleFilterWithChannelOrder
+KeepParticles	smc/ParticleFilterWithChannelOrder.h	/^    void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);$/;"	p	class:ParticleFilterWithChannelOrder
 KnownChannelAlgorithm	algorithms/KnownChannelAlgorithm.cpp	/^KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel &channel): Algorithm(name, alphabet, L, N, K),_channel(channel)$/;"	f	class:KnownChannelAlgorithm
 KnownChannelAlgorithm	algorithms/KnownChannelAlgorithm.h	/^    KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel &channel);$/;"	p	class:KnownChannelAlgorithm
 KnownChannelAlgorithm	algorithms/KnownChannelAlgorithm.h	/^class KnownChannelAlgorithm : public Algorithm$/;"	c
@@ -212,12 +223,13 @@ ML_SMCAlgorithm	algorithms/ML_SMCAlgorithm.cpp	/^ML_SMCAlgorithm::ML_SMCAlgorith
 ML_SMCAlgorithm	algorithms/ML_SMCAlgorithm.h	/^    ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm);$/;"	p	class:ML_SMCAlgorithm
 ML_SMCAlgorithm	algorithms/ML_SMCAlgorithm.h	/^class ML_SMCAlgorithm : public SMCAlgorithm$/;"	c
 ML_UNKNOWNCHANNELORDERSMCALGORITHM_H	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^#define ML_UNKNOWNCHANNELORDERSMCALGORITHM_H$/;"	d
-ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.cpp	/^ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex, smoothingLag, nParticles, resamplingCriterion, resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos)$/;"	f	class:ML_UnknownChannelOrderSMCAlgorithm
-ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex, int smoothingLag, int nParticles, ResamplingCriterion resamplingCriterion, ResamplingAlgorithm *resamplingAlgorithm,tMatrix simbolosVerdaderos);$/;"	p	class:ML_UnknownChannelOrderSMCAlgorithm
+ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.cpp	/^ML_UnknownChannelOrderSMCAlgorithm::ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos): UnknownChannelOrderSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles,resamplingAlgorithm),_simbolosVerdaderos(simbolosVerdaderos),_resamplingAlgorithm2(resamplingAlgorithm2)$/;"	f	class:ML_UnknownChannelOrderSMCAlgorithm
+ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^    ML_UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,ResamplingAlgorithm *resamplingAlgorithm2,tMatrix simbolosVerdaderos);$/;"	p	class:ML_UnknownChannelOrderSMCAlgorithm
 ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^class ML_UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderSMCAlgorithm$/;"	c
 MODULATOR_H	transmision/Modulator.h	/^#define MODULATOR_H$/;"	d
 MSE	algorithms/Algorithm.cpp	/^double Algorithm::MSE(const vector<tMatrix> &channelMatrices)$/;"	f	class:Algorithm
 MSE	algorithms/Algorithm.h	/^    double MSE(const vector<tMatrix> &channelMatrices);$/;"	p	class:Algorithm
+MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.h	/^#define MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H$/;"	d
 MatricesVectorToStream	util/Util.cpp	/^void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)$/;"	f	class:Util
 MatricesVectorToStream	util/Util.h	/^	static void MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f);$/;"	p	class:Util
 MatrixToStream	util/Util.cpp	/^void Util::MatrixToStream(tMatrix A,string name,ofstream &f)$/;"	f	class:Util
@@ -234,9 +246,13 @@ Modulator	transmision/Modulator.h	/^    Modulator();$/;"	p	class:Modulator
 Modulator	transmision/Modulator.h	/^class Modulator{$/;"	c
 Mult	util/Util.cpp	/^void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)$/;"	f	class:Util
 Mult	util/Util.h	/^    static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);$/;"	p	class:Util
+MultipleChannelEstimatorsPerParticleAlgorithm	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.cpp	/^MultipleChannelEstimatorsPerParticleAlgorithm::MultipleChannelEstimatorsPerParticleAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)$/;"	f	class:MultipleChannelEstimatorsPerParticleAlgorithm
+MultipleChannelEstimatorsPerParticleAlgorithm	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.h	/^    MultipleChannelEstimatorsPerParticleAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);$/;"	p	class:MultipleChannelEstimatorsPerParticleAlgorithm
+MultipleChannelEstimatorsPerParticleAlgorithm	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.h	/^class MultipleChannelEstimatorsPerParticleAlgorithm : public UnknownChannelOrderAlgorithm$/;"	c
 NOISE_H	transmision/Noise.h	/^#define NOISE_H$/;"	d
 NbitsByStream	transmision/Bits.h	/^	int NbitsByStream() const {return nBitsByStream;}$/;"	f	class:Bits
 NbitsBySymbol	transmision/Alphabet.h	/^		int NbitsBySymbol() { return _nBitsBySymbol;}$/;"	f	class:Alphabet
+NchannelOrders	smc/ParticleFilterWithChannelOrder.h	/^    int NchannelOrders() {return _candidateOrders.size();}$/;"	f	class:ParticleFilterWithChannelOrder
 NextMatrix	estimation/ChannelMatrixEstimator.h	/^	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;$/;"	p	class:ChannelMatrixEstimator
 NextMatrix	estimation/KalmanEstimator.cpp	/^tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)$/;"	f	class:KalmanEstimator
 NextMatrix	estimation/KalmanEstimator.h	/^	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);$/;"	p	class:KalmanEstimator
@@ -256,11 +272,11 @@ NormalPdf	statistics/StatUtil.h	/^	static double NormalPdf(const tVector &x,cons
 NormalPdf	statistics/StatUtil.h	/^	static double NormalPdf(double x,double mean,double variance);$/;"	p	class:StatUtil
 Normalize	util/Util.cpp	/^tVector Util::Normalize(const tVector &v)$/;"	f	class:Util
 Normalize	util/Util.h	/^	static tVector Normalize(const tVector &v);$/;"	p	class:Util
-NormalizeParticleGroups	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^void UnknownChannelOrderSMCAlgorithm::NormalizeParticleGroups()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
 NormalizeParticleGroups	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	void NormalizeParticleGroups();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
 NormalizeWeights	smc/ParticleFilter.h	/^    void NormalizeWeights()$/;"	f	class:ParticleFilter
 NormalizeWeights	smc/ParticleFilter.h	/^    void NormalizeWeights(std::vector<int> indexes)$/;"	f	class:ParticleFilter
 Nparticles	smc/ParticleFilter.h	/^	int Nparticles() { return _nParticles;}$/;"	f	class:ParticleFilter
+NparticlesOfChannelOrderIndex	smc/ParticleFilterWithChannelOrder.h	/^    int NparticlesOfChannelOrderIndex(int iChannelOrder) { return _nParticlesPerChannelOrder[iChannelOrder];}$/;"	f	class:ParticleFilterWithChannelOrder
 Nr	transmision/MIMOChannel.h	/^	int Nr() const { return _nRx;};$/;"	f	class:MIMOChannel
 Nr	transmision/Noise.h	/^	int Nr() { return _nRx;}$/;"	f	class:Noise
 Nstreams	transmision/Bits.h	/^	int Nstreams() const { return nStreams;}$/;"	f	class:Bits
@@ -276,6 +292,7 @@ PACKAGE_NAME	optimized/config.h	/^#define PACKAGE_NAME /;"	d
 PACKAGE_STRING	optimized/config.h	/^#define PACKAGE_STRING /;"	d
 PACKAGE_TARNAME	optimized/config.h	/^#define PACKAGE_TARNAME /;"	d
 PACKAGE_VERSION	optimized/config.h	/^#define PACKAGE_VERSION /;"	d
+PARTICLEFILTERWITHCHANNELORDER_H	smc/ParticleFilterWithChannelOrder.h	/^#define PARTICLEFILTERWITHCHANNELORDER_H$/;"	d
 PARTICLEFILTER_H	smc/ParticleFilter.h	/^#define PARTICLEFILTER_H$/;"	d
 PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDER_H	smc/ParticleWithChannelEstimationAndChannelOrder.h	/^#define PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDER_H$/;"	d
 PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H	smc/ParticleWithChannelEstimationAndLinearDetection.h	/^#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H$/;"	d
@@ -287,10 +304,15 @@ Particle	smc/Particle.h	/^class Particle{$/;"	c
 ParticleFilter	smc/ParticleFilter.cpp	/^ParticleFilter::ParticleFilter(int nParticles):_nParticles(nParticles),_particles(new ParticleWithChannelEstimation*[nParticles])$/;"	f	class:ParticleFilter
 ParticleFilter	smc/ParticleFilter.h	/^    ParticleFilter(int nParticles);$/;"	p	class:ParticleFilter
 ParticleFilter	smc/ParticleFilter.h	/^class ParticleFilter{$/;"	c
-ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.cpp	/^ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle)$/;"	f	class:ParticleWithChannelEstimation
+ParticleFilterWithChannelOrder	smc/ParticleFilterWithChannelOrder.cpp	/^ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders)$/;"	f	class:ParticleFilterWithChannelOrder
+ParticleFilterWithChannelOrder	smc/ParticleFilterWithChannelOrder.h	/^    ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders);$/;"	p	class:ParticleFilterWithChannelOrder
+ParticleFilterWithChannelOrder	smc/ParticleFilterWithChannelOrder.h	/^class ParticleFilterWithChannelOrder : public ParticleFilter$/;"	c
+ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.cpp	/^ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle),_channelMatrixEstimators(particle._channelMatrixEstimators.size())$/;"	f	class:ParticleWithChannelEstimation
 ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.cpp	/^ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants$/;"	f	class:ParticleWithChannelEstimation
+ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.cpp	/^ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,vector <ChannelMatrixEstimator *> channelMatrixEstimators):Particle(weight, symbolVectorLength, nTimeInstants),_channelMatrixEstimators(channelMatrixEstimators)$/;"	f	class:ParticleWithChannelEstimation
 ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.h	/^	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);$/;"	p	class:ParticleWithChannelEstimation
 ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.h	/^    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);$/;"	p	class:ParticleWithChannelEstimation
+ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.h	/^    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,std::vector <ChannelMatrixEstimator *> channelMatrixEstimators);$/;"	p	class:ParticleWithChannelEstimation
 ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.h	/^class ParticleWithChannelEstimation : public Particle$/;"	c
 ParticleWithChannelEstimationAndChannelOrder	smc/ParticleWithChannelEstimationAndChannelOrder.cpp	/^ ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle):ParticleWithChannelEstimation(particle),_m(particle._m)$/;"	f	class:ParticleWithChannelEstimationAndChannelOrder
 ParticleWithChannelEstimationAndChannelOrder	smc/ParticleWithChannelEstimationAndChannelOrder.cpp	/^ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),_m(m)$/;"	f	class:ParticleWithChannelEstimationAndChannelOrder
@@ -345,15 +367,13 @@ Random	randomutil/Random.h	/^		Random (uint32_t seed) : _seed(seed) { };$/;"	f	c
 Random	randomutil/Random.h	/^class Random$/;"	c
 Range	transmision/MIMOChannel.cpp	/^vector<tMatrix> MIMOChannel::Range(int a,int b)$/;"	f	class:MIMOChannel
 Range	transmision/MIMOChannel.h	/^    vector<tMatrix> Range(int a,int b);$/;"	p	class:MIMOChannel
-Resample	smc/ResamplingAlgorithm.h	/^    virtual void Resample(ParticleFilter &particleFilter) = 0;$/;"	p	class:ResamplingAlgorithm
-Resample	smc/StdResamplingAlgorithm.cpp	/^void StdResamplingAlgorithm::Resample(ParticleFilter &particleFilter)$/;"	f	class:StdResamplingAlgorithm
-Resample	smc/StdResamplingAlgorithm.h	/^	void Resample(ParticleFilter &particleFilter);$/;"	p	class:StdResamplingAlgorithm
-Resampling	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^void UnknownChannelOrderSMCAlgorithm::Resampling()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
-Resampling	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	virtual void Resampling();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
+Resample	smc/ByChannelOrderResamplingAlgorithm.cpp	/^void ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)$/;"	f	class:ByChannelOrderResamplingAlgorithm
+Resample	smc/ByChannelOrderResamplingAlgorithm.h	/^    virtual void Resample(ParticleFilter *particleFilter);$/;"	p	class:ByChannelOrderResamplingAlgorithm
+Resample	smc/ResamplingAlgorithm.h	/^    virtual void Resample(ParticleFilter *particleFilter) = 0;$/;"	p	class:ResamplingAlgorithm
+Resample	smc/StdResamplingAlgorithm.cpp	/^void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)$/;"	f	class:StdResamplingAlgorithm
+Resample	smc/StdResamplingAlgorithm.h	/^	void Resample(ParticleFilter *particleFilter);$/;"	p	class:StdResamplingAlgorithm
 ResamplingAlgorithm	smc/ResamplingAlgorithm.h	/^    ResamplingAlgorithm(ResamplingCriterion resamplingCriterion): _resamplingCriterion(resamplingCriterion) {}$/;"	f	class:ResamplingAlgorithm
 ResamplingAlgorithm	smc/ResamplingAlgorithm.h	/^class ResamplingAlgorithm{$/;"	c
-ResamplingByParticleGroups	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^void UnknownChannelOrderSMCAlgorithm::ResamplingByParticleGroups()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
-ResamplingByParticleGroups	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	virtual void ResamplingByParticleGroups();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
 ResamplingCriterion	smc/ResamplingCriterion.cpp	/^ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRatio(resamplingRatio)$/;"	f	class:ResamplingCriterion
 ResamplingCriterion	smc/ResamplingCriterion.h	/^    ResamplingCriterion(double resamplingRatio);$/;"	p	class:ResamplingCriterion
 ResamplingCriterion	smc/ResamplingCriterion.h	/^class ResamplingCriterion{$/;"	c
@@ -395,8 +415,10 @@ SMCEXCEPTIONS_H	smc/smcExceptions.h	/^#define SMCEXCEPTIONS_H$/;"	d
 STATUTIL_H	statistics/StatUtil.h	/^#define STATUTIL_H$/;"	d
 STDC_HEADERS	optimized/config.h	/^#define STDC_HEADERS /;"	d
 STDRESAMPLINGALGORITHM_H	smc/StdResamplingAlgorithm.h	/^#define STDRESAMPLINGALGORITHM_H$/;"	d
-SetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[n] = matrix;}$/;"	f	class:ParticleWithChannelEstimation
-SetParticle	smc/ParticleFilter.h	/^	void SetParticle(ParticleWithChannelEstimation *particle,int n)$/;"	f	class:ParticleFilter
+SetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[0][n] = matrix;}$/;"	f	class:ParticleWithChannelEstimation
+SetChannelMatrix	smc/ParticleWithChannelEstimation.h	/^    void SetChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix) { _estimatedChannelMatrices[iChannelOrder][n] = matrix;}$/;"	f	class:ParticleWithChannelEstimation
+SetParticle	smc/ParticleFilter.h	/^	virtual void SetParticle(ParticleWithChannelEstimation *particle,int n)$/;"	f	class:ParticleFilter
+SetParticle	smc/ParticleFilterWithChannelOrder.h	/^    void SetParticle(ParticleWithChannelEstimation *particle,int n)$/;"	f	class:ParticleFilterWithChannelOrder
 SetSNR	transmision/ChannelDependentNoise.cpp	/^void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)$/;"	f	class:ChannelDependentNoise
 SetSNR	transmision/ChannelDependentNoise.h	/^	void SetSNR(int SNR,double alphabetVariance);$/;"	p	class:ChannelDependentNoise
 SetSymbolVector	smc/Particle.h	/^	void SetSymbolVector(int n,const std::vector<tSymbol> &v)$/;"	f	class:Particle
@@ -441,11 +463,11 @@ UTIL_H	util/Util.h	/^#define UTIL_H$/;"	d
 UnknownChannelAlgorithm	algorithms/UnknownChannelAlgorithm.cpp	/^UnknownChannelAlgorithm::UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int K) : Algorithm(name,alphabet,L,N,K)$/;"	f	class:UnknownChannelAlgorithm
 UnknownChannelAlgorithm	algorithms/UnknownChannelAlgorithm.h	/^    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int K);$/;"	p	class:UnknownChannelAlgorithm
 UnknownChannelAlgorithm	algorithms/UnknownChannelAlgorithm.h	/^class UnknownChannelAlgorithm : public Algorithm$/;"	c
-UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.cpp	/^UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders(new int[channelEstimators.size()]),_maxOrder(-1),_firstObservationIndex(firstObservationIndex),_nCandidateOrders(channelEstimators.size())$/;"	f	class:UnknownChannelOrderAlgorithm
-UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.h	/^    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int firstObservationIndex);$/;"	p	class:UnknownChannelOrderAlgorithm
+UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.cpp	/^UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation)$/;"	f	class:UnknownChannelOrderAlgorithm
+UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.h	/^    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);$/;"	p	class:UnknownChannelOrderAlgorithm
 UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.h	/^class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm$/;"	c
-UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^UnknownChannelOrderSMCAlgorithm::UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, firstObservationIndex),$/;"	f	class:UnknownChannelOrderSMCAlgorithm
-UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^    UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int firstObservationIndex,int smoothingLag,int nParticles,ResamplingCriterion resamplingCriterion,ResamplingAlgorithm *resamplingAlgorithm);$/;"	p	class:UnknownChannelOrderSMCAlgorithm
+UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^UnknownChannelOrderSMCAlgorithm::UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation),$/;"	f	class:UnknownChannelOrderSMCAlgorithm
+UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^    UnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);$/;"	p	class:UnknownChannelOrderSMCAlgorithm
 UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^class UnknownChannelOrderSMCAlgorithm : public UnknownChannelOrderAlgorithm$/;"	c
 Util	util/Util.h	/^class Util{$/;"	c
 VERSION	optimized/config.h	/^#define VERSION /;"	d
@@ -492,17 +514,19 @@ _auxMatrix	filters/KalmanFilter.h	/^	tMatrix _predictiveCovarianceFtrans,_auxMat
 _auxVector	filters/KalmanFilter.h	/^	tVector _auxVector,_KalmanGainByNotPredicted;$/;"	m	class:KalmanFilter
 _bitsSequences	transmision/Alphabet.h	/^		std::vector<std::vector<tBit> > _bitsSequences;$/;"	m	class:Alphabet
 _buffer	statistics/ARprocess.h	/^	tMatrix **_buffer;$/;"	m	class:ARprocess
-_candidateOrders	algorithms/UnknownChannelOrderAlgorithm.h	/^	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
+_candidateOrders	algorithms/UnknownChannelOrderAlgorithm.h	/^    vector<int> _candidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
+_candidateOrders	smc/ParticleFilterWithChannelOrder.h	/^    vector<int> _candidateOrders;$/;"	m	class:ParticleFilterWithChannelOrder
 _channel	algorithms/KnownChannelAlgorithm.h	/^	const MIMOChannel &_channel;$/;"	m	class:KnownChannelAlgorithm
 _channel	transmision/ChannelDependentNoise.h	/^	MIMOChannel *_channel;$/;"	m	class:ChannelDependentNoise
 _channelEstimator	algorithms/KnownChannelOrderAlgorithm.h	/^	ChannelMatrixEstimator *_channelEstimator;$/;"	m	class:KnownChannelOrderAlgorithm
 _channelEstimators	algorithms/UnknownChannelOrderAlgorithm.h	/^	vector<ChannelMatrixEstimator *> _channelEstimators;$/;"	m	class:UnknownChannelOrderAlgorithm
 _channelMatrices	transmision/ARchannel.h	/^	tMatrix* _channelMatrices;$/;"	m	class:ARchannel
 _channelMatrixCols	detection/LinearDetector.h	/^	int _channelMatrixRows, _channelMatrixCols;$/;"	m	class:LinearDetector
-_channelMatrixEstimator	smc/ParticleWithChannelEstimation.h	/^	ChannelMatrixEstimator *_channelMatrixEstimator;$/;"	m	class:ParticleWithChannelEstimation
+_channelMatrixEstimators	smc/ParticleWithChannelEstimation.h	/^	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;$/;"	m	class:ParticleWithChannelEstimation
 _channelMatrixRows	detection/LinearDetector.h	/^	int _channelMatrixRows, _channelMatrixCols;$/;"	m	class:LinearDetector
 _channelOrder2index	algorithms/UnknownChannelOrderAlgorithm.h	/^	int *_channelOrder2index;$/;"	m	class:UnknownChannelOrderAlgorithm
-_channelOrderWeightsSum	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	double *_channelOrderWeightsSum;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
+_channelOrder2index	smc/ParticleFilterWithChannelOrder.h	/^    int _maxOrder,*_channelOrder2index,*_nParticlesPerChannelOrder;$/;"	m	class:ParticleFilterWithChannelOrder
+_channelOrderWeightsSum	smc/ParticleFilterWithChannelOrder.h	/^    double *_channelOrderWeightsSum;$/;"	m	class:ParticleFilterWithChannelOrder
 _coefficients	statistics/ARprocess.h	/^	vector<double> _coefficients;$/;"	m	class:ARprocess
 _columns	statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
 _d	algorithms/SMCAlgorithm.h	/^    int _d,_startDetectionTime;$/;"	m	class:SMCAlgorithm
@@ -512,16 +536,16 @@ _deltaMatrix	estimation/LMSEstimator.h	/^	tMatrix _deltaMatrix;$/;"	m	class:LMSE
 _detectedSymbolVectors	algorithms/ViterbiAlgorithm.h	/^    tMatrix _preamble,*_detectedSymbolVectors;$/;"	m	class:ViterbiAlgorithm
 _error	estimation/LMSEstimator.h	/^	tVector _predictedObservations,_error;$/;"	m	class:LMSEstimator
 _estimatedChannelMatrices	algorithms/KnownSymbolsKalmanBasedChannelEstimator.h	/^    vector<tMatrix> _estimatedChannelMatrices;$/;"	m	class:KnownSymbolsKalmanBasedChannelEstimator
-_estimatedChannelMatrices	smc/ParticleWithChannelEstimation.h	/^	tMatrix *_estimatedChannelMatrices;$/;"	m	class:ParticleWithChannelEstimation
+_estimatedChannelMatrices	smc/ParticleWithChannelEstimation.h	/^	tMatrix **_estimatedChannelMatrices;$/;"	m	class:ParticleWithChannelEstimation
 _exitStage	algorithms/ViterbiAlgorithm.h	/^    tState *_exitStage, *_arrivalStage;$/;"	m	class:ViterbiAlgorithm
 _filter	detection/RMMSEDetector.h	/^	tMatrix _filter;$/;"	m	class:RMMSEDetector
 _filteredCovariance	filters/KalmanFilter.h	/^	tMatrix _predictiveCovariance,_filteredCovariance;$/;"	m	class:KalmanFilter
 _filteredMean	filters/KalmanFilter.h	/^	tVector _predictiveMean,_filteredMean;$/;"	m	class:KalmanFilter
-_firstObservationIndex	algorithms/UnknownChannelOrderAlgorithm.h	/^	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
 _forgettingFactor	estimation/RLSEstimator.h	/^	double _forgettingFactor,_invForgettingFactor;$/;"	m	class:RLSEstimator
 _g	detection/RMMSEDetector.h	/^	tVector _g;$/;"	m	class:RMMSEDetector
 _g	estimation/RLSEstimator.h	/^    tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;$/;"	m	class:RLSEstimator
 _gObservations	detection/RMMSEDetector.h	/^	tMatrix _identityL,_gObservations;$/;"	m	class:RMMSEDetector
+_iFirstObservation	algorithms/UnknownChannelOrderAlgorithm.h	/^	int _maxOrder,_iFirstObservation;$/;"	m	class:UnknownChannelOrderAlgorithm
 _iNextMatrix	statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
 _identityL	detection/RMMSEDetector.h	/^	tMatrix _identityL,_gObservations;$/;"	m	class:RMMSEDetector
 _identityL	estimation/KalmanEstimator.h	/^	tMatrix _identityL;$/;"	m	class:KalmanEstimator
@@ -545,17 +569,18 @@ _linearDetector	smc/ParticleWithChannelEstimationAndLinearDetection.h	/^	LinearD
 _m	algorithms/KnownChannelOrderAlgorithm.h	/^	int _m,_Nm;$/;"	m	class:KnownChannelOrderAlgorithm
 _m	smc/ParticleWithChannelEstimationAndChannelOrder.h	/^	int _m;$/;"	m	class:ParticleWithChannelEstimationAndChannelOrder
 _matrix	transmision/Noise.h	/^	tMatrix _matrix;$/;"	m	class:Noise
-_maxOrder	algorithms/UnknownChannelOrderAlgorithm.h	/^	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
+_maxOrder	algorithms/UnknownChannelOrderAlgorithm.h	/^	int _maxOrder,_iFirstObservation;$/;"	m	class:UnknownChannelOrderAlgorithm
+_maxOrder	smc/ParticleFilterWithChannelOrder.h	/^    int _maxOrder,*_channelOrder2index,*_nParticlesPerChannelOrder;$/;"	m	class:ParticleFilterWithChannelOrder
 _mean	transmision/Alphabet.h	/^		double _mean,_variance;$/;"	m	class:Alphabet
 _memory	transmision/MIMOChannel.h	/^	int _nTx, _nRx, _memory,_length,_nTxnRx,_nTxnRxMemory,_nTxMemory;$/;"	m	class:MIMOChannel
 _mu	estimation/LMSEstimator.h	/^	double _mu;$/;"	m	class:LMSEstimator
 _nBitsBySymbol	transmision/Alphabet.h	/^		int _nBitsBySymbol,_length;$/;"	m	class:Alphabet
-_nCandidateOrders	algorithms/UnknownChannelOrderAlgorithm.h	/^	int *_candidateOrders,_maxOrder,_firstObservationIndex,_nCandidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
 _nChannelCoefficients	estimation/KalmanEstimator.h	/^	int _nChannelCoefficients;$/;"	m	class:KalmanEstimator
 _nCoefficients	statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
 _nElementsToEstimate	filters/KalmanFilter.h	/^	int _nElementsToEstimate;$/;"	m	class:KalmanFilter
 _nParticles	smc/ParticleFilter.h	/^    int _nParticles;$/;"	m	class:ParticleFilter
-_nParticlesPerChannelOrder	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	vector<int> _nParticlesPerChannelOrder;	$/;"	m	class:UnknownChannelOrderSMCAlgorithm
+_nParticlesPerChannelOrder	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	vector<int> _nParticlesPerChannelOrder;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
+_nParticlesPerChannelOrder	smc/ParticleFilterWithChannelOrder.h	/^    int _maxOrder,*_channelOrder2index,*_nParticlesPerChannelOrder;$/;"	m	class:ParticleFilterWithChannelOrder
 _nPossibleInputs	algorithms/ViterbiAlgorithm.h	/^    int _nStates,_nPossibleInputs,_d;$/;"	m	class:ViterbiAlgorithm
 _nRx	transmision/MIMOChannel.h	/^	int _nTx, _nRx, _memory,_length,_nTxnRx,_nTxnRxMemory,_nTxMemory;$/;"	m	class:MIMOChannel
 _nRx	transmision/Noise.h	/^	int _nRx,_length;$/;"	m	class:Noise
@@ -576,7 +601,7 @@ _observationsSymbolsVector	estimation/RLSEstimator.h	/^    tMatrix _invForgettin
 _pTilde	estimation/RLSEstimator.h	/^	tMatrix _invRtilde,_pTilde;$/;"	m	class:RLSEstimator
 _pTildeInvRtilde	estimation/RLSEstimator.h	/^    tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;$/;"	m	class:RLSEstimator
 _particleFilter	algorithms/SMCAlgorithm.h	/^	ParticleFilter _particleFilter;$/;"	m	class:SMCAlgorithm
-_particleFilter	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	ParticleFilter _particleFilter;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
+_particleFilter	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	ParticleFilterWithChannelOrder _particleFilter;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
 _particles	smc/ParticleFilter.h	/^    ParticleWithChannelEstimation **_particles;$/;"	m	class:ParticleFilter
 _piv	estimation/KalmanEstimator.h	/^	tLongIntVector _piv;$/;"	m	class:KalmanEstimator
 _piv	filters/KalmanFilter.h	/^	tLongIntVector _piv;$/;"	m	class:KalmanFilter
@@ -592,7 +617,7 @@ _rAllSymbolRows	smc/Particle.h	/^	tRange _rAllSymbolRows;$/;"	m	class:Particle
 _randomGenerator	statistics/ARprocess.h	/^	Random _randomGenerator;$/;"	m	class:ARprocess
 _resamplingAlgorithm	algorithms/SMCAlgorithm.h	/^	StdResamplingAlgorithm _resamplingAlgorithm;$/;"	m	class:SMCAlgorithm
 _resamplingAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	ResamplingAlgorithm *_resamplingAlgorithm;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
-_resamplingCriterion	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^	ResamplingCriterion _resamplingCriterion;$/;"	m	class:UnknownChannelOrderSMCAlgorithm
+_resamplingAlgorithm2	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^    ResamplingAlgorithm *_resamplingAlgorithm2;$/;"	m	class:ML_UnknownChannelOrderSMCAlgorithm
 _resamplingCriterion	smc/ResamplingAlgorithm.h	/^    ResamplingCriterion _resamplingCriterion;$/;"	m	class:ResamplingAlgorithm
 _resamplingRatio	smc/ResamplingCriterion.h	/^	double _resamplingRatio;$/;"	m	class:ResamplingCriterion
 _rows	statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
@@ -645,8 +670,6 @@ operator -	transmision/Bits.cpp	/^int Bits::operator-(const Bits &bits) const$/;
 operator -	transmision/Bits.h	/^	int operator-(const Bits &bits) const;$/;"	p	class:Bits
 operator =	smc/Particle.cpp	/^void Particle::operator=(const Particle &particle)$/;"	f	class:Particle
 operator =	smc/Particle.h	/^	void operator=(const Particle &particle);$/;"	p	class:Particle
-operator =	smc/ParticleWithChannelEstimation.cpp	/^void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimation &particle)$/;"	f	class:ParticleWithChannelEstimation
-operator =	smc/ParticleWithChannelEstimation.h	/^	void operator=(const ParticleWithChannelEstimation &particle);$/;"	p	class:ParticleWithChannelEstimation
 operator =	transmision/Bits.cpp	/^Bits& Bits::operator=(const Bits& bits)$/;"	f	class:Bits
 operator =	transmision/Bits.h	/^	Bits& operator=(const Bits& bits);$/;"	p	class:Bits
 operator ==	transmision/Bits.cpp	/^bool Bits::operator==(const Bits &bits) const$/;"	f	class:Bits
@@ -700,13 +723,15 @@ tVector	src/types.h	/^typedef LaVectorDouble tVector;$/;"	t
 ~LinearDetector	detection/LinearDetector.h	/^	virtual ~LinearDetector() {};$/;"	f	class:LinearDetector
 ~LinearFilterBasedSMCAlgorithm	algorithms/LinearFilterBasedSMCAlgorithm.cpp	/^LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()$/;"	f	class:LinearFilterBasedSMCAlgorithm
 ~LinearFilterBasedSMCAlgorithm	algorithms/LinearFilterBasedSMCAlgorithm.h	/^    ~LinearFilterBasedSMCAlgorithm();$/;"	p	class:LinearFilterBasedSMCAlgorithm
-~ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.cpp	/^ML_UnknownChannelOrderSMCAlgorithm::~ML_UnknownChannelOrderSMCAlgorithm()$/;"	f	class:ML_UnknownChannelOrderSMCAlgorithm
-~ML_UnknownChannelOrderSMCAlgorithm	algorithms/ML_UnknownChannelOrderSMCAlgorithm.h	/^    ~ML_UnknownChannelOrderSMCAlgorithm();$/;"	p	class:ML_UnknownChannelOrderSMCAlgorithm
+~MultipleChannelEstimatorsPerParticleAlgorithm	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.cpp	/^MultipleChannelEstimatorsPerParticleAlgorithm::~MultipleChannelEstimatorsPerParticleAlgorithm()$/;"	f	class:MultipleChannelEstimatorsPerParticleAlgorithm
+~MultipleChannelEstimatorsPerParticleAlgorithm	algorithms/MultipleChannelEstimatorsPerParticleAlgorithm.h	/^    ~MultipleChannelEstimatorsPerParticleAlgorithm();$/;"	p	class:MultipleChannelEstimatorsPerParticleAlgorithm
 ~Noise	transmision/Noise.h	/^	virtual ~Noise() {};$/;"	f	class:Noise
 ~Particle	smc/Particle.cpp	/^Particle::~Particle()$/;"	f	class:Particle
 ~Particle	smc/Particle.h	/^    virtual ~Particle();$/;"	p	class:Particle
 ~ParticleFilter	smc/ParticleFilter.cpp	/^ParticleFilter::~ParticleFilter()$/;"	f	class:ParticleFilter
 ~ParticleFilter	smc/ParticleFilter.h	/^    ~ParticleFilter();$/;"	p	class:ParticleFilter
+~ParticleFilterWithChannelOrder	smc/ParticleFilterWithChannelOrder.cpp	/^ParticleFilterWithChannelOrder::~ParticleFilterWithChannelOrder()$/;"	f	class:ParticleFilterWithChannelOrder
+~ParticleFilterWithChannelOrder	smc/ParticleFilterWithChannelOrder.h	/^    ~ParticleFilterWithChannelOrder();$/;"	p	class:ParticleFilterWithChannelOrder
 ~ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.cpp	/^ParticleWithChannelEstimation::~ParticleWithChannelEstimation()$/;"	f	class:ParticleWithChannelEstimation
 ~ParticleWithChannelEstimation	smc/ParticleWithChannelEstimation.h	/^    ~ParticleWithChannelEstimation();$/;"	p	class:ParticleWithChannelEstimation
 ~ParticleWithChannelEstimationAndChannelOrder	smc/ParticleWithChannelEstimationAndChannelOrder.cpp	/^ParticleWithChannelEstimationAndChannelOrder::~ParticleWithChannelEstimationAndChannelOrder()$/;"	f	class:ParticleWithChannelEstimationAndChannelOrder
@@ -716,7 +741,5 @@ tVector	src/types.h	/^typedef LaVectorDouble tVector;$/;"	t
 ~ParticleWithChannelEstimationAndLinearDetector	smc/ParticleWithChannelEstimationAndLinearDetector.cpp	/^ParticleWithChannelEstimationAndLinearDetector::~ParticleWithChannelEstimationAndLinearDetector()$/;"	f	class:ParticleWithChannelEstimationAndLinearDetector
 ~UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.cpp	/^UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()$/;"	f	class:UnknownChannelOrderAlgorithm
 ~UnknownChannelOrderAlgorithm	algorithms/UnknownChannelOrderAlgorithm.h	/^    ~UnknownChannelOrderAlgorithm();$/;"	p	class:UnknownChannelOrderAlgorithm
-~UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.cpp	/^UnknownChannelOrderSMCAlgorithm::~UnknownChannelOrderSMCAlgorithm()$/;"	f	class:UnknownChannelOrderSMCAlgorithm
-~UnknownChannelOrderSMCAlgorithm	algorithms/UnknownChannelOrderSMCAlgorithm.h	/^    ~UnknownChannelOrderSMCAlgorithm();$/;"	p	class:UnknownChannelOrderSMCAlgorithm
 ~ViterbiAlgorithm	algorithms/ViterbiAlgorithm.cpp	/^ViterbiAlgorithm::~ViterbiAlgorithm()$/;"	f	class:ViterbiAlgorithm
 ~ViterbiAlgorithm	algorithms/ViterbiAlgorithm.h	/^    ~ViterbiAlgorithm();$/;"	p	class:ViterbiAlgorithm

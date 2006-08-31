@@ -1,22 +1,19 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="5" >
-  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="196" Type="Source" />
+ <DocsAndViews NumberOfDocuments="4" >
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.h" >
+   <View0 line="34" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.h" >
-   <View0 line="28" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
+   <View0 line="179" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.cpp" >
-   <View0 line="29" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 line="198" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
-   <View0 line="0" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ML_UnknownChannelOrderSMCAlgorithm.cpp" >
+   <View0 line="141" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.h" >
-   <View0 line="0" Type="Source" />
-  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -36,7 +33,7 @@
      <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
-     <mark line="122" />
+     <mark line="180" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
