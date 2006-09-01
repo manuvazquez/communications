@@ -21,7 +21,7 @@
 
 ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
 {
-    if(preamble.cols() != (_channel.Memory()-1))
+    if(preamble.cols() < (_channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
 
     _nStates = (int)pow((double)alphabet.Length(),(double)channel.Nt()*(channel.Memory()-1));
@@ -68,23 +68,24 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
-//     _detectedSymbolVectors = new tMatrix(_channel.Nt(),observations.cols());
     _detectedSymbolVectors = new tMatrix(_channel.Nt(),_K+_d);
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
-    vector<tSymbol> preambleVector(preambleLength);
-    for(int i=0;i<preambleLength;i++)
-        preambleVector[i] = _preamble(i % _preamble.rows(),i / _preamble.rows());
+    vector<tSymbol> preambleVector(_N*(_channel.Memory()-1));
+
+    // the number of columns of the preamble might be greater than m-1
+    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(_channel.Memory()-1))*_N;
+
+    for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
+        preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet"
     int initialState = _alphabet.SymbolsArrayToInt(preambleVector);
 
     _exitStage[initialState].sequence = new tMatrix(_preamble);
 
-//  DeployState(initialState,observations.col(_channel.Memory()-1),_channel[_channel.Memory()-1]);
-
-    for( iProcessedObservation=_channel.Memory()-1;iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
+    for( iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
         for(iState=0;iState<_nStates;iState++)
         {
@@ -108,9 +109,8 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     iBestState = BestState();
 
     // the first detected vector is copied into "_detectedSymbolVectors"
-    _detectedSymbolVectors->col(_channel.Memory()-1).inject((_exitStage[iBestState].sequence)->col(_channel.Memory()-1));
+    _detectedSymbolVectors->col(_preamble.cols()).inject((_exitStage[iBestState].sequence)->col(_preamble.cols()));
 
-//     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<observations.cols();iProcessedObservation++)
     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
         for(iState=0;iState<_nStates;iState++)
@@ -132,17 +132,13 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         }
 
         iBestState = BestState();
-        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()));
-
-//         cout << "Detectado el vector" << endl << (_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_channel.Memory()) << endl;
-
+        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1));
     }
 
-//     for(iProcessedObservation=observations.cols()-firstSymbolVectorDetectedAt+_channel.Memory();iProcessedObservation<observations.cols();iProcessedObservation++)
     // last detected symbol vectors are processed
-    for(iProcessedObservation=_K+_d-firstSymbolVectorDetectedAt+_channel.Memory();iProcessedObservation<_K+_d;iProcessedObservation++)
+    for(iProcessedObservation=_K+_d-firstSymbolVectorDetectedAt+_preamble.cols()+1;iProcessedObservation<_K+_d;iProcessedObservation++)
         _detectedSymbolVectors->col(iProcessedObservation).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation));
-        
+
 }
 
 void ViterbiAlgorithm::BuildStateTransitionMatrix()
@@ -159,14 +155,6 @@ void ViterbiAlgorithm::BuildStateTransitionMatrix()
             // computes de next state give the current one and the input (both in decimal)
             _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
     }
-
-//     for(int iState=0;iState<_nStates;iState++)
-//     {
-//         for(iInput=0;iInput<_nPossibleInputs;iInput++)
-//             cout << _stateTransitionMatrix[iState][iInput] << " ";
-//         cout << endl;
-//     }
-    
 }
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
@@ -205,8 +193,6 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         newCost = _exitStage[iState].cost + Blas_Norm2(error);
 
         arrivalState = _stateTransitionMatrix[iState][iInput];
-
-//      cout << "Arrival state = " << arrivalState << " symbolsVector" << endl << symbolVectors << endl;
 
         // if there is something in the arrival state
         if(_arrivalStage[arrivalState].sequence!=NULL)
@@ -248,13 +234,13 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
             _arrivalStage[arrivalState].cost = newCost;
         }
     }
-    
+
 }
 
 tMatrix ViterbiAlgorithm::GetDetectedSymbolVectors()
 {
 //     return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_detectedSymbolVectors->cols()-_d-1));
-    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_channel.Memory()-1,_K-1));
+    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_preamble.cols(),_K-1));
 }
 
 void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
@@ -278,60 +264,3 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
         cout << "------------------" << endl;
     }
 }
-
-// double ViterbiAlgorithm::SER(tMatrix symbols)
-// {
-//     int windowSize = symbols.cols();
-//     int nDetectedVectors = _detectedSymbolVectors->cols()-_d;
-// 
-//     if(windowSize>nDetectedVectors)
-//         throw RuntimeException("ViterbiAlgorithm::SER: more symbol vectors passed than detected.");
-// 
-//     int nErrors = 0;
-//     int windowStart = nDetectedVectors - windowSize;
-//     int j;
-// 
-//     for(int i=windowStart;i<nDetectedVectors;i++)
-//     {
-//         j=0;
-//         while(j<_channel.Nt())
-//         {
-//             if((*_detectedSymbolVectors)(j,i)!=symbols(j,i-windowStart))
-//                 nErrors++;
-//             j++;
-//         }
-//     }
-//     return ((double)nErrors)/(double)(windowSize*_channel.Nt());
-// }
-
-// double ViterbiAlgorithm::SER(tMatrix symbols)
-// {
-//     // best state is chosen
-//     int iBestState = BestState();
-// 
-// //  cout << "La mejor secuencia" << endl << *(_exitStage[iBestState].sequence) << endl;
-// //  cout << "Los simbolos pasados" << endl << symbols << endl;
-// 
-//     int windowSize = symbols.cols();
-//     int nDetectedVectors = (_exitStage[iBestState].sequence)->cols()-_d;
-// 
-//     if(windowSize>nDetectedVectors)
-//         throw RuntimeException("ViterbiAlgorithm::SER: more symbol vectors passed than detected.");
-// 
-//     int nErrors = 0;
-//     int windowStart = nDetectedVectors - windowSize;
-//     int j;
-// 
-//     for(int i=windowStart;i<nDetectedVectors;i++)
-//     {
-//         j=0;
-//         while(j<_channel.Nt())
-//         {
-// //          if((*(_exitStage[iBestState].sequence))(j,i)!=symbols(j,i-windowStart))
-//             if((*_detectedSymbolVectors)(j,i)!=symbols(j,i-windowStart))
-//                 nErrors++;
-//             j++;
-//         }
-//     }
-//     return ((double)nErrors)/(double)(windowSize*_channel.Nt());
-// }

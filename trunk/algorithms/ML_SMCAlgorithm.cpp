@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ML_SMCAlgorithm.h"
 
-ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
+ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
 {
 }
 
@@ -41,7 +41,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 	int nObservations = observations.cols();
 	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
 	int nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*_d));
-	
+
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
@@ -62,7 +62,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 			{
 				// the corresponding testing vector is generated from the index
 				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
-				
+
 				// current tested vector is copied in the m-th position
 				for(k=0;k<_N;k++)
 					smoothingSymbolVectors(k,_m-1) = testedVector[k];
@@ -121,7 +121,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
-						
+
 			// channel matrix is estimated by means of the particle channel estimator
 			processedParticle->SetChannelMatrix(iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 

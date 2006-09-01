@@ -19,12 +19,9 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanBasedChannelEstimator.h"
 
-KnownSymbolsKalmanBasedChannelEstimator::KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimator, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsKalmanBasedChannelEstimator::KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m,KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
 {
-//     cout << "Constructor: " << endl << _symbolVectors << endl; 
-//     cout << "Es submatrixview " << _symbolVectors.is_submatrixview() << endl;
 }
-
 
 KnownSymbolsKalmanBasedChannelEstimator::~KnownSymbolsKalmanBasedChannelEstimator()
 {
@@ -32,17 +29,11 @@ KnownSymbolsKalmanBasedChannelEstimator::~KnownSymbolsKalmanBasedChannelEstimato
 
 void KnownSymbolsKalmanBasedChannelEstimator::Run(tMatrix observations,vector<double> noiseVariances)
 {
-//         cout << "En Run: " << endl << _symbolVectors << endl;
-//     cout << "Es submatrixview " << _symbolVectors.is_submatrixview() << endl;
-
-//     int nSymbolVectors = _symbolVectors.cols();
-    _estimatedChannelMatrices.reserve(_K-_m+1);
-//     _estimatedChannelMatrices.reserve(nSymbolVectors-_m+1);
+    _estimatedChannelMatrices.reserve(_K-_preamble.cols());
 
     tRange rAllSymbolRows(0,_N-1);
 
-//     for(int iSymbolVector=_m-1;iSymbolVector<nSymbolVectors;iSymbolVector++)
-    for(int iSymbolVector=_m-1;iSymbolVector<_K;iSymbolVector++)
+    for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
     {
         _estimatedChannelMatrices.push_back( _channelEstimator->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_m+1,iSymbolVector)),noiseVariances[iSymbolVector]));
     }

@@ -19,12 +19,12 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimator, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
 _d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles)
 {
     // at first, we assume that all observations from the preamble need to be processed
-    _startDetectionTime = _m - 1;
+    _startDetectionTime = _preamble.cols();
 }
 
 void SMCAlgorithm::InitializeParticles()
@@ -68,9 +68,9 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter.GetParticle(iParticle);
-	
+
         //the channel estimation given by the training sequence is copied into each particle...
-        for(j=_m-1;j<trainingSequenceChannelMatrices.size();j++)
+        for(j=_preamble.cols();j<trainingSequenceChannelMatrices.size();j++)
         {
             processedParticle->SetChannelMatrix(j,trainingSequenceChannelMatrices[j]);
         }
@@ -80,7 +80,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     }
 
     // the Process method must start in
-    _startDetectionTime = trainingSequenceChannelMatrices.size();
+    _startDetectionTime = _preamble.cols() + trainingSequence.cols();
+//     _startDetectionTime = trainingSequenceChannelMatrices.size();
 
     this->Process(observations,noiseVariances);
 }
@@ -91,19 +92,19 @@ tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
     int iBestParticle;
     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
 
-    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_m-1,_K-1));
+    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }
 
 vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
-    channelMatrices.reserve(_K-_m+1);
+    channelMatrices.reserve(_K-_preamble.cols());
 
     // best particle is chosen
     int iBestParticle;
     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
-    
-    for(int i=_m-1;i<_K;i++)
+
+    for(int i=_preamble.cols();i<_K;i++)
         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(i));
 
     return channelMatrices;
@@ -112,7 +113,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 // void SMCAlgorithm::Resampling()
 // {
 // 	tVector weigths = _particleFilter.GetWeightsVector();
-// 
+//
 //     if(_resamplingCriterion.ResamplingNeeded(weigths))
 //     {
 //         vector<int> indexes = StatUtil::Discrete_rnd(_particleFilter.Nparticles(),weigths);

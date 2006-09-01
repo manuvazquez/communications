@@ -19,9 +19,10 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,  ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(channelEstimator->Clone()),_preamble(preamble),_Nm(channelEstimator->Cols())
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(channelEstimator->Clone()),_preamble(preamble),_Nm(channelEstimator->Cols()),_m(m)
 {
-		_m = _preamble.cols() + 1;
+    if(_m!=(_Nm/_N))
+        throw RuntimeException("KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithmInsufficient: the channel order parameter is not coherent with the channel estimator.");
 }
 
 KnownChannelOrderAlgorithm::~ KnownChannelOrderAlgorithm()
@@ -34,16 +35,16 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatri
 // 	int lengthSequenceToProcess = trainingSequence.cols() + _preamble.cols();
 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
 	int lengthToProcessSequence = toProcessSequence.cols();
-	
+
 	if(observations.cols()<lengthToProcessSequence)
 		throw RuntimeException("Insufficient number of observations.");
-	
+
 	vector<tMatrix> estimatedMatrices(lengthToProcessSequence);
 
 	// selects all the rows from a symbols matrix
 	tRange allSymbolRows(0,_N-1);
 
-	for(int i=_m-1;i<lengthToProcessSequence;i++)
+	for(int i=_preamble.cols();i<lengthToProcessSequence;i++)
 	{
 		tRange mColumns(i-_m+1,i);
 		estimatedMatrices[i] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);

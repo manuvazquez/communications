@@ -37,15 +37,15 @@ protected:
 public:
 
     /**
-     * 
-     * @param name 
-     * @param alphabet 
-     * @param channelEstimator 
-     * @param preamble 
+     *
+     * @param name
+     * @param alphabet
+     * @param channelEstimator
+     * @param preamble
      * @param symbolVectors includes the preamble
-     * @return 
+     * @return
      */
-    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
+    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
 
     ~KnownSymbolsKalmanBasedChannelEstimator();
 
