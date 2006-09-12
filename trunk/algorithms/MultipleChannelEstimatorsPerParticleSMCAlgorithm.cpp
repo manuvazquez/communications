@@ -17,25 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "MultipleChannelEstimatorsPerParticleAlgorithm.h"
+#include "MultipleChannelEstimatorsPerParticleSMCAlgorithm.h"
 
-MultipleChannelEstimatorsPerParticleAlgorithm::MultipleChannelEstimatorsPerParticleAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)
+MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)
 //variables initialization
 ,_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles,_candidateOrders),_nParticlesPerChannelOrder(_candidateOrders.size())
 {
     // at first, we assume that all symbol vectors from the preamble need to be processed
-    _startDetectionSymbolVector = _preamble.cols();
-
-    // and all the observations from _iFirstObservation
-    _startDetectionObservation = _iFirstObservation;
+    _startDetectionTime = _preamble.cols();
 }
 
 
-MultipleChannelEstimatorsPerParticleAlgorithm::~MultipleChannelEstimatorsPerParticleAlgorithm()
+MultipleChannelEstimatorsPerParticleSMCAlgorithm::~MultipleChannelEstimatorsPerParticleSMCAlgorithm()
 {
 }
 
-void MultipleChannelEstimatorsPerParticleAlgorithm::InitializeParticles()
+void MultipleChannelEstimatorsPerParticleSMCAlgorithm::InitializeParticles()
 {
     int iParticlePresentOrder,nParticlesPresentOrder,iParticle=0;
     int iChannelMatrixEstimator;
@@ -53,27 +50,27 @@ void MultipleChannelEstimatorsPerParticleAlgorithm::InitializeParticles()
                 thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
 
             // ... and passed within a vector to each particle
-            _particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K-_iFirstObservation+_preamble.cols(),thisParticleChannelMatrixEstimators,_candidateOrders[iChannelOrder]),iParticle);
+            _particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,_candidateOrders[iChannelOrder]),iParticle);
         }
     }
 }
 
-void MultipleChannelEstimatorsPerParticleAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
     int nObservations = observations.cols();
 
-    if(nObservations<_startDetectionObservation+_maxOrder)
-        throw RuntimeException("MultipleChannelEstimatorsPerParticleAlgorithm::Run: Not enough observations.");
+    if(nObservations<_startDetectionTime+_maxOrder)
+        throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Not enough observations.");
 
     this->InitializeParticles();
 
     this->Process(observations,noiseVariances);
 }
 
-void MultipleChannelEstimatorsPerParticleAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
-        throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
+        throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     // observations are going to be needed to find the best particle
 //     _observations = observations;
@@ -126,13 +123,12 @@ void MultipleChannelEstimatorsPerParticleAlgorithm::Run(tMatrix observations,vec
     }
 
     // the Process method must start in
-    _startDetectionObservation = _iFirstObservation + trainingSequence.cols();
-    _startDetectionSymbolVector = _preamble.cols() + trainingSequence.cols();
+    _startDetectionTime += trainingSequence.cols();
 
     this->Process(observations,noiseVariances);
 }
 
-tMatrix MultipleChannelEstimatorsPerParticleAlgorithm::GetDetectedSymbolVectors()
+tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVectors()
 {
     int iBestParticle;
     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
@@ -141,10 +137,10 @@ tMatrix MultipleChannelEstimatorsPerParticleAlgorithm::GetDetectedSymbolVectors(
 
     cout << "La particula seleccionada tiene orden " << processedParticle->GetChannelOrder() << endl;
 
-    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-_iFirstObservation+_preamble.cols()-1));
+    return ((_particleFilter.GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }
 
-vector<tMatrix> MultipleChannelEstimatorsPerParticleAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices(0);
     return channelMatrices;

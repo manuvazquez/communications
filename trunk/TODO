@@ -13,3 +13,5 @@
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
 - añadir simbolos para suavizado, no bits
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
+- que todos los algoritmos reciban un puntero al algoritmo de remuestreo o ninguno
+- eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm

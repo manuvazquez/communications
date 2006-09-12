@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H
-#define MULTIPLECHANNELESTIMATORSPERPARTICLEALGORITHM_H
+#ifndef MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
+#define MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
 
 #include <UnknownChannelOrderAlgorithm.h>
 
@@ -29,12 +29,13 @@
 #include <ParticleFilterWithChannelOrder.h>
 #include <ResamplingAlgorithm.h>
 
-class MultipleChannelEstimatorsPerParticleAlgorithm : public UnknownChannelOrderAlgorithm
+class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
     ParticleFilterWithChannelOrder _particleFilter;
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
+	int _startDetectionTime;
     tRange _allSymbolsRows;
     vector<int> _nParticlesPerChannelOrder;
 //     tMatrix _observations;
@@ -44,9 +45,9 @@ protected:
     vector<vector<int> > GetIndexesOfChannelOrders();
     int BestParticle();
 public:
-    MultipleChannelEstimatorsPerParticleAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
-    ~MultipleChannelEstimatorsPerParticleAlgorithm();
+    ~MultipleChannelEstimatorsPerParticleSMCAlgorithm();
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
