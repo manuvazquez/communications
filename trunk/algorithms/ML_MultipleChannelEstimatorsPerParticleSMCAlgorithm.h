@@ -26,7 +26,10 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#define P_CHANNEL_ORDER_PDF 0.5
+#include <vector>
 #include <KalmanEstimator.h>
+#include <StatUtil.h>
 
 class ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
@@ -37,7 +40,8 @@ public:
 
 protected:
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
-
+private:
+	int channelOrderPdf(const int& m,const double& p);
 };
 
 #endif

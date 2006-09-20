@@ -43,7 +43,7 @@ public:
      ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle);
 
 	int GetChannelOrder(){ return _m;}
-
+	void SetChannelOrder(int m) { _m = m;}
 };
 
 #endif

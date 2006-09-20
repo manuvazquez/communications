@@ -64,6 +64,14 @@ public:
 
     int NchannelOrders() {return _candidateOrders.size();}
 
+	int IndexFromChannelOrder(const int& m)
+	{
+		for(int i=0;i<_candidateOrders.size();i++)
+			if(_candidateOrders[i]==m)
+				return i;
+		throw RuntimeException("ParticleFilterWithChannelOrder::IndexFromChannelOrder: there is no channel estimator with that channel order");
+	}
+
     vector<vector<int> > GetIndexesOfChannelOrders();
     void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
     void KeepParticles(std::vector<int> resamplingIndexes);

@@ -45,6 +45,7 @@ KalmanEstimator::~KalmanEstimator()
 
 tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
 {
+// 	cout << "obser es " << observations.size() << " L es " << _L << " symbolsMatrix.rows()*symbolsMatrix.cols() " << symbolsMatrix.rows()*symbolsMatrix.cols() << " _Nm " << _Nm << endl;
 	if(observations.size()!=_L || symbolsMatrix.rows()*symbolsMatrix.cols()!=_Nm)
 		throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
 
@@ -79,6 +80,7 @@ void KalmanEstimator::FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix)
 
 double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
+// 	cout << "obser es " << observations.size() << " L es " << _L << " symbolsMatrix.rows()*symbolsMatrix.cols() " << symbolsMatrix.rows()*symbolsMatrix.cols() << " _Nm " << _Nm << endl;
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
 		throw RuntimeException("KalmanEstimator::Likelihood: observations vector length or symbols matrix length are wrong.");
 

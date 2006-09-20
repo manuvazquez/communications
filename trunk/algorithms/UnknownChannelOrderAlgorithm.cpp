@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownChannelOrderAlgorithm.h"
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(channelEstimators[0]->Cols()/_N),_minOrder(channelEstimators[0]->Cols()/_N),_iFirstObservation(iFirstObservation)
 {
     for(int i=0;i<channelEstimators.size();i++)
     {
