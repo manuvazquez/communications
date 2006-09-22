@@ -34,12 +34,17 @@
 class ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
+    ParticleFilterWithChannelOrder _particleFilter;
+
     ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
     ~ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm();
 
+	ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
+
 protected:
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void InitializeParticles();
 private:
 	int channelOrderPdf(const int& m,const double& p);
 };

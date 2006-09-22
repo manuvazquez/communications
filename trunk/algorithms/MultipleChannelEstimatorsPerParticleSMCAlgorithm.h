@@ -32,15 +32,13 @@
 class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
-    ParticleFilterWithChannelOrder _particleFilter;
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionObservation,_startDetectionSymbolVector;
 	int _startDetectionTime;
     tRange _allSymbolsRows;
-    vector<int> _nParticlesPerChannelOrder;
-//     tMatrix _observations;
 
-    virtual void InitializeParticles();
+	virtual ParticleFilter* GetParticleFilterPointer() = 0;
+    virtual void InitializeParticles() = 0;
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
     vector<vector<int> > GetIndexesOfChannelOrders();
     int BestParticle();

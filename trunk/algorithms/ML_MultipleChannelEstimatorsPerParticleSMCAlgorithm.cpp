@@ -19,14 +19,32 @@
  ***************************************************************************/
 #include "ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h"
 
-ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm)
+ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles,_candidateOrders)
 {
-// 	cout << "Probando..." << endl;
-// 	for(int i=0;i<10;i++)
-// 		cout << channelOrderPdf(1,0.5) << endl;
-// 	exit(0);
 }
 
+void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::InitializeParticles()
+{
+    int iParticlePresentOrder,nParticlesPresentOrder,iParticle=0;
+    int iChannelMatrixEstimator;
+
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    {
+    // If the number of particles is not divisible by the number of channel orders, the remaining particles are assigned to the first channel orders (the + (......) term)
+        nParticlesPresentOrder = _particleFilter.Nparticles()/_candidateOrders.size() + (_particleFilter.Nparticles() % _candidateOrders.size() > iChannelOrder);
+
+        for(iParticlePresentOrder=0;iParticlePresentOrder<nParticlesPresentOrder;iParticlePresentOrder++,iParticle++)
+        {
+            // a clone of each of the channel matrix estimators is constructed...
+            vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
+            for(iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
+                thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
+
+            // ... and passed within a vector to each particle
+            _particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrder(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,_candidateOrders[iChannelOrder]),iParticle);
+        }
+    }
+}
 
 ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::~ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm()
 {
@@ -38,7 +56,6 @@ void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::Process(const tMatrix&
 	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;
 	int iSymbolVectorToBeProcessed;
-// 	int m_previous;
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
 	double auxLikelihoodsProd;
 	KalmanEstimator *channelEstimatorClone;
@@ -55,26 +72,12 @@ void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::Process(const tMatrix&
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 
-// 		vector<vector<int> > indexes = _particleFilter.GetIndexesOfChannelOrders();
-// 		for(int indexChannelOrder=0;indexChannelOrder<_candidateOrders.size();indexChannelOrder++)
-// 		{
-// 			cout << "De " << indexChannelOrder << "  hay " << indexes[indexChannelOrder].size() << endl;
-// 		}
-
-// 		iSymbolVectorToBeProcessed = _startDetectionSymbolVector+iObservationToBeProcessed-_startDetectionObservation;
-//
-// 			cout << "iObservationTo.. es " << iObservationToBeProcessed << endl;
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
-// 			cout << "iParticle es " << iParticle << endl;
 
 			ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( _particleFilter.GetParticle(iParticle));
 
-// 			m_previous = processedParticle->GetChannelOrder();
-
 			m = channelOrderPdf(processedParticle->GetChannelOrder(),P_CHANNEL_ORDER_PDF);
-
-// 			cout << "Particula " << iParticle << " " << processedParticle->GetChannelOrder() << " -> " << m << endl;
 
 			processedParticle->SetChannelOrder(m);
 
@@ -156,9 +159,6 @@ void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::Process(const tMatrix&
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
-// 			// channel matrix is estimated by means of the particle channel estimator
-// 			processedParticle->SetChannelMatrix(iSymbolVectorToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(iSymbolVectorToBeProcessed-m+1,iSymbolVectorToBeProcessed),noiseVariances[iObservationToBeProcessed]));
-
 			// channel matrix is estimated with each of the channel estimators within the particle
 			for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
@@ -168,45 +168,15 @@ void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::Process(const tMatrix&
 
 			processedParticle->SetWeight(processedParticle->GetWeight()*Util::Sum(likelihoods));
 
-// // 			cout << "Particula de orden " << processedParticle->GetChannelOrder() << "actualizada por " << Util::Sum(likelihoods) << endl;
-//
-// //             cout << "Terminada de procesar particula " << iParticle << endl;
-//
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-// //         cout << "Instante " << iObservationToBeProcessed << endl;
-//
-// // 		NormalizeParticleGroups();
 		_particleFilter.NormalizeWeights();
-
-		cout << "Antes de resampling" << endl;
-
-		vector<vector<int> > indexesPrueba = _particleFilter.GetIndexesOfChannelOrders();
-		for(int indexChannelOrder=0;indexChannelOrder<_candidateOrders.size();indexChannelOrder++)
-		{
-			cout << "De " << indexChannelOrder << "  hay " << indexesPrueba[indexChannelOrder].size() << endl;
-		}
-
-		cout << "Los pesos" << endl << _particleFilter.GetWeightsVector() << endl;
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 		{
         	_resamplingAlgorithm->Resample(&_particleFilter);
 		}
-
-		cout << "Despues de resampling" << endl;
-
-		indexesPrueba = _particleFilter.GetIndexesOfChannelOrders();
-		for(int indexChannelOrder=0;indexChannelOrder<_candidateOrders.size();indexChannelOrder++)
-		{
-			cout << "De " << indexChannelOrder << "  hay " << indexesPrueba[indexChannelOrder].size() << endl;
-		}
-
-// 		for(int indexChannelOrder=0;indexChannelOrder<_candidateOrders.size();indexChannelOrder++)
-// 		{
-// 			cout << "De " << indexChannelOrder << "  hay " << _particleFilter.NparticlesOfChannelOrderIndex(indexChannelOrder) << endl;
-// 		}
 
 	} // for each time instant
 }

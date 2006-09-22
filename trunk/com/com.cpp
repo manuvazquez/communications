@@ -66,7 +66,7 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 2;
-    int L=3,N=2,m=3,K=30;
+    int L=3,N=2,m=2,K=30;
     int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
