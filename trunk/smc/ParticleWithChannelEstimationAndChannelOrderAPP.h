@@ -25,15 +25,18 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <vector>
+
 class ParticleWithChannelEstimationAndChannelOrderAPP : public ParticleWithChannelEstimation
 {
 private:
-	double _channelOrderAPP;
+	std::vector<double> _channelOrderAPP;
 public:
-    ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators,double channelOrderAPP);
+    ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
 
-	void SetChannelOrderAPP(const double& channelOrderAPP) { _channelOrderAPP = channelOrderAPP;}
-	double GetChannelOrderAPP() { return _channelOrderAPP;}
+	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
+	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *Clone();
 	ParticleWithChannelEstimationAndChannelOrderAPP(const ParticleWithChannelEstimationAndChannelOrderAPP& particle);

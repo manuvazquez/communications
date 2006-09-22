@@ -43,6 +43,7 @@
 #include <UnknownChannelOrderAlgorithm.h>
 #include <ML_UnknownChannelOrderSMCAlgorithm.h>
 #include <ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+#include <ISIR.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -197,7 +198,9 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-            algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+
+            algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
 // 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
