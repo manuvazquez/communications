@@ -3,13 +3,13 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="200" Type="Source" />
+   <View0 line="64" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ISIR.h" >
-   <View0 line="18" Type="Source" />
+   <View0 Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ISIR.cpp" >
-   <View0 line="39" Type="Source" />
+   <View0 line="41" Type="Source" />
   </Doc2>
  </DocsAndViews>
  <pluginList>
