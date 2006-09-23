@@ -44,7 +44,7 @@ void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
 	int iSmoothingLag,iParticle,iSampledVector,iChannelOrder;
 	int iSymbolVectorToBeProcessed;
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
-	double auxLikelihoodsProd;
+	double auxLikelihoodsProd,channelOrderAPPsNormConstant,newChannelOrderAPP;
 	KalmanEstimator *channelEstimatorClone;
 
 	// it selects all rows in the symbols Matrix
@@ -83,44 +83,44 @@ void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
 					vector<tSymbol> testedSmoothingVector(_N*d);
 					// it includes all symbol vectors involved in the smoothing
 					tMatrix smoothingSymbolVectors(_N,m+d);
-		
+
 					// the m-1 already detected symbol vectors are copied into the matrix (just needed if m>1):
 					if(m>1)
 						smoothingSymbolVectors(allSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1));
-	
+
 					// current tested vector is copied in the m-th position
 					for(k=0;k<_N;k++)
 						smoothingSymbolVectors(k,m-1) = testedVector[k];
-	
+
 					// every possible smoothing sequence is tested
 					for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
 					{
 						// a testing smoothing vector is generated for the index
 						_alphabet.IntToSymbolsArray(iSmoothingVector,testedSmoothingVector);
-	
+
 						// symbols used for smoothing are copied into "smoothingSymbolVectors"
 						for(k=0;k<testedSmoothingVector.size();k++)
 							smoothingSymbolVectors((Nm+k)%_N,(Nm+k)/_N) = testedSmoothingVector[k];
-	
+
 						auxLikelihoodsProd = 1.0;
-	
+
 						// a clone of the channel estimator is generated because this must not be modified
 						channelEstimatorClone = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Clone());
-	
+
 						for(iSmoothingLag=0;iSmoothingLag<=d;iSmoothingLag++)
 						{
 							tRange mColumns(iSmoothingLag,iSmoothingLag+m-1);
-	
+
 							// the likelihood is computed and accumulated
 							auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
-	
+
 							// a step in the Kalman Filter
 							channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 						} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
-	
+
 						// memory of the clone is freed
 						delete channelEstimatorClone;
-	
+
 						// the likelihood is accumulated in the proper position of vector:
 						likelihoods(iTestedVector) += auxLikelihoodsProd*processedParticle->GetChannelOrderAPP(iChannelOrder);
 
@@ -148,17 +148,30 @@ void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
+            channelOrderAPPsNormConstant = 0.0;
+
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
 				channelEstimatorClone = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator(iChannelOrder));
 
-				// the a posteriori probability for each channel order must be updated with the previous app for this order and the likelihood at the present instant with the sampled symbol vector
-				processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)*
-				channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors (iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]),iChannelOrder);
+                // the a posteriori probability for each channel order must be updated with the previous app for this order and the likelihood at the present instant with the sampled symbol vector
+                newChannelOrderAPP = processedParticle->GetChannelOrderAPP(iChannelOrder)*
+                channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors (iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]);
 
-				// channel matrix is estimated with each of the channel estimators within the particle				
+                channelOrderAPPsNormConstant += newChannelOrderAPP;
+
+				processedParticle->SetChannelOrderAPP(newChannelOrderAPP,iChannelOrder);
+
+				// channel matrix is estimated with each of the channel estimators within the particle
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator(iChannelOrder))->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 			}
+
+            if(channelOrderAPPsNormConstant==0)
+                throw RuntimeException("ISIR::Process: the normalizing constant for the channel order a posteriori probabilities is 0.");
+
+            // all the channel order a posteriori probabilities are normalized by the previously computed constant
+            for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+                processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
 
 
 			processedParticle->SetWeight(processedParticle->GetWeight()*Util::Sum(likelihoods));
