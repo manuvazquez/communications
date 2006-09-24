@@ -134,13 +134,13 @@ tVector Util::Normalize(const tVector &v)
 
 	int nElements = v.size();
 	double sum = 0.0;
-	
+
 	for(k=0;k<nElements;k++)
 		sum += v(k);
 
 	if(sum==0)
 		throw AllElementsNullException("Util::Normalize: A vector of zeros can't be normalized.");
-	
+
 	tVector res(nElements);
 	for(k=0;k<nElements;k++)
 		res(k) = v(k)/sum;
@@ -153,7 +153,7 @@ double Util::Sum(const tVector &v)
 
 	for(int i=v.size();i--;i>=0)
 		res += v(i);
-	return res;		
+	return res;
 }
 
 void Util::Max(const tVector &v,int &index)
@@ -201,17 +201,17 @@ void Util::Print(const tMatrix &A)
         for(j=0;j<A.cols();j++)
             cout << setprecision(6) << setw(12) << left << A(i,j);
         cout << endl;
-    }    
+    }
 }
 
 void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
-    
+
     for(int i=0;i<A.rows();i++)
-    {           
+    {
         for(int j=0;j<A.cols();j++)
-            f << A(i,j) << " "; 
+            f << A(i,j) << " ";
         f << endl;
     }
 }
@@ -225,4 +225,9 @@ void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream 
 		for(j=0;j<(matrices.at(iMatrix)).cols();j++)
 			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
+}
+
+void Util::ScalarToStream(int scalar,string name,ofstream &f)
+{
+    f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
 }

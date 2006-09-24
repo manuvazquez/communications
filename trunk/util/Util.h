@@ -55,6 +55,7 @@ public:
     static void Print(const tMatrix &A);
 	static void MatrixToStream(tMatrix A,string name,ofstream &f);
 	static void MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f);
+    static void ScalarToStream(int scalar,string name,ofstream &f);
 };
 
 #endif

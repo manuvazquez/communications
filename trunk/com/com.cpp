@@ -66,11 +66,12 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 100;
+    int nFrames = 2;
     int L=3,N=2,m=2,K=30;
     int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
+    char outputFileName[] = "res";
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -198,9 +199,11 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-//             algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
-
             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+
+
+
+//             algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
 // 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
@@ -237,7 +240,7 @@ int main(int argc,char* argv[])
                 delete algorithms[iAlgorithm];
             }
         }
-		ofstream f("res",ofstream::trunc);
+		ofstream f(outputFileName,ofstream::trunc);
 
 		tMatrix auxOverallPe = overallPeMatrix;
 		auxOverallPe *= 1.0/(double)(iFrame+1);
@@ -246,6 +249,8 @@ int main(int argc,char* argv[])
 		tMatrix auxOverallMse = overallMseMatrix;
 		auxOverallMse *= 1.0/(double)(iFrame+1);
 		Util::MatrixToStream(auxOverallMse,"mse",f);
+
+        Util::ScalarToStream(iFrame+1,"nTramas",f);
 
 		f.close();
     }
