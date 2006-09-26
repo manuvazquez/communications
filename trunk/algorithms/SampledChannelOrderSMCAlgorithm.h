@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISIR_H
-#define ISIR_H
+#ifndef SAMPLEDCHANNELORDERSMCALGORITHM_H
+#define SAMPLEDCHANNELORDERSMCALGORITHM_H
 
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
@@ -26,19 +26,19 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
-#include <KalmanEstimator.h>
+#include <ParticleFilterWithChannelOrder.h>
 
-class ISIR : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class SampledChannelOrderSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
+public:
+    SampledChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+
 protected:
-	ParticleFilter _particleFilter;	
+	ParticleFilterWithChannelOrder _particleFilter;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
-public:
-    ISIR(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
 };
 

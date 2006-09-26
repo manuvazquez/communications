@@ -18,10 +18,15 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
+#define HOSTNAME_LENGTH 50
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
 #include <vector>
+#include <unistd.h>
+#include <string>
+
 #include "types.h"
 #include <Alphabet.h>
 #include <Bits.h>
@@ -71,7 +76,7 @@ int main(int argc,char* argv[])
     int longSecEntr = 10;
     int nParticles = 30;
     int d = m -1;
-    char outputFileName[] = "res";
+    char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -107,6 +112,12 @@ int main(int argc,char* argv[])
     Alphabet pam2(1,2,secuenciasBits,simbolos);
 
 	// -----------------------------------------------------------------------------
+
+	char hostname[HOSTNAME_LENGTH];
+	gethostname(hostname,HOSTNAME_LENGTH);
+// 	cout << "Ejecutando en " << hostname << "..." << endl;
+
+	strcat(outputFileName,hostname);
 
     // a specific preamble is generated...
 //     tMatrix preambulo(N,m-1);
