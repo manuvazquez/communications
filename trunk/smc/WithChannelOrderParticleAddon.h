@@ -17,22 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ParticleWithChannelEstimationAndLinearDetection.h"
+#ifndef WITHCHANNELORDERPARTICLEADDON_H
+#define WITHCHANNELORDERPARTICLEADDON_H
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),WithLinearDetectionParticleAddon(linearDetector)
-{
-}
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class WithChannelOrderParticleAddon{
+protected:
+	int _m;
+public:
+    WithChannelOrderParticleAddon(int m);
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle)
-{
-}
+    WithChannelOrderParticleAddon(const WithChannelOrderParticleAddon& withChannelOrderParticleAddon);
 
-// ParticleWithChannelEstimationAndLinearDetection::~ParticleWithChannelEstimationAndLinearDetection()
-// {
-// 	delete _linearDetector;
-// }
+	int GetChannelOrder(){ return _m;}
+	void SetChannelOrder(int m) { _m = m;}
+};
 
-ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
-{
-	return new ParticleWithChannelEstimationAndLinearDetection(*this);
-}
+#endif

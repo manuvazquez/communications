@@ -27,23 +27,22 @@
 */
 
 #include <vector>
+#include <WithChannelOrderParticleAddon.h>
 
-class ParticleWithChannelEstimationAndChannelOrder : public ParticleWithChannelEstimation
+class ParticleWithChannelEstimationAndChannelOrder : public ParticleWithChannelEstimation, public WithChannelOrderParticleAddon
 {
-protected:
-	int _m;
+// protected:
+// 	int _m;
 public:
     ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m);
 
     ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,int m);
 
-    ~ParticleWithChannelEstimationAndChannelOrder();
-
     ParticleWithChannelEstimationAndChannelOrder* Clone();
      ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle);
 
-	int GetChannelOrder(){ return _m;}
-	void SetChannelOrder(int m) { _m = m;}
+// 	int GetChannelOrder(){ return _m;}
+// 	void SetChannelOrder(int m) { _m = m;}
 };
 
 #endif

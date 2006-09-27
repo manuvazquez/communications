@@ -27,16 +27,17 @@
 */
 
 #include <vector>
+#include <WithChannelOrderAppParticleAddon.h>
 
-class ParticleWithChannelEstimationAndChannelOrderAPP : public ParticleWithChannelEstimation
+class ParticleWithChannelEstimationAndChannelOrderAPP : public ParticleWithChannelEstimation, public WithChannelOrderAppParticleAddon
 {
-private:
-	std::vector<double> _channelOrderAPP;
+// private:
+// 	std::vector<double> _channelOrderAPP;
 public:
     ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
 
-	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+// 	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
+// 	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *Clone();
 	ParticleWithChannelEstimationAndChannelOrderAPP(const ParticleWithChannelEstimationAndChannelOrderAPP& particle);

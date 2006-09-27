@@ -17,22 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ParticleWithChannelEstimationAndLinearDetection.h"
+#include "WithLinearDetectionParticleAddon.h"
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),WithLinearDetectionParticleAddon(linearDetector)
+WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(LinearDetector *linearDetector):_linearDetector(linearDetector)
 {
 }
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle)
+WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon):_linearDetector(withLinearDetectionParticleAddon._linearDetector->Clone())
 {
 }
 
-// ParticleWithChannelEstimationAndLinearDetection::~ParticleWithChannelEstimationAndLinearDetection()
-// {
-// 	delete _linearDetector;
-// }
-
-ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
+WithLinearDetectionParticleAddon::~WithLinearDetectionParticleAddon()
 {
-	return new ParticleWithChannelEstimationAndLinearDetection(*this);
+	delete _linearDetector;
 }
+
+

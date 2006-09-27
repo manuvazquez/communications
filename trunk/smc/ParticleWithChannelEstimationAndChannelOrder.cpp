@@ -19,25 +19,20 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndChannelOrder.h"
 
-ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),_m(m)
+ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),WithChannelOrderParticleAddon(m)
 {
 }
 
-ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators),_m(m)
+ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(double weight, int symbolVectorLength, int nTimeInstants, std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,int m): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators),WithChannelOrderParticleAddon(m)
 {
 }
-
-ParticleWithChannelEstimationAndChannelOrder::~ParticleWithChannelEstimationAndChannelOrder()
-{
-}
-
 
 ParticleWithChannelEstimationAndChannelOrder* ParticleWithChannelEstimationAndChannelOrder::Clone()
 {
     return new ParticleWithChannelEstimationAndChannelOrder(*this);
 }
 
- ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle):ParticleWithChannelEstimation(particle),_m(particle._m)
+ ParticleWithChannelEstimationAndChannelOrder::ParticleWithChannelEstimationAndChannelOrder(const ParticleWithChannelEstimationAndChannelOrder& particle):ParticleWithChannelEstimation(particle),WithChannelOrderParticleAddon(particle)
 {
 }
 

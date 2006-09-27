@@ -17,22 +17,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ParticleWithChannelEstimationAndLinearDetection.h"
+#include "WithChannelOrderParticleAddon.h"
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),WithLinearDetectionParticleAddon(linearDetector)
+WithChannelOrderParticleAddon::WithChannelOrderParticleAddon(int m):_m(m)
 {
 }
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle)
+WithChannelOrderParticleAddon::WithChannelOrderParticleAddon(const WithChannelOrderParticleAddon& withChannelOrderParticleAddon):_m(withChannelOrderParticleAddon._m)
 {
 }
 
-// ParticleWithChannelEstimationAndLinearDetection::~ParticleWithChannelEstimationAndLinearDetection()
-// {
-// 	delete _linearDetector;
-// }
-
-ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
-{
-	return new ParticleWithChannelEstimationAndLinearDetection(*this);
-}

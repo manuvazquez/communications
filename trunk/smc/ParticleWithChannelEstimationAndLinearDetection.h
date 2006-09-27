@@ -27,21 +27,22 @@
 */
 
 #include <LinearDetector.h>
+#include <WithLinearDetectionParticleAddon.h>
 
-class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation
+class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon
 {
 protected:
-	LinearDetector *_linearDetector;
+// 	LinearDetector *_linearDetector;
 public:
     ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
 
 	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
 
-    ~ParticleWithChannelEstimationAndLinearDetection();
+//     ~ParticleWithChannelEstimationAndLinearDetection();
 
 	ParticleWithChannelEstimationAndLinearDetection *Clone();
 
-	LinearDetector *GetLinearDetector() { return _linearDetector;}
+// 	LinearDetector *GetLinearDetector() { return _linearDetector;}
 };
 
 #endif

@@ -17,22 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ParticleWithChannelEstimationAndLinearDetection.h"
+#ifndef WITHCHANNELORDERAPPPARTICLEADDON_H
+#define WITHCHANNELORDERAPPPARTICLEADDON_H
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator),WithLinearDetectionParticleAddon(linearDetector)
-{
-}
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle)
-{
-}
+#include <vector>
 
-// ParticleWithChannelEstimationAndLinearDetection::~ParticleWithChannelEstimationAndLinearDetection()
-// {
-// 	delete _linearDetector;
-// }
+class WithChannelOrderAppParticleAddon{
+protected:
+	std::vector<double> _channelOrderAPP;
+public:
+    WithChannelOrderAppParticleAddon(std::vector<double> channelOrderAPP);
+    WithChannelOrderAppParticleAddon(int nChannelOrderAPP);
 
-ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
-{
-	return new ParticleWithChannelEstimationAndLinearDetection(*this);
-}
+	WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon);
+
+	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
+	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+};
+
+#endif
