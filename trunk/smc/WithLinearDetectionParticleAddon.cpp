@@ -19,17 +19,25 @@
  ***************************************************************************/
 #include "WithLinearDetectionParticleAddon.h"
 
-WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(LinearDetector *linearDetector):_linearDetector(linearDetector)
+WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(LinearDetector *linearDetector):_linearDetectors(1)
+{
+    _linearDetectors[0] = linearDetector;
+}
+
+WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(std::vector<LinearDetector *> linearDetectors):_linearDetectors(linearDetectors)
 {
 }
 
-WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon):_linearDetector(withLinearDetectionParticleAddon._linearDetector->Clone())
+WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon):_linearDetectors(withLinearDetectionParticleAddon._linearDetectors.size())
 {
+    for(int iLinearDetector=0;iLinearDetector<_linearDetectors.size();iLinearDetector++)
+        _linearDetectors[iLinearDetector] = withLinearDetectionParticleAddon._linearDetectors[iLinearDetector]->Clone();
 }
 
 WithLinearDetectionParticleAddon::~WithLinearDetectionParticleAddon()
 {
-	delete _linearDetector;
+    for(int iLinearDetector=0;iLinearDetector<_linearDetectors.size();iLinearDetector++)
+        delete _linearDetectors[iLinearDetector];
 }
 
 

@@ -70,7 +70,8 @@ am_libsmc_a_OBJECTS = ResamplingCriterion.$(OBJEXT) \
 	ParticleWithChannelEstimationAndChannelOrderAPP.$(OBJEXT) \
 	WithLinearDetectionParticleAddon.$(OBJEXT) \
 	WithChannelOrderAppParticleAddon.$(OBJEXT) \
-	WithChannelOrderParticleAddon.$(OBJEXT)
+	WithChannelOrderParticleAddon.$(OBJEXT) \
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.$(OBJEXT)
 libsmc_a_OBJECTS = $(am_libsmc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -191,18 +192,19 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libsmc.a
 noinst_HEADERS = ResamplingCriterion.h smcExceptions.h StdResamplingAlgorithm.h \
-	Particle.h ParticleWithChannelEstimation.h \
-	ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h \
-	ResamplingAlgorithm.h ParticleFilterWithChannelOrder.h ByChannelOrderResamplingAlgorithm.h \
-	ParticleWithChannelEstimationAndChannelOrderAPP.h WithLinearDetectionParticleAddon.h WithChannelOrderAppParticleAddon.h \
-	WithChannelOrderParticleAddon.h
+		Particle.h ParticleWithChannelEstimation.h \
+		ParticleWithChannelEstimationAndLinearDetection.h ParticleFilter.h ParticleWithChannelEstimationAndChannelOrder.h \
+		ResamplingAlgorithm.h ParticleFilterWithChannelOrder.h ByChannelOrderResamplingAlgorithm.h \
+		ParticleWithChannelEstimationAndChannelOrderAPP.h WithLinearDetectionParticleAddon.h WithChannelOrderAppParticleAddon.h \
+		WithChannelOrderParticleAddon.h ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h
 
 libsmc_a_SOURCES = ResamplingCriterion.cpp StdResamplingAlgorithm.cpp \
-	Particle.cpp ParticleWithChannelEstimation.cpp \
-	ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp \
-	ParticleFilterWithChannelOrder.cpp ByChannelOrderResamplingAlgorithm.cpp \
-	ParticleWithChannelEstimationAndChannelOrderAPP.cpp WithLinearDetectionParticleAddon.cpp \
-	WithChannelOrderAppParticleAddon.cpp WithChannelOrderParticleAddon.cpp
+		Particle.cpp ParticleWithChannelEstimation.cpp \
+		ParticleWithChannelEstimationAndLinearDetection.cpp ParticleFilter.cpp ParticleWithChannelEstimationAndChannelOrder.cpp \
+		ParticleFilterWithChannelOrder.cpp ByChannelOrderResamplingAlgorithm.cpp \
+		ParticleWithChannelEstimationAndChannelOrderAPP.cpp WithLinearDetectionParticleAddon.cpp \
+		WithChannelOrderAppParticleAddon.cpp WithChannelOrderParticleAddon.cpp \
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.cpp
 
 all: all-am
 
@@ -285,6 +287,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndChannelOrder.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndChannelOrderAPP.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndLinearDetection.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ResamplingCriterion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StdResamplingAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithChannelOrderAppParticleAddon.Po@am__quote@

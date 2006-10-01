@@ -17,15 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ParticleWithChannelEstimationAndLinearDetector.h"
+#ifndef LINEARFILTERBASEDISIRALGORITHM_H
+#define LINEARFILTERBASEDISIRALGORITHM_H
 
-ParticleWithChannelEstimationAndLinearDetector::ParticleWithChannelEstimationAndLinearDetector(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator)
+#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+
+#include <vector>
+#include <LinearDetector.h>
+
+class LinearFilterBasedISIRAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
-}
+public:
+    LinearFilterBasedISIRAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
+    ~LinearFilterBasedISIRAlgorithm();
 
-ParticleWithChannelEstimationAndLinearDetector::~ParticleWithChannelEstimationAndLinearDetector()
-{
-}
+protected:
+    vector<LinearDetector *> _linearDetectors;
+    tRange _allObservationRows;
 
+    vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    virtual ParticleFilter* GetParticleFilterPointer();
+    virtual void InitializeParticles();
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
+};
+
+#endif

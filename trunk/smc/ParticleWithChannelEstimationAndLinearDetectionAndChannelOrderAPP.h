@@ -17,32 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHLINEARDETECTIONPARTICLEADDON_H
-#define WITHLINEARDETECTIONPARTICLEADDON_H
+#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERAPP_H
+#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERAPP_H
+
+#include <ParticleWithChannelEstimation.h>
+#include <WithChannelOrderAppParticleAddon.h>
+#include <WithLinearDetectionParticleAddon.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <vector>
-#include <LinearDetector.h>
-
-class WithLinearDetectionParticleAddon{
-protected:
-    std::vector<LinearDetector *> _linearDetectors;
-// 	LinearDetector *_linearDetector;
+class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP : public ParticleWithChannelEstimation, public WithChannelOrderAppParticleAddon, public WithLinearDetectionParticleAddon
+{
 public:
-    WithLinearDetectionParticleAddon(LinearDetector *linearDetector);
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, int nChannelOrderAPP, std::vector< LinearDetector * > linearDetectors);
 
-    WithLinearDetectionParticleAddon(std::vector<LinearDetector *> linearDetectors);
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP& particle);
 
-	WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon);
+    ~ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP();
 
-    ~WithLinearDetectionParticleAddon();
-
-	LinearDetector *GetLinearDetector() { return _linearDetectors[0];}
-
-    LinearDetector *GetLinearDetector(int n) { return _linearDetectors[n];}
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *Clone();
 };
 
 #endif

@@ -17,32 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHLINEARDETECTIONPARTICLEADDON_H
-#define WITHLINEARDETECTIONPARTICLEADDON_H
+#include "ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, int nChannelOrderAPP, std::vector< LinearDetector * > linearDetectors): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators), WithChannelOrderAppParticleAddon(nChannelOrderAPP), WithLinearDetectionParticleAddon(linearDetectors)
+{
+}
 
-#include <vector>
-#include <LinearDetector.h>
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP& particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle),WithChannelOrderAppParticleAddon(particle)
+{
+}
 
-class WithLinearDetectionParticleAddon{
-protected:
-    std::vector<LinearDetector *> _linearDetectors;
-// 	LinearDetector *_linearDetector;
-public:
-    WithLinearDetectionParticleAddon(LinearDetector *linearDetector);
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::~ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP()
+{
+}
 
-    WithLinearDetectionParticleAddon(std::vector<LinearDetector *> linearDetectors);
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::Clone()
+{
+    return new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(*this);
+}
 
-	WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon);
-
-    ~WithLinearDetectionParticleAddon();
-
-	LinearDetector *GetLinearDetector() { return _linearDetectors[0];}
-
-    LinearDetector *GetLinearDetector(int n) { return _linearDetectors[n];}
-};
-
-#endif

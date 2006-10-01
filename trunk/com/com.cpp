@@ -210,7 +210,7 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-            algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
 
 

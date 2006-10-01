@@ -61,22 +61,6 @@ ParticleWithChannelEstimation::~ParticleWithChannelEstimation()
     delete[] _estimatedChannelMatrices;
 }
 
-// void ParticleWithChannelEstimation::operator=(const ParticleWithChannelEstimation &particle)
-// {
-// 	if(this!=&particle)
-// 	{
-// 		Particle::operator =(particle);
-//
-// 		delete _channelMatrixEstimator;
-// 		_channelMatrixEstimator = (particle._channelMatrixEstimator)->Clone();
-//
-// 		delete[] _estimatedChannelMatrices;
-// 		_estimatedChannelMatrices = new tMatrix[_nTimeInstants];
-// 		for(int i=0;i<_nTimeInstants;i++)
-// 			_estimatedChannelMatrices[i] = (particle._estimatedChannelMatrices)[i];
-// 	}
-// }
-
 ParticleWithChannelEstimation *ParticleWithChannelEstimation::Clone()
 {
 	return new ParticleWithChannelEstimation(*this);
