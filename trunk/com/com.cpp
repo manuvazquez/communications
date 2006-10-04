@@ -49,6 +49,7 @@
 #include <ML_UnknownChannelOrderSMCAlgorithm.h>
 #include <ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 #include <ISIR.h>
+#include <LinearFilterBasedISIRAlgorithm.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -72,9 +73,9 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 2;
-    int L=3,N=2,m=2,K=30;
-    int longSecEntr = 10;
-    int nParticles = 30;
+    int L=3,N=2,m=2,K=300;
+    int longSecEntr = 30;
+    int nParticles = 100;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -135,10 +136,15 @@ int main(int argc,char* argv[])
     RLSEstimator RLSestimator(mediaInicial,forgettingFactor);
     LMSEstimator LMSestimator(mediaInicial,muLMS);
 
-	// vector of channel estimators for unknown channel order algorithms
-	vector<ChannelMatrixEstimator *> UnknownChannelOrderEstimators;
+	// vectors of channel estimators and linear detectors for unknown channel order algorithms
+	vector<ChannelMatrixEstimator *> unknownChannelOrderEstimators;
+	vector<LinearDetector *> unknownChannelOrderLinearDetectors;
 	for(int iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-		UnknownChannelOrderEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
+	{
+		unknownChannelOrderEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
+
+		unknownChannelOrderLinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),pam2.Variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
+	}
 
     // linear filters
     RMMSEDetector RMMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
@@ -200,7 +206,7 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
+//             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
 
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
@@ -210,15 +216,17 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 
-//             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
+            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
+// -----------------------------------------------------------------------------
 
-//             algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),UnknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm("Estimador del orden del canal",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
-// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
+// 			algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+m-1,unknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
-//             algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+unknownChannelOrderAlgorithmsPreamble.cols(),UnknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
+//             algorithms.push_back(new ML_UnknownChannelOrderSMCAlgorithm ("ML Unknown Channel Order",pam2,L,N,K+unknownChannelOrderAlgorithmsPreamble.cols(),unknownChannelOrderEstimators,unknownChannelOrderAlgorithmsPreamble,m-1,d,nParticles,&unknownChannelOrderResamplingAlgorithm,&algoritmoRemuestreo,simbolosTransmitir));
 
             // ----------------------------------------------------------------------
 

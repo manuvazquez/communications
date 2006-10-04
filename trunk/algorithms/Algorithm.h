@@ -61,7 +61,11 @@ public:
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-	tMatrix HsToStackedH(vector<tMatrix> matrices,int m);
+	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d);
+	tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
+	{
+		return HsToStackedH(matrices,m,matrices.size()-1);
+	}
 };
 
 #endif

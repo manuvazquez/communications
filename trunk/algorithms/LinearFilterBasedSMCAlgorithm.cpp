@@ -100,7 +100,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// the estimated stacked channel matrix is used to obtain soft estimations
 			// of the transmitted symbols
 			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->Detect(stackedObservations,stackedChannelMatrix);
-// 			tVector softEstimations =  (_particlesLinearDetectors[iParticle])->Detect(stackedObservations,stackedChannelMatrix);
 
 // 			tMatrix filter = _particlesLinearDetectors[iParticle]->ComputedFilter();
 			tMatrix filter = (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->ComputedFilter();
@@ -143,6 +142,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 						symbolProb(iSampledSymbol,iAlphabet) = 0.5;
 				}
+
+// 				cout << "Probabilidades resultantes" << symbolProb.row(iSampledSymbol);
+// 				getchar();
 
 				int iSampled = (StatUtil::Discrete_rnd(1,symbolProb.row(iSampledSymbol)))[0];
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];

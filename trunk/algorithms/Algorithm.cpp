@@ -84,12 +84,14 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     return mse/(double)windowSize;
 }
 
-tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m)
+tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int d)
 {
 	
 	if((matrices[0].cols() % m)!=0)
 		throw RuntimeException("Algorithm::HsToStackedH: Incorrect number of columns in the matrices.");
-	int d = matrices.size()-1;
+
+	if(matrices.size()<(d+1))
+		throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
 	
 	tMatrix res(_L*(d+1),_N*(m+d));
     res = 0.0;

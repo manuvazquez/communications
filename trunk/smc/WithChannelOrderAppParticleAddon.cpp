@@ -25,6 +25,8 @@ WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(std::vector<d
 
 WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(int nChannelOrderAPP):_channelOrderAPP(nChannelOrderAPP)
 {
+	for(int i=0;i<_channelOrderAPP.size();i++)
+		_channelOrderAPP[i] = 1.0/(double)_channelOrderAPP.size();
 }
 
 WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon):_channelOrderAPP(withChannelOrderAppParticleAddon._channelOrderAPP)
