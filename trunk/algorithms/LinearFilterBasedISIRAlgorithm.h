@@ -30,11 +30,12 @@
 #include <LinearDetector.h>
 #include <ParticleFilter.h>
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
+#include <ARchannel.h>
 
 class LinearFilterBasedISIRAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
-    LinearFilterBasedISIRAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
+    LinearFilterBasedISIRAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const ARchannel &canal,const tMatrix &simbolos);
 
     ~LinearFilterBasedISIRAlgorithm();
 
@@ -42,6 +43,9 @@ protected:
     vector<LinearDetector *> _linearDetectors;
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+
+	const ARchannel &_canal;
+	const tMatrix &_simbolos;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
     vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);

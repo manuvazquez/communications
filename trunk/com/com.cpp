@@ -73,9 +73,9 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 2;
-    int L=3,N=2,m=2,K=300;
-    int longSecEntr = 30;
-    int nParticles = 100;
+    int L=3,N=2,m=2,K=30;
+    int longSecEntr = 10;
+    int nParticles = 30;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -116,12 +116,10 @@ int main(int argc,char* argv[])
 
 	char hostname[HOSTNAME_LENGTH];
 	gethostname(hostname,HOSTNAME_LENGTH);
-// 	cout << "Ejecutando en " << hostname << "..." << endl;
 
 	strcat(outputFileName,hostname);
 
     // a specific preamble is generated...
-//     tMatrix preambulo(N,m-1);
     tMatrix preambulo(N,10);
     preambulo = -1.0;
 
@@ -218,7 +216,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
 
 // -----------------------------------------------------------------------------
 
