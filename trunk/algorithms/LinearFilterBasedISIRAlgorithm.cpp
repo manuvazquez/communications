@@ -86,8 +86,8 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 	double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd,sumChannelOrderAPPs;
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
-	tMatrix symbolProbAux = LaGenMatDouble::ones(_N*_maxOrder,_alphabet.Length());
-	symbolProbAux *= 0.5;
+	tMatrix symbolProbAux = LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length());
+// 	symbolProbAux *= 0.5;
 
 	vector<tMatrix> symbolProb(_candidateOrders.size(),symbolProbAux);
 
@@ -149,7 +149,7 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 				tMatrix s2qAux(_L*(d+1),_L*(d+1));
 				tVector s2qAuxFilter(_L*(d+1));
 
-				// predicted channel matrices are stored in a vector in order to stack them
+				// predicted channel matrices are sampled and stored in a vector in order to stack them
 
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,Nm)*_samplingVariance
 				Util::Add((processedParticle->GetChannelMatrixEstimator(iChannelOrder))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
@@ -206,16 +206,15 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 					}
 				}
 
-// 				cout << "Matriz de probabilidades para este orden" << endl << symbolProb[iChannelOrder] << endl;
 			}
 
 // 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 // 			{
-// 				cout << " Orden " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder);
+// 				cout << "Orden " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " ";
 // 			}
 // 			cout << endl;
 
-			// the probabilities of the different channel orders are weighted according to the a posteriori probability of the channel order in the previous time instant
+			//the probabilities of the different channel orders are weighted according to the a posteriori probability of the channel order in the previous time instant
 			overallSymbolProb = symbolProb[0];
 			overallSymbolProb *= processedParticle->GetChannelOrderAPP(0);
 			for(iChannelOrder=1;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -223,8 +222,43 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 				Util::Add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderAPP(iChannelOrder));
 			}
 
-			proposal = 1.0;
+// 			// another method of combination
+// 			overallSymbolProb = 0.0;
+// 			tRange rAllAlphabetSymbolsCols(0,_alphabet.Length()-1);
+// 			for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+// 			{
+// 				tRange rSymbolVectorBeingProccessed(iSmoothing*_N,(iSmoothing+1)*_N-1);
+//
+// 				// normalizing constant for vector s_{t+iSmoothing} must be computed
+// 				double normalizationCt = 0.0;
+// 				int addendsNumber = 0;
+// 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 				{
+// 					if(_candidateOrders[iChannelOrder]>iSmoothing)
+// 					{
+// 						normalizationCt += processedParticle->GetChannelOrderAPP(iChannelOrder);
+// 						addendsNumber++;
+// 					}
+// 				}
+//
+// 				if(normalizationCt!=0)
+// 					for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 					{
+// 						tMatrix auxMat(_N,_alphabet.Length());
+// 						Util::Add(overallSymbolProb(rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols),symbolProb[iChannelOrder](rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols),auxMat,1.0,processedParticle->GetChannelOrderAPP(iChannelOrder)/normalizationCt);
+// 						overallSymbolProb(rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols).inject(auxMat);
+// 					}
+// 				else
+// 					for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 					{
+// 						tMatrix auxMat(_N,_alphabet.Length());
+// 						Util::Add(overallSymbolProb(rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols),symbolProb[iChannelOrder](rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols),auxMat,1.0,1.0/(double)addendsNumber);
+// 						overallSymbolProb(rSymbolVectorBeingProccessed,rAllAlphabetSymbolsCols).inject(auxMat);
+// 					}
+//
+// 			}
 
+			proposal = 1.0;
 			// the symbols are sampled from the above combined probabilities
 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
@@ -238,8 +272,8 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 // 			{
 // 				cout << " Orden " << _candidateOrders[iChannelOrder] << endl << symbolProb[iChannelOrder] << endl;
 // 			}
-
-			cout << "Se va a nuestrear de" << endl << overallSymbolProb << endl;
+// 			cout << "Se va a nuestrear de" << endl << overallSymbolProb << endl;
+//             getchar();
 
 			// sampled symbol vector is stored for the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(_allSymbolsRows));
@@ -255,8 +289,6 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 				m = _candidateOrders[iChannelOrder];
 				d = m-1;
 
-// 				cout << "Antes de lo de los rangos" << endl;
-
 				// already detected symbol vectors involved in the current detection
 				tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
 
@@ -267,22 +299,13 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 				// i) the already known:
 				forWeightUpdateNeededSymbols(_allSymbolsRows,r0mMinus2).inject(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
 
-// 				cout << "Lo que muestreó" << endl << Util::ToMatrix(sampledSmoothingVector,columnwise,_N) << endl;
-
-// 				cout << "Y lo va a meter en" << endl << forWeightUpdateNeededSymbols << endl;
-
-// 				cout << "Pasado el primero" << endl;
-
-
 				// ii) the just sampled
 				forWeightUpdateNeededSymbols(_allSymbolsRows,rSampledSymbolVectors).inject(Util::ToMatrix(sampledSmoothingVector,columnwise,_N));
-
-// 				cout << "Antes de empezar el calculo de la versosimilitudes" << endl;
 
 // 				likelihoodsProd = 1.0;
 				likelihoodsProd = processedParticle->GetChannelOrderAPP(iChannelOrder);
 
-				for(iSmoothing=0;iSmoothing<=_maxOrder-1;iSmoothing++)
+				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					tRange rSymbolVectors(iSmoothing,iSmoothing+m-1);
 					tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors),columnwise);
@@ -304,10 +327,10 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 
 				// the estimation of the channel matrix is updated
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed, (processedParticle->GetChannelMatrixEstimator(iChannelOrder))->NextMatrix(observations.col(iObservationToBeProcessed),forWeightUpdateNeededSymbols(_allSymbolsRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
-			}
 
-			// the computed likelihood is accumulated
-			sumLikelihoodsProd += likelihoodsProd;
+                // the computed likelihood is accumulated
+                sumLikelihoodsProd += likelihoodsProd;
+			}
 
 			// the channel order APPs are normalized for the next iteration
 			if(sumChannelOrderAPPs==0)
@@ -318,7 +341,7 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 			}
 
 			// the weight is updated
-			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
+			processedParticle->SetWeight((sumLikelihoodsProd/proposal)*processedParticle->GetWeight());
 		}
 // 		cout << "Antes de normalizar" << endl;
 		_particleFilter.NormalizeWeights();
