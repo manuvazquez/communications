@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "StdResamplingAlgorithm.h"
 
+// #define DEBUG
+
 using namespace std;
 
 StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
@@ -33,5 +35,10 @@ void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
     {
         vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weigths);
         particleFilter->KeepParticles(indexes);
+
+		#ifdef DEBUG
+		for(int i=0;i<particleFilter->Nparticles();i++)
+			cout << i << " <- " << indexes[i] << endl;
+		#endif
     }
 }

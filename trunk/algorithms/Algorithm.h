@@ -43,7 +43,7 @@ protected:
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int N, int K);
 	virtual ~Algorithm() {};
-	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;   
+	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
     string GetName() {return _name;}
@@ -54,17 +54,21 @@ public:
     */
     virtual tMatrix GetDetectedSymbolVectors() = 0;
     /**
-     * 
+     *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */
     virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d);
+	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);
 	tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
 	{
-		return HsToStackedH(matrices,m,matrices.size()-1);
+		return HsToStackedH(matrices,m,0,matrices.size()-1);
+	}
+	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d)
+	{
+		return HsToStackedH(matrices,m,0,d);
 	}
 };
 

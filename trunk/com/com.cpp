@@ -75,13 +75,13 @@ int main(int argc,char* argv[])
     int nFrames = 2;
     int L=3,N=2,m=2,K=30;
     int longSecEntr = 10;
-    int nParticles = 30;
+    int nParticles = 10;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    /*SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12)*/;SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -206,13 +206,13 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
+//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
 
-            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
+//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 
 //             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
