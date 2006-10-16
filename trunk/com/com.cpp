@@ -81,7 +81,7 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    /*SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12)*/;SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -206,9 +206,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
 

@@ -3,13 +3,13 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="81" Type="Source" />
+   <View0 line="92" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedISIRAlgorithm.h" >
-   <View0 line="0" Type="Source" />
+   <View0 Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedISIRAlgorithm.cpp" >
-   <View0 line="23" Type="Source" />
+   <View0 line="369" Type="Source" />
   </Doc2>
  </DocsAndViews>
  <pluginList>
@@ -29,14 +29,14 @@
      <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedISIRAlgorithm.cpp" >
-     <mark line="106" />
-     <mark line="431" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="218" />
+     <mark line="317" />
+     <mark line="369" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
      <mark line="180" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="218" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

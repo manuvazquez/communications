@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedISIRAlgorithm.h"
 
-#define DEBUG2
+// #define DEBUG2
 
 LinearFilterBasedISIRAlgorithm::LinearFilterBasedISIRAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const ARchannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 ,_canal(canal),_simbolos(simbolos)
@@ -315,7 +315,8 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 
 			proposal = 1.0;
 			// the symbols are sampled from the above combined probabilities
-			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
+			for(iSampledSymbol=0;iSampledSymbol<_N;iSampledSymbol++)
+// 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
 				int iSampled = (StatUtil::Discrete_rnd(1,overallSymbolProb.row(iSampledSymbol)))[0];
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
@@ -366,7 +367,8 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 				cout << "La anterior probabilidad de m para orden " << _candidateOrders[iChannelOrder] << ": " << likelihoodsProd << endl;
 				#endif
 
-				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+				for(iSmoothing=0;iSmoothing<1;iSmoothing++)
+// 				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					tRange rSymbolVectors(iSmoothing,iSmoothing+m-1);
 					tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors),columnwise);
@@ -405,7 +407,11 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 
 			// the channel order APPs are normalized for the next iteration
 			if(sumChannelOrderAPPs==0)
-				throw RuntimeException("LinearFilterBasedISIRAlgorithm::Process: the sum of the channel order APP is zero.");
+			{
+// 				throw RuntimeException("LinearFilterBasedISIRAlgorithm::Process: the sum of the channel order APP is zero.");
+				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+					processedParticle->SetChannelOrderAPP(1.0/(double)_candidateOrders.size(),iChannelOrder);
+			}
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
 				processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/sumChannelOrderAPPs,iChannelOrder);
