@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "ViterbiAlgorithm.h"
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,_channel.Memory()-2),_d(smoothingLag)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,channel.Memory()-2),_d(smoothingLag)
 {
-    if(preamble.cols() < (_channel.Memory()-1))
+    if(preamble.cols() < (channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
 
     _nStates = (int)pow((double)alphabet.Length(),(double)channel.Nt()*(channel.Memory()-1));
@@ -65,17 +65,18 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
+	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
-    _detectedSymbolVectors = new tMatrix(_channel.Nt(),_K+_d);
+    _detectedSymbolVectors = new tMatrix(channel.Nt(),_K+_d);
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
-    vector<tSymbol> preambleVector(_N*(_channel.Memory()-1));
+    vector<tSymbol> preambleVector(_N*(channel.Memory()-1));
 
     // the number of columns of the preamble might be greater than m-1
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(_channel.Memory()-1))*_N;
+    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.Memory()-1))*_N;
 
     for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
@@ -90,7 +91,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         for(iState=0;iState<_nStates;iState++)
         {
             if(_exitStage[iState].sequence!=NULL)
-                DeployState(iState,observations.col(iProcessedObservation),_channel[iProcessedObservation]);
+                DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
@@ -116,7 +117,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         for(iState=0;iState<_nStates;iState++)
         {
             if(_exitStage[iState].sequence!=NULL)
-                DeployState(iState,observations.col(iProcessedObservation),_channel[iProcessedObservation]);
+                DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
@@ -159,30 +160,33 @@ void ViterbiAlgorithm::BuildStateTransitionMatrix()
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
 {
+	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
+
     double newCost;
     int arrivalState;
-    tVector computedObservations(_channel.Nr()),error(_channel.Nr());
+    tVector computedObservations(channel.Nr()),error(channel.Nr());
+
 
     int sequenceLength = (_exitStage[iState].sequence)->cols();
 
     // "symbolVectors" will contain all the symbols involved in the current observation
-    tMatrix symbolVectors(_channel.Nt(),_channel.Memory());
+    tMatrix symbolVectors(channel.Nt(),channel.Memory());
 
     // the already detected symbols vectors in the sequence are copied into "symbolVectors"
-    symbolVectors(rAllSymbolRows,rmMinus1FirstColumns).inject((*(_exitStage[iState].sequence))(rAllSymbolRows,tRange(sequenceLength-_channel.Memory()+1,sequenceLength-1)));
+    symbolVectors(rAllSymbolRows,rmMinus1FirstColumns).inject((*(_exitStage[iState].sequence))(rAllSymbolRows,tRange(sequenceLength-channel.Memory()+1,sequenceLength-1)));
 
     // now we compute the cost for each possible input
     for(int iInput=0;iInput<_nPossibleInputs;iInput++)
     {
         // the decimal iInput is converted to a symbol vector
-        vector<tSymbol> testedVector(_channel.Nt());
+        vector<tSymbol> testedVector(channel.Nt());
 
         // according to the alphabet
         _alphabet.IntToSymbolsArray(iInput,testedVector);
 
         // it's copied into "symbolVectors"
-        for(int i=0;i<_channel.Nt();i++)
-            symbolVectors(i,_channel.Memory()-1) = testedVector[i];
+        for(int i=0;i<channel.Nt();i++)
+            symbolVectors(i,channel.Memory()-1) = testedVector[i];
 
         // computedObservations = channelMatrix * symbolVectors(:)
         Blas_Mat_Vec_Mult(channelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
@@ -204,13 +208,13 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
                 tMatrix *aux = _arrivalStage[arrivalState].sequence;
 
                 // memory for the new matrix is reserved: it will have one more column
-                _arrivalStage[arrivalState].sequence = new tMatrix(_channel.Nt(),sequenceLength+1);
+                _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
 
                 // the old symbol vectors are stored in the new matrix
                 (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,tRange(0,sequenceLength-1)).inject(*(_exitStage[iState].sequence));
 
                 // the new one is copied
-                (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(_channel.Memory()-1));
+                (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
 
                 // the cost is updated
                 _arrivalStage[arrivalState].cost = newCost;
@@ -222,13 +226,13 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         else
         {
             // memory for the new matrix is reserved: it will have one more column
-            _arrivalStage[arrivalState].sequence = new tMatrix(_channel.Nt(),sequenceLength+1);
+            _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
 
             // the old symbol vectors are stored in the new matrix
             (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,tRange(0,sequenceLength-1)).inject(*(_exitStage[iState].sequence));
 
             // the new one is copied
-            (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(_channel.Memory()-1));
+            (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
 
             // the cost is updated
             _arrivalStage[arrivalState].cost = newCost;

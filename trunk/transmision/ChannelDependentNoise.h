@@ -22,7 +22,8 @@
 
 #include <Noise.h>
 #include <math.h>
-#include <MIMOChannel.h>
+// #include <MIMOChannel.h>
+#include <StillMemoryMIMOChannel.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/larvd.h>
 #include <lapackpp/lacvd.h>

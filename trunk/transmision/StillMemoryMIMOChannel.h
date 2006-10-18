@@ -17,43 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef STILLMEMORYMIMOCHANNEL_H
+#define STILLMEMORYMIMOCHANNEL_H
+
+#include <MIMOChannel.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-// #include <lapackpp/gmd.h>
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
-
-class MIMOChannel{
+class StillMemoryMIMOChannel : public MIMOChannel
+{
 protected:
-	int _nTx, _nRx, /*_memory,*/_length,_nTxnRx/*,_nTxnRxMemory,_nTxMemory*/;
-
+	int _memory,_nTxnRxMemory,_nTxMemory;
 public:
-//     MIMOChannel();
-	MIMOChannel(int nTx,int nRx,int length);
-	virtual ~MIMOChannel() {};
+    StillMemoryMIMOChannel(int nTx, int nRx, int memory,int length);
 
-	int Nt() const { return _nTx;};
-	int Nr() const { return _nRx;};
-// 	int Memory() const {return _memory;};
-	int Length() const {return _length;};
-	int NtNr() const {return _nTxnRx;};
-// 	int NtNrMemory() const {return _nTxnRxMemory;};
-// 	int NtMemory() const {return _nTxMemory;};
-	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
-	int NtMemory(int n) const {return _nTx*Memory(n);};
-// 	virtual int Memory() const = 0;
-	virtual int Memory(int n) const = 0;
-	virtual int MaximumOrder() const = 0;
-	virtual tMatrix& operator[](int n) const = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
+	int Memory() const {return _memory;};
+	int Memory(int n) const {return _memory;}
+	int MaximumOrder() const {return _memory;}
+	int NtNrMemory() const {return _nTxnRxMemory;};
+	int NtMemory() const {return _nTxMemory;};
+
+//     virtual tMatrix& operator [ ](int n) const;
+
 };
 
 #endif

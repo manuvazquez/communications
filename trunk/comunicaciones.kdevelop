@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>algorithms/libalgorithms.a</activetarget>
+      <activetarget>transmision/libtransmision.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

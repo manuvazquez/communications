@@ -17,43 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef SPRAWLINGMEMORYARMIMOCHANNEL_H
+#define SPRAWLINGMEMORYARMIMOCHANNEL_H
+
+#include <SprawlingMemoryMIMOChannel.h>
+#include <ARprocess.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-// #include <lapackpp/gmd.h>
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
-
-class MIMOChannel{
+class SprawlingMemoryARMIMOChannel : public SprawlingMemoryMIMOChannel
+{
 protected:
-	int _nTx, _nRx, /*_memory,*/_length,_nTxnRx/*,_nTxnRxMemory,_nTxMemory*/;
-
+	tMatrix* _channelMatrices;
+	int *_channelOrders;
+	ARprocess _ARprocess;
 public:
-//     MIMOChannel();
-	MIMOChannel(int nTx,int nRx,int length);
-	virtual ~MIMOChannel() {};
+    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
 
-	int Nt() const { return _nTx;};
-	int Nr() const { return _nRx;};
-// 	int Memory() const {return _memory;};
-	int Length() const {return _length;};
-	int NtNr() const {return _nTxnRx;};
-// 	int NtNrMemory() const {return _nTxnRxMemory;};
-// 	int NtMemory() const {return _nTxMemory;};
-	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
-	int NtMemory(int n) const {return _nTx*Memory(n);};
-// 	virtual int Memory() const = 0;
-	virtual int Memory(int n) const = 0;
-	virtual int MaximumOrder() const = 0;
-	virtual tMatrix& operator[](int n) const = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
+    ~SprawlingMemoryARMIMOChannel();
+
+	int Memory(int n) const {return _channelOrders[n];}
+	tMatrix& operator[](int n) const { return _channelMatrices[n];};
 };
 
 #endif

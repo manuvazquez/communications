@@ -32,6 +32,7 @@
 #include <Bits.h>
 #include <ARprocess.h>
 #include <ARchannel.h>
+#include <SprawlingMemoryARMIMOChannel.h>
 #include <ChannelDependentNoise.h>
 #include <Modulator.h>
 #include <Demodulator.h>
@@ -101,6 +102,19 @@ int main(int argc,char* argv[])
 	// unknown channel order
 	vector<int> candidateChannelOrders;
 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);/*candidateChannelOrders.push_back(5);*/
+
+	// sprawling memory transition probability matrix
+	tMatrix transitionProbabilitiesMatrix(candidateChannelOrders.size(),candidateChannelOrders.size());
+
+	// probability of staying in the same channel order
+	for(int i=0;i<candidateChannelOrders.size();i++)
+		transitionProbabilitiesMatrix(i,i) = 0.7;
+	transitionProbabilitiesMatrix(0,1) = 0.2;
+	transitionProbabilitiesMatrix(0,2) = 0.1;
+	transitionProbabilitiesMatrix(1,0) = 0.15;
+	transitionProbabilitiesMatrix(1,2) = 0.15;
+	transitionProbabilitiesMatrix(2,0) = 0.1;
+	transitionProbabilitiesMatrix(2,1) = 0.2;
 
     // linear detectors parameters
     double forgettingFactorDetector = 0.98;
@@ -180,7 +194,7 @@ int main(int argc,char* argv[])
         // ... and then modulated by means of the alphabet
         tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
 
-        // ...and set before the symbols to be transmitted
+        // the preamble is set before the symbols to be transmitted
         simbolosTransmitir = Util::Append(preambulo,simbolosTransmitir);
 
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
@@ -188,12 +202,17 @@ int main(int argc,char* argv[])
         // an AR channel is generated
         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
+		// a channel order varying AR channel is generated
+// 		SprawlingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
+
+		// noise is generated according to the channel
+		ChannelDependentNoise ruido(&canal);
+
         for(int iSNR=0;iSNR<SNRs.size();iSNR++)
         {
             cout << "SNR = " << SNRs[iSNR] << " [Trama " << iFrame << "]..." << endl;
 
-            // noise is generated
-            ChannelDependentNoise ruido(&canal);
+			// noise SNR is set
             ruido.SetSNR(SNRs[iSNR],pam2.Variance());
 
             // transmission
@@ -210,7 +229,7 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,simbolosTransmitir));
 

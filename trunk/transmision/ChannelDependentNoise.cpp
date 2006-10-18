@@ -40,15 +40,18 @@ ChannelDependentNoise::~ChannelDependentNoise()
 
 void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 {
-	int i,j,_channelMemory;
+	int i,j,memory;
 	double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nRx;
 	double stdDev,variance;
 
-	_channelMemory = _channel->Memory();
+// 	memory = _channel->Memory();
 
-	tMatrix channelTranspChannel(_channel->NtMemory(),_channel->NtMemory());
-	for(j=_channelMemory-1;j<_length;j++)
+// 	tMatrix channelTranspChannel(_channel->NtMemory(),_channel->NtMemory());
+	for(j=_channel->MaximumOrder() - 1;j<_length;j++)
 	{
+		memory = _channel->Memory(j);
+		tMatrix channelTranspChannel(_channel->NtMemory(j),_channel->NtMemory(j));
+
 		//channelTranspChannel = varianceConstant*alphabetVariance/Nr*_channel[j]'*_channel[j];
 		Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant);
 

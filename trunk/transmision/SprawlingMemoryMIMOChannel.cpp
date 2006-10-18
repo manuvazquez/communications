@@ -17,43 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#include "SprawlingMemoryMIMOChannel.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+using namespace std;
 
-// #include <lapackpp/gmd.h>
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
+SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int length, vector<int> candidateOrders,tMatrix transitionProbabilitiesMatrix,int initialChannelOrderIndex): MIMOChannel(nTx, nRx, length),_candidateOrders(candidateOrders),_transitionProbabilitiesMatrix(transitionProbabilitiesMatrix),_initialChannelOrderIndex(initialChannelOrderIndex)
+{
+	// it obtains the maximum allowed order for the channel
+	int iMaxOrder = 0;
+	_maxOrder = _candidateOrders[0];
+	for(int i=1;i<_candidateOrders.size();i++)
+		if(_candidateOrders[i]>_maxOrder)
+		{
+			iMaxOrder = i;
+			_maxOrder = _candidateOrders[i];
+		}
 
-class MIMOChannel{
-protected:
-	int _nTx, _nRx, /*_memory,*/_length,_nTxnRx/*,_nTxnRxMemory,_nTxMemory*/;
+	if(_transitionProbabilitiesMatrix.rows()!=_transitionProbabilitiesMatrix.cols() || _transitionProbabilitiesMatrix.cols()!=_candidateOrders.size())
+	{
+		throw RuntimeException("SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel: either transition probabilities matrix or channel orders vector dimensions are wrong.");
+	}
 
-public:
-//     MIMOChannel();
-	MIMOChannel(int nTx,int nRx,int length);
-	virtual ~MIMOChannel() {};
+	// it checks wether the probabilites matrix is coherent
+	for(int i=0;i<_transitionProbabilitiesMatrix.rows();i++)
+		if(Util::Sum(_transitionProbabilitiesMatrix.row(i))!=1.0)
+			throw RuntimeException("SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel: matrix probabilites are not coherent");
 
-	int Nt() const { return _nTx;};
-	int Nr() const { return _nRx;};
-// 	int Memory() const {return _memory;};
-	int Length() const {return _length;};
-	int NtNr() const {return _nTxnRx;};
-// 	int NtNrMemory() const {return _nTxnRxMemory;};
-// 	int NtMemory() const {return _nTxMemory;};
-	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
-	int NtMemory(int n) const {return _nTx*Memory(n);};
-// 	virtual int Memory() const = 0;
-	virtual int Memory(int n) const = 0;
-	virtual int MaximumOrder() const = 0;
-	virtual tMatrix& operator[](int n) const = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
-};
-
-#endif
+	cout << "Sale del primer constructor" << endl;
+}

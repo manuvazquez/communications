@@ -21,7 +21,7 @@
 
 using namespace std;
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): MIMOChannel(nTx, nRx, memory, length),
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): StillMemoryMIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
 _ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance),
 ARcoefficients,ARvariance,randomGenerator)
@@ -33,7 +33,7 @@ ARcoefficients,ARvariance,randomGenerator)
 			_channelMatrices[i] = _ARproc.NextMatrix();
 }
 
-ARchannel::ARchannel(const ARchannel &archannel):MIMOChannel(archannel),_ARproc(archannel._ARproc),_channelMatrices(new tMatrix[_length])
+ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_ARproc(archannel._ARproc),_channelMatrices(new tMatrix[_length])
 {
 	for(int i=_memory-1;i<_length;i++)
 			_channelMatrices[i] = archannel._channelMatrices[i];

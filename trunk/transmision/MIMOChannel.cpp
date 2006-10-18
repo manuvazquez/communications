@@ -22,11 +22,11 @@
 
 using namespace la;
 
-MIMOChannel::MIMOChannel():_nTx(0),_nRx(0),_memory(0),_length(0),_nTxnRx(0),_nTxnRxMemory(0),_nTxMemory(0)
-{
-}
+// MIMOChannel::MIMOChannel():_nTx(0),_nRx(0),_memory(0),_length(0),_nTxnRx(0),_nTxnRxMemory(0),_nTxMemory(0)
+// {
+// }
 
-MIMOChannel::MIMOChannel(int nTx,int nRx, int memory, int length):_nTx(nTx),_nRx(nRx),_memory(memory),_length(length),_nTxnRx(_nTx*_nRx),_nTxnRxMemory(_nTx*_nRx*_memory),_nTxMemory(_nTx*_memory)
+MIMOChannel::MIMOChannel(int nTx,int nRx,/* int memory, */int length):_nTx(nTx),_nRx(nRx)/*,_memory(memory)*/,_length(length),_nTxnRx(_nTx*_nRx)/*,_nTxnRxMemory(_nTx*_nRx*_memory),_nTxMemory(_nTx*_memory)*/
 {
 }
 
@@ -46,7 +46,7 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 		throw RuntimeException("Missmatched noise dimensions.");
 
 	// the number of resulting observations depends on the channel _memory
-	int nObservations = symbols.cols() - (_memory - 1);
+	int nObservations = symbols.cols() - (MaximumOrder() - 1);
 
 	if(nObservations<1)
 		throw RuntimeException("Not enough symbol vectors for this channel _memory.");
@@ -58,7 +58,7 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 
 	tRange allChannelMatrixRows(0,_nRx-1);
 
-	for(int iSymbolVector=_memory-1;iSymbolVector<symbols.cols();iSymbolVector++)
+	for(int iSymbolVector=MaximumOrder() - 1;iSymbolVector<symbols.cols();iSymbolVector++)
 	{
 		// just for the sake of clarity
 		tMatrix &currentChannelMatrix = (*this)[iSymbolVector];
@@ -70,11 +70,11 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 		// (_memory >= 1)
 		currentObservationVector = 0.0;
 
-		for(j=0;j<_memory;j++)
+		for(j=0;j<Memory(iSymbolVector);j++)
 		{
 			// currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*_nTx,(j+1)*_nTx-1)))*symbols.col(iSymbolVector-_memory+1+j)
 			tRange rowsRange(j*_nTx,(j+1)*_nTx-1);
-			Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-_memory+1+j), currentObservationVector,1.0,1.0);
+			Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-Memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
 		}
 
 		// the noise is added:

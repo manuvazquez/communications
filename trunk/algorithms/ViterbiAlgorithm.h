@@ -21,6 +21,7 @@
 #define VITERBIALGORITHM_H
 
 #include <KnownChannelAlgorithm.h>
+#include <StillMemoryMIMOChannel.h>
 
 /**
     @author Manu <manu@rustneversleeps>
@@ -52,7 +53,7 @@ protected:
     void BuildStateTransitionMatrix();
     void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const MIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
+    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
 
     ~ViterbiAlgorithm();
 
@@ -60,7 +61,7 @@ public:
     {
         int bestState = 0;
         double bestCost = _exitStage[0].cost;
-    
+
         for(int iState=1;iState<_nStates;iState++)
             if(_exitStage[iState].cost < bestCost)
             {
@@ -75,8 +76,6 @@ public:
     void Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     tMatrix GetDetectedSymbolVectors();
     void PrintStage(tStage exitOrArrival);
-
-//     double SER(tMatrix symbols);
 };
 
 #endif

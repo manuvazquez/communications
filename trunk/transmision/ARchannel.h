@@ -20,7 +20,8 @@
 #ifndef ARCHANNEL_H
 #define ARCHANNEL_H
 
-#include <MIMOChannel.h>
+// #include <MIMOChannel.h>
+#include <StillMemoryMIMOChannel.h>
 #include <vector>
 #include <ARprocess.h>
 
@@ -28,7 +29,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-class ARchannel : public MIMOChannel
+class ARchannel : public StillMemoryMIMOChannel
 {
 protected:
 	tMatrix* _channelMatrices;
