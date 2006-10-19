@@ -72,39 +72,19 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     int windowStart = nEstimatedChannelMatrices - windowSize;
     int j;
 
-    for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
-    {
-        // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-        mse += Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
-
-//         cout << "sumando: " << Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0) << ",";
-    }
-//     cout << endl;
+	// if the channel is sprawling memory, the channel matrices of the real channel may have different sizes
+	try {
+		for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+		{
+			// the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
+			mse += Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
+		}
+	} catch (IncompatibleOperandsException) {
+		return 0.0;
+	}
 
     return mse/(double)windowSize;
 }
-
-// tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int d)
-// {
-//
-// 	if((matrices[0].cols() % m)!=0)
-// 		throw RuntimeException("Algorithm::HsToStackedH: Incorrect number of columns in the matrices.");
-//
-// 	if(matrices.size()<(d+1))
-// 		throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
-//
-// 	tMatrix res(_L*(d+1),_N*(m+d));
-//     res = 0.0;
-//
-// 	for(int i=0;i<=d;i++)
-// 	{
-// 		tRange rowsRange(i*_L,(i+1)*_L-1);
-// 		tRange colsRange(i*_N,i*_N+_N*m-1);
-// 		res(rowsRange,colsRange).inject(matrices[i]);
-// 	}
-//
-// 	return res;
-// }
 
 tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 {

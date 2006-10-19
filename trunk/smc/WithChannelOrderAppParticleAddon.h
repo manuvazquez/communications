@@ -37,6 +37,8 @@ public:
 
 	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
 	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+
+	int MaxChannelOrderAppIndex();
 };
 
 #endif

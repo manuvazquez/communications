@@ -31,4 +31,10 @@ class AllElementsNullException : public runtime_error
 	public:
 		AllElementsNullException(string s) : runtime_error(s) { }
 };
+
+class IncompatibleOperandsException : public runtime_error
+{
+	public:
+		IncompatibleOperandsException(string s) : runtime_error(s) { }
+};
 #endif

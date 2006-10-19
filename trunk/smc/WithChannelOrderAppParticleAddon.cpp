@@ -32,3 +32,19 @@ WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(int nChannelO
 WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon):_channelOrderAPP(withChannelOrderAppParticleAddon._channelOrderAPP)
 {
 }
+
+int WithChannelOrderAppParticleAddon::MaxChannelOrderAppIndex()
+{
+	double max;
+	int iMax;
+
+	iMax = 0;
+	max = _channelOrderAPP[0];
+	for(int i=1;i<_channelOrderAPP.size();i++)
+		if(_channelOrderAPP[i]>max)
+		{
+			iMax = i;
+			max = _channelOrderAPP[i];
+		}
+	return iMax;
+}

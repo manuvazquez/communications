@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDISIRALGORITHM_H
-#define LINEARFILTERBASEDISIRALGORITHM_H
+#ifndef LINEARFILTERBASEDUNKNOWNCHANNELORDERMODELSMCALGORITHM_H
+#define LINEARFILTERBASEDUNKNOWNCHANNELORDERMODELSMCALGORITHM_H
 
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
@@ -32,12 +32,12 @@
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
 #include <MIMOChannel.h>
 
-class LinearFilterBasedISIRAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
-    LinearFilterBasedISIRAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel &canal,const tMatrix &simbolos);
+    LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel &canal,const tMatrix &simbolos);
 
-    ~LinearFilterBasedISIRAlgorithm();
+    ~LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm();
 
 protected:
     vector<LinearDetector *> _linearDetectors;

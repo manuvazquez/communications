@@ -34,31 +34,29 @@ ARcoefficients,ARvariance,randomGenerator)
 
 	for(int i=_maxOrder-1;i<_length;i++)
 	{
-		_channelOrders[i] = StatUtil::Discrete_rnd(1,transitionProbabilitiesMatrix.row(iPresentChannelOrder))[0];
+		_channelOrders[i] = iPresentChannelOrder;
 
 		_channelMatrices[i] = _ARprocess.NextMatrix()(rAllObservationsRows,tRange(0,_nTx*_candidateOrders[iPresentChannelOrder]-1));
 
-		iPresentChannelOrder = _channelOrders[i];
+		iPresentChannelOrder = StatUtil::Discrete_rnd(1,transitionProbabilitiesMatrix.row(iPresentChannelOrder))[0];
 	}
 
 	// the first channel order is modified in the loop but it must be "initialChannelOrderIndex"
 	_channelOrders[_maxOrder-1] = initialChannelOrderIndex;
 }
 
+SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel):SprawlingMemoryMIMOChannel(channel),_ARprocess(channel._ARprocess),_channelMatrices(new tMatrix[_length]),_channelOrders(new int[_length])
+{
+	for(int i=_maxOrder-1;i<_length;i++)
+	{
+		_channelOrders[i] = channel._channelOrders[i];
+		_channelMatrices[i] = channel._channelMatrices[i];
+	}
+}
 
 SprawlingMemoryARMIMOChannel::~SprawlingMemoryARMIMOChannel()
 {
 	delete[] _channelMatrices;
 	delete[] _channelOrders;
 }
-
-// int SprawlingMemoryARMIMOChannel::Memory(int n) const
-// {
-// 	return 0;
-// }
-
-// tMatrix& SprawlingMemoryARMIMOChannel::operator[](int n) const
-// {
-// // 	return tMatrix(); // <--------------------------------------------------
-// }
 

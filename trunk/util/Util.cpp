@@ -183,7 +183,7 @@ void Util::Min(const tVector &v,int &index)
 double Util::SquareError(const tMatrix &A,const tMatrix &B)
 {
     if(A.cols()!=B.cols() || A.rows()!=B.rows())
-        throw RuntimeException("Util::SquareError: matrix dimensions are different.");
+        throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
 
     double res = 0.0;
     int j;

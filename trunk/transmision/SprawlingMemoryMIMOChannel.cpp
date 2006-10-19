@@ -42,6 +42,4 @@ SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int len
 	for(int i=0;i<_transitionProbabilitiesMatrix.rows();i++)
 		if(Util::Sum(_transitionProbabilitiesMatrix.row(i))!=1.0)
 			throw RuntimeException("SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel: matrix probabilites are not coherent");
-
-	cout << "Sale del primer constructor" << endl;
 }

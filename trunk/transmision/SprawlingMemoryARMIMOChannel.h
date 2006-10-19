@@ -35,9 +35,11 @@ protected:
 public:
     SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
 
+	SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel);
+
     ~SprawlingMemoryARMIMOChannel();
 
-	int Memory(int n) const {return _channelOrders[n];}
+	int Memory(int n) const {return _candidateOrders[_channelOrders[n]];}
 	tMatrix& operator[](int n) const { return _channelMatrices[n];};
 };
 

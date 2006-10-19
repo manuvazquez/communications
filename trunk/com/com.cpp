@@ -51,6 +51,8 @@
 #include <ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 #include <ISIR.h>
 #include <LinearFilterBasedISIRAlgorithm.h>
+#include <LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h>
+#include <LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -73,10 +75,10 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 2;
-    int L=3,N=2,m=2,K=30;
-    int longSecEntr = 10;
-    int nParticles = 10;
+    int nFrames = 500;
+    int L=3,N=2,m=2,K=300;
+    int longSecEntr = 30;
+    int nParticles = 30;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -203,7 +205,7 @@ int main(int argc,char* argv[])
         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// a channel order varying AR channel is generated
-// 		SprawlingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
+// 		SprawlingMemoryARMIMOChannel canal(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -235,7 +237,12 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+
+            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR with smoothing",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+
+            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm("Linear Filter Based ISIR decidiendose por un modelo",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+
 
 // -----------------------------------------------------------------------------
 
