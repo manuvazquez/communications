@@ -75,10 +75,10 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 2;
-    int L=3,N=2,m=2,K=30;
-    int trainSeqLength = 10;
-    int nParticles = 10;
+    int nFrames = 500;
+    int L=3,N=2,m=2,K=300;
+    int trainSeqLength = 30;
+    int nParticles = 30;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -229,9 +229,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preambulo.cols(),m,&kalmanEstimator,preambulo,d,nParticles,algoritmoRemuestreo));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preambulo.cols(),m,&LMSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preambulo.cols(),m,&RLSestimator,&RMMSEdetector,preambulo,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
 
             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preambulo.cols(),canal,preambulo,d));
 
@@ -241,9 +241,21 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("Linear Filter Based ISIR",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
 
-            algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR with smoothing",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+//             algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR with smoothing",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
 
-            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm("Linear Filter Based ISIR decidiendose por un modelo",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+//             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm("Linear Filter Based ISIR decidiendose por un modelo",pam2,L,N,K+preambulo.cols(),unknownChannelOrderEstimators,unknownChannelOrderLinearDetectors,preambulo,preambulo.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance,canal,simbolosTransmitir));
+
+			// -------------------- Los algoritmos de siempre considerando diferentes m's
+
+			// m=2
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 2",pam2,L,N,K+preambulo.cols(),candidateChannelOrders[0],unknownChannelOrderEstimators[0],unknownChannelOrderLinearDetectors[0],preambulo,candidateChannelOrders[0]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+
+			//m=3
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 3",pam2,L,N,K+preambulo.cols(),candidateChannelOrders[1],unknownChannelOrderEstimators[1],unknownChannelOrderLinearDetectors[1],preambulo,candidateChannelOrders[1]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+
+			//m=4
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 4",pam2,L,N,K+preambulo.cols(),candidateChannelOrders[2],unknownChannelOrderEstimators[2],unknownChannelOrderLinearDetectors[2],preambulo,candidateChannelOrders[2]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],samplingVariance,ARvariance));
+
 
 
 // -----------------------------------------------------------------------------
@@ -306,7 +318,7 @@ int main(int argc,char* argv[])
 
         Util::ScalarToStream(iFrame+1,"nFrames",f);
 
-		Util::StringsVectorToStream(algorithmsNames,"names",f);
+		Util::StringsVectorToStream(algorithmsNames,"algorithmsNames",f);
         Util::ScalarToStream(L,"L",f);
         Util::ScalarToStream(N,"N",f);
         Util::ScalarToStream(m,"m",f);
@@ -314,6 +326,8 @@ int main(int argc,char* argv[])
         Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
         Util::ScalarToStream(nParticles,"nParticles",f);
         Util::ScalarToStream(d,"d",f);
+		Util::IntsVectorToStream(candidateChannelOrders,"candidateOrders",f);
+		Util::IntsVectorToStream(SNRs,"SNRs",f);
 
 		f.close();
 		// ---------------------------------------------------------

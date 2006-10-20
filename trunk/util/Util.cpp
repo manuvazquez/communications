@@ -257,3 +257,12 @@ void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstrea
 		f << endl;
 	}
 }
+
+void Util::IntsVectorToStream(std::vector<int> ints,string name,ofstream &f)
+{
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << ints.size() << endl;
+
+	for(int i=0;i<ints.size();i++)
+		f << ints[i] << " ";
+	f << endl;
+}
