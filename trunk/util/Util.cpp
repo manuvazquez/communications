@@ -231,3 +231,29 @@ void Util::ScalarToStream(int scalar,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
 }
+
+void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstream &f)
+{
+	int j;
+
+    f << "# name: "<< name << endl <<"# type: string" << endl << "# elements: " << strings.size() << endl;
+
+	int iMax = 0;
+	int max = strings[0].length();
+	for(int i=0;i<strings.size();i++)
+		if(strings[i].length()>max)
+		{
+			iMax = i;
+			max = strings[i].length();
+		}
+	for(int i=0;i<strings.size();i++)
+	{
+		f << "# length: " << max << endl;
+		f << strings[i];
+
+		// paddling with spaces
+		for(j=max-strings[i].length();j>0;j--)
+			f << " ";
+		f << endl;
+	}
+}

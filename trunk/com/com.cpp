@@ -75,10 +75,10 @@ int main(int argc,char* argv[])
     double pe,mse;
 
     // PARAMETERS
-    int nFrames = 500;
-    int L=3,N=2,m=2,K=300;
-    int longSecEntr = 30;
-    int nParticles = 30;
+    int nFrames = 2;
+    int L=3,N=2,m=2,K=30;
+    int trainSeqLength = 10;
+    int nParticles = 10;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -130,6 +130,9 @@ int main(int argc,char* argv[])
 
 	// -----------------------------------------------------------------------------
 
+	// a vector that will contain the names of the algorithms
+	vector<string> algorithmsNames;
+
 	char hostname[HOSTNAME_LENGTH];
 	gethostname(hostname,HOSTNAME_LENGTH);
 
@@ -140,10 +143,10 @@ int main(int argc,char* argv[])
     preambulo = -1.0;
 
     tRange rAllSymbolRows(0,N-1);
-    tRange rTrainingSequenceSymbolVectors(preambulo.cols(),preambulo.cols()+longSecEntr-1);
+    tRange rTrainingSequenceSymbolVectors(preambulo.cols(),preambulo.cols()+trainSeqLength-1);
 
     // the last "d" observations are used only for smoothing and don't result in any detected vector
-    tRange rSymbolVectorsToComputePe(preambulo.cols()+longSecEntr,K+preambulo.cols()-1);
+    tRange rSymbolVectorsToComputePe(preambulo.cols()+trainSeqLength,K+preambulo.cols()-1);
 
     // channel estimators are constructed for the different algorithms
     KalmanEstimator kalmanEstimator(mediaInicial,ARcoefficients[0],ARvariance);
@@ -171,7 +174,6 @@ int main(int argc,char* argv[])
 
 	// the algorithms with the higher smoothing lag require
 	int nSmoothingInstants = maxCandidateOrder-1;
-// 	int nSmoothingInstants = d;
 
 	// the preamble that will be passed to the unknown channel order algorithms
 	tMatrix unknownChannelOrderAlgorithmsPreamble(N,maxCandidateOrder-1);
@@ -262,6 +264,12 @@ int main(int argc,char* argv[])
 
                 overallMseMatrix.resize(SNRs.size(),algorithms.size());
                 overallMseMatrix = 0.0;
+
+				// we fill the vector with the names of the algorithms
+				for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+				{
+					algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
+				}
             }
 
             // algorithms are executed
@@ -270,7 +278,7 @@ int main(int argc,char* argv[])
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
 
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
-                mse = algorithms[iAlgorithm]->MSE(canal.Range(preambulo.cols()+longSecEntr,K+preambulo.cols()-1));
+                mse = algorithms[iAlgorithm]->MSE(canal.Range(preambulo.cols()+trainSeqLength,K+preambulo.cols()-1));
 
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
@@ -282,7 +290,10 @@ int main(int argc,char* argv[])
 
                 delete algorithms[iAlgorithm];
             }
-        }
+        } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
+
+
+		// ----------------- VARIABLES SAVING ----------------------
 		ofstream f(outputFileName,ofstream::trunc);
 
 		tMatrix auxOverallPe = overallPeMatrix;
@@ -293,10 +304,21 @@ int main(int argc,char* argv[])
 		auxOverallMse *= 1.0/(double)(iFrame+1);
 		Util::MatrixToStream(auxOverallMse,"mse",f);
 
-        Util::ScalarToStream(iFrame+1,"nTramas",f);
+        Util::ScalarToStream(iFrame+1,"nFrames",f);
+
+		Util::StringsVectorToStream(algorithmsNames,"names",f);
+        Util::ScalarToStream(L,"L",f);
+        Util::ScalarToStream(N,"N",f);
+        Util::ScalarToStream(m,"m",f);
+        Util::ScalarToStream(K,"K",f);
+        Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
+        Util::ScalarToStream(nParticles,"nParticles",f);
+        Util::ScalarToStream(d,"d",f);
 
 		f.close();
-    }
+		// ---------------------------------------------------------
+
+    } // for(int iFrame=0;iFrame<nFrames;iFrame++)
 
     overallPeMatrix *= 1.0/nFrames;
     overallMseMatrix *= 1.0/nFrames;
