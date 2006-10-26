@@ -29,7 +29,7 @@ Bits::Bits()
 	matrix = NULL;
 }
 
-Bits::Bits(int nStreams, int nBitsByStream,Random randomGenerator)
+Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
 {
 	this->nStreams = nStreams;
 	this->nBitsByStream = nBitsByStream;
@@ -38,7 +38,9 @@ Bits::Bits(int nStreams, int nBitsByStream,Random randomGenerator)
 
 	matrix = new tBit[nStreams*nBitsByStream];
 	for(int i=nStreams*nBitsByStream;i--;)
+	{
 		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
+	}
 }
 
 Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): nStreams(nStreams),nBitsByStream(nBitsByStream),matrix(matrix)
@@ -142,5 +144,5 @@ int Bits::operator-(const Bits &bits) const
 	for(int i=nStreams*nBitsByStream;i--;)
 		if(matrix[i]!=bits.matrix[i])
 			res++;
-	return res;	
+	return res;
 }

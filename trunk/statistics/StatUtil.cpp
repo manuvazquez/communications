@@ -33,7 +33,7 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 
     double *distributionFunction = new double[nProbabilities];
     distributionFunction[0] = normalizedProbabilities(0);
-    for(i=0;i<nProbabilities;i++)
+    for(i=1;i<nProbabilities;i++)
            distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
 
     vector<int> res(nSamples);

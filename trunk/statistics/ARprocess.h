@@ -41,11 +41,11 @@ private:
 	int _nCoefficients, _rows, _columns, _iNextMatrix;
 	int _iterationsForConvergence;
 	tMatrix **_buffer;
-	Random _randomGenerator;
+// 	Random _randomGenerator;
 
 public:
 //     ARprocess();
-	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance,Random randomGenerator = Random(0));
+	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance/*,Random randomGenerator = Random(0)*/);
 	ARprocess(const ARprocess &arprocess);
 	~ARprocess();
 	tMatrix NextMatrix();

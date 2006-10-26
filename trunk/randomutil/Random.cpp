@@ -5,13 +5,13 @@ using namespace std;
 
 double Random::randn ()
 {
-  static bool havesmpl = false;
-  static double smpl;
+//   static bool _havesmpl = false;
+//   static double _smpl;
 
-  if(havesmpl)
+  if(_havesmpl)
   {
-	  havesmpl = false;
-	  return smpl;
+	  _havesmpl = false;
+	  return _smpl;
   }
   else
   {
@@ -27,8 +27,8 @@ double Random::randn ()
 
 	  w = sqrt (-2.0 * log (w) / w);
 
-	  smpl = x2 * w;
-	  havesmpl = true;
+	  _smpl = x2 * w;
+	  _havesmpl = true;
 
 	  return x1 * w;
   }

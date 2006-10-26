@@ -40,14 +40,10 @@ ChannelDependentNoise::~ChannelDependentNoise()
 
 void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 {
-// 	cout << "Entrando en SetSNR" << endl;
 	int i,j,memory;
 	double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nRx;
 	double stdDev,variance;
 
-// 	memory = _channel->Memory();
-
-// 	tMatrix channelTranspChannel(_channel->NtMemory(),_channel->NtMemory());
 	for(j=_channel->MaximumOrder()-1;j<_length;j++)
 	{
 		memory = _channel->Memory(j);
@@ -62,14 +58,20 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 		Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant);
 
 		variance = channelTranspChannel.trace();
+
+// 		cout << "La varianza para j =  " << j << " es " << variance << endl;
+// 		getchar();
+
 		stdDev = sqrt(variance);
 
 		for(i=0;i<_nRx;i++)
+		{
 			// normalize by dividing by the old standard deviation and multiplying by the new one
+// 			cout << _matrix(i,j) << endl;
 			_matrix(i,j) = _matrix(i,j)/_stdDevs[j]*stdDev;
+		}
 		_stdDevs[j] = stdDev;
 	}
-// 	cout << "Saliendo de SetSNR" << endl;
 }
 
 double ChannelDependentNoise::StdDevAt(int n)

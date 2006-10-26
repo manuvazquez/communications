@@ -132,7 +132,8 @@ int main(int argc,char* argv[])
 // 	for(int i=0;i<secuenciaSimbolos.size();i++)
 // 		cout << secuenciaSimbolos[i];
 // 	cout << endl;
-	Bits bits(2,4);
+	Random randi(1);
+	Bits bits(2,4,randi);
 	bits.Print();
 	cout << "-----------" << endl;
 	Bits bits2;
@@ -161,7 +162,7 @@ int main(int argc,char* argv[])
 	tRange todasFilasSimbolos(0,N-1);
 	double muLMS = 0.05;
 
-	Bits bitsTransmitir(N,K);
+	Bits bitsTransmitir(N,K,randi);
 
 	tMatrix simbolosTransmitir = Modulator::Modulate(bitsTransmitir,pam2);
 

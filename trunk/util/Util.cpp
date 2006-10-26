@@ -227,10 +227,13 @@ void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream 
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
 
-void Util::ScalarToStream(int scalar,string name,ofstream &f)
+template<class T> void Util::ScalarToStream(T scalar,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
 }
+
+template void Util::ScalarToStream(int scalar,string name,ofstream &f);
+template void Util::ScalarToStream(double scalar,string name,ofstream &f);
 
 void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstream &f)
 {

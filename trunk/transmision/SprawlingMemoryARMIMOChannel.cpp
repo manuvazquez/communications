@@ -20,7 +20,7 @@
 #include "SprawlingMemoryARMIMOChannel.h"
 
 SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, transitionProbabilitiesMatrix, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
-ARcoefficients,ARvariance,randomGenerator)
+ARcoefficients,ARvariance/*,randomGenerator*/)
 {
 	int presentChannelOrder,iPresentChannelOrder;
 	tRange rAllObservationsRows(0,_nRx-1);

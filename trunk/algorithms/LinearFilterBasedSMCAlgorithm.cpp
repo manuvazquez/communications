@@ -65,18 +65,26 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		// the stacked observations vector
 		tVector stackedObservations = Util::ToVector(observations(allObservationsRows,smoothingRange),columnwise);
 
+// 		cout << "La varianza dentro del filtro (" << iObservationToBeProcessed << ") " << noiseVariances[iObservationToBeProcessed] << endl;
+
 		// stacked noise covariance needs to be constructed
 		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*(_d+1),_L*(_d+1));
 		for(iSmoothing=0;iSmoothing<_d+1;iSmoothing++)
 			for(iRow=0;iRow<_L;iRow++)
 				stackedNoiseCovariance(iSmoothing*_L+iRow,iSmoothing*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
+// 		cout << "la megamatriz de covarianza" << endl << stackedNoiseCovariance << endl;
+
 		// required noise covariances are computed from the noise variances
 		for(iSmoothing=0;iSmoothing<=_d;iSmoothing++)
 		{
 			noiseCovariances[iSmoothing] = LaGenMatDouble::eye(_L);
 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
+
+// 			cout << noiseCovariances[iSmoothing] << endl;
 		}
+
+// 		getchar();
 
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
@@ -88,7 +96,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			Util::Add((processedParticle->GetChannelMatrixEstimator())->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
 // 			Util::Add((_particlesChannelMatrixEstimators[iParticle])->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
 
-			for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
+			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
 			{
 				// matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
 				Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
@@ -196,7 +204,8 @@ vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMa
 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
 	tRange allObservationRows(0,_L-1);
 
-	for(int i=_m-1;i<lengthSequenceToProcess;i++)
+	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
+// 	for(int i=_m-1;i<lengthSequenceToProcess;i++)
 	{
 		tRange smoothingRange(i,i+_d);
 		tVector stackedObservationsVector = Util::ToVector(observations(allObservationRows,smoothingRange),columnwise);

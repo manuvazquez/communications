@@ -36,7 +36,7 @@ private:
 
 public:
 	Bits();
-	Bits(int nStreams, int nBitsByStream,Random randomGenerator = Random(0));
+	Bits(int nStreams, int nBitsByStream,Random &randomGenerator);
 	Bits(tBit *matrix,int nStreams,int nBitsByStream);
 	Bits& operator=(const Bits& bits);
 	Bits(const Bits& bits);

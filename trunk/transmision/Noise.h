@@ -34,7 +34,7 @@ protected:
 	int _nRx,_length;
 	tMatrix _matrix;
 public:
-    Noise(int nRx,int length,Random randomGenerator = Random(0));
+    Noise(int nRx,int length/*,Random randomGenerator = Random(0)*/);
 	virtual ~Noise() {};
 
 	int Length() { return _length;}
