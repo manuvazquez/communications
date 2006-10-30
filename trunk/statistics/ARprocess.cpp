@@ -95,7 +95,7 @@ tMatrix ARprocess::NextMatrix()
 	// _buffer[i % _nCoefficients] = aux + noise;
 	Util::Add(aux,noise,*(_buffer[_iNextMatrix % _nCoefficients]));
 
-	return *(_buffer[_iNextMatrix % _nCoefficients]);
+	return *(_buffer[_iNextMatrix++ % _nCoefficients]);
 }
 
 

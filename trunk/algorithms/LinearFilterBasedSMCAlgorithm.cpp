@@ -105,6 +105,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// matrices are stacked to give
 			tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
+            tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(_d+1)-1),tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
+
 			// the estimated stacked channel matrix is used to obtain soft estimations
 			// of the transmitted symbols
 			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->Detect(stackedObservations,stackedChannelMatrix);
@@ -115,7 +117,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// operations needed to computed the sampling variance
 
 			//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+// 			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+
+            Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 
 			// s2qAux = s2qAux + stackedNoiseCovariance
 			Util::Add(s2qAux,stackedNoiseCovariance,s2qAux);
@@ -129,7 +133,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
 
-				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+// 				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+
+                s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 // 				cout << "La varianza calculada: " << s2q << " t = " << iObservationToBeProcessed << endl;
 
 				double sumProb = 0.0;

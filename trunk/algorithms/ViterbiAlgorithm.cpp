@@ -75,9 +75,8 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     int preambleLength = _preamble.rows()*_preamble.cols();
     vector<tSymbol> preambleVector(_N*(channel.Memory()-1));
 
-    // the number of columns of the preamble might be greater than m-1
+    // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
     int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.Memory()-1))*_N;
-
     for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
 
@@ -175,6 +174,8 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     // the already detected symbols vectors in the sequence are copied into "symbolVectors"
     symbolVectors(rAllSymbolRows,rmMinus1FirstColumns).inject((*(_exitStage[iState].sequence))(rAllSymbolRows,tRange(sequenceLength-channel.Memory()+1,sequenceLength-1)));
 
+    tRange rOldSymbolVectors(0,sequenceLength-1);
+
     // now we compute the cost for each possible input
     for(int iInput=0;iInput<_nPossibleInputs;iInput++)
     {
@@ -194,7 +195,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         // error = observations - computedObservations
         Util::Add(observations,computedObservations,error,1.0,-1.0);
 
-        newCost = _exitStage[iState].cost + Blas_Norm2(error);
+        newCost = _exitStage[iState].cost + Blas_Dot_Prod(error,error);
 
         arrivalState = _stateTransitionMatrix[iState][iInput];
 
@@ -211,7 +212,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
                 _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
 
                 // the old symbol vectors are stored in the new matrix
-                (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,tRange(0,sequenceLength-1)).inject(*(_exitStage[iState].sequence));
+                (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState].sequence));
 
                 // the new one is copied
                 (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
@@ -229,7 +230,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
             _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
 
             // the old symbol vectors are stored in the new matrix
-            (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,tRange(0,sequenceLength-1)).inject(*(_exitStage[iState].sequence));
+            (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState].sequence));
 
             // the new one is copied
             (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
