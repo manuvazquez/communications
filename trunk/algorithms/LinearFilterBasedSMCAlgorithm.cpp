@@ -94,7 +94,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 			// matricesToStack[0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
 			Util::Add((processedParticle->GetChannelMatrixEstimator())->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
-// 			Util::Add((_particlesChannelMatrixEstimators[iParticle])->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
 
 			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
 			{
@@ -117,9 +116,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// operations needed to computed the sampling variance
 
 			//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
+            Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 // 			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
 
-            Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 
 			// s2qAux = s2qAux + stackedNoiseCovariance
 			Util::Add(s2qAux,stackedNoiseCovariance,s2qAux);
@@ -136,7 +135,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 // 				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
                 s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-// 				cout << "La varianza calculada: " << s2q << " t = " << iObservationToBeProcessed << endl;
 
 				double sumProb = 0.0;
 				// the probability for each posible symbol alphabet is computed

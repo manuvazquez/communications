@@ -57,7 +57,8 @@ public:
 	static void MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f);
     template<class T> static void ScalarToStream(T scalar,string name,ofstream &f);
     static void StringsVectorToStream(std::vector<string> strings,string name,ofstream &f);
-    static void IntsVectorToStream(std::vector<int> ints,string name,ofstream &f);
+//     static void IntsVectorToStream(std::vector<int> ints,string name,ofstream &f);
+    template<class T> static void ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f);
 };
 
 #endif

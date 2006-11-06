@@ -1,25 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="6" >
-  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.h" >
-   <View0 Type="Source" />
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 line="80" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
-   <View0 line="204" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.h" >
-   <View0 Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.cpp" >
-   <View0 line="8" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/ARprocess.cpp" >
-   <View0 Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="124" Type="Source" />
-  </Doc5>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -30,23 +15,28 @@
     <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="144" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedUnknownChannelOrderSMCAlgorithm.cpp" >
+     <mark line="193" />
+     <mark line="211" />
+     <mark line="179" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ML_SMCAlgorithm.cpp" >
      <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedISIRAlgorithm.cpp" >
-     <mark line="317" />
-     <mark line="369" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="222" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
-     <mark line="107" />
-     <mark line="135" />
-     <mark line="118" />
+     <mark line="315" />
+     <mark line="367" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
      <mark line="180" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+     <mark line="106" />
+     <mark line="117" />
+     <mark line="134" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="127" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

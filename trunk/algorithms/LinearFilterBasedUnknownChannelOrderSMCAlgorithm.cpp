@@ -21,8 +21,8 @@
 
 // #define DEBUG2
 
-LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
-,_canal(canal),_simbolos(simbolos)
+LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+// ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
         throw RuntimeException("LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
@@ -103,9 +103,9 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 		#ifdef DEBUG2
-		cout << "iObservationToBeProcessed: " << iObservationToBeProcessed << endl;
-		cout << "Simbolos anteriores" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1)) << endl;
-		cout << "Simbolos transmitidos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
+			cout << "iObservationToBeProcessed: " << iObservationToBeProcessed << endl;
+			cout << "Simbolos anteriores" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1)) << endl;
+			cout << "Simbolos transmitidos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
 		#endif
 
 // 		cout << "Matriz de verdad" << endl << _canal[iObservationToBeProcessed] << endl;
@@ -119,7 +119,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 		// stacked noise covariance needs to be constructed
 		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*_maxOrder,_L*_maxOrder);
 
-		// the loop accomplish 2 things:
+		// the loop accomplishes 2 things:
 		for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 		{
 			// i) construction of the stacked noise covariance
@@ -130,13 +130,6 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 			noiseCovariances[iSmoothing] = LaGenMatDouble::eye(_L);
 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
 		}
-
-// 		// required noise covariances are computed from the noise variances
-// 		for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
-// 		{
-// 			noiseCovariances[iSmoothing] = LaGenMatDouble::eye(_L);
-// 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
-// 		}
 
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
@@ -175,8 +168,6 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 
 // 				nLinearFiltersNeeded = 1;
 
-				LinearDetector *linearDetectorClone = processedParticle->GetLinearDetector(iChannelOrder)->Clone();
-
 				// during the first iteration, we are going to use the real linear detector of this particle for this channel order
 				LinearDetector *linearDetectorBeingProccessed = processedParticle->GetLinearDetector(iChannelOrder);
 
@@ -186,16 +177,23 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 					// matrices are stacked to give
 					tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
+            		tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(d+1)-1),tRange((m-1)*_N,stackedChannelMatrix.cols()-1));
+
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols
 					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix);
 
 					tMatrix filter = linearDetectorBeingProccessed->ComputedFilter();
 
+					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
+					if(iLinearFilterNeeded==0)
+						linearDetectorBeingProccessed = linearDetectorBeingProccessed->Clone();
+
 					// operations needed to computed the sampling variance
 
 					//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-					Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
+// 					Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
 					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
@@ -211,7 +209,9 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 						// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
 						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
-						s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+                		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+
+// 						s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
 						double sumProb = 0.0;
 						// the probability for each posible symbol alphabet is computed
@@ -232,13 +232,10 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;
 						}
 					}
-
-					// the remaining iterations we don't want the real linear detector to be modified
-					linearDetectorBeingProccessed = linearDetectorClone;
 				} // for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 
 				// the clone is dismissed
-				delete linearDetectorClone;
+				delete linearDetectorBeingProccessed;
 
 			} //for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 

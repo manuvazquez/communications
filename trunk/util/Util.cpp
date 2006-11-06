@@ -261,11 +261,22 @@ void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstrea
 	}
 }
 
-void Util::IntsVectorToStream(std::vector<int> ints,string name,ofstream &f)
-{
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << ints.size() << endl;
+// void Util::IntsVectorToStream(std::vector<int> ints,string name,ofstream &f)
+// {
+//     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << ints.size() << endl;
+//
+// 	for(int i=0;i<ints.size();i++)
+// 		f << ints[i] << " ";
+// 	f << endl;
+// }
 
-	for(int i=0;i<ints.size();i++)
-		f << ints[i] << " ";
+template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f)
+{
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << vector.size() << endl;
+
+	for(int i=0;i<vector.size();i++)
+		f << vector[i] << " ";
 	f << endl;
 }
+template void Util::ScalarsVectorToStream(std::vector<double> vector,string name,ofstream &f);
+template void Util::ScalarsVectorToStream(std::vector<int> vector,string name,ofstream &f);
