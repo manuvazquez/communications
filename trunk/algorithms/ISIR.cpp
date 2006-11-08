@@ -46,6 +46,7 @@ void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
 	double auxLikelihoodsProd,channelOrderAPPsNormConstant,newChannelOrderAPP;
 	KalmanEstimator *channelEstimatorClone;
+	double channelOrderAprioriProbability = 1.0/(double)_candidateOrders.size();
 
 	// it selects all rows in the symbols Matrix
 	tRange allSymbolRows(0,_N-1);
@@ -167,11 +168,12 @@ void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
 			}
 
             if(channelOrderAPPsNormConstant==0)
-                throw RuntimeException("ISIR::Process: the normalizing constant for the channel order a posteriori probabilities is 0.");
-
-            // all the channel order a posteriori probabilities are normalized by the previously computed constant
-            for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-                processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
+				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+					processedParticle->SetChannelOrderAPP(channelOrderAprioriProbability,iChannelOrder);
+			else
+				// all the channel order a posteriori probabilities are normalized by the previously computed constant
+				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+					processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
 
 
 			processedParticle->SetWeight(processedParticle->GetWeight()*Util::Sum(likelihoods));

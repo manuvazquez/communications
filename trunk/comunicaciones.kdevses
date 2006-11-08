@@ -1,10 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
+ <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="80" Type="Source" />
+   <View0 line="106" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/StatUtil.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/SprawlingMemoryARMIMOChannel.cpp" >
+   <View0 line="23" Type="Source" />
+  </Doc2>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -27,16 +33,13 @@
      <mark line="315" />
      <mark line="367" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
-     <mark line="180" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="106" />
      <mark line="117" />
      <mark line="134" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="127" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
+     <mark line="180" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

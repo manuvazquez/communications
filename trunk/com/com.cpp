@@ -20,6 +20,9 @@
 
 #define HOSTNAME_LENGTH 50
 
+// the seed used to create the random objects is generated from the system time
+#define RANDOM_SEED
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -95,7 +98,6 @@ int main(int argc,char* argv[])
     double channelMean=0.0,channelVariance=1.0;
 
     // channel estimator parameters
-//     double firstSampledChannelMatrixVariance = 0.0039062;
 	double firstSampledChannelMatrixVariance = 0.0;
     double subsequentSampledChannelMatricesVariance = 0.0;
     tMatrix mediaInicial(L,N*m);
@@ -197,7 +199,11 @@ int main(int argc,char* argv[])
     tMatrix overallMseMatrix;
 
     // we don't want the same bits to be generated over and over
-    Random bitsRandomGenerator(0);
+	#ifdef RANDOM_SEED
+		Random bitsRandomGenerator;
+	#else
+    	Random bitsRandomGenerator(0);
+    #endif
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -216,7 +222,7 @@ int main(int argc,char* argv[])
         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// a channel order varying AR channel is generated
-// 		SprawlingMemoryARMIMOChannel canal(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
+// 		SprawlingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -249,6 +255,8 @@ int main(int argc,char* argv[])
             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo));
 
             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("Linear Filter Unknown Channel Order",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+
+			// --------------------------------------------------------------
 
 //             algorithms.push_back(new LinearFilterBasedISIRAlgorithm("Linear Filter Based ISIR with smoothing",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance,canal,simbolosTransmitir));
 

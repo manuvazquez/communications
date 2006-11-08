@@ -21,8 +21,7 @@
 
 using namespace std;
 
-Noise::Noise(int nRx,int length/*,Random randomGenerator*/): _nRx(nRx),_length(length),
-// _matrix(randomGenerator.randnArray(_nRx*_length,0,1),_nRx,_length)
+Noise::Noise(int nRx,int length): _nRx(nRx),_length(length),
 _matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0))
 {
 }

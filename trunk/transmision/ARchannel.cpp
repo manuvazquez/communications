@@ -21,10 +21,10 @@
 
 using namespace std;
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): StillMemoryMIMOChannel(nTx, nRx, memory, length),
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance): StillMemoryMIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
 _ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance),
-ARcoefficients,ARvariance/*,randomGenerator*/)
+ARcoefficients,ARvariance)
 {
 	_channelMatrices = new tMatrix[length];
 

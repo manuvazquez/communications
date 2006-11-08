@@ -26,6 +26,10 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <types.h>
+#include <lapackpp/blas3pp.h>
+
 class SprawlingMemoryARMIMOChannel : public SprawlingMemoryMIMOChannel
 {
 protected:
@@ -33,7 +37,7 @@ protected:
 	int *_channelOrders;
 	ARprocess _ARprocess;
 public:
-    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
+    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance);
 
 	SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel);
 

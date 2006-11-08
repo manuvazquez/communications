@@ -37,7 +37,7 @@ protected:
 
 
 public:
-    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator =  Random(0));
+    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
 	ARchannel(const ARchannel &archannel);
 	~ARchannel();
 

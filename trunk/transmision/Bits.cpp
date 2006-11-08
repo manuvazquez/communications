@@ -34,8 +34,6 @@ Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
 	this->nStreams = nStreams;
 	this->nBitsByStream = nBitsByStream;
 
-// 	Random randomGenerator(1234);
-
 	matrix = new tBit[nStreams*nBitsByStream];
 	for(int i=nStreams*nBitsByStream;i--;)
 	{

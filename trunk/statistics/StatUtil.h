@@ -26,6 +26,7 @@
 
 #include <stdlib.h>
 #include <vector>
+#include <types.h>
 #include <Random.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
@@ -37,10 +38,8 @@
 
 class StatUtil{
 public:
-//     static vector<int> Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator= Random(0));
-
     static vector<int> Discrete_rnd(int nSamples, tVector probabilities);
-// 
+
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
 
 	static double NormalPdf(double x,double mean,double variance);

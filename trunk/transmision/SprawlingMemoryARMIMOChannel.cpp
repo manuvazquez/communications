@@ -19,11 +19,22 @@
  ***************************************************************************/
 #include "SprawlingMemoryARMIMOChannel.h"
 
-SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance,Random randomGenerator): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, transitionProbabilitiesMatrix, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
-ARcoefficients,ARvariance/*,randomGenerator*/)
+// the seed used to create the random objects is generated from the system time
+#define RANDOM_SEED
+
+SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, transitionProbabilitiesMatrix, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
+ARcoefficients,ARvariance)
 {
 	int presentChannelOrder,iPresentChannelOrder;
 	tRange rAllObservationsRows(0,_nRx-1);
+	double overAllNorm,lastTapNorm,ratio,sample;
+	double changeProbability = 0.1;
+
+	#ifdef RANDOM_SEED
+		static Random randomGenerator;
+	#else
+		static Random randomGenerator(3);
+	#endif
 
 	_channelMatrices = new tMatrix[length];
 	_channelOrders = new int[length];
@@ -36,9 +47,46 @@ ARcoefficients,ARvariance/*,randomGenerator*/)
 	{
 		_channelOrders[i] = iPresentChannelOrder;
 
+		cout << _candidateOrders[iPresentChannelOrder] << endl;
+
 		_channelMatrices[i] = _ARprocess.NextMatrix()(rAllObservationsRows,tRange(0,_nTx*_candidateOrders[iPresentChannelOrder]-1));
 
-		iPresentChannelOrder = StatUtil::Discrete_rnd(1,transitionProbabilitiesMatrix.row(iPresentChannelOrder))[0];
+		cout << "La matriz de canal" << endl << _channelMatrices[i] << endl;
+
+		// overall Frobenius norm of the channel is computed
+		overAllNorm = pow(Blas_NormF(_channelMatrices[i]),2.0);
+
+		// Frobenius norm of the last "tap" of the channel
+		lastTapNorm = pow(Blas_NormF(_channelMatrices[i](rAllObservationsRows,tRange((_candidateOrders[iPresentChannelOrder]-1)*nTx,_candidateOrders[iPresentChannelOrder]*nTx-1))),2.0);
+
+		cout << overAllNorm << "," << lastTapNorm << endl;
+
+// 		iPresentChannelOrder += (abs(1.0 - ratio) < randomGenerator.rand())*(ratio / abs(ratio));
+
+		ratio = lastTapNorm/(overAllNorm/_candidateOrders[iPresentChannelOrder]);
+
+		cout << "el ratio es " << ratio << endl;
+
+// 		cout << "maxOrder es " << _maxOrder << endl;
+
+		// if the energy of the last tap is relatively small
+		if(ratio < 1.0)
+		{
+			if(_candidateOrders[iPresentChannelOrder] > 1)
+				iPresentChannelOrder -= ((1.0 - ratio) > randomGenerator.rand()) && (randomGenerator.rand() < changeProbability);
+		}
+		// if the energy of the last tap is relatively big
+		else
+		{
+			if(_candidateOrders[iPresentChannelOrder] < _maxOrder)
+			{
+				iPresentChannelOrder += ((ratio - 1.0) > randomGenerator.rand()) && (randomGenerator.rand() < changeProbability);
+			}
+		}
+
+		getchar();
+
+// 		iPresentChannelOrder = StatUtil::Discrete_rnd(1,transitionProbabilitiesMatrix.row(iPresentChannelOrder))[0];
 	}
 
 	// the first channel order is modified in the loop but it must be "initialChannelOrderIndex"

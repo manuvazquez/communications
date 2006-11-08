@@ -19,14 +19,21 @@
  ***************************************************************************/
 #include "StatUtil.h"
 
+// the seed used to create the random objects is generated from the system time
+#define RANDOM_SEED
+
 using namespace std;
 
 vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
-// vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities,Random randomGenerator)
 {
     int i,j;
 	double uniform;
-	static Random randomGenerator(1);
+
+	#ifdef RANDOM_SEED
+		static Random randomGenerator;
+	#else
+		static Random randomGenerator(1);
+	#endif
 
     tVector normalizedProbabilities = Util::Normalize(probabilities);
     int nProbabilities = probabilities.size();
@@ -41,7 +48,6 @@ vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
     for(i=0;i<nSamples;i++)
     {
 		uniform = randomGenerator.rand();
-// 		cout << "la uniforme generada " << uniform << endl;
 		j=0;
 		while(uniform>distributionFunction[j])
 			j++;
@@ -58,7 +64,12 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
 {
 	tMatrix res(rows,cols);
 	double stdDv = sqrt(variance);
-	static Random randomGenerator(0);
+
+	#ifdef RANDOM_SEED
+		static Random randomGenerator;
+	#else
+		static Random randomGenerator(2);
+	#endif
 
 	int j;
 	for(int i=0;i<rows;i++)
@@ -70,7 +81,6 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
 
 double StatUtil::NormalPdf(double x,double mean,double variance)
 {
-	//densidad = 1/sqrt(2*pi*var)*exp( -(abs(x-media))^2/(2*var) );
 	double distance = fabs(x - mean);
 
 	return 1.0/sqrt(2.0*M_PI*variance)*exp(-(distance*distance)/(2.0*variance));
@@ -78,7 +88,6 @@ double StatUtil::NormalPdf(double x,double mean,double variance)
 
 double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance)
 {
-// densidad = 1/(sqrt(abs(det(coVar)))*(2*pi)^(N/2))*exp(-0.5*real((x-mu)'*inv(coVar)*(x-mu)));
 
 	int N = x.size();
 	// the received covariance matrix can't be modified

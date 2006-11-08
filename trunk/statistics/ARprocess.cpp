@@ -21,7 +21,7 @@
 
 using namespace std;
 
-ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance/*,Random randomGenerator*/):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_rows(seed.rows()),_columns(seed.cols()),_nCoefficients(coefficients.size()),_buffer(new tMatrix*[_nCoefficients]),_iterationsForConvergence(200)/*,_randomGenerator(randomGenerator)*/
+ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_rows(seed.rows()),_columns(seed.cols()),_nCoefficients(coefficients.size()),_buffer(new tMatrix*[_nCoefficients]),_iterationsForConvergence(200)
 {
 	//the buffer is filled
 	int i,j;
@@ -74,7 +74,6 @@ ARprocess::~ARprocess()
 	for(int i=0;i<_nCoefficients;i++)
 		delete _buffer[i];
 	delete[] _buffer;
-// 	delete _randomGenerator;
 }
 
 tMatrix ARprocess::NextMatrix()
@@ -85,10 +84,6 @@ tMatrix ARprocess::NextMatrix()
 	for(int j=0;j<_nCoefficients;j++)
 		// aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
 		Util::Add(aux,*(_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
-
-// 	cout << "_nCoefficients es " << _nCoefficients << " y el coeficiente es " << _coefficients[0] << endl;
-
-// 	cout << "_noiseMean es " << _noiseMean << " y _noiseVariance " << _noiseVariance << endl;
 
 	tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
