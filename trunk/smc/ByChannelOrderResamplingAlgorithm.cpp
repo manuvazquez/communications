@@ -23,10 +23,11 @@ ByChannelOrderResamplingAlgorithm::ByChannelOrderResamplingAlgorithm(ResamplingC
 {
 }
 
-void ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
+int ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
 {
     ParticleFilterWithChannelOrder *pf = dynamic_cast <ParticleFilterWithChannelOrder *> (particleFilter);
 
+	int resamplingHappened = 0;
     vector<vector <int> > indexesOfChannelOrders = pf->GetIndexesOfChannelOrders();
     tVector weights = pf->GetWeightsVector();
 
@@ -40,22 +41,21 @@ void ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
         if(_resamplingCriterion.ResamplingNeeded(weights,indexesOfChannelOrders[iChannelOrder]))
         {
             // the weights corresponding to the channel order being processed are selected. Note that they all are adjacent
-//             tRange rWeightsOrder(indexesOfChannelOrders[iChannelOrder][0],indexesOfChannelOrders[iChannelOrder][indexesOfChannelOrders[iChannelOrder].size()-1]);
-
             tVector currentChannelOrderWeights(nParticlesCurrentChannelOrder);
             for(int i=0;i<nParticlesCurrentChannelOrder;i++)
                 currentChannelOrderWeights(i) = weights(indexesOfChannelOrders[iChannelOrder][i]);
-//
-// //          cout << rWeightsOrder << endl;
-//
+
             vector<int> auxIndexes = StatUtil::Discrete_rnd(nParticlesCurrentChannelOrder,currentChannelOrderWeights);
-//
+
             vector<int> indexes(nParticlesCurrentChannelOrder);
             for(int i=0;i<nParticlesCurrentChannelOrder;i++)
                     indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
 
             pf->KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
+            resamplingHappened = 1;
         }
     }
+
+    return resamplingHappened;
 }
 

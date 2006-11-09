@@ -21,7 +21,7 @@
 
 using namespace std;
 
-SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int length, vector<int> candidateOrders,tMatrix transitionProbabilitiesMatrix,int initialChannelOrderIndex): MIMOChannel(nTx, nRx, length),_candidateOrders(candidateOrders),_transitionProbabilitiesMatrix(transitionProbabilitiesMatrix),_initialChannelOrderIndex(initialChannelOrderIndex)
+SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int length, vector<int> candidateOrders,int initialChannelOrderIndex): MIMOChannel(nTx, nRx, length),_candidateOrders(candidateOrders),_initialChannelOrderIndex(initialChannelOrderIndex)
 {
 	// it obtains the maximum allowed order for the channel
 	int iMaxOrder = 0;
@@ -32,14 +32,4 @@ SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int len
 			iMaxOrder = i;
 			_maxOrder = _candidateOrders[i];
 		}
-
-	if(_transitionProbabilitiesMatrix.rows()!=_transitionProbabilitiesMatrix.cols() || _transitionProbabilitiesMatrix.cols()!=_candidateOrders.size())
-	{
-		throw RuntimeException("SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel: either transition probabilities matrix or channel orders vector dimensions are wrong.");
-	}
-
-	// it checks wether the probabilites matrix is coherent
-	for(int i=0;i<_transitionProbabilitiesMatrix.rows();i++)
-		if(Util::Sum(_transitionProbabilitiesMatrix.row(i))!=1.0)
-			throw RuntimeException("SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel: matrix probabilites are not coherent");
 }

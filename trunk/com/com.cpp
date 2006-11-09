@@ -19,6 +19,7 @@
  ***************************************************************************/
 
 #define HOSTNAME_LENGTH 50
+#define SPRINTF_BUFFER 30
 
 // the seed used to create the random objects is generated from the system time
 #define RANDOM_SEED
@@ -76,12 +77,15 @@ using namespace std;
 int main(int argc,char* argv[])
 {
     double pe,mse;
+    int iChannelOrder,iSNR;
+    char buffer[SPRINTF_BUFFER];
 
     // PARAMETERS
-    int nFrames = 500;
+    int nFrames = 1000;
     int L=3,N=2,m=2,K=300;
     int trainSeqLength = 30;
     int nParticles = 30;
+    double resamplingRatio = 0.9;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
@@ -107,20 +111,7 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);/*candidateChannelOrders.push_back(5);*/
-
-	// sprawling memory transition probability matrix
-	tMatrix transitionProbabilitiesMatrix(candidateChannelOrders.size(),candidateChannelOrders.size());
-
-	// probability of staying in the same channel order
-	for(int i=0;i<candidateChannelOrders.size();i++)
-		transitionProbabilitiesMatrix(i,i) = 0.7;
-	transitionProbabilitiesMatrix(0,1) = 0.2;
-	transitionProbabilitiesMatrix(0,2) = 0.1;
-	transitionProbabilitiesMatrix(1,0) = 0.15;
-	transitionProbabilitiesMatrix(1,2) = 0.15;
-	transitionProbabilitiesMatrix(2,0) = 0.1;
-	transitionProbabilitiesMatrix(2,1) = 0.2;
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);
 
     // linear detectors parameters
     double forgettingFactorDetector = 0.95;
@@ -176,9 +167,9 @@ int main(int argc,char* argv[])
 
 	// the maximum of the candidate channel orders is computed
 	int maxCandidateOrder = candidateChannelOrders[0];
-	for(int i=1;i<candidateChannelOrders.size();i++)
-		if(candidateChannelOrders[i]>maxCandidateOrder)
-			maxCandidateOrder = candidateChannelOrders[i];
+	for(iChannelOrder=1;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+		if(candidateChannelOrders[iChannelOrder]>maxCandidateOrder)
+			maxCandidateOrder = candidateChannelOrders[iChannelOrder];
 
 	// the algorithms with the higher smoothing lag require
 	int nSmoothingInstants = maxCandidateOrder-1;
@@ -188,7 +179,7 @@ int main(int argc,char* argv[])
 	unknownChannelOrderAlgorithmsPreamble = -1.0;
 
     // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(0.9);
+    ResamplingCriterion criterioRemuestreo(resamplingRatio);
     StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
 
     // resampling algorith for the case of unknown channel order
@@ -222,12 +213,12 @@ int main(int argc,char* argv[])
         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// a channel order varying AR channel is generated
-// 		SprawlingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,transitionProbabilitiesMatrix,0,channelMean,channelVariance,ARcoefficients,ARvariance);
+// 		SprawlingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,0,channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
 
-        for(int iSNR=0;iSNR<SNRs.size();iSNR++)
+        for(iSNR=0;iSNR<SNRs.size();iSNR++)
         {
             cout << "SNR = " << SNRs[iSNR] << " [Trama " << iFrame << "]..." << endl;
 
@@ -242,7 +233,7 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
+//             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
 
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&LMSestimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
@@ -252,7 +243,7 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,simbolosTransmitir));
 
-            algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new ISIR("ISIR",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo));
 
             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("Linear Filter Unknown Channel Order",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
@@ -262,18 +253,14 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm("Linear Filter Based ISIR decidiendose por un modelo",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance,canal,simbolosTransmitir));
 
-			// -------------------- Los algoritmos de siempre considerando diferentes m's
+			// the RLS algorithm considering all posible channel orders
+			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+			{
+				// the channel order (int) is converted to char *
+				sprintf(buffer,"%d",candidateChannelOrders[iChannelOrder]);
 
-			// m=2
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 2",pam2,L,N,K+preamble.cols(),candidateChannelOrders[0],RLSchannelEstimators[0],RMMSElinearDetectors[0],preamble,candidateChannelOrders[0]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
-
-			//m=3
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 3",pam2,L,N,K+preamble.cols(),candidateChannelOrders[1],RLSchannelEstimators[1],RMMSElinearDetectors[1],preamble,candidateChannelOrders[1]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
-
-			//m=4
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS suponiendo m = 4",pam2,L,N,K+preamble.cols(),candidateChannelOrders[2],RLSchannelEstimators[2],RMMSElinearDetectors[2],preamble,candidateChannelOrders[2]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
-
-
+				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,K+preamble.cols(),candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+			}
 
 // -----------------------------------------------------------------------------
 
@@ -342,6 +329,7 @@ int main(int argc,char* argv[])
         Util::ScalarToStream(K,"K",f);
         Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
         Util::ScalarToStream(nParticles,"nParticles",f);
+        Util::ScalarToStream(resamplingRatio,"resamplingRatio",f);
         Util::ScalarToStream(d,"d",f);
 		Util::ScalarsVectorToStream(candidateChannelOrders,"candidateOrders",f);
 		Util::ScalarsVectorToStream(SNRs,"SNRs",f);

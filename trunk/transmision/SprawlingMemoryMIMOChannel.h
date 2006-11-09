@@ -33,9 +33,8 @@ class SprawlingMemoryMIMOChannel : public MIMOChannel
 protected:
 	std::vector<int> _candidateOrders;
 	int _maxOrder,_initialChannelOrderIndex;
-	tMatrix _transitionProbabilitiesMatrix;
 public:
-    SprawlingMemoryMIMOChannel(int nTx,int nRx,int length,std::vector<int> candidateOrders,tMatrix transitionProbabilitiesMatrix,int initialChannelOrderIndex);
+    SprawlingMemoryMIMOChannel(int nTx,int nRx,int length,std::vector<int> candidateOrders,int initialChannelOrderIndex);
 
     int MaximumOrder() const {return _maxOrder;}
 };

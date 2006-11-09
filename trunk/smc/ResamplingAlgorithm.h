@@ -32,7 +32,7 @@ protected:
     ResamplingCriterion _resamplingCriterion;
 public:
     ResamplingAlgorithm(ResamplingCriterion resamplingCriterion): _resamplingCriterion(resamplingCriterion) {}
-    virtual void Resample(ParticleFilter *particleFilter) = 0;
+    virtual int Resample(ParticleFilter *particleFilter) = 0;
 
 };
 

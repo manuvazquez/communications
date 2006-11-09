@@ -27,7 +27,7 @@ StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCri
 {
 }
 
-void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
+int StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
 {
     tVector weigths = particleFilter->GetWeightsVector();
 
@@ -40,5 +40,7 @@ void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
 		for(int i=0;i<particleFilter->Nparticles();i++)
 			cout << i << " <- " << indexes[i] << endl;
 		#endif
+		return 1;
     }
+    return 0;
 }

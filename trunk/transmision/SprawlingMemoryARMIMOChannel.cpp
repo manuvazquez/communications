@@ -22,7 +22,7 @@
 // the seed used to create the random objects is generated from the system time
 #define RANDOM_SEED
 
-SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, transitionProbabilitiesMatrix, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
+SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
 ARcoefficients,ARvariance)
 {
 	int presentChannelOrder,iPresentChannelOrder;
@@ -61,13 +61,9 @@ ARcoefficients,ARvariance)
 
 		cout << overAllNorm << "," << lastTapNorm << endl;
 
-// 		iPresentChannelOrder += (abs(1.0 - ratio) < randomGenerator.rand())*(ratio / abs(ratio));
-
 		ratio = lastTapNorm/(overAllNorm/_candidateOrders[iPresentChannelOrder]);
 
 		cout << "el ratio es " << ratio << endl;
-
-// 		cout << "maxOrder es " << _maxOrder << endl;
 
 		// if the energy of the last tap is relatively small
 		if(ratio < 1.0)
@@ -85,8 +81,6 @@ ARcoefficients,ARvariance)
 		}
 
 		getchar();
-
-// 		iPresentChannelOrder = StatUtil::Discrete_rnd(1,transitionProbabilitiesMatrix.row(iPresentChannelOrder))[0];
 	}
 
 	// the first channel order is modified in the loop but it must be "initialChannelOrderIndex"

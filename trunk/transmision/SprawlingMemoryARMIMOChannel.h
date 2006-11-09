@@ -37,7 +37,7 @@ protected:
 	int *_channelOrders;
 	ARprocess _ARprocess;
 public:
-    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, tMatrix transitionProbabilitiesMatrix, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance);
+    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance);
 
 	SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel);
 
