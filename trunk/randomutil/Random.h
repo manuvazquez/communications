@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <sys/time.h>
-// #include <cstdlib>
 #include <complex>
 
 class Random
@@ -16,7 +15,7 @@ class Random
 
 	public:
 		Random () {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}
-		Random (uint32_t seed) : _seed(seed),_havesmpl(false) { };
+		Random (uint32_t seed) : _seed(seed),_havesmpl(false) {};
 		double randn();
 
 		std::complex<double> complexRandn();

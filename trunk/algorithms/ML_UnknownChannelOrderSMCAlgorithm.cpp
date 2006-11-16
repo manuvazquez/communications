@@ -126,7 +126,7 @@ void ML_UnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, ve
 			}
 
 			// one sample from the discrete distribution is taken
-			int iSampledVector = (StatUtil::Discrete_rnd(1,probabilities))[0];
+			int iSampledVector = StatUtil::Discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);

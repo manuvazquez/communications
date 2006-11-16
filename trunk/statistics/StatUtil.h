@@ -38,14 +38,16 @@
 
 class StatUtil{
 public:
+    /**
+     * It assumes that the probabilities are normalized
+     * @param probabilities
+     * @return
+     */
+    static int Discrete_rnd(tVector probabilities);
     static vector<int> Discrete_rnd(int nSamples, tVector probabilities);
-
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
-
 	static double NormalPdf(double x,double mean,double variance);
-
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
-
 	static double Variance(const tVector &v);
 };
 

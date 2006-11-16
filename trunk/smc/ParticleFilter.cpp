@@ -67,7 +67,7 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 	while(previousResampledParticle<_nParticles)
 	{
 		resParticles[previousResampledParticle] = _particles[previousResampledParticle];
-		previousResampledParticle++;		
+		previousResampledParticle++;
 	}
 
 	// the memory of the particles given by index is released
@@ -94,13 +94,3 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
         delete[] _particles;
         _particles = resParticles;
 }
-
-// void ParticleFilter::Resampling()
-// {
-// //     if(_resamplingCriterion.ResamplingNeeded(_particles,_nParticles))
-//     if(_resamplingCriterion.ResamplingNeeded(GetWeightsVector()))
-//     {
-//         vector<int> indexes = StatUtil::Discrete_rnd(_nParticles,GetWeightsVector());
-// 		KeepParticles(indexes);
-//     }
-// }

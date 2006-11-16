@@ -252,7 +252,10 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 			for(iSampledSymbol=0;iSampledSymbol<_N;iSampledSymbol++)
 // 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
-				int iSampled = (StatUtil::Discrete_rnd(1,overallSymbolProb.row(iSampledSymbol)))[0];
+				int iSampled = StatUtil::Discrete_rnd(overallSymbolProb.row(iSampledSymbol));
+
+// 				cout << "iSampled fue " << iSampled << endl;
+// 				getchar();
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= overallSymbolProb(iSampledSymbol,iSampled);

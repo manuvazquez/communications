@@ -22,7 +22,7 @@
 #define SPRINTF_BUFFER 30
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 #include <iostream>
 #include <iomanip>
@@ -341,6 +341,8 @@ int main(int argc,char* argv[])
 		Util::MatrixToStream(preamble,"preamble",f);
 		Util::ScalarToStream(channelMean,"channelMean",f);
 		Util::ScalarToStream(channelVariance,"channelVariance",f);
+		Util::ScalarToStream(firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",f);
+		Util::ScalarToStream(subsequentSampledChannelMatricesVariance,"subsequentSampledChannelMatricesVariance",f);
 
 		f.close();
 		// ---------------------------------------------------------

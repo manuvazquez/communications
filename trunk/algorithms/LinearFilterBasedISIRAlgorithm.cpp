@@ -251,7 +251,7 @@ void LinearFilterBasedISIRAlgorithm::Process(const tMatrix& observations, vector
 			// the symbols are sampled from the above combined probabilities
 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
-				int iSampled = (StatUtil::Discrete_rnd(1,overallSymbolProb.row(iSampledSymbol)))[0];
+				int iSampled = StatUtil::Discrete_rnd(overallSymbolProb.row(iSampledSymbol));
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= overallSymbolProb(iSampledSymbol,iSampled);

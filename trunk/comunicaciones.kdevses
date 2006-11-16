@@ -3,7 +3,7 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="86" Type="Source" />
+   <View0 line="81" Type="Source" />
   </Doc0>
  </DocsAndViews>
  <pluginList>
@@ -16,6 +16,7 @@
      <mark line="144" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedUnknownChannelOrderSMCAlgorithm.cpp" >
+     <mark line="256" />
      <mark line="193" />
      <mark line="211" />
      <mark line="179" />
@@ -24,8 +25,8 @@
      <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedISIRAlgorithm.cpp" >
-     <mark line="315" />
-     <mark line="367" />
+     <mark line="317" />
+     <mark line="369" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
      <mark line="180" />

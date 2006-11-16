@@ -158,7 +158,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 // 				cout << "Probabilidades resultantes" << symbolProb.row(iSampledSymbol);
 // 				getchar();
 
-				int iSampled = (StatUtil::Discrete_rnd(1,symbolProb.row(iSampledSymbol)))[0];
+				int iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= symbolProb(iSampledSymbol,iSampled);

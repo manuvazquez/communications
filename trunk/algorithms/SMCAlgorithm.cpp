@@ -109,14 +109,3 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 
     return channelMatrices;
 }
-
-// void SMCAlgorithm::Resampling()
-// {
-// 	tVector weigths = _particleFilter.GetWeightsVector();
-//
-//     if(_resamplingCriterion.ResamplingNeeded(weigths))
-//     {
-//         vector<int> indexes = StatUtil::Discrete_rnd(_particleFilter.Nparticles(),weigths);
-// 		_particleFilter.KeepParticles(indexes);
-//     }
-// }

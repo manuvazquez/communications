@@ -20,9 +20,39 @@
 #include "StatUtil.h"
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 using namespace std;
+
+int StatUtil::Discrete_rnd(tVector probabilities)
+{
+    int i;
+	double uniform;
+
+	#ifdef RANDOM_SEED
+		static Random randomGenerator;
+	#else
+		static Random randomGenerator(1);
+	#endif
+
+    tVector normalizedProbabilities = Util::Normalize(probabilities);
+    int nProbabilities = probabilities.size();
+
+    double *distributionFunction = new double[nProbabilities];
+    distributionFunction[0] = normalizedProbabilities(0);
+    for(i=1;i<nProbabilities;i++)
+           distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
+
+	uniform = randomGenerator.rand();
+	int res = 0;
+	while(uniform>distributionFunction[res])
+		res++;
+
+	// memory release
+	delete[] distributionFunction;
+
+	return res;
+}
 
 vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
 {

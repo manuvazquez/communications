@@ -151,7 +151,7 @@ void ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::Process(const tMatrix&
 			}
 
 			// one sample from the discrete distribution is taken
-			int iSampledVector = (StatUtil::Discrete_rnd(1,probabilities))[0];
+			int iSampledVector = StatUtil::Discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
@@ -194,12 +194,12 @@ int ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm::channelOrderPdf(const i
 	}else if(m==_maxOrder) {
 		probabilities(0) = p;
 		probabilities(1) = 1-p;
-		probabilities(2) = 0;		
+		probabilities(2) = 0;
 	}else {
 		probabilities(0) = p/2;
 		probabilities(1) = 1-p;
-		probabilities(2) = p/2;	
+		probabilities(2) = p/2;
 	}
 
-	return m + alphabet[StatUtil::Discrete_rnd(1,probabilities)[0]];
+	return m + alphabet[StatUtil::Discrete_rnd(probabilities)];
 }
