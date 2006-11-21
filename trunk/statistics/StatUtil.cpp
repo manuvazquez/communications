@@ -32,16 +32,16 @@ int StatUtil::Discrete_rnd(tVector probabilities)
 	#ifdef RANDOM_SEED
 		static Random randomGenerator;
 	#else
-		static Random randomGenerator(1);
+		static Random randomGenerator(11);
 	#endif
 
-    tVector normalizedProbabilities = Util::Normalize(probabilities);
+//     tVector normalizedProbabilities = Util::Normalize(probabilities);
     int nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
-    distributionFunction[0] = normalizedProbabilities(0);
+    distributionFunction[0] = probabilities(0);
     for(i=1;i<nProbabilities;i++)
-           distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
+           distributionFunction[i] = distributionFunction[i-1]+probabilities(i);
 
 	uniform = randomGenerator.rand();
 	int res = 0;

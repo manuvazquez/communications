@@ -32,13 +32,16 @@
 class ISIR : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
-	ParticleFilter _particleFilter;	
+	ParticleFilter _particleFilter;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+
+ const MIMOChannel &_canal;
+ const tMatrix &_simbolos;
 public:
-    ISIR(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+    ISIR(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos);
 
 };
 

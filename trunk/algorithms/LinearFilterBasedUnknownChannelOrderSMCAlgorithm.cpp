@@ -85,7 +85,8 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 	int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
 	vector<vector<tMatrix> > matricesToStack(_candidateOrders.size());
 	tVector sampledVector(_N),sampledSmoothingVector(_N*_maxOrder);
-	double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd,sumChannelOrderAPPs;
+	double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd,channelOrderAPPsNormConstant;
+	double *newChannelOrderAPPs = new double[_candidateOrders.size()];
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
 	tMatrix symbolProbAux = LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length());
@@ -277,7 +278,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 			#endif
 
 			sumLikelihoodsProd = 0.0;
-			sumChannelOrderAPPs = 0.0;
+			channelOrderAPPsNormConstant = 0.0;
 
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
@@ -323,10 +324,11 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 					// unnormalized APP channel order
 					if(iSmoothing==0)
 					{
-						processedParticle->SetChannelOrderAPP(likelihoodsProd,iChannelOrder);
+// 						processedParticle->SetChannelOrderAPP(likelihoodsProd,iChannelOrder);
+						newChannelOrderAPPs[iChannelOrder] = likelihoodsProd;
 
 						// it's accumulated for normalization purposes
-						sumChannelOrderAPPs += likelihoodsProd;
+						channelOrderAPPsNormConstant += likelihoodsProd;
 
 						#ifdef DEBUG3
 							cout << "Se actualiza la probabilidad de m por " << StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseCovariances[iSmoothing]) << endl;
@@ -342,19 +344,26 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 			}
 
 			// the channel order APPs are normalized for the next iteration
-			if(sumChannelOrderAPPs==0)
+			if(channelOrderAPPsNormConstant!=0)
 			{
 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-					processedParticle->SetChannelOrderAPP(1.0/(double)_candidateOrders.size(),iChannelOrder);
+					processedParticle->SetChannelOrderAPP(newChannelOrderAPPs[iChannelOrder]/channelOrderAPPsNormConstant,iChannelOrder);
 			}
-			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-			{
-				processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/sumChannelOrderAPPs,iChannelOrder);
 
-				#ifdef DEBUG
-					cout << "Orden actualizado " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " ";
-				#endif
-			}
+// 			// the channel order APPs are normalized for the next iteration
+// 			if(channelOrderAPPsNormConstant==0)
+// 			{
+// 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 					processedParticle->SetChannelOrderAPP(1.0/(double)_candidateOrders.size(),iChannelOrder);
+// 			}
+// 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 			{
+// 				processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
+//
+// 				#ifdef DEBUG
+// 					cout << "Orden actualizado " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " ";
+// 				#endif
+// 			}
 
 			#ifdef DEBUG
 				cout << endl;
@@ -394,6 +403,8 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
             _resamplingAlgorithm->Resample(&_particleFilter);
-	}
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+
+	delete[] newChannelOrderAPPs;
 }
 
