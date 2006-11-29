@@ -29,48 +29,28 @@ RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double f
 	_E(rowsRange,colsRange).inject(LaGenMatDouble::eye(_nSymbolsToBeDetected));
 }
 
-// tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix)
-// {
-// 	if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
-// 		throw RuntimeException("observations vector or channel matrix dimensions are wrong.");
-// 
-// 	// _g = _invForgettingFactor*_invRtilde*observations
-// 	Blas_Mat_Vec_Mult(_invRtilde,observations,_g,_invForgettingFactor);
-// 
-// 	// _g = _g / (1 + _invForgettingFactor*observations'*_invRtilde*observations
-// 	_g *= 1.0/(1.0 + Blas_Dot_Prod(observations,_g));
-// 
-// 	// _gObservations = _g*observations
-// 	Util::Mult(_g,observations,_gObservations);
-// 
-// 	// _identityMinusgObservations = _identityL - _gObservations
-// 	Util::Add(_identityL,_gObservations,_identityMinusgObservations,1.0,-1.0);
-// 
-// 	// _auxInvRtilde = _invForgettingFactor*_identityMinusgObservations*_invRtilde
-// 	Blas_Mat_Mat_Mult(_identityMinusgObservations,_invRtilde,_auxInvRtilde,_invForgettingFactor);
-// 
-//     cout << "pasó el primero" << endl;
-// 
-// 	_invRtilde = _auxInvRtilde;
-// 
-// 	// _varianceInvRtildeChannelMatrix = _alphabetVariance*_invRtilde*channelMatrix
-// 	Blas_Mat_Mat_Mult(_invRtilde,channelMatrix,_varianceInvRtildeChannelMatrix,_alphabetVariance);
-// 
-//     cout << "pasó el segundo" << endl;
-// 
-// 	// _filter = _varianceInvRtildeChannelMatrix*_E
-// 	Blas_Mat_Mat_Mult(_varianceInvRtildeChannelMatrix,_E,_filter);
-// 
-//     cout << "pasó el tercero" << endl;
-// 
-// 
-//     tVector res(_nSymbolsToBeDetected);
-// 
-// 	// _softEstimations = _filter'*observations
-// 	Blas_Mat_Trans_Vec_Mult(_filter,observations,res);
-// 
-//     return res;
-// }
+void RMMSEDetector::StateStep(tVector observations)
+{
+	if(observations.size()!= _channelMatrixRows)
+		throw RuntimeException("observations vector dimensions are wrong.");
+
+	// _g = _invForgettingFactor*_invRtilde*observations
+	Blas_Mat_Vec_Mult(_invRtilde,observations,_g,_invForgettingFactor);
+
+	// _g = _g / (1 + _invForgettingFactor*observations'*_invRtilde*observations
+	_g *= 1.0/(1.0 + Blas_Dot_Prod(observations,_g));
+
+	// _gObservations = _g*observations
+	Util::Mult(_g,observations,_gObservations);
+
+	// _identityMinusgObservations = _identityL - _gObservations
+	Util::Add(_identityL,_gObservations,_identityMinusgObservations,1.0,-1.0);
+
+	// _auxInvRtilde = _invForgettingFactor*_identityMinusgObservations*_invRtilde
+	Blas_Mat_Mat_Mult(_identityMinusgObservations,_invRtilde,_auxInvRtilde,_invForgettingFactor);
+
+	_invRtilde = _auxInvRtilde;
+}
 
 tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix)
 {

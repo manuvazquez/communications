@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "LinearFilterBasedSMCAlgorithm.h"
 
+#define DEBUG2
+
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm)
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 {
@@ -104,11 +106,20 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// matrices are stacked to give
 			tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
-            tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(_d+1)-1),tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
+			#ifdef DEBUG
+				cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
+				cout << "stackedNoiseCovariance" << endl << stackedNoiseCovariance << endl;
+			#endif
+
+//             tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(_d+1)-1),tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
 
 			// the estimated stacked channel matrix is used to obtain soft estimations
 			// of the transmitted symbols
 			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->Detect(stackedObservations,stackedChannelMatrix);
+
+			#ifdef DEBUG2
+				cout << "softEstimations" << endl << softEstimations << endl;
+			#endif
 
 // 			tMatrix filter = _particlesLinearDetectors[iParticle]->ComputedFilter();
 			tMatrix filter = (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->ComputedFilter();
@@ -116,8 +127,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// operations needed to computed the sampling variance
 
 			//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-            Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
-// 			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+//             Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
+			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
 
 
 			// s2qAux = s2qAux + stackedNoiseCovariance
@@ -132,9 +143,16 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
 
-// 				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(_m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
-                s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+//                 s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+
+				#ifdef DEBUG
+					cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
+					cout << "filter" << endl << filter << endl;
+					cout << "s2q = " << s2q << endl;
+					getchar();
+                #endif
 
 				double sumProb = 0.0;
 				// the probability for each posible symbol alphabet is computed
@@ -163,6 +181,10 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 				proposal *= symbolProb(iSampledSymbol,iSampled);
 			}
+
+			#ifdef DEBUG2
+				cout << "probabilidades calculadas" << endl << symbolProb << endl;
+			#endif
 
 			// sampled symbol vector is stored for the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(allSymbolRows));

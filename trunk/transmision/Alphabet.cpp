@@ -11,7 +11,7 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
     if(secuenciasBits.size()!=simbolos.size())
     {
 			throw RuntimeException("Alphabet.cpp: el numero de secuencias de bits es distinto al de simbolos.");
-			
+
     }
 
     this->_length = secuenciasBits.size();
@@ -66,7 +66,7 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 
 // 	// se reserva espacio para un vector de bits tamaño "tamVector"
 // 	vector<tBit> _bitsSequences(tamVector);
-	
+
 	int resto,i;
 
 	i=1;
@@ -85,9 +85,9 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 {
 	int size = symbolsVector.size();
-	
+
 	int res = 0, base = 1;
-	vector<tSymbol>::iterator iterator;	
+	vector<tSymbol>::iterator iterator;
 	for(int i=size-1;i>=0;i--)
 	{
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
@@ -99,4 +99,22 @@ int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 		base *= _length;
 	}
 	return res;
+}
+
+tSymbol Alphabet::HardDecision(double softEstimation)
+{
+	double distance;
+
+	double minDistance = softEstimation - _symbols[0];
+	int iMin = 0;
+
+	for(int i=1;i<_length;i++)
+	{
+		distance = softEstimation - _symbols[i];
+		if(distance<minDistance)
+		{
+			minDistance = distance;
+			iMin = i;
+		}
+	}
 }

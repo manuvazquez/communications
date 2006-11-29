@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include "LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h"
 
-// #define DEBUG2
+// #define DEBUG4
 
-LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
-// ,_canal(canal),_simbolos(simbolos)
+LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
         throw RuntimeException("LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
@@ -49,7 +49,6 @@ vector<vector<tMatrix> > LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Proce
             // the observations from i to i+d are stacked
             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
             tVector stackedObservationsVector = Util::ToVector(observations(_allObservationRows,rSmoothingRange),columnwise);
-
             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
         }
     }
@@ -109,8 +108,6 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 			cout << "Simbolos transmitidos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
 		#endif
 
-// 		cout << "Matriz de verdad" << endl << _canal[iObservationToBeProcessed] << endl;
-
 		// observation matrix columns that are involved in the smoothing
 		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
 
@@ -151,6 +148,10 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 				Nm = _N*m;
 				matricesToStack[iChannelOrder] = vector<tMatrix>(_maxOrder,tMatrix(_L,Nm));
 
+				#ifdef DEBUG4
+					cout << "m = " << m << endl;
+				#endif
+
 				tMatrix s2qAux(_L*(d+1),_L*(d+1));
 				tVector s2qAuxFilter(_L*(d+1));
 
@@ -172,19 +173,41 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 				// during the first iteration, we are going to use the real linear detector of this particle for this channel order
 				LinearDetector *linearDetectorBeingProccessed = processedParticle->GetLinearDetector(iChannelOrder);
 
+				#ifdef DEBUG3
+					cout << "Simbolos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
+				#endif
+
 				for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 				{
+					#ifdef DEBUG4
+						cout << "iLinearFilterNeeded = " << iLinearFilterNeeded << endl;
+					#endif
+
 					tRange rInvolvedObservations(iLinearFilterNeeded*_L,_L*(d+1+iLinearFilterNeeded)-1);
 					// matrices are stacked to give
 					tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
-            		tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(d+1)-1),tRange((m-1)*_N,stackedChannelMatrix.cols()-1));
+					#ifdef DEBUG4
+						cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
+						cout << "stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations)" << endl << stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations) << endl;
+					#endif
+
+//             		tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(d+1)-1),tRange((m-1)*_N,stackedChannelMatrix.cols()-1));
 
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols
 					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix);
 
+					#ifdef DEBUG3
+						cout << "iLinearFilterNeeded = " << iLinearFilterNeeded << endl << softEstimations << endl;
+						getchar();
+					#endif
+
 					tMatrix filter = linearDetectorBeingProccessed->ComputedFilter();
+
+					#ifdef DEBUG4
+						cout << "filter" << endl << filter << endl;
+					#endif
 
 					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
 					if(iLinearFilterNeeded==0)
@@ -193,8 +216,8 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 					// operations needed to computed the sampling variance
 
 					//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
-// 					Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+//             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
 					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
@@ -210,9 +233,17 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 						// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
 						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
-                		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+                		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
-// 						s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+//                 		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+
+// 						s2q /= 10;
+
+						#ifdef DEBUG4
+							cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
+                			cout << "s2q = " << s2q << endl;
+                			getchar();
+                		#endif
 
 						double sumProb = 0.0;
 						// the probability for each posible symbol alphabet is computed
@@ -235,8 +266,16 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 					}
 				} // for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 
+				#ifdef DEBUG4
+					cout << "probabilidades par orden " << _candidateOrders[iChannelOrder] << endl << symbolProb[iChannelOrder] << endl;
+				#endif
+
 				// the clone is dismissed
 				delete linearDetectorBeingProccessed;
+
+				#ifdef DEBUG4
+					getchar();
+				#endif
 
 			} //for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
@@ -250,8 +289,8 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 
 			proposal = 1.0;
 			// the symbols are sampled from the above combined probabilities
-			for(iSampledSymbol=0;iSampledSymbol<_N;iSampledSymbol++)
-// 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
+// 			for(iSampledSymbol=0;iSampledSymbol<_N;iSampledSymbol++)
+			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
 				int iSampled = StatUtil::Discrete_rnd(overallSymbolProb.row(iSampledSymbol));
 
@@ -304,8 +343,8 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 					cout << "La anterior probabilidad de m para orden " << _candidateOrders[iChannelOrder] << ": " << likelihoodsProd << endl;
 				#endif
 
-				for(iSmoothing=0;iSmoothing<1;iSmoothing++)
-// 				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+// 				for(iSmoothing=0;iSmoothing<1;iSmoothing++)
+				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					tRange rSymbolVectors(iSmoothing,iSmoothing+m-1);
 					tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors),columnwise);

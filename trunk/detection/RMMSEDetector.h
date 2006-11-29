@@ -54,29 +54,7 @@ public:
 
     tVector Detect(tVector observations, tMatrix channelMatrix);
 	RMMSEDetector *Clone();
-
-	void StateStep(tVector observations)
-	{
-		if(observations.size()!= _channelMatrixRows)
-			throw RuntimeException("observations vector dimensions are wrong.");
-	
-		// _g = _invForgettingFactor*_invRtilde*observations
-		Blas_Mat_Vec_Mult(_invRtilde,observations,_g,_invForgettingFactor);
-	
-		// _g = _g / (1 + _invForgettingFactor*observations'*_invRtilde*observations
-		_g *= 1.0/(1.0 + Blas_Dot_Prod(observations,_g));
-	
-		// _gObservations = _g*observations
-		Util::Mult(_g,observations,_gObservations);
-	
-		// _identityMinusgObservations = _identityL - _gObservations
-		Util::Add(_identityL,_gObservations,_identityMinusgObservations,1.0,-1.0);
-	
-		// _auxInvRtilde = _invForgettingFactor*_identityMinusgObservations*_invRtilde
-		Blas_Mat_Mat_Mult(_identityMinusgObservations,_invRtilde,_auxInvRtilde,_invForgettingFactor);
-
-		_invRtilde = _auxInvRtilde;
-	}
+	void StateStep(tVector observations);
 
 	tMatrix ComputedFilter() { return _filter;}
 

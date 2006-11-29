@@ -23,6 +23,7 @@ class Alphabet
 		int Length() { return _length;}
 		void IntToSymbolsArray(int numero, std::vector<tSymbol> &res);
 		int SymbolsArrayToInt(std::vector<tSymbol> symbolsVector);
+		tSymbol HardDecision(double softEstimation);
 };
 #endif
 
