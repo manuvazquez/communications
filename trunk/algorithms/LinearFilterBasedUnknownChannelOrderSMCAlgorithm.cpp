@@ -196,7 +196,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols
-					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix);
+					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations));
 
 					#ifdef DEBUG3
 						cout << "iLinearFilterNeeded = " << iLinearFilterNeeded << endl << softEstimations << endl;

@@ -60,7 +60,7 @@ ARFLAGS = cru
 libdetection_a_AR = $(AR) $(ARFLAGS)
 libdetection_a_DEPENDENCIES = /usr/lib/liblapackpp.la
 am_libdetection_a_OBJECTS = LinearDetector.$(OBJEXT) \
-	RMMSEDetector.$(OBJEXT)
+	RMMSEDetector.$(OBJEXT) MMSEDetector.$(OBJEXT)
 libdetection_a_OBJECTS = $(am_libdetection_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -183,8 +183,8 @@ target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libdetection.a
-noinst_HEADERS = LinearDetector.h RMMSEDetector.h
-libdetection_a_SOURCES = LinearDetector.cpp RMMSEDetector.cpp
+noinst_HEADERS = LinearDetector.h RMMSEDetector.h MMSEDetector.h
+libdetection_a_SOURCES = LinearDetector.cpp RMMSEDetector.cpp MMSEDetector.cpp
 libdetection_a_LIBADD = /usr/lib/liblapackpp.la
 all: all-am
 
@@ -260,6 +260,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LinearDetector.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MMSEDetector.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RMMSEDetector.Po@am__quote@
 
 .cpp.o:

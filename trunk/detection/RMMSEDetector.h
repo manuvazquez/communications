@@ -52,7 +52,7 @@ protected:
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
 
-    tVector Detect(tVector observations, tMatrix channelMatrix);
+    tVector Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);
 	RMMSEDetector *Clone();
 	void StateStep(tVector observations);
 

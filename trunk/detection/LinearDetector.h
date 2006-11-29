@@ -33,7 +33,7 @@ protected:
 public:
     LinearDetector(int rows,int cols,double alphabetVariance);
 	virtual void StateStep(tVector observations) = 0;
-	virtual tVector Detect(tVector observations,tMatrix channelMatrix) = 0;
+	virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
 	virtual tMatrix ComputedFilter() = 0;
 	virtual ~LinearDetector() {};
 	virtual LinearDetector *Clone() = 0;

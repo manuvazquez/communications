@@ -4,19 +4,13 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h KnownChannelOrderAlgorithm.h SMCAlgorithm.h \
-					ML_SMCAlgorithm.h KnownChannelAlgorithm.h ViterbiAlgorithm.h \
-					KnownSymbolsKalmanBasedChannelEstimator.h UnknownChannelOrderAlgorithm.h UnknownChannelOrderSMCAlgorithm.h \
-					ML_UnknownChannelOrderSMCAlgorithm.h MultipleChannelEstimatorsPerParticleSMCAlgorithm.h \
-					ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h ISIR.h SampledChannelOrderSMCAlgorithm.h \
-		LinearFilterBasedISIRAlgorithm.h LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h \
-	LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm.h
+	ML_SMCAlgorithm.h KnownChannelAlgorithm.h ViterbiAlgorithm.h \
+	KnownSymbolsKalmanBasedChannelEstimator.h UnknownChannelOrderAlgorithm.h \
+	MultipleChannelEstimatorsPerParticleSMCAlgorithm.h ISIR.h LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp KnownChannelOrderAlgorithm.cpp \
-					SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
-					KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimator.cpp \
-					UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp UnknownChannelOrderSMCAlgorithm.cpp \
-					ML_UnknownChannelOrderSMCAlgorithm.cpp MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp \
-					ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp ISIR.cpp SampledChannelOrderSMCAlgorithm.cpp \
-		LinearFilterBasedISIRAlgorithm.cpp LinearFilterBasedUnknownChannelOrderSMCAlgorithm.cpp \
-	LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm.cpp
+	SMCAlgorithm.cpp ML_SMCAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+	KnownChannelAlgorithm.cpp ViterbiAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimator.cpp \
+	UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp \
+	MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp ISIR.cpp LinearFilterBasedUnknownChannelOrderSMCAlgorithm.cpp
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a

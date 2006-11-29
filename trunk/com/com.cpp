@@ -43,22 +43,21 @@
 #include <Modulator.h>
 #include <Demodulator.h>
 #include <KalmanFilter.h>
+
 #include <KalmanEstimator.h>
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
+
 #include <RMMSEDetector.h>
+#include <MMSEDetector.h>
 
 #include <ML_SMCAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
 #include <ViterbiAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <UnknownChannelOrderAlgorithm.h>
-#include <ML_UnknownChannelOrderSMCAlgorithm.h>
-#include <ML_MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 #include <ISIR.h>
-#include <LinearFilterBasedISIRAlgorithm.h>
 #include <LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h>
-#include <LinearFilterBasedUnknownChannelOrderModelSMCAlgorithm.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -84,16 +83,16 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 1;
-    int L=3,N=2,m=2,K=300;
-    int trainSeqLength = 30;
-    int nParticles = 1;
+    int L=3,N=2,m=2,K=30;
+    int trainSeqLength = 10;
+    int nParticles = 10;
     double resamplingRatio = 0.9;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
 
     // SNRs to be processed
     vector<int> SNRs;
-    /*SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15)*/;SNRs.push_back(50);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);/*SNRs.push_back(50);*/
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -181,6 +180,8 @@ int main(int argc,char* argv[])
     // linear filters
     RMMSEDetector RMMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
 
+    MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
+
 	// the maximum of the candidate channel orders is computed
 	int maxCandidateOrder = candidateChannelOrders[0];
 	for(iChannelOrder=1;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -253,7 +254,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&LMSestimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&RLSestimator,/*&RMMSEdetector*/RMMSElinearDetectors[0],preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&RLSestimator,/*&RMMSEdetector*//*RMMSElinearDetectors[0]*/&MMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
@@ -261,7 +262,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIR("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-//             algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance,canal,simbolosTransmitir));
+            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance,canal,simbolosTransmitir));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)

@@ -52,7 +52,7 @@ void RMMSEDetector::StateStep(tVector observations)
 	_invRtilde = _auxInvRtilde;
 }
 
-tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix)
+tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)
 {
 	if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
 		throw RuntimeException("observations vector or channel matrix dimensions are wrong.");

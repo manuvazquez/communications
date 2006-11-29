@@ -17,28 +17,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SAMPLEDCHANNELORDERSMCALGORITHM_H
-#define SAMPLEDCHANNELORDERSMCALGORITHM_H
+#ifndef MMSEDETECTOR_H
+#define MMSEDETECTOR_H
 
-#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+#include <LinearDetector.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ParticleFilterWithChannelOrder.h>
+#include <Util.h>
+#include <lapackpp/gmd.h>
+#include <lapackpp/blas2pp.h>
+#include <lapackpp/blas3pp.h>
+#include <lapackpp/laslv.h>
+#include <lapackpp/lavli.h>
 
-class SampledChannelOrderSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class MMSEDetector : public LinearDetector
 {
-public:
-    SampledChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
-
 protected:
-	ParticleFilterWithChannelOrder _particleFilter;
+	int _nSymbolsToBeDetected;
+	tMatrix _filter;
 
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
-    virtual void InitializeParticles();
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+	// auxiliary variables
+	tMatrix _alphabetVarianceChannelMatrixChannelMatrixTrans;
+	tMatrix _Rx;
+	tLongIntVector _piv;
+	tVector _softEstimations;
+	tRange _rNsimbolsDetected,_rAllChannelMatrixRows;
+public:
+    MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
+
+    virtual MMSEDetector * Clone();
+	virtual tMatrix ComputedFilter();
+    virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
+    virtual void StateStep(tVector observations) {};
 
 };
 
