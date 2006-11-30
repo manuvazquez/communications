@@ -38,8 +38,10 @@
 class RMMSEDetector : public LinearDetector
 {
 protected:
-	double _invForgettingFactor;
+	double _forgettingFactor,_invForgettingFactor;
 	int _nSymbolsToBeDetected;
+	double _alphaPowerSumNow,_alphaPowerSumPrevious;
+	double _alphaPower,_alphaPowerSumFactor;
 
 	tVector _g;
 	tMatrix _invRtilde;

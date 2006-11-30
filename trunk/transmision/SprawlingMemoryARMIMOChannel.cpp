@@ -20,7 +20,7 @@
 #include "SprawlingMemoryARMIMOChannel.h"
 
 // the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#define RANDOM_SEED
 
 SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
 ARcoefficients,ARvariance)

@@ -23,7 +23,7 @@
 #define SPRINTF_BUFFER 30
 
 // the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#define RANDOM_SEED
 
 #include <iostream>
 #include <iomanip>
@@ -82,10 +82,10 @@ int main(int argc,char* argv[])
     char buffer[SPRINTF_BUFFER];
 
     // PARAMETERS
-    int nFrames = 1;
-    int L=3,N=2,m=2,K=30;
-    int trainSeqLength = 10;
-    int nParticles = 10;
+    int nFrames = 1000;
+    int L=3,N=2,m=2,K=300;
+    int trainSeqLength = 30;
+    int nParticles = 30;
     double resamplingRatio = 0.9;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -252,17 +252,17 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&LMSestimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&LMSestimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&RLSestimator,/*&RMMSEdetector*//*RMMSElinearDetectors[0]*/&MMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&RLSestimator,&RMMSEdetector/*RMMSElinearDetectors[0]*//*&MMSEdetector*/,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Estimador de Kalman con simbolos conocidos",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,simbolosTransmitir));
 
 //             algorithms.push_back(new ISIR("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance,canal,simbolosTransmitir));
+            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
