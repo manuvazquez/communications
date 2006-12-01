@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-KalmanEstimator::KalmanEstimator(tMatrix initialEstimation,double ARcoefficient,double ARvariance)
+KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
 //auxiliary variables initialization
 _F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
@@ -55,7 +55,7 @@ tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &s
 	_kalmanFilter->Step(_F,observations,observationEquationCovariance);
 
 	_lastEstimatedChannelMatrix = Util::ToMatrix(_kalmanFilter->FilteredMean(),rowwise,_L);
-		
+
 	return  _lastEstimatedChannelMatrix;
 }
 
@@ -90,7 +90,7 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 	invNoiseCovariance *= (1/noiseVariance);
 
 	tMatrix invPredictiveCovariance = _kalmanFilter->PredictiveCovariance();
-	LUFactorizeIP(invPredictiveCovariance,_piv);	
+	LUFactorizeIP(invPredictiveCovariance,_piv);
 	// detPredictiveCovariance = det(_kalmanFilter->PredictiveCovariance())
 	double detPredictiveCovariance = 1.0;
 	for(int i=0;i<_nChannelCoefficients;i++)
@@ -112,7 +112,7 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 
 	// invB = inv(_B)
 	tMatrix invB = _B;
-	LUFactorizeIP(invB,_piv);	
+	LUFactorizeIP(invB,_piv);
 	LaLUInverseIP(invB,_piv);
 
 	// _invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->PredictiveMean()

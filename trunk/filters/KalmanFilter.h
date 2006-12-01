@@ -48,9 +48,9 @@ private:
 	tVector _auxVector,_KalmanGainByNotPredicted;
 	tLongIntVector _piv;
 public:
-    KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength);
+    KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength);
 
-	void Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance);
+	void Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
 	tVector PredictiveMean() { return _predictiveMean;}
 	tVector FilteredMean() {return _filteredMean;}
 	tMatrix PredictiveCovariance() {return _predictiveCovariance;}

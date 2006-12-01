@@ -43,8 +43,8 @@ public:
      * @param probabilities
      * @return
      */
-    static int Discrete_rnd(tVector probabilities);
-    static vector<int> Discrete_rnd(int nSamples, tVector probabilities);
+    static int Discrete_rnd(const tVector &probabilities);
+    static vector<int> Discrete_rnd(int nSamples,const tVector &probabilities);
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
 	static double NormalPdf(double x,double mean,double variance);
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);

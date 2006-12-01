@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanFilter.h"
 
-KalmanFilter::KalmanFilter(tMatrix R,tMatrix stateEquationCovariance,tVector initialMean, tMatrix initialCovariance,int observationVectorLength):
+KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength):
 _nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_filteredMean(initialMean),_filteredCovariance(initialCovariance),_predictiveMean(R.rows()),_predictiveCovariance(R.rows(),R.rows()),_observationVectorLength(observationVectorLength),
 // auxiliary variables
 _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovarianceRtrans(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength),_auxMatrix(_observationVectorLength,_observationVectorLength),_KalmanGain(_nElementsToEstimate,_observationVectorLength),_auxVector(_observationVectorLength),_KalmanGainByNotPredicted(_nElementsToEstimate),_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate),_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate),_piv(_observationVectorLength)
@@ -41,7 +41,7 @@ _RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovari
 
 }
 
-void KalmanFilter::Step(tMatrix F,tVector observation, tMatrix observationEquationCovariance)
+void KalmanFilter::Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)
 {
 	if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size() || observation.size()!=_observationVectorLength)
 		throw RuntimeException("The matrix F or observation vector dimensions are wrong.");

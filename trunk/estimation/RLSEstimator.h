@@ -41,18 +41,11 @@ protected:
 	double _forgettingFactor,_invForgettingFactor;
 	tMatrix _invRtilde,_pTilde;
 
-	// de la otra forma
-// 	tMatrix _transposeEstimatedChannelMatrix,_P,_kEstimationError,_kSymbolsVector;
-// 	tMatrix _identityMinuskSymbolsVector,_auxP;
-// 	tVector _k,_PsymbolsVector,_symbolsVectorTransposeEstimatedChannelMatrix;
-// 	tVector _estimationError;
-	// --------------------
-
     // auxiliary variables
     tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
 public:
-    RLSEstimator(tMatrix initialEstimation,double forgettingFactor);
+    RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* Clone();
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);

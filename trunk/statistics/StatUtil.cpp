@@ -24,7 +24,7 @@
 
 using namespace std;
 
-int StatUtil::Discrete_rnd(tVector probabilities)
+int StatUtil::Discrete_rnd(const tVector &probabilities)
 {
     int i;
 	double uniform;
@@ -54,7 +54,7 @@ int StatUtil::Discrete_rnd(tVector probabilities)
 	return res;
 }
 
-vector<int> StatUtil::Discrete_rnd(int nSamples, tVector probabilities)
+vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities)
 {
     int i,j;
 	double uniform;
