@@ -17,26 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STILLMEMORYMIMOCHANNEL_H
-#define STILLMEMORYMIMOCHANNEL_H
+#include "OneChannelOrderPerTransmitAtennaMIMOChannel.h"
 
-#include <MIMOChannel.h>
+#define DEBUG
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-class StillMemoryMIMOChannel : public MIMOChannel
+OneChannelOrderPerTransmitAtennaMIMOChannel::OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int>& candidateOrders,const tMatrix& channelOrderMatrixProbabilities): MIMOChannel(nTx, nRx, length)
+,_channelOrderMatrixProbabilities(channelOrderMatrixProbabilities),_candidateOrders(candidateOrders),_antennaChannelOrder(new int[_nTx])
 {
-protected:
-	int _memory,_nTxnRxMemory,_nTxMemory;
-public:
-    StillMemoryMIMOChannel(int nTx, int nRx, int memory,int length);
+	_maxChannelOrder = -1;
+	_nChannelMatrixNotNullColumns = 0;
+	for(int i=0;i<_nTx;i++)
+	{
+		_antennaChannelOrder[i] = _candidateOrders[StatUtil::Discrete_rnd(channelOrderMatrixProbabilities.row(i))];
 
-	int Memory() const {return _memory;};
-	int Memory(int n) const {return _memory;}
-	int MaximumOrder() const {return _memory;}
-	int NtNrMemory() const {return _nTxnRxMemory;};
-	int NtMemory() const {return _nTxMemory;};
-};
+		if(_antennaChannelOrder[i] > _maxChannelOrder)
+			_maxChannelOrder = _antennaChannelOrder[i];
 
-#endif
+		_nChannelMatrixNotNullColumns += _antennaChannelOrder[i];
+	}
+
+	#ifdef DEBUG
+		for(int i=0;i<_nTx;i++)
+			cout << _antennaChannelOrder[i] << endl;
+
+		cout << "El maximo: " << _maxChannelOrder << " y el nº total de columnas: " << _nChannelMatrixNotNullColumns << endl;
+	#endif
+}
+
+
+OneChannelOrderPerTransmitAtennaMIMOChannel::~OneChannelOrderPerTransmitAtennaMIMOChannel()
+{
+	delete[] _antennaChannelOrder;
+}

@@ -17,26 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STILLMEMORYMIMOCHANNEL_H
-#define STILLMEMORYMIMOCHANNEL_H
+#ifndef ONECHANNELORDERPERTRANSMITATENNAMIMOCHANNEL_H
+#define ONECHANNELORDERPERTRANSMITATENNAMIMOCHANNEL_H
 
 #include <MIMOChannel.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class StillMemoryMIMOChannel : public MIMOChannel
+
+#include <StatUtil.h>
+
+class OneChannelOrderPerTransmitAtennaMIMOChannel : public MIMOChannel
 {
 protected:
-	int _memory,_nTxnRxMemory,_nTxMemory;
+	tMatrix _channelOrderMatrixProbabilities;
+	std::vector<int> _candidateOrders;
+	int *_antennaChannelOrder;
+	int _maxChannelOrder,_nChannelMatrixNotNullColumns;
 public:
-    StillMemoryMIMOChannel(int nTx, int nRx, int memory,int length);
+    OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int>& candidateOrders,const tMatrix& channelOrderMatrixProbabilities);
 
-	int Memory() const {return _memory;};
-	int Memory(int n) const {return _memory;}
-	int MaximumOrder() const {return _memory;}
-	int NtNrMemory() const {return _nTxnRxMemory;};
-	int NtMemory() const {return _nTxMemory;};
+    ~OneChannelOrderPerTransmitAtennaMIMOChannel();
+
+    virtual int MaximumOrder() const {return _maxChannelOrder;}
+    virtual int Memory(int n) const {return _maxChannelOrder;}
 };
 
 #endif

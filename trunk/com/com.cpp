@@ -37,8 +37,11 @@
 #include <Alphabet.h>
 #include <Bits.h>
 #include <ARprocess.h>
+
 #include <ARchannel.h>
+#include <ARoneChannelOrderPerTransmitAtennaMIMOChannel.h>
 #include <SparklingMemoryARMIMOChannel.h>
+
 #include <ChannelDependentNoise.h>
 #include <Modulator.h>
 #include <Demodulator.h>
@@ -232,6 +235,10 @@ int main(int argc,char* argv[])
 
         // an AR channel is generated
         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
+
+//     ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length, const std::vector< int >& candidateOrders, const tMatrix& channelOrderMatrixProbabilities,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
+
+		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal3(N,L,simbolosTransmitir.cols(),candidateChannelOrders,channelOrderMatrixProbabilities,channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// a channel order varying AR channel is generated
 // 		SparklingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,0,channelMean,channelVariance,ARcoefficients,ARvariance);

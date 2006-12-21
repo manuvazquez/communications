@@ -34,8 +34,6 @@ class ARchannel : public StillMemoryMIMOChannel
 protected:
 	tMatrix* _channelMatrices;
 	ARprocess _ARproc;
-
-
 public:
     ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
 	ARchannel(const ARchannel &archannel);

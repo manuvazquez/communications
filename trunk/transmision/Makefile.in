@@ -67,7 +67,9 @@ am_libtransmision_a_OBJECTS = Alphabet.$(OBJEXT) Bits.$(OBJEXT) \
 	ChannelDependentNoise.$(OBJEXT) Modulator.$(OBJEXT) \
 	Demodulator.$(OBJEXT) StillMemoryMIMOChannel.$(OBJEXT) \
 	SparklingMemoryMIMOChannel.$(OBJEXT) \
-	SparklingMemoryARMIMOChannel.$(OBJEXT)
+	SparklingMemoryARMIMOChannel.$(OBJEXT) \
+	OneChannelOrderPerTransmitAtennaMIMOChannel.$(OBJEXT) \
+	ARoneChannelOrderPerTransmitAtennaMIMOChannel.$(OBJEXT)
 libtransmision_a_OBJECTS = $(am_libtransmision_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -202,11 +204,13 @@ METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
 libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp MIMOChannel.cpp \
 	ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp Demodulator.cpp \
-	StillMemoryMIMOChannel.cpp SparklingMemoryMIMOChannel.cpp SparklingMemoryARMIMOChannel.cpp
+	StillMemoryMIMOChannel.cpp SparklingMemoryMIMOChannel.cpp SparklingMemoryARMIMOChannel.cpp \
+	OneChannelOrderPerTransmitAtennaMIMOChannel.cpp ARoneChannelOrderPerTransmitAtennaMIMOChannel.cpp
 
 noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
 	ChannelDependentNoise.h Demodulator.h StillMemoryMIMOChannel.h SparklingMemoryMIMOChannel.h \
-	SparklingMemoryARMIMOChannel.h
+	SparklingMemoryARMIMOChannel.h OneChannelOrderPerTransmitAtennaMIMOChannel.h \
+	ARoneChannelOrderPerTransmitAtennaMIMOChannel.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
@@ -285,6 +289,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ARchannel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ARoneChannelOrderPerTransmitAtennaMIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Alphabet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Bits.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelDependentNoise.Po@am__quote@
@@ -292,6 +297,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Modulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Noise.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaMIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparklingMemoryARMIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparklingMemoryMIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StillMemoryMIMOChannel.Po@am__quote@
