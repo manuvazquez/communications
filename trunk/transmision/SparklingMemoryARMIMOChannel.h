@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SPRAWLINGMEMORYARMIMOCHANNEL_H
-#define SPRAWLINGMEMORYARMIMOCHANNEL_H
+#ifndef SPARKLINGMEMORYARMIMOCHANNEL_H
+#define SPARKLINGMEMORYARMIMOCHANNEL_H
 
-#include <SprawlingMemoryMIMOChannel.h>
+#include <SparklingMemoryMIMOChannel.h>
 #include <ARprocess.h>
 
 /**
@@ -30,18 +30,18 @@
 #include <types.h>
 #include <lapackpp/blas3pp.h>
 
-class SprawlingMemoryARMIMOChannel : public SprawlingMemoryMIMOChannel
+class SparklingMemoryARMIMOChannel : public SparklingMemoryMIMOChannel
 {
 protected:
 	tMatrix* _channelMatrices;
 	int *_channelOrders;
 	ARprocess _ARprocess;
 public:
-    SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance);
+    SparklingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,std::vector<double> ARcoefficients,double ARvariance);
 
-	SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel);
+	SparklingMemoryARMIMOChannel(const SparklingMemoryARMIMOChannel &channel);
 
-    ~SprawlingMemoryARMIMOChannel();
+    ~SparklingMemoryARMIMOChannel();
 
 	int Memory(int n) const {return _candidateOrders[_channelOrders[n]];}
 	tMatrix& operator[](int n) const { return _channelMatrices[n];};

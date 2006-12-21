@@ -17,12 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "SprawlingMemoryARMIMOChannel.h"
+#include "SparklingMemoryARMIMOChannel.h"
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
-SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SprawlingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
+SparklingMemoryARMIMOChannel::SparklingMemoryARMIMOChannel(int nTx, int nRx, int length, std::vector< int > candidateOrders, int initialChannelOrderIndex,double mean,double variance,vector<double> ARcoefficients,double ARvariance): SparklingMemoryMIMOChannel(nTx, nRx, length, candidateOrders, initialChannelOrderIndex),_ARprocess(StatUtil::RandnMatrix(nRx,nTx*_maxOrder,mean,variance),
 ARcoefficients,ARvariance)
 {
 	int presentChannelOrder,iPresentChannelOrder;
@@ -87,7 +87,7 @@ ARcoefficients,ARvariance)
 	_channelOrders[_maxOrder-1] = initialChannelOrderIndex;
 }
 
-SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(const SprawlingMemoryARMIMOChannel &channel):SprawlingMemoryMIMOChannel(channel),_ARprocess(channel._ARprocess),_channelMatrices(new tMatrix[_length]),_channelOrders(new int[_length])
+SparklingMemoryARMIMOChannel::SparklingMemoryARMIMOChannel(const SparklingMemoryARMIMOChannel &channel):SparklingMemoryMIMOChannel(channel),_ARprocess(channel._ARprocess),_channelMatrices(new tMatrix[_length]),_channelOrders(new int[_length])
 {
 	for(int i=_maxOrder-1;i<_length;i++)
 	{
@@ -96,7 +96,7 @@ SprawlingMemoryARMIMOChannel::SprawlingMemoryARMIMOChannel(const SprawlingMemory
 	}
 }
 
-SprawlingMemoryARMIMOChannel::~SprawlingMemoryARMIMOChannel()
+SparklingMemoryARMIMOChannel::~SparklingMemoryARMIMOChannel()
 {
 	delete[] _channelMatrices;
 	delete[] _channelOrders;

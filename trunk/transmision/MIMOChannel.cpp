@@ -26,7 +26,7 @@ using namespace la;
 // {
 // }
 
-MIMOChannel::MIMOChannel(int nTx,int nRx,/* int memory, */int length):_nTx(nTx),_nRx(nRx)/*,_memory(memory)*/,_length(length),_nTxnRx(_nTx*_nRx)/*,_nTxnRxMemory(_nTx*_nRx*_memory),_nTxMemory(_nTx*_memory)*/
+MIMOChannel::MIMOChannel(int nTx,int nRx,int length):_nTx(nTx),_nRx(nRx),_length(length),_nTxnRx(_nTx*_nRx)
 {
 }
 
@@ -63,8 +63,6 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 		// just for the sake of clarity
 		tMatrix &currentChannelMatrix = (*this)[iSymbolVector];
 
-// 		cout << "Matriz procesada" << endl << currentChannelMatrix;
-
 		//currentObservationVector will accumulate the contributions of the
 		// different symbol vectors that participate in the current observation
 		// (_memory >= 1)
@@ -98,10 +96,7 @@ vector<tMatrix> MIMOChannel::Range(int a,int b)
     vector<tMatrix> res(nMatrices);
 
     for(int i=0;i<nMatrices;i++)
-    {
         res[i] = operator[](a+i);
-//      cout << "en ARChannel" << endl << _channelMatrices[i] << endl;
-    }
 
     return res;
 }

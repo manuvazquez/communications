@@ -72,7 +72,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     int windowStart = nEstimatedChannelMatrices - windowSize;
     int j;
 
-	// if the channel is sprawling memory, the channel matrices of the real channel may have different sizes
+	// if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
 	try {
 		for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
 		{

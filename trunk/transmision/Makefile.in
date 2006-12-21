@@ -66,8 +66,8 @@ am_libtransmision_a_OBJECTS = Alphabet.$(OBJEXT) Bits.$(OBJEXT) \
 	MIMOChannel.$(OBJEXT) ARchannel.$(OBJEXT) Noise.$(OBJEXT) \
 	ChannelDependentNoise.$(OBJEXT) Modulator.$(OBJEXT) \
 	Demodulator.$(OBJEXT) StillMemoryMIMOChannel.$(OBJEXT) \
-	SprawlingMemoryMIMOChannel.$(OBJEXT) \
-	SprawlingMemoryARMIMOChannel.$(OBJEXT)
+	SparklingMemoryMIMOChannel.$(OBJEXT) \
+	SparklingMemoryARMIMOChannel.$(OBJEXT)
 libtransmision_a_OBJECTS = $(am_libtransmision_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -200,14 +200,13 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
-libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp \
-						MIMOChannel.cpp ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp \
-			Demodulator.cpp StillMemoryMIMOChannel.cpp SprawlingMemoryMIMOChannel.cpp \
-	SprawlingMemoryARMIMOChannel.cpp
+libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp MIMOChannel.cpp \
+	ARchannel.cpp Noise.cpp ChannelDependentNoise.cpp Modulator.cpp Demodulator.cpp \
+	StillMemoryMIMOChannel.cpp SparklingMemoryMIMOChannel.cpp SparklingMemoryARMIMOChannel.cpp
 
 noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
-			ChannelDependentNoise.h Demodulator.h StillMemoryMIMOChannel.h SprawlingMemoryMIMOChannel.h \
-	SprawlingMemoryARMIMOChannel.h
+	ChannelDependentNoise.h Demodulator.h StillMemoryMIMOChannel.h SparklingMemoryMIMOChannel.h \
+	SparklingMemoryARMIMOChannel.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
@@ -293,8 +292,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Modulator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Noise.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SprawlingMemoryARMIMOChannel.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SprawlingMemoryMIMOChannel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparklingMemoryARMIMOChannel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/SparklingMemoryMIMOChannel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StillMemoryMIMOChannel.Po@am__quote@
 
 .cpp.o:

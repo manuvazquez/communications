@@ -17,19 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "SprawlingMemoryMIMOChannel.h"
+#ifndef SPARKLINGMEMORYMIMOCHANNEL_H
+#define SPARKLINGMEMORYMIMOCHANNEL_H
 
-using namespace std;
+#include <MIMOChannel.h>
 
-SprawlingMemoryMIMOChannel::SprawlingMemoryMIMOChannel(int nTx, int nRx, int length, vector<int> candidateOrders,int initialChannelOrderIndex): MIMOChannel(nTx, nRx, length),_candidateOrders(candidateOrders),_initialChannelOrderIndex(initialChannelOrderIndex)
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+
+#include <Util.h>
+
+class SparklingMemoryMIMOChannel : public MIMOChannel
 {
-	// it obtains the maximum allowed order for the channel
-	int iMaxOrder = 0;
-	_maxOrder = _candidateOrders[0];
-	for(int i=1;i<_candidateOrders.size();i++)
-		if(_candidateOrders[i]>_maxOrder)
-		{
-			iMaxOrder = i;
-			_maxOrder = _candidateOrders[i];
-		}
-}
+protected:
+	std::vector<int> _candidateOrders;
+	int _maxOrder,_initialChannelOrderIndex;
+public:
+    SparklingMemoryMIMOChannel(int nTx,int nRx,int length,std::vector<int> candidateOrders,int initialChannelOrderIndex);
+
+    int MaximumOrder() const {return _maxOrder;}
+};
+
+#endif

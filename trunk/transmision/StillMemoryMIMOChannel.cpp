@@ -23,7 +23,3 @@ StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nTx, int nRx, int memory, int
 {
 }
 
-// tMatrix& StillMemoryMIMOChannel::operator [ ](int n) const
-// {
-// }
-

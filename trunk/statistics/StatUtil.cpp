@@ -20,7 +20,7 @@
 #include "StatUtil.h"
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 using namespace std;
 

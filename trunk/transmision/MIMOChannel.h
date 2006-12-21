@@ -32,7 +32,7 @@
 
 class MIMOChannel{
 protected:
-	int _nTx, _nRx, /*_memory,*/_length,_nTxnRx/*,_nTxnRxMemory,_nTxMemory*/;
+	int _nTx, _nRx,_length,_nTxnRx;
 
 public:
 //     MIMOChannel();
@@ -41,14 +41,10 @@ public:
 
 	int Nt() const { return _nTx;};
 	int Nr() const { return _nRx;};
-// 	int Memory() const {return _memory;};
 	int Length() const {return _length;};
 	int NtNr() const {return _nTxnRx;};
-// 	int NtNrMemory() const {return _nTxnRxMemory;};
-// 	int NtMemory() const {return _nTxMemory;};
 	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
 	int NtMemory(int n) const {return _nTx*Memory(n);};
-// 	virtual int Memory() const = 0;
 	virtual int Memory(int n) const = 0;
 	virtual int MaximumOrder() const = 0;
 	virtual tMatrix& operator[](int n) const = 0;
