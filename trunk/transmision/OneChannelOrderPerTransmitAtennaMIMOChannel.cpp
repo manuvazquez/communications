@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "OneChannelOrderPerTransmitAtennaMIMOChannel.h"
 
-#define DEBUG
+// #define DEBUG
 
 OneChannelOrderPerTransmitAtennaMIMOChannel::OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int>& candidateOrders,const tMatrix& channelOrderMatrixProbabilities): MIMOChannel(nTx, nRx, length)
 ,_channelOrderMatrixProbabilities(channelOrderMatrixProbabilities),_candidateOrders(candidateOrders),_antennaChannelOrder(new int[_nTx])

@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>transmision/libtransmision.a</activetarget>
+      <activetarget>estimation/libestimation.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

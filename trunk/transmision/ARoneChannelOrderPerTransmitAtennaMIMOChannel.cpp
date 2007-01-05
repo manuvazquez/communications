@@ -55,6 +55,8 @@ ARcoefficients,ARvariance)
 				cout << "next....: " << nextNotUsedColumn << endl;
 			#endif
 		}
+
+		_channelMatrices[i] = channelMatrix;
 	}
 }
 

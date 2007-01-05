@@ -44,13 +44,12 @@ protected:
     // auxiliary variables
     tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
+	tMatrix NextMatrix(const tVector& observations, const tVector& symbolsVector, double noiseVariance);
 public:
     RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* Clone();
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
-	tMatrix NextMatrix2(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
-
 };
 
 #endif

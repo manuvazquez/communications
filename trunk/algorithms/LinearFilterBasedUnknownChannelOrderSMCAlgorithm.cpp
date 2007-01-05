@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h"
 
-// #define DEBUG4
+// #define DEBUG6
 
 LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 // ,_canal(canal),_simbolos(simbolos)
@@ -141,6 +141,15 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 				cout << endl;
 			#endif
 
+			#ifdef DEBUG6
+				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+				{
+					cout << "Orden " << _candidateOrders[iChannelOrder] << endl;
+					cout << processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix() << endl;
+				}
+				getchar();
+			#endif
+
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
 				m = _candidateOrders[iChannelOrder];
@@ -157,7 +166,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 
 				// predicted channel matrices are sampled and stored in a vector in order to stack them
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,Nm)*_samplingVariance
-				Util::Add((processedParticle->GetChannelMatrixEstimator(iChannelOrder))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
+				Util::Add(processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
 
 				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
 				{
