@@ -50,7 +50,7 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 
 		#ifdef DEBUG
 			cout << "tiempo = " << j << " la memoria es ahora " << memory << endl;
-		#endif DEBUG
+		#endif
 
 		tMatrix channelTranspChannel(_channel->NtMemory(j),_channel->NtMemory(j));
 

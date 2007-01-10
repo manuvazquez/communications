@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDUNKNOWNCHANNELORDERSMCALGORITHM_H
-#define LINEARFILTERBASEDUNKNOWNCHANNELORDERSMCALGORITHM_H
+#ifndef UCO_SIS_H
+#define UCO_SIS_H
 
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
@@ -32,17 +32,18 @@
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
 #include <MIMOChannel.h>
 
-class LinearFilterBasedUnknownChannelOrderSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class UCO_SIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
-    LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/);
+    UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/);
 
-    ~LinearFilterBasedUnknownChannelOrderSMCAlgorithm();
+    ~UCO_SIS();
 
 protected:
     vector<LinearDetector *> _linearDetectors;
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    tRange _rAllObservationRows;
 
 // 	const MIMOChannel &_canal;
 // 	const tMatrix &_simbolos;
@@ -51,8 +52,6 @@ protected:
     vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
-private:
-    tRange _allObservationRows;
 };
 
 #endif

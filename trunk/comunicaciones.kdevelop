@@ -18,7 +18,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>estimation/libestimation.a</activetarget>
+      <activetarget>algorithms/libalgorithms.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

@@ -1,19 +1,28 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="4" >
+ <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="116" Type="Source" />
+   <View0 Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.cpp" >
-   <View0 line="34" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.h" >
+   <View0 Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.h" >
-   <View0 line="46" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/RLSEstimator.cpp" >
+   <View0 Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 line="5" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/LMSEstimator.h" >
+   <View0 Type="Source" />
   </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/LMSEstimator.cpp" >
+   <View0 Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.h" >
+   <View0 Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.cpp" >
+   <View0 line="0" Type="Source" />
+  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -28,6 +37,9 @@
      <mark line="256" />
      <mark line="110" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/CME_UCO_SIS.cpp" >
+     <mark line="148" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedUnknownChannelOrderSMCAlgorithm.cpp" >
      <mark line="147" />
      <mark line="301" />
@@ -40,9 +52,6 @@
      <mark line="317" />
      <mark line="369" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="191" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="52" />
      <mark line="142" />
@@ -52,6 +61,9 @@
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderSMCAlgorithm.cpp" >
      <mark line="180" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="284" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

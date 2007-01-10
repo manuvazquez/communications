@@ -17,28 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h"
+#include "UCO_SIS.h"
 
 // #define DEBUG6
 
-LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_allObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+UCO_SIS::UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
-        throw RuntimeException("LinearFilterBasedUnknownChannelOrderSMCAlgorithm::LinearFilterBasedUnknownChannelOrderSMCAlgorithm: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
+        throw RuntimeException("UCO_SIS::UCO_SIS: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
 
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->Clone();
 }
 
 
-LinearFilterBasedUnknownChannelOrderSMCAlgorithm::~LinearFilterBasedUnknownChannelOrderSMCAlgorithm()
+UCO_SIS::~UCO_SIS()
 {
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         delete _linearDetectors[iChannelOrder];
 }
 
-vector<vector<tMatrix> > LinearFilterBasedUnknownChannelOrderSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<vector<tMatrix> > UCO_SIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
     int iChannelOrder;
 
@@ -48,7 +48,7 @@ vector<vector<tMatrix> > LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Proce
         {
             // the observations from i to i+d are stacked
             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
-            tVector stackedObservationsVector = Util::ToVector(observations(_allObservationRows,rSmoothingRange),columnwise);
+            tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
         }
     }
@@ -56,7 +56,7 @@ vector<vector<tMatrix> > LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Proce
     return UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 }
 
-void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::InitializeParticles()
+void UCO_SIS::InitializeParticles()
 {
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
@@ -78,7 +78,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::InitializeParticles()
     }
 }
 
-void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled,iChannelOrder;
 	int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
@@ -112,7 +112,7 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
 
 		// the stacked observations vector
-		tVector stackedObservations = Util::ToVector(observations(_allObservationRows,rSmoothingRange),columnwise);
+		tVector stackedObservations = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
 
 		// stacked noise covariance needs to be constructed
 		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*_maxOrder,_L*_maxOrder);
@@ -397,21 +397,6 @@ void LinearFilterBasedUnknownChannelOrderSMCAlgorithm::Process(const tMatrix& ob
 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 					processedParticle->SetChannelOrderAPP(newChannelOrderAPPs[iChannelOrder]/channelOrderAPPsNormConstant,iChannelOrder);
 			}
-
-// 			// the channel order APPs are normalized for the next iteration
-// 			if(channelOrderAPPsNormConstant==0)
-// 			{
-// 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 					processedParticle->SetChannelOrderAPP(1.0/(double)_candidateOrders.size(),iChannelOrder);
-// 			}
-// 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 			{
-// 				processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
-//
-// 				#ifdef DEBUG
-// 					cout << "Orden actualizado " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " ";
-// 				#endif
-// 			}
 
 			#ifdef DEBUG
 				cout << endl;

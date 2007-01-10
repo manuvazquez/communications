@@ -23,7 +23,7 @@
 #define SPRINTF_BUFFER 30
 
 // the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#define RANDOM_SEED
 
 #include <iostream>
 #include <iomanip>
@@ -60,7 +60,8 @@
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <UnknownChannelOrderAlgorithm.h>
 #include <ISIR.h>
-#include <LinearFilterBasedUnknownChannelOrderSMCAlgorithm.h>
+#include <UCO_SIS.h>
+#include <CME_UCO_SIS.h>
 
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
@@ -244,9 +245,9 @@ int main(int argc,char* argv[])
         tMatrix trainingSequence = simbolosTransmitir(rAllSymbolRows,rTrainingSequenceSymbolVectors);
 
         // an AR channel is generated
-//         ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
+        ARchannel canal(N,L,m,simbolosTransmitir.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
 
-		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,simbolosTransmitir.cols(),candidateSubchannelOrders,channelOrderMatrixProbabilities,channelMean,channelVariance,ARcoefficients,ARvariance);
+// 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,simbolosTransmitir.cols(),candidateSubchannelOrders,channelOrderMatrixProbabilities,channelMean,channelVariance,ARcoefficients,ARvariance);
 
 		// a channel order varying AR channel is generated
 // 		SparklingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,0,channelMean,channelVariance,ARcoefficients,ARvariance);
@@ -281,7 +282,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIR("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-            algorithms.push_back(new LinearFilterBasedUnknownChannelOrderSMCAlgorithm("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+            algorithms.push_back(new UCO_SIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
