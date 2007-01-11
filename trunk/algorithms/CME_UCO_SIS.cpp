@@ -17,68 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "UCO_SIS.h"
+#include "CME_UCO_SIS.h"
 
-// #define DEBUG6
+#define DEBUG
 
-UCO_SIS::UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
-// ,_canal(canal),_simbolos(simbolos)
+CME_UCO_SIS::CME_UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): UCO_SIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
 {
-    if(linearDetectors.size()!=_candidateOrders.size())
-        throw RuntimeException("UCO_SIS::UCO_SIS: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
-
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->Clone();
 }
 
 
-UCO_SIS::~UCO_SIS()
+CME_UCO_SIS::~CME_UCO_SIS()
 {
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        delete _linearDetectors[iChannelOrder];
 }
 
-vector<vector<tMatrix> > UCO_SIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-{
-    int iChannelOrder;
 
-    for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
-    {
-        for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        {
-            // the observations from i to i+d are stacked
-            tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
-            tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-            _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
-        }
-    }
-
-    return UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
-}
-
-void UCO_SIS::InitializeParticles()
-{
-    // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
-    {
-		// a clone of each of the channel matrix estimators...
-		vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
-
-		//...and linear detectors is constructed
-		vector<LinearDetector *> thisParticleLinearDetectors(_candidateOrders.size());
-
-		for(int iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
-		{
-			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->Clone();
-			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->Clone();
-		}
-
-		// ... and passed within a vector to each particle
-		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,_candidateOrders.size(),thisParticleLinearDetectors),iParticle);
-    }
-}
-
-void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVariances)
+void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled,iChannelOrder;
 	int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
@@ -101,16 +54,42 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 	tVector predictedNoiselessObservation(_L);
 
+	// ------------------ CME ADDON -------------------------
+
+// 	vector<int> CMEstackedInstantsNeeded(_candidateOrders.size());
+// 	vector<int> nTimeInstantsToStack(_candidateOrders.size());
+//
+// 	for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 	{
+//
+// 		// we want to know how many observations vectors we need to stack for applying CME
+// 		CMEstackedInstantsNeeded[iChannelOrder] = (_N*_candidateOrders[iChannelOrder] - _L)/(_L - _N) + 1;
+//
+// 		// at least, we are going to stack "_maxOrder-1"
+// 		nTimeInstantsToStack[iChannelOrder] = CMEstackedInstantsNeeded[iChannelOrder] > (_maxOrder-1) ? CMEstackedInstantsNeeded[iChannelOrder]:(_maxOrder-1);
+//
+// 		#ifdef DEBUG
+// 			cout << "orden: " << _candidateOrders[iChannelOrder] << " requeridos por CME: " << CMEstackedInstantsNeeded[iChannelOrder] << " entonces: " << nTimeInstantsToStack[iChannelOrder] << endl;
+// 		#endif
+// 	}
+
+	// we want to know how many observations vectors we need to stack for applying CME
+	int nTimeInstantsToStackCME = (_N*_maxOrder - _L)/(_L - _N) + 1;
+	nTimeInstantsToStackCME = nTimeInstantsToStackCME > 0 ? nTimeInstantsToStackCME:0;
+
+	// at least, we are going to stack "_maxOrder-1"
+	int nTimeInstantsToStack = nTimeInstantsToStackCME > (_maxOrder-1) ? nTimeInstantsToStackCME:(_maxOrder-1);
+
+	#ifdef DEBUG
+		cout << "nTimeInstantsToStackCME: " << nTimeInstantsToStackCME << " nTimeInstantsToStack: " << nTimeInstantsToStack << endl;
+	#endif
+
+	// ------------------------------------------------------
+
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-		#ifdef DEBUG2
-			cout << "iObservationToBeProcessed: " << iObservationToBeProcessed << endl;
-			cout << "Simbolos anteriores" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1)) << endl;
-			cout << "Simbolos transmitidos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
-		#endif
-
-		// observation matrix columns that are involved in the smoothing
-		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
+		// observation matrix columns that are involved
+		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+nTimeInstantsToStack);
 
 		// the stacked observations vector
 		tVector stackedObservations = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
@@ -134,33 +113,12 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 		{
 			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *>(_particleFilter.GetParticle(iParticle));
 
-			#ifdef DEBUG
-				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-				{
-					cout << "Orden " << _candidateOrders[iChannelOrder] << " " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " ";
-				}
-				cout << endl;
-			#endif
-
-			#ifdef DEBUG6
-				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-				{
-					cout << "Orden " << _candidateOrders[iChannelOrder] << endl;
-					cout << processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix() << endl;
-				}
-				getchar();
-			#endif
-
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
 				m = _candidateOrders[iChannelOrder];
 				d = m-1;
 				Nm = _N*m;
-				matricesToStack[iChannelOrder] = vector<tMatrix>(_maxOrder,tMatrix(_L,Nm));
-
-				#ifdef DEBUG4
-					cout << "m = " << m << endl;
-				#endif
+				matricesToStack[iChannelOrder] = vector<tMatrix>(nTimeInstantsToStack+1,tMatrix(_L,Nm));
 
 				tMatrix s2qAux(_L*(d+1),_L*(d+1));
 				tVector s2qAuxFilter(_L*(d+1));
@@ -170,11 +128,84 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,Nm)*_samplingVariance
 				Util::Add(processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
 
-				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
+				for(iSmoothing=1;iSmoothing<=nTimeInstantsToStack;iSmoothing++)
 				{
 					// matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient * matricesToStack[iChannelOrder][iSmoothing-1] + rand(_L,Nm)*_ARprocessVariance
 					Util::Add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::RandnMatrix(_L,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
 				}
+
+				// ------------------------------ CME ---------------------------------
+
+				tMatrix CMEstackedChannelMatrix = HsToStackedH(matricesToStack[iChannelOrder],_candidateOrders[iChannelOrder],nTimeInstantsToStackCME);
+
+				#ifdef DEBUG
+					cout << "Orden de canal: " << _candidateOrders[iChannelOrder] << endl;
+					cout << "La matriz apilada para CME es" << endl << CMEstackedChannelMatrix << endl;
+					cout << "filas: " << CMEstackedChannelMatrix.rows() << " columnas: " << CMEstackedChannelMatrix.cols() << endl;
+					cout << "debería tener " << _N*(_candidateOrders[iChannelOrder]+nTimeInstantsToStackCME) << " columnas" << endl;
+				#endif
+
+				int nRowsCMEstackedChannelMatrix = CMEstackedChannelMatrix.rows();
+				int nColsCMEstackedChannelMatrix = CMEstackedChannelMatrix.cols();
+
+				tMatrix HTH(nColsCMEstackedChannelMatrix,nColsCMEstackedChannelMatrix);
+				// HTH = matricesToStack[iChannelOrder][0]^T * matricesToStack[iChannelOrder][0]
+				Blas_Mat_Trans_Mat_Mult(CMEstackedChannelMatrix,CMEstackedChannelMatrix,HTH);
+
+				// both the determinant and the inverse of HTH are computed
+				tLongIntVector piv(nColsCMEstackedChannelMatrix);
+				LUFactorizeIP(HTH,piv);
+
+				double detHTH = 1.0;
+				for(int i=0;i<nRowsCMEstackedChannelMatrix;i++)
+					detHTH *= HTH(i,i);
+
+				// because HTH is positive definite, the determinant is known to be positive
+				detHTH = fabs(detHTH);
+
+				#ifdef DEBUG
+					cout << "El determinante sin denominador es " << detHTH << endl;
+				#endif
+
+				// inverse is computed
+				LaLUInverseIP(HTH,piv);
+
+				#ifdef DEBUG
+					cout << "La inversa es " << endl << HTH << endl;
+				#endif
+
+				tMatrix HinvHTH(nRowsCMEstackedChannelMatrix,nColsCMEstackedChannelMatrix);
+				// HinvHTH = CMEstackedChannelMatrix * inv(HTH)
+				Blas_Mat_Mat_Mult(CMEstackedChannelMatrix,HTH,HinvHTH);
+
+				tMatrix identityMinusHinvHTH_HT(nRowsCMEstackedChannelMatrix,nRowsCMEstackedChannelMatrix);
+				// identityMinusHinvHTH_HT = HinvHTH * CMEstackedChannelMatrix
+				// next, identity matrix will be added
+				Blas_Mat_Mat_Trans_Mult(HinvHTH,CMEstackedChannelMatrix,identityMinusHinvHTH_HT,-1.0);
+
+				// identityMinusHinvHTH_HT = I + identityMinusHinvHTH_HT
+				for(int i=0;i<nRowsCMEstackedChannelMatrix;i++)
+					identityMinusHinvHTH_HT(i,i)+= 1.0;
+
+				tVector xTidentityMinusHinvHTH_HT(nRowsCMEstackedChannelMatrix);
+				// xTidentityMinusHinvHTH_HT = stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1))^T * identityMinusHinvHTH_HT = identityMinusHinvHTH_HT^T * stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1))
+				Blas_Mat_Trans_Vec_Mult(identityMinusHinvHTH_HT,stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1)),xTidentityMinusHinvHTH_HT);
+
+				double estimatedNoiseVariance = Blas_Dot_Prod(xTidentityMinusHinvHTH_HT,stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1)));
+
+				#ifdef DEBUG
+					cout << "varianza estimada: " << estimatedNoiseVariance << endl;
+					getchar();
+				#endif
+
+				double CME = (double)((nRowsCMEstackedChannelMatrix - nColsCMEstackedChannelMatrix)/2)*estimatedNoiseVariance/noiseVariances[iObservationToBeProcessed] + 0.5*log(detHTH/pow(2*M_PI*noiseVariances[iObservationToBeProcessed],nRowsCMEstackedChannelMatrix));
+
+				#ifdef DEBUG
+					cout << " CME: " << CME << endl;
+					getchar();
+				#endif
+
+				// --------------------------------------------------------------------
 
 				// for sampling s_{t:t+d} we need to build
 				nLinearFiltersNeeded = _maxOrder - m + 1; // linear filters
@@ -182,42 +213,18 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 				// during the first iteration, we are going to use the real linear detector of this particle for this channel order
 				LinearDetector *linearDetectorBeingProccessed = processedParticle->GetLinearDetector(iChannelOrder);
 
-				#ifdef DEBUG3
-					cout << "Simbolos" << endl << _simbolos(_allSymbolsRows, tRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1)) << endl;
-				#endif
-
 				for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 				{
-					#ifdef DEBUG4
-						cout << "iLinearFilterNeeded = " << iLinearFilterNeeded << endl;
-					#endif
-
 					tRange rInvolvedObservations(iLinearFilterNeeded*_L,_L*(d+1+iLinearFilterNeeded)-1);
 
 					// matrices are stacked to give
 					tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
-					#ifdef DEBUG4
-						cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
-						cout << "stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations)" << endl << stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations) << endl;
-					#endif
-
-//             		tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(d+1)-1),tRange((m-1)*_N,stackedChannelMatrix.cols()-1));
-
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols
 					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations));
 
-					#ifdef DEBUG3
-						cout << "iLinearFilterNeeded = " << iLinearFilterNeeded << endl << softEstimations << endl;
-						getchar();
-					#endif
-
 					tMatrix filter = linearDetectorBeingProccessed->ComputedFilter();
-
-					#ifdef DEBUG4
-						cout << "filter" << endl << filter << endl;
-					#endif
 
 					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
 					if(iLinearFilterNeeded==0)
@@ -227,7 +234,6 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 					//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
-//             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
 					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
@@ -244,16 +250,6 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
                 		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-//                 		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-// 						s2q /= 10;
-
-						#ifdef DEBUG4
-							cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
-                			cout << "s2q = " << s2q << endl;
-                			getchar();
-                		#endif
 
 						double sumProb = 0.0;
 						// the probability for each posible symbol alphabet is computed
@@ -276,16 +272,8 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 					}
 				} // for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 
-				#ifdef DEBUG4
-					cout << "probabilidades par orden " << _candidateOrders[iChannelOrder] << endl << symbolProb[iChannelOrder] << endl;
-				#endif
-
 				// the clone is dismissed
 				delete linearDetectorBeingProccessed;
-
-				#ifdef DEBUG4
-					getchar();
-				#endif
 
 			} //for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
@@ -299,32 +287,17 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 			proposal = 1.0;
 			// the symbols are sampled from the above combined probabilities
-// 			for(iSampledSymbol=0;iSampledSymbol<_N;iSampledSymbol++)
 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
 				int iSampled = StatUtil::Discrete_rnd(overallSymbolProb.row(iSampledSymbol));
 
-// 				cout << "iSampled fue " << iSampled << endl;
-// 				getchar();
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= overallSymbolProb(iSampledSymbol,iSampled);
 			}
 
-			#ifdef DEBUG
-				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-				{
-					cout << " Orden " << _candidateOrders[iChannelOrder] << endl << symbolProb[iChannelOrder] << endl;
-				}
-				cout << "Se va a nuestrear de" << endl << overallSymbolProb << endl;
-			#endif
-
 			// sampled symbol vector is stored for the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(_allSymbolsRows));
-
-			#ifdef DEBUG
-				cout << "Muestreó" << endl << processedParticle->GetSymbolVector(iObservationToBeProcessed) << endl;
-			#endif
 
 			sumLikelihoodsProd = 0.0;
 			channelOrderAPPsNormConstant = 0.0;
@@ -349,21 +322,10 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 				likelihoodsProd = processedParticle->GetChannelOrderAPP(iChannelOrder);
 
-				#ifdef DEBUG3
-					cout << "La anterior probabilidad de m para orden " << _candidateOrders[iChannelOrder] << ": " << likelihoodsProd << endl;
-				#endif
-
-// 				for(iSmoothing=0;iSmoothing<1;iSmoothing++)
 				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					tRange rSymbolVectors(iSmoothing,iSmoothing+m-1);
 					tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors),columnwise);
-
-					#ifdef DEBUG2
-						cout << "iSmoothing = " << iSmoothing << endl;
-						cout << "Simbolos para verosimilitud: " << endl << forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors);
-						cout << "Matriz de canal: " << endl << matricesToStack[iChannelOrder][iSmoothing];
-					#endif
 
 					// predictedNoiselessObservation = matricesToStack[iChannelOrder][iSmoothing] * stackedSymbolVector
 					Blas_Mat_Vec_Mult(matricesToStack[iChannelOrder][iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
@@ -373,15 +335,10 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 					// unnormalized APP channel order
 					if(iSmoothing==0)
 					{
-// 						processedParticle->SetChannelOrderAPP(likelihoodsProd,iChannelOrder);
 						newChannelOrderAPPs[iChannelOrder] = likelihoodsProd;
 
 						// it's accumulated for normalization purposes
 						channelOrderAPPsNormConstant += likelihoodsProd;
-
-						#ifdef DEBUG3
-							cout << "Se actualiza la probabilidad de m por " << StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseCovariances[iSmoothing]) << endl;
-						#endif
 					}
 				}
 
@@ -399,40 +356,12 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 					processedParticle->SetChannelOrderAPP(newChannelOrderAPPs[iChannelOrder]/channelOrderAPPsNormConstant,iChannelOrder);
 			}
 
-			#ifdef DEBUG
-				cout << endl;
-				cout << "El peso se actualiza multiplicando por " << sumLikelihoodsProd/proposal << endl;
-			#endif
-
 			// the weight is updated
 			processedParticle->SetWeight((sumLikelihoodsProd/proposal)*processedParticle->GetWeight());
 
-			#ifdef DEBUG2
-				cout << "---------" << " " << iParticle << " " << "---------" << endl << Util::ToMatrix(sampledSmoothingVector,columnwise,_N) << "Peso actualizado por " << sumLikelihoodsProd/proposal << " | ";
-				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-				{
-					cout << "Orden " << _candidateOrders[iChannelOrder] << ": " << processedParticle->GetChannelOrderAPP(iChannelOrder) << " | ";
-				}
-				cout << endl;
-			#endif
-
-			#ifdef DEBUG
-				getchar();
-			#endif
 		} // for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 
 		_particleFilter.NormalizeWeights();
-
-		#ifdef DEBUG2
-			tVector pesos = _particleFilter.GetWeightsVector();
-			int iMaximoPeso;
-			Util::Max(pesos,iMaximoPeso);
-			cout << "La mejor partícula fue " << iMaximoPeso << " con peso " << pesos(iMaximoPeso) << endl;
-		#endif
-
-		#ifdef DEBUG2
-			getchar();
-		#endif
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))

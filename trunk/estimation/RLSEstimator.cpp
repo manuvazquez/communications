@@ -19,6 +19,10 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
+RLSEstimator::RLSEstimator(double forgettingFactor): ChannelMatrixEstimator(),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor)
+{
+}
+
 RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor): ChannelMatrixEstimator(initialEstimation),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
 // auxiliary variables initialization
 _invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm),_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm)
@@ -34,7 +38,7 @@ ChannelMatrixEstimator* RLSEstimator::Clone()
 tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
-		throw RuntimeException("Observations vector length or symbols matrix dimensions are wrong.");
+		throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
 
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 

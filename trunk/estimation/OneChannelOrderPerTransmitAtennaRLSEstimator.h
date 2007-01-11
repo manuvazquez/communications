@@ -17,31 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELMATRIXESTIMATOR_H
-#define CHANNELMATRIXESTIMATOR_H
+#ifndef ONECHANNELORDERPERTRANSMITATENNARLSESTIMATOR_H
+#define ONECHANNELORDERPERTRANSMITATENNARLSESTIMATOR_H
+
+#include <RLSEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <types.h>
-
-class ChannelMatrixEstimator{
+class OneChannelOrderPerTransmitAtennaRLSEstimator : public RLSEstimator
+{
 protected:
-	int _L,_Nm;
-	tMatrix _lastEstimatedChannelMatrix;
-
-	ChannelMatrixEstimator();
+	vector<int> _antennasChannelOrders;
 public:
-	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation);
-	virtual ~ChannelMatrixEstimator() {};
+    OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation, double forgettingFactor,const vector<int> &antennasChannelOrders);
 
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() = 0;
-	int Cols() { return _Nm;}
-	int Rows() { return _L;}
-	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+    ~OneChannelOrderPerTransmitAtennaRLSEstimator();
+
+    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 
 };
 

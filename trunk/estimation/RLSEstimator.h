@@ -44,6 +44,8 @@ protected:
     // auxiliary variables
     tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
+
+    RLSEstimator(double forgettingFactor);
 	virtual tMatrix NextMatrix(const tVector& observations, const tVector& symbolsVector, double noiseVariance);
 public:
     RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor);

@@ -17,32 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELMATRIXESTIMATOR_H
-#define CHANNELMATRIXESTIMATOR_H
+#include "OneChannelOrderPerTransmitAtennaRLSEstimator.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation, double forgettingFactor,const vector<int> &antennasChannelOrders): RLSEstimator(forgettingFactor),_antennasChannelOrders(antennasChannelOrders)
+{
+	_L = initialEstimation.rows();
+	_Nm = initialEstimation.cols();
+	int maxOrder = Util::Max(_antennasChannelOrders);
+	int N = _antennasChannelOrders.size();
+	if((_Nm % N)!=0)
+		throw RuntimeException("OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator: the length of the antennas channel orders vector is not coherent with the initial estimation channel matrix dimensions");
+}
 
-#include <types.h>
 
-class ChannelMatrixEstimator{
-protected:
-	int _L,_Nm;
-	tMatrix _lastEstimatedChannelMatrix;
+OneChannelOrderPerTransmitAtennaRLSEstimator::~OneChannelOrderPerTransmitAtennaRLSEstimator()
+{
+}
 
-	ChannelMatrixEstimator();
-public:
-	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation);
-	virtual ~ChannelMatrixEstimator() {};
 
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() = 0;
-	int Cols() { return _Nm;}
-	int Rows() { return _L;}
-	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+tMatrix OneChannelOrderPerTransmitAtennaRLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+{
+    return RLSEstimator::NextMatrix(observations, symbolsMatrix, noiseVariance);
+}
 
-};
-
-#endif

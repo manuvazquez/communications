@@ -17,31 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELMATRIXESTIMATOR_H
-#define CHANNELMATRIXESTIMATOR_H
+#ifndef CME_UCO_SIS_H
+#define CME_UCO_SIS_H
+
+#include <UCO_SIS.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <types.h>
-
-class ChannelMatrixEstimator{
-protected:
-	int _L,_Nm;
-	tMatrix _lastEstimatedChannelMatrix;
-
-	ChannelMatrixEstimator();
+class CME_UCO_SIS : public UCO_SIS
+{
 public:
-	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation);
-	virtual ~ChannelMatrixEstimator() {};
+    CME_UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() = 0;
-	int Cols() { return _Nm;}
-	int Rows() { return _L;}
-	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+    ~CME_UCO_SIS();
+
+protected:
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
 };
 

@@ -19,7 +19,7 @@ class Random
 		double randn();
 
 		std::complex<double> complexRandn();
-		int randab(int a, int b) { return (a+(int) ((double) b*rand_r(&_seed)/(RAND_MAX+1.0))); };
+		int randab(int a, int b) { return (a+(int) ((double) (b-a+1)*rand_r(&_seed)/(RAND_MAX+1.0))); };
 		double rand() { return ((double) rand_r(&_seed))/((double) RAND_MAX); }
 		uint32_t getSeed() { return _seed; }
 		void setSeed(uint32_t seed) { _seed = seed; }

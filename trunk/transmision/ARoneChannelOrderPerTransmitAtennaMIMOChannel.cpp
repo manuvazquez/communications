@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ARoneChannelOrderPerTransmitAtennaMIMOChannel.h"
 
+// #define DEBUG
+
 ARoneChannelOrderPerTransmitAtennaMIMOChannel::ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length, const std::vector< int >& candidateOrders, const tMatrix& channelOrderMatrixProbabilities,double mean,double variance,vector<double> ARcoefficients,double ARvariance): OneChannelOrderPerTransmitAtennaMIMOChannel(nTx, nRx, length, candidateOrders, channelOrderMatrixProbabilities)
 //ARprocess constructor call
 ,_ARproc(StatUtil::RandnMatrix(nRx,_nChannelMatrixNotNullColumns,mean,variance),
@@ -33,28 +35,54 @@ ARcoefficients,ARvariance)
 	for(int i=_maxChannelOrder-1;i<_length;i++)
 	{
 		arProcessMatrix = _ARproc.NextMatrix();
-		nextNotUsedColumn = 0;
-		for(int iAntenna=0;iAntenna<_nTx;iAntenna++)
-		{
-			tRange rChannelMatrixColumns((_maxChannelOrder-_antennaChannelOrder[iAntenna])*_nTx+iAntenna,_nTx*_maxChannelOrder-1,_nTx);
 
-			#ifdef DEBUG
-				cout << "El rango " << endl << rChannelMatrixColumns << endl;
-			#endif
+		#ifdef DEBUG
+			tMatrix matrizRecuperada(arProcessMatrix);
+			matrizRecuperada = 0.0;
+			cout << "matriz que se va a intercalar con 0s" << endl << arProcessMatrix << endl;
+			cout << "Matriz sin ceros antes" << endl << matrizRecuperada << endl;
+		#endif
 
-			channelMatrix(rAllRows,rChannelMatrixColumns).inject(arProcessMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+_antennaChannelOrder[iAntenna]-1)));
 
-			#ifdef DEBUG
-				cout << "Matriz del proceso AR" << endl << arProcessMatrix << endl;
-				cout << "Matrix de canal" << endl << channelMatrix << endl;
-			#endif
+		vector<int> antennasChannelOrders(_nTx);
+		for(int j=0;j<_nTx;j++)
+			antennasChannelOrders[j] = _antennaChannelOrder[j];
 
-			nextNotUsedColumn += _antennaChannelOrder[iAntenna];
+		OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(arProcessMatrix,_nTx,antennasChannelOrders,channelMatrix);
 
-			#ifdef DEBUG
-				cout << "next....: " << nextNotUsedColumn << endl;
-			#endif
-		}
+		#ifdef DEBUG
+			cout << "Matriz intercalada" << endl << channelMatrix << endl;
+		#endif
+
+		#ifdef DEBUG
+			OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(channelMatrix,_nTx,antennasChannelOrders,matrizRecuperada);
+			cout << "Matriz sin ceros despues de recuperada" << endl << matrizRecuperada << endl;
+			getchar();
+		#endif
+
+// 		nextNotUsedColumn = 0;
+// 		for(int iAntenna=0;iAntenna<_nTx;iAntenna++)
+// 		{
+// 			tRange rChannelMatrixColumns((_maxChannelOrder-_antennaChannelOrder[iAntenna])*_nTx+iAntenna,_nTx*_maxChannelOrder-1,_nTx);
+//
+// 			#ifdef DEBUG
+// 				cout << "El rango " << endl << rChannelMatrixColumns << endl;
+// 			#endif
+//
+// 			channelMatrix(rAllRows,rChannelMatrixColumns).inject(arProcessMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+_antennaChannelOrder[iAntenna]-1)));
+//
+// 			#ifdef DEBUG
+// 				cout << "Matriz del proceso AR" << endl << arProcessMatrix << endl;
+// 				cout << "Matrix de canal" << endl << channelMatrix << endl;
+// 			#endif
+//
+// 			nextNotUsedColumn += _antennaChannelOrder[iAntenna];
+//
+// 			#ifdef DEBUG
+// 				cout << "next....: " << nextNotUsedColumn << endl;
+// 				getchar();
+// 			#endif
+// 		}
 
 		_channelMatrices[i] = channelMatrix;
 	}
@@ -65,5 +93,3 @@ ARoneChannelOrderPerTransmitAtennaMIMOChannel::~ARoneChannelOrderPerTransmitAten
 {
 	delete[] _channelMatrices;
 }
-
-

@@ -58,6 +58,8 @@ public:
     template<class T> static void ScalarToStream(T scalar,string name,ofstream &f);
     static void StringsVectorToStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f);
+    template<class T> static T Max(const std::vector<T> &vector);
+    template<class T> static T Sum(const std::vector<T> &vector);
 };
 
 #endif

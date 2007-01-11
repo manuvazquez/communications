@@ -271,3 +271,28 @@ template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string 
 }
 template void Util::ScalarsVectorToStream(std::vector<double> vector,string name,ofstream &f);
 template void Util::ScalarsVectorToStream(std::vector<int> vector,string name,ofstream &f);
+
+template<class T> T Util::Max(const std::vector<T> &vector)
+{
+	int iMax = 0;
+	T max = vector[0];
+
+	for(int i=1;i<vector.size();i++)
+		if(vector[i]>max)
+		{
+			iMax = i;
+			max = vector[i];
+		}
+	return iMax;
+}
+template int Util::Max(const std::vector<int> &vector);
+
+template<class T> T Util::Sum(const std::vector<T> &vector)
+{
+	T sum = vector[0];
+
+	for(int i=1;i<vector.size();i++)
+		sum += vector[i];
+	return sum;
+}
+template int Util::Sum(const std::vector<int> &vector);

@@ -42,6 +42,9 @@ public:
 
     virtual int MaximumOrder() const {return _maxChannelOrder;}
     virtual int Memory(int n) const {return _maxChannelOrder;}
+
+	static void WithoutZerosMatrixToWithZerosMatrix(const tMatrix &withoutZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withZerosMatrix);
+	static void WithZerosMatrixToWithoutZerosMatrix(const tMatrix &withZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix);
 };
 
 #endif
