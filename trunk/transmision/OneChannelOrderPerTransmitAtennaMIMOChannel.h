@@ -38,7 +38,7 @@ public:
 
     OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders);
 
-    virtual int MaximumOrder() const {return _maxChannelOrder;}
+    virtual int EffectiveMemory() const {return _maxChannelOrder;}
     virtual int Memory(int n) const {return _maxChannelOrder;}
 
     vector<int> GetAntennasChannelOrders() {return _antennasChannelOrders;}

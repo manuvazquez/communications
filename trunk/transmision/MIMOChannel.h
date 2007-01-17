@@ -46,7 +46,7 @@ public:
 	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
 	int NtMemory(int n) const {return _nTx*Memory(n);};
 	virtual int Memory(int n) const = 0;
-	virtual int MaximumOrder() const = 0;
+	virtual int EffectiveMemory() const = 0;
 	virtual tMatrix& operator[](int n) const = 0;
 	tMatrix Transmit(tMatrix &symbols,Noise &noise);
     vector<tMatrix> Range(int a,int b);

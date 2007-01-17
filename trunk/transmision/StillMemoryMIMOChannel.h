@@ -34,7 +34,7 @@ public:
 
 	int Memory() const {return _memory;};
 	int Memory(int n) const {return _memory;}
-	int MaximumOrder() const {return _memory;}
+	int EffectiveMemory() const {return _memory;}
 	int NtNrMemory() const {return _nTxnRxMemory;};
 	int NtMemory() const {return _nTxMemory;};
 };

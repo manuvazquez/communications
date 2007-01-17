@@ -36,7 +36,7 @@ protected:
 public:
     SparklingMemoryMIMOChannel(int nTx,int nRx,int length,std::vector<int> candidateOrders,int initialChannelOrderIndex);
 
-    int MaximumOrder() const {return _maxOrder;}
+    int EffectiveMemory() const {return _maxOrder;}
 };
 
 #endif

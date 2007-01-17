@@ -30,7 +30,12 @@ OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRL
 	// initialization of variables declared in ChannelMatrixEstimator
 	_L = initialEstimation.rows();
 	_Nm = Util::Sum(_antennasChannelOrders);
-	if((initialEstimation.cols() % _N)!=0)
+
+	#ifdef DEBUG
+		cout << "initialEstimation.cols(): " << initialEstimation.cols() << " Util::Max(_antennasChannelOrders)*_N): " << _antennasChannelOrders[Util::Max(_antennasChannelOrders)]*_N << endl;
+	#endif
+
+	if(initialEstimation.cols() != (_antennasChannelOrders[Util::Max(_antennasChannelOrders)]*_N))
 		throw RuntimeException("OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator: the length of the antennas channel orders vector is not coherent with the initial estimation channel matrix dimensions");
 
 	_lastEstimatedChannelMatrix = tMatrix(_L,_Nm);
@@ -51,6 +56,8 @@ OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRL
     _withoutZerosMatrix = tMatrix(_L,_Nm);
 
     #ifdef DEBUG
+    	cout << "initialEstimation" << endl << initialEstimation << endl;
+    	cout << " _withoutZerosMatrix" << endl << _withoutZerosMatrix << endl;
     	cout << "Antes de convertir initialEstimation" << endl;
     #endif
 

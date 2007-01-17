@@ -44,7 +44,7 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 	double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nRx;
 	double stdDev,variance;
 
-	for(j=_channel->MaximumOrder()-1;j<_length;j++)
+	for(j=_channel->EffectiveMemory()-1;j<_length;j++)
 	{
 		memory = _channel->Memory(j);
 

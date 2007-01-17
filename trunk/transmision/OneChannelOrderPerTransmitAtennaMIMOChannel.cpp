@@ -109,7 +109,8 @@ void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosM
         int channelOrdersSum = Util::Sum(antennasChannelOrders);
 
         #ifdef DEBUG
-                cout << "las columnas de la matriz destino: " << withZerosMatrix.cols() << endl;
+                cout << "las columnas de la matriz origen: " << withZerosMatrix.cols() << endl;
+                cout << "las columnas de la matriz destino: " << withoutZerosMatrix.cols() << endl;
                 cout << "maxChannelOrder: " << maxChannelOrder << " N: " << N << endl;
         #endif
 
@@ -128,6 +129,7 @@ void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosM
                 #ifdef DEBUG
                         cout << "El rango " << endl << rSourceColumns << endl;
                         cout << withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)) << endl;
+                        cout << "hola" << endl;
                 #endif
 
                 withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)).inject(withZerosMatrix(rAllRows,rSourceColumns));
