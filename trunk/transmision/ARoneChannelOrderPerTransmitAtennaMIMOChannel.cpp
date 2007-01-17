@@ -21,73 +21,63 @@
 
 // #define DEBUG
 
+void ARoneChannelOrderPerTransmitAtennaMIMOChannel::ConstructorProcessing()
+{
+	for(int i=_maxChannelOrder-1;i<_length;i++)
+	{
+		tMatrix channelMatrix(_nRx,_nTx*_maxChannelOrder);
+		tMatrix arProcessMatrix = _ARproc.NextMatrix();
+
+		OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(arProcessMatrix,_nTx,_antennasChannelOrders,channelMatrix);
+
+		_channelMatrices[i] = channelMatrix;
+	}
+}
+
 ARoneChannelOrderPerTransmitAtennaMIMOChannel::ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length, const std::vector< int >& candidateOrders, const tMatrix& channelOrderMatrixProbabilities,double mean,double variance,vector<double> ARcoefficients,double ARvariance): OneChannelOrderPerTransmitAtennaMIMOChannel(nTx, nRx, length, candidateOrders, channelOrderMatrixProbabilities)
 //ARprocess constructor call
 ,_ARproc(StatUtil::RandnMatrix(nRx,_nChannelMatrixNotNullColumns,mean,variance),
 ARcoefficients,ARvariance)
 ,_channelMatrices(new tMatrix[_length])
 {
-	tMatrix arProcessMatrix;
-	tMatrix channelMatrix = LaGenMatDouble::zeros(_nRx,_nTx*_maxChannelOrder);
-	int nextNotUsedColumn;
-	tRange rAllRows(0,_nRx-1);
-
-	for(int i=_maxChannelOrder-1;i<_length;i++)
-	{
-		arProcessMatrix = _ARproc.NextMatrix();
-
-		#ifdef DEBUG
-			tMatrix matrizRecuperada(arProcessMatrix);
-			matrizRecuperada = 0.0;
-			cout << "matriz que se va a intercalar con 0s" << endl << arProcessMatrix << endl;
-			cout << "Matriz sin ceros antes" << endl << matrizRecuperada << endl;
-		#endif
-
-
-		vector<int> antennasChannelOrders(_nTx);
-		for(int j=0;j<_nTx;j++)
-			antennasChannelOrders[j] = _antennaChannelOrder[j];
-
-		OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(arProcessMatrix,_nTx,antennasChannelOrders,channelMatrix);
-
-		#ifdef DEBUG
-			cout << "Matriz intercalada" << endl << channelMatrix << endl;
-		#endif
-
-		#ifdef DEBUG
-			OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(channelMatrix,_nTx,antennasChannelOrders,matrizRecuperada);
-			cout << "Matriz sin ceros despues de recuperada" << endl << matrizRecuperada << endl;
-			getchar();
-		#endif
-
-// 		nextNotUsedColumn = 0;
-// 		for(int iAntenna=0;iAntenna<_nTx;iAntenna++)
-// 		{
-// 			tRange rChannelMatrixColumns((_maxChannelOrder-_antennaChannelOrder[iAntenna])*_nTx+iAntenna,_nTx*_maxChannelOrder-1,_nTx);
+// 	for(int i=_maxChannelOrder-1;i<_length;i++)
+// 	{
+// 		tMatrix channelMatrix(_nRx,_nTx*_maxChannelOrder);
+// 		tMatrix arProcessMatrix = _ARproc.NextMatrix();
 //
-// 			#ifdef DEBUG
-// 				cout << "El rango " << endl << rChannelMatrixColumns << endl;
-// 			#endif
+// 		#ifdef DEBUG
+// 			tMatrix matrizRecuperada(arProcessMatrix);
+// 			matrizRecuperada = 0.0;
+// 			cout << "matriz que se va a intercalar con 0s" << endl << arProcessMatrix << endl;
+// 			cout << "Matriz sin ceros antes" << endl << matrizRecuperada << endl;
+// 		#endif
 //
-// 			channelMatrix(rAllRows,rChannelMatrixColumns).inject(arProcessMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+_antennaChannelOrder[iAntenna]-1)));
+// 		OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(arProcessMatrix,_nTx,_antennasChannelOrders,channelMatrix);
 //
-// 			#ifdef DEBUG
-// 				cout << "Matriz del proceso AR" << endl << arProcessMatrix << endl;
-// 				cout << "Matrix de canal" << endl << channelMatrix << endl;
-// 			#endif
+// 		#ifdef DEBUG
+// 			cout << "Matriz intercalada" << endl << channelMatrix << endl;
+// 		#endif
 //
-// 			nextNotUsedColumn += _antennaChannelOrder[iAntenna];
+// 		#ifdef DEBUG
+// 			OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(channelMatrix,_nTx,antennasChannelOrders,matrizRecuperada);
+// 			cout << "Matriz sin ceros despues de recuperada" << endl << matrizRecuperada << endl;
+// 			getchar();
+// 		#endif
 //
-// 			#ifdef DEBUG
-// 				cout << "next....: " << nextNotUsedColumn << endl;
-// 				getchar();
-// 			#endif
-// 		}
+// 		_channelMatrices[i] = channelMatrix;
+// 	}
 
-		_channelMatrices[i] = channelMatrix;
-	}
+	ConstructorProcessing();
 }
 
+ARoneChannelOrderPerTransmitAtennaMIMOChannel::ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders,double mean,double variance,vector<double> ARcoefficients,double ARvariance): OneChannelOrderPerTransmitAtennaMIMOChannel(nTx, nRx, length,antennasChannelOrders)
+//ARprocess constructor call
+,_ARproc(StatUtil::RandnMatrix(nRx,_nChannelMatrixNotNullColumns,mean,variance),
+ARcoefficients,ARvariance)
+,_channelMatrices(new tMatrix[_length])
+{
+	ConstructorProcessing();
+}
 
 ARoneChannelOrderPerTransmitAtennaMIMOChannel::~ARoneChannelOrderPerTransmitAtennaMIMOChannel()
 {

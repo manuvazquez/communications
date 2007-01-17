@@ -88,6 +88,10 @@ void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVar
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
+		#ifdef DEBUG
+			cout << "iObservationToBeProcessed: " << iObservationToBeProcessed << endl;
+		#endif
+
 		// observation matrix columns that are involved
 		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+nTimeInstantsToStack);
 
@@ -140,9 +144,10 @@ void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVar
 
 				#ifdef DEBUG
 					cout << "Orden de canal: " << _candidateOrders[iChannelOrder] << endl;
-					cout << "La matriz apilada para CME es" << endl << CMEstackedChannelMatrix << endl;
+// 					cout << "La matriz apilada para CME es" << endl << CMEstackedChannelMatrix << endl;
+// 					cout << "La matriz de observaciones apiladas" << endl << stackedObservations << endl;
 					cout << "filas: " << CMEstackedChannelMatrix.rows() << " columnas: " << CMEstackedChannelMatrix.cols() << endl;
-					cout << "debería tener " << _N*(_candidateOrders[iChannelOrder]+nTimeInstantsToStackCME) << " columnas" << endl;
+// 					cout << "debería tener " << _N*(_candidateOrders[iChannelOrder]+nTimeInstantsToStackCME) << " columnas" << endl;
 				#endif
 
 				int nRowsCMEstackedChannelMatrix = CMEstackedChannelMatrix.rows();
@@ -156,23 +161,32 @@ void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVar
 				tLongIntVector piv(nColsCMEstackedChannelMatrix);
 				LUFactorizeIP(HTH,piv);
 
+// 				#ifdef DEBUG
+// 					cout << "Despues de la factorizacion LU" << endl << HTH << endl;
+// 				#endif
+
 				double detHTH = 1.0;
-				for(int i=0;i<nRowsCMEstackedChannelMatrix;i++)
+				for(int i=0;i<nColsCMEstackedChannelMatrix;i++)
+				{
+// 					#ifdef DEBUG
+// 						cout << "elemento " << i << "-esimo: " << HTH(i,i) << endl;
+// 					#endif
 					detHTH *= HTH(i,i);
+				}
 
 				// because HTH is positive definite, the determinant is known to be positive
 				detHTH = fabs(detHTH);
 
-				#ifdef DEBUG
-					cout << "El determinante sin denominador es " << detHTH << endl;
-				#endif
+// 				#ifdef DEBUG
+// 					cout << "El determinante sin denominador es " << detHTH << endl;
+// 				#endif
 
 				// inverse is computed
 				LaLUInverseIP(HTH,piv);
 
-				#ifdef DEBUG
-					cout << "La inversa es " << endl << HTH << endl;
-				#endif
+// 				#ifdef DEBUG
+// 					cout << "La inversa es " << endl << HTH << endl;
+// 				#endif
 
 				tMatrix HinvHTH(nRowsCMEstackedChannelMatrix,nColsCMEstackedChannelMatrix);
 				// HinvHTH = CMEstackedChannelMatrix * inv(HTH)
@@ -191,16 +205,18 @@ void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVar
 				// xTidentityMinusHinvHTH_HT = stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1))^T * identityMinusHinvHTH_HT = identityMinusHinvHTH_HT^T * stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1))
 				Blas_Mat_Trans_Vec_Mult(identityMinusHinvHTH_HT,stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1)),xTidentityMinusHinvHTH_HT);
 
-				double estimatedNoiseVariance = Blas_Dot_Prod(xTidentityMinusHinvHTH_HT,stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1)));
+				double estimatedNoiseVariance = 1.0/((double)(nRowsCMEstackedChannelMatrix - nColsCMEstackedChannelMatrix))* Blas_Dot_Prod(xTidentityMinusHinvHTH_HT,stackedObservations(tRange(0,nRowsCMEstackedChannelMatrix-1)));
 
 				#ifdef DEBUG
 					cout << "varianza estimada: " << estimatedNoiseVariance << endl;
-					getchar();
+					cout << "varianza real: " << noiseVariances[iObservationToBeProcessed] << endl;
 				#endif
 
-				double CME = (double)((nRowsCMEstackedChannelMatrix - nColsCMEstackedChannelMatrix)/2)*estimatedNoiseVariance/noiseVariances[iObservationToBeProcessed] + 0.5*log(detHTH/pow(2*M_PI*noiseVariances[iObservationToBeProcessed],nRowsCMEstackedChannelMatrix));
+				double CME = (double)((nRowsCMEstackedChannelMatrix - nColsCMEstackedChannelMatrix)/2.0)*estimatedNoiseVariance/noiseVariances[iObservationToBeProcessed] + 0.5*log(detHTH/pow(2*M_PI*noiseVariances[iObservationToBeProcessed],nColsCMEstackedChannelMatrix));
 
 				#ifdef DEBUG
+					cout << "Determinante de verdad: " << detHTH/pow(2*M_PI*noiseVariances[iObservationToBeProcessed],nColsCMEstackedChannelMatrix) << endl;
+					cout << "primer sumando: " << (double)((nRowsCMEstackedChannelMatrix - nColsCMEstackedChannelMatrix)/2.0)*estimatedNoiseVariance/noiseVariances[iObservationToBeProcessed] << endl;
 					cout << " CME: " << CME << endl;
 					getchar();
 				#endif
@@ -347,7 +363,7 @@ void CME_UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVar
 
                 // the computed likelihood is accumulated
                 sumLikelihoodsProd += likelihoodsProd;
-			}
+			} // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
 			// the channel order APPs are normalized for the next iteration
 			if(channelOrderAPPsNormConstant!=0)

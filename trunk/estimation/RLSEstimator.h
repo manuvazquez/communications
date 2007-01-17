@@ -45,12 +45,13 @@ protected:
     tVector _invForgettingFactorSymbolsVectorInvRtilde,_g,_invForgettingFactorInvRtildeSymbolsVector;
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
 
-    RLSEstimator(double forgettingFactor);
-	virtual tMatrix NextMatrix(const tVector& observations, const tVector& symbolsVector, double noiseVariance);
+    RLSEstimator(int N,double forgettingFactor);
+	tMatrix NextMatrixProcessing(const tVector& observations, const tVector& symbolsVector, double noiseVariance);
 public:
-    RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor);
+    RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* Clone();
+
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 };
 

@@ -19,24 +19,87 @@
  ***************************************************************************/
 #include "OneChannelOrderPerTransmitAtennaRLSEstimator.h"
 
-OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation, double forgettingFactor,const vector<int> &antennasChannelOrders): RLSEstimator(forgettingFactor),_antennasChannelOrders(antennasChannelOrders)
+// #define DEBUG
+
+OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation,int N,double forgettingFactor,const vector<int> &antennasChannelOrders): RLSEstimator(N,forgettingFactor),_antennasChannelOrders(antennasChannelOrders)
 {
+	if(antennasChannelOrders.size()!=_N)
+		throw RuntimeException("OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator: antennasChannelOrders size is wrong.");
+
+
+	// initialization of variables declared in ChannelMatrixEstimator
 	_L = initialEstimation.rows();
-	_Nm = initialEstimation.cols();
-	int maxOrder = Util::Max(_antennasChannelOrders);
-	int N = _antennasChannelOrders.size();
-	if((_Nm % N)!=0)
+	_Nm = Util::Sum(_antennasChannelOrders);
+	if((initialEstimation.cols() % _N)!=0)
 		throw RuntimeException("OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRLSEstimator: the length of the antennas channel orders vector is not coherent with the initial estimation channel matrix dimensions");
+
+	_lastEstimatedChannelMatrix = tMatrix(_L,_Nm);
+
+	// initialization of variables declared in RLSEstimator
+    _invRtilde = LaGenMatDouble::eye(_Nm);
+    _pTilde = LaGenMatDouble::zeros(_L,_Nm);
+    _invForgettingFactorSymbolsVectorInvRtilde = tVector(_Nm);
+    _g = tVector(_Nm);
+    _invForgettingFactorInvRtildeSymbolsVector = tVector(_Nm);
+    _invForgettingFactorInvRtildeSymbolsVectorg = tMatrix(_Nm,_Nm);
+    _observationsSymbolsVector = tMatrix(_L,_Nm);
+
+	// initialization of the wrapper variables
+    _involvedSymbolsVector = tVector(_Nm);
+//     _withZerosMatrix = tMatrix(initialEstimation.rows(),initialEstimation.cols());
+    _withZerosMatrix = initialEstimation;
+    _withoutZerosMatrix = tMatrix(_L,_Nm);
+
+    #ifdef DEBUG
+    	cout << "Antes de convertir initialEstimation" << endl;
+    #endif
+
+	// the initial estimation received is cut according to the orders of the transmit antennas
+	OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialEstimation,_N,_antennasChannelOrders,_lastEstimatedChannelMatrix);
+
+    #ifdef DEBUG
+    	cout << "Despues de convertir initialEstimation" << endl;
+    	cout << "_lastEstimatedChannelMatrix es" << endl << _lastEstimatedChannelMatrix << endl;
+    #endif
 }
 
-
-OneChannelOrderPerTransmitAtennaRLSEstimator::~OneChannelOrderPerTransmitAtennaRLSEstimator()
+ChannelMatrixEstimator *OneChannelOrderPerTransmitAtennaRLSEstimator::Clone()
 {
+	return new OneChannelOrderPerTransmitAtennaRLSEstimator(*this);
 }
 
+tMatrix OneChannelOrderPerTransmitAtennaRLSEstimator::LastEstimatedChannelMatrix()
+{
+	return _withZerosMatrix;
+}
 
 tMatrix OneChannelOrderPerTransmitAtennaRLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
-    return RLSEstimator::NextMatrix(observations, symbolsMatrix, noiseVariance);
+	#ifdef DEBUG
+		cout << "en el netxMatrix del wrapper" << endl;
+	#endif
+	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
+
+	// a new vector which includes only the symbols involving the observations is constructed
+	OneChannelOrderPerTransmitAtennaMIMOChannel::CompleteSymbolsVectorToOnlyInvolvedSymbolsVector(symbolsVector,_N,_antennasChannelOrders,_involvedSymbolsVector);
+
+	#ifdef DEBUG
+		cout << "antes de llamar a NextMatrix" << endl;
+	#endif
+
+	// the underlying RLS estimator is called
+	_withoutZerosMatrix = RLSEstimator::NextMatrixProcessing(observations, _involvedSymbolsVector, noiseVariance);
+
+	// the returned matrix is converted
+	OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(_withoutZerosMatrix,_N,_antennasChannelOrders,_withZerosMatrix);
+
+
+	#ifdef DEBUG
+		cout << "antes del retorno del netxMatrix del wrapper" << endl;
+		cout << "Va a devolver" << endl << _withZerosMatrix << endl;
+		cout << "Filas: " << _withZerosMatrix.rows() << " Columnas: " << _withZerosMatrix.cols() << endl;
+		getchar();
+	#endif
+    return _withZerosMatrix;
 }
 

@@ -50,6 +50,7 @@
 #include <KalmanEstimator.h>
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
+#include <OneChannelOrderPerTransmitAtennaRLSEstimator.h>
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
@@ -93,6 +94,7 @@ int main(int argc,char* argv[])
     double resamplingRatio = 0.9;
     int d = m -1;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
+    int preambleLength = 10;
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -162,7 +164,7 @@ int main(int argc,char* argv[])
 	strcat(outputFileName,presentTimeString);
 
     // a specific preamble is generated...
-    tMatrix preamble(N,10);
+    tMatrix preamble(N,preambleLength);
     preamble = -1.0;
 
     tRange rAllSymbolRows(0,N-1);
@@ -172,29 +174,18 @@ int main(int argc,char* argv[])
     tRange rSymbolVectorsToComputePe(preamble.cols()+trainSeqLength,K+preamble.cols()-1);
 //     tRange rSymbolVectorsToComputePe(100,K+preamble.cols()-1);
 
-    // channel estimators are constructed for the different algorithms
-    KalmanEstimator kalmanEstimator(mediaInicial,ARcoefficients[0],ARvariance);
-    RLSEstimator RLSestimator(mediaInicial,forgettingFactor);
-    LMSEstimator LMSestimator(mediaInicial,muLMS);
-
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
 	vector<LinearDetector *> RMMSElinearDetectors;
 	for(int iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		kalmanChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),ARcoefficients[0],ARvariance));
+		kalmanChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),N,ARcoefficients[0],ARvariance));
 
-		RLSchannelEstimators.push_back(new RLSEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),forgettingFactor));
+		RLSchannelEstimators.push_back(new RLSEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),N,forgettingFactor));
 
 		RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),pam2.Variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
 	}
-
-// 	tVector a(4),b(2);
-// 	tMatrix M(4,2);
-// 	double c;
-// 	RLSEstimator prueba(LaGenMatDouble::zeros(L,N*candidateChannelOrders[0]),forgettingFactor);
-// 	prueba.hola(a,b,c);
 
     // linear filters
     RMMSEDetector RMMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
@@ -208,7 +199,7 @@ int main(int argc,char* argv[])
 
 	// the algorithms with the higher smoothing lag require
 	int nSmoothingInstants = maxCandidateOrder-1;
-// 	int nSmoothingInstants = 50;
+// 	int nSmoothingInstants = 150;
 
     // always the same resampling criterion and algorithms
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
@@ -246,8 +237,11 @@ int main(int argc,char* argv[])
 
 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,simbolosTransmitir.cols(),candidateSubchannelOrders,channelOrderMatrixProbabilities,channelMean,channelVariance,ARcoefficients,ARvariance);
 
-		// a channel order varying AR channel is generated
-// 		SparklingMemoryARMIMOChannel canal2(N,L,simbolosTransmitir.cols(),candidateChannelOrders,0,channelMean,channelVariance,ARcoefficients,ARvariance);
+		// channel estimators based on the channel are constructed
+		KalmanEstimator kalmanEstimator(mediaInicial,N,ARcoefficients[0],ARvariance);
+	    RLSEstimator rlsEstimator(mediaInicial,N,forgettingFactor);
+		OneChannelOrderPerTransmitAtennaRLSEstimator rlsWithoutZeros(mediaInicial,N,forgettingFactor,canal.GetAntennasChannelOrders());
+		LMSEstimator lmsEstimator(mediaInicial,N,muLMS);
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -269,9 +263,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ML_SMCAlgorithm ("Detector suavizado optimo",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&LMSestimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&lmsEstimator,&RMMSEdetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&RLSestimator,&RMMSEdetector/*RMMSElinearDetectors[0]*//*&MMSEdetector*/,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&RMMSEdetector/*RMMSElinearDetectors[0]*//*&MMSEdetector*/,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
@@ -279,9 +273,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIR("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-//             algorithms.push_back(new UCO_SIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+            algorithms.push_back(new UCO_SIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
-            algorithms.push_back(new CME_UCO_SIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+//             algorithms.push_back(new CME_UCO_SIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -365,6 +359,8 @@ int main(int argc,char* argv[])
 		Util::ScalarToStream(channelVariance,"channelVariance",f);
 		Util::ScalarToStream(firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",f);
 		Util::ScalarToStream(subsequentSampledChannelMatricesVariance,"subsequentSampledChannelMatricesVariance",f);
+		Util::ScalarToStream(nSmoothingInstants,"nSmoothingInstants",f);
+		Util::ScalarToStream(preambleLength,"preambleLength",f);
 
 		f.close();
 		// ---------------------------------------------------------

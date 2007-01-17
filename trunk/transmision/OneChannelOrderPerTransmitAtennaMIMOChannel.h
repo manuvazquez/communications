@@ -1,4 +1,4 @@
-/***************************************************************************
+ /***************************************************************************
  *   Copyright (C) 2006 by Manu   *
  *   manu@rustneversleeps   *
  *                                                                         *
@@ -31,20 +31,25 @@
 class OneChannelOrderPerTransmitAtennaMIMOChannel : public MIMOChannel
 {
 protected:
-	tMatrix _channelOrderMatrixProbabilities;
-	std::vector<int> _candidateOrders;
-	int *_antennaChannelOrder;
+	std::vector<int> _antennasChannelOrders;
 	int _maxChannelOrder,_nChannelMatrixNotNullColumns;
 public:
     OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int>& candidateOrders,const tMatrix& channelOrderMatrixProbabilities);
 
-    ~OneChannelOrderPerTransmitAtennaMIMOChannel();
+    OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders);
 
     virtual int MaximumOrder() const {return _maxChannelOrder;}
     virtual int Memory(int n) const {return _maxChannelOrder;}
 
+    vector<int> GetAntennasChannelOrders() {return _antennasChannelOrders;}
+
 	static void WithoutZerosMatrixToWithZerosMatrix(const tMatrix &withoutZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withZerosMatrix);
+
 	static void WithZerosMatrixToWithoutZerosMatrix(const tMatrix &withZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix);
+
+	static void CompleteSymbolsVectorToOnlyInvolvedSymbolsVector(const tVector &withZerosSymbolsVector,int N,const vector<int> &antennasChannelOrders,tVector &withoutZerosSymbolsVector);
+
+// 	static void WithZerosMatrixAndVectorToWithoutZerosMatrixAndVector(const tMatrix &withZerosMatrix,const tVector &withZerosSymbolsVector,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix,tVector &withoutZerosSymbolsVector);
 };
 
 #endif

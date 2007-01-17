@@ -25,23 +25,24 @@
 */
 
 #include <types.h>
+#include <exceptions.h>
 
 class ChannelMatrixEstimator{
 protected:
-	int _L,_Nm;
+	int _L,_Nm,_N;
 	tMatrix _lastEstimatedChannelMatrix;
 
-	ChannelMatrixEstimator();
+	ChannelMatrixEstimator(int N);
 public:
 	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation);
+    ChannelMatrixEstimator(tMatrix initialEstimation,int N);
 	virtual ~ChannelMatrixEstimator() {};
 
 	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
 	virtual ChannelMatrixEstimator *Clone() = 0;
-	int Cols() { return _Nm;}
+	virtual int Cols() { return _Nm;}
 	int Rows() { return _L;}
-	tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+	virtual tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
 
 };
 

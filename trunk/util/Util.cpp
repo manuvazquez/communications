@@ -19,10 +19,16 @@
  ***************************************************************************/
 #include "Util.h"
 
+// #define DEBUG
+
 using namespace std;
 
 void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
+	#ifdef DEBUG
+		cout << "A.rows(): " << A.rows() << " A.cols(): " << A.cols() << " B.rows(): " << B.rows() << " B.cols(): " << B.cols() << endl;
+	#endif
+
 	if(A.rows()!=B.rows() || A.cols()!=B.cols())
 		throw RuntimeException("Matrices can't be added.");
 

@@ -19,11 +19,11 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(double forgettingFactor): ChannelMatrixEstimator(),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor)
+RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor)
 {
 }
 
-RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,double forgettingFactor): ChannelMatrixEstimator(initialEstimation),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
+RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
 // auxiliary variables initialization
 _invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm),_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm)
 {
@@ -42,7 +42,7 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-	return NextMatrix(observations,symbolsVector,noiseVariance);
+	return NextMatrixProcessing(observations,symbolsVector,noiseVariance);
 
 //     // _invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
 //     Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,_invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
@@ -73,7 +73,7 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 // 	return _lastEstimatedChannelMatrix;
 }
 
-tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tVector& symbolsVector, double noiseVariance)
+tMatrix RLSEstimator::NextMatrixProcessing(const tVector& observations, const tVector& symbolsVector, double noiseVariance)
 {
     // _invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
     Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,_invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);

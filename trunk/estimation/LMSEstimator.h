@@ -37,7 +37,7 @@ protected:
 	tVector _predictedObservations,_error;
 	tMatrix _deltaMatrix;
 public:
-    LMSEstimator(const tMatrix &initialEstimation,double mu);
+    LMSEstimator(const tMatrix &initialEstimation,int N,double mu);
 
     virtual LMSEstimator* Clone();
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);

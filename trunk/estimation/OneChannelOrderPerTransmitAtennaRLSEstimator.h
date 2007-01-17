@@ -25,14 +25,25 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <OneChannelOrderPerTransmitAtennaMIMOChannel.h>
+
 class OneChannelOrderPerTransmitAtennaRLSEstimator : public RLSEstimator
 {
 protected:
 	vector<int> _antennasChannelOrders;
-public:
-    OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation, double forgettingFactor,const vector<int> &antennasChannelOrders);
+	tVector _involvedSymbolsVector;
+	// "_withZerosMatrix" always contains the expanded estimated matrix
+	tMatrix _withZerosMatrix;
 
-    ~OneChannelOrderPerTransmitAtennaRLSEstimator();
+	tMatrix _withoutZerosMatrix;
+public:
+    OneChannelOrderPerTransmitAtennaRLSEstimator(const tMatrix& initialEstimation,int N,double forgettingFactor,const vector<int> &antennasChannelOrders);
+
+    virtual ChannelMatrixEstimator *Clone();
+
+    virtual int Cols() { return _withZerosMatrix.cols();}
+    virtual tMatrix LastEstimatedChannelMatrix();
 
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 

@@ -22,32 +22,38 @@
 // #define DEBUG
 
 OneChannelOrderPerTransmitAtennaMIMOChannel::OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int>& candidateOrders,const tMatrix& channelOrderMatrixProbabilities): MIMOChannel(nTx, nRx, length)
-,_channelOrderMatrixProbabilities(channelOrderMatrixProbabilities),_candidateOrders(candidateOrders),_antennaChannelOrder(new int[_nTx])
+,_antennasChannelOrders(nTx),_nChannelMatrixNotNullColumns(0)
 {
 	_maxChannelOrder = -1;
-	_nChannelMatrixNotNullColumns = 0;
 	for(int i=0;i<_nTx;i++)
 	{
-		_antennaChannelOrder[i] = _candidateOrders[StatUtil::Discrete_rnd(channelOrderMatrixProbabilities.row(i))];
+		_antennasChannelOrders[i] = candidateOrders[StatUtil::Discrete_rnd(channelOrderMatrixProbabilities.row(i))];
 
-		if(_antennaChannelOrder[i] > _maxChannelOrder)
-			_maxChannelOrder = _antennaChannelOrder[i];
+		if(_antennasChannelOrders[i] > _maxChannelOrder)
+			_maxChannelOrder = _antennasChannelOrders[i];
 
-		_nChannelMatrixNotNullColumns += _antennaChannelOrder[i];
+		_nChannelMatrixNotNullColumns += _antennasChannelOrders[i];
 	}
 
 	#ifdef DEBUG
 		for(int i=0;i<_nTx;i++)
-			cout << _antennaChannelOrder[i] << endl;
+			cout << _antennasChannelOrders[i] << endl;
 
 		cout << "El maximo: " << _maxChannelOrder << " y el nº total de columnas: " << _nChannelMatrixNotNullColumns << endl;
 	#endif
 }
 
-
-OneChannelOrderPerTransmitAtennaMIMOChannel::~OneChannelOrderPerTransmitAtennaMIMOChannel()
+OneChannelOrderPerTransmitAtennaMIMOChannel::OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders): MIMOChannel(nTx, nRx, length)
+,_antennasChannelOrders(antennasChannelOrders),_nChannelMatrixNotNullColumns(0)
 {
-	delete[] _antennaChannelOrder;
+	_maxChannelOrder = -1;
+	for(int i=0;i<_nTx;i++)
+	{
+		if(_antennasChannelOrders[i] > _maxChannelOrder)
+			_maxChannelOrder = _antennasChannelOrders[i];
+
+		_nChannelMatrixNotNullColumns += _antennasChannelOrders[i];
+	}
 }
 
 void OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(const tMatrix &withoutZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withZerosMatrix)
@@ -96,46 +102,118 @@ void OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosM
 
 void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(const tMatrix &withZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix)
 {
-	if(withoutZerosMatrix.rows()!=withZerosMatrix.rows())
-		throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: matrix dimensions are not coherent");
+        if(withoutZerosMatrix.rows()!=withZerosMatrix.rows())
+                throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: matrix dimensions are not coherent");
 
+        int maxChannelOrder = antennasChannelOrders[Util::Max(antennasChannelOrders)];
+        int channelOrdersSum = Util::Sum(antennasChannelOrders);
+
+        #ifdef DEBUG
+                cout << "las columnas de la matriz destino: " << withZerosMatrix.cols() << endl;
+                cout << "maxChannelOrder: " << maxChannelOrder << " N: " << N << endl;
+        #endif
+
+        if(withoutZerosMatrix.cols()!= channelOrdersSum)
+                throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: resultant matrix has not enough columns");
+
+        tRange rAllRows(0,withoutZerosMatrix.rows()-1);
+
+        withoutZerosMatrix = 0.0;
+
+        int nextNotUsedColumn = 0;
+        for(int iAntenna=0;iAntenna<N;iAntenna++)
+        {
+                tRange rSourceColumns((maxChannelOrder-antennasChannelOrders[iAntenna])*N+iAntenna,N*maxChannelOrder-1,N);
+
+                #ifdef DEBUG
+                        cout << "El rango " << endl << rSourceColumns << endl;
+                        cout << withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)) << endl;
+                #endif
+
+                withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)).inject(withZerosMatrix(rAllRows,rSourceColumns));
+
+                #ifdef DEBUG
+                        cout << "Matriz del proceso AR" << endl << withoutZerosMatrix << endl;
+                        cout << "Matrix de canal" << endl << withZerosMatrix << endl;
+                #endif
+
+                nextNotUsedColumn += antennasChannelOrders[iAntenna];
+
+                #ifdef DEBUG
+                        cout << "next....: " << nextNotUsedColumn << endl;
+                        getchar();
+                #endif
+        }
+}
+
+void OneChannelOrderPerTransmitAtennaMIMOChannel::CompleteSymbolsVectorToOnlyInvolvedSymbolsVector(const tVector &withZerosSymbolsVector,int N,const vector<int> &antennasChannelOrders,tVector &withoutZerosSymbolsVector)
+{
 	int maxChannelOrder = antennasChannelOrders[Util::Max(antennasChannelOrders)];
 	int channelOrdersSum = Util::Sum(antennasChannelOrders);
 
-	#ifdef DEBUG
-		cout << "las columnas de la matriz destino: " << withZerosMatrix.cols() << endl;
-		cout << "maxChannelOrder: " << maxChannelOrder << " N: " << N << endl;
-	#endif
+	if(withoutZerosSymbolsVector.size()!= channelOrdersSum)
+		throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::CompleteSymbolsVectorToOnlyInvolvedSymbolsVector: resultant vector has not the right number of columns");
 
-	if(withoutZerosMatrix.cols()!= channelOrdersSum)
-		throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: resultant matrix has not enough columns");
-
-	tRange rAllRows(0,withoutZerosMatrix.rows()-1);
-
-	withoutZerosMatrix = 0.0;
+	withoutZerosSymbolsVector = 0.0;
 
 	int nextNotUsedColumn = 0;
 	for(int iAntenna=0;iAntenna<N;iAntenna++)
 	{
 		tRange rSourceColumns((maxChannelOrder-antennasChannelOrders[iAntenna])*N+iAntenna,N*maxChannelOrder-1,N);
+		tRange rDestinyColumns(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1);
 
-		#ifdef DEBUG
-			cout << "El rango " << endl << rSourceColumns << endl;
-			cout << withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)) << endl;
-		#endif
-
-		withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)).inject(withZerosMatrix(rAllRows,rSourceColumns));
-
-		#ifdef DEBUG
-			cout << "Matriz del proceso AR" << endl << withoutZerosMatrix << endl;
-			cout << "Matrix de canal" << endl << withZerosMatrix << endl;
-		#endif
+		withoutZerosSymbolsVector(rDestinyColumns).inject(withZerosSymbolsVector(rSourceColumns));
 
 		nextNotUsedColumn += antennasChannelOrders[iAntenna];
-
-		#ifdef DEBUG
-			cout << "next....: " << nextNotUsedColumn << endl;
-			getchar();
-		#endif
 	}
 }
+
+// void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixAndVectorToWithoutZerosMatrixAndVector(const tMatrix &withZerosMatrix,const tVector &withZerosSymbolsVector,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix,tVector &withoutZerosSymbolsVector)
+// {
+// 	if(withoutZerosMatrix.rows()!=withZerosMatrix.rows())
+// 		throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixAndVectorToWithoutZerosMatrixAndVector: matrix dimensions are not coherent");
+//
+// 	int maxChannelOrder = antennasChannelOrders[Util::Max(antennasChannelOrders)];
+// 	int channelOrdersSum = Util::Sum(antennasChannelOrders);
+//
+// 	#ifdef DEBUG
+// 		cout << "las columnas de la matriz destino: " << withZerosMatrix.cols() << endl;
+// 		cout << "maxChannelOrder: " << maxChannelOrder << " N: " << N << endl;
+// 	#endif
+//
+// 	if((withoutZerosMatrix.cols()!= channelOrdersSum) || (withoutZerosSymbolsVector.size()!= channelOrdersSum))
+// 		throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixAndVectorToWithoutZerosMatrixAndVector: resultant matrix or vector has not the right number of columns");
+//
+// 	tRange rAllRows(0,withoutZerosMatrix.rows()-1);
+//
+// 	withoutZerosMatrix = 0.0;
+// 	withoutZerosSymbolsVector = 0.0;
+//
+// 	int nextNotUsedColumn = 0;
+// 	for(int iAntenna=0;iAntenna<N;iAntenna++)
+// 	{
+// 		tRange rSourceColumns((maxChannelOrder-antennasChannelOrders[iAntenna])*N+iAntenna,N*maxChannelOrder-1,N);
+//
+// 		#ifdef DEBUG
+// 			cout << "El rango " << endl << rSourceColumns << endl;
+// 			cout << withoutZerosMatrix(rAllRows,tRange(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1)) << endl;
+// 		#endif
+//
+// 		tRange rDestinyColumns(nextNotUsedColumn,nextNotUsedColumn+antennasChannelOrders[iAntenna]-1);
+// 		withoutZerosMatrix(rAllRows,rDestinyColumns).inject(withZerosMatrix(rAllRows,rSourceColumns));
+//
+// 		withoutZerosSymbolsVector(rDestinyColumns).inject(withZerosSymbolsVector(rSourceColumns));
+//
+// 		#ifdef DEBUG
+// 			cout << "Matriz del proceso AR" << endl << withoutZerosMatrix << endl;
+// 			cout << "Matrix de canal" << endl << withZerosMatrix << endl;
+// 		#endif
+//
+// 		nextNotUsedColumn += antennasChannelOrders[iAntenna];
+//
+// 		#ifdef DEBUG
+// 			cout << "next....: " << nextNotUsedColumn << endl;
+// 			getchar();
+// 		#endif
+// 	}
+// }

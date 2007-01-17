@@ -1,4 +1,6 @@
-INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/src -I$(top_srcdir)/util
+INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil \
+	-I$(top_srcdir)/src -I$(top_srcdir)/statistics -I$(top_srcdir)/transmision \
+	-I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h RLSEstimator.h \
