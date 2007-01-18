@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ML_SMCAlgorithm.h"
 
+// #define DEBUG
+
 ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
 {
 }
@@ -48,11 +50,17 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-// 		cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+		#ifdef DEBUG
+			cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
+		#endif
 
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
 		{
+			#ifdef DEBUG
+				cout << "Particula: " << iParticle << endl;
+			#endif
+
 			ParticleWithChannelEstimation *processedParticle = _particleFilter.GetParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
@@ -81,8 +89,16 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 
 					auxLikelihoodsProd = 1.0;
 
+					#ifdef DEBUG
+						cout << "Before clonig the channel estimator." << endl;
+					#endif
+
 					// a clone of the channel estimator is generated because this must not be modified
 					channelEstimatorClone = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator()->Clone());
+
+					#ifdef DEBUG
+						cout << "After clonig the channel estimator." << endl;
+					#endif
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
@@ -90,6 +106,10 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 
 						// the likelihood is computed and accumulated
 						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+
+						#ifdef DEBUG
+							cout << "Despues de llamar a likelihood." << endl;
+						#endif
 
 						// a step in the Kalman Filter
 						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);

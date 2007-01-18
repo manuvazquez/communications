@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ONECHANNELORDERPERTRANSMITATENNAESTIMATOR_H
-#define ONECHANNELORDERPERTRANSMITATENNAESTIMATOR_H
+#ifndef ONECHANNELORDERPERTRANSMITATENNAWRAPPERESTIMATOR_H
+#define ONECHANNELORDERPERTRANSMITATENNAWRAPPERESTIMATOR_H
 
 #include <ChannelMatrixEstimator.h>
 
@@ -30,19 +30,18 @@
 #include <Util.h>
 #include <OneChannelOrderPerTransmitAtennaMIMOChannel.h>
 
-class OneChannelOrderPerTransmitAtennaEstimator : public ChannelMatrixEstimator
+class OneChannelOrderPerTransmitAtennaWrapperEstimator : public ChannelMatrixEstimator
 {
 protected:
 	std::vector<int> _antennasChannelOrders;
 	tVector _involvedSymbolsVector;
-// 	tMatrix _lastEstimatedChannelMatrixWithoutZeros;
 	ChannelMatrixEstimator *_realEstimator;
 public:
-    OneChannelOrderPerTransmitAtennaEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator);
+    OneChannelOrderPerTransmitAtennaWrapperEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator);
 
-    OneChannelOrderPerTransmitAtennaEstimator(const OneChannelOrderPerTransmitAtennaEstimator &estimator);
+    OneChannelOrderPerTransmitAtennaWrapperEstimator(const OneChannelOrderPerTransmitAtennaWrapperEstimator &estimator);
 
-    ~OneChannelOrderPerTransmitAtennaEstimator();
+    ~OneChannelOrderPerTransmitAtennaWrapperEstimator();
 
     virtual ChannelMatrixEstimator* Clone();
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);

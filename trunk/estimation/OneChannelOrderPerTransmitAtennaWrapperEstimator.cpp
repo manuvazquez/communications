@@ -17,44 +17,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "OneChannelOrderPerTransmitAtennaEstimator.h"
+#include "OneChannelOrderPerTransmitAtennaWrapperEstimator.h"
 
 // #define DEBUG
 
 using namespace std;
 
-OneChannelOrderPerTransmitAtennaEstimator::OneChannelOrderPerTransmitAtennaEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator): ChannelMatrixEstimator(initialEstimation, N),_antennasChannelOrders(antennasChannelOrders),_realEstimator(realEstimator),_involvedSymbolsVector(realEstimator->Cols())
+OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator): ChannelMatrixEstimator(initialEstimation, N),_antennasChannelOrders(antennasChannelOrders),_realEstimator(realEstimator),_involvedSymbolsVector(realEstimator->Cols())
 {
 	#ifdef DEBUG
 		cout << "_antennasChannelOrders.size(): " << _antennasChannelOrders.size() << " _N: " << _N << endl;
 		cout << "El tamaño de involvedSymb... es " << _involvedSymbolsVector.size() << endl;
 	#endif
 	if(_antennasChannelOrders.size()!=_N)
-		throw RuntimeException("OneChannelOrderPerTransmitAtennaEstimator::OneChannelOrderPerTransmitAtennaEstimator: antennasChannelOrders size is wrong.");
+		throw RuntimeException("OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator: antennasChannelOrders size is wrong.");
 
 	if(_lastEstimatedChannelMatrix.cols() != (_antennasChannelOrders[Util::Max(_antennasChannelOrders)]*_N))
-		throw RuntimeException("OneChannelOrderPerTransmitAtennaEstimator::OneChannelOrderPerTransmitAtennaEstimator: the length of the antennas channel orders vector is not coherent with the initial estimation channel matrix dimensions");
+		throw RuntimeException("OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator: the length of the antennas channel orders vector is not coherent with the initial estimation channel matrix dimensions");
 
 	if(_realEstimator->Cols()!=Util::Sum(_antennasChannelOrders))
-		throw RuntimeException("OneChannelOrderPerTransmitAtennaEstimator::OneChannelOrderPerTransmitAtennaEstimator: the underlying estimator is not coherent with \"antennasChannelOrders\".");
+		throw RuntimeException("OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator: the underlying estimator is not coherent with \"antennasChannelOrders\".");
 }
 
-OneChannelOrderPerTransmitAtennaEstimator::OneChannelOrderPerTransmitAtennaEstimator(const OneChannelOrderPerTransmitAtennaEstimator &estimator):ChannelMatrixEstimator(estimator),_antennasChannelOrders(estimator._antennasChannelOrders),_involvedSymbolsVector(estimator._involvedSymbolsVector),_realEstimator(estimator._realEstimator->Clone())
+OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator(const OneChannelOrderPerTransmitAtennaWrapperEstimator &estimator):ChannelMatrixEstimator(estimator),_antennasChannelOrders(estimator._antennasChannelOrders),_involvedSymbolsVector(estimator._involvedSymbolsVector),_realEstimator(estimator._realEstimator->Clone())
 {
 }
 
-OneChannelOrderPerTransmitAtennaEstimator::~OneChannelOrderPerTransmitAtennaEstimator()
+OneChannelOrderPerTransmitAtennaWrapperEstimator::~OneChannelOrderPerTransmitAtennaWrapperEstimator()
 {
 	delete _realEstimator;
 }
 
 
-ChannelMatrixEstimator* OneChannelOrderPerTransmitAtennaEstimator::Clone()
+ChannelMatrixEstimator* OneChannelOrderPerTransmitAtennaWrapperEstimator::Clone()
 {
-	return new OneChannelOrderPerTransmitAtennaEstimator(*this);
+	return new OneChannelOrderPerTransmitAtennaWrapperEstimator(*this);
 }
 
-tMatrix OneChannelOrderPerTransmitAtennaEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+tMatrix OneChannelOrderPerTransmitAtennaWrapperEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 

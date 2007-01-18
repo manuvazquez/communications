@@ -26,6 +26,10 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double A
 //auxiliary variables initialization
 _F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
+	#ifdef DEBUG
+		cout << "_L: " << _L << " _Nm: " << _Nm << endl;
+		cout << "initialEstimation" << endl << initialEstimation << endl;
+	#endif
 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
 	R *= ARcoefficient;
 	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);

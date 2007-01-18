@@ -46,7 +46,6 @@ protected:
     tMatrix _invForgettingFactorInvRtildeSymbolsVectorg,_observationsSymbolsVector,_pTildeInvRtilde;
 
     RLSEstimator(int N,double forgettingFactor);
-	tMatrix NextMatrixProcessing(const tVector& observations, const tVector& symbolsVector, double noiseVariance);
 public:
     RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor);
 

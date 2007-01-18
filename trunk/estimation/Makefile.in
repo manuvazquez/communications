@@ -66,8 +66,7 @@ libestimation_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 am_libestimation_a_OBJECTS = ChannelMatrixEstimator.$(OBJEXT) \
 	KalmanEstimator.$(OBJEXT) RLSEstimator.$(OBJEXT) \
 	LMSEstimator.$(OBJEXT) \
-	OneChannelOrderPerTransmitAtennaRLSEstimator.$(OBJEXT) \
-	OneChannelOrderPerTransmitAtennaEstimator.$(OBJEXT)
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.$(OBJEXT)
 libestimation_a_OBJECTS = $(am_libestimation_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -194,12 +193,10 @@ INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil \
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h RLSEstimator.h \
-		LMSEstimator.h OneChannelOrderPerTransmitAtennaRLSEstimator.h \
-	OneChannelOrderPerTransmitAtennaEstimator.h
+	LMSEstimator.h OneChannelOrderPerTransmitAtennaWrapperEstimator.h
 
 libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp \
-		RLSEstimator.cpp LMSEstimator.cpp OneChannelOrderPerTransmitAtennaRLSEstimator.cpp \
-	OneChannelOrderPerTransmitAtennaEstimator.cpp
+	RLSEstimator.cpp LMSEstimator.cpp OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp
 
 libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
@@ -281,8 +278,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelMatrixEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KalmanEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LMSEstimator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaEstimator.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaRLSEstimator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaWrapperEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RLSEstimator.Po@am__quote@
 
 .cpp.o:
