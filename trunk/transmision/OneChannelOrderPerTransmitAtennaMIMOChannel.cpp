@@ -100,22 +100,18 @@ void OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosM
 	}
 }
 
-void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(const tMatrix &withZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withoutZerosMatrix)
+tMatrix OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(const tMatrix &withZerosMatrix,int N,const vector<int> &antennasChannelOrders)
 {
-        if(withoutZerosMatrix.rows()!=withZerosMatrix.rows())
-                throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: matrix dimensions are not coherent");
-
         int maxChannelOrder = antennasChannelOrders[Util::Max(antennasChannelOrders)];
         int channelOrdersSum = Util::Sum(antennasChannelOrders);
+
+        tMatrix withoutZerosMatrix(withZerosMatrix.rows(),channelOrdersSum);
 
         #ifdef DEBUG
                 cout << "las columnas de la matriz origen: " << withZerosMatrix.cols() << endl;
                 cout << "las columnas de la matriz destino: " << withoutZerosMatrix.cols() << endl;
                 cout << "maxChannelOrder: " << maxChannelOrder << " N: " << N << endl;
         #endif
-
-        if(withoutZerosMatrix.cols()!= channelOrdersSum)
-                throw RuntimeException("ARoneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix: resultant matrix has not enough columns");
 
         tRange rAllRows(0,withoutZerosMatrix.rows()-1);
 
@@ -146,6 +142,8 @@ void OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosM
                         getchar();
                 #endif
         }
+
+        return withoutZerosMatrix;
 }
 
 void OneChannelOrderPerTransmitAtennaMIMOChannel::CompleteSymbolsVectorToOnlyInvolvedSymbolsVector(const tVector &withZerosSymbolsVector,int N,const vector<int> &antennasChannelOrders,tVector &withoutZerosSymbolsVector)

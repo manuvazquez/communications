@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
+// #define DEBUG
+
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
 //auxiliary variables initialization
@@ -48,7 +50,7 @@ tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &s
 	if(observations.size()!=_L || symbolsMatrix.rows()*symbolsMatrix.cols()!=_Nm)
 		throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
 
-	FillFfromSymbolsMatrix(symbolsMatrix);
+	FillFfromSymbolsMatrix(Util::ToVector(symbolsMatrix,columnwise));
 	tMatrix observationEquationCovariance = LaGenMatDouble::eye(_L);
 	observationEquationCovariance *= noiseVariance;
 	_kalmanFilter->Step(_F,observations,observationEquationCovariance);
@@ -58,28 +60,32 @@ tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &s
 	return  _lastEstimatedChannelMatrix;
 }
 
-void KalmanEstimator::FillFfromSymbolsMatrix(const tMatrix &symbolsMatrix)
+void KalmanEstimator::FillFfromSymbolsMatrix(const tVector &symbolsVector)
 {
-	int i,j,nSymbols;
+	int i,j;
 
-	nSymbols = symbolsMatrix.rows()*symbolsMatrix.cols();
-	if(nSymbols!=_Nm)
-		throw RuntimeException("The number of elements of the received symbols matrix is wrong.");
+	if(symbolsVector.size()!=_Nm)
+		throw RuntimeException("KalmanEstimator::FillFfromSymbolsMatrix: the number of elements of the received symbols vector is wrong.");
 
 	// stacks the symbols inside symbolsMatrix to construct F
-// 	cout << "F antes" << _F << endl;
+	#ifdef DEBUG
+		cout << "F antes" << endl << _F << endl;
+	#endif
 	for(i=0;i<_L;i++)
 		for(j=0;j<_Nm;j++)
 		{
-			_F(i,i*_Nm+j) = symbolsMatrix(j%symbolsMatrix.rows(),j/symbolsMatrix.rows());
-// 			cout << "modifico el elemento (" << i << "," << (i*_Nm+j) << ")" << endl;
+			_F(i,i*_Nm+j) = symbolsVector(j);
+			#ifdef DEBUG
+				cout << "modifico el elemento (" << i << "," << (i*_Nm+j) << ")" << endl;
+			#endif
 		}
-// 	cout << "F despues" << _F << endl;
+	#ifdef DEBUG
+		cout << "F despues" << endl << _F << endl;
+	#endif
 }
 
 double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
-// 	cout << "obser es " << observations.size() << " L es " << _L << " symbolsMatrix.rows()*symbolsMatrix.cols() " << symbolsMatrix.rows()*symbolsMatrix.cols() << " _Nm " << _Nm << endl;
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
 		throw RuntimeException("KalmanEstimator::Likelihood: observations vector length or symbols matrix length are wrong.");
 
@@ -98,7 +104,7 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 	// invPredictiveCovariance = inv(_kalmanFilter->PredictiveCovariance())
 	LaLUInverseIP(invPredictiveCovariance,_piv);
 
-	FillFfromSymbolsMatrix(symbolsMatrix);
+	FillFfromSymbolsMatrix(Util::ToVector(symbolsMatrix,columnwise));
 
 	// _FtransInvNoiseCovariance = _F' * invNoiseCovariance
 	Blas_Mat_Trans_Mat_Mult(_F,invNoiseCovariance,_FtransInvNoiseCovariance);

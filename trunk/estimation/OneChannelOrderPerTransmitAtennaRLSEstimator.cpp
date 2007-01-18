@@ -62,7 +62,8 @@ OneChannelOrderPerTransmitAtennaRLSEstimator::OneChannelOrderPerTransmitAtennaRL
     #endif
 
 	// the initial estimation received is cut according to the orders of the transmit antennas
-	OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialEstimation,_N,_antennasChannelOrders,_lastEstimatedChannelMatrix);
+// 	OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialEstimation,_N,_antennasChannelOrders,_lastEstimatedChannelMatrix);
+	_lastEstimatedChannelMatrix = OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialEstimation,_N,_antennasChannelOrders);
 
     #ifdef DEBUG
     	cout << "Despues de convertir initialEstimation" << endl;

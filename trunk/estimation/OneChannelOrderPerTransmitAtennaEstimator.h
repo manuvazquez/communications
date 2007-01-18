@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
+#ifndef ONECHANNELORDERPERTRANSMITATENNAESTIMATOR_H
+#define ONECHANNELORDERPERTRANSMITATENNAESTIMATOR_H
 
 #include <ChannelMatrixEstimator.h>
 
@@ -26,38 +26,27 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <math.h>
-#include <KalmanFilter.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
+#include <vector>
+#include <Util.h>
+#include <OneChannelOrderPerTransmitAtennaMIMOChannel.h>
 
-class KalmanEstimator : public ChannelMatrixEstimator
+class OneChannelOrderPerTransmitAtennaEstimator : public ChannelMatrixEstimator
 {
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
-	tMatrix _identityL;
-
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
-
-private:
-	void FillFfromSymbolsMatrix(const tVector &symbolsVector);
+protected:
+	std::vector<int> _antennasChannelOrders;
+	tVector _involvedSymbolsVector;
+// 	tMatrix _lastEstimatedChannelMatrixWithoutZeros;
+	ChannelMatrixEstimator *_realEstimator;
 public:
-    KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
-	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
-	~KalmanEstimator();
+    OneChannelOrderPerTransmitAtennaEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator);
 
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone();
+    OneChannelOrderPerTransmitAtennaEstimator(const OneChannelOrderPerTransmitAtennaEstimator &estimator);
+
+    ~OneChannelOrderPerTransmitAtennaEstimator();
+
+    virtual ChannelMatrixEstimator* Clone();
+    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+
 };
 
 #endif

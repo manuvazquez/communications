@@ -53,6 +53,7 @@
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
 #include <OneChannelOrderPerTransmitAtennaRLSEstimator.h>
+#include <OneChannelOrderPerTransmitAtennaEstimator.h>
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
@@ -90,11 +91,11 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 1;
-    int L=3,N=2,K=300;
+    int L=3,N=2,K=30;
     int m=2; // it only affects the case of one channel order
     int d = m -1;
-    int trainSeqLength = 30;
-    int nParticles = 30;
+    int trainSeqLength = 10;
+    int nParticles = 10;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -256,26 +257,17 @@ int main(int argc,char* argv[])
 		KalmanEstimator kalmanEstimator(initialChannelEstimation,N,ARcoefficients[0],ARvariance);
 	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
 
-		#ifdef DEBUG
-			cout << "Antes de generar el RLS wrapper" << endl;
-			cout << "columnas de la initialEstimation pasada: " << N*canal.EffectiveMemory() << endl;
-		#endif
-
-		OneChannelOrderPerTransmitAtennaRLSEstimator rlsWithoutZeros(initialChannelEstimation,N,forgettingFactor,canal.GetAntennasChannelOrders());
-
-		#ifdef DEBUG
-			cout << "Despues de generar el RLS wrapper" << endl;
-		#endif
+		OneChannelOrderPerTransmitAtennaRLSEstimator rlsEstimatorWithoutZeros(initialChannelEstimation,N,forgettingFactor,canal.GetAntennasChannelOrders());
 
 		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
-
-		#ifdef DEBUG
-			cout << "Generados los estimadores de canal" << endl;
-		#endif
 
 		// ...and linear detectors
 		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
 		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
+
+		OneChannelOrderPerTransmitAtennaEstimator rlsWrapper(initialChannelEstimation,N,canal.GetAntennasChannelOrders(),new RLSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,canal.GetAntennasChannelOrders()),N,forgettingFactor));
+
+		OneChannelOrderPerTransmitAtennaEstimator lmsWrapper(initialChannelEstimation,N,canal.GetAntennasChannelOrders(),new LMSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,canal.GetAntennasChannelOrders()),N,muLMS));
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -299,7 +291,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal LMS",pam2,L,N,K+preamble.cols(),m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&rlsWithoutZeros,&rmmseDetector/*RMMSElinearDetectors[0]*//*&MMSEdetector*/,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Filtro lineal RLS",pam2,L,N,K+preamble.cols(),m,&rlsEstimatorWithoutZeros,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
