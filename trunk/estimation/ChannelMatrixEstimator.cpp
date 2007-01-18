@@ -25,8 +25,10 @@ ChannelMatrixEstimator::ChannelMatrixEstimator(int N):_L(0),_Nm(0),_N(N)
 
 ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_lastEstimatedChannelMatrix(initialEstimation),_L(initialEstimation.rows()),_Nm(initialEstimation.cols()),_N(N)
 {
-	if((_Nm % _N) != 0)
-		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
+	if(_Nm < _N)
+		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
+// 	if((_Nm % _N) != 0)
+// 		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
 }
 
 

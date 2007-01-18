@@ -54,6 +54,16 @@ ChannelMatrixEstimator* OneChannelOrderPerTransmitAtennaWrapperEstimator::Clone(
 	return new OneChannelOrderPerTransmitAtennaWrapperEstimator(*this);
 }
 
+double OneChannelOrderPerTransmitAtennaWrapperEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+{
+	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
+
+	// symbols not involved in the observation are supressed in "_involvedSymbolsVector"
+	OneChannelOrderPerTransmitAtennaMIMOChannel::CompleteSymbolsVectorToOnlyInvolvedSymbolsVector(symbolsVector,_N,_antennasChannelOrders,_involvedSymbolsVector);
+
+	return _realEstimator->Likelihood(observations,_involvedSymbolsVector,noiseVariance);
+}
+
 tMatrix OneChannelOrderPerTransmitAtennaWrapperEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);

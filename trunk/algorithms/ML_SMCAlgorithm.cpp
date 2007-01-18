@@ -31,7 +31,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 	int iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
 	double auxLikelihoodsProd;
-	KalmanEstimator *channelEstimatorClone;
+	ChannelMatrixEstimator *channelEstimatorClone;
 	tRange mFirstColumns(0,_m-1);
 
 	// it selects all rows in the symbols Matrix
@@ -94,7 +94,7 @@ void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > nois
 					#endif
 
 					// a clone of the channel estimator is generated because this must not be modified
-					channelEstimatorClone = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator()->Clone());
+					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator()->Clone();
 
 					#ifdef DEBUG
 						cout << "After clonig the channel estimator." << endl;

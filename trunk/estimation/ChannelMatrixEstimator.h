@@ -40,6 +40,11 @@ public:
 
 	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
 	virtual ChannelMatrixEstimator *Clone() = 0;
+
+	virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+	{
+		throw RuntimeException("ChannelMatrixEstimator::Likelihood: not implemented yet.");
+	}
 	int Cols() { return _Nm;}
 	int Rows() { return _L;}
 	virtual tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
