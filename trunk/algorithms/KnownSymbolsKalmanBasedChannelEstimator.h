@@ -32,12 +32,11 @@ class KnownSymbolsKalmanBasedChannelEstimator : public KnownChannelOrderAlgorith
 {
 protected:
     tMatrix _symbolVectors;
-//     const tMatrix &_symbolVectors;
     vector<tMatrix> _estimatedChannelMatrices;
 public:
 
     /**
-     *
+     * It must receive a KalmanEstimator (or a wrapped one)
      * @param name
      * @param alphabet
      * @param channelEstimator
@@ -45,7 +44,7 @@ public:
      * @param symbolVectors includes the preamble
      * @return
      */
-    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m, KalmanEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
+    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
 
     ~KnownSymbolsKalmanBasedChannelEstimator();
 

@@ -30,14 +30,10 @@
 
 class ARoneChannelOrderPerTransmitAtennaMIMOChannel : public OneChannelOrderPerTransmitAtennaMIMOChannel
 {
-private:
-	inline void ConstructorProcessing();
 protected:
 	tMatrix* _channelMatrices;
 	ARprocess _ARproc;
 public:
-    ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length, const std::vector< int >& candidateOrders, const tMatrix& channelOrderMatrixProbabilities,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
-
     ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
 
 	tMatrix& operator[](int n) const { return _channelMatrices[n];};
