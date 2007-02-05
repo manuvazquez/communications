@@ -24,14 +24,6 @@
 OneChannelOrderPerTransmitAtennaMIMOChannel::OneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders): StillMemoryMIMOChannel(nTx, nRx,antennasChannelOrders[Util::Max(antennasChannelOrders)],length)
 ,_antennasChannelOrders(antennasChannelOrders),_nChannelMatrixNotNullColumns(Util::Sum(antennasChannelOrders))
 {
-// 	_maxChannelOrder = -1;
-// 	for(int i=0;i<_nTx;i++)
-// 	{
-// 		if(_antennasChannelOrders[i] > _maxChannelOrder)
-// 			_maxChannelOrder = _antennasChannelOrders[i];
-//
-// 		_nChannelMatrixNotNullColumns += _antennasChannelOrders[i];
-// 	}
 }
 
 void OneChannelOrderPerTransmitAtennaMIMOChannel::WithoutZerosMatrixToWithZerosMatrix(const tMatrix &withoutZerosMatrix,int N,const vector<int> &antennasChannelOrders,tMatrix &withZerosMatrix)

@@ -5,7 +5,7 @@
 - pasar todo lo que sea posible por referencia (los preamble a los algoritmos)
 - variable endResamplingTime en SMCAlgorithm::Resampling
 - pasar las observaciones por referencia
-- en ML_SMCAlgorithm 
+- en ML_SMCAlgorithm
   - nObservations ya no vale para nada
   - mFirstColumns pilla una columna de mas
 - StdResamplingAlgorithm no tiene codigo
@@ -15,3 +15,5 @@
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
 - que todos los algoritmos reciban un puntero al algoritmo de remuestreo o ninguno
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
+- añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
+- reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)

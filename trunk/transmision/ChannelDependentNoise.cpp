@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ChannelDependentNoise.h"
 
+// #define DEBUG
+
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
  : Noise(channel->Nr(),channel->Length()),_channel(channel)
 {
