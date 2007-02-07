@@ -27,6 +27,9 @@
 */
 
 #include <vector>
+#include <string>
+#include <sys/time.h>
+
 #include <LinearDetector.h>
 #include <ParticleFilter.h>
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
@@ -39,11 +42,15 @@ public:
 
     ~UCO_SIS();
 
+    tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1));}
+
 protected:
     vector<LinearDetector *> _linearDetectors;
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     tRange _rAllObservationRows;
+	tMatrix _channelOrderAPPs;
+	tRange _rCandidateOrders;
 
 // 	const MIMOChannel &_canal;
 // 	const tMatrix &_simbolos;

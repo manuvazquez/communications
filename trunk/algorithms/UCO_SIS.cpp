@@ -19,9 +19,12 @@
  ***************************************************************************/
 #include "UCO_SIS.h"
 
+#define DATE_LENGTH 100
+#define FILENAME_LENGTH 150
+
 // #define DEBUG6
 
-UCO_SIS::UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+UCO_SIS::UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1)
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
@@ -86,6 +89,32 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 	tVector sampledVector(_N),sampledSmoothingVector(_N*_maxOrder);
 	double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd,channelOrderAPPsNormConstant;
 	double *newChannelOrderAPPs = new double[_candidateOrders.size()];
+
+	// channel order APP saving
+	int iBestParticle;
+	_channelOrderAPPs(_candidateOrders.size(),_K);
+
+	// during the training sequence, the channel order APPs are assumed uniform
+	_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();
+
+
+
+// 	// get present time of the system
+// 	time_t presentTime;
+// 	time(&presentTime);
+// 	char presentTimeString[DATE_LENGTH];
+// 	ctime_r(&presentTime,presentTimeString);
+// 	presentTimeString[strlen(presentTimeString)-1] = '\0';
+// 	for(int i=strlen(presentTimeString)-1;i>=0;i--)
+// 		if(presentTimeString[i]==' ')
+// 			presentTimeString[i]='_';
+//
+// 	// output file name is generated
+// 	char outputFileName[FILENAME_LENGTH] = "UCO_SIS_";
+// 	strcat(outputFileName,presentTimeString);
+
+
+
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
 	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length()));
@@ -227,7 +256,6 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 					//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
-//             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
 					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
@@ -244,10 +272,6 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
                 		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-//                 		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-// 						s2q /= 10;
 
 						#ifdef DEBUG4
 							cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
@@ -423,6 +447,16 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 		_particleFilter.NormalizeWeights();
 
+		// we find out which is the "best" particle at this time instant
+		Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
+
+		// its a posteriori channel order probabilities are stored
+		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP *>(_particleFilter.GetParticle(iBestParticle));
+
+		for(int i=0;i<_candidateOrders.size();i++)
+			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderAPP(i);
+
+
 		#ifdef DEBUG2
 			tVector pesos = _particleFilter.GetWeightsVector();
 			int iMaximoPeso;
@@ -440,5 +474,10 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 
 	delete[] newChannelOrderAPPs;
+
+// 	ofstream f(outputFileName,ofstream::trunc);
+// 	Util::MatrixToStream(_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1)),"_channelOrderAPPs",f);
+// 	Util::ScalarsVectorToStream(_candidateOrders,"candidateOrders",f);
+// 	f.close();
 }
 

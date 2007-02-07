@@ -27,6 +27,9 @@
 // the seed used to create the random objects is generated from the system time
 #define RANDOM_SEED
 
+// wether or not, data regarding the channel orders APP evolution is saved
+#define CHANNELORDERSAPP_SAVING
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -67,19 +70,20 @@
 #include <UCO_SIS.h>
 #include <CME_UCO_SIS.h>
 
+#include <Particle.h>
+#include <ParticleWithChannelEstimation.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
 #include <ByChannelOrderResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
+
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
 #include <lapackpp/blas3pp.h>
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
-#include <Particle.h>
-#include <ParticleWithChannelEstimation.h>
 
 using namespace std;
 
@@ -91,11 +95,11 @@ int main(int argc,char* argv[])
 
     // PARAMETERS
     int nFrames = 1000;
-    int L=3,N=2,K=30;
-    int m=2; // it only affects the case of one channel order
+    int L=3,N=2,K=300;
+    int m=3; // it only affects the case of one channel order
     int d = m -1;
-    int trainSeqLength = 10;
-    int nParticles = 10;
+    int trainSeqLength = 30;
+    int nParticles = 500;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -126,7 +130,8 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);/*candidateChannelOrders.push_back(5);*/
+// 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(8);candidateChannelOrders.push_back(10);
 
     // linear detectors parameters
     double forgettingFactorDetector = 0.95;
@@ -215,6 +220,10 @@ int main(int argc,char* argv[])
     tMatrix overallPeMatrix;
     tMatrix overallMseMatrix;
 
+    #ifdef CHANNELORDERSAPP_SAVING
+    	vector<tMatrix> channelOrdersAPPs(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K));
+    #endif
+
     // we don't want the same bits to be generated over and over
 	#ifdef RANDOM_SEED
 		Random bitsRandomGenerator;
@@ -260,13 +269,13 @@ int main(int argc,char* argv[])
 
 		// ...and linear detectors
 		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
-		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
+// 		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
 
 		// absence of noise
-		NullNoise ruidoNulo(canal.Nr(),canal.Length());
+// 		NullNoise ruidoNulo(canal.Nr(),canal.Length());
 
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
         {
@@ -341,11 +350,6 @@ int main(int argc,char* argv[])
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
 
-//                 	vector<tMatrix> mats = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
-//                 	cout << "El tamaño es " << mats.size() << endl;;
-//                 	cout << mats[295] << endl;
-//                 	getchar();
-
                 pe = algorithms[iAlgorithm]->SER(simbolosTransmitir(rAllSymbolRows,rSymbolVectorsToComputePe));
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preamble.cols(),K+preamble.cols()-1));
 
@@ -356,6 +360,15 @@ int main(int argc,char* argv[])
 
                 // and the MSE
                 overallMseMatrix(iSNR,iAlgorithm) += mse;
+
+                #ifdef CHANNELORDERSAPP_SAVING
+                	if(!algorithms[iAlgorithm]->GetName().compare("UCO-SIS"))
+                	{
+                		tMatrix channelOrderAPPsAux = (dynamic_cast <UCO_SIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+
+                		Util::Add(channelOrderAPPsAux,channelOrdersAPPs[iSNR],channelOrdersAPPs[iSNR]);
+                	}
+                #endif
 
                 delete algorithms[iAlgorithm];
             }
@@ -372,6 +385,13 @@ int main(int argc,char* argv[])
 		tMatrix auxOverallMse = overallMseMatrix;
 		auxOverallMse *= 1.0/(double)(iFrame+1);
 		Util::MatrixToStream(auxOverallMse,"mse",f);
+
+		#ifdef CHANNELORDERSAPP_SAVING
+			vector<tMatrix> auxChannelOrdersAPPs = channelOrdersAPPs;
+			for(int i=0;i<SNRs.size();i++)
+				auxChannelOrdersAPPs[i] *= 1.0/(double)(iFrame+1);
+			Util::MatricesVectorToStream(auxChannelOrdersAPPs,"uco_channelOrdersAPPs",f);
+		#endif
 
         Util::ScalarToStream(iFrame+1,"nFrames",f);
 

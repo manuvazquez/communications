@@ -17,3 +17,4 @@
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
 - añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)
+- definir preambulo en algun lugar más alto de la jerarquía
