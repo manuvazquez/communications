@@ -59,6 +59,7 @@ protected:
     vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+	vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
 #endif

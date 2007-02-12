@@ -481,3 +481,17 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 // 	f.close();
 }
 
+vector<tMatrix> UCO_SIS::GetEstimatedChannelMatrices()
+{
+    vector<tMatrix> channelMatrices;
+    channelMatrices.reserve(_K-_preamble.cols());
+
+    // best particle is chosen
+    int iBestParticle;
+    Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
+
+    for(int i=_preamble.cols();i<_K;i++)
+        channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
+
+    return channelMatrices;
+}
