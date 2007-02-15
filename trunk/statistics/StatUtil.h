@@ -48,7 +48,9 @@ public:
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
 	static double NormalPdf(double x,double mean,double variance);
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
+	static double NormalPdf(const tVector &x,const tVector &mean,double variance);
 	static double Variance(const tVector &v);
+	static double Mean(const tMatrix &A);
 };
 
 #endif

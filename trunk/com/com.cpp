@@ -25,7 +25,7 @@
 #define SPRINTF_BUFFER 30
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 // wether or not, data regarding the channel orders APP evolution is saved
 #define CHANNELORDERSAPP_SAVING
@@ -91,29 +91,29 @@ using namespace std;
 int main(int argc,char* argv[])
 {
     double pe,mse;
-    int iChannelOrder,iSNR;
+    int iChannelOrder,iSNR,d;
     char buffer[SPRINTF_BUFFER];
 
-    // PARAMETERS
-    int nFrames = 2;
+    // GLOBAL PARAMETERS
+    int nFrames = 1;
     int L=3,N=2,K=300;
-    int m=5; // it only affects the case of one channel order
-    int d = m -1;
     int trainSeqLength = 30;
     int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
 
-    // channel orders of the different transmit antennas for the case
-    // of a multiple channel order system
+    // - ONE CHANNEL ORDER SYSTEM
+    int m = 2;
+
+    // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
     antennasChannelOrders[0] = 1;
     antennasChannelOrders[1] = 3;
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    /*SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);*/SNRs.push_back(3);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -131,11 +131,11 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
+// 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
 
 // 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(8);candidateChannelOrders.push_back(10);
 
-// 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);candidateChannelOrders.push_back(8);
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);candidateChannelOrders.push_back(8);
 
     // linear detectors parameters
     double forgettingFactorDetector = 0.95;
@@ -148,10 +148,7 @@ int main(int argc,char* argv[])
     Alphabet pam2(1,2,secuenciasBits,simbolos);
 
 
-	// for generating random channel orders for channels with different channel order
-	// for each transmit antenna
-
-	// unknown channel order
+	// for generating random channel orders for the case of one channel order per antenna system
 	vector<int> candidateSubchannelOrders;
 	candidateSubchannelOrders.push_back(1);candidateSubchannelOrders.push_back(2);candidateSubchannelOrders.push_back(3);candidateSubchannelOrders.push_back(4);
 
@@ -282,7 +279,7 @@ int main(int argc,char* argv[])
 		ChannelDependentNoise ruido(&canal);
 
 		// absence of noise
-// 		NullNoise ruidoNulo(canal.Nr(),canal.Length());
+		NullNoise ruidoNulo(canal.Nr(),canal.Length());
 
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
         {

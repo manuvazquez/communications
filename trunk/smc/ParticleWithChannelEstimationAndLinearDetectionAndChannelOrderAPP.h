@@ -30,7 +30,9 @@
 class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP : public ParticleWithChannelEstimation, public WithChannelOrderAppParticleAddon, public WithLinearDetectionParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, int nChannelOrderAPP, std::vector< LinearDetector * > linearDetectors);
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, int nChannelOrderAPP);
+
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors,std::vector<double> channelOrderAPP);
 
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP& particle);
 

@@ -19,7 +19,11 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h"
 
-ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, int nChannelOrderAPP, std::vector< LinearDetector * > linearDetectors): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators), WithChannelOrderAppParticleAddon(nChannelOrderAPP), WithLinearDetectionParticleAddon(linearDetectors)
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, int nChannelOrderAPP): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators), WithChannelOrderAppParticleAddon(nChannelOrderAPP), WithLinearDetectionParticleAddon(linearDetectors)
+{
+}
+
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, std::vector<double> channelOrderAPP): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators), WithChannelOrderAppParticleAddon(channelOrderAPP), WithLinearDetectionParticleAddon(linearDetectors)
 {
 }
 

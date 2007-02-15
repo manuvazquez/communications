@@ -60,6 +60,7 @@ public:
     template<class T> static void ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static T Max(const std::vector<T> &vector);
     template<class T> static T Sum(const std::vector<T> &vector);
+    static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
 };
 
 #endif

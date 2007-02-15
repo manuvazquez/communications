@@ -302,3 +302,14 @@ template<class T> T Util::Sum(const std::vector<T> &vector)
 	return sum;
 }
 template int Util::Sum(const std::vector<int> &vector);
+
+void Util::ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)
+{
+	if(A.rows()!=B.rows() || A.cols()!=B.cols())
+		throw RuntimeException("ElementByElementDiv: Matrices can't be divided element by element.");
+
+	int j;
+	for(int i=0;i<A.rows();i++)
+		for(j=0;j<A.cols();j++)
+			C(i,j) = A(i,j)/B(i,j);
+}

@@ -20,7 +20,7 @@
 #include "StatUtil.h"
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 using namespace std;
 
@@ -143,6 +143,15 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &c
 	return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
 }
 
+double StatUtil::NormalPdf(const tVector &x,const tVector &mean,double variance)
+{
+	tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
+
+	covariance *= variance;
+// 	cout << "covarianza dentro de statutil" << endl << covariance << endl;
+	return StatUtil::NormalPdf(x,mean,covariance);
+}
+
 double StatUtil::Variance(const tVector &v)
 {
 	double squareMean=0.0,mean=0.0;
@@ -156,4 +165,16 @@ double StatUtil::Variance(const tVector &v)
 	squareMean /= v.size();
 
 	return squareMean - mean*mean;
+}
+
+double StatUtil::Mean(const tMatrix &A)
+{
+	double sum = 0.0;
+
+	int i,j;
+	for(i=0;i<A.rows();i++)
+		for(j=0;j<A.cols();j++)
+			sum += A(i,j);
+
+	return sum/(double)(i*j);
 }

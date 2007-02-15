@@ -66,7 +66,7 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
 
     vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
 
-//  // selects all the rows from a symbols matrix
+ 	// selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_N-1);
 
     int iOrder;

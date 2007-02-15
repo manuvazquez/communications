@@ -18,3 +18,6 @@
 - añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)
 - definir preambulo en algun lugar más alto de la jerarquía
+- meter todas las comprobaciones dentro de un #ifdef DEBUG
+- KnownChannelOrderAlgorithm::ProcessTrainingSequence que no devuelva matrices vacías para la zona del preambulo (para ser coherente con UnknownChannelOrderAlgorithm::ProcessTrainingSequence)
+- eliminar "_d" de MultipleChannelEstimatorsPerParticleSMCAlgorithm y sus clases derivadas
