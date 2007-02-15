@@ -17,15 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ML_SMCAlgorithm.h"
+#include "DSISoptAlgorithm.h"
 
 // #define DEBUG
 
-ML_SMCAlgorithm::ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
+DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
 {
 }
 
-void ML_SMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
+void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	int k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;

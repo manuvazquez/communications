@@ -30,10 +30,10 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class ML_SMCAlgorithm : public SMCAlgorithm
+class DSISoptAlgorithm : public SMCAlgorithm
 {
 public:
-    ML_SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
+    DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
 
 protected:
     void Process(const tMatrix &observations, vector< double > noiseVariances);

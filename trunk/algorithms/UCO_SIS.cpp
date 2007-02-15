@@ -191,7 +191,7 @@ void UCO_SIS::InitializeParticles()
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_candidateOrders.size()),iParticle);
+		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_trainingSequenceComputedChannelOrderAPPs),iParticle);
     }
 }
 
@@ -559,8 +559,8 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 
 			#ifdef DEBUG12
 				cout << "---------" << " " << iParticle << " " << "---------" << endl;
-				cout << "el vector de simbolos muestreado" << endl << sampledSmoothingVector(_allSymbolsRows) << endl;
-				cout << "El autentico vector de simbolos" << endl << _simbolos.col(iObservationToBeProcessed) << endl;
+// 				cout << "el vector de simbolos muestreado" << endl << sampledSmoothingVector(_allSymbolsRows) << endl;
+// 				cout << "El autentico vector de simbolos" << endl << _simbolos.col(iObservationToBeProcessed) << endl;
 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 				{
 					cout << "Orden " << _candidateOrders[iChannelOrder] << ": " << processedParticle->GetChannelOrderAPP(iChannelOrder) << endl;
