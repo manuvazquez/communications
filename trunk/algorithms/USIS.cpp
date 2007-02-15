@@ -17,30 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "UCO_SIS.h"
+#include "USIS.h"
 
 // #define DEBUG10
 #define DEBUG9
 // #define DEBUG12
 
-UCO_SIS::UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1),_trainingSequenceComputedChannelOrderAPPs(_candidateOrders.size())
+USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_rAllObservationRows(0,_L-1),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1),_trainingSequenceComputedChannelOrderAPPs(_candidateOrders.size())
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
-        throw RuntimeException("UCO_SIS::UCO_SIS: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
+        throw RuntimeException("USIS::USIS: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
 
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->Clone();
 }
 
 
-UCO_SIS::~UCO_SIS()
+USIS::~USIS()
 {
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         delete _linearDetectors[iChannelOrder];
 }
 
-vector<vector<tMatrix> > UCO_SIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 	// channel estimation for the training sequence is needed in order to compute the channel order APP
 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
@@ -173,7 +173,7 @@ vector<vector<tMatrix> > UCO_SIS::ProcessTrainingSequence(const tMatrix &observa
     return estimatedMatrices;
 }
 
-void UCO_SIS::InitializeParticles()
+void USIS::InitializeParticles()
 {
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
@@ -195,7 +195,7 @@ void UCO_SIS::InitializeParticles()
     }
 }
 
-void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVariances)
+void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled,iChannelOrder;
 	int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
@@ -606,7 +606,7 @@ void UCO_SIS::Process(const tMatrix& observations, vector< double > noiseVarianc
 	delete[] newChannelOrderAPPs;
 }
 
-vector<tMatrix> UCO_SIS::GetEstimatedChannelMatrices()
+vector<tMatrix> USIS::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
     channelMatrices.reserve(_K-_preamble.cols());

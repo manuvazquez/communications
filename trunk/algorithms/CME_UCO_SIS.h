@@ -17,20 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CME_UCO_SIS_H
-#define CME_UCO_SIS_H
+#ifndef CME_USIS_H
+#define CME_USIS_H
 
-#include <UCO_SIS.h>
+#include <USIS.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class CME_UCO_SIS : public UCO_SIS
+class CME_USIS : public USIS
 {
 public:
-    CME_UCO_SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
+    CME_USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-    ~CME_UCO_SIS();
+    ~CME_USIS();
 
 protected:
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);

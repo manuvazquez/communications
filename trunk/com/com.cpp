@@ -66,9 +66,9 @@
 #include <ViterbiAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <UnknownChannelOrderAlgorithm.h>
-#include <ISIR.h>
-#include <UCO_SIS.h>
-#include <CME_UCO_SIS.h>
+#include <ISIS.h>
+#include <USIS.h>
+// #include <CME_USIS.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -316,11 +316,11 @@ int main(int argc,char* argv[])
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols) (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,simbolosTransmitir));
 							// ---------------------------------------------
 
-//             algorithms.push_back(new ISIR("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
+//             algorithms.push_back(new ISIS("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-//             algorithms.push_back(new UCO_SIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+            algorithms.push_back(new USIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
-//             algorithms.push_back(new CME_UCO_SIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+//             algorithms.push_back(new CME_USIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -375,7 +375,7 @@ int main(int argc,char* argv[])
                 #ifdef CHANNELORDERSAPP_SAVING
                 	if(!algorithms[iAlgorithm]->GetName().compare("UCO-SIS"))
                 	{
-                		tMatrix channelOrderAPPsAux = (dynamic_cast <UCO_SIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+                		tMatrix channelOrderAPPsAux = (dynamic_cast <USIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
 
                 		Util::Add(channelOrderAPPsAux,channelOrdersAPPs[iSNR],channelOrdersAPPs[iSNR]);
                 	}

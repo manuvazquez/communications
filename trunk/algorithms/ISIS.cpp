@@ -17,14 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ISIR.h"
+#include "ISIS.h"
 
-ISIR::ISIR(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
+ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
 ,_canal(canal),_simbolos(simbolos)
 {
 }
 
-void ISIR::InitializeParticles()
+void ISIS::InitializeParticles()
 {
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
@@ -39,7 +39,7 @@ void ISIR::InitializeParticles()
     }
 }
 
-void ISIR::Process(const tMatrix& observations, vector< double > noiseVariances)
+void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector,iChannelOrder;

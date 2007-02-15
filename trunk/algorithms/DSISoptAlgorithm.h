@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ML_SMCALGORITHM_H
-#define ML_SMCALGORITHM_H
+#ifndef DSISOPTALGORITHM_H
+#define DSISOPTALGORITHM_H
 
 #include <math.h>
 #include <typeinfo>

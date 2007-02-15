@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISIR_H
-#define ISIR_H
+#ifndef ISIS_H
+#define ISIS_H
 
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
@@ -29,7 +29,7 @@
 #include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
 #include <KalmanEstimator.h>
 
-class ISIR : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
 	ParticleFilter _particleFilter;
@@ -41,7 +41,7 @@ protected:
  const MIMOChannel &_canal;
  const tMatrix &_simbolos;
 public:
-    ISIR(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos);
+    ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos);
 
 };
 
