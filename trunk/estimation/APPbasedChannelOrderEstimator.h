@@ -17,23 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CME_USIS_H
-#define CME_USIS_H
+#ifndef APPBASEDCHANNELORDERESTIMATOR_H
+#define APPBASEDCHANNELORDERESTIMATOR_H
 
-#include <USIS.h>
+#include <ChannelOrderEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class CME_USIS : public USIS
+
+#include <ChannelMatrixEstimator.h>
+#include <Util.h>
+
+class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 {
-public:
-    CME_USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
-
-    ~CME_USIS();
-
 protected:
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+	vector<ChannelMatrixEstimator *> _channelEstimators;
+public:
+    APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators);
+
+    ~APPbasedChannelOrderEstimator();
+
+    virtual std::vector< double > ComputeProbabilities(const tMatrix& observations, std::vector< double > noiseVariances, tMatrix trainingSequence);
 
 };
 

@@ -79,10 +79,6 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
             estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
         }
     }
-
-//  for(int j=0;j<_candidateOrders.size();j++)
-//      cout << _channelEstimators[j]->LastEstimatedChannelMatrix();
-
     return estimatedMatrices;
 }
 

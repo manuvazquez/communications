@@ -63,10 +63,12 @@ libestimation_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/lib/liblapackpp.la
-am_libestimation_a_OBJECTS = ChannelMatrixEstimator.$(OBJEXT) \
-	KalmanEstimator.$(OBJEXT) RLSEstimator.$(OBJEXT) \
+am_libestimation_a_OBJECTS = APPbasedChannelOrderEstimator.$(OBJEXT) \
+	ChannelMatrixEstimator.$(OBJEXT) \
+	ChannelOrderEstimator.$(OBJEXT) KalmanEstimator.$(OBJEXT) \
 	LMSEstimator.$(OBJEXT) \
-	OneChannelOrderPerTransmitAtennaWrapperEstimator.$(OBJEXT)
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.$(OBJEXT) \
+	RLSEstimator.$(OBJEXT)
 libestimation_a_OBJECTS = $(am_libestimation_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -192,11 +194,13 @@ INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil \
 
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
-noinst_HEADERS = ChannelMatrixEstimator.h KalmanEstimator.h RLSEstimator.h \
-	LMSEstimator.h OneChannelOrderPerTransmitAtennaWrapperEstimator.h
+noinst_HEADERS = APPbasedChannelOrderEstimator.h ChannelMatrixEstimator.h \
+	ChannelOrderEstimator.h KalmanEstimator.h LMSEstimator.h \
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.h RLSEstimator.h
 
-libestimation_a_SOURCES = ChannelMatrixEstimator.cpp KalmanEstimator.cpp \
-	RLSEstimator.cpp LMSEstimator.cpp OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp
+libestimation_a_SOURCES = APPbasedChannelOrderEstimator.cpp \
+	ChannelMatrixEstimator.cpp ChannelOrderEstimator.cpp KalmanEstimator.cpp LMSEstimator.cpp \
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp RLSEstimator.cpp
 
 libestimation_a_LIBADD = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/filters/libfilters.a \
@@ -275,7 +279,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/APPbasedChannelOrderEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelMatrixEstimator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelOrderEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KalmanEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LMSEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaWrapperEstimator.Po@am__quote@
