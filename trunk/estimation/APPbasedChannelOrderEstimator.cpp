@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "APPbasedChannelOrderEstimator.h"
 
+// #define DEBUG
+
 APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size()),_rAllSymbolRows(0,_preamble.rows()-1),_channelOrderAPPs(channelEstimators.size(),1.0/(double)channelEstimators.size()),_unnormalizedChannelOrderAPPs(new double[channelEstimators.size()]),_ARcoefficient(ARcoefficient)
 {
     for(int i=0;i<channelEstimators.size();i++)
@@ -28,10 +30,18 @@ APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& prea
 
 APPbasedChannelOrderEstimator::~APPbasedChannelOrderEstimator()
 {
+	#ifdef DEBUG
+    	cout << "Al principio del destructor de APPbasedChannelOrderEstimator" << endl;
+   	#endif
+
     for(int i=0;i<_channelEstimators.size();i++)
         delete _channelEstimators[i];
 
     delete[] _unnormalizedChannelOrderAPPs;
+
+	#ifdef DEBUG
+    	cout << "Al final del destructor de APPbasedChannelOrderEstimator" << endl;
+   	#endif
 }
 
 
@@ -46,9 +56,18 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
 
     tVector predictedNoiselessObservation(observations.rows());
 
+	#ifdef DEBUG
+    	cout << "hola" << endl;
+   	#endif
+
     int iChannelOrder;
     for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
     {
+
+		#ifdef DEBUG
+			cout << "i = " << i << endl;
+		#endif
+
         normalizationCt = 0.0;
 
         for(iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
@@ -59,6 +78,10 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
             tMatrix predictedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
             predictedChannelMatrix *= _ARcoefficient;
 
+			#ifdef DEBUG
+				cout << "Antes de llamar a Blas" << endl;
+			#endif
+
             // predictedNoiselessObservation = LastEstimatedChannelMatrix * stackedSymbolVector
             Blas_Mat_Vec_Mult(predictedChannelMatrix,stackedSymbolVector,predictedNoiselessObservation);
 
@@ -66,7 +89,12 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
 
             normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
 
+			// channel estimators are updated
             _channelEstimators[iChannelOrder]->NextMatrix(observations.col(i),sequenceToProcess(_rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[i]);
+
+			#ifdef DEBUG
+				cout << "Final del bucle iChannelOrder" << endl;
+			#endif
         }
 
         if(normalizationCt!=0)
@@ -74,6 +102,16 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
             {
                 _channelOrderAPPs[iChannelOrder] = _unnormalizedChannelOrderAPPs[iChannelOrder] / normalizationCt;
             }
+
+		#ifdef DEBUG
+			cout << "Final del bucle i" << endl;
+		#endif
     }
+
+	#ifdef DEBUG
+    	cout << "Final del metodo" << endl;
+   	#endif
+
+   	return _channelOrderAPPs;
 }
 

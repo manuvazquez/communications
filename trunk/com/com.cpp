@@ -57,6 +57,7 @@
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
 #include <OneChannelOrderPerTransmitAtennaWrapperEstimator.h>
+#include <APPbasedChannelOrderEstimator.h>
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
@@ -296,11 +297,11 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,K+preamble.cols(),m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
@@ -331,6 +332,10 @@ int main(int argc,char* argv[])
 // 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,K+preamble.cols(),candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 // 			}
 
+			// channel order estimators
+			APPbasedChannelOrderEstimator channelOrderEstimator(preamble,RLSchannelEstimators,ARcoefficients[0]);
+
+
 			// ---------------------------------------------------------------------------------
 
             // here the number of algoriths is known. So, the first iteration:
@@ -355,6 +360,9 @@ int main(int argc,char* argv[])
 					algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
 				}
             }
+
+            // channel order estimation
+            vector<double> estimatedChanelOrderAPPs = channelOrderEstimator.ComputeProbabilities(observaciones,ruido.Variances(),trainingSequence);
 
             // algorithms are executed
             for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)

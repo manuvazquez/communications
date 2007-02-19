@@ -313,3 +313,13 @@ void Util::ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)
 		for(j=0;j<A.cols();j++)
 			C(i,j) = A(i,j)/B(i,j);
 }
+
+template<class T> void Util::Print(const std::vector<T> &vector)
+{
+	cout << "[";
+	for(uint i=0;i<vector.size()-1;i++)
+		cout << vector[i] << ",";
+	cout << vector[vector.size()-1] << "]" << endl;
+}
+template void Util::Print(const std::vector<int> &vector);
+template void Util::Print(const std::vector<double> &vector);
