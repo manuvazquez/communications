@@ -19,42 +19,61 @@
  ***************************************************************************/
 #include "APPbasedChannelOrderEstimator.h"
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size())
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size()),_rAllSymbolRows(0,_preamble.rows()-1),_channelOrderAPPs(channelEstimators.size(),1.0/(double)channelEstimators.size()),_unnormalizedChannelOrderAPPs(new double[channelEstimators.size()]),_ARcoefficient(ARcoefficient)
 {
-	for(int i=0;i<channelEstimators.size();i++)
-		_channelEstimators[i] = channelEstimators[i]->Clone();
+    for(int i=0;i<channelEstimators.size();i++)
+        _channelEstimators[i] = channelEstimators[i]->Clone();
 }
 
 
 APPbasedChannelOrderEstimator::~APPbasedChannelOrderEstimator()
 {
-	for(int i=0;i<_channelEstimators.size();i++)
-		delete _channelEstimators[i];
+    for(int i=0;i<_channelEstimators.size();i++)
+        delete _channelEstimators[i];
+
+    delete[] _unnormalizedChannelOrderAPPs;
 }
 
 
-vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations, vector< double > noiseVariances, tMatrix trainingSequence)
+vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations, vector< double > noiseVariances, tMatrix symbolVectors)
 {
-//     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
-//     int lengthSequenceToProcess = sequenceToProcess.cols();
-//
-//     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-//         throw RuntimeException("UnknownChannelOrderAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
-//
-//     vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
-//
-//  	// selects all the rows from a symbols matrix
-//     tRange rAllSymbolRows(0,_N-1);
-//
-//     int iOrder;
-//     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
-//     {
-//         for(iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//         {
-//             tRange mColumns(_preamble.cols()+i-_iFirstObservation-_candidateOrders[iOrder]+1,_preamble.cols()+i-_iFirstObservation);
-// //
-//             estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
-//         }
-//     }
+    tMatrix sequenceToProcess = Util::Append(_preamble,symbolVectors);
+    int lengthSequenceToProcess = sequenceToProcess.cols();
+    double normalizationCt;
+
+    if(observations.cols() < lengthSequenceToProcess)
+        throw RuntimeException("APPbasedChannelOrderEstimator::ComputeProbabilities: Insufficient number of observations.");
+
+    tVector predictedNoiselessObservation(observations.rows());
+
+    int iChannelOrder;
+    for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
+    {
+        normalizationCt = 0.0;
+
+        for(iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
+        {
+            tRange rInvolvedSymbolVectors(i-_channelEstimators[iChannelOrder]->Memory()+1,i);
+            tVector stackedSymbolVector = Util::ToVector(sequenceToProcess(_rAllSymbolRows,rInvolvedSymbolVectors),columnwise);
+
+            tMatrix predictedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
+            predictedChannelMatrix *= _ARcoefficient;
+
+            // predictedNoiselessObservation = LastEstimatedChannelMatrix * stackedSymbolVector
+            Blas_Mat_Vec_Mult(predictedChannelMatrix,stackedSymbolVector,predictedNoiselessObservation);
+
+            _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]);
+
+            normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
+
+            _channelEstimators[iChannelOrder]->NextMatrix(observations.col(i),sequenceToProcess(_rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[i]);
+        }
+
+        if(normalizationCt!=0)
+            for(int iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
+            {
+                _channelOrderAPPs[iChannelOrder] = _unnormalizedChannelOrderAPPs[iChannelOrder] / normalizationCt;
+            }
+    }
 }
 

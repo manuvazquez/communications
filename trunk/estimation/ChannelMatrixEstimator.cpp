@@ -27,8 +27,24 @@ ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):
 {
 	if(_Nm < _N)
 		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
-// 	if((_Nm % _N) != 0)
-// 		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
+
+    // check erased because of "OneChannelOrderPerTransmitAtennaWrapperEstimator"
+	/*
+    if((_Nm % _N) != 0)
+		throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
+    */
+
+    if((_Nm % _N) == 0)
+        _m = _Nm/_N;
+    // _m=-1 accounts for the case of a "OneChannelOrderPerTransmitAtennaWrapperEstimator" being used, whose internal ChannelMatrixEstimator does not need to have a number of columns multiple of _N
+    else
+        _m = -1;
 }
 
-
+int ChannelMatrixEstimator::Memory()
+{
+    if(_m!=-1)
+        return _m;
+    else
+        throw RuntimeException("ChannelMatrixEstimator::Memory: this may not be a real channel matrix estimator: its number of columns is not a multiple of the number of transmitting antennas.");
+}

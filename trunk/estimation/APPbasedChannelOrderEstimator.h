@@ -23,22 +23,33 @@
 #include <ChannelOrderEstimator.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <ChannelMatrixEstimator.h>
 #include <Util.h>
+#include <StatUtil.h>
+// #include <lapackpp/gmd.h>
+// #include <lapackpp/blas1pp.h>
+#include <lapackpp/blas2pp.h>
+// #include <lapackpp/blas3pp.h>
+// #include <lapackpp/laslv.h>
+// #include <lapackpp/lavli.h>
 
 class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 {
 protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
+    vector<ChannelMatrixEstimator *> _channelEstimators;
+    vector<double> _channelOrderAPPs;
+    tRange _rAllSymbolRows;
+    double *_unnormalizedChannelOrderAPPs;
+    double _ARcoefficient;
 public:
-    APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators);
+    APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient);
 
     ~APPbasedChannelOrderEstimator();
 
-    virtual std::vector< double > ComputeProbabilities(const tMatrix& observations, std::vector< double > noiseVariances, tMatrix trainingSequence);
+    virtual std::vector< double > ComputeProbabilities(const tMatrix& observations, std::vector< double > noiseVariances, tMatrix symbolVectors);
 
 };
 

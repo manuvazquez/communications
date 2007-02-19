@@ -33,7 +33,7 @@ protected:
 public:
     ChannelOrderEstimator(const tMatrix &preamble);
 
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations,std::vector<double> noiseVariances,tMatrix trainingSequence)=0;
+	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations,std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
 
 };
 

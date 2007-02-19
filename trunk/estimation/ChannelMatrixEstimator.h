@@ -29,7 +29,7 @@
 
 class ChannelMatrixEstimator{
 protected:
-	int _L,_Nm,_N;
+	int _L,_Nm,_N,_m;
 	tMatrix _lastEstimatedChannelMatrix;
 
 	ChannelMatrixEstimator(int N);
@@ -47,6 +47,7 @@ public:
 	}
 	int Cols() { return _Nm;}
 	int Rows() { return _L;}
+    int Memory();
 	virtual tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
 
 };
