@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-// #define DEBUG
+#define DEBUG
 
 #define HOSTNAME_LENGTH 50
 #define DATE_LENGTH 100
@@ -97,7 +97,7 @@ int main(int argc,char* argv[])
     char buffer[SPRINTF_BUFFER];
 
     // GLOBAL PARAMETERS
-    int nFrames = 1;
+    int nFrames = 1000;
     int L=3,N=2,K=30;
     int trainSeqLength = 10;
     int nParticles = 10;
@@ -106,7 +106,7 @@ int main(int argc,char* argv[])
     int preambleLength = 10;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 3;
+    int m = 7;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -115,7 +115,7 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    /*SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);*/SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -321,7 +321,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIS("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-            algorithms.push_back(new USIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+//             algorithms.push_back(new USIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 //             algorithms.push_back(new CME_USIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
@@ -366,7 +366,7 @@ int main(int argc,char* argv[])
             // channel order estimation
             vector<double> estimatedChanelOrderAPPs = channelOrderEstimator.ComputeProbabilities(observaciones,ruido.Variances(),trainingSequence);
             for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-            	channelOrderAPPsAfterTrainingSequence(iChannelOrder,SNRs[iSNR]) += estimatedChanelOrderAPPs[iChannelOrder];
+            	channelOrderAPPsAfterTrainingSequence(iChannelOrder,iSNR) += estimatedChanelOrderAPPs[iChannelOrder];
 
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
@@ -396,7 +396,7 @@ int main(int argc,char* argv[])
                 // Pe evolution
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 tMatrix transmittedSymbols = simbolosTransmitir(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));
-                #ifdef DEBUG
+                #ifdef DEBUG2
 					cout << "simbolos detectados" << endl << detectedSymbols << endl;
 					cout << "simbolos trasmitidos" << endl << simbolosTransmitir(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1)) <<endl;
                 #endif
@@ -407,7 +407,7 @@ int main(int argc,char* argv[])
 
                 delete algorithms[iAlgorithm];
             }
-        } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
+        } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
 
 		// ----------------- VARIABLES SAVING ----------------------
@@ -426,6 +426,10 @@ int main(int argc,char* argv[])
 				for(int j=0;j<K;j++)
 					overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
 		Util::MatricesVectorToStream(overallPeTimeEvolution,"peTimeEvolution",f);
+
+		tMatrix auxChannelOrderAPPsAfterTrainingSequence = channelOrderAPPsAfterTrainingSequence;
+		auxChannelOrderAPPsAfterTrainingSequence *= 1.0/(double)(iFrame+1);
+		Util::MatrixToStream(auxChannelOrderAPPsAfterTrainingSequence,"channelOrderAPPsAfterTrainingSequence",f);
 
 		#ifdef CHANNELORDERSAPP_SAVING
 			vector<tMatrix> auxChannelOrdersAPPs = channelOrdersAPPs;

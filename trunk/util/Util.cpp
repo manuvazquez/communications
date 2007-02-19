@@ -223,6 +223,9 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
 
 void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)
 {
+	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].rows()==0)
+		return;
+
 	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << endl;
 
 	int i,j;
@@ -242,6 +245,9 @@ template void Util::ScalarToStream(double scalar,string name,ofstream &f);
 
 void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstream &f)
 {
+	if(strings.size()==0)
+		return;
+
 	int j;
 
     f << "# name: "<< name << endl <<"# type: string" << endl << "# elements: " << strings.size() << endl;
