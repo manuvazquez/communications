@@ -23,7 +23,7 @@ using namespace std;
 
 ParticleWithChannelEstimationAndChannelOrderAPP::ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators),WithChannelOrderAppParticleAddon(channelMatrixEstimators.size())
 {
-	for(int iChannelOrder=0;iChannelOrder<_channelMatrixEstimators.size();iChannelOrder++)
+	for(uint iChannelOrder=0;iChannelOrder<_channelMatrixEstimators.size();iChannelOrder++)
 		_channelOrderAPP[iChannelOrder] = 1.0/(double)_channelMatrixEstimators.size();
 }
 

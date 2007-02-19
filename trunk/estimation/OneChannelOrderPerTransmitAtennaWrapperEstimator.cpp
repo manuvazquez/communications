@@ -23,7 +23,7 @@
 
 using namespace std;
 
-OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator): ChannelMatrixEstimator(initialEstimation, N),_antennasChannelOrders(antennasChannelOrders),_realEstimator(realEstimator),_involvedSymbolsVector(realEstimator->Cols())
+OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator(tMatrix initialEstimation, int N, const vector<int> &antennasChannelOrders,ChannelMatrixEstimator *realEstimator): ChannelMatrixEstimator(initialEstimation, N),_antennasChannelOrders(antennasChannelOrders),_involvedSymbolsVector(realEstimator->Cols()),_realEstimator(realEstimator)
 {
 	#ifdef DEBUG
 		cout << "_antennasChannelOrders.size(): " << _antennasChannelOrders.size() << " _N: " << _N << endl;

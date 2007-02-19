@@ -25,7 +25,7 @@ WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(std::vector<d
 
 WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(int nChannelOrderAPP):_channelOrderAPP(nChannelOrderAPP)
 {
-	for(int i=0;i<_channelOrderAPP.size();i++)
+	for(uint i=0;i<_channelOrderAPP.size();i++)
 		_channelOrderAPP[i] = 1.0/(double)_channelOrderAPP.size();
 }
 
@@ -40,7 +40,7 @@ int WithChannelOrderAppParticleAddon::MaxChannelOrderAppIndex()
 
 	iMax = 0;
 	max = _channelOrderAPP[0];
-	for(int i=1;i<_channelOrderAPP.size();i++)
+	for(uint i=1;i<_channelOrderAPP.size();i++)
 		if(_channelOrderAPP[i]>max)
 		{
 			iMax = i;

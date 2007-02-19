@@ -23,9 +23,8 @@
 
 ARoneChannelOrderPerTransmitAtennaMIMOChannel::ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders,double mean,double variance,vector<double> ARcoefficients,double ARvariance): OneChannelOrderPerTransmitAtennaMIMOChannel(nTx, nRx, length,antennasChannelOrders)
 //ARprocess constructor call
-,_ARproc(StatUtil::RandnMatrix(nRx,_nChannelMatrixNotNullColumns,mean,variance),
+,_channelMatrices(new tMatrix[_length]),_ARproc(StatUtil::RandnMatrix(nRx,_nChannelMatrixNotNullColumns,mean,variance),
 ARcoefficients,ARvariance)
-,_channelMatrices(new tMatrix[_length])
 {
 	#ifdef DEBUG
 		cout << "Antes de empezar el bucle para crear las matrice para los instantes de tiempo." << endl;

@@ -21,7 +21,7 @@
 
 using namespace std;
 
-ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_rows(seed.rows()),_columns(seed.cols()),_nCoefficients(coefficients.size()),_buffer(new tMatrix*[_nCoefficients]),_iterationsForConvergence(200)
+ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols()),_iterationsForConvergence(200),_buffer(new tMatrix*[_nCoefficients])
 {
 	//the buffer is filled
 	int i,j;

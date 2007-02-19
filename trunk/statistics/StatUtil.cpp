@@ -171,10 +171,9 @@ double StatUtil::Mean(const tMatrix &A)
 {
 	double sum = 0.0;
 
-	int i,j;
-	for(i=0;i<A.rows();i++)
-		for(j=0;j<A.cols();j++)
+	for(int i=0;i<A.rows();i++)
+		for(int j=0;j<A.cols();j++)
 			sum += A(i,j);
 
-	return sum/(double)(i*j);
+	return sum/(double)(A.rows()*A.cols());
 }

@@ -31,7 +31,7 @@ void ISIS::InitializeParticles()
     {
 		// a clone of each of the channel matrix estimators is constructed...
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
-		for(int iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
+		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
 
 		// ... and passed within a vector to each particle
@@ -41,13 +41,13 @@ void ISIS::InitializeParticles()
 
 void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-	int k,m,d,iSmoothingVector,nSmoothingVectors,Nm;
-	int iSmoothingLag,iParticle,iSampledVector,iChannelOrder;
-	int iSymbolVectorToBeProcessed;
+	int m,d,iSmoothingVector,nSmoothingVectors,Nm;
+	int iSmoothingLag,iParticle,iSampledVector;
+	uint iChannelOrder,k;
 	vector<tSymbol> testedVector(_N),sampledVector(_N);
 	double auxLikelihoodsProd,channelOrderAPPsNormConstant/*,newChannelOrderAPP*/;
 	KalmanEstimator *auxChannelEstimator;
-	double channelOrderAprioriProbability = 1.0/(double)_candidateOrders.size();
+// 	double channelOrderAprioriProbability = 1.0/(double)_candidateOrders.size();
 
 //     tVector newChannelOrderAPPs(_candidateOrders.size());
     double *newChannelOrderAPPs = new double[_candidateOrders.size()];
@@ -176,7 +176,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
             #endif
 
 			// one sample from the discrete distribution is taken
-			int iSampledVector = StatUtil::Discrete_rnd(probabilities);
+			iSampledVector = StatUtil::Discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);

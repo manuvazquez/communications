@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RMMSEDetector.h"
 
-RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_filter(_channelMatrixRows,_nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0)
+RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_filter(_channelMatrixRows,_nSymbolsToBeDetected)
 // auxiliary
 ,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows),_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols)
 {

@@ -23,17 +23,17 @@ ParticleFilterWithChannelOrder::ParticleFilterWithChannelOrder(int nParticles,ve
  : ParticleFilter(nParticles),_candidateOrders(candidateOrders),_maxOrder(-1)
 {
     // it finds out the maximum channel order
-    for(int i=0;i<_candidateOrders.size();i++)
+    for(uint i=0;i<_candidateOrders.size();i++)
         if(_candidateOrders[i]>_maxOrder)
             _maxOrder = _candidateOrders[i];
 
     // a vector that associate a channel order with its corresponding index is generated
     _channelOrder2index = new int[_maxOrder+1];
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 
     _nParticlesPerChannelOrder = new int[_candidateOrders.size()];
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _nParticlesPerChannelOrder[iChannelOrder] = 0;
 
     _channelOrderWeightsSum = new double[_maxOrder+1];
@@ -68,7 +68,7 @@ void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIn
 {
     ParticleWithChannelEstimationAndChannelOrder *processedParticle;
 
-    for(int iParticle=0;iParticle<resamplingIndexes.size();iParticle++)
+    for(uint iParticle=0;iParticle<resamplingIndexes.size();iParticle++)
     {
         // particle to be replaced
         processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[indexes[iParticle]]);
@@ -87,7 +87,7 @@ void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIn
 {
     ParticleWithChannelEstimationAndChannelOrder *processedParticle;
 
-    for(int i=0;i<_candidateOrders.size();i++)
+    for(uint i=0;i<_candidateOrders.size();i++)
         _nParticlesPerChannelOrder[_channelOrder2index[_candidateOrders[i]]] = 0;
 
     for(int iParticle=0;iParticle<_nParticles;iParticle++)
@@ -104,7 +104,7 @@ void ParticleFilterWithChannelOrder::KeepParticles(std::vector<int> resamplingIn
 //     int iParticle;
 //
 //     // the sum of the weights of each group of particles is set to zero...
-//     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+//     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 //         _channelOrderWeightsSum[_candidateOrders[iChannelOrder]] = 0.0;
 //
 //     // ... to compute it here

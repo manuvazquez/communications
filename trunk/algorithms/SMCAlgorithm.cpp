@@ -21,7 +21,7 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
-_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingAlgorithm(resamplingAlgorithm),_particleFilter(nParticles)
+_particleFilter(nParticles),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1)
 {
     // at first, we assume that all observations from the preamble need to be processed
     _startDetectionTime = _preamble.cols();

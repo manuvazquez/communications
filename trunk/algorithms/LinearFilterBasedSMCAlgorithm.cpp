@@ -154,7 +154,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 					getchar();
                 #endif
 
-				double sumProb = 0.0;
+				sumProb = 0.0;
 				// the probability for each posible symbol alphabet is computed
 				for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 				{
@@ -176,7 +176,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 // 				cout << "Probabilidades resultantes" << symbolProb.row(iSampledSymbol);
 // 				getchar();
 
-				int iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
+				iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= symbolProb(iSampledSymbol,iSampled);

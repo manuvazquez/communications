@@ -70,7 +70,6 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 
     double mse = 0;
     int windowStart = nEstimatedChannelMatrices - windowSize;
-    int j;
 
 	// if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
 	try {
@@ -91,7 +90,7 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	if((matrices[0].cols() % m)!=0)
 		throw RuntimeException("Algorithm::HsToStackedH: Incorrect number of columns in the matrices.");
 
-	int nMatricesToStack = d - start + 1;
+	uint nMatricesToStack = d - start + 1;
 
 	if(matrices.size()< nMatricesToStack)
 		throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");

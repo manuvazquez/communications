@@ -33,7 +33,8 @@ class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOr
 {
 protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
-    int _d,_startDetectionObservation,_startDetectionSymbolVector;
+    int _d;
+//     int _startDetectionObservation,_startDetectionSymbolVector;
 	int _startDetectionTime;
     tRange _allSymbolsRows;
 

@@ -26,7 +26,7 @@ SparklingMemoryMIMOChannel::SparklingMemoryMIMOChannel(int nTx, int nRx, int len
 	// it obtains the maximum allowed order for the channel
 	int iMaxOrder = 0;
 	_maxOrder = _candidateOrders[0];
-	for(int i=1;i<_candidateOrders.size();i++)
+	for(uint i=1;i<_candidateOrders.size();i++)
 		if(_candidateOrders[i]>_maxOrder)
 		{
 			iMaxOrder = i;

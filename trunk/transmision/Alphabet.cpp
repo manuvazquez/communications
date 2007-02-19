@@ -88,7 +88,7 @@ int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 
 	int res = 0, base = 1;
 	vector<tSymbol>::iterator iterator;
-	for(int i=size-1;i>=0;i--)
+	for(uint i=size-1;i>=0;i--)
 	{
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
@@ -117,4 +117,6 @@ tSymbol Alphabet::HardDecision(double softEstimation)
 			iMin = i;
 		}
 	}
+
+	return _symbols[iMin];
 }

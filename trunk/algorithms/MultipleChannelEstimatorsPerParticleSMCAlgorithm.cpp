@@ -21,7 +21,7 @@
 
 MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)
 //variables initialization
-,_d(smoothingLag),_allSymbolsRows(0,_N-1),_resamplingAlgorithm(resamplingAlgorithm)
+,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1)
 {
     // at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionTime = _preamble.cols();
@@ -49,7 +49,9 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
-    int iParticle,j,iChannelOrder;
+    int iParticle;
+    uint j;
+    uint iChannelOrder;
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
@@ -89,7 +91,7 @@ tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVecto
     int iBestParticle;
     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
-    ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( GetParticleFilterPointer()->GetParticle(iBestParticle));
+//     ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( GetParticleFilterPointer()->GetParticle(iBestParticle));
 
     return ((GetParticleFilterPointer()->GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }

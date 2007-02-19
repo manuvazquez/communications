@@ -66,7 +66,7 @@ public:
 
 	int IndexFromChannelOrder(const int& m)
 	{
-		for(int i=0;i<_candidateOrders.size();i++)
+		for(uint i=0;i<_candidateOrders.size();i++)
 			if(_candidateOrders[i]==m)
 				return i;
 		throw RuntimeException("ParticleFilterWithChannelOrder::IndexFromChannelOrder: there is no channel estimator with that channel order");

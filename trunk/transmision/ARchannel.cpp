@@ -33,7 +33,7 @@ ARcoefficients,ARvariance)
 			_channelMatrices[i] = _ARproc.NextMatrix();
 }
 
-ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_ARproc(archannel._ARproc),_channelMatrices(new tMatrix[_length])
+ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_channelMatrices(new tMatrix[_length]),_ARproc(archannel._ARproc)
 {
 	for(int i=_memory-1;i<_length;i++)
 			_channelMatrices[i] = archannel._channelMatrices[i];

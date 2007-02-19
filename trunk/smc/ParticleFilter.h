@@ -35,7 +35,7 @@ protected:
 public:
 
     ParticleFilter(int nParticles);
-    ~ParticleFilter();
+    virtual ~ParticleFilter();
 
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
 	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
@@ -46,8 +46,8 @@ public:
 		delete _particles[n];
 		_particles[n] = particle;
 	}
-	
-    tVector GetWeightsVector() 
+
+    tVector GetWeightsVector()
     {
         tVector weights(_nParticles);
         for(int i=0;i<_nParticles;i++)

@@ -57,7 +57,6 @@ void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
         throw RuntimeException("Util::Mult: Resultant matrix dimensions are wrong.");
 
     int j;
-    int nElements = a.size();
     for(int i=0;i<a.size();i++)
     {
         for(j=0;j<b.size();j++)
@@ -100,10 +99,10 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
 	tMatrix matrix = LaGenMatDouble::zeros(rows,cols);
 
 	if(order==rowwise)
-		for(int iVector=vector.size();iVector--;)
+		for(uint iVector=vector.size();iVector--;)
 			matrix(iVector/cols,iVector%cols) = vector(iVector);
 	else
-		for(int iVector=vector.size();iVector--;)
+		for(uint iVector=vector.size();iVector--;)
 			matrix(iVector%rows,iVector/rows) = vector(iVector);
 	return matrix;
 }
@@ -157,7 +156,7 @@ double Util::Sum(const tVector &v)
 {
 	double res = 0.0;
 
-	for(int i=v.size();i--;i>=0)
+	for(uint i=v.size();i--;)
 		res += v(i);
 	return res;
 }
@@ -227,7 +226,7 @@ void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream 
 	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << endl;
 
 	int i,j;
-	for(int iMatrix=0;iMatrix<matrices.size();iMatrix++)
+	for(uint iMatrix=0;iMatrix<matrices.size();iMatrix++)
 		for(j=0;j<(matrices.at(iMatrix)).cols();j++)
 			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
@@ -247,15 +246,15 @@ void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstrea
 
     f << "# name: "<< name << endl <<"# type: string" << endl << "# elements: " << strings.size() << endl;
 
-	int iMax = 0;
-	int max = strings[0].length();
-	for(int i=0;i<strings.size();i++)
+	uint iMax = 0;
+	uint max = strings[0].length();
+	for(uint i=0;i<strings.size();i++)
 		if(strings[i].length()>max)
 		{
 			iMax = i;
 			max = strings[i].length();
 		}
-	for(int i=0;i<strings.size();i++)
+	for(uint i=0;i<strings.size();i++)
 	{
 		f << "# length: " << max << endl;
 		f << strings[i];
@@ -271,7 +270,7 @@ template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string 
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << vector.size() << endl;
 
-	for(int i=0;i<vector.size();i++)
+	for(uint i=0;i<vector.size();i++)
 		f << vector[i] << " ";
 	f << endl;
 }
@@ -283,7 +282,7 @@ template<class T> T Util::Max(const std::vector<T> &vector)
 	int iMax = 0;
 	T max = vector[0];
 
-	for(int i=1;i<vector.size();i++)
+	for(uint i=1;i<vector.size();i++)
 		if(vector[i]>max)
 		{
 			iMax = i;
@@ -297,7 +296,7 @@ template<class T> T Util::Sum(const std::vector<T> &vector)
 {
 	T sum = vector[0];
 
-	for(int i=1;i<vector.size();i++)
+	for(uint i=1;i<vector.size();i++)
 		sum += vector[i];
 	return sum;
 }

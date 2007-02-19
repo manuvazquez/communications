@@ -92,7 +92,8 @@ using namespace std;
 int main(int argc,char* argv[])
 {
     double pe,mse;
-    int iChannelOrder,iSNR,d;
+    uint iChannelOrder,iSNR;
+    int d;
     char buffer[SPRINTF_BUFFER];
 
     // GLOBAL PARAMETERS
@@ -192,7 +193,7 @@ int main(int argc,char* argv[])
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
 	vector<LinearDetector *> RMMSElinearDetectors;
-	for(int iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		kalmanChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),N,ARcoefficients[0],ARvariance));
 
@@ -228,6 +229,7 @@ int main(int argc,char* argv[])
 
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
     vector<LaGenMatInt> overallErrorsNumberTimeEvolution(SNRs.size());
+    tMatrix channelOrderAPPsAfterTrainingSequence = LaGenMatDouble::zeros(candidateChannelOrders.size(),SNRs.size());
 
     // we don't want the same bits to be generated over and over
 	#ifdef RANDOM_SEED
@@ -348,14 +350,14 @@ int main(int argc,char* argv[])
                 overallMseMatrix = 0.0;
 
 				// Pe evolution
-				for(int i=0;i<SNRs.size();i++)
+				for(uint i=0;i<SNRs.size();i++)
 				{
 					overallPeTimeEvolution[i] = tMatrix(algorithms.size(),K);
 					overallErrorsNumberTimeEvolution[i] = LaGenMatInt::zeros(algorithms.size(),K);
 				}
 
 				// we fill the vector with the names of the algorithms
-				for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+				for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
 				{
 					algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
 				}
@@ -363,9 +365,11 @@ int main(int argc,char* argv[])
 
             // channel order estimation
             vector<double> estimatedChanelOrderAPPs = channelOrderEstimator.ComputeProbabilities(observaciones,ruido.Variances(),trainingSequence);
+            for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+            	channelOrderAPPsAfterTrainingSequence(iChannelOrder,SNRs[iSNR]) += estimatedChanelOrderAPPs[iChannelOrder];
 
             // algorithms are executed
-            for(int iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+            for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
 
@@ -403,7 +407,7 @@ int main(int argc,char* argv[])
 
                 delete algorithms[iAlgorithm];
             }
-        } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
+        } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 
 
 		// ----------------- VARIABLES SAVING ----------------------
@@ -417,15 +421,15 @@ int main(int argc,char* argv[])
 		auxOverallMse *= 1.0/(double)(iFrame+1);
 		Util::MatrixToStream(auxOverallMse,"mse",f);
 
-		for(int iSNR=0;iSNR<SNRs.size();iSNR++)
-			for(int i=0;i<algorithmsNames.size();i++)
+		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
+			for(uint i=0;i<algorithmsNames.size();i++)
 				for(int j=0;j<K;j++)
 					overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
 		Util::MatricesVectorToStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
 		#ifdef CHANNELORDERSAPP_SAVING
 			vector<tMatrix> auxChannelOrdersAPPs = channelOrdersAPPs;
-			for(int i=0;i<SNRs.size();i++)
+			for(uint i=0;i<SNRs.size();i++)
 				auxChannelOrdersAPPs[i] *= 1.0/(double)(iFrame+1);
 			Util::MatricesVectorToStream(auxChannelOrdersAPPs,"uco_channelOrdersAPPs",f);
 		#endif

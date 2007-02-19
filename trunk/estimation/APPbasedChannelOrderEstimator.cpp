@@ -21,9 +21,9 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size()),_rAllSymbolRows(0,_preamble.rows()-1),_channelOrderAPPs(channelEstimators.size(),1.0/(double)channelEstimators.size()),_unnormalizedChannelOrderAPPs(new double[channelEstimators.size()]),_ARcoefficient(ARcoefficient)
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size()),_channelOrderAPPs(channelEstimators.size(),1.0/(double)channelEstimators.size()),_rAllSymbolRows(0,_preamble.rows()-1),_unnormalizedChannelOrderAPPs(new double[channelEstimators.size()]),_ARcoefficient(ARcoefficient)
 {
-    for(int i=0;i<channelEstimators.size();i++)
+    for(uint i=0;i<channelEstimators.size();i++)
         _channelEstimators[i] = channelEstimators[i]->Clone();
 }
 
@@ -34,7 +34,7 @@ APPbasedChannelOrderEstimator::~APPbasedChannelOrderEstimator()
     	cout << "Al principio del destructor de APPbasedChannelOrderEstimator" << endl;
    	#endif
 
-    for(int i=0;i<_channelEstimators.size();i++)
+    for(uint i=0;i<_channelEstimators.size();i++)
         delete _channelEstimators[i];
 
     delete[] _unnormalizedChannelOrderAPPs;
@@ -60,7 +60,7 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
     	cout << "hola" << endl;
    	#endif
 
-    int iChannelOrder;
+    uint iChannelOrder;
     for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
     {
 
@@ -98,7 +98,7 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
         }
 
         if(normalizationCt!=0)
-            for(int iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
+            for(uint iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
             {
                 _channelOrderAPPs[iChannelOrder] = _unnormalizedChannelOrderAPPs[iChannelOrder] / normalizationCt;
             }

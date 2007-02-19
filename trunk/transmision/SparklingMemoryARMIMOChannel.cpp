@@ -27,7 +27,7 @@ ARcoefficients,ARvariance)
 {
 	int presentChannelOrder,iPresentChannelOrder;
 	tRange rAllObservationsRows(0,_nRx-1);
-	double overAllNorm,lastTapNorm,ratio,sample;
+	double overAllNorm,lastTapNorm,ratio;
 	double changeProbability = 0.1;
 
 	#ifdef RANDOM_SEED
@@ -87,7 +87,7 @@ ARcoefficients,ARvariance)
 	_channelOrders[_maxOrder-1] = initialChannelOrderIndex;
 }
 
-SparklingMemoryARMIMOChannel::SparklingMemoryARMIMOChannel(const SparklingMemoryARMIMOChannel &channel):SparklingMemoryMIMOChannel(channel),_ARprocess(channel._ARprocess),_channelMatrices(new tMatrix[_length]),_channelOrders(new int[_length])
+SparklingMemoryARMIMOChannel::SparklingMemoryARMIMOChannel(const SparklingMemoryARMIMOChannel &channel):SparklingMemoryMIMOChannel(channel),_channelMatrices(new tMatrix[_length]),_channelOrders(new int[_length]),_ARprocess(channel._ARprocess)
 {
 	for(int i=_maxOrder-1;i<_length;i++)
 	{

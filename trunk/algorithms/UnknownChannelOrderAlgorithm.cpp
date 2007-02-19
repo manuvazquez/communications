@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "UnknownChannelOrderAlgorithm.h"
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_preamble(preamble),_candidateOrders( channelEstimators.size()),_maxOrder(channelEstimators[0]->Cols()/_N),_minOrder(channelEstimators[0]->Cols()/_N),_iFirstObservation(iFirstObservation)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(channelEstimators[0]->Cols()/_N),_minOrder(channelEstimators[0]->Cols()/_N),_iFirstObservation(iFirstObservation),_preamble(preamble)
 {
-    for(int i=0;i<channelEstimators.size();i++)
+    for(uint i=0;i<channelEstimators.size();i++)
     {
         // the memory of this estimator is obtained from the number of columns of the channel matrix estimator and the algorithm parameter N
         if((channelEstimators[i]->Cols() % _N) !=0)
@@ -43,14 +43,14 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
     // a vector that associate a channel order with its corresponding index is generated
     _channelOrder2index = new int[_maxOrder+1];
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 }
 
 
 UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 {
-    for(int i=0;i<_channelEstimators.size();i++)
+    for(uint i=0;i<_channelEstimators.size();i++)
         delete _channelEstimators[i];
 
     delete[] _channelOrder2index;
@@ -59,7 +59,7 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
-    int lengthSequenceToProcess = sequenceToProcess.cols();
+//     int lengthSequenceToProcess = sequenceToProcess.cols();
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("UnknownChannelOrderAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
@@ -69,7 +69,7 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
  	// selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_N-1);
 
-    int iOrder;
+    uint iOrder;
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
         for(iOrder=0;iOrder<_candidateOrders.size();iOrder++)

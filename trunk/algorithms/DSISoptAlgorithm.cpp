@@ -27,7 +27,7 @@ DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, i
 
 void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
-	int k,iSmoothingVector;
+	uint k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
 	double auxLikelihoodsProd;
@@ -40,9 +40,8 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	// it includes all symbol vectors involved in the smoothing
 	tMatrix smoothingSymbolVectors(_N,_m+_d);
 
-	int nObservations = observations.cols();
-	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
-	int nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*_d));
+	uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+	uint nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*_d));
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
@@ -66,7 +65,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			// the m-1 already detected symbol vectors are copied into the matrix:
 			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(processedParticle->GetSymbolVectors(mPrecedentColumns));
 
-			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
 				// the corresponding testing vector is generated from the index
 				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
@@ -134,7 +133,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			}
 
 			// one sample from the discrete distribution is taken
-			int iSampledVector = StatUtil::Discrete_rnd(probabilities);
+			iSampledVector = StatUtil::Discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);

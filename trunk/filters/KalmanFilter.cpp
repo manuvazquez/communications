@@ -20,9 +20,9 @@
 #include "KalmanFilter.h"
 
 KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength):
-_nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_filteredMean(initialMean),_filteredCovariance(initialCovariance),_predictiveMean(R.rows()),_predictiveCovariance(R.rows(),R.rows()),_observationVectorLength(observationVectorLength),
+_R(R),_stateEquationCovariance(stateEquationCovariance),_nElementsToEstimate(initialMean.size()),_predictiveMean(R.rows()),_filteredMean(initialMean),_predictiveCovariance(R.rows(),R.rows()),_filteredCovariance(initialCovariance),_observationVectorLength(observationVectorLength),
 // auxiliary variables
-_RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovarianceRtrans(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength),_auxMatrix(_observationVectorLength,_observationVectorLength),_KalmanGain(_nElementsToEstimate,_observationVectorLength),_auxVector(_observationVectorLength),_KalmanGainByNotPredicted(_nElementsToEstimate),_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate),_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate),_piv(_observationVectorLength)
+_predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength),_auxMatrix(_observationVectorLength,_observationVectorLength),_KalmanGain(_nElementsToEstimate,_observationVectorLength),_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate),_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovarianceRtrans(_nElementsToEstimate,_nElementsToEstimate),_auxVector(_observationVectorLength),_KalmanGainByNotPredicted(_nElementsToEstimate),_piv(_observationVectorLength)
 {
 	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
 		throw RuntimeException("Matrices R and F dimensions are not coherent with those of the vector to be estimated.");
