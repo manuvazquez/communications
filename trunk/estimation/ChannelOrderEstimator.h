@@ -30,12 +30,16 @@
 class ChannelOrderEstimator{
 protected:
 	tMatrix _preamble;
+	std::vector<int> _candidateOrders;
+    std::vector<double> _channelOrderAPPs;
 public:
-    ChannelOrderEstimator(const tMatrix &preamble);
+    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders);
 
     virtual ~ChannelOrderEstimator() {}
 
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations,std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
+    virtual ChannelOrderEstimator *Clone() = 0;
+
+	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
 
 };
 

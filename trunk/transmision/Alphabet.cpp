@@ -3,6 +3,8 @@
 #include "Alphabet.h"
 #include "exceptions.h"
 
+// #define DEBUG
+
 using namespace std;
 
 Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
@@ -61,8 +63,12 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 {
 	int tamVector = res.size();
 
+	#ifdef DEBUG
+		cout << "tamVector: " << tamVector << endl;
+	#endif
+
 	if(numero>=pow((double)_length,(double)tamVector))
-		throw RuntimeException("El tamaño del vector es demasiado pequeño.");
+		throw RuntimeException("Alphabet::IntToSymbolsArray: vector size is smaller than needed.");
 
 // 	// se reserva espacio para un vector de bits tamaño "tamVector"
 // 	vector<tBit> _bitsSequences(tamVector);
@@ -86,10 +92,17 @@ int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 {
 	int size = symbolsVector.size();
 
+	#ifdef DEBUG
+		cout << "symbolsVector.size(): " << symbolsVector.size() << endl;
+	#endif
+
 	int res = 0, base = 1;
 	vector<tSymbol>::iterator iterator;
-	for(uint i=size-1;i>=0;i--)
+	for(int i=size-1;i>=0;i--)
 	{
+		#ifdef DEBUG
+			cout << "Antes del for" << endl;
+		#endif
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
 		{

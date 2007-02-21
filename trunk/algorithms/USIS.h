@@ -31,6 +31,7 @@
 #include <sys/time.h>
 
 #include <LinearDetector.h>
+#include <ChannelOrderEstimator.h>
 #include <ParticleFilter.h>
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
 #include <MIMOChannel.h>
@@ -38,7 +39,7 @@
 class USIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
-    USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/);
+    USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator * channelOrderEstimator, double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/);
 
     ~USIS();
 
@@ -46,6 +47,7 @@ public:
 
 protected:
     vector<LinearDetector *> _linearDetectors;
+    ChannelOrderEstimator *_channelOrderEstimator;
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     tRange _rAllObservationRows;

@@ -18,7 +18,7 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#define DEBUG
+// #define DEBUG
 
 #define HOSTNAME_LENGTH 50
 #define DATE_LENGTH 100
@@ -69,7 +69,6 @@
 #include <UnknownChannelOrderAlgorithm.h>
 #include <ISIS.h>
 #include <USIS.h>
-// #include <CME_USIS.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -97,7 +96,7 @@ int main(int argc,char* argv[])
     char buffer[SPRINTF_BUFFER];
 
     // GLOBAL PARAMETERS
-    int nFrames = 1000;
+    int nFrames = 2;
     int L=3,N=2,K=30;
     int trainSeqLength = 10;
     int nParticles = 10;
@@ -106,7 +105,7 @@ int main(int argc,char* argv[])
     int preambleLength = 10;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 7;
+    int m = 2;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -115,7 +114,8 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+	SNRs.push_back(12);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -139,6 +139,11 @@ int main(int argc,char* argv[])
 
 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);candidateChannelOrders.push_back(8);
 
+	// initial channel estimation for every channel order
+	vector<tMatrix> initialChannelMatrixEstimations(candidateChannelOrders.size());
+	for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+		initialChannelMatrixEstimations[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
+
     // linear detectors parameters
     double forgettingFactorDetector = 0.95;
 
@@ -148,11 +153,6 @@ int main(int argc,char* argv[])
     vector<tSymbol> simbolos(2);
     simbolos[0] = -1; simbolos[1] = 1;
     Alphabet pam2(1,2,secuenciasBits,simbolos);
-
-
-	// for generating random channel orders for the case of one channel order per antenna system
-	vector<int> candidateSubchannelOrders;
-	candidateSubchannelOrders.push_back(1);candidateSubchannelOrders.push_back(2);candidateSubchannelOrders.push_back(3);candidateSubchannelOrders.push_back(4);
 
 	// -----------------------------------------------------------------------------
 
@@ -193,14 +193,18 @@ int main(int argc,char* argv[])
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
 	vector<LinearDetector *> RMMSElinearDetectors;
-	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		kalmanChannelEstimators.push_back(new KalmanEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),N,ARcoefficients[0],ARvariance));
+		kalmanChannelEstimators.push_back(new KalmanEstimator(initialChannelMatrixEstimations[iChannelOrder],N,ARcoefficients[0],ARvariance));
 
-		RLSchannelEstimators.push_back(new RLSEstimator(LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]),N,forgettingFactor));
+		RLSchannelEstimators.push_back(new RLSEstimator(initialChannelMatrixEstimations[iChannelOrder],N,forgettingFactor));
 
 		RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),pam2.Variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
 	}
+
+
+	// channel order estimators
+	APPbasedChannelOrderEstimator *channelOrderEstimator= new APPbasedChannelOrderEstimator(preamble,candidateChannelOrders,initialChannelMatrixEstimations,ARcoefficients[0]);
 
 	// the maximum of the candidate channel orders is computed
 	int maxCandidateOrder = candidateChannelOrders[0];
@@ -321,9 +325,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIS("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-//             algorithms.push_back(new USIS("UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
-
-//             algorithms.push_back(new CME_USIS("CME_UCO-SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+            algorithms.push_back(new USIS("USIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -333,10 +335,6 @@ int main(int argc,char* argv[])
 //
 // 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,K+preamble.cols(),candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 // 			}
-
-			// channel order estimators
-			APPbasedChannelOrderEstimator channelOrderEstimator(preamble,RLSchannelEstimators,ARcoefficients[0]);
-
 
 			// ---------------------------------------------------------------------------------
 
@@ -363,10 +361,22 @@ int main(int argc,char* argv[])
 				}
             }
 
-            // channel order estimation
-            vector<double> estimatedChanelOrderAPPs = channelOrderEstimator.ComputeProbabilities(observaciones,ruido.Variances(),trainingSequence);
-            for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-            	channelOrderAPPsAfterTrainingSequence(iChannelOrder,iSNR) += estimatedChanelOrderAPPs[iChannelOrder];
+			#ifdef DEBUG
+				vector<ChannelMatrixEstimator *> RLSchannelEstimatorsCopia = RLSchannelEstimators;
+				vector<vector<tMatrix> > matricesEstimadas(candidateChannelOrders.size());
+				for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+				{
+					RLSchannelEstimatorsCopia[iChannelOrder] = RLSchannelEstimators[iChannelOrder]->Clone();
+					for(int iTiempo=preambleLength;iTiempo<preambleLength+trainSeqLength;iTiempo++)
+					{
+						matricesEstimadas[iChannelOrder].push_back(RLSchannelEstimatorsCopia[iChannelOrder]->NextMatrix(observaciones.col(iTiempo),simbolosTransmitir(tRange(0,N-1),tRange(iTiempo-candidateChannelOrders[iChannelOrder]+1,iTiempo)),ruido.Variances()[iTiempo]));
+					}
+				}
+				vector<double> estimatedChanelOrderAPPs = channelOrderEstimator->Clone()->ComputeProbabilities(observaciones,matricesEstimadas,ruido.Variances(),trainingSequence);
+				for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+               		channelOrderAPPsAfterTrainingSequence(iChannelOrder,iSNR) += estimatedChanelOrderAPPs[iChannelOrder];
+               	Util::Print(estimatedChanelOrderAPPs);
+			#endif
 
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)

@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ViterbiAlgorithm.h"
 
+// #define DEBUG
+
 ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_d(smoothingLag),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
 {
     if(preamble.cols() < (channel.Memory()-1))
@@ -159,6 +161,10 @@ void ViterbiAlgorithm::BuildStateTransitionMatrix()
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
 {
+	#ifdef DEBUG
+		cout << "channelMatrix" << endl << channelMatrix << endl;
+	#endif
+
 	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
 
     double newCost;

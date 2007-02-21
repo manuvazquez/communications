@@ -21,6 +21,6 @@
 
 using namespace std;
 
-ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble):_preamble(preamble)
+ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders):_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
 {
 }

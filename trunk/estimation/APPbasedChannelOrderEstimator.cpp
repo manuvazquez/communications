@@ -21,31 +21,22 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble,vector<ChannelMatrixEstimator *> channelEstimators,double ARcoefficient): ChannelOrderEstimator(preamble),_channelEstimators(channelEstimators.size()),_channelOrderAPPs(channelEstimators.size(),1.0/(double)channelEstimators.size()),_rAllSymbolRows(0,_preamble.rows()-1),_unnormalizedChannelOrderAPPs(new double[channelEstimators.size()]),_ARcoefficient(ARcoefficient)
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(const tMatrix& preamble, std::vector<int> candidateOrders, vector<tMatrix> initialChannelMatrixEstimations,double ARcoefficient): ChannelOrderEstimator(preamble,candidateOrders),_lastEstimatedChannelMatrices(initialChannelMatrixEstimations),_rAllSymbolRows(0,_preamble.rows()-1),_unnormalizedChannelOrderAPPs(initialChannelMatrixEstimations.size()),_ARcoefficient(ARcoefficient)
 {
-    for(uint i=0;i<channelEstimators.size();i++)
-        _channelEstimators[i] = channelEstimators[i]->Clone();
 }
 
 
 APPbasedChannelOrderEstimator::~APPbasedChannelOrderEstimator()
 {
-	#ifdef DEBUG
-    	cout << "Al principio del destructor de APPbasedChannelOrderEstimator" << endl;
-   	#endif
+}
 
-    for(uint i=0;i<_channelEstimators.size();i++)
-        delete _channelEstimators[i];
-
-    delete[] _unnormalizedChannelOrderAPPs;
-
-	#ifdef DEBUG
-    	cout << "Al final del destructor de APPbasedChannelOrderEstimator" << endl;
-   	#endif
+APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::Clone()
+{
+	return new APPbasedChannelOrderEstimator(*this);
 }
 
 
-vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations, vector< double > noiseVariances, tMatrix symbolVectors)
+vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const vector<vector<tMatrix> > channelMatrices, vector< double > noiseVariances, tMatrix symbolVectors)
 {
     tMatrix sequenceToProcess = Util::Append(_preamble,symbolVectors);
     int lengthSequenceToProcess = sequenceToProcess.cols();
@@ -54,28 +45,25 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
     if(observations.cols() < lengthSequenceToProcess)
         throw RuntimeException("APPbasedChannelOrderEstimator::ComputeProbabilities: Insufficient number of observations.");
 
-    tVector predictedNoiselessObservation(observations.rows());
+	if(channelMatrices.size() != _lastEstimatedChannelMatrices.size())
+   		throw RuntimeException("APPbasedChannelOrderEstimator::ComputeProbabilities: \"channelMatrices\" size is not coherent with received initial channel matrix estimations.");
 
-	#ifdef DEBUG
-    	cout << "hola" << endl;
-   	#endif
+    if(channelMatrices[0].size() < symbolVectors.cols())
+   		throw RuntimeException("APPbasedChannelOrderEstimator::ComputeProbabilities: Insufficient number of channel matrices per channel order.");
+
+    tVector predictedNoiselessObservation(observations.rows());
 
     uint iChannelOrder;
     for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
     {
-
-		#ifdef DEBUG
-			cout << "i = " << i << endl;
-		#endif
-
         normalizationCt = 0.0;
 
-        for(iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
+        for(iChannelOrder=0;iChannelOrder<channelMatrices.size();iChannelOrder++)
         {
-            tRange rInvolvedSymbolVectors(i-_channelEstimators[iChannelOrder]->Memory()+1,i);
+            tRange rInvolvedSymbolVectors(i-_candidateOrders[iChannelOrder]+1,i);
             tVector stackedSymbolVector = Util::ToVector(sequenceToProcess(_rAllSymbolRows,rInvolvedSymbolVectors),columnwise);
 
-            tMatrix predictedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
+            tMatrix predictedChannelMatrix = _lastEstimatedChannelMatrices[iChannelOrder];
             predictedChannelMatrix *= _ARcoefficient;
 
 			#ifdef DEBUG
@@ -89,8 +77,8 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
 
             normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
 
-			// channel estimators are updated
-            _channelEstimators[iChannelOrder]->NextMatrix(observations.col(i),sequenceToProcess(_rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[i]);
+			// the next estimated channel matrix is stored into
+            _lastEstimatedChannelMatrices[iChannelOrder] = channelMatrices[iChannelOrder][i-_preamble.cols()];
 
 			#ifdef DEBUG
 				cout << "Final del bucle iChannelOrder" << endl;
@@ -98,7 +86,7 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
         }
 
         if(normalizationCt!=0)
-            for(uint iChannelOrder=0;iChannelOrder<_channelEstimators.size();iChannelOrder++)
+            for(uint iChannelOrder=0;iChannelOrder<channelMatrices.size();iChannelOrder++)
             {
                 _channelOrderAPPs[iChannelOrder] = _unnormalizedChannelOrderAPPs[iChannelOrder] / normalizationCt;
             }

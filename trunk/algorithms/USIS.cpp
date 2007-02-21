@@ -23,7 +23,7 @@
 #define DEBUG9
 // #define DEBUG12
 
-USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_L-1),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1),_trainingSequenceComputedChannelOrderAPPs(_candidateOrders.size())
+USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_L-1),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1),_trainingSequenceComputedChannelOrderAPPs(_candidateOrders.size())
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
@@ -38,6 +38,8 @@ USIS::~USIS()
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         delete _linearDetectors[iChannelOrder];
+
+	delete _channelOrderEstimator;
 }
 
 vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
@@ -45,51 +47,29 @@ vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observatio
 	// channel estimation for the training sequence is needed in order to compute the channel order APP
 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
-// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 	{
-// 		for(uint j=1;j<estimatedMatrices[iChannelOrder].size();j++)
-// 		{
-// 			tMatrix resta(estimatedMatrices[iChannelOrder][j].rows(),estimatedMatrices[iChannelOrder][j].cols());
-// 			Util::Add(estimatedMatrices[iChannelOrder][j],estimatedMatrices[iChannelOrder][j-1],resta,1.0,-1.0);
+	_trainingSequenceComputedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,trainingSequence);
+
+	Util::Print(_trainingSequenceComputedChannelOrderAPPs);
+
+// 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
 //
-// 			tMatrix cociente(estimatedMatrices[iChannelOrder][j].rows(),estimatedMatrices[iChannelOrder][j].cols());
-// 			Util::ElementByElementDiv(estimatedMatrices[iChannelOrder][j],estimatedMatrices[iChannelOrder][j-1],cociente);
-//
-// 			cout << "Orden: " << _candidateOrders[iChannelOrder] << " , j = " << j << ", media = " << StatUtil::Mean(cociente) << endl;
-// 			cout << cociente << endl;
-// 			cout << "Una tecla..."; getchar();
-// 		}
-// 	}
-
-	#ifdef DEBUG
-		cout << estimatedMatrices[0].size() << " matrices por orden" << endl;
-	#endif
-
-
-	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
-// 	int lengthToProcessSequence = toProcessSequence.cols();
-
-	tVector predictedNoiselessObservation(_L);
-	double *unnormalizedAPP = new double[_candidateOrders.size()];
-	double normalizationCt;
+// 	tVector predictedNoiselessObservation(_L);
+// 	double *unnormalizedAPP = new double[_candidateOrders.size()];
+// 	double normalizationCt;
 
     uint iChannelOrder;
 
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = 1.0/(double) _candidateOrders.size();
-
-
-	vector<tMatrix> channelMatrixEstimations(_candidateOrders.size());
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		channelMatrixEstimations[iChannelOrder] = LaGenMatDouble::zeros(_L,_N*_candidateOrders[iChannelOrder]);
+// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = 1.0/(double) _candidateOrders.size();
+//
+//
+// 	vector<tMatrix> channelMatrixEstimations(_candidateOrders.size());
+// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 		channelMatrixEstimations[iChannelOrder] = LaGenMatDouble::zeros(_L,_N*_candidateOrders[iChannelOrder]);
 
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
-		normalizationCt = 0.0;
-
-		#ifdef DEBUG8
-			cout << "i es " << i << endl;
-		#endif
+// 		normalizationCt = 0.0;
 
         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         {
@@ -101,74 +81,30 @@ vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observatio
             tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
 
-			// ------------ computations involving channel order APP -------------
-
-			tRange rSymbolVectors(i-_candidateOrders[iChannelOrder]+1,i);
-			tVector stackedSymbolVector = Util::ToVector(toProcessSequence(_allSymbolsRows,rSymbolVectors),columnwise);
-
-// 			if(iChannelOrder==3)
-// 				channelMatrixEstimations[iChannelOrder] = _canal[i];
-
-			#ifdef DEBUG8
-				cout << "la matriz de canal" << endl << channelMatrixEstimations[iChannelOrder] << endl;
-				cout << "el vect de sim apilados" << endl << stackedSymbolVector << endl;
-			#endif
-
-			// predictedNoiselessObservation = estimatedMatrices[iChannelOrder][i] * stackedSymbolVector
-			Blas_Mat_Vec_Mult(channelMatrixEstimations[iChannelOrder],stackedSymbolVector,predictedNoiselessObservation);
-// 			Blas_Mat_Vec_Mult(estimatedMatrices[iChannelOrder][i-_iFirstObservation],stackedSymbolVector,predictedNoiselessObservation);
-
-// 			cout << "channelMatrixEstimations[iChannelOrder]" << endl << channelMatrixEstimations[iChannelOrder] << endl;
-// 			cout << "estimatedMatrices[iChannelOrder][i-_iFirstObservation]" << endl << estimatedMatrices[iChannelOrder][i-_iFirstObservation] << endl;
-// 			cout << "Una tecla..."; getchar();
-
-			#ifdef DEBUG8
-				cout << "m = " << _candidateOrders[iChannelOrder] << endl;
-				cout << "observacion predecida" << endl << predictedNoiselessObservation << endl;
-				cout << "observación de verdad" << endl << observations.col(i) << endl;
-				cout << "verosimilitud " << StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]) << endl;
-				cout << "Una tecla..."; getchar();
-			#endif
-
-			unnormalizedAPP[iChannelOrder] = _trainingSequenceComputedChannelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]);
-
-			#ifdef DEBUG7
-				cout << "sin normalizar " << unnormalizedAPP[iChannelOrder] << endl;
-// 				cout << "la pdf fue " << StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]) << endl;
-			#endif
-
-			#ifdef DEBUG10
-				if(i==_iFirstObservation+trainingSequence.cols()-1)
-				{
-					cout << "----------------------------------" << endl;
-					cout << "i: " << i << endl;
-					cout << "m = " << _candidateOrders[iChannelOrder] << endl;
-					cout << "observacion predecida" << endl << predictedNoiselessObservation << endl;
-					cout << "observación de verdad" << endl << observations.col(i) << endl;
-					cout << "matriz estimada" << endl << channelMatrixEstimations[iChannelOrder] << endl;
-					cout << "pdf " << StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]) << endl;
-				}
-			#endif
-
-			channelMatrixEstimations[iChannelOrder] = estimatedMatrices[iChannelOrder][i-_iFirstObservation];
-			channelMatrixEstimations[iChannelOrder] *= _ARcoefficient;
-
-			normalizationCt += unnormalizedAPP[iChannelOrder];
+// 			// ------------ computations involving channel order APP -------------
+//
+// 			tRange rSymbolVectors(i-_candidateOrders[iChannelOrder]+1,i);
+// 			tVector stackedSymbolVector = Util::ToVector(toProcessSequence(_allSymbolsRows,rSymbolVectors),columnwise);
+//
+// 			// predictedNoiselessObservation = estimatedMatrices[iChannelOrder][i] * stackedSymbolVector
+// 			Blas_Mat_Vec_Mult(channelMatrixEstimations[iChannelOrder],stackedSymbolVector,predictedNoiselessObservation);
+//
+// 			unnormalizedAPP[iChannelOrder] = _trainingSequenceComputedChannelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]);
+//
+// 			channelMatrixEstimations[iChannelOrder] = estimatedMatrices[iChannelOrder][i-_iFirstObservation];
+// 			channelMatrixEstimations[iChannelOrder] *= _ARcoefficient;
+//
+// 			normalizationCt += unnormalizedAPP[iChannelOrder];
         }
 
-		if(normalizationCt!=0)
-        	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        	{
-        		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = unnormalizedAPP[iChannelOrder] / normalizationCt;
-        	}
+// 		if(normalizationCt!=0)
+//         	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+//         	{
+//         		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = unnormalizedAPP[iChannelOrder] / normalizationCt;
+//         	}
     }
 
-	#ifdef DEBUG9
-    for(uint i=0;i<_trainingSequenceComputedChannelOrderAPPs.size();i++)
-    	cout << "Probabilidad " << _candidateOrders[i] << " " << _trainingSequenceComputedChannelOrderAPPs[i] << endl;
-   	#endif
-
-	delete[] unnormalizedAPP;
+// 	delete[] unnormalizedAPP;
 
     return estimatedMatrices;
 }
