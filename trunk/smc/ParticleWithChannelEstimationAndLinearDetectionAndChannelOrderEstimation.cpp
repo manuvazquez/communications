@@ -17,32 +17,18 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELORDERESTIMATOR_H
-#define CHANNELORDERESTIMATOR_H
+#include "ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators), WithLinearDetectionParticleAddon(linearDetectors), WithChannelOrderEstimationParticleAddon(channelOrderEstimator)
+{
+}
 
-#include <types.h>
-#include <vector>
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle),WithChannelOrderEstimationParticleAddon(particle)
+{
+}
 
-class ChannelOrderEstimator{
-protected:
-	tMatrix _preamble;
-	std::vector<int> _candidateOrders;
-    std::vector<double> _channelOrderAPPs;
-public:
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders);
+ParticleWithChannelEstimation* ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::Clone()
+{
+    return new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(*this);
+}
 
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
-
-    virtual ~ChannelOrderEstimator() {}
-
-    virtual ChannelOrderEstimator *Clone() = 0;
-
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
-
-};
-
-#endif

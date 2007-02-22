@@ -17,31 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELORDERESTIMATOR_H
-#define CHANNELORDERESTIMATOR_H
+#ifndef WITHCHANNELORDERESTIMATIONPARTICLEADDON_H
+#define WITHCHANNELORDERESTIMATIONPARTICLEADDON_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <types.h>
-#include <vector>
 
-class ChannelOrderEstimator{
+#include <ChannelOrderEstimator.h>
+
+class WithChannelOrderEstimationParticleAddon{
 protected:
-	tMatrix _preamble;
-	std::vector<int> _candidateOrders;
-    std::vector<double> _channelOrderAPPs;
+	ChannelOrderEstimator *_channelOrderEstimator;
 public:
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders);
+    WithChannelOrderEstimationParticleAddon(ChannelOrderEstimator * channelOrderEstimator);
 
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
+    WithChannelOrderEstimationParticleAddon(const WithChannelOrderEstimationParticleAddon& withChannelOrderEstimationParticleAddon);
 
-    virtual ~ChannelOrderEstimator() {}
-
-    virtual ChannelOrderEstimator *Clone() = 0;
-
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
+    ~WithChannelOrderEstimationParticleAddon();
 
 };
 

@@ -17,31 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CHANNELORDERESTIMATOR_H
-#define CHANNELORDERESTIMATOR_H
+#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERESTIMATION_H
+#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERESTIMATION_H
+
+#include <ParticleWithChannelEstimation.h>
+#include <WithLinearDetectionParticleAddon.h>
+#include <WithChannelOrderEstimationParticleAddon.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <types.h>
-#include <vector>
-
-class ChannelOrderEstimator{
-protected:
-	tMatrix _preamble;
-	std::vector<int> _candidateOrders;
-    std::vector<double> _channelOrderAPPs;
+class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon, public WithChannelOrderEstimationParticleAddon
+{
 public:
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders);
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator);
 
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation);
 
-    virtual ~ChannelOrderEstimator() {}
-
-    virtual ChannelOrderEstimator *Clone() = 0;
-
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
+    ParticleWithChannelEstimation* Clone();
 
 };
 
