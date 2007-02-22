@@ -29,21 +29,24 @@
 
 class ChannelOrderEstimator{
 protected:
+	int _N;
 	tMatrix _preamble;
 	std::vector<int> _candidateOrders;
     std::vector<double> _channelOrderAPPs;
 public:
-    ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders);
+    ChannelOrderEstimator(int N, const tMatrix &preamble, std::vector<int> candidateOrders);
 
     ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
 
     virtual ~ChannelOrderEstimator() {}
 
-    double GetAPP(int n) {return _channelOrderAPPs[n];}
+    double GetChannelOrderAPP(int n) {return _channelOrderAPPs[n];}
 
     virtual ChannelOrderEstimator *Clone() = 0;
 
-	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;
+	virtual void Update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolsVector,double noiseVariance)=0;
+
+	virtual std::vector<double> ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors)=0;
 
 };
 

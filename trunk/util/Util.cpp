@@ -311,7 +311,7 @@ template int Util::Sum(const std::vector<int> &vector);
 void Util::ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)
 {
 	if(A.rows()!=B.rows() || A.cols()!=B.cols())
-		throw RuntimeException("ElementByElementDiv: Matrices can't be divided element by element.");
+		throw RuntimeException("Util::ElementByElementDiv: Matrices can't be divided element by element.");
 
 	int j;
 	for(int i=0;i<A.rows();i++)
@@ -328,3 +328,12 @@ template<class T> void Util::Print(const std::vector<T> &vector)
 }
 template void Util::Print(const std::vector<int> &vector);
 template void Util::Print(const std::vector<double> &vector);
+
+void Util::ShiftUp(tVector &v,int n)
+{
+	if(n>=v.size())
+		throw RuntimeException("Util::ShiftUp: vector is too short for this shift.");
+
+	for(int i=0;i<v.size()-n;i++)
+		v(i) = v(i+n);
+}

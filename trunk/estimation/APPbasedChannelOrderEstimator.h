@@ -38,14 +38,19 @@ protected:
     tRange _rAllSymbolRows;
     vector<double> _unnormalizedChannelOrderAPPs;
     double _ARcoefficient;
+    int _maxChannelOrder,_NmaxChannelOrder;
+    vector<int> _channelOrder2index;
+    tVector _symbolsVector;
 public:
-    APPbasedChannelOrderEstimator(const tMatrix& preamble, std::vector<int> candidateOrders, vector<tMatrix> initialChannelMatrixEstimations,double ARcoefficient);
+    APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders, vector<tMatrix> initialChannelMatrixEstimations,double ARcoefficient);
 
     ~APPbasedChannelOrderEstimator();
 
     virtual APPbasedChannelOrderEstimator *Clone();
 
-    virtual std::vector< double > ComputeProbabilities(const tMatrix& observations, const vector<vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors);
+    void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolsVector,double noiseVariance);
+
+    virtual std::vector<double> ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors);
 
 };
 

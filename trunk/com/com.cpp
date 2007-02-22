@@ -204,7 +204,7 @@ int main(int argc,char* argv[])
 
 
 	// channel order estimators
-	APPbasedChannelOrderEstimator *channelOrderEstimator= new APPbasedChannelOrderEstimator(preamble,candidateChannelOrders,initialChannelMatrixEstimations,ARcoefficients[0]);
+	APPbasedChannelOrderEstimator *channelOrderEstimator= new APPbasedChannelOrderEstimator(N,preamble,candidateChannelOrders,initialChannelMatrixEstimations,ARcoefficients[0]);
 
 	// the maximum of the candidate channel orders is computed
 	int maxCandidateOrder = candidateChannelOrders[0];
