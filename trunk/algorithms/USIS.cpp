@@ -47,64 +47,26 @@ vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observatio
 	// channel estimation for the training sequence is needed in order to compute the channel order APP
 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
+	// the estimated matrices are used to update the global channel order estimator
 	_trainingSequenceComputedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,trainingSequence);
 
 	Util::Print(_trainingSequenceComputedChannelOrderAPPs);
 
-// 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
-//
-// 	tVector predictedNoiselessObservation(_L);
-// 	double *unnormalizedAPP = new double[_candidateOrders.size()];
-// 	double normalizationCt;
-
     uint iChannelOrder;
-
-// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = 1.0/(double) _candidateOrders.size();
-//
-//
-// 	vector<tMatrix> channelMatrixEstimations(_candidateOrders.size());
-// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 		channelMatrixEstimations[iChannelOrder] = LaGenMatDouble::zeros(_L,_N*_candidateOrders[iChannelOrder]);
 
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
-// 		normalizationCt = 0.0;
-
         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         {
-			// ------------ computations involving linear detection -------------
-
             // the observations from i to i+d are stacked
             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
 
             tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
-
-// 			// ------------ computations involving channel order APP -------------
-//
-// 			tRange rSymbolVectors(i-_candidateOrders[iChannelOrder]+1,i);
-// 			tVector stackedSymbolVector = Util::ToVector(toProcessSequence(_allSymbolsRows,rSymbolVectors),columnwise);
-//
-// 			// predictedNoiselessObservation = estimatedMatrices[iChannelOrder][i] * stackedSymbolVector
-// 			Blas_Mat_Vec_Mult(channelMatrixEstimations[iChannelOrder],stackedSymbolVector,predictedNoiselessObservation);
-//
-// 			unnormalizedAPP[iChannelOrder] = _trainingSequenceComputedChannelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations.col(i),predictedNoiselessObservation,noiseVariances[i]);
-//
-// 			channelMatrixEstimations[iChannelOrder] = estimatedMatrices[iChannelOrder][i-_iFirstObservation];
-// 			channelMatrixEstimations[iChannelOrder] *= _ARcoefficient;
-//
-// 			normalizationCt += unnormalizedAPP[iChannelOrder];
         }
 
-// 		if(normalizationCt!=0)
-//         	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-//         	{
-//         		_trainingSequenceComputedChannelOrderAPPs[iChannelOrder] = unnormalizedAPP[iChannelOrder] / normalizationCt;
-//         	}
     }
 
-// 	delete[] unnormalizedAPP;
 
     return estimatedMatrices;
 }
@@ -143,7 +105,6 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 	// channel order APP saving
 	int iBestParticle;
-// 	_channelOrderAPPs(_candidateOrders.size(),_K);
 
 	// during the training sequence, the channel order APPs are assumed uniform
 	_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();

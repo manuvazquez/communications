@@ -39,6 +39,8 @@ public:
 
     virtual ~ChannelOrderEstimator() {}
 
+    double GetAPP(int n) {return _channelOrderAPPs[n];}
+
     virtual ChannelOrderEstimator *Clone() = 0;
 
 	virtual std::vector <double> ComputeProbabilities(const tMatrix &observations, const std::vector<std::vector<tMatrix> > channelMatrices, std::vector<double> noiseVariances,tMatrix symbolVectors)=0;

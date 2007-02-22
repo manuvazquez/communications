@@ -37,6 +37,8 @@ public:
 
     ~WithChannelOrderEstimationParticleAddon();
 
+    double GetChannelOrderAPP(int n) {return _channelOrderEstimator->GetAPP(n);}
+
 };
 
 #endif
