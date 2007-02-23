@@ -50,7 +50,21 @@ protected:
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
 
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
+    /**
+     * Constructor for allowing the algorithm to operate over a already constructed particle filter
+     * @param name
+     * @param alphabet
+     * @param L
+     * @param N
+     * @param K
+     * @param m
+     * @param channelEstimator
+     * @param preamble
+     * @param smoothingLag
+     * @param particleFilter
+     * @param resamplingAlgorithm
+     */
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
 
     ~SMCAlgorithm();
 
@@ -58,6 +72,9 @@ public:
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+
+	void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);
+
     tMatrix GetDetectedSymbolVectors();
     vector<tMatrix> GetEstimatedChannelMatrices();
 };

@@ -20,21 +20,20 @@
 #ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERESTIMATION_H
 #define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDCHANNELORDERESTIMATION_H
 
-#include <ParticleWithChannelEstimation.h>
-#include <WithLinearDetectionParticleAddon.h>
+#include <ParticleWithChannelEstimationAndLinearDetection.h>
 #include <WithChannelOrderEstimationParticleAddon.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon, public WithChannelOrderEstimationParticleAddon
+class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation : public ParticleWithChannelEstimationAndLinearDetection, public WithChannelOrderEstimationParticleAddon
 {
 public:
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator);
 
-	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation);
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particle);
 
-    ParticleWithChannelEstimation* Clone();
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* Clone();
 
 };
 

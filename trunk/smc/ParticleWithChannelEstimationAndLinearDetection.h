@@ -36,6 +36,8 @@ protected:
 public:
     ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
 
+    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
+
 	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
 
 //     ~ParticleWithChannelEstimationAndLinearDetection();

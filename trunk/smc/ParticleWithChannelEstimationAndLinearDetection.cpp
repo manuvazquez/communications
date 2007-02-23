@@ -23,6 +23,10 @@ ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAn
 {
 }
 
+ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, vector< ChannelMatrixEstimator * > channelMatrixEstimators, vector< LinearDetector * > linearDetectors):ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators),WithLinearDetectionParticleAddon(linearDetectors)
+{
+}
+
 ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle):ParticleWithChannelEstimation(particle),WithLinearDetectionParticleAddon(particle)
 {
 }

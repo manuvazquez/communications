@@ -27,6 +27,14 @@ _particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(t
     _startDetectionTime = _preamble.cols();
 }
 
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,StdResamplingAlgorithm resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
+// _variables initialization
+_particleFilter(particleFilter),_particleFilterNeedToBeDeleted(false),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0)
+{
+    // at first, we assume that all observations from the preamble need to be processed
+    _startDetectionTime = _preamble.cols();
+}
+
 SMCAlgorithm::~SMCAlgorithm()
 {
 	if(_particleFilterNeedToBeDeleted)
@@ -61,6 +69,17 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
         throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
 
     this->InitializeParticles();
+
+    this->Process(observations,noiseVariances);
+}
+
+void SMCAlgorithm::RunFrom(int n,tMatrix observations,vector<double> noiseVariances)
+{
+    int nObservations = observations.cols();
+	_startDetectionTime = n;
+
+    if(nObservations<(_startDetectionTime+1+_d))
+        throw RuntimeException("SMCAlgorithm::RunFrom: Not enough observations.");
 
     this->Process(observations,noiseVariances);
 }
