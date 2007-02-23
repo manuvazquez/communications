@@ -33,7 +33,6 @@
 #include <LinearDetector.h>
 #include <ChannelOrderEstimator.h>
 #include <ParticleFilter.h>
-// #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h>
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h>
 #include <MIMOChannel.h>
 
@@ -54,7 +53,6 @@ protected:
     tRange _rAllObservationRows;
 	tMatrix _channelOrderAPPs;
 	tRange _rCandidateOrders;
-// 	vector<double> _trainingSequenceComputedChannelOrderAPPs;
 
 // 	const MIMOChannel &_canal;
 // 	const tMatrix &_simbolos;

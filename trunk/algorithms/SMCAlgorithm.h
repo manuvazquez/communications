@@ -48,6 +48,8 @@ protected:
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
 
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
+
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
     tMatrix GetDetectedSymbolVectors();
