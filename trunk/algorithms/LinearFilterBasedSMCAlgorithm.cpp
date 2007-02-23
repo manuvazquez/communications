@@ -35,9 +35,9 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 {
 	// memory is reserved
-	for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+	for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 	{
-		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter.Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()),iParticle);
+		_particleFilter->SetParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()),iParticle);
 	}
 }
 
@@ -88,14 +88,14 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 // 		getchar();
 
-		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter.GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 // 			// predicted channel matrices are stored in a vector in order to stack them
 
 			// matricesToStack[0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
-			Util::Add((processedParticle->GetChannelMatrixEstimator())->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
+			Util::Add((processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
 
 			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
 			{
@@ -213,14 +213,14 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
 
 			// and the estimation of the channel matrix
-			processedParticle->SetChannelMatrix(iObservationToBeProcessed, (processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),forWeightUpdateNeededSymbols(allSymbolRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed, (processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->NextMatrix(observations.col(iObservationToBeProcessed),forWeightUpdateNeededSymbols(allSymbolRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
 		}
-		_particleFilter.NormalizeWeights();
+		_particleFilter->NormalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
-            _resamplingAlgorithm.Resample(&_particleFilter);
+            _resamplingAlgorithm.Resample(_particleFilter);
 	}
 }
 

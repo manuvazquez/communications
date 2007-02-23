@@ -43,14 +43,13 @@ public:
 
     ~ParticleWithChannelEstimation();
 
-	tMatrix GetChannelMatrix(int n) { return _estimatedChannelMatrices[0][n];}
     tMatrix GetChannelMatrix(int iChannelOrder,int n) { return _estimatedChannelMatrices[iChannelOrder][n];}
 
-	void SetChannelMatrix(int n,const tMatrix &matrix) { _estimatedChannelMatrices[0][n] = matrix;}
     void SetChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix) { _estimatedChannelMatrices[iChannelOrder][n] = matrix;}
 
-	ChannelMatrixEstimator *GetChannelMatrixEstimator() { return _channelMatrixEstimators[0];}
     ChannelMatrixEstimator *GetChannelMatrixEstimator(int iChannelOrder) { return _channelMatrixEstimators[iChannelOrder];}
+
+    int NchannelMatrixEstimators() {return _channelMatrixEstimators.size();}
 
 // 	void operator=(const ParticleWithChannelEstimation &particle);
 	ParticleWithChannelEstimation *Clone();

@@ -1,10 +1,31 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
-  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="139" Type="Source" />
+ <DocsAndViews NumberOfDocuments="8" >
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
+   <View0 Encoding="" line="56" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+   <View0 Encoding="" line="43" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h" >
+   <View0 Encoding="" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/DSISoptAlgorithm.h" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+   <View0 Encoding="" line="160" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.h" >
+   <View0 Encoding="" line="51" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/smc/ParticleWithChannelEstimation.cpp" >
+   <View0 Encoding="" line="28" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/changelog" >
+   <View0 Encoding="" line="5" Type="Source" />
+  </Doc7>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>

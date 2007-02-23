@@ -35,20 +35,26 @@
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
-	ParticleFilter _particleFilter;
-// 	ResamplingCriterion _resamplingCriterion;
+	ParticleFilter *_particleFilter;
+	bool _particleFilterNeedToBeDeleted;
 	StdResamplingAlgorithm _resamplingAlgorithm;
     int _d,_startDetectionTime;
     tRange _allSymbolsRows;
 
+    // a particle contains a vector of channel estimators (and possibly linear detectors)
+    int _estimatorIndex;
+
     virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-// 	virtual void Resampling();
 
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
 
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
+
+    ~SMCAlgorithm();
+
+	void SetEstimatorIndex(int n);
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

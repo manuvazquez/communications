@@ -27,7 +27,8 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int 
 {
     _channelMatrixEstimators[0] = channelMatrixEstimator;
 
-    _estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
+//     _estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
+    _estimatedChannelMatrices = new tMatrix*[1];
     _estimatedChannelMatrices[0] = new tMatrix[_nTimeInstants];
 }
 

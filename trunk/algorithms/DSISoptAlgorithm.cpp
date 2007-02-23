@@ -54,13 +54,13 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 		#endif
 
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
-		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
 			#ifdef DEBUG
 				cout << "Particula: " << iParticle << endl;
 			#endif
 
-			ParticleWithChannelEstimation *processedParticle = _particleFilter.GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
 			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(processedParticle->GetSymbolVectors(mPrecedentColumns));
@@ -93,7 +93,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 					#endif
 
 					// a clone of the channel estimator is generated because this must not be modified
-					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator()->Clone();
+					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->Clone();
 
 					#ifdef DEBUG
 						cout << "After clonig the channel estimator." << endl;
@@ -142,18 +142,18 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator())->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-		_particleFilter.NormalizeWeights();
+		_particleFilter->NormalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 // 			Resampling();
-            _resamplingAlgorithm.Resample(&_particleFilter);
+            _resamplingAlgorithm.Resample(_particleFilter);
 
 	} // for each time instant
 }
