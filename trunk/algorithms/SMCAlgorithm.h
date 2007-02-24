@@ -64,7 +64,7 @@ public:
      * @param particleFilter
      * @param resamplingAlgorithm
      */
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
 
     ~SMCAlgorithm();
 

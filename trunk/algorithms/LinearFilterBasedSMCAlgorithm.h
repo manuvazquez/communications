@@ -40,6 +40,24 @@ class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 public:
     LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
 
+    /**
+     * Constructor for allowing the algorithm to operate over a already constructed particle filter
+     * @param name
+     * @param alphabet
+     * @param L
+     * @param N
+     * @param K
+     * @param m
+     * @param preamble
+     * @param smoothingLag
+     * @param nParticles
+     * @param resamplingAlgorithm
+     * @param ARcoefficient
+     * @param samplingVariance
+     * @param ARprocessVariance
+     */
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
+
     ~LinearFilterBasedSMCAlgorithm();
 
 protected:

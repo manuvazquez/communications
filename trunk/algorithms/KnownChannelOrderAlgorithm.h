@@ -40,6 +40,7 @@ protected:
 	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble);
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::HsToStackedH;

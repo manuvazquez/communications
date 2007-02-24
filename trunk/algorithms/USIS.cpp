@@ -322,7 +322,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		for(uint i=0;i<_candidateOrders.size();i++)
 			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
 
-		BeforeResamplingProcess();
+		BeforeResamplingProcess(observations,noiseVariances);
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))

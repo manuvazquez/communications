@@ -21,19 +21,22 @@
 #define USIS2SIS_H
 
 #include <USIS.h>
+#include <LinearFilterBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 class USIS2SIS : public USIS
 {
+protected:
+    double _threshold;
 public:
     USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
     ~USIS2SIS();
 
 protected:
-    virtual void BeforeResamplingProcess();
+    virtual void BeforeResamplingProcess(const tMatrix& observations, const vector< double > &noiseVariances);
 
 };
 

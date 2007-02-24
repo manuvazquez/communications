@@ -25,6 +25,10 @@ KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alp
         throw RuntimeException("KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm: the channel order parameter is not coherent with the channel estimator.");
 }
 
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(NULL),_m(m),_Nm(_N*m),_preamble(preamble)
+{
+}
+
 KnownChannelOrderAlgorithm::~ KnownChannelOrderAlgorithm()
 {
 	delete _channelEstimator;

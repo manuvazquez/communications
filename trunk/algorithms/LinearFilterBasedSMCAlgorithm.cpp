@@ -26,6 +26,10 @@ LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphab
 {
 }
 
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, smoothingLag, particleFilter, resamplingAlgorithm)
+,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+{
+}
 
 LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 {

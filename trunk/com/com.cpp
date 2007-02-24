@@ -69,6 +69,7 @@
 #include <UnknownChannelOrderAlgorithm.h>
 #include <ISIS.h>
 #include <USIS.h>
+#include <USIS2SIS.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -325,7 +326,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ISIS("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-            algorithms.push_back(new USIS("USIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+//             algorithms.push_back(new USIS("USIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+
+            algorithms.push_back(new USIS2SIS("USIS2SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
