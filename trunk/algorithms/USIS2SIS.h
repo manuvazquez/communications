@@ -17,22 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ChannelOrderEstimator.h"
+#ifndef USIS2SIS_H
+#define USIS2SIS_H
 
-using namespace std;
+#include <USIS.h>
 
-ChannelOrderEstimator::ChannelOrderEstimator(int N, const tMatrix &preamble, std::vector<int> candidateOrders):_N(N),_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class USIS2SIS : public USIS
 {
-}
+public:
+    USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, vector<double> channelOrderAPPs):_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
-{
-}
+    ~USIS2SIS();
 
-tVector ChannelOrderEstimator::GetChannelOrderAPPsVector()
-{
-	tVector res(_channelOrderAPPs.size());
-	for(int i=0;i<_channelOrderAPPs.size();i++)
-		res(i) = _channelOrderAPPs[i];
-	return res;
-}
+protected:
+    virtual void BeforeResamplingProcess();
+
+};
+
+#endif

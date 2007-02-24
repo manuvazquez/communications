@@ -17,22 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ChannelOrderEstimator.h"
+#include "USIS2SIS.h"
 
-using namespace std;
-
-ChannelOrderEstimator::ChannelOrderEstimator(int N, const tMatrix &preamble, std::vector<int> candidateOrders):_N(N),_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
+USIS2SIS::USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance): USIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance)
 {
 }
 
-ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, vector<double> channelOrderAPPs):_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
+
+USIS2SIS::~USIS2SIS()
 {
 }
 
-tVector ChannelOrderEstimator::GetChannelOrderAPPsVector()
+
+void USIS2SIS::BeforeResamplingProcess()
 {
-	tVector res(_channelOrderAPPs.size());
-	for(int i=0;i<_channelOrderAPPs.size();i++)
-		res(i) = _channelOrderAPPs[i];
-	return res;
+    tVector _weightedChannelOrderAPPs = LaVectorDouble::zeros(_candidateOrders.size());
+
+    for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+	{
+		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iParticle));
+
+		tVector particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPPsVector();
+		Util::Add(_weightedChannelOrderAPPs,particleChannelOrderAPPs,_weightedChannelOrderAPPs,1.0,processedParticle->GetWeight());
+	}
 }
+

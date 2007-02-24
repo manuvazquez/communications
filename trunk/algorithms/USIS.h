@@ -53,6 +53,7 @@ protected:
     tRange _rAllObservationRows;
 	tMatrix _channelOrderAPPs;
 	tRange _rCandidateOrders;
+	bool _processDoneExternally;
 
 // 	const MIMOChannel &_canal;
 // 	const tMatrix &_simbolos;
@@ -61,6 +62,9 @@ protected:
     vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+
+	virtual void BeforeResamplingProcess() {}
+
 	vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
