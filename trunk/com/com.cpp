@@ -98,9 +98,9 @@ int main(int argc,char* argv[])
 
     // GLOBAL PARAMETERS
     int nFrames = 2;
-    int L=3,N=2,K=30;
-    int trainSeqLength = 10;
-    int nParticles = 10;
+    int L=3,N=2,K=300;
+    int trainSeqLength = 30;
+    int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -304,29 +304,29 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,K+preamble.cols(),m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,K+preamble.cols(),m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,simbolosTransmitir));
 
 							// -------- One channel order per antenna ------
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,d,nParticles,algoritmoRemuestreo));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
 //
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&lmsWrapper,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&lmsWrapper,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 //
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&rlsWrapper,&rmmseDetector,preamble,d,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&rlsWrapper,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 //
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols) (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,simbolosTransmitir));
 							// ---------------------------------------------
 
 //             algorithms.push_back(new ISIS("ISIS",pam2,L,N,K+preamble.cols(),kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,simbolosTransmitir));
 
-//             algorithms.push_back(new USIS("USIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
+            algorithms.push_back(new USIS("USIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
             algorithms.push_back(new USIS2SIS("USIS2SIS",pam2,L,N,K+preamble.cols(),RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance/*,canal,simbolosTransmitir*/));
 
@@ -336,7 +336,7 @@ int main(int argc,char* argv[])
 // 				// the channel order (int) is converted to char *
 // 				sprintf(buffer,"%d",candidateChannelOrders[iChannelOrder]);
 //
-// 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,K+preamble.cols(),candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+// 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,K+preamble.cols(),candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 // 			}
 
 			// ---------------------------------------------------------------------------------

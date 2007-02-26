@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,StdResamplingAlgorithm resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
+DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm)
 {
 }
 
@@ -153,7 +153,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
 // 			Resampling();
-            _resamplingAlgorithm.Resample(_particleFilter);
+            _resamplingAlgorithm->Resample(_particleFilter);
 
 	} // for each time instant
 }

@@ -13,7 +13,6 @@
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
 - añadir simbolos para suavizado, no bits
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
-- que todos los algoritmos reciban un puntero al algoritmo de remuestreo o ninguno
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
 - añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)

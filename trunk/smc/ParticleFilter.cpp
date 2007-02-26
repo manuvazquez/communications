@@ -40,7 +40,7 @@ ParticleFilter::~ParticleFilter()
 void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
 {
 	if(resamplingIndexes.size()!=indexes.size())
-		throw RuntimeException("StdResamplingAlgorithm::Resampling: the size of the indexes vector and resampling indexes vector don't match.");
+		throw RuntimeException("ParticleFilter::KeepParticles: the size of the indexes vector and resampling indexes vector don't match.");
 
 	int nParticlesToBeResampled = indexes.size();
 

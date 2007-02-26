@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "USIS2SIS.h"
 
-#define DEBUG
+// #define DEBUG
 
 USIS2SIS::USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance): USIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_threshold(0.8)
 {
@@ -31,7 +31,7 @@ USIS2SIS::~USIS2SIS()
 }
 
 
-void USIS2SIS::BeforeResamplingProcess(const tMatrix& observations, const vector< double > &noiseVariances)
+void USIS2SIS::BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances)
 {
     tVector _weightedChannelOrderAPPs(_candidateOrders.size());
     _weightedChannelOrderAPPs = 0.0;
@@ -60,8 +60,17 @@ void USIS2SIS::BeforeResamplingProcess(const tMatrix& observations, const vector
     // if the threshold is reached
     if(_weightedChannelOrderAPPs(iMax)>_threshold)
     {
-//     LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, StdResamplingAlgorithm resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
-//         LinearFilterBasedSMCAlgorithm(_name,_alphabet,_L,_N,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,*_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
+        #ifdef DEBUG
+            cout << "Pasa del umbral: " << endl;
+            cout << "La probabilidad más alta es la " << iMax << endl;
+        #endif
+
+        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_L,_N,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
+
+        knownChannelOrderAlgorithm.SetEstimatorIndex(iMax);
+        knownChannelOrderAlgorithm.RunFrom(iProcessedObservation,observations,noiseVariances);
+        _processDoneExternally = true;
+        return;
     }
 }
 

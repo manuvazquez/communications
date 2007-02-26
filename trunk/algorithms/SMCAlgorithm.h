@@ -28,7 +28,7 @@
 
 #include <ParticleFilter.h>
 #include <ResamplingCriterion.h>
-#include <StdResamplingAlgorithm.h>
+#include <ResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <ParticleWithChannelEstimation.h>
 
@@ -37,7 +37,7 @@ class SMCAlgorithm : public KnownChannelOrderAlgorithm
 protected:
 	ParticleFilter *_particleFilter;
 	bool _particleFilterNeedToBeDeleted;
-	StdResamplingAlgorithm _resamplingAlgorithm;
+	ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionTime;
     tRange _allSymbolsRows;
 
@@ -48,7 +48,7 @@ protected:
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 
 public:
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,StdResamplingAlgorithm resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
     /**
      * Constructor for allowing the algorithm to operate over a already constructed particle filter
@@ -64,7 +64,7 @@ public:
      * @param particleFilter
      * @param resamplingAlgorithm
      */
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,StdResamplingAlgorithm resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm);
 
     ~SMCAlgorithm();
 

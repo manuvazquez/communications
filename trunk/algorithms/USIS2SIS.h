@@ -36,7 +36,7 @@ public:
     ~USIS2SIS();
 
 protected:
-    virtual void BeforeResamplingProcess(const tMatrix& observations, const vector< double > &noiseVariances);
+    virtual void BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances);
 
 };
 

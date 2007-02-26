@@ -63,7 +63,7 @@ protected:
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
-	virtual void BeforeResamplingProcess(const tMatrix& observations, const vector< double > &noiseVariances) {}
+	virtual void BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances) {}
 
 	vector<tMatrix> GetEstimatedChannelMatrices();
 };
