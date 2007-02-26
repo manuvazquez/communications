@@ -61,7 +61,11 @@ void RMMSEDetector::StateStep(tVector observations)
 tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)
 {
 	if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
-		throw RuntimeException("observations vector or channel matrix dimensions are wrong.");
+	{
+		cout << "channel matrix:" << endl << channelMatrix << endl;
+		cout << "channelMatrix.rows(): " << channelMatrix.rows() << " channelMatrix.cols(): " << channelMatrix.cols() << endl;
+		throw RuntimeException("RMMSEDetector::Detect: observations vector or channel matrix dimensions are wrong.");
+	}
 
 	// the inverse of the observations correlation matrix is updated
 	this->StateStep(observations);

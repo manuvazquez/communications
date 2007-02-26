@@ -119,14 +119,14 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 			// the estimated stacked channel matrix is used to obtain soft estimations
 			// of the transmitted symbols
-			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector(_estimatorIndex))->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 
 			#ifdef DEBUG2
 				cout << "softEstimations" << endl << softEstimations << endl;
 			#endif
 
 // 			tMatrix filter = _particlesLinearDetectors[iParticle]->ComputedFilter();
-			tMatrix filter = (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector())->ComputedFilter();
+			tMatrix filter = (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector(_estimatorIndex))->ComputedFilter();
 
 			// operations needed to computed the sampling variance
 

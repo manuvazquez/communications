@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>algorithms/libalgorithms.a</activetarget>
+      <activetarget>algorithms/USIS2SIS/libUSIS2SIS.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>
@@ -32,7 +32,7 @@
       <directoryradio>executable</directoryradio>
       <runarguments>
         <comunicaciones/>
-        <com/>
+        <com></com>
       </runarguments>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -43,6 +43,12 @@
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
+      <debugarguments>
+        <com></com>
+      </debugarguments>
+      <cwd>
+        <com>/home/manu/c++/comunicaciones/optimized/./algorithms</com>
+      </cwd>
     </run>
     <configurations>
       <optimized>

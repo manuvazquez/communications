@@ -17,32 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
-#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
+#include "UniformRelatedCriterion.h"
 
-#include <ParticleWithChannelEstimation.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <LinearDetector.h>
-#include <WithLinearDetectionParticleAddon.h>
-
-class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon
+UniformRelatedCriterion::UniformRelatedCriterion(double ratio):_ratio(ratio)
 {
-protected:
-// 	LinearDetector *_linearDetector;
-public:
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
+}
 
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
+bool UniformRelatedCriterion::MakeTransition(tVector channelOrderAPPs)
+{
+	double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
 
-	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
+	int iMax;
+    Util::Max(channelOrderAPPs,iMax);
 
+    return (channelOrderAPPs(iMax)>(_ratio*uniformProbability));
+}
 
-	ParticleWithChannelEstimationAndLinearDetection *Clone();
-
-};
-
-#endif

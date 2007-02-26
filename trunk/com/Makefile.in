@@ -51,15 +51,16 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS)
 am_com_OBJECTS = com.$(OBJEXT)
 com_OBJECTS = $(am_com_OBJECTS)
-com_DEPENDENCIES = $(top_builddir)/estimation/libestimation.a \
-	$(top_builddir)/transmision/libtransmision.a \
-	$(top_builddir)/filters/libfilters.a \
+com_DEPENDENCIES = $(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a \
 	$(top_builddir)/algorithms/libalgorithms.a \
-	$(top_builddir)/smc/libsmc.a \
-	$(top_builddir)/statistics/libstatistics.a \
-	$(top_builddir)/util/libutil.a \
-	$(top_builddir)/randomutil/librandomutil.a \
 	$(top_builddir)/detection/libdetection.a \
+	$(top_builddir)/estimation/libestimation.a \
+	$(top_builddir)/filters/libfilters.a \
+	$(top_builddir)/smc/libsmc.a \
+	$(top_builddir)/transmision/libtransmision.a \
+	$(top_builddir)/util/libutil.a \
+	$(top_builddir)/statistics/libstatistics.a \
+	$(top_builddir)/randomutil/librandomutil.a \
 	/usr/lib/liblapackpp.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -178,17 +179,17 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/algorithms -I$(top_srcdir)/detection \
-	-I$(top_srcdir)/estimation -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil -I$(top_srcdir)/smc \
-	-I$(top_srcdir)/src -I$(top_srcdir)/statistics -I$(top_srcdir)/transmision \
-	-I$(top_srcdir)/util
+INCLUDES = -I$(top_srcdir)/algorithms -I$(top_srcdir)/algorithms/USIS2SIS \
+	-I$(top_srcdir)/detection -I$(top_srcdir)/estimation -I$(top_srcdir)/filters \
+	-I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src -I$(top_srcdir)/statistics \
+	-I$(top_srcdir)/transmision -I$(top_srcdir)/util
 
 METASOURCES = AUTO
-com_LDADD = $(top_builddir)/estimation/libestimation.a \
-	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/filters/libfilters.a \
-	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/smc/libsmc.a $(top_builddir)/statistics/libstatistics.a \
-	$(top_builddir)/util/libutil.a $(top_builddir)/randomutil/librandomutil.a \
-	$(top_builddir)/detection/libdetection.a /usr/lib/liblapackpp.la
+com_LDADD = $(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a \
+	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/detection/libdetection.a \
+	$(top_builddir)/estimation/libestimation.a $(top_builddir)/filters/libfilters.a $(top_builddir)/smc/libsmc.a \
+	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/util/libutil.a \
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
 
 com_SOURCES = com.cpp
 all: all-am

@@ -17,32 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
-#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
-
-#include <ParticleWithChannelEstimation.h>
+#ifndef TRANSITIONCRITERION_H
+#define TRANSITIONCRITERION_H
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <LinearDetector.h>
-#include <WithLinearDetectionParticleAddon.h>
+#include <types.h>
+#include <Util.h>
 
-class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon
-{
-protected:
-// 	LinearDetector *_linearDetector;
+class TransitionCriterion{
 public:
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
 
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
+    virtual bool MakeTransition(tVector channelOrderAPPs) = 0;
 
-	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
-
-
-	ParticleWithChannelEstimationAndLinearDetection *Clone();
-
+    virtual ~TransitionCriterion() {}
 };
 
 #endif

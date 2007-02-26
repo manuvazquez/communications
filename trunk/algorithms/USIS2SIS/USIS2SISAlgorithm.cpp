@@ -17,21 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "USIS2SIS.h"
+#include "USIS2SISAlgorithm.h"
 
 // #define DEBUG
 
-USIS2SIS::USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance): USIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_threshold(0.8)
+USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion): USIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_transitionCriterion(transitionCriterion)
 {
 }
 
 
-USIS2SIS::~USIS2SIS()
+USIS2SISAlgorithm::~USIS2SISAlgorithm()
 {
 }
 
 
-void USIS2SIS::BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances)
+void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances)
 {
     tVector _weightedChannelOrderAPPs(_candidateOrders.size());
     _weightedChannelOrderAPPs = 0.0;
@@ -58,7 +58,8 @@ void USIS2SIS::BeforeResamplingProcess(int iProcessedObservation, const tMatrix&
     #endif
 
     // if the threshold is reached
-    if(_weightedChannelOrderAPPs(iMax)>_threshold)
+//     if(_weightedChannelOrderAPPs(iMax)>_threshold)
+    if(_transitionCriterion->MakeTransition(_weightedChannelOrderAPPs))
     {
         #ifdef DEBUG
             cout << "Pasa del umbral: " << endl;

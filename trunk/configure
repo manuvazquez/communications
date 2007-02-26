@@ -19340,7 +19340,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile transmision/Makefile randomutil/Makefile statistics/Makefile util/Makefile filters/Makefile estimation/Makefile algorithms/Makefile smc/Makefile detection/Makefile com/Makefile"
+ac_config_files="$ac_config_files Makefile algorithms/Makefile algorithms/USIS2SIS/Makefile com/Makefile detection/Makefile estimation/Makefile filters/Makefile randomutil/Makefile smc/Makefile src/Makefile statistics/Makefile transmision/Makefile util/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -19928,17 +19928,18 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
-    "transmision/Makefile") CONFIG_FILES="$CONFIG_FILES transmision/Makefile" ;;
-    "randomutil/Makefile") CONFIG_FILES="$CONFIG_FILES randomutil/Makefile" ;;
-    "statistics/Makefile") CONFIG_FILES="$CONFIG_FILES statistics/Makefile" ;;
-    "util/Makefile") CONFIG_FILES="$CONFIG_FILES util/Makefile" ;;
-    "filters/Makefile") CONFIG_FILES="$CONFIG_FILES filters/Makefile" ;;
-    "estimation/Makefile") CONFIG_FILES="$CONFIG_FILES estimation/Makefile" ;;
     "algorithms/Makefile") CONFIG_FILES="$CONFIG_FILES algorithms/Makefile" ;;
-    "smc/Makefile") CONFIG_FILES="$CONFIG_FILES smc/Makefile" ;;
-    "detection/Makefile") CONFIG_FILES="$CONFIG_FILES detection/Makefile" ;;
+    "algorithms/USIS2SIS/Makefile") CONFIG_FILES="$CONFIG_FILES algorithms/USIS2SIS/Makefile" ;;
     "com/Makefile") CONFIG_FILES="$CONFIG_FILES com/Makefile" ;;
+    "detection/Makefile") CONFIG_FILES="$CONFIG_FILES detection/Makefile" ;;
+    "estimation/Makefile") CONFIG_FILES="$CONFIG_FILES estimation/Makefile" ;;
+    "filters/Makefile") CONFIG_FILES="$CONFIG_FILES filters/Makefile" ;;
+    "randomutil/Makefile") CONFIG_FILES="$CONFIG_FILES randomutil/Makefile" ;;
+    "smc/Makefile") CONFIG_FILES="$CONFIG_FILES smc/Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "statistics/Makefile") CONFIG_FILES="$CONFIG_FILES statistics/Makefile" ;;
+    "transmision/Makefile") CONFIG_FILES="$CONFIG_FILES transmision/Makefile" ;;
+    "util/Makefile") CONFIG_FILES="$CONFIG_FILES util/Makefile" ;;
 
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}

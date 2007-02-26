@@ -17,32 +17,17 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
-#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
+#include "MaximumProbabilityCriterion.h"
 
-#include <ParticleWithChannelEstimation.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <LinearDetector.h>
-#include <WithLinearDetectionParticleAddon.h>
-
-class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon
+MaximumProbabilityCriterion::MaximumProbabilityCriterion(double threshold): TransitionCriterion(),_threshold(threshold)
 {
-protected:
-// 	LinearDetector *_linearDetector;
-public:
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
+}
 
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
+bool MaximumProbabilityCriterion::MakeTransition(tVector channelOrderAPPs)
+{
+    int iMax;
+    Util::Max(channelOrderAPPs,iMax);
 
-	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
+    return (channelOrderAPPs(iMax)>_threshold);
+}
 
-
-	ParticleWithChannelEstimationAndLinearDetection *Clone();
-
-};
-
-#endif

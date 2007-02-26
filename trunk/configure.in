@@ -7,4 +7,6 @@ AC_LANG_CPLUSPLUS
 AC_PROG_CXX
 AM_PROG_LIBTOOL
 
-AC_OUTPUT(Makefile src/Makefile transmision/Makefile randomutil/Makefile statistics/Makefile util/Makefile filters/Makefile estimation/Makefile algorithms/Makefile smc/Makefile detection/Makefile com/Makefile)
+AC_OUTPUT(Makefile algorithms/Makefile algorithms/USIS2SIS/Makefile com/Makefile \
+	detection/Makefile estimation/Makefile filters/Makefile randomutil/Makefile smc/Makefile \
+	src/Makefile statistics/Makefile transmision/Makefile util/Makefile)

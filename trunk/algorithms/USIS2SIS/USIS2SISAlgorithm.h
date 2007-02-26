@@ -17,23 +17,26 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef USIS2SIS_H
-#define USIS2SIS_H
+#ifndef USIS2SISALGORITHM_H
+#define USIS2SISALGORITHM_H
 
 #include <USIS.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class USIS2SIS : public USIS
+
+#include <LinearFilterBasedSMCAlgorithm.h>
+#include <TransitionCriterion.h>
+
+class USIS2SISAlgorithm : public USIS
 {
 protected:
-    double _threshold;
+    TransitionCriterion *_transitionCriterion;
 public:
-    USIS2SIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance);
+    USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion);
 
-    ~USIS2SIS();
+    ~USIS2SISAlgorithm();
 
 protected:
     virtual void BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances);

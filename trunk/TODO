@@ -22,3 +22,4 @@
 - eliminar "_d" de MultipleChannelEstimatorsPerParticleSMCAlgorithm y sus clases derivadas
 - para calcular la overallPe y mse, hacer la división al final
 - memcpy para hacer copias de arrays (en el remuestreo por ejemplo)
+- que la función SetEstimatorIndex de SMCAlgorithm no sea pública
