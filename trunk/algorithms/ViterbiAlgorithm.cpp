@@ -26,34 +26,24 @@ ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, i
     if(preamble.cols() < (channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
 
-//     _nStates = (int)pow((double)alphabet.Length(),(double)channel.Nt()*(channel.Memory()-1));
-//     _nPossibleInputs = (int)pow((double)alphabet.Length(),(double)channel.Nt());
+    _exitStage = new ViterbiPath[_trellis.Nstates()];
+    _arrivalStage = new ViterbiPath[_trellis.Nstates()];
 
-    _exitStage = new tState[_trellis.Nstates()];
-    _arrivalStage = new tState[_trellis.Nstates()];
-
-    for(int i=0;i<_trellis.Nstates();i++)
-    {
-        _exitStage[i].sequence = NULL;
-        _exitStage[i].cost = 0.0;
-        _arrivalStage[i].sequence = NULL;
-    }
-
-//     BuildStateTransitionMatrix();
+//     for(int i=0;i<_trellis.Nstates();i++)
+//     {
+//         _exitStage[i]._detectedSequence = NULL;
+//         _exitStage[i]._cost = 0.0;
+//         _arrivalStage[i]._detectedSequence = NULL;
+//     }
 }
 
 
 ViterbiAlgorithm::~ViterbiAlgorithm()
 {
-//     for(int iState=0;iState<_nStates;iState++)
-//         delete[] _stateTransitionMatrix[iState];
-//
-//     delete[] _stateTransitionMatrix;
-
-    for(int i=0;i<_trellis.Nstates();i++)
-    {
-        delete _exitStage[i].sequence;
-    }
+//     for(int i=0;i<_trellis.Nstates();i++)
+//     {
+//         delete _exitStage[i]._detectedSequence;
+//     }
 
     delete[] _exitStage;
     delete[] _arrivalStage;
@@ -85,79 +75,63 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet"
     int initialState = _alphabet.SymbolsArrayToInt(preambleVector);
 
-    _exitStage[initialState].sequence = new tMatrix(_preamble);
+    _exitStage[initialState]._detectedSequence = new tMatrix(_preamble);
 
     for( iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
-            if(_exitStage[iState].sequence!=NULL)
+            if(_exitStage[iState]._detectedSequence!=NULL)
                 DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
-        tState *aux = _exitStage;
+        ViterbiPath *aux = _exitStage;
         _exitStage = _arrivalStage;
         _arrivalStage = aux;
 
         // the _arrivalStage (old _exitStage) gets cleaned
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
-            delete _arrivalStage[iState].sequence;
-            _arrivalStage[iState].sequence = NULL;
+            delete _arrivalStage[iState]._detectedSequence;
+            _arrivalStage[iState]._detectedSequence = NULL;
         }
     }
 
     iBestState = BestState();
 
     // the first detected vector is copied into "_detectedSymbolVectors"
-    _detectedSymbolVectors->col(_preamble.cols()).inject((_exitStage[iBestState].sequence)->col(_preamble.cols()));
+    _detectedSymbolVectors->col(_preamble.cols()).inject((_exitStage[iBestState]._detectedSequence)->col(_preamble.cols()));
 
     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
-            if(_exitStage[iState].sequence!=NULL)
+            if(_exitStage[iState]._detectedSequence!=NULL)
                 DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
-        tState *aux = _exitStage;
+        ViterbiPath *aux = _exitStage;
         _exitStage = _arrivalStage;
         _arrivalStage = aux;
 
         // the _arrivalStage (old _exitStage) gets cleaned
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
-            delete _arrivalStage[iState].sequence;
-            _arrivalStage[iState].sequence = NULL;
+            delete _arrivalStage[iState]._detectedSequence;
+            _arrivalStage[iState]._detectedSequence = NULL;
         }
 
         iBestState = BestState();
-        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1));
+        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1).inject((_exitStage[iBestState]._detectedSequence)->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1));
     }
 
     // last detected symbol vectors are processed
     for(iProcessedObservation=_K+_d-firstSymbolVectorDetectedAt+_preamble.cols()+1;iProcessedObservation<_K+_d;iProcessedObservation++)
-        _detectedSymbolVectors->col(iProcessedObservation).inject((_exitStage[iBestState].sequence)->col(iProcessedObservation));
+        _detectedSymbolVectors->col(iProcessedObservation).inject((_exitStage[iBestState]._detectedSequence)->col(iProcessedObservation));
 
 }
-
-// void ViterbiAlgorithm::BuildStateTransitionMatrix()
-// {
-//     _stateTransitionMatrix = new int*[_nStates];
-//
-//     int alphabetLengthToTheNmMinus2 = _nStates/_nPossibleInputs;
-//
-//     int iInput;
-//     for(int iState=0;iState<_nStates;iState++)
-//     {
-//         _stateTransitionMatrix[iState] = new int[_nPossibleInputs];
-//         for(iInput=0;iInput<_nPossibleInputs;iInput++)
-//             // computes de next state give the current one and the input (both in decimal)
-//             _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
-//     }
-// }
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
 {
@@ -172,13 +146,13 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     tVector computedObservations(channel.Nr()),error(channel.Nr());
 
 
-    int sequenceLength = (_exitStage[iState].sequence)->cols();
+    int sequenceLength = (_exitStage[iState]._detectedSequence)->cols();
 
     // "symbolVectors" will contain all the symbols involved in the current observation
     tMatrix symbolVectors(channel.Nt(),channel.Memory());
 
     // the already detected symbols vectors in the sequence are copied into "symbolVectors"
-    symbolVectors(rAllSymbolRows,rmMinus1FirstColumns).inject((*(_exitStage[iState].sequence))(rAllSymbolRows,tRange(sequenceLength-channel.Memory()+1,sequenceLength-1)));
+    symbolVectors(rAllSymbolRows,rmMinus1FirstColumns).inject((*(_exitStage[iState]._detectedSequence))(rAllSymbolRows,tRange(sequenceLength-channel.Memory()+1,sequenceLength-1)));
 
     tRange rOldSymbolVectors(0,sequenceLength-1);
 
@@ -201,51 +175,59 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         // error = observations - computedObservations
         Util::Add(observations,computedObservations,error,1.0,-1.0);
 
-        newCost = _exitStage[iState].cost + Blas_Dot_Prod(error,error);
+        newCost = _exitStage[iState]._cost + Blas_Dot_Prod(error,error);
 
-//         arrivalState = _stateTransitionMatrix[iState][iInput];
         arrivalState = _trellis(iState,iInput);
 
-        // if there is something in the arrival state
-        if(_arrivalStage[arrivalState].sequence!=NULL)
-        {
-            // if the new cost is smaller
-            if(_arrivalStage[arrivalState].cost > newCost)
-            {
-                // the pointer that will be overwritten is kept in order to free its memory
-                tMatrix *aux = _arrivalStage[arrivalState].sequence;
+		// if there is nothing in the arrival state
+		if((_arrivalStage[arrivalState]._detectedSequence==NULL) ||
+			// or there is a path whose cost is greater
+			(_arrivalStage[arrivalState]._cost > newCost))
+				// the ViterbiPath object at the arrival state is updated with that from the exit stage, the
+				// new symbol vector, and the new cost
+				_arrivalStage[arrivalState].Update(_exitStage[iState],symbolVectors.col(channel.Memory()-1),newCost);
 
-                // memory for the new matrix is reserved: it will have one more column
-                _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
-
-                // the old symbol vectors are stored in the new matrix
-                (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState].sequence));
-
-                // the new one is copied
-                (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
-
-                // the cost is updated
-                _arrivalStage[arrivalState].cost = newCost;
-
-                // memory release
-                delete aux;
-            } // if(_arrivalStage[arrivalState].cost > newCost)
-        } // if(_arrivalStage[arrivalState].sequence!=NULL)
-        else
-        {
-            // memory for the new matrix is reserved: it will have one more column
-            _arrivalStage[arrivalState].sequence = new tMatrix(channel.Nt(),sequenceLength+1);
-
-            // the old symbol vectors are stored in the new matrix
-            (*(_arrivalStage[arrivalState].sequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState].sequence));
-
-            // the new one is copied
-            (_arrivalStage[arrivalState].sequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
-
-            // the cost is updated
-            _arrivalStage[arrivalState].cost = newCost;
-        }
-    }
+//         // if there is something in the arrival state
+//         if(_arrivalStage[arrivalState]._detectedSequence!=NULL)
+//         {
+//             // if the new cost is smaller
+//             if(_arrivalStage[arrivalState]._cost > newCost)
+//             {
+//                 // the pointer that will be overwritten is kept in order to free its memory
+// //                 tMatrix *aux = _arrivalStage[arrivalState]._detectedSequence;
+//                 delete _arrivalStage[arrivalState]._detectedSequence;
+//
+//                 // memory for the new matrix is reserved: it will have one more column
+//                 _arrivalStage[arrivalState]._detectedSequence = new tMatrix(channel.Nt(),sequenceLength+1);
+//
+//                 // the old symbol vectors are stored in the new matrix
+//                 (*(_arrivalStage[arrivalState]._detectedSequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState]._detectedSequence));
+//
+//                 // the new one is copied
+//                 (_arrivalStage[arrivalState]._detectedSequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
+//
+//                 // the cost is updated
+//                 _arrivalStage[arrivalState]._cost = newCost;
+//
+//                 // memory release
+// //                 delete aux;
+//             } // if(_arrivalStage[arrivalState]._cost > newCost)
+//         } // if(_arrivalStage[arrivalState]._detectedSequence!=NULL)
+//         else
+//         {
+//             // memory for the new matrix is reserved: it will have one more column
+//             _arrivalStage[arrivalState]._detectedSequence = new tMatrix(channel.Nt(),sequenceLength+1);
+//
+//             // the old symbol vectors are stored in the new matrix
+//             (*(_arrivalStage[arrivalState]._detectedSequence))(rAllSymbolRows,rOldSymbolVectors).inject(*(_exitStage[iState]._detectedSequence));
+//
+//             // the new one is copied
+//             (_arrivalStage[arrivalState]._detectedSequence)->col(sequenceLength).inject(symbolVectors.col(channel.Memory()-1));
+//
+//             // the cost is updated
+//             _arrivalStage[arrivalState]._cost = newCost;
+//         }
+    } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 
 }
 
@@ -257,7 +239,7 @@ tMatrix ViterbiAlgorithm::GetDetectedSymbolVectors()
 
 void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
 {
-    tState *stage;
+    ViterbiPath *stage;
     if(exitOrArrival == exitStage)
         stage = _exitStage;
     else
@@ -266,12 +248,12 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
     for(int i=0;i<_trellis.Nstates();i++)
     {
         cout << "State " << i << endl;
-        if(stage[i].sequence==NULL)
+        if(stage[i]._detectedSequence==NULL)
             cout << "Empty" << endl;
         else
         {
-            cout << "Sequence:" << endl << *(stage[i].sequence) << endl;
-            cout << "Cost: " << stage[i].cost << endl;
+            cout << "Sequence:" << endl << *(stage[i]._detectedSequence) << endl;
+            cout << "Cost: " << stage[i]._cost << endl;
         }
         cout << "------------------" << endl;
     }

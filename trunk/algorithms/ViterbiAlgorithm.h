@@ -29,6 +29,7 @@
 
 #include <math.h>
 #include <Trellis.h>
+#include <ViterbiPath.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
@@ -39,21 +40,19 @@ enum tStage {exitStage,arrivalStage};
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 protected:
-    int /*_nStates,_nPossibleInputs,*/_d;
-//     int **_stateTransitionMatrix;
+    int _d;
 	Trellis _trellis;
 
 
-    typedef struct {
-        double cost;
-        tMatrix *sequence;
-    } tState;
+//     typedef struct {
+//         double cost;
+//         tMatrix *sequence;
+//     } tState;
 
-    tState *_exitStage, *_arrivalStage;
+    ViterbiPath *_exitStage, *_arrivalStage;
     tMatrix _preamble,*_detectedSymbolVectors;
     tRange rAllSymbolRows,rmMinus1FirstColumns;
 
-    void BuildStateTransitionMatrix();
     void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
 public:
     ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
@@ -63,13 +62,13 @@ public:
     int BestState()
     {
         int bestState = 0;
-        double bestCost = _exitStage[0].cost;
+        double bestCost = _exitStage[0]._cost;
 
         for(int iState=1;iState<_trellis.Nstates();iState++)
-            if(_exitStage[iState].cost < bestCost)
+            if(_exitStage[iState]._cost < bestCost)
             {
                 bestState = iState;
-                bestCost = _exitStage[iState].cost;
+                bestCost = _exitStage[iState]._cost;
             }
         return bestState;
     }
