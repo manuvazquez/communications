@@ -28,6 +28,7 @@
 */
 
 #include <math.h>
+#include <Trellis.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
@@ -38,8 +39,10 @@ enum tStage {exitStage,arrivalStage};
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 protected:
-    int _nStates,_nPossibleInputs,_d;
-    int **_stateTransitionMatrix;
+    int /*_nStates,_nPossibleInputs,*/_d;
+//     int **_stateTransitionMatrix;
+	Trellis _trellis;
+
 
     typedef struct {
         double cost;
@@ -62,7 +65,7 @@ public:
         int bestState = 0;
         double bestCost = _exitStage[0].cost;
 
-        for(int iState=1;iState<_nStates;iState++)
+        for(int iState=1;iState<_trellis.Nstates();iState++)
             if(_exitStage[iState].cost < bestCost)
             {
                 bestState = iState;

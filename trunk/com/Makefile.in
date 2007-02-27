@@ -53,15 +53,15 @@ am_com_OBJECTS = com.$(OBJEXT)
 com_OBJECTS = $(am_com_OBJECTS)
 com_DEPENDENCIES = $(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a \
 	$(top_builddir)/algorithms/libalgorithms.a \
+	$(top_builddir)/detection/trellis/libtrellis.a \
 	$(top_builddir)/detection/libdetection.a \
 	$(top_builddir)/estimation/libestimation.a \
 	$(top_builddir)/filters/libfilters.a \
 	$(top_builddir)/smc/libsmc.a \
 	$(top_builddir)/transmision/libtransmision.a \
-	$(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a \
 	$(top_builddir)/randomutil/librandomutil.a \
-	/usr/lib/liblapackpp.la
+	$(top_builddir)/util/libutil.a /usr/lib/liblapackpp.la
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -180,16 +180,17 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 INCLUDES = -I$(top_srcdir)/algorithms -I$(top_srcdir)/algorithms/USIS2SIS \
-	-I$(top_srcdir)/detection -I$(top_srcdir)/estimation -I$(top_srcdir)/filters \
-	-I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src -I$(top_srcdir)/statistics \
-	-I$(top_srcdir)/transmision -I$(top_srcdir)/util
+	-I$(top_srcdir)/detection -I$(top_srcdir)/detection/trellis -I$(top_srcdir)/estimation \
+	-I$(top_srcdir)/filters -I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src \
+	-I$(top_srcdir)/statistics -I$(top_srcdir)/transmision -I$(top_srcdir)/util
 
 METASOURCES = AUTO
 com_LDADD = $(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a \
-	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/detection/libdetection.a \
-	$(top_builddir)/estimation/libestimation.a $(top_builddir)/filters/libfilters.a $(top_builddir)/smc/libsmc.a \
-	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/util/libutil.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
+	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/detection/trellis/libtrellis.a \
+	$(top_builddir)/detection/libdetection.a $(top_builddir)/estimation/libestimation.a \
+	$(top_builddir)/filters/libfilters.a $(top_builddir)/smc/libsmc.a \
+	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/statistics/libstatistics.a \
+	$(top_builddir)/randomutil/librandomutil.a $(top_builddir)/util/libutil.a /usr/lib/liblapackpp.la
 
 com_SOURCES = com.cpp
 all: all-am
@@ -205,9 +206,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  com/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  com/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  com/Makefile
+	  $(AUTOMAKE) --foreign  com/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

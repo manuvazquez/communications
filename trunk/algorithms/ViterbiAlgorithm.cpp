@@ -21,36 +21,36 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_d(smoothingLag),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
 {
     if(preamble.cols() < (channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
 
-    _nStates = (int)pow((double)alphabet.Length(),(double)channel.Nt()*(channel.Memory()-1));
-    _nPossibleInputs = (int)pow((double)alphabet.Length(),(double)channel.Nt());
+//     _nStates = (int)pow((double)alphabet.Length(),(double)channel.Nt()*(channel.Memory()-1));
+//     _nPossibleInputs = (int)pow((double)alphabet.Length(),(double)channel.Nt());
 
-    _exitStage = new tState[_nStates];
-    _arrivalStage = new tState[_nStates];
+    _exitStage = new tState[_trellis.Nstates()];
+    _arrivalStage = new tState[_trellis.Nstates()];
 
-    for(int i=0;i<_nStates;i++)
+    for(int i=0;i<_trellis.Nstates();i++)
     {
         _exitStage[i].sequence = NULL;
         _exitStage[i].cost = 0.0;
         _arrivalStage[i].sequence = NULL;
     }
 
-    BuildStateTransitionMatrix();
+//     BuildStateTransitionMatrix();
 }
 
 
 ViterbiAlgorithm::~ViterbiAlgorithm()
 {
-    for(int iState=0;iState<_nStates;iState++)
-        delete[] _stateTransitionMatrix[iState];
+//     for(int iState=0;iState<_nStates;iState++)
+//         delete[] _stateTransitionMatrix[iState];
+//
+//     delete[] _stateTransitionMatrix;
 
-    delete[] _stateTransitionMatrix;
-
-    for(int i=0;i<_nStates;i++)
+    for(int i=0;i<_trellis.Nstates();i++)
     {
         delete _exitStage[i].sequence;
     }
@@ -89,7 +89,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
     for( iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
-        for(iState=0;iState<_nStates;iState++)
+        for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(_exitStage[iState].sequence!=NULL)
                 DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
@@ -101,7 +101,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         _arrivalStage = aux;
 
         // the _arrivalStage (old _exitStage) gets cleaned
-        for(iState=0;iState<_nStates;iState++)
+        for(iState=0;iState<_trellis.Nstates();iState++)
         {
             delete _arrivalStage[iState].sequence;
             _arrivalStage[iState].sequence = NULL;
@@ -115,7 +115,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
-        for(iState=0;iState<_nStates;iState++)
+        for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(_exitStage[iState].sequence!=NULL)
                 DeployState(iState,observations.col(iProcessedObservation),channel[iProcessedObservation]);
@@ -127,7 +127,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         _arrivalStage = aux;
 
         // the _arrivalStage (old _exitStage) gets cleaned
-        for(iState=0;iState<_nStates;iState++)
+        for(iState=0;iState<_trellis.Nstates();iState++)
         {
             delete _arrivalStage[iState].sequence;
             _arrivalStage[iState].sequence = NULL;
@@ -143,21 +143,21 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
 }
 
-void ViterbiAlgorithm::BuildStateTransitionMatrix()
-{
-    _stateTransitionMatrix = new int*[_nStates];
-
-    int alphabetLengthToTheNmMinus2 = _nStates/_nPossibleInputs;
-
-    int iInput;
-    for(int iState=0;iState<_nStates;iState++)
-    {
-        _stateTransitionMatrix[iState] = new int[_nPossibleInputs];
-        for(iInput=0;iInput<_nPossibleInputs;iInput++)
-            // computes de next state give the current one and the input (both in decimal)
-            _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
-    }
-}
+// void ViterbiAlgorithm::BuildStateTransitionMatrix()
+// {
+//     _stateTransitionMatrix = new int*[_nStates];
+//
+//     int alphabetLengthToTheNmMinus2 = _nStates/_nPossibleInputs;
+//
+//     int iInput;
+//     for(int iState=0;iState<_nStates;iState++)
+//     {
+//         _stateTransitionMatrix[iState] = new int[_nPossibleInputs];
+//         for(iInput=0;iInput<_nPossibleInputs;iInput++)
+//             // computes de next state give the current one and the input (both in decimal)
+//             _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
+//     }
+// }
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
 {
@@ -183,7 +183,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     tRange rOldSymbolVectors(0,sequenceLength-1);
 
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_nPossibleInputs;iInput++)
+    for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
     {
         // the decimal iInput is converted to a symbol vector
         vector<tSymbol> testedVector(channel.Nt());
@@ -203,7 +203,8 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
         newCost = _exitStage[iState].cost + Blas_Dot_Prod(error,error);
 
-        arrivalState = _stateTransitionMatrix[iState][iInput];
+//         arrivalState = _stateTransitionMatrix[iState][iInput];
+        arrivalState = _trellis(iState,iInput);
 
         // if there is something in the arrival state
         if(_arrivalStage[arrivalState].sequence!=NULL)
@@ -262,7 +263,7 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
     else
         stage = _arrivalStage;
 
-    for(int i=0;i<_nStates;i++)
+    for(int i=0;i<_trellis.Nstates();i++)
     {
         cout << "State " << i << endl;
         if(stage[i].sequence==NULL)

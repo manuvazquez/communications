@@ -200,9 +200,10 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
-	-I$(top_srcdir)/filters -I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src \
-	-I$(top_srcdir)/statistics -I$(top_srcdir)/transmision -I$(top_srcdir)/util
+INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/detection/trellis \
+	-I$(top_srcdir)/estimation -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil -I$(top_srcdir)/smc \
+	-I$(top_srcdir)/src -I$(top_srcdir)/statistics -I$(top_srcdir)/transmision \
+	-I$(top_srcdir)/util
 
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
@@ -233,9 +234,9 @@ $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  algorithms/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --foreign  algorithms/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  algorithms/Makefile
+	  $(AUTOMAKE) --foreign  algorithms/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \

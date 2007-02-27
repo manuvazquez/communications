@@ -8,5 +8,6 @@ AC_PROG_CXX
 AM_PROG_LIBTOOL
 
 AC_OUTPUT(Makefile algorithms/Makefile algorithms/USIS2SIS/Makefile com/Makefile \
-	detection/Makefile estimation/Makefile filters/Makefile randomutil/Makefile smc/Makefile \
-	src/Makefile statistics/Makefile transmision/Makefile util/Makefile)
+	detection/Makefile detection/trellis/Makefile estimation/Makefile filters/Makefile \
+	randomutil/Makefile smc/Makefile src/Makefile statistics/Makefile transmision/Makefile \
+	util/Makefile)
