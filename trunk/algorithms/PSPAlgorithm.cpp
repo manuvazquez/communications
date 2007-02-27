@@ -17,36 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef VITERBIPATH_H
-#define VITERBIPATH_H
+#include "PSPAlgorithm.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)
+{
+}
 
-#include <types.h>
-#include <exceptions.h>
 
-class ViterbiPath{
-protected:
-	double _cost;
-	tMatrix *_detectedSequence;
-public:
-    ViterbiPath();
-    ViterbiPath(double cost,tMatrix initialSequence);
-    ViterbiPath(const ViterbiPath &path);
-//     ViterbiPath(const ViterbiPath &path, tVector newSymbolVector, double newCost);
-    ~ViterbiPath();
+PSPAlgorithm::~PSPAlgorithm()
+{
+}
 
-    double GetCost() const { return _cost;}
-    void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
-    bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector GetSymbolVector(int n) const { return _detectedSequence->col(n);}
 
-	void Print() const;
-	void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
-	void Ref(const ViterbiPath &path);
-	void operator=(const ViterbiPath &path);
-};
-
-#endif

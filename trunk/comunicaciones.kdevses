@@ -1,16 +1,22 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
+ <DocsAndViews NumberOfDocuments="5" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="102" Type="Source" />
+   <View0 Encoding="" line="109" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/ViterbiPath.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.h" >
+   <View0 Encoding="" line="45" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/ViterbiPath.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
+   <View0 Encoding="" line="195" Type="Source" />
   </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/ViterbiPath.h" >
+   <View0 Encoding="" line="37" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/ViterbiPath.cpp" >
+   <View0 Encoding="" line="44" Type="Source" />
+  </Doc4>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -23,20 +29,17 @@
   </kdevastyle>
   <kdevbookmarks>
    <bookmarks>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="85" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
      <mark line="559" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="58" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="85" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
-     <mark line="138" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+     <mark line="58" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
      <mark line="66" />

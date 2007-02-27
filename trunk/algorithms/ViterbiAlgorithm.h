@@ -39,16 +39,15 @@ enum tStage {exitStage,arrivalStage};
 
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
+private:
+	// decimal inputs will be converted to a symbol vector and stored in here
+	vector<tSymbol> _inputVector;
+
+	// states in decimal format will be converted to a symbol vector and stored in here
+	vector<tSymbol> _stateVector;
 protected:
     int _d;
 	Trellis _trellis;
-
-
-//     typedef struct {
-//         double cost;
-//         tMatrix *sequence;
-//     } tState;
-
     ViterbiPath *_exitStage, *_arrivalStage;
     tMatrix _preamble,*_detectedSymbolVectors;
     tRange rAllSymbolRows,rmMinus1FirstColumns;
@@ -62,13 +61,13 @@ public:
     int BestState()
     {
         int bestState = 0;
-        double bestCost = _exitStage[0]._cost;
+        double bestCost = _exitStage[0].GetCost();
 
         for(int iState=1;iState<_trellis.Nstates();iState++)
-            if(_exitStage[iState]._cost < bestCost)
+            if(_exitStage[iState].GetCost() < bestCost)
             {
                 bestState = iState;
-                bestCost = _exitStage[iState]._cost;
+                bestCost = _exitStage[iState].GetCost();
             }
         return bestState;
     }

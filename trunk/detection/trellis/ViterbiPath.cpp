@@ -23,23 +23,27 @@ ViterbiPath::ViterbiPath():_cost(0.0),_detectedSequence(NULL)
 {
 }
 
+ViterbiPath::ViterbiPath(double cost,tMatrix initialSequence):_cost(cost),_detectedSequence(new tMatrix(initialSequence))
+{
+}
+
 ViterbiPath::ViterbiPath(const ViterbiPath &path):_cost(path._cost),_detectedSequence(new tMatrix(*(path._detectedSequence)))
 {
 }
 
-ViterbiPath::ViterbiPath(const ViterbiPath &path, tVector newSymbolVector, double newCost)
-{
-	_detectedSequence = new tMatrix(path._detectedSequence->rows(),path._detectedSequence->cols()+1);
-
-	// already detected symbols are copied into the built path
-	(*_detectedSequence)(tRange(0,path._detectedSequence->rows()-1),tRange(0,path._detectedSequence->cols()-1)).inject(*(path._detectedSequence));
-
-	// and so the new one
-	_detectedSequence->col(path._detectedSequence->cols()).inject(newSymbolVector);
-
-	// the cost is updated
-	_cost = newCost;
-}
+// ViterbiPath::ViterbiPath(const ViterbiPath &path, tVector newSymbolVector, double newCost)
+// {
+// 	_detectedSequence = new tMatrix(path._detectedSequence->rows(),path._detectedSequence->cols()+1);
+//
+// 	// already detected symbols are copied into the built path
+// 	(*_detectedSequence)(tRange(0,path._detectedSequence->rows()-1),tRange(0,path._detectedSequence->cols()-1)).inject(*(path._detectedSequence));
+//
+// 	// and so the new one
+// 	_detectedSequence->col(path._detectedSequence->cols()).inject(newSymbolVector);
+//
+// 	// the cost is updated
+// 	_cost = newCost;
+// }
 
 ViterbiPath::~ViterbiPath()
 {
@@ -89,4 +93,10 @@ void ViterbiPath::operator=(const ViterbiPath &path)
 	delete aux;
 
 	_cost = path._cost;
+}
+
+void ViterbiPath::Print() const
+{
+	cout << "Sequence:" << endl << *(_detectedSequence) << endl;
+	cout << "Cost: " << _cost << endl;
 }
