@@ -24,3 +24,5 @@
 - memcpy para hacer copias de arrays (en el remuestreo por ejemplo)
 - que la función SetEstimatorIndex de SMCAlgorithm no sea pública
 - las variables _cost y _detectedSequence de ViterbiPath no sean públicas (amigas o algo así)
+- que un ChannelMatrixEstimator reciba la memoria en el constructor
+- que los algoritmos en lugar de recibir K reciban endDetection o algo así

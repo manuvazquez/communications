@@ -87,7 +87,7 @@ void SMCAlgorithm::RunFrom(int n,tMatrix observations,vector<double> noiseVarian
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
-        throw RuntimeException("Run: Observations matrix or training sequence dimensions are wrong.");
+        throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle,j;
 

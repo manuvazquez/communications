@@ -72,6 +72,7 @@
 #include <USIS2SISAlgorithm.h>
 #include <MaximumProbabilityCriterion.h>
 #include <UniformRelatedCriterion.h>
+#include <PSPAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -99,7 +100,7 @@ int main(int argc,char* argv[])
     char buffer[SPRINTF_BUFFER];
 
     // GLOBAL PARAMETERS
-    int nFrames = 2;
+    int nFrames = 1;
     int L=3,N=2,K=300;
     int trainSeqLength = 30;
     int nParticles = 30;
@@ -317,9 +318,11 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
+//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,K+preamble.cols(),canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,simbolosTransmitir));
+
+            algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,preamble,d));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));

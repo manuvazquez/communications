@@ -17,28 +17,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TRELLIS_H
-#define TRELLIS_H
+#ifndef PSPPATH_H
+#define PSPPATH_H
+
+#include <ViterbiPath.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <Alphabet.h>
-#include <math.h>
+#include <vector>
+#include <ChannelMatrixEstimator.h>
 
-class Trellis{
+class PSPPath : public ViterbiPath
+{
 protected:
-    int _nStates,_nPossibleInputs;
-    int **_stateTransitionMatrix;
+	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
+	tMatrix **_estimatedChannelMatrices;
 public:
-    Trellis(const Alphabet &alphabet, int N, int m);
+    PSPPath();
 
-    ~Trellis();
+    PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators);
 
-    int Nstates() const { return _nStates;}
-    int NpossibleInputs() const {return _nPossibleInputs;}
-    int operator ()(int state, int input) const { return _stateTransitionMatrix[state][input];}
+    PSPPath(const PSPPath &path);
+
+    ~PSPPath();
+
+    void Clean();
+    void Print() const;
+    /**
+     * Updates the current path object from another path object, plus a new symbol vector, a new cost, a new vector of ChannelMatrixEstimators, and a vector of channel matrices
+     * @param path
+     * @param newSymbolVector
+     * @param newCost
+     * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
+     * @param newChannelMatrices
+     */
+    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators,const std::vector<tMatrix> &newChannelMatrices);
+	void operator=(const PSPPath &path);
 
 };
 

@@ -20,17 +20,34 @@
 #ifndef PSPALGORITHM_H
 #define PSPALGORITHM_H
 
-#include <UnknownChannelOrderAlgorithm.h>
+#include <KnownChannelOrderAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class PSPAlgorithm : public UnknownChannelOrderAlgorithm
+
+#include <Trellis.h>
+#include <PSPPath.h>
+
+class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
+protected:
+    int _d,_startDetectionTime;
+	Trellis _trellis;
+    PSPPath *_exitStage, *_arrivalStage;
+    tMatrix *_detectedSymbolVectors;
+
+	void Process(const tMatrix &observations,vector<double> noiseVariances);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation);
+    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag);
 
     ~PSPAlgorithm();
+
+	void Run(tMatrix observations,vector<double> noiseVariances);
+	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+
+	tMatrix GetDetectedSymbolVectors();
+	std::vector<tMatrix> GetEstimatedChannelMatrices();
 
 };
 

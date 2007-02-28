@@ -29,24 +29,24 @@
 
 class ViterbiPath{
 protected:
+	int _nTimeInstants;
 	double _cost;
 	tMatrix *_detectedSequence;
 public:
     ViterbiPath();
-    ViterbiPath(double cost,tMatrix initialSequence);
+    ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence);
     ViterbiPath(const ViterbiPath &path);
-//     ViterbiPath(const ViterbiPath &path, tVector newSymbolVector, double newCost);
-    ~ViterbiPath();
+    virtual ~ViterbiPath();
 
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
     tVector GetSymbolVector(int n) const { return _detectedSequence->col(n);}
 
-	void Print() const;
+	virtual void Print() const;
 	void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
-	void Ref(const ViterbiPath &path);
-	void operator=(const ViterbiPath &path);
+	virtual void Ref(const ViterbiPath &path);
+	virtual void operator=(const ViterbiPath &path);
 };
 
 #endif

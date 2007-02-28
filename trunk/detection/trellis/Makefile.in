@@ -59,7 +59,8 @@ LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libtrellis_a_AR = $(AR) $(ARFLAGS)
 libtrellis_a_LIBADD =
-am_libtrellis_a_OBJECTS = Trellis.$(OBJEXT) ViterbiPath.$(OBJEXT)
+am_libtrellis_a_OBJECTS = PSPPath.$(OBJEXT) Trellis.$(OBJEXT) \
+	ViterbiPath.$(OBJEXT)
 libtrellis_a_OBJECTS = $(am_libtrellis_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -179,11 +180,13 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-INCLUDES = -I$(top_srcdir)/src -I$(top_srcdir)/transmision -I$(top_srcdir)/util
+INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/src \
+	-I$(top_srcdir)/transmision -I$(top_srcdir)/util
+
 METASOURCES = AUTO
 lib_LIBRARIES = libtrellis.a
-noinst_HEADERS = Trellis.h ViterbiPath.h
-libtrellis_a_SOURCES = Trellis.cpp ViterbiPath.cpp
+noinst_HEADERS = PSPPath.h Trellis.h ViterbiPath.h
+libtrellis_a_SOURCES = PSPPath.cpp Trellis.cpp ViterbiPath.cpp
 all: all-am
 
 .SUFFIXES:
@@ -257,6 +260,7 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPPath.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/Trellis.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ViterbiPath.Po@am__quote@
 
