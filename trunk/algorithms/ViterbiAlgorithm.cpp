@@ -66,7 +66,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
     _exitStage[initialState] = ViterbiPath(_K,0.0,_preamble);
 
-    for( iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
+    for(iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
         for(iState=0;iState<_trellis.Nstates();iState++)
         {

@@ -31,15 +31,26 @@
 
 class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
+private:
+	// decimal inputs will be converted to a symbol vector and stored in here
+	vector<tSymbol> _inputVector;
+
+	// states in decimal format will be converted to a symbol vector and stored in here
+	vector<tSymbol> _stateVector;
+
+	int BestState();
 protected:
     int _d,_startDetectionTime;
 	Trellis _trellis;
     PSPPath *_exitStage, *_arrivalStage;
     tMatrix *_detectedSymbolVectors;
+	int _firstSymbolVectorDetectedAt;
+	double _ARcoefficient;
 
 	void Process(const tMatrix &observations,vector<double> noiseVariances);
+	void DeployState(int iState,const tVector &observations, double noiseVariance);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag);
+    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient);
 
     ~PSPAlgorithm();
 

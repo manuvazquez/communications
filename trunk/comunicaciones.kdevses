@@ -1,28 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="7" >
+ <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="26" Type="Source" />
+   <View0 Encoding="" line="123" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-   <View0 Encoding="" line="80" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.h" >
-   <View0 Encoding="" line="41" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/PSPPath.h" >
-   <View0 Encoding="" line="35" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/detection/trellis/PSPPath.cpp" >
-   <View0 Encoding="" line="87" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
-   <View0 Encoding="" line="55" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ViterbiAlgorithm.h" >
-   <View0 Encoding="" line="51" Type="Source" />
-  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -35,26 +17,27 @@
   </kdevastyle>
   <kdevbookmarks>
    <bookmarks>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="85" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
      <mark line="559" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="58" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="85" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-     <mark line="61" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+     <mark line="58" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
      <mark line="66" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="324" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/detection/trellis/PSPPath.cpp" >
+     <mark line="125" />
+     <mark line="79" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
@@ -63,7 +46,7 @@
   </kdevsubversion>
   <kdevvalgrind>
    <executable path="" params="" />
-   <valgrind path="/usr/bin/valgrind" params="--tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --leak-check=yes" />
+   <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />
   </kdevvalgrind>

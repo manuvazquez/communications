@@ -43,6 +43,7 @@ public:
 
     ~PSPPath();
 
+	ChannelMatrixEstimator * GetChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
     void Clean();
     void Print() const;
     /**
@@ -53,7 +54,7 @@ public:
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
      * @param newChannelMatrices
      */
-    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators,const std::vector<tMatrix> &newChannelMatrices);
+    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators/*,const std::vector<tMatrix> &newChannelMatrices*/);
 	void operator=(const PSPPath &path);
 
 };

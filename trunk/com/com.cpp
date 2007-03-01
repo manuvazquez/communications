@@ -118,8 +118,8 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(12);
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+	SNRs.push_back(3);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -322,7 +322,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,K+preamble.cols(),m,&kalmanEstimator,preamble,simbolosTransmitir));
 
-            algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,preamble,d));
+            algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,K+preamble.cols(),m,&rlsEstimator,preamble,d,K+preamble.cols()+d,ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,K+preamble.cols(),m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));

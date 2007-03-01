@@ -55,6 +55,9 @@ void ViterbiPath::Update(const ViterbiPath &path, tVector newSymbolVector, doubl
 	// the cost is updated
 	_cost = newCost;
 
+	// and
+	_nTimeInstants = path._nTimeInstants;
+
 	delete aux;
 }
 
@@ -85,6 +88,9 @@ void ViterbiPath::operator=(const ViterbiPath &path)
 
 void ViterbiPath::Print() const
 {
+	if(this->IsEmpty())
+		throw RuntimeException("ViterbiPath::Print(): Path is empty.");
+
 	cout << "Sequence:" << endl << *(_detectedSequence);
 	cout << "Cost: " << _cost << endl;
 }
