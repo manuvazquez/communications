@@ -99,6 +99,21 @@ int main(int argc,char* argv[])
     int d;
     char buffer[SPRINTF_BUFFER];
 
+// 	vector<double> prueba;
+// 	prueba.reserve(10);
+// 	cout << "el tamaño es " << prueba.size() << endl;
+// 	prueba.push_back(0.3);
+// 	prueba.push_back(0.1);
+// 	prueba.push_back(0.5);
+// 	cout << "el tamaño es " << prueba.size() << endl;
+// 	Util::Print(prueba);
+// 	vector<double>::iterator lastElement = prueba.end();
+// 	lastElement = lastElement - 1;
+// 	prueba.erase(lastElement);
+// 	cout << "el tamaño es " << prueba.size() << endl;
+// 	Util::Print(prueba);
+// 	exit(0);
+
     // GLOBAL PARAMETERS
     int nFrames = 1;
     int L=3,N=2,K=300;

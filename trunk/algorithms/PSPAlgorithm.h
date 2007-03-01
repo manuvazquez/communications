@@ -32,6 +32,8 @@
 class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
 private:
+	tRange _rAllSymbolRows;
+private:
 	// decimal inputs will be converted to a symbol vector and stored in here
 	vector<tSymbol> _inputVector;
 
@@ -44,6 +46,7 @@ protected:
 	Trellis _trellis;
     PSPPath *_exitStage, *_arrivalStage;
     tMatrix *_detectedSymbolVectors;
+    std::vector<tMatrix> _estimatedChannelMatrices;
 	int _firstSymbolVectorDetectedAt;
 	double _ARcoefficient;
 
