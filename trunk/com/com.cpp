@@ -99,21 +99,6 @@ int main(int argc,char* argv[])
     int d;
     char buffer[SPRINTF_BUFFER];
 
-// 	vector<double> prueba;
-// 	prueba.reserve(10);
-// 	cout << "el tamaño es " << prueba.size() << endl;
-// 	prueba.push_back(0.3);
-// 	prueba.push_back(0.1);
-// 	prueba.push_back(0.5);
-// 	cout << "el tamaño es " << prueba.size() << endl;
-// 	Util::Print(prueba);
-// 	vector<double>::iterator lastElement = prueba.end();
-// 	lastElement = lastElement - 1;
-// 	prueba.erase(lastElement);
-// 	cout << "el tamaño es " << prueba.size() << endl;
-// 	Util::Print(prueba);
-// 	exit(0);
-
     // GLOBAL PARAMETERS
     int nFrames = 1;
     int L=3,N=2,K=300;
@@ -124,7 +109,7 @@ int main(int argc,char* argv[])
     int preambleLength = 10;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 2;
+    int m = 4;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -392,23 +377,6 @@ int main(int argc,char* argv[])
 				}
             }
 
-			#ifdef DEBUG
-				vector<ChannelMatrixEstimator *> RLSchannelEstimatorsCopia = RLSchannelEstimators;
-				vector<vector<tMatrix> > matricesEstimadas(candidateChannelOrders.size());
-				for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-				{
-					RLSchannelEstimatorsCopia[iChannelOrder] = RLSchannelEstimators[iChannelOrder]->Clone();
-					for(int iTiempo=preambleLength;iTiempo<preambleLength+trainSeqLength;iTiempo++)
-					{
-						matricesEstimadas[iChannelOrder].push_back(RLSchannelEstimatorsCopia[iChannelOrder]->NextMatrix(observaciones.col(iTiempo),simbolosTransmitir(tRange(0,N-1),tRange(iTiempo-candidateChannelOrders[iChannelOrder]+1,iTiempo)),ruido.Variances()[iTiempo]));
-					}
-				}
-				vector<double> estimatedChanelOrderAPPs = channelOrderEstimator->Clone()->ComputeProbabilities(observaciones,matricesEstimadas,ruido.Variances(),trainingSequence);
-				for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-               		channelOrderAPPsAfterTrainingSequence(iChannelOrder,iSNR) += estimatedChanelOrderAPPs[iChannelOrder];
-               	Util::Print(estimatedChanelOrderAPPs);
-			#endif
-
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
@@ -437,10 +405,7 @@ int main(int argc,char* argv[])
                 // Pe evolution
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 tMatrix transmittedSymbols = simbolosTransmitir(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));
-                #ifdef DEBUG2
-					cout << "simbolos detectados" << endl << detectedSymbols << endl;
-					cout << "simbolos trasmitidos" << endl << simbolosTransmitir(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1)) <<endl;
-                #endif
+
                 for(int k=0;k<K;k++)
                 	for(int iUser=0;iUser<N;iUser++)
                 		if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))

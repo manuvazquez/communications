@@ -28,12 +28,13 @@
 
 #include <Trellis.h>
 #include <PSPPath.h>
+#include <PSPPathCandidate.h>
 
 class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
 private:
 	tRange _rAllSymbolRows;
-private:
+
 	// decimal inputs will be converted to a symbol vector and stored in here
 	vector<tSymbol> _inputVector;
 
@@ -42,6 +43,7 @@ private:
 
 	int BestState();
 protected:
+
     int _d,_startDetectionTime;
 	Trellis _trellis;
     PSPPath *_exitStage, *_arrivalStage;
@@ -49,7 +51,9 @@ protected:
     std::vector<tMatrix> _estimatedChannelMatrices;
 	int _firstSymbolVectorDetectedAt;
 	double _ARcoefficient;
+	PSPPathCandidate *_bestArrivingPaths;
 
+	void ProcessOneObservation(const tVector &observations,double noiseVariance);
 	void Process(const tMatrix &observations,vector<double> noiseVariances);
 	void DeployState(int iState,const tVector &observations, double noiseVariance);
 public:
