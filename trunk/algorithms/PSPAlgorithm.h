@@ -41,17 +41,16 @@ private:
 	// states in decimal format will be converted to a symbol vector and stored in here
 	vector<tSymbol> _stateVector;
 
-	int BestState();
+	void BestPairStateSurvivor(int &bestState,int &bestSurvivor);
 protected:
-
-    int _d,_startDetectionTime;
+    int _nSurvivors,_d,_startDetectionTime;
 	Trellis _trellis;
-    PSPPath *_exitStage, *_arrivalStage;
+    PSPPath **_exitStage, **_arrivalStage;
     tMatrix *_detectedSymbolVectors;
     std::vector<tMatrix> _estimatedChannelMatrices;
 	int _firstSymbolVectorDetectedAt;
 	double _ARcoefficient;
-	PSPPathCandidate *_bestArrivingPaths;
+	PSPPathCandidate **_bestArrivingPaths;
 
 	void ProcessOneObservation(const tVector &observations,double noiseVariance);
 	void Process(const tMatrix &observations,vector<double> noiseVariances);
