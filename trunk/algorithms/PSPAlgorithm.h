@@ -42,6 +42,7 @@ private:
 	vector<tSymbol> _stateVector;
 
 	void BestPairStateSurvivor(int &bestState,int &bestSurvivor);
+    int DisposableSurvivor(int iState);
 protected:
     int _nSurvivors,_d,_startDetectionTime;
 	Trellis _trellis;
@@ -56,7 +57,7 @@ protected:
 	void Process(const tMatrix &observations,vector<double> noiseVariances);
 	void DeployState(int iState,const tVector &observations, double noiseVariance);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient);
+    PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);
 
     ~PSPAlgorithm();
 
@@ -65,6 +66,7 @@ public:
 
 	tMatrix GetDetectedSymbolVectors();
 	std::vector<tMatrix> GetEstimatedChannelMatrices();
+    void PrintState(int iState);
 
 };
 
