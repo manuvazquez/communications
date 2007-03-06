@@ -94,7 +94,6 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
 
-
     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 
     vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
@@ -106,9 +105,11 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
         //the channel estimation given by the training sequence is copied into each particle...
-        for(j=_preamble.cols();j<trainingSequenceChannelMatrices.size();j++)
+//         for(j=_preamble.cols();j<trainingSequenceChannelMatrices.size();j++)
+        for(j=_preamble.cols();j<preambleTrainingSequence.cols();j++)
         {
-            processedParticle->SetChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j]);
+//             processedParticle->SetChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j]);
+            processedParticle->SetChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
         }
 
         //... the symbols are considered detected...

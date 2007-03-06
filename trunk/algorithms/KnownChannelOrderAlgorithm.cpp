@@ -42,7 +42,8 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatri
 	if(observations.cols()<lengthToProcessSequence)
 		throw RuntimeException("KnownChannelOrderAlgorithm::ProcessTrainingSequence: insufficient number of observations.");
 
-	vector<tMatrix> estimatedMatrices(lengthToProcessSequence);
+// 	vector<tMatrix> estimatedMatrices(lengthToProcessSequence);
+	vector<tMatrix> estimatedMatrices(trainingSequence.cols());
 
 	// selects all the rows from a symbols matrix
 	tRange allSymbolRows(0,_N-1);
@@ -50,7 +51,8 @@ vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatri
 	for(int i=_preamble.cols();i<lengthToProcessSequence;i++)
 	{
 		tRange mColumns(i-_m+1,i);
-		estimatedMatrices[i] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
+// 		estimatedMatrices[i] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
+		estimatedMatrices[i-_preamble.cols()] = _channelEstimator->NextMatrix(observations.col(i),toProcessSequence(allSymbolRows,mColumns),noiseVariances[i]);
 	}
 	return estimatedMatrices;
 }

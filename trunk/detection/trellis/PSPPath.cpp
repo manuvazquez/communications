@@ -31,8 +31,10 @@ PSPPath::PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::ve
 	if(initialChannelMatrices.size()!=channelMatrixEstimators.size())
 		throw RuntimeException("PSPPath::PSPPath: channel order implied by the length of the \"initialChannelMatrices\" vector is not equal to that implied by \"channelMatrixEstimators\".");
 
-	if(initialSequence.cols()!=initialChannelMatrices[0].size())
-		throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is not equal to the number of received detected channel matrices.");
+// 	if(initialSequence.cols()!=initialChannelMatrices[0].size())
+// 		throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is not equal to the number of received detected channel matrices.");
+	if(initialChannelMatrices[0].size()>initialSequence.cols())
+		throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is less than number of received detected channel matrices.");
 
 	for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<channelMatrixEstimators.size();iChannelMatrixEstimator++)
 	{
@@ -40,7 +42,9 @@ PSPPath::PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::ve
 
         _estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[_nTimeInstants];
 		for(uint i=0;i<initialChannelMatrices[iChannelMatrixEstimator].size();i++)
-			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = initialChannelMatrices[iChannelMatrixEstimator][i];
+			_estimatedChannelMatrices[iChannelMatrixEstimator][initialSequence.cols()-1-i] = initialChannelMatrices[iChannelMatrixEstimator][i];
+/*		for(uint i=0;i<initialChannelMatrices[iChannelMatrixEstimator].size();i++)
+			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = initialChannelMatrices[iChannelMatrixEstimator][i];		*/
 	}
 }
 

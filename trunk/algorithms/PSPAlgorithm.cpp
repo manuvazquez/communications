@@ -174,7 +174,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 	(*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_startDetectionTime-1)).inject(trainingSequence);
 
 	// and so the channel matrices
-	for(uint i=_preamble.cols();i<trainingSequenceChannelMatrices.size();i++)
+	for(uint i=0;i<trainingSequenceChannelMatrices.size();i++)
 		_estimatedChannelMatrices.push_back(trainingSequenceChannelMatrices[i]);
 
     // the symbols contained in the preamble are copied into a c++ vector...

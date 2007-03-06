@@ -103,14 +103,6 @@ int main(int argc,char* argv[])
     int d,lastSymbolVectorInstant;
     char buffer[SPRINTF_BUFFER];
 
-//     int holita[4];
-//     holita[0] = 1; holita[1] = 2; holita[2] = 3; holita[3] = 4;
-//     do{
-//     	for(int iPrueba=0;iPrueba<4;iPrueba++)
-//     		cout << holita[iPrueba] << " ";
-//     	cout << endl;
-//     } while(next_permutation(holita,holita+4));
-
     // GLOBAL PARAMETERS
     int nFrames = 2;
     int L=3,N=2,K=300;
@@ -208,10 +200,6 @@ int main(int argc,char* argv[])
     tRange rAllSymbolRows(0,N-1);
     tRange rTrainingSequenceSymbolVectors(preamble.cols(),preamble.cols()+trainSeqLength-1);
 
-    // the last "d" observations are used only for smoothing and don't result in any detected vector
-    tRange rSymbolVectorsToComputePe(preamble.cols()+trainSeqLength,K+preamble.cols()-1);
-//     tRange rSymbolVectorsToComputePe(100,K+preamble.cols()-1);
-
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
@@ -253,10 +241,7 @@ int main(int argc,char* argv[])
 
 	// PSP
 	if(adjustParticlesNumberFromSurvivors)
-	{
-		int nPSPstates = (int)pow((double)pam2.Length(),N*(m-1));
-		nParticles = nPSPstates*nSurvivors;
-	}
+		nParticles = (int)pow((double)pam2.Length(),N*(m-1))*nSurvivors;
 
     // matrices for results
     tMatrix overallPeMatrix;
@@ -420,7 +405,6 @@ int main(int argc,char* argv[])
 
                 pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K);
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
-//                 pe = algorithms[iAlgorithm]->SER(symbols(rAllSymbolRows,rSymbolVectorsToComputePe));
 
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
