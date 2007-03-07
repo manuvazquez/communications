@@ -243,6 +243,13 @@ int main(int argc,char* argv[])
 	if(adjustParticlesNumberFromSurvivors)
 		nParticles = (int)pow((double)pam2.Length(),N*(m-1))*nSurvivors;
 
+    // ambiguity resolution
+    uint *firstPermutation = new uint[N];
+    for(int i=0;i<N;i++) firstPermutation[i] = i;
+    vector<vector<uint> > permutations = Util::Permutations(firstPermutation,N);
+    delete[] firstPermutation;
+    tRange rAllObservationsRows(0,L-1),rLastNchannelMatrixColumns(N*m-N,N*m-1);
+
     // matrices for results
     tMatrix overallPeMatrix;
     tMatrix overallMseMatrix;
@@ -406,6 +413,26 @@ int main(int argc,char* argv[])
                 pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K);
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 
+//                 vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
+//                 int iBestPerm;
+//
+//                 tMatrix lastTrueChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+//                 tMatrix lastEstimatedChannelMatrix = canal[lastSymbolVectorInstant-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+//                 tVector aux = lastEstimatedChannelMatrix.col(1);
+//                 lastEstimatedChannelMatrix.col(1).inject(lastEstimatedChannelMatrix.col(0));
+//                 lastEstimatedChannelMatrix.col(0).inject(aux);
+//                 lastEstimatedChannelMatrix.col(0) *= -1.0;
+//                 vector<int> signs = Util::SolveAmbiguity(lastTrueChannelMatrix,lastEstimatedChannelMatrix,permutations,iBestPerm);
+//
+//                 cout << "La mejor permutacion es la " << iBestPerm << endl;
+//                 Util::Print(permutations[iBestPerm]);
+//                 cout << "Y los signos" << endl;
+//                 Util::Print(signs);
+//                 tMatrix arrangedDetectedSymbols = Util::ApplyPermutation(detectedSymbols,permutations[iBestPerm],signs);
+//                 cout << "Son iguales: " << arrangedDetectedSymbols.equal_to(detectedSymbols) << endl;
+//                 cout << "Una tecla..." << endl;
+//                 getchar();
+
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
                 // the error probability is accumulated
@@ -537,3 +564,4 @@ double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from
 
     return (double)errors/(double)(length*bits1.Nstreams());
 }
+

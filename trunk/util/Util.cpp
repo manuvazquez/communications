@@ -25,7 +25,7 @@ using namespace std;
 
 void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
-	#ifdef DEBUG
+	#ifdef DEBUG2
 		cout << "A.rows(): " << A.rows() << " A.cols(): " << A.cols() << " B.rows(): " << B.rows() << " B.cols(): " << B.cols() << endl;
 	#endif
 
@@ -298,6 +298,20 @@ template<class T> T Util::Max(const std::vector<T> &vector)
 }
 template int Util::Max(const std::vector<int> &vector);
 
+template<class T> void Util::Min(const std::vector<T> &vector,int &iMin)
+{
+    iMin = 0;
+    T min = vector[0];
+
+    for(uint i=1;i<vector.size();i++)
+        if(vector[i]<min)
+        {
+            iMin = i;
+            min = vector[i];
+        }
+}
+template void Util::Min(const std::vector<double> &vector,int &iMin);
+
 template<class T> T Util::Sum(const std::vector<T> &vector)
 {
 	T sum = vector[0];
@@ -327,6 +341,7 @@ template<class T> void Util::Print(const std::vector<T> &vector)
 	cout << vector[vector.size()-1] << "]" << endl;
 }
 template void Util::Print(const std::vector<int> &vector);
+template void Util::Print(const std::vector<uint> &vector);
 template void Util::Print(const std::vector<double> &vector);
 
 void Util::ShiftUp(tVector &v,int n)
@@ -353,3 +368,96 @@ template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
     return res;
 }
 template vector<vector<int> > Util::Permutations(int *array, int nElements);
+template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
+
+vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
+{
+    #ifdef DEBUG
+        cout << "H1" << endl << H1 << "H2" << endl << H2;
+    #endif
+
+    if(H1.rows()!=H2.rows() || H1.cols()!=H2.cols())
+    {
+        cout << "H1" << endl << H1 << "H2" << endl << H2;
+        throw RuntimeException("Util::SolveAmbiguity: matrices do not have the same dimensions.");
+    }
+
+    uint nColumns = H1.cols();
+
+    if(permutations[0].size()!=nColumns)
+        throw RuntimeException("Util::SolveAmbiguity: number of elements of the first permutations is not N.");
+
+    for(uint i=0;i<permutations[0].size();i++)
+        if(permutations[0][i]!=i)
+            throw RuntimeException("Util::SolveAmbiguity: first permutation is not correct.");
+
+    double errorWithoutChangingSign;
+    double errorChangingSign;
+    tVector errorVector(H1.rows());
+
+    vector<vector<int> > signs(permutations.size(),vector<int>(nColumns));
+    vector<double> permutationError(permutations.size(),0.0);
+
+    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    {
+        #ifdef DEBUG
+            cout << "probando permutación" << endl;
+            Print(permutations[iPermut]);
+        #endif
+
+        for(uint iCol=0;iCol<permutations[iPermut].size();iCol++)
+        {
+            tVector col1 = H1.col(iCol);
+
+            #ifdef DEBUG
+                cout << "columna de la 1ª matriz" << endl << col1;
+            #endif
+
+            // error without changing the sign
+            tVector col2 = H2.col(permutations[iPermut][iCol]);
+
+            #ifdef DEBUG
+                cout << "columna de la 2ª matriz" << endl << col2;
+            #endif
+
+            Add(col1,col2,errorVector,1.0,-1.0);
+            errorWithoutChangingSign = Blas_Dot_Prod(errorVector,errorVector);
+
+            // error changing the sign
+            Add(col1,col2,errorVector,1.0,1.0);
+            errorChangingSign = Blas_Dot_Prod(errorVector,errorVector);
+
+            if(errorChangingSign<errorWithoutChangingSign)
+            {
+                signs[iPermut][iCol] = -1;
+                permutationError[iPermut] += errorChangingSign;
+            }else
+            {
+                signs[iPermut][iCol] = 1;
+                permutationError[iPermut] += errorWithoutChangingSign;
+            }
+        }
+    }
+
+    #ifdef DEBUG
+        Print(permutationError);
+    #endif
+
+    Min(permutationError,iBestPermutation);
+    return signs[iBestPermutation];
+}
+
+tMatrix Util::ApplyPermutation(tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
+{
+    int N = symbols.rows();
+    if(permutation.size()!=N || signs.size()!=N)
+        throw RuntimeException("Util::ApplyPermutation: length of the received permutation is not N.");
+
+    tMatrix res(symbols.rows(),symbols.cols());
+    for(int i=0;i<N;i++)
+    {
+        res.row(i).inject(symbols.row(permutation[i]));
+        res.row(i) *= signs[permutation[i]];
+    }
+    return res;
+}

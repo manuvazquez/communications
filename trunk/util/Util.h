@@ -33,6 +33,7 @@
 #include <exceptions.h>
 #include "utilExceptions.h"
 #include <lapackpp/gmd.h>
+#include <lapackpp/blas1pp.h>
 
 enum tOrder {rowwise,columnwise};
 
@@ -60,11 +61,14 @@ public:
     static void StringsVectorToStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static T Max(const std::vector<T> &vector);
+    template<class T> static void Min(const std::vector<T> &vector,int &iMin);
     template<class T> static T Sum(const std::vector<T> &vector);
     static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
     template<class T> static void Print(const std::vector<T> &vector);
     static void ShiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
+    static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
+    static tMatrix ApplyPermutation(tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
 };
 
 #endif
