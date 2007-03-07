@@ -26,6 +26,7 @@
 
 #include <iomanip>
 #include <math.h>
+#include <algorithm>
 #include <vector>
 #include <fstream>
 #include <types.h>
@@ -63,6 +64,7 @@ public:
     static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
     template<class T> static void Print(const std::vector<T> &vector);
     static void ShiftUp(tVector &v,int n);
+    template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
 };
 
 #endif

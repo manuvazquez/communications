@@ -337,3 +337,19 @@ void Util::ShiftUp(tVector &v,int n)
 	for(int i=0;i<v.size()-n;i++)
 		v(i) = v(i+n);
 }
+
+template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
+{
+	vector<vector<T> > res;
+
+	int iPermut = 0;
+	do{
+		res.push_back(vector<T>(nElements));
+		for(int j=0;j<nElements;j++)
+			res[iPermut][j] = array[j];
+		iPermut++;
+    } while(next_permutation(array,array+nElements));
+
+    return res;
+}
+template vector<vector<int> > Util::Permutations(int *array, int nElements);
