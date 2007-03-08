@@ -68,7 +68,7 @@ public:
     static void ShiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
-    static tMatrix ApplyPermutation(tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
+    static tMatrix ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
 };
 
 #endif

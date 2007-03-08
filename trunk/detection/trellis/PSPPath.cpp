@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "PSPPath.h"
 
-#define DEBUG
+// #define DEBUG
 
 PSPPath::PSPPath(): ViterbiPath(),_estimatedChannelMatrices(NULL)
 {
@@ -98,7 +98,17 @@ void PSPPath::Update(const PSPPath& path, tVector newSymbolVector, double newCos
 	if(newChannelMatrixEstimators.size()!=path._channelMatrixEstimators.size())
 		throw RuntimeException("PSPPath::Update: the number of ChannelMatrixEstimator's fo the source path object and the number of the received ones differ.");
 
+    #ifdef DEBUG
+    	cout << "Antes de llamar al Update de ViterbiPath" << endl;
+    	cout << "newSymbolVector es " << endl << newSymbolVector;
+    	cout << "newCost es " << newCost << endl;
+    #endif
+
     ViterbiPath::Update(path, newSymbolVector, newCost);
+
+    #ifdef DEBUG
+    	cout << "LLamado al Update de ViterbiPath" << endl;
+    #endif
 
 	// if this object does not have the proper number of ChannelMatrixEstimator's
 	if(_channelMatrixEstimators.size()==0)

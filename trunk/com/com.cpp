@@ -118,8 +118,7 @@ int main(int argc,char* argv[])
 
     // PSP
     int nSurvivors = 2;
-//     bool adjustParticlesNumberFromSurvivors = true;
-    bool adjustParticlesNumberFromSurvivors = false;
+    bool adjustParticlesNumberFromSurvivors = true;
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 3;
@@ -241,7 +240,10 @@ int main(int argc,char* argv[])
 
 	// PSP
 	if(adjustParticlesNumberFromSurvivors)
+	{
 		nParticles = (int)pow((double)pam2.Length(),N*(m-1))*nSurvivors;
+        cout << "Number of particles adjusted to " << nParticles << endl;
+    }
 
     // ambiguity resolution
     uint *firstPermutation = new uint[N];
@@ -405,33 +407,29 @@ int main(int argc,char* argv[])
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
+                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
+                vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
 
-                pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K);
+				tMatrix withoutAmbiguityDetectedSymbols;
+
+                // if the algorithm doesn't know the channel
+                if(estimatedChannelMatrices.size()!=0)
+                {
+					tMatrix lastTrueChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+					tMatrix lastEstimatedChannelMatrix = canal[lastSymbolVectorInstant-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+
+					int iBestPerm;
+                	vector<int> signs = Util::SolveAmbiguity(lastTrueChannelMatrix,lastEstimatedChannelMatrix,permutations,iBestPerm);
+
+					withoutAmbiguityDetectedSymbols = Util::ApplyPermutation(detectedSymbols,permutations[iBestPerm],signs);
+                }else
+                	withoutAmbiguityDetectedSymbols = detectedSymbols;
+
+                pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K);
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
-
-//                 vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
-//                 int iBestPerm;
-//
-//                 tMatrix lastTrueChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1](rAllObservationsRows,rLastNchannelMatrixColumns);
-//                 tMatrix lastEstimatedChannelMatrix = canal[lastSymbolVectorInstant-1](rAllObservationsRows,rLastNchannelMatrixColumns);
-//                 tVector aux = lastEstimatedChannelMatrix.col(1);
-//                 lastEstimatedChannelMatrix.col(1).inject(lastEstimatedChannelMatrix.col(0));
-//                 lastEstimatedChannelMatrix.col(0).inject(aux);
-//                 lastEstimatedChannelMatrix.col(0) *= -1.0;
-//                 vector<int> signs = Util::SolveAmbiguity(lastTrueChannelMatrix,lastEstimatedChannelMatrix,permutations,iBestPerm);
-//
-//                 cout << "La mejor permutacion es la " << iBestPerm << endl;
-//                 Util::Print(permutations[iBestPerm]);
-//                 cout << "Y los signos" << endl;
-//                 Util::Print(signs);
-//                 tMatrix arrangedDetectedSymbols = Util::ApplyPermutation(detectedSymbols,permutations[iBestPerm],signs);
-//                 cout << "Son iguales: " << arrangedDetectedSymbols.equal_to(detectedSymbols) << endl;
-//                 cout << "Una tecla..." << endl;
-//                 getchar();
 
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
@@ -451,7 +449,6 @@ int main(int argc,char* argv[])
                 #endif
 
                 // Pe evolution
-//                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));
 
                 for(int k=0;k<K;k++)
@@ -501,6 +498,7 @@ int main(int argc,char* argv[])
         Util::ScalarToStream(K,"K",f);
         Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
         Util::ScalarToStream(nParticles,"nParticles",f);
+        Util::ScalarToStream(nSurvivors,"nSurvivors",f);
         Util::ScalarToStream(resamplingRatio,"resamplingRatio",f);
         Util::ScalarToStream(d,"d",f);
 		Util::ScalarsVectorToStream(candidateChannelOrders,"candidateOrders",f);

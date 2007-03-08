@@ -31,8 +31,8 @@ class ViterbiPath{
 protected:
 	int _nTimeInstants;
 	double _cost;
-	tMatrix *_detectedSequence;
 public:
+	tMatrix *_detectedSequence;
     ViterbiPath();
     ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence);
     ViterbiPath(const ViterbiPath &path);
@@ -41,7 +41,7 @@ public:
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector GetSymbolVector(int n) const { return _detectedSequence->col(n);}
+    tVector GetSymbolVector(int n) const { /*cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
 
 	virtual void Print() const;
 	void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);

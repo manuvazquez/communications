@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ViterbiPath.h"
 
+// #define DEBUG
+
 ViterbiPath::ViterbiPath():_nTimeInstants(0),_cost(0.0),_detectedSequence(NULL)
 {
 }
@@ -43,11 +45,26 @@ void ViterbiPath::Update(const ViterbiPath &path, tVector newSymbolVector, doubl
 
 	// the below code is safe, though
 
+	#ifdef DEBUG
+		cout << "Antes de ehhhhhhh" << endl;
+		cout << "path._detectedSequence->rows() es " << path._detectedSequence->rows() << endl;
+	#endif
+
 	tMatrix *aux = _detectedSequence;
 	_detectedSequence = new tMatrix(path._detectedSequence->rows(),path._detectedSequence->cols()+1);
 
-	// already detected symbols are copied into the new reserved matrix
-	(*_detectedSequence)(tRange(0,path._detectedSequence->rows()-1),tRange(0,path._detectedSequence->cols()-1)).inject(*(path._detectedSequence));
+	#ifdef DEBUG
+		cout << "ehhhhhhh" << endl;
+	#endif
+
+	// if the accumulated sequence is not empty
+	if(path._detectedSequence->cols()>0)
+		// already detected symbols are copied into the new reserved matrix
+		(*_detectedSequence)(tRange(0,path._detectedSequence->rows()-1),tRange(0,path._detectedSequence->cols()-1)).inject(*(path._detectedSequence));
+
+	#ifdef DEBUG
+		cout << "pasado el if>0" << endl;
+	#endif
 
 	// and so the new one
 	_detectedSequence->col(path._detectedSequence->cols()).inject(newSymbolVector);

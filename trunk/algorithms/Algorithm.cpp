@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "Algorithm.h"
 
+// #define DEBUG
+
 Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int K):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(K)
 {
 }
@@ -60,6 +62,10 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 
     vector<tMatrix> estimatedChannelMatrices = GetEstimatedChannelMatrices();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
+
+    #ifdef DEBUG
+    	cout << "recibidas: " << windowSize << ", estimadas: " << nEstimatedChannelMatrices << endl;
+    #endif
 
     // if the algorithm didn't make channel estimation
     if(nEstimatedChannelMatrices==0)

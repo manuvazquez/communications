@@ -372,7 +372,7 @@ template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
 
 vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
 {
-    #ifdef DEBUG
+    #ifdef DEBUG2
         cout << "H1" << endl << H1 << "H2" << endl << H2;
     #endif
 
@@ -400,7 +400,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
 
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
-        #ifdef DEBUG
+        #ifdef DEBUG2
             cout << "probando permutación" << endl;
             Print(permutations[iPermut]);
         #endif
@@ -409,14 +409,14 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
         {
             tVector col1 = H1.col(iCol);
 
-            #ifdef DEBUG
+            #ifdef DEBUG2
                 cout << "columna de la 1ª matriz" << endl << col1;
             #endif
 
             // error without changing the sign
             tVector col2 = H2.col(permutations[iPermut][iCol]);
 
-            #ifdef DEBUG
+            #ifdef DEBUG2
                 cout << "columna de la 2ª matriz" << endl << col2;
             #endif
 
@@ -439,7 +439,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
         }
     }
 
-    #ifdef DEBUG
+    #ifdef DEBUG2
         Print(permutationError);
     #endif
 
@@ -447,8 +447,12 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     return signs[iBestPermutation];
 }
 
-tMatrix Util::ApplyPermutation(tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
+tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {
+	#ifdef DEBUG
+		cout << "hola" << endl;
+	#endif
+
     int N = symbols.rows();
     if(permutation.size()!=N || signs.size()!=N)
         throw RuntimeException("Util::ApplyPermutation: length of the received permutation is not N.");
@@ -459,5 +463,8 @@ tMatrix Util::ApplyPermutation(tMatrix &symbols,const vector<uint> &permutation,
         res.row(i).inject(symbols.row(permutation[i]));
         res.row(i) *= signs[permutation[i]];
     }
+	#ifdef DEBUG
+		cout << "saliendo de Apply..." << endl;
+	#endif
     return res;
 }
