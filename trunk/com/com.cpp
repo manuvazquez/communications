@@ -101,12 +101,11 @@ int main(int argc,char* argv[])
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
-    char buffer[SPRINTF_BUFFER];
 
     // GLOBAL PARAMETERS
-    int nFrames = 2;
-    int L=3,N=2,K=300;
-    int trainSeqLength = 30;
+    int nFrames = 1;
+    int L=3,N=2,K=30;
+    int trainSeqLength = 10;
     int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -196,8 +195,20 @@ int main(int argc,char* argv[])
     tMatrix preamble(N,preambleLength);
     preamble = -1.0;
 
+    // some useful ranges
     tRange rAllSymbolRows(0,N-1);
-    tRange rTrainingSequenceSymbolVectors(preamble.cols(),preamble.cols()+trainSeqLength-1);
+    tRange rTrainingSequenceSymbolVectors(preambleLength,preambleLength+trainSeqLength-1);
+    tRange rAllObservationsRows(0,L-1),rLastNchannelMatrixColumns(N*m-N,N*m-1);
+
+    // variances for generating the channel coefficients
+    vector<double> subChannelMatrixVariances(m);
+    tMatrix channelCoefficientsVariances = LaGenMatDouble::ones(L,N*m);
+    for(int i=0;i<m;i++)
+    {
+//         subChannelMatrixVariances[i] = channelVariance;
+        subChannelMatrixVariances[i] = exp((i+1-m));
+        channelCoefficientsVariances(rAllObservationsRows,tRange(i*N,i*N+N-1)) *= subChannelMatrixVariances[i];
+    }
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
@@ -250,7 +261,6 @@ int main(int argc,char* argv[])
     for(int i=0;i<N;i++) firstPermutation[i] = i;
     vector<vector<uint> > permutations = Util::Permutations(firstPermutation,N);
     delete[] firstPermutation;
-    tRange rAllObservationsRows(0,L-1),rLastNchannelMatrixColumns(N*m-N,N*m-1);
 
     // matrices for results
     tMatrix overallPeMatrix;
@@ -287,8 +297,18 @@ int main(int argc,char* argv[])
 
         tMatrix trainingSequence = symbols(rAllSymbolRows,rTrainingSequenceSymbolVectors);
 
+        // ARchannel matrix intialization
+        tMatrix ARchannelInitializationMatrix(L,N*m);
+
+        // i) without any channel model
+//         ARchannelInitializationMatrix = StatUtil::RandnMatrix(L,N*m,channelMean,channelVariance);
+
+        // ii) following an ad-hoc channel model
+        for(int i=0;i<m;i++)
+            ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
+
         // an AR channel is generated
-        ARchannel canal(N,L,m,symbols.cols(),channelMean,channelVariance,ARcoefficients,ARvariance);
+        ARchannel canal(N,L,m,symbols.cols(),ARchannelInitializationMatrix,ARcoefficients,ARvariance);
 
 // 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,symbols.cols(),antennasChannelOrders,channelMean,channelVariance,ARcoefficients,ARvariance);
 
@@ -299,7 +319,8 @@ int main(int argc,char* argv[])
 		// ... and according to that m, channel estimators are constructed...
 		tMatrix initialChannelEstimation = LaGenMatDouble::zeros(L,N*m);
 
-		KalmanEstimator kalmanEstimator(initialChannelEstimation,N,ARcoefficients[0],ARvariance);
+// 		KalmanEstimator kalmanEstimator(initialChannelEstimation,N,ARcoefficients[0],ARvariance);
+        KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
 	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
 		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
 
@@ -341,11 +362,11 @@ int main(int argc,char* argv[])
 
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
+//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
-            algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+//             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm 5 supervivientes",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],5));
 
@@ -373,6 +394,9 @@ int main(int argc,char* argv[])
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 // 			{
+//
+//                 char buffer[SPRINTF_BUFFER];
+//
 // 				// the channel order (int) is converted to char *
 // 				sprintf(buffer,"%d",candidateChannelOrders[iChannelOrder]);
 //

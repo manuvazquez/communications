@@ -52,6 +52,7 @@ private:
 	void FillFfromSymbolsMatrix(const tVector &symbolsVector);
 public:
     KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
+    KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance);
 	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
 	~KalmanEstimator();
 

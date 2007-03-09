@@ -199,7 +199,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 			cout << "iProcessedObservation: " << iProcessedObservation << endl;
 		#endif
 
-		#ifdef DEBUG3º
+		#ifdef DEBUG3
 			cout << "eso: " << _exitStage[iBestState][iBestSurvivor]._detectedSequence->cols();
 		#endif
 

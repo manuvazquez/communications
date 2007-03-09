@@ -40,6 +40,20 @@ _F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoise
 	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
 }
 
+KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm),_identityL(LaGenMatDouble::eye(_L)),
+//auxiliary variables initialization
+_F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
+{
+	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
+	R *= ARcoefficient;
+	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
+	stateEquationCovariance *= ARvariance;
+	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
+    tMatrix initialCovariance = Util::DiagonalMatrix(Util::ToVector(variances,rowwise));
+
+	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
+}
+
 KalmanEstimator::KalmanEstimator(const KalmanEstimator &kalmanEstimator):ChannelMatrixEstimator(kalmanEstimator),_kalmanFilter(new KalmanFilter(*(kalmanEstimator._kalmanFilter))),_nChannelCoefficients(kalmanEstimator._nChannelCoefficients),_identityL(kalmanEstimator._identityL),_F(LaGenMatDouble::zeros(_L,_L*_Nm)),_piv(_nChannelCoefficients),_FtransInvNoiseCovariance(_nChannelCoefficients,_L),_B(_nChannelCoefficients,_nChannelCoefficients),_invPredictiveCovariancePredictiveMean(_nChannelCoefficients),_auxAuxArgExp(_nChannelCoefficients),_auxAuxArgExpInvB(_nChannelCoefficients),_observationsNoiseCovariance(_L)
 {
 }

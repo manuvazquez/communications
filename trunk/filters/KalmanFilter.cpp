@@ -25,7 +25,10 @@ _R(R),_stateEquationCovariance(stateEquationCovariance),_nElementsToEstimate(ini
 _predictiveCovarianceFtrans(_nElementsToEstimate,_observationVectorLength),_auxMatrix(_observationVectorLength,_observationVectorLength),_KalmanGain(_nElementsToEstimate,_observationVectorLength),_FpredictiveCovariance(_observationVectorLength,_nElementsToEstimate),_KalmanGainFpredictiveCovariance(_nElementsToEstimate,_nElementsToEstimate),_predictiveCovarianceAux(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate),_RfilteredCovarianceRtrans(_nElementsToEstimate,_nElementsToEstimate),_auxVector(_observationVectorLength),_KalmanGainByNotPredicted(_nElementsToEstimate),_piv(_observationVectorLength)
 {
 	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
-		throw RuntimeException("Matrices R and F dimensions are not coherent with those of the vector to be estimated.");
+		throw RuntimeException("KalmanFilter::KalmanFilter: matrices R and F dimensions are not coherent with those of the vector to be estimated.");
+
+	if(initialMean.size()!=initialCovariance.rows() || initialMean.size()!=initialCovariance.cols())
+		throw RuntimeException("KalmanFilter::KalmanFilter: the number of rows and columns of the covariance must be the number of rows of the mean.");
 
 	// _predictiveMean = _R*_filteredMean
 	Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);

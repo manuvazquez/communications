@@ -35,7 +35,7 @@ protected:
 	tMatrix* _channelMatrices;
 	ARprocess _ARproc;
 public:
-    ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
+    ARchannel(int nTx, int nRx, int memory, int length,tMatrix initializationMatrix,vector<double> ARcoefficients,double ARvariance);
 	ARchannel(const ARchannel &archannel);
 	~ARchannel();
 

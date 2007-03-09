@@ -468,3 +468,11 @@ tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permut
 	#endif
     return res;
 }
+
+tMatrix Util::DiagonalMatrix(const tVector &vector)
+{
+	tMatrix res = LaGenMatDouble::zeros(vector.size(),vector.size());
+	for(int i=0;i<vector.size();i++)
+		res(i,i) = vector(i);
+	return res;
+}

@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>detection/trellis/libtrellis.a</activetarget>
+      <activetarget>com/com</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

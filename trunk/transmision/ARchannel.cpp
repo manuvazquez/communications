@@ -21,11 +21,13 @@
 
 using namespace std;
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,double mean,double variance,vector<double> ARcoefficients,double ARvariance): StillMemoryMIMOChannel(nTx, nRx, memory, length),
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,tMatrix initializationMatrix,vector<double> ARcoefficients,double ARvariance): StillMemoryMIMOChannel(nTx, nRx, memory, length),
 //ARprocess constructor call
-_ARproc(StatUtil::RandnMatrix(nRx,nTx*memory,mean,variance),
-ARcoefficients,ARvariance)
+_ARproc(initializationMatrix,ARcoefficients,ARvariance)
 {
+	if(initializationMatrix.rows()!=nRx || initializationMatrix.cols()!=(nTx*memory))
+		throw RuntimeException("ARchannel::ARchannel: the initialization matrix dimensions are not coherent with the received parameters.");
+
 	_channelMatrices = new tMatrix[length];
 
 	//initialization
