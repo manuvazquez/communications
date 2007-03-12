@@ -301,11 +301,11 @@ int main(int argc,char* argv[])
         tMatrix ARchannelInitializationMatrix(L,N*m);
 
         // i) without any channel model
-//         ARchannelInitializationMatrix = StatUtil::RandnMatrix(L,N*m,channelMean,channelVariance);
+        ARchannelInitializationMatrix = StatUtil::RandnMatrix(L,N*m,channelMean,channelVariance);
 
         // ii) following an ad-hoc channel model
-        for(int i=0;i<m;i++)
-            ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
+//         for(int i=0;i<m;i++)
+//             ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
 
         // an AR channel is generated
         ARchannel canal(N,L,m,symbols.cols(),ARchannelInitializationMatrix,ARcoefficients,ARvariance);

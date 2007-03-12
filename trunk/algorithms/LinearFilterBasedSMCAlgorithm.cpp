@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedSMCAlgorithm.h"
 
-// #define DEBUG2
+// #define DEBUG10
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm)
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
@@ -38,10 +38,14 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 
 void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 {
+    tRange rPreamble(0,_preamble.cols()-1);
+
 	// memory is reserved
 	for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 	{
 		_particleFilter->SetParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()),iParticle);
+
+        _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
 	}
 }
 
@@ -100,6 +104,11 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 			// matricesToStack[0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
 			Util::Add((processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
+
+            #ifdef DEBUG10
+                cout << "matricesToStack[0] vale" << endl << matricesToStack[0];
+//                 getchar();
+            #endif
 
 			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
 			{
@@ -193,6 +202,12 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// sampled symbol vector is stored for the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(allSymbolRows));
 
+
+            #ifdef DEBUG10
+                cout << alreadyDetectedSymbolVectors;
+                getchar();
+            #endif
+
 			// all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols"
 			// i) the already known:
 			forWeightUpdateNeededSymbols(allSymbolRows,range0mMinus2).inject(processedParticle->GetSymbolVectors(alreadyDetectedSymbolVectors));
@@ -206,6 +221,10 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			{
 				tRange rSymbolVectors(iSmoothing,iSmoothing+_m-1);
 				tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(allSymbolRows,rSymbolVectors),columnwise);
+
+                #ifdef DEBUG10
+                    cout << stackedSymbolVector << endl;
+                #endif
 
 				// predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
 				Blas_Mat_Vec_Mult(matricesToStack[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
@@ -240,10 +259,6 @@ vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMa
 		tVector stackedObservationsVector = Util::ToVector(observations(allObservationRows,smoothingRange),columnwise);
 		_linearDetector->StateStep(stackedObservationsVector);
 	}
-
-// 	// the resultant linear detector is copied into each particle
-// 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-// 		_particlesLinearDetectors[iParticle] = _linearDetector->Clone();
 
 	return SMCAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 }

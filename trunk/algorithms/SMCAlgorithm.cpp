@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
+// #define DEBUG10
+
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
 _particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0)
@@ -58,6 +60,12 @@ void SMCAlgorithm::InitializeParticles()
     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
         _particleFilter->SetParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone()),iParticle);
+
+        _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+
+        #ifdef DEBUG10
+            cout << "lo que acabo de meter" << endl << _particleFilter->GetParticle(iParticle)->GetSymbolVectors(tRange(0,_preamble.cols()-1));
+        #endif
     }
 }
 
@@ -69,6 +77,11 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
         throw RuntimeException("SMCAlgorithm::Run: Not enough observations.");
 
     this->InitializeParticles();
+
+//     tRange rPreamble(0,_preamble.cols()-1);
+//     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+//         //... the symbols are considered detected...
+//         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
 
     this->Process(observations,noiseVariances);
 }
@@ -90,11 +103,13 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle,j;
+    int preamblePlusTrainingSequenceLength = _preamble.cols() + trainingSequence.cols();
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
-    tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
+//     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
 
-    tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
+//     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
+    tRange rTrainingSequence(_preamble.cols(),preamblePlusTrainingSequenceLength-1);
 
     vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
@@ -105,17 +120,17 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
         //the channel estimation given by the training sequence is copied into each particle...
-        for(j=_preamble.cols();j<preambleTrainingSequence.cols();j++)
+        for(j=_preamble.cols();j<preamblePlusTrainingSequenceLength;j++)
         {
             processedParticle->SetChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
         }
 
         //... the symbols are considered detected...
-        processedParticle->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
+        processedParticle->SetSymbolVectors(rTrainingSequence,trainingSequence);
     }
 
     // the Process method must start in
-    _startDetectionTime = _preamble.cols() + trainingSequence.cols();
+    _startDetectionTime = preamblePlusTrainingSequenceLength;
 
     this->Process(observations,noiseVariances);
 }
