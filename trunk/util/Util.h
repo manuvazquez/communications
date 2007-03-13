@@ -34,6 +34,8 @@
 #include "utilExceptions.h"
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
+#include <lapackpp/sybmd.h>
+#include <lapackpp/sybfd.h>
 
 enum tOrder {rowwise,columnwise};
 
@@ -70,6 +72,7 @@ public:
     static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix DiagonalMatrix(const tVector &vector);
+    static tMatrix Cholesky(const tMatrix &matrix);
 };
 
 #endif

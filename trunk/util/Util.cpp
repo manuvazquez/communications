@@ -30,7 +30,7 @@ void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double 
 	#endif
 
 	if(A.rows()!=B.rows() || A.cols()!=B.cols())
-		throw RuntimeException("Matrices can't be added.");
+		throw RuntimeException("Util::Add: matrices can't be added.");
 
 	int i,j;
 	int rows = A.rows(), cols = A.cols();
@@ -44,7 +44,7 @@ void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double 
 	int nElements = a.size();
 
 	if(nElements!=b.size())
-		throw RuntimeException("Vectors can't be added.");
+		throw RuntimeException("Util::Add: vectors can't be added.");
 
 	for(int i=0;i<nElements;i++)
 		c(i) = alpha*a(i) + beta*b(i);
@@ -474,5 +474,27 @@ tMatrix Util::DiagonalMatrix(const tVector &vector)
 	tMatrix res = LaGenMatDouble::zeros(vector.size(),vector.size());
 	for(int i=0;i<vector.size();i++)
 		res(i,i) = vector(i);
+	return res;
+}
+
+tMatrix Util::Cholesky(const tMatrix &matrix)
+{
+	if(matrix.rows()!=matrix.cols())
+		throw RuntimeException("Util::Cholesky: matrix is not square.");
+
+	tMatrix res = LaGenMatDouble::zeros(matrix.rows(),matrix.rows());
+
+	LaSymmBandMatDouble spdMatrix(matrix.rows(),2*matrix.rows()-1);
+	for(int i=0;i<matrix.rows();i++)
+		for(int j=0;j<matrix.cols();j++)
+			spdMatrix(i,j) = matrix(i,j);
+
+	LaSymmBandMatFactorizeIP(spdMatrix);
+
+	for(int i=0;i<matrix.rows();i++)
+		for(int j=0;j<matrix.cols();j++)
+			if(j<=i)
+				res(i,j) = spdMatrix(i,j);
+
 	return res;
 }

@@ -35,6 +35,7 @@
 #include <lapackpp/blas3pp.h>
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
+#include <lapackpp/sybmd.h>
 
 class StatUtil{
 public:
@@ -46,6 +47,7 @@ public:
     static int Discrete_rnd(const tVector &probabilities);
     static vector<int> Discrete_rnd(int nSamples,const tVector &probabilities);
 	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
+	static tVector RandMatrix(const tVector &mean,const tMatrix &covariance);
 	static double NormalPdf(double x,double mean,double variance);
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
 	static double NormalPdf(const tVector &x,const tVector &mean,double variance);

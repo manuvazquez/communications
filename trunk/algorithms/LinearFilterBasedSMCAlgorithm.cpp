@@ -21,7 +21,7 @@
 
 // #define DEBUG10
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 {
 }
@@ -75,26 +75,18 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		// the stacked observations vector
 		tVector stackedObservations = Util::ToVector(observations(allObservationsRows,smoothingRange),columnwise);
 
-// 		cout << "La varianza dentro del filtro (" << iObservationToBeProcessed << ") " << noiseVariances[iObservationToBeProcessed] << endl;
-
 		// stacked noise covariance needs to be constructed
 		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*(_d+1),_L*(_d+1));
 		for(iSmoothing=0;iSmoothing<_d+1;iSmoothing++)
 			for(iRow=0;iRow<_L;iRow++)
 				stackedNoiseCovariance(iSmoothing*_L+iRow,iSmoothing*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
-// 		cout << "la megamatriz de covarianza" << endl << stackedNoiseCovariance << endl;
-
 		// required noise covariances are computed from the noise variances
 		for(iSmoothing=0;iSmoothing<=_d;iSmoothing++)
 		{
 			noiseCovariances[iSmoothing] = LaGenMatDouble::eye(_L);
 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
-
-// 			cout << noiseCovariances[iSmoothing] << endl;
 		}
-
-// 		getchar();
 
 		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
@@ -107,7 +99,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
             #ifdef DEBUG10
                 cout << "matricesToStack[0] vale" << endl << matricesToStack[0];
-//                 getchar();
             #endif
 
 			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
@@ -124,8 +115,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				cout << "stackedNoiseCovariance" << endl << stackedNoiseCovariance << endl;
 			#endif
 
-//             tMatrix stackedChannelMatrixMinus = stackedChannelMatrix(tRange(0,_L*(_d+1)-1),tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
-
 			// the estimated stacked channel matrix is used to obtain soft estimations
 			// of the transmitted symbols
 			tVector softEstimations =  (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector(_estimatorIndex))->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
@@ -134,13 +123,11 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				cout << "softEstimations" << endl << softEstimations << endl;
 			#endif
 
-// 			tMatrix filter = _particlesLinearDetectors[iParticle]->ComputedFilter();
 			tMatrix filter = (dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (processedParticle)->GetLinearDetector(_estimatorIndex))->ComputedFilter();
 
 			// operations needed to computed the sampling variance
 
 			//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-//             Blas_Mat_Mat_Trans_Mult(stackedChannelMatrixMinus,stackedChannelMatrixMinus,s2qAux,_alphabet.Variance());
 			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
 
 
@@ -157,8 +144,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 
 				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(_m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-//                 s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrixMinus.col(iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
 				#ifdef DEBUG
 					cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
@@ -185,9 +170,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 						symbolProb(iSampledSymbol,iAlphabet) = 0.5;
 				}
-
-// 				cout << "Probabilidades resultantes" << symbolProb.row(iSampledSymbol);
-// 				getchar();
 
 				iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
@@ -253,7 +235,6 @@ vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMa
 	tRange allObservationRows(0,_L-1);
 
 	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
-// 	for(int i=_m-1;i<lengthSequenceToProcess;i++)
 	{
 		tRange smoothingRange(i,i+_d);
 		tVector stackedObservationsVector = Util::ToVector(observations(allObservationRows,smoothingRange),columnwise);

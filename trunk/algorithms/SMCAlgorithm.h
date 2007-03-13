@@ -44,11 +44,13 @@ protected:
     // a particle contains a vector of channel estimators (and possibly linear detectors)
     int _estimatorIndex;
 
+    tMatrix _channelMatrixMean,_channelMatrixVariances;
+
     virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
 
 public:
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);
 
     /**
      * Constructor for allowing the algorithm to operate over a already constructed particle filter

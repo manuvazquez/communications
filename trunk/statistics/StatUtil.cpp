@@ -109,6 +109,20 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
 	return res;
 }
 
+tVector StatUtil::RandMatrix(const tVector &mean,const tMatrix &covariance)
+{
+	if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
+		throw RuntimeException("StatUtil::RandnMatrix: dimensions of the mean or the covariance are wrong.");
+
+	tVector res(mean.size()),resWithouMean(mean.size());
+
+	tMatrix L = Util::Cholesky(covariance);
+	Blas_Mat_Vec_Mult(L,RandnMatrix(mean.size(),1,0.0,1.0),resWithouMean);
+	Util::Add(mean,resWithouMean,res);
+
+	return res;
+}
+
 double StatUtil::NormalPdf(double x,double mean,double variance)
 {
 	double distance = fabs(x - mean);

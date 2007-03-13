@@ -21,10 +21,16 @@
 
 // #define DEBUG10
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
-_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0)
+_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances)
 {
+	if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
+		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
+
+	if(channelMatrixVariances.rows()!=L || channelMatrixVariances.cols()!=(N*m))
+		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix variances dimensions are wrong.");
+
     // at first, we assume that all observations from the preamble need to be processed
     _startDetectionTime = _preamble.cols();
 }
@@ -78,10 +84,17 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
     this->InitializeParticles();
 
-//     tRange rPreamble(0,_preamble.cols()-1);
-//     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-//         //... the symbols are considered detected...
-//         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
+	tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
+	tMatrix channelCovariance = Util::DiagonalMatrix(Util::ToVector(_channelMatrixVariances,rowwise));
+
+	// the initial estimation of the particles channel matrix estimators is set
+    for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+    {
+		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+
+		// a sample of the a priori channel distribution is drawn based on the mean and the covariance
+		processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+    }
 
     this->Process(observations,noiseVariances);
 }
