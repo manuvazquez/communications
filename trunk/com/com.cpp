@@ -66,6 +66,7 @@
 
 #include <DSISoptAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
+#include <LinearFilterBasedMKFAlgorithm.h>
 #include <ViterbiAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimator.h>
 #include <UnknownChannelOrderAlgorithm.h>
@@ -100,6 +101,14 @@ double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from
 
 int main(int argc,char* argv[])
 {
+// 	tMatrix A = StatUtil::RandnMatrix(6,4,0.0,1.0);
+// 	tMatrix B(A);
+// 	tMatrix C(4,4);
+//
+// 	Blas_Mat_Trans_Mat_Mult(A,B,C);
+// 	cout << "A es" << endl << A;
+// 	cout << "Chol" << endl << Util::Cholesky(C);
+
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
@@ -363,6 +372,8 @@ int main(int argc,char* argv[])
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
+
+//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,subsequentSampledChannelMatricesVariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 

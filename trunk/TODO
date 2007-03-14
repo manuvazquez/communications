@@ -27,3 +27,4 @@
 - que los algoritmos en lugar de recibir K reciban endDetection o algo así
 - eliminar de ViterbiAlgorithm lo de "	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);"
 - en ViterbiAlgorith, que BestState() sea private
+- KalmanEstimator en NextMatrix: que use la media predictiva no la filtrada (revisar)

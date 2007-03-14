@@ -73,7 +73,8 @@ am_libalgorithms_a_OBJECTS = Algorithm.$(OBJEXT) \
 	PSPAlgorithm.$(OBJEXT) SMCAlgorithm.$(OBJEXT) USIS.$(OBJEXT) \
 	UnknownChannelAlgorithm.$(OBJEXT) \
 	UnknownChannelOrderAlgorithm.$(OBJEXT) \
-	ViterbiAlgorithm.$(OBJEXT)
+	ViterbiAlgorithm.$(OBJEXT) \
+	LinearFilterBasedMKFAlgorithm.$(OBJEXT)
 libalgorithms_a_OBJECTS = $(am_libalgorithms_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -208,15 +209,15 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/detection/trellis \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h \
-	KnownChannelOrderAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h \
-	MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h SMCAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h \
-	ViterbiAlgorithm.h
+		KnownChannelOrderAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h \
+		MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h SMCAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h \
+		ViterbiAlgorithm.h LinearFilterBasedMKFAlgorithm.h
 
 libalgorithms_a_SOURCES = Algorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
-	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
-	KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedSMCAlgorithm.cpp \
-	MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp SMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
-	UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp
+		KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
+		KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedSMCAlgorithm.cpp \
+		MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp SMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
+		UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp LinearFilterBasedMKFAlgorithm.cpp
 
 libalgorithms_a_LIBADD = $(top_builddir)/transmision/libtransmision.a \
 	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a $(top_builddir)/smc/libsmc.a
@@ -301,6 +302,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnownChannelAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnownChannelOrderAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnownSymbolsKalmanBasedChannelEstimator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LinearFilterBasedMKFAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LinearFilterBasedSMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/MultipleChannelEstimatorsPerParticleSMCAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/PSPAlgorithm.Po@am__quote@

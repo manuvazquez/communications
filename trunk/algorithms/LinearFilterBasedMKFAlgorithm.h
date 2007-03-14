@@ -17,50 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
+#ifndef LINEARFILTERBASEDMKFALGORITHM_H
+#define LINEARFILTERBASEDMKFALGORITHM_H
 
-#include <ChannelMatrixEstimator.h>
+#include <LinearFilterBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <math.h>
-#include <KalmanFilter.h>
-#include <StatUtil.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
+#include <KalmanEstimator.h>
 
-class KalmanEstimator : public ChannelMatrixEstimator
+class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
 {
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
-	tMatrix _identityL;
-
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
-
-private:
-	void FillFfromSymbolsMatrix(const tVector &symbolsVector);
 public:
-    KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
-    KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance);
-	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
-	~KalmanEstimator();
+    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone();
-	tMatrix SampleFromPredictive();
+protected:
+    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix)
+    {
+    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)))->SampleFromPredictive();
+    }
+
 };
 
 #endif

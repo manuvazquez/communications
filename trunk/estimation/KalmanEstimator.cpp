@@ -178,3 +178,11 @@ KalmanEstimator *KalmanEstimator::Clone()
 	// it relies on copy constructor
 	return new KalmanEstimator(*this);
 }
+
+tMatrix KalmanEstimator::SampleFromPredictive()
+{
+	tVector predictiveMean = _kalmanFilter->PredictiveMean();
+	tMatrix predictiveCovariance = _kalmanFilter->PredictiveCovariance();
+
+	return Util::ToMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_L);
+}

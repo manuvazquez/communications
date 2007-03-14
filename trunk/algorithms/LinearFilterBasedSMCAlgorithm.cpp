@@ -95,7 +95,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 // 			// predicted channel matrices are stored in a vector in order to stack them
 
 			// matricesToStack[0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
-			Util::Add((processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
+// 			Util::Add((processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
+			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[0]);
 
             #ifdef DEBUG10
                 cout << "matricesToStack[0] vale" << endl << matricesToStack[0];

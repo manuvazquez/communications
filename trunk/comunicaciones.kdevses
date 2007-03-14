@@ -1,13 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="2" >
+ <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="289" Type="Source" />
+   <View0 line="107" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 line="0" Type="Source" />
-  </Doc1>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -15,6 +12,9 @@
   </kdevdebugger>
   <kdevbookmarks>
    <bookmarks>
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
+     <mark line="182" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="85" />
     </bookmark>
@@ -39,9 +39,12 @@
      <mark line="66" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="326" />
-     <mark line="209" />
-     <mark line="364" />
+     <mark line="375" />
+     <mark line="155" />
+     <mark line="218" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+     <mark line="97" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
@@ -49,8 +52,8 @@
    <subversion recurseresolve="1" recurserelocate="1" recursemerge="1" recursecommit="1" base="" recursepropget="1" recurseswitch="1" recurseupdate="1" recursepropset="1" recursediff="1" recurserevert="1" forcemove="1" recursecheckout="1" forceremove="1" recurseadd="1" recurseproplist="1" forcemerge="1" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="" params="" />
-   <valgrind path="/usr/bin/valgrind" params="--tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --leak-check=yes" />
+   <executable path="/home/manu/c++/comunicaciones/debug/com/com" params="" />
+   <valgrind path="/usr/bin/valgrind" params="--tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />
   </kdevvalgrind>

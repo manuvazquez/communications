@@ -477,24 +477,49 @@ tMatrix Util::DiagonalMatrix(const tVector &vector)
 	return res;
 }
 
+// tMatrix Util::Cholesky(const tMatrix &matrix)
+// {
+// 	if(matrix.rows()!=matrix.cols())
+// 		throw RuntimeException("Util::Cholesky: matrix is not square.");
+//
+// 	tMatrix res = LaGenMatDouble::zeros(matrix.rows(),matrix.rows());
+//
+// 	LaSymmBandMatDouble spdMatrix(matrix.rows(),2*matrix.rows()-1);
+// 	for(int i=0;i<matrix.rows();i++)
+// 		for(int j=0;j<matrix.cols();j++)
+// 			spdMatrix(i,j) = matrix(i,j);
+//
+// 	LaSymmBandMatFactorizeIP(spdMatrix);
+//
+// 	for(int i=0;i<matrix.rows();i++)
+// 		for(int j=0;j<matrix.cols();j++)
+// 			if(j<=i)
+// 				res(i,j) = spdMatrix(i,j);
+//
+// 	return res;
+// }
+
 tMatrix Util::Cholesky(const tMatrix &matrix)
 {
-	if(matrix.rows()!=matrix.cols())
-		throw RuntimeException("Util::Cholesky: matrix is not square.");
+  if (matrix.rows() != matrix.cols())
+	throw RuntimeException("Util::Cholesky: Matrix not square");
 
-	tMatrix res = LaGenMatDouble::zeros(matrix.rows(),matrix.rows());
-
-	LaSymmBandMatDouble spdMatrix(matrix.rows(),2*matrix.rows()-1);
-	for(int i=0;i<matrix.rows();i++)
-		for(int j=0;j<matrix.cols();j++)
-			spdMatrix(i,j) = matrix(i,j);
-
-	LaSymmBandMatFactorizeIP(spdMatrix);
-
-	for(int i=0;i<matrix.rows();i++)
-		for(int j=0;j<matrix.cols();j++)
-			if(j<=i)
-				res(i,j) = spdMatrix(i,j);
-
-	return res;
+  tMatrix L_ = LaGenMatDouble::zeros(matrix.rows(), matrix.rows());
+  for (uint j = 0; j < matrix.rows(); j++)
+	{
+	  double d = 0;
+	  for (uint k = 0; k < j; k++)
+		{
+		  double s = 0;
+		  for (uint i = 0; i < k; i++)
+			{
+			  s += L_ (k, i) * L_ (j, i);
+			}
+		  L_ (j, k) = s = (matrix(j, k) - s) / L_ (k, k);
+		  d = d + s * s;
+		}
+	  d = matrix(j, j) - d;
+	  L_ (j, j) = sqrt (d);
+	}
+  return L_;
 }
