@@ -334,15 +334,15 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 vector<tMatrix> USIS::GetEstimatedChannelMatrices()
 {
-    vector<tMatrix> channelMatrices;
-    channelMatrices.reserve(_K-_preamble.cols());
+//     vector<tMatrix> channelMatrices;
+//     channelMatrices.reserve(_K-_preamble.cols());
+//
+//     // best particle is chosen
+//     int iBestParticle;
+//     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
+//
+//     for(int i=_preamble.cols();i<_K;i++)
+//         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
 
-    // best particle is chosen
-    int iBestParticle;
-    Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
-
-    for(int i=_preamble.cols();i<_K;i++)
-        channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
-
-    return channelMatrices;
+    return vector<tMatrix>(0);
 }

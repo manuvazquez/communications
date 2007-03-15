@@ -26,13 +26,15 @@ PSPPath::PSPPath(): ViterbiPath(),_estimatedChannelMatrices(NULL)
 }
 
 
-PSPPath::PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators): ViterbiPath(nTimeInstants, cost, initialSequence), _channelMatrixEstimators(channelMatrixEstimators.size()),_estimatedChannelMatrices(new tMatrix*[channelMatrixEstimators.size()])
+PSPPath::PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators): ViterbiPath(nTimeInstants, cost, initialSequence), _channelMatrixEstimators(channelMatrixEstimators.size())
 {
 	if(initialChannelMatrices.size()!=channelMatrixEstimators.size())
 		throw RuntimeException("PSPPath::PSPPath: channel order implied by the length of the \"initialChannelMatrices\" vector is not equal to that implied by \"channelMatrixEstimators\".");
 
 	if(initialChannelMatrices[0].size()>initialSequence.cols())
 		throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is less than number of received detected channel matrices.");
+
+	_estimatedChannelMatrices = new tMatrix*[channelMatrixEstimators.size()];
 
 	for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<channelMatrixEstimators.size();iChannelMatrixEstimator++)
 	{
