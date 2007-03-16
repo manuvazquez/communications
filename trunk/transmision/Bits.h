@@ -27,12 +27,13 @@
 #include "types.h"
 #include "exceptions.h"
 #include <Random.h>
+#include <vector>
 
 class Bits{
 
 private:
-	int nStreams, nBitsByStream;
-	tBit *matrix;
+	uint _nStreams, _nBitsByStream,_nBits;
+	tBit *_matrix;
 
 public:
 	Bits();
@@ -45,11 +46,13 @@ public:
 	void Print();
 	Bits DifferentialEncoding();
 	Bits DifferentialDecoding();
-// 	const tBit* BitsMatrix() const { return matrix;}
-	tBit operator()(int i,int j) const {return matrix[i*nBitsByStream+j];}
-	int Nstreams() const { return nStreams;}
-	int NbitsByStream() const {return nBitsByStream;}
+	tBit operator()(int i,int j) const {return _matrix[i*_nBitsByStream+j];}
+	int Nstreams() const { return _nStreams;}
+	int NbitsByStream() const {return _nBitsByStream;}
 	bool operator==(const Bits &bits) const;
+	std::vector<tBit> GetStream(int index) const;
+	void Inject(int index,const std::vector<tBit> &stream);
+	void InvertStream(int index);
 
 	// returns the number of non coincident bits
 	int operator-(const Bits &bits) const;

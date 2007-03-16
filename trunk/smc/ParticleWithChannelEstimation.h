@@ -56,6 +56,7 @@ public:
 
 		// return a matrix with the proper dimension (not initialized)
 		return tMatrix(_channelMatrixEstimators[iChannelOrder]->Rows(),_channelMatrixEstimators[iChannelOrder]->Cols());
+// 		return LaGenMatDouble::zeros(_channelMatrixEstimators[iChannelOrder]->Rows(),_channelMatrixEstimators[iChannelOrder]->Cols());
     }
 
     void SetChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)

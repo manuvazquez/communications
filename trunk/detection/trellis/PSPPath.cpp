@@ -100,7 +100,7 @@ void PSPPath::Update(const PSPPath& path, tVector newSymbolVector, double newCos
 	if(newChannelMatrixEstimators.size()!=path._channelMatrixEstimators.size())
 		throw RuntimeException("PSPPath::Update: the number of ChannelMatrixEstimator's fo the source path object and the number of the received ones differ.");
 
-    #ifdef DEBUG
+    #ifdef DEBUG2
     	cout << "Antes de llamar al Update de ViterbiPath" << endl;
     	cout << "newSymbolVector es " << endl << newSymbolVector;
     	cout << "newCost es " << newCost << endl;
@@ -108,7 +108,7 @@ void PSPPath::Update(const PSPPath& path, tVector newSymbolVector, double newCos
 
     ViterbiPath::Update(path, newSymbolVector, newCost);
 
-    #ifdef DEBUG
+    #ifdef DEBUG2
     	cout << "LLamado al Update de ViterbiPath" << endl;
     #endif
 
@@ -124,6 +124,10 @@ void PSPPath::Update(const PSPPath& path, tVector newSymbolVector, double newCos
 			_estimatedChannelMatrices[iChannelMatrixEstimator] = NULL;
 	}
 
+	#ifdef DEBUG
+// 		cout << "hola" << endl;
+	#endif
+
 	for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<path._channelMatrixEstimators.size();iChannelMatrixEstimator++)
 	{
 		delete _channelMatrixEstimators[iChannelMatrixEstimator];
@@ -134,6 +138,10 @@ void PSPPath::Update(const PSPPath& path, tVector newSymbolVector, double newCos
 
 		for(int i=0;i<_nTimeInstants;i++)
 			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+
+		#ifdef DEBUG
+			cout << "Guardando matriz en " << _detectedSequence->cols()-1 << endl;
+		#endif
 
 		// the new matrix is added at the right index based on the last detected vector
 		_estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->LastEstimatedChannelMatrix();

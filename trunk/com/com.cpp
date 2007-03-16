@@ -98,6 +98,8 @@
 using namespace std;
 
 double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
+double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
+void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2);
 
 int main(int argc,char* argv[])
 {
@@ -225,7 +227,6 @@ int main(int argc,char* argv[])
 		RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),pam2.Variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
 	}
 
-
 	// channel order estimators
 	APPbasedChannelOrderEstimator *channelOrderEstimator= new APPbasedChannelOrderEstimator(N,preamble,candidateChannelOrders,initialChannelMatrixEstimations,ARcoefficients[0]);
 
@@ -287,6 +288,16 @@ int main(int argc,char* argv[])
     {
         // bits are generated ...
         Bits bits(N,K+nSmoothingBitsVectors,bitsRandomGenerator);
+
+// 		bits.Print();
+//         vector<tBit> stream = bits.GetStream(1);
+//         for(int ii=0;ii<bits.NbitsByStream();ii++)
+//         	cout << stream[ii] << " ";
+//         cout << endl;
+// //         bits.Inject(0,stream);
+// 		bits.InvertStream(0);
+//         bits.Print();
+//         exit(0);
 
         // ... and then modulated by means of the alphabet
         tMatrix symbols = Modulator::Modulate(bits,pam2);
@@ -456,7 +467,11 @@ int main(int argc,char* argv[])
                 }else
                 	withoutAmbiguityDetectedSymbols = detectedSymbols;
 
-                pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K);
+//                 pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K);
+                mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
+
+				pe = ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K,permutations);
+
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 
                 cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
@@ -556,31 +571,45 @@ int main(int argc,char* argv[])
 
     cout << "Overall MSE:" << endl;
     Util::Print(overallMseMatrix);
+
+    // memory is released
+	for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	{
+		delete kalmanChannelEstimators[iChannelOrder];
+		delete RLSchannelEstimators[iChannelOrder];
+		delete RMMSElinearDetectors[iChannelOrder];
+	}
+	delete channelOrderEstimator;
 }
 
-double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
+void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
 {
-    int errors = 0;
-
-    int length = to1-from1;
-    if(length!=(to2-from2))
+    if((to1-from1)!=(to2-from2))
    	{
-   		cout << "Range 1: " << length << " | " << "Range 2: " << to2-from2 << endl;
-        throw RuntimeException("ComputeBER: comparisons range length are different.");
+   		cout << "Range 1: " << (to1-from1) << " | " << "Range 2: " << to2-from2 << endl;
+        throw RuntimeException("BERComputingChecks: comparisons range length are different.");
     }
 
-    if(length<0)
-        throw RuntimeException("ComputeBER: comparisons range are negatives.");
+    if(to1<from1)
+        throw RuntimeException("BERComputingChecks: comparisons range are negatives.");
 
     if(to1>bits1.NbitsByStream() || to2>bits2.NbitsByStream() || from1<0 || from2<0)
     {
     	cout << "bits1.NbitsByStream(): " << bits1.NbitsByStream() << ",bits2.NbitsByStream(): " << bits2.NbitsByStream() << endl;
     	cout << "from1: " << from1 << ", to1: " << to1 << " | " << "from2: " << from2 << ", to2: " << to2 << endl;
-        throw RuntimeException("ComputeBER: one or several comparison limits are wrong.");
+        throw RuntimeException("BERComputingChecks: one or several comparison limits are wrong.");
     }
 
     if(bits1.Nstreams()!=bits2.Nstreams())
-        throw RuntimeException("ComputeBER: bits objects have different number of streams.");
+        throw RuntimeException("BERComputingChecks: bits objects have different number of streams.");
+}
+
+double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
+{
+	BERComputingChecks(bits1,from1,to1,bits2,from2,to2);
+
+	int length = to1-from1;
+    int errors = 0;
 
     for(int iBits1=from1,iBits2=from2;iBits1<to1;iBits1++,iBits2++)
         for(int iStream=0;iStream<bits1.Nstreams();iStream++)
@@ -590,3 +619,40 @@ double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from
     return (double)errors/(double)(length*bits1.Nstreams());
 }
 
+double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
+{
+	BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
+
+	int length = to1-from1;
+
+	// max number of errors is length*sourceBits.Nstreams()
+	int minErrors = length*sourceBits.Nstreams()+1;
+
+    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    {
+    	int errorsPermutation = 0;
+
+        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        {
+        	int errorsInverting=0,errorsWithoutInverting=0;
+
+        	// without inverting bits
+        	for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
+        		errorsWithoutInverting += (sourceBits(iStream,iSourceStream) != detectedBits(permutations[iPermut][iStream],iDetectedStream));
+
+        	// inverting bits
+        	for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
+        		errorsInverting += (sourceBits(iStream,iSourceStream) == detectedBits(permutations[iPermut][iStream],iDetectedStream));
+
+        	if(errorsWithoutInverting<errorsInverting)
+        		errorsPermutation += errorsWithoutInverting;
+        	else
+        		errorsPermutation += errorsInverting;
+        }
+
+        if(errorsPermutation<minErrors)
+        	minErrors = errorsPermutation;
+    }
+
+    return (double)minErrors/(double)(length*sourceBits.Nstreams());
+}

@@ -26,6 +26,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+// #define DEBUG13
 #include <vector>
 #include <ChannelMatrixEstimator.h>
 
@@ -44,6 +45,14 @@ public:
     ~PSPPath();
 
 	ChannelMatrixEstimator * GetChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
+	tMatrix GetChannelMatrix(int n)
+	{
+		#ifdef DEBUG13
+			cout << "nº de vectores de símbolos detectados " << _detectedSequence->cols() << endl;
+			cout << "DEvolviendo" << endl << _estimatedChannelMatrices[0][n] << endl;
+		#endif
+		return _estimatedChannelMatrices[0][n];
+	}
     void Clean();
     void Print() const;
     /**

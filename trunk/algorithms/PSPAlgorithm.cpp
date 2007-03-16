@@ -170,7 +170,8 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     #endif
 
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
-    _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
+    _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(_startDetectionTime));
+//     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
 
     #ifdef DEBUG3
     	cout << "despues de _estimatedChannelMatrices.push_back" << endl;
@@ -183,7 +184,9 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
         BestPairStateSurvivor(iBestState,iBestSurvivor);
 
         _detectedSymbolVectors->col(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1));
-    	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
+
+    	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
+//     	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
     }
 
     #ifdef DEBUG3
@@ -209,7 +212,8 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 			cout << "en el medio" << iProcessedObservation << endl;
 		#endif
 
-		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
+		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
+// 		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
         #ifdef DEBUG2
             cout << "detectado " << endl << _exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation) << endl;
         #endif

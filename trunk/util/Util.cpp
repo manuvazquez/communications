@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Util.h"
 
-// #define DEBUG
+// #define DEBUG13
 
 using namespace std;
 
@@ -372,7 +372,7 @@ template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
 
 vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
 {
-    #ifdef DEBUG2
+    #ifdef DEBUG13
         cout << "H1" << endl << H1 << "H2" << endl << H2;
     #endif
 
@@ -400,7 +400,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
 
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
-        #ifdef DEBUG2
+        #ifdef DEBUG13
             cout << "probando permutación" << endl;
             Print(permutations[iPermut]);
         #endif
@@ -409,14 +409,14 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
         {
             tVector col1 = H1.col(iCol);
 
-            #ifdef DEBUG2
+            #ifdef DEBUG13
                 cout << "columna de la 1ª matriz" << endl << col1;
             #endif
 
             // error without changing the sign
             tVector col2 = H2.col(permutations[iPermut][iCol]);
 
-            #ifdef DEBUG2
+            #ifdef DEBUG13
                 cout << "columna de la 2ª matriz" << endl << col2;
             #endif
 

@@ -24,114 +24,122 @@
 
 Bits::Bits()
 {
-	nStreams = 0;
-	nBitsByStream = 0;
-	matrix = NULL;
+	_nStreams = 0;
+	_nBitsByStream = 0;
+	_nBits = 0;
+	_matrix = NULL;
 }
 
-Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator)
+Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator):_nStreams(nStreams),_nBitsByStream(nBitsByStream),_nBits(nStreams*nBitsByStream)
 {
-	this->nStreams = nStreams;
-	this->nBitsByStream = nBitsByStream;
-
-	matrix = new tBit[nStreams*nBitsByStream];
-	for(int i=nStreams*nBitsByStream;i--;)
+	_matrix = new tBit[_nBits];
+	for(int i=_nBits;i--;)
 	{
-		matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
+		_matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
 	}
 }
 
-Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): nStreams(nStreams),nBitsByStream(nBitsByStream),matrix(matrix)
+Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): _nStreams(nStreams),_nBitsByStream(nBitsByStream),_nBits(nStreams*nBitsByStream),_matrix(matrix)
 {
 }
+
+// Bits& Bits::operator=(const Bits& bits)
+// {
+// 	_nStreams = bits._nStreams;
+// 	_nBitsByStream = bits._nBitsByStream;
+// 	if(_matrix!=NULL)
+// 		delete[] _matrix;
+// 	_matrix = new tBit[bits._nStreams*bits._nBitsByStream];
+// 	for(int i=_nStreams*_nBitsByStream;i--;)
+// 		_matrix[i] = bits._matrix[i];
+// 	return *this;
+// }
 
 Bits& Bits::operator=(const Bits& bits)
 {
-	cout << "Calling = operator..." << endl;
-	nStreams = bits.nStreams;
-	nBitsByStream = bits.nBitsByStream;
-	if(matrix!=NULL)
+	if(_nStreams!=bits._nStreams || _nBitsByStream!=bits._nBitsByStream)
 	{
-		delete[] matrix;
-// 		cout << "Not null!!" << endl;
+		_nStreams = bits._nStreams;
+		_nBitsByStream = bits._nBitsByStream;
+		_nBits = bits._nBits;
+		delete[] _matrix;
+		_matrix = new tBit[_nBits];
 	}
-	matrix = new tBit[bits.nStreams*bits.nBitsByStream];
-	for(int i=nStreams*nBitsByStream;i--;)
-		matrix[i] = bits.matrix[i];
+
+	for(int i=_nBits;i--;)
+		_matrix[i] = bits._matrix[i];
+
 	return *this;
 }
 
 Bits::Bits(const Bits& bits):
-nStreams(bits.nStreams),nBitsByStream(bits.nBitsByStream)
+_nStreams(bits._nStreams),_nBitsByStream(bits._nBitsByStream),_nBits(bits._nBits)
 {
-	cout << "Calling copy constructor..." << endl;
-	matrix = new tBit[bits.nStreams*bits.nBitsByStream];
-	for(int i=nStreams*nBitsByStream;i--;)
-		matrix[i] = bits.matrix[i];
+	_matrix = new tBit[_nBits];
+	for(int i=_nBits;i--;)
+		_matrix[i] = bits._matrix[i];
 }
 
 Bits::~Bits()
 {
-	delete[] matrix;
+	delete[] _matrix;
 }
 
 void Bits::Print()
 {
-	int i,j;
+	uint i,j;
 
-	for(i=0;i<nStreams;i++)
+	for(i=0;i<_nStreams;i++)
 	{
-		for(j=0;j<nBitsByStream;j++)
-			cout << matrix[i*nBitsByStream+j];
+		for(j=0;j<_nBitsByStream;j++)
+			cout << _matrix[i*_nBitsByStream+j];
 		cout << endl;
 	}
 }
 
 Bits Bits::DifferentialEncoding()
 {
-	//Bits res(nStreams,nBitsByStream+1);
 	Bits res;
-	res.nStreams = nStreams;
-	res.nBitsByStream = nBitsByStream+1;
-	res.matrix = new tBit[res.nStreams*res.nBitsByStream];
+	res._nStreams = _nStreams;
+	res._nBitsByStream = _nBitsByStream+1;
+	res._nBits = res._nStreams*res._nBitsByStream;
+	res._matrix = new tBit[res._nBits];
 
-	int i,j;
-	for(i=0;i<nStreams;i++)
+	uint i,j;
+	for(i=0;i<_nStreams;i++)
 	{
 		// differential encoding assumes the first bits equals 0
-		res.matrix[i*res.nBitsByStream] = 0;
-		for(j=0;j<nBitsByStream;j++)
-			res.matrix[i*res.nBitsByStream+j+1] = (res.matrix[i*res.nBitsByStream+j] + matrix[i*nBitsByStream+j]) % 2;
+		res._matrix[i*res._nBitsByStream] = 0;
+		for(j=0;j<_nBitsByStream;j++)
+			res._matrix[i*res._nBitsByStream+j+1] = (res._matrix[i*res._nBitsByStream+j] + _matrix[i*_nBitsByStream+j]) % 2;
 	}
 	return res;
 }
 
 Bits Bits::DifferentialDecoding()
 {
-	if(nBitsByStream<2)
+	if(_nBitsByStream<2)
 		throw RuntimeException("2 bits by stream needed at least for differential decoding.");
 
 	Bits res;
-	res.nStreams = nStreams;
-	res.nBitsByStream = nBitsByStream-1;
-	res.matrix = new tBit[res.nStreams*res.nBitsByStream];
+	res._nStreams = _nStreams;
+	res._nBitsByStream = _nBitsByStream-1;
+	res._nBits = res._nStreams*res._nBitsByStream;
+	res._matrix = new tBit[res._nBits];
 
-	int i,j;
-	for(i=0;i<nStreams;i++)
+	uint i,j;
+	for(i=0;i<_nStreams;i++)
 	{
-		for(j=1;j<nBitsByStream;j++)
-		{
-// 			cout << "i " << i << " j " << j << " res.nBitsByStream=" << res.nBitsByStream << endl;
-			res.matrix[i*res.nBitsByStream+j-1] = (matrix[i*nBitsByStream+j-1] + matrix[i*nBitsByStream+j]) % 2;
-		}
+		for(j=1;j<_nBitsByStream;j++)
+			res._matrix[i*res._nBitsByStream+j-1] = (_matrix[i*_nBitsByStream+j-1] + _matrix[i*_nBitsByStream+j]) % 2;
 	}
 	return res;
 }
 
 bool Bits::operator==(const Bits &bits) const
 {
-	for(int i=nStreams*nBitsByStream;i--;)
-		if(matrix[i]!=bits.matrix[i])
+	for(int i=_nBits;i--;)
+		if(_matrix[i]!=bits._matrix[i])
 			return false;
 	return true;
 }
@@ -139,8 +147,33 @@ bool Bits::operator==(const Bits &bits) const
 int Bits::operator-(const Bits &bits) const
 {
 	int res = 0;
-	for(int i=nStreams*nBitsByStream;i--;)
-		if(matrix[i]!=bits.matrix[i])
+	for(int i=_nStreams*_nBitsByStream;i--;)
+		if(_matrix[i]!=bits._matrix[i])
 			res++;
 	return res;
+}
+
+vector<tBit> Bits::GetStream(int index) const
+{
+	vector<tBit> res(_nBitsByStream);
+
+	for(uint i=index*_nBitsByStream,j=0;j<_nBitsByStream;i++,j++)
+		res[j] = _matrix[i];
+
+	return res;
+}
+
+void Bits::Inject(int index,const std::vector<tBit> &stream)
+{
+	if(stream.size()!=_nBitsByStream)
+		throw RuntimeException("Bits::Inject: the stream has not the correct number of bits.");
+
+	for(uint i=index*_nBitsByStream,j=0;j<_nBitsByStream;i++,j++)
+		_matrix[i] = stream[j];
+}
+
+void Bits::InvertStream(int index)
+{
+	for(uint i=index*_nBitsByStream,j=0;j<_nBitsByStream;i++,j++)
+		_matrix[i] = _matrix[i]^1;
 }
