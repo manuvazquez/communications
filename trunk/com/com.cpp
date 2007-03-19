@@ -109,7 +109,7 @@ int main(int argc,char* argv[])
 
     // GLOBAL PARAMETERS
     int nFrames = 1;
-    int L=3,N=2,K=30;
+    int L=3,N=2,K=300;
     int trainSeqLength = 10;
     int nParticles = 30;
     double resamplingRatio = 0.9;
@@ -371,17 +371,17 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
-            algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+//             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm 5 supervivientes",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],5));
 
@@ -452,25 +452,25 @@ int main(int argc,char* argv[])
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
 
-				tMatrix withoutAmbiguityDetectedSymbols;
-
-                // if the algorithm doesn't know the channel
-                if(estimatedChannelMatrices.size()!=0)
-                {
-					tMatrix lastTrueChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1](rAllObservationsRows,rLastNchannelMatrixColumns);
-					tMatrix lastEstimatedChannelMatrix = canal[lastSymbolVectorInstant-1](rAllObservationsRows,rLastNchannelMatrixColumns);
-
-					int iBestPerm;
-                	vector<int> signs = Util::SolveAmbiguity(lastTrueChannelMatrix,lastEstimatedChannelMatrix,permutations,iBestPerm);
-
-					withoutAmbiguityDetectedSymbols = Util::ApplyPermutation(detectedSymbols,permutations[iBestPerm],signs);
-                }else
-                	withoutAmbiguityDetectedSymbols = detectedSymbols;
+// 				tMatrix withoutAmbiguityDetectedSymbols;
+//
+//                 // if the algorithm doesn't know the channel
+//                 if(estimatedChannelMatrices.size()!=0)
+//                 {
+// 					tMatrix lastTrueChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+// 					tMatrix lastEstimatedChannelMatrix = canal[lastSymbolVectorInstant-1](rAllObservationsRows,rLastNchannelMatrixColumns);
+//
+// 					int iBestPerm;
+//                 	vector<int> signs = Util::SolveAmbiguity(lastTrueChannelMatrix,lastEstimatedChannelMatrix,permutations,iBestPerm);
+//
+// 					withoutAmbiguityDetectedSymbols = Util::ApplyPermutation(detectedSymbols,permutations[iBestPerm],signs);
+//                 }else
+//                 	withoutAmbiguityDetectedSymbols = detectedSymbols;
 
 //                 pe = ComputeBER(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K);
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 
-				pe = ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(withoutAmbiguityDetectedSymbols,pam2),BERwindowStart,K,permutations);
+				pe = ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K,permutations);
 
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 

@@ -25,7 +25,8 @@ RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimato
 
 RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm)),
 // auxiliary variables initialization
-_invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm),_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm)
+_invForgettingFactorSymbolsVectorInvRtilde(_Nm),_g(_Nm),_invForgettingFactorInvRtildeSymbolsVector(_Nm)
+// ,_invForgettingFactorInvRtildeSymbolsVectorg(_Nm,_Nm),_observationsSymbolsVector(_L,_Nm)
 {
 }
 
@@ -50,22 +51,41 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
     _g = _invForgettingFactorSymbolsVectorInvRtilde;
     _g *= (1.0/auxDenominator);
 
-    // _invForgettingFactorInvRtildeSymbolsVector = _invRtilde*symbolsVector
+    // _invForgettingFactorInvRtildeSymbolsVector = _invForgettingFactor*_invRtilde*symbolsVector
     Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,_invForgettingFactorInvRtildeSymbolsVector,_invForgettingFactor);
 
-	// _invRtilde = _invForgettingFactorInvRtildeSymbolsVector*_g'
-	Util::Mult(_invForgettingFactorInvRtildeSymbolsVector,_g,_invForgettingFactorInvRtildeSymbolsVectorg);
+	// _invForgettingFactorInvRtildeSymbolsVectorg = _invForgettingFactorInvRtildeSymbolsVector*_g'
+// 	Util::Mult(_invForgettingFactorInvRtildeSymbolsVector,_g,_invForgettingFactorInvRtildeSymbolsVectorg);
+
+
+
+    // _invRtilde = _invForgettingFactor*_invRtilde
+    _invRtilde *= _invForgettingFactor;
+
+    // _invRtilde = _invRtilde - _invForgettingFactorInvRtildeSymbolsVector*_g
+    Blas_R1_Update(_invRtilde,_invForgettingFactorInvRtildeSymbolsVector,_g,-1.0);
+
+
 
 	// _invRtilde = _invForgettingFactor*_invRtilde - _invForgettingFactorInvRtildeSymbolsVectorg
-	Util::Add(_invRtilde,_invForgettingFactorInvRtildeSymbolsVectorg,_invRtilde,_invForgettingFactor,-1.0);
+// 	Util::Add(_invRtilde,_invForgettingFactorInvRtildeSymbolsVectorg,_invRtilde,_invForgettingFactor,-1.0);
 
 	// _observationsSymbolsVector = observations*symbolsVector'
-	Util::Mult(observations,symbolsVector,_observationsSymbolsVector);
+// 	Util::Mult(observations,symbolsVector,_observationsSymbolsVector);
+
+
+
+    // _pTilde = _forgettingFactor*_pTilde
+    _pTilde *= _forgettingFactor;
+
+    // _pTilde = _pTilde + observations*symbolsVector'
+    Blas_R1_Update(_pTilde,observations,symbolsVector);
+
 
 	// _pTilde = _forgettingFactor*_pTilde + _observationsSymbolsVector
-	Util::Add(_pTilde,_observationsSymbolsVector,_pTilde,_forgettingFactor);
+// 	Util::Add(_pTilde,_observationsSymbolsVector,_pTilde,_forgettingFactor);
 
-	// _pTildeInvRtilde = _pTilde*_invRtilde
+	// _lastEstimatedChannelMatrix = _pTilde*_invRtilde
 	Blas_Mat_Mat_Mult(_pTilde,_invRtilde,_lastEstimatedChannelMatrix);
 
 	return _lastEstimatedChannelMatrix;

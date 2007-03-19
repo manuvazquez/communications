@@ -48,8 +48,9 @@ protected:
 	tMatrix _filter;
 
 	// auxiliary
-	tMatrix _identityL,_gObservations;
-	tMatrix _identityMinusgObservations,_auxInvRtilde;
+// 	tMatrix _identityL,_gObservations;
+// 	tMatrix _identityMinusgObservations;
+    tMatrix _auxInvRtilde;
 	tMatrix _E,_varianceInvRtildeChannelMatrix;
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);

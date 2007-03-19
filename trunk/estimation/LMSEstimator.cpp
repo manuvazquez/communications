@@ -19,7 +19,9 @@
  ***************************************************************************/
 #include "LMSEstimator.h"
 
-LMSEstimator::LMSEstimator(const tMatrix &initialEstimation,int N,double mu): ChannelMatrixEstimator(initialEstimation,N),_mu(mu),_predictedObservations(_L),_error(_L),_deltaMatrix(_L,_Nm)
+LMSEstimator::LMSEstimator(const tMatrix &initialEstimation,int N,double mu): ChannelMatrixEstimator(initialEstimation,N),_mu(mu)
+,_predictedObservations(_L)
+//,_error(_L) ,_deltaMatrix(_L,_Nm)
 {
 }
 
@@ -32,17 +34,28 @@ tMatrix LMSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 {
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-	// _predictedObservations = _lastEstimatedChannelMatrix * symbolsVector
-	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,_predictedObservations);
+// 	// _predictedObservations = _lastEstimatedChannelMatrix * symbolsVector
+// 	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,_predictedObservations);
+//
+// 	// _error = _predictedObservations - observations
+// 	Util::Add(_predictedObservations,observations,_error,1.0,-1.0);
 
-	// _error = _predictedObservations - observations
-	Util::Add(_predictedObservations,observations,_error,1.0,-1.0);
+    // _error = observations
+    tVector error = observations;
 
-	// _deltaMatrix = _mu * _error * symbolsVector'
-	Util::Mult(_error,symbolsVector,_deltaMatrix,_mu);
+    // error = _lastEstimatedChannelMatrix*symbolsVector - error
+    // (note that error is initialized to observations, so that:
+    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
+    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
 
-	// _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix - _deltaMatrix
-	Util::Add(_lastEstimatedChannelMatrix,_deltaMatrix,_lastEstimatedChannelMatrix,1.0,-1.0);
+// 	// _deltaMatrix = _mu * _error * symbolsVector'
+// 	Util::Mult(_error,symbolsVector,_deltaMatrix,_mu);
+//
+// 	// _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix - _deltaMatrix
+// 	Util::Add(_lastEstimatedChannelMatrix,_deltaMatrix,_lastEstimatedChannelMatrix,1.0,-1.0);
+
+    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
+    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu);
 
 	return _lastEstimatedChannelMatrix;
 }

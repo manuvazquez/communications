@@ -42,10 +42,10 @@ private:
 	int _observationVectorLength;
 
 	// auxiliar variables
-	tMatrix _predictiveCovarianceFtrans,_auxMatrix,_KalmanGain,_FpredictiveCovariance;
-	tMatrix _KalmanGainFpredictiveCovariance,_predictiveCovarianceAux;
-	tMatrix _RfilteredCovariance,_RfilteredCovarianceRtrans;
-	tVector _auxVector,_KalmanGainByNotPredicted;
+	tMatrix _predictiveCovarianceFtrans/*,_auxMatrix*/,_KalmanGain,_FpredictiveCovariance;
+// 	tMatrix /*_KalmanGainFpredictiveCovariance,*/_predictiveCovarianceAux;
+	tMatrix _RfilteredCovariance/*,_RfilteredCovarianceRtrans*/;
+// 	tVector /*_auxVector,*/_KalmanGainByNotPredicted;
 	tLongIntVector _piv;
 public:
     KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength);
