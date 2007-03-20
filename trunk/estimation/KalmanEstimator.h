@@ -41,16 +41,9 @@ class KalmanEstimator : public ChannelMatrixEstimator
 private:
 	KalmanFilter *_kalmanFilter;
 	int _nChannelCoefficients;
-	tMatrix _identityL;
-
-	// auxiliary variables (just for efficiency's sake)
-	tMatrix _F;
-	tLongIntVector _piv;
-	tMatrix _FtransInvNoiseCovariance,_B;
-	tVector _invPredictiveCovariancePredictiveMean,_auxAuxArgExp,_auxAuxArgExpInvB,_observationsNoiseCovariance;
 
 private:
-	void FillFfromSymbolsMatrix(const tVector &symbolsVector);
+	tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
 public:
     KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
     KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance);

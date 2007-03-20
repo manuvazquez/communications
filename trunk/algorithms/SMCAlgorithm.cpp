@@ -85,7 +85,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
     this->InitializeParticles();
 
 	tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
-	tMatrix channelCovariance = Util::DiagonalMatrix(Util::ToVector(_channelMatrixVariances,rowwise));
+// 	tMatrix channelCovariance = Util::DiagonalMatrix(Util::ToVector(_channelMatrixVariances,rowwise));
+	tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 
 	// the initial estimation of the particles channel matrix estimators is set
     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
