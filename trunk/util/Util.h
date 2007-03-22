@@ -49,6 +49,7 @@ public:
 	static void Transpose(const tMatrix &A,tMatrix &B);
 	static tVector ToVector(const tMatrix &matrix,tOrder order);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
+	static tMatrix ToMatrix(const vector<double> &vector,tOrder order,int rows,int cols);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
 	static tMatrix Append(const tMatrix &A,const tMatrix &B);
 	static tVector Normalize(const tVector &v);
@@ -72,6 +73,7 @@ public:
     static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix Cholesky(const tMatrix &matrix);
+    template<class T> static void NextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
 };
 
 #endif

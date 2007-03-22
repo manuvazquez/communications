@@ -54,6 +54,7 @@ public:
 	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 	KalmanEstimator *Clone();
 	tMatrix SampleFromPredictive();
+	void SetFirstEstimatedChannelMatrix(const tMatrix &matrix);
 };
 
 #endif

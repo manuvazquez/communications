@@ -65,7 +65,7 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 
 	for(iState=0;iState<_trellis.Nstates();iState++)
 	{
-		// if the first survivor is empty, we assume that so they are the remaining ones
+		// if the first survivor is empty, we assume that so are the remaining ones
 		if(!_exitStage[iState][0].IsEmpty())
         {
             #ifdef DEBUG2
@@ -84,24 +84,24 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 	{
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
-			PSPPathCandidate &survivorCandidate = _bestArrivingPaths[iState][iSurvivor];
-			if(survivorCandidate.NoPathArrived())
+			PSPPathCandidate &bestPathCandidate = _bestArrivingPaths[iState][iSurvivor];
+			if(bestPathCandidate.NoPathArrived())
 				continue;
 
-			PSPPath &sourcePath = _exitStage[survivorCandidate._fromState][survivorCandidate._fromSurvivor];
+			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
 			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.GetChannelMatrixEstimator()->Clone();
 
 			#ifdef DEBUG
 				cout << "Antes de llamar a NextMatrix" << endl;
 			#endif
 
-			newChannelMatrixEstimator->NextMatrix(observations,survivorCandidate._detectedSymbolVectors,noiseVariance);
+			newChannelMatrixEstimator->NextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 
 			#ifdef DEBUG
 				cout << "Despues de llamar a NextMatrix" << endl;
 			#endif
 
-			_arrivalStage[iState][iSurvivor].Update(sourcePath,survivorCandidate._newSymbolVector,survivorCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
+			_arrivalStage[iState][iSurvivor].Update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
 
 			#ifdef DEBUG
 				cout << "Despues de llamar a Update" << endl;

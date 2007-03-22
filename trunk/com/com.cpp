@@ -103,12 +103,30 @@ void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &det
 
 int main(int argc,char* argv[])
 {
+// 	vector<double> A(3);
+// 	A[0] = -0.1; A[1] = 0.0; A[2] = 0.1;
+// 	vector<double> B(2);
+// 	B[0] = -0.5; B[1] = 0.5;
+// 	vector<vector <double> > alfs(2);
+// 	alfs[0] = A;
+// 	alfs[1] = B;
+//
+// 	vector<double> v(2);
+// 	v[0] = -0.1; v[1] = -0.5;
+// 	Util::Print(v);
+// 	for(int i=0;i<5;i++)
+// 	{
+// 		Util::NextVector(v,alfs);
+// 		Util::Print(v);
+// 	}
+// 	exit(0);
+
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1;
+    int nFrames = 5;
     int L=3,N=2,K=300;
     int trainSeqLength = 30;
     int nParticles = 30;
@@ -125,7 +143,7 @@ int main(int argc,char* argv[])
     bool adjustParticlesNumberFromSurvivors = true;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 3;
+    int m = 2;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -289,16 +307,6 @@ int main(int argc,char* argv[])
         // bits are generated ...
         Bits bits(N,K+nSmoothingBitsVectors,bitsRandomGenerator);
 
-// 		bits.Print();
-//         vector<tBit> stream = bits.GetStream(1);
-//         for(int ii=0;ii<bits.NbitsByStream();ii++)
-//         	cout << stream[ii] << " ";
-//         cout << endl;
-// //         bits.Inject(0,stream);
-// 		bits.InvertStream(0);
-//         bits.Print();
-//         exit(0);
-
         // ... and then modulated by means of the alphabet
         tMatrix symbols = Modulator::Modulate(bits,pam2);
 
@@ -373,7 +381,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

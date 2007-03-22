@@ -168,3 +168,8 @@ tMatrix KalmanEstimator::SampleFromPredictive()
 
 	return Util::ToMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_L);
 }
+
+void KalmanEstimator::SetFirstEstimatedChannelMatrix(const tMatrix &matrix)
+{
+	_kalmanFilter->SetFilteredMean(Util::ToVector(matrix,rowwise));
+}

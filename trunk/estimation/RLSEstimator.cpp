@@ -19,11 +19,11 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor)
+RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_invForgettingFactor(1.0/forgettingFactor)
 {
 }
 
-RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm))
+RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm))
 {
 }
 
@@ -41,7 +41,6 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
 	tVector invForgettingFactorSymbolsVectorInvRtilde(_Nm);
-
     // invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
     Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
 
@@ -62,7 +61,7 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
     Blas_R1_Update(_invRtilde,invForgettingFactorInvRtildeSymbolsVector,g,-1.0);
 
     // _pTilde = _forgettingFactor*_pTilde
-    _pTilde *= _forgettingFactor;
+    _pTilde *= (1.0/_invForgettingFactor);
 
     // _pTilde = _pTilde + observations*symbolsVector'
     Blas_R1_Update(_pTilde,observations,symbolsVector);

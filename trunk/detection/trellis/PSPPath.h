@@ -27,6 +27,7 @@
 */
 
 // #define DEBUG13
+#define DO_NOT_STORE_CHANNEL_MATRICES
 #include <vector>
 #include <ChannelMatrixEstimator.h>
 
@@ -34,7 +35,10 @@ class PSPPath : public ViterbiPath
 {
 protected:
 	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
-	tMatrix **_estimatedChannelMatrices;
+
+	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		tMatrix **_estimatedChannelMatrices;
+	#endif
 public:
     PSPPath();
 
@@ -51,7 +55,11 @@ public:
 			cout << "nº de vectores de símbolos detectados " << _detectedSequence->cols() << endl;
 			cout << "DEvolviendo" << endl << _estimatedChannelMatrices[0][n] << endl;
 		#endif
-		return _estimatedChannelMatrices[0][n];
+
+		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+			return _estimatedChannelMatrices[0][n];
+		#endif
+		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->Rows(),_channelMatrixEstimators[0]->Cols());
 	}
     void Clean();
     void Print() const;
@@ -63,7 +71,7 @@ public:
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
      * @param newChannelMatrices
      */
-    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators/*,const std::vector<tMatrix> &newChannelMatrices*/);
+    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
 	void operator=(const PSPPath &path);
 
 };

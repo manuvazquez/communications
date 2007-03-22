@@ -35,18 +35,11 @@
 
 class KalmanFilter{
 private:
-	tMatrix _R, _Rtranspose, _stateEquationCovariance;
+	tMatrix _R,_stateEquationCovariance;
 	int _nElementsToEstimate;
 	tVector _predictiveMean,_filteredMean;
 	tMatrix _predictiveCovariance,_filteredCovariance;
-	int _observationVectorLength;
 
-	// auxiliar variables
-	tMatrix _predictiveCovarianceFtrans/*,_auxMatrix*/,_KalmanGain,_FpredictiveCovariance;
-// 	tMatrix /*_KalmanGainFpredictiveCovariance,*/_predictiveCovarianceAux;
-	tMatrix _RfilteredCovariance/*,_RfilteredCovarianceRtrans*/;
-// 	tVector /*_auxVector,*/_KalmanGainByNotPredicted;
-	tLongIntVector _piv;
 public:
     KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength);
 
@@ -55,6 +48,7 @@ public:
 	tVector FilteredMean() {return _filteredMean;}
 	tMatrix PredictiveCovariance() {return _predictiveCovariance;}
 	tMatrix FilteredCovariance() {return _filteredCovariance;}
+	void SetFilteredMean(const tVector &filteredMean);
 };
 
 #endif

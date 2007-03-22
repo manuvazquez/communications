@@ -31,6 +31,7 @@
 #include <ResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <ParticleWithChannelEstimation.h>
+#include <math.h>
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {

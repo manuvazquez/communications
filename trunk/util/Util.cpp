@@ -107,6 +107,22 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
 	return matrix;
 }
 
+tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,int rows,int cols)
+{
+	if(vector.size()> (rows*cols))
+		throw RuntimeException("Util::ToMatrix: The length of the vector is greater than rows by cols.");
+
+	tMatrix matrix = LaGenMatDouble::zeros(rows,cols);
+
+	if(order==rowwise)
+		for(uint iVector=vector.size();iVector--;)
+			matrix(iVector/cols,iVector%cols) = vector[iVector];
+	else
+		for(uint iVector=vector.size();iVector--;)
+			matrix(iVector%rows,iVector/rows) = vector[iVector];
+	return matrix;
+}
+
 tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows)
 {
 	int remainder = vector.size() % rows;
@@ -515,3 +531,28 @@ tMatrix Util::Cholesky(const tMatrix &matrix)
 	}
   return L_;
 }
+
+template<class T> void Util::NextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
+{
+	if(vector.size()!=alphabets.size())
+		throw RuntimeException("Util::NextVector: number of alphabets must be equal to the number of elements of the vector.");
+
+	bool done = false;
+	int iPos = vector.size()-1;
+	while(iPos>=0 && !done)
+	{
+		uint iAlphabet = 0;
+		while(vector[iPos]!=alphabets[iPos][iAlphabet] && iAlphabet<alphabets[iPos].size())
+			iAlphabet++;
+		if(iAlphabet==alphabets[iPos].size())
+			throw RuntimeException("Util::NextVector: symbol not belongin to the corresponding alphabet found.");
+		if(iAlphabet<(alphabets[iPos].size()-1))
+		{
+			vector[iPos] = alphabets[iPos][iAlphabet+1];
+			done = true;
+		}else
+			vector[iPos] = alphabets[iPos][0];
+		iPos--;
+	}
+}
+template void Util::NextVector(vector<double> &vector,const vector<vector<double> > &alphabets);

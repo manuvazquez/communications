@@ -80,17 +80,29 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 
 void ParticleFilter::KeepParticles(vector<int> indexes)
 {
-        ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
+	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
 
-        for(int iParticle=0;iParticle<_nParticles;iParticle++)
-        {
-                resParticles[iParticle] = (_particles[indexes[iParticle]])->Clone();
-                resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
-        }
+	vector<bool> particleNeeded(_nParticles,false);
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+		particleNeeded[indexes[iParticle]] = true;
 
-        for(int iParticle=0;iParticle<_nParticles;iParticle++)
-                delete _particles[iParticle];
+	// the memory occupied by the particles that are not gonna be resampled is released
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+		if(!particleNeeded[iParticle])
+		{
+			delete _particles[iParticle];
+			_particles[iParticle] = NULL;
+		}
 
-        delete[] _particles;
-        _particles = resParticles;
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+	{
+			resParticles[iParticle] = (_particles[indexes[iParticle]])->Clone();
+			resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
+	}
+
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+			delete _particles[iParticle];
+
+	delete[] _particles;
+	_particles = resParticles;
 }
