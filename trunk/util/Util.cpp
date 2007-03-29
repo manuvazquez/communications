@@ -360,6 +360,15 @@ template void Util::Print(const std::vector<int> &vector);
 template void Util::Print(const std::vector<uint> &vector);
 template void Util::Print(const std::vector<double> &vector);
 
+template<class T> void Util::Print(const T* array,int nElements)
+{
+	cout << "[";
+	for(int i=0;i<nElements-1;i++)
+		cout << array[i] << ",";
+	cout << array[nElements-1] << "]" << endl;
+}
+template void Util::Print(const int* array,int nElements);
+
 void Util::ShiftUp(tVector &v,int n)
 {
 	if(n>=v.size())

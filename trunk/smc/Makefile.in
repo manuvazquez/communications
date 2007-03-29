@@ -72,7 +72,9 @@ am_libsmc_a_OBJECTS = ByChannelOrderResamplingAlgorithm.$(OBJEXT) \
 	WithChannelOrderAppParticleAddon.$(OBJEXT) \
 	WithChannelOrderEstimationParticleAddon.$(OBJEXT) \
 	WithChannelOrderParticleAddon.$(OBJEXT) \
-	WithLinearDetectionParticleAddon.$(OBJEXT)
+	WithLinearDetectionParticleAddon.$(OBJEXT) \
+	ResidualResamplingAlgorithm.$(OBJEXT) \
+	WithThresholdResamplingAlgorithmWrapper.$(OBJEXT)
 libsmc_a_OBJECTS = $(am_libsmc_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -203,7 +205,8 @@ noinst_HEADERS = ByChannelOrderResamplingAlgorithm.h Particle.h \
 	ParticleWithChannelEstimationAndLinearDetection.h ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.h \
 	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h ResamplingAlgorithm.h ResamplingCriterion.h StdResamplingAlgorithm.h \
 	WithChannelOrderAppParticleAddon.h WithChannelOrderEstimationParticleAddon.h \
-	WithChannelOrderParticleAddon.h WithLinearDetectionParticleAddon.h smcExceptions.h
+	WithChannelOrderParticleAddon.h WithLinearDetectionParticleAddon.h smcExceptions.h \
+	ResidualResamplingAlgorithm.h WithThresholdResamplingAlgorithmWrapper.h
 
 libsmc_a_SOURCES = ByChannelOrderResamplingAlgorithm.cpp Particle.cpp \
 	ParticleFilter.cpp ParticleFilterWithChannelOrder.cpp ParticleWithChannelEstimation.cpp \
@@ -211,7 +214,8 @@ libsmc_a_SOURCES = ByChannelOrderResamplingAlgorithm.cpp Particle.cpp \
 	ParticleWithChannelEstimationAndLinearDetection.cpp ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.cpp \
 	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.cpp ResamplingCriterion.cpp StdResamplingAlgorithm.cpp \
 	WithChannelOrderAppParticleAddon.cpp WithChannelOrderEstimationParticleAddon.cpp \
-	WithChannelOrderParticleAddon.cpp WithLinearDetectionParticleAddon.cpp
+	WithChannelOrderParticleAddon.cpp WithLinearDetectionParticleAddon.cpp ResidualResamplingAlgorithm.cpp \
+	WithThresholdResamplingAlgorithmWrapper.cpp
 
 all: all-am
 
@@ -297,11 +301,13 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderAPP.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ResamplingCriterion.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ResidualResamplingAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/StdResamplingAlgorithm.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithChannelOrderAppParticleAddon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithChannelOrderEstimationParticleAddon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithChannelOrderParticleAddon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithLinearDetectionParticleAddon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/WithThresholdResamplingAlgorithmWrapper.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	if $(CXXCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \

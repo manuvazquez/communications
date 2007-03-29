@@ -27,20 +27,31 @@ StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCri
 {
 }
 
-int StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
+StdResamplingAlgorithm* StdResamplingAlgorithm::Clone() const
 {
-    tVector weigths = particleFilter->GetWeightsVector();
-
-    if(_resamplingCriterion.ResamplingNeeded(weigths))
-    {
-        vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weigths);
-        particleFilter->KeepParticles(indexes);
-
-		#ifdef DEBUG
-		for(int i=0;i<particleFilter->Nparticles();i++)
-			cout << i << " <- " << indexes[i] << endl;
-		#endif
-		return 1;
-    }
-    return 0;
+	return new StdResamplingAlgorithm(*this);
 }
+
+void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
+{
+	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
+	particleFilter->KeepParticles(indexes);
+}
+
+// int StdResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
+// {
+//     tVector weigths = particleFilter->GetWeightsVector();
+//
+//     if(_resamplingCriterion.ResamplingNeeded(weigths))
+//     {
+//         vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weigths);
+//         particleFilter->KeepParticles(indexes);
+//
+// 		#ifdef DEBUG
+// 		for(int i=0;i<particleFilter->Nparticles();i++)
+// 			cout << i << " <- " << indexes[i] << endl;
+// 		#endif
+// 		return 1;
+//     }
+//     return 0;
+// }

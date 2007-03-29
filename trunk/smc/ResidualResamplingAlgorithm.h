@@ -17,30 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STDRESAMPLINGALGORITHM_H
-#define STDRESAMPLINGALGORITHM_H
+#ifndef RESIDUALRESAMPLINGALGORITHM_H
+#define RESIDUALRESAMPLINGALGORITHM_H
+
+#include <ResamplingAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <vector>
-#include <types.h>
-#include <ResamplingAlgorithm.h>
-// #include <ChannelMatrixEstimator.h>
-// #include <LinearDetector.h>
-// #include <ParticleFilter.h>
-// #include <ParticleWithChannelEstimation.h>
-// #include <exceptions.h>
-
-class StdResamplingAlgorithm : public ResamplingAlgorithm{
+class ResidualResamplingAlgorithm : public ResamplingAlgorithm
+{
 public:
-    StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+    ResidualResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-	virtual StdResamplingAlgorithm* Clone() const;
+	virtual ResidualResamplingAlgorithm* Clone() const;
 
-	void Resample(ParticleFilter *particleFilter,const tVector &weights);
-// 	int ResampleWhenNecessary(ParticleFilter *particleFilter);
+    virtual void Resample(ParticleFilter* particleFilter, const tVector& weights);
+
 };
 
 #endif

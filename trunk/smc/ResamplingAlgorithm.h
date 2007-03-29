@@ -32,9 +32,25 @@ protected:
     ResamplingCriterion _resamplingCriterion;
 public:
     ResamplingAlgorithm(ResamplingCriterion resamplingCriterion): _resamplingCriterion(resamplingCriterion) {}
-    virtual ~ResamplingAlgorithm() {}
-    virtual int Resample(ParticleFilter *particleFilter) = 0;
+	virtual ~ResamplingAlgorithm() {}
 
+	virtual ResamplingAlgorithm* Clone() const = 0;
+
+	ResamplingCriterion GetResamplingCriterion() { return _resamplingCriterion;}
+
+    virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) = 0;
+
+    virtual int ResampleWhenNecessary(ParticleFilter *particleFilter)
+    {
+		tVector weigths = particleFilter->GetWeightsVector();
+
+		if(_resamplingCriterion.ResamplingNeeded(weigths))
+		{
+			Resample(particleFilter,weigths);
+			return 1;
+		}
+		return 0;
+    }
 };
 
 #endif

@@ -17,30 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STDRESAMPLINGALGORITHM_H
-#define STDRESAMPLINGALGORITHM_H
+#ifndef WITHTHRESHOLDRESAMPLINGALGORITHMWRAPPER_H
+#define WITHTHRESHOLDRESAMPLINGALGORITHMWRAPPER_H
+
+#include <ResamplingAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <vector>
-#include <types.h>
-#include <ResamplingAlgorithm.h>
-// #include <ChannelMatrixEstimator.h>
-// #include <LinearDetector.h>
-// #include <ParticleFilter.h>
-// #include <ParticleWithChannelEstimation.h>
-// #include <exceptions.h>
-
-class StdResamplingAlgorithm : public ResamplingAlgorithm{
+class WithThresholdResamplingAlgorithmWrapper : public ResamplingAlgorithm
+{
+protected:
+	double _threshold;
+	ResamplingAlgorithm *_realResamplingAlgorithm;
 public:
-    StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+    WithThresholdResamplingAlgorithmWrapper(ResamplingAlgorithm *resamplingAlgorithm,double threshold);
 
-	virtual StdResamplingAlgorithm* Clone() const;
+    ~WithThresholdResamplingAlgorithmWrapper();
 
-	void Resample(ParticleFilter *particleFilter,const tVector &weights);
-// 	int ResampleWhenNecessary(ParticleFilter *particleFilter);
+	virtual WithThresholdResamplingAlgorithmWrapper* Clone() const;
+
+    WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper);
+
+
+    virtual void Resample(ParticleFilter* particleFilter, const tVector& weights);
+
 };
 
 #endif

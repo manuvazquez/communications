@@ -23,7 +23,12 @@ ByChannelOrderResamplingAlgorithm::ByChannelOrderResamplingAlgorithm(ResamplingC
 {
 }
 
-int ByChannelOrderResamplingAlgorithm::Resample(ParticleFilter *particleFilter)
+ByChannelOrderResamplingAlgorithm* ByChannelOrderResamplingAlgorithm::Clone() const
+{
+	return new ByChannelOrderResamplingAlgorithm(*this);
+}
+
+int ByChannelOrderResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
     ParticleFilterWithChannelOrder *pf = dynamic_cast <ParticleFilterWithChannelOrder *> (particleFilter);
 

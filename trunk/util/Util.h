@@ -68,6 +68,7 @@ public:
     template<class T> static T Sum(const std::vector<T> &vector);
     static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
     template<class T> static void Print(const std::vector<T> &vector);
+    template<class T> static void Print(const T* array,int nElements);
     static void ShiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);

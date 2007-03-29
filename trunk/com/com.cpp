@@ -81,6 +81,8 @@
 #include <ParticleWithChannelEstimation.h>
 #include <ResamplingCriterion.h>
 #include <StdResamplingAlgorithm.h>
+#include <ResidualResamplingAlgorithm.h>
+#include <WithThresholdResamplingAlgorithmWrapper.h>
 #include <ByChannelOrderResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
@@ -103,24 +105,6 @@ void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &det
 
 int main(int argc,char* argv[])
 {
-// 	vector<double> A(3);
-// 	A[0] = -0.1; A[1] = 0.0; A[2] = 0.1;
-// 	vector<double> B(2);
-// 	B[0] = -0.5; B[1] = 0.5;
-// 	vector<vector <double> > alfs(2);
-// 	alfs[0] = A;
-// 	alfs[1] = B;
-//
-// 	vector<double> v(2);
-// 	v[0] = -0.1; v[1] = -0.5;
-// 	Util::Print(v);
-// 	for(int i=0;i<5;i++)
-// 	{
-// 		Util::NextVector(v,alfs);
-// 		Util::Print(v);
-// 	}
-// 	exit(0);
-
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
@@ -139,8 +123,8 @@ int main(int argc,char* argv[])
     int MSEwindowStart = 0;
 
     // PSP
-    int nSurvivors = 2;
-    bool adjustParticlesNumberFromSurvivors = true;
+    int nSurvivors = 4;
+    bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 2;
@@ -153,7 +137,6 @@ int main(int argc,char* argv[])
     // SNRs to be processed
     vector<int> SNRs;
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(-2);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -259,23 +242,34 @@ int main(int argc,char* argv[])
 
 	int nSmoothingBitsVectors = nSmoothingSymbolsVectors*pam2.NbitsBySymbol();
 
-    // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
-    StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
-
-    // resampling algorithm for the case of unknown channel order
-    ByChannelOrderResamplingAlgorithm unknownChannelOrderResamplingAlgorithm(criterioRemuestreo);
-
-	// USIS2SIS transition criterion(s)
-    MaximumProbabilityCriterion USISmaximumProbabilityCriterion(0.8);
-    UniformRelatedCriterion USISuniformRelatedCriterion(2.0);
-
 	// PSP
 	if(adjustParticlesNumberFromSurvivors)
 	{
 		nParticles = (int)pow((double)pam2.Length(),N*(m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
+
+    // always the same resampling criterion and algorithms
+    ResamplingCriterion criterioRemuestreo(resamplingRatio);
+    StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
+    ResidualResamplingAlgorithm residualResampling(criterioRemuestreo);
+    WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
+
+    // resampling algorithm for the case of unknown channel order
+    ByChannelOrderResamplingAlgorithm unknownChannelOrderResamplingAlgorithm(criterioRemuestreo);
+
+	// vectors with the thresholds and the corresponding resampling algorithms
+	vector<double> thresholds;
+	vector<ResamplingAlgorithm*> resamplingAlgorithms;
+	for(double threshold=1.0/double(nParticles);threshold<1.0;threshold+=0.1)
+	{
+		thresholds.push_back(threshold);
+		resamplingAlgorithms.push_back(new WithThresholdResamplingAlgorithmWrapper(new ResidualResamplingAlgorithm(criterioRemuestreo),threshold));
+	}
+
+	// USIS2SIS transition criterion(s)
+    MaximumProbabilityCriterion USISmaximumProbabilityCriterion(0.8);
+    UniformRelatedCriterion USISuniformRelatedCriterion(2.0);
 
     // ambiguity resolution
     uint *firstPermutation = new uint[N];
@@ -377,19 +371,19 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
-//             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+//             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm 5 supervivientes",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],5));
 
@@ -425,6 +419,18 @@ int main(int argc,char* argv[])
 //
 // 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS suponiendo m = ") + string(buffer),pam2,L,N,lastSymbolVectorInstant,candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 // 			}
+
+			// the RLS algorithm considering several resampling thresholds
+			for(uint iThreshold=0;iThreshold<thresholds.size();iThreshold++)
+			{
+
+                char buffer[SPRINTF_BUFFER];
+
+				// the threshold (double) is converted to char *
+				sprintf(buffer,"%f",thresholds[iThreshold]);
+
+				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS with threshold = ") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,resamplingAlgorithms[iThreshold],initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+			}
 
 			// ---------------------------------------------------------------------------------
 
@@ -588,6 +594,9 @@ int main(int argc,char* argv[])
 		delete RMMSElinearDetectors[iChannelOrder];
 	}
 	delete channelOrderEstimator;
+
+	for(uint iThreshold=0;iThreshold<thresholds.size();iThreshold++)
+		delete resamplingAlgorithms[iThreshold];
 }
 
 void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)

@@ -35,6 +35,8 @@
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
+private:
+	void InitializeParticlesChannelMatrixEstimations();
 protected:
 	ParticleFilter *_particleFilter;
 	bool _particleFilterNeedToBeDeleted;

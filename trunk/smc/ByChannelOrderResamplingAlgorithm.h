@@ -33,7 +33,10 @@ class ByChannelOrderResamplingAlgorithm : public ResamplingAlgorithm
 public:
     ByChannelOrderResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-    virtual int Resample(ParticleFilter *particleFilter);
+	virtual ByChannelOrderResamplingAlgorithm* Clone() const;
+
+	virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) {}
+    virtual int ResampleWhenNecessary(ParticleFilter *particleFilter);
 
 };
 
