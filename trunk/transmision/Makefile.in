@@ -60,7 +60,7 @@ ARFLAGS = cru
 libtransmision_a_AR = $(AR) $(ARFLAGS)
 libtransmision_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
 	$(top_builddir)/statistics/libstatistics.a \
-	$(top_builddir)/randomutil/librandomutil.a \
+	$(top_builddir)/smc/resampling/libresampling.a \
 	/usr/lib/liblapackpp.la
 am_libtransmision_a_OBJECTS = Alphabet.$(OBJEXT) Bits.$(OBJEXT) \
 	MIMOChannel.$(OBJEXT) ARchannel.$(OBJEXT) Noise.$(OBJEXT) \
@@ -214,7 +214,7 @@ noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
 		ARoneChannelOrderPerTransmitAtennaMIMOChannel.h NullNoise.h
 
 libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
+	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/smc/resampling/libresampling.a /usr/lib/liblapackpp.la
 
 all: all-am
 

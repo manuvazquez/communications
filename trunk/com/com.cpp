@@ -80,7 +80,7 @@
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
 #include <ResamplingCriterion.h>
-#include <StdResamplingAlgorithm.h>
+#include <MultinomialResamplingAlgorithm.h>
 #include <ResidualResamplingAlgorithm.h>
 #include <WithThresholdResamplingAlgorithmWrapper.h>
 #include <ByChannelOrderResamplingAlgorithm.h>
@@ -110,7 +110,7 @@ int main(int argc,char* argv[])
     int d,lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 5;
+    int nFrames = 1;
     int L=3,N=2,K=300;
     int trainSeqLength = 30;
     int nParticles = 30;
@@ -251,7 +251,7 @@ int main(int argc,char* argv[])
 
     // always the same resampling criterion and algorithms
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
-    StdResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
+    MultinomialResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
     ResidualResamplingAlgorithm residualResampling(criterioRemuestreo);
     WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
 
@@ -375,7 +375,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -421,16 +421,16 @@ int main(int argc,char* argv[])
 // 			}
 
 			// the RLS algorithm considering several resampling thresholds
-			for(uint iThreshold=0;iThreshold<thresholds.size();iThreshold++)
-			{
-
-                char buffer[SPRINTF_BUFFER];
-
-				// the threshold (double) is converted to char *
-				sprintf(buffer,"%f",thresholds[iThreshold]);
-
-				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS with threshold = ") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,resamplingAlgorithms[iThreshold],initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-			}
+// 			for(uint iThreshold=0;iThreshold<thresholds.size();iThreshold++)
+// 			{
+//
+//                 char buffer[SPRINTF_BUFFER];
+//
+// 				// the threshold (double) is converted to char *
+// 				sprintf(buffer,"%f",thresholds[iThreshold]);
+//
+// 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("Filtro lineal RLS with threshold = ") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,resamplingAlgorithms[iThreshold],initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 			}
 
 			// ---------------------------------------------------------------------------------
 

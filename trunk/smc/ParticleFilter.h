@@ -55,14 +55,6 @@ public:
         return weights;
     }
 
-//     void NormalizeWeights()
-//     {
-// 		std::vector<int> indexes(_nParticles);
-// 		for(int i=0;i<_nParticles;i++)
-// 			indexes[i] = i;
-// 		NormalizeWeights(indexes);
-//     }
-
     void NormalizeWeights()
     {
         double sum = 0.0;

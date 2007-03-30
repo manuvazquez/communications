@@ -19340,7 +19340,7 @@ LIBTOOL='$(SHELL) $(top_builddir)/libtool'
 
 
 
-ac_config_files="$ac_config_files Makefile algorithms/Makefile algorithms/USIS2SIS/Makefile com/Makefile detection/Makefile detection/trellis/Makefile estimation/Makefile filters/Makefile randomutil/Makefile smc/Makefile src/Makefile statistics/Makefile transmision/Makefile util/Makefile"
+ac_config_files="$ac_config_files Makefile algorithms/Makefile algorithms/USIS2SIS/Makefile com/Makefile detection/Makefile detection/trellis/Makefile estimation/Makefile filters/Makefile randomutil/Makefile smc/Makefile smc/resampling/Makefile src/Makefile statistics/Makefile transmision/Makefile util/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -19937,6 +19937,7 @@ do
     "filters/Makefile") CONFIG_FILES="$CONFIG_FILES filters/Makefile" ;;
     "randomutil/Makefile") CONFIG_FILES="$CONFIG_FILES randomutil/Makefile" ;;
     "smc/Makefile") CONFIG_FILES="$CONFIG_FILES smc/Makefile" ;;
+    "smc/resampling/Makefile") CONFIG_FILES="$CONFIG_FILES smc/resampling/Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "statistics/Makefile") CONFIG_FILES="$CONFIG_FILES statistics/Makefile" ;;
     "transmision/Makefile") CONFIG_FILES="$CONFIG_FILES transmision/Makefile" ;;

@@ -17,41 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "StdResamplingAlgorithm.h"
+#ifndef MULTINOMIALRESAMPLINGALGORITHM_H
+#define MULTINOMIALRESAMPLINGALGORITHM_H
 
-// #define DEBUG
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-using namespace std;
+#include <vector>
+#include <types.h>
+#include <ResamplingAlgorithm.h>
+// #include <ChannelMatrixEstimator.h>
+// #include <LinearDetector.h>
+// #include <ParticleFilter.h>
+// #include <ParticleWithChannelEstimation.h>
+// #include <exceptions.h>
 
-StdResamplingAlgorithm::StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
-{
-}
+class MultinomialResamplingAlgorithm : public ResamplingAlgorithm{
+public:
+    MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-StdResamplingAlgorithm* StdResamplingAlgorithm::Clone() const
-{
-	return new StdResamplingAlgorithm(*this);
-}
+	virtual MultinomialResamplingAlgorithm* Clone() const;
 
-void StdResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
-{
-	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
-	particleFilter->KeepParticles(indexes);
-}
+	void Resample(ParticleFilter *particleFilter,const tVector &weights);
+// 	int ResampleWhenNecessary(ParticleFilter *particleFilter);
+};
 
-// int StdResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
-// {
-//     tVector weigths = particleFilter->GetWeightsVector();
-//
-//     if(_resamplingCriterion.ResamplingNeeded(weigths))
-//     {
-//         vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weigths);
-//         particleFilter->KeepParticles(indexes);
-//
-// 		#ifdef DEBUG
-// 		for(int i=0;i<particleFilter->Nparticles();i++)
-// 			cout << i << " <- " << indexes[i] << endl;
-// 		#endif
-// 		return 1;
-//     }
-//     return 0;
-// }
+#endif

@@ -17,30 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef STDRESAMPLINGALGORITHM_H
-#define STDRESAMPLINGALGORITHM_H
+#include "MultinomialResamplingAlgorithm.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+// #define DEBUG
 
-#include <vector>
-#include <types.h>
-#include <ResamplingAlgorithm.h>
-// #include <ChannelMatrixEstimator.h>
-// #include <LinearDetector.h>
-// #include <ParticleFilter.h>
-// #include <ParticleWithChannelEstimation.h>
-// #include <exceptions.h>
+using namespace std;
 
-class StdResamplingAlgorithm : public ResamplingAlgorithm{
-public:
-    StdResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+MultinomialResamplingAlgorithm::MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
+{
+}
 
-	virtual StdResamplingAlgorithm* Clone() const;
+MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::Clone() const
+{
+	return new MultinomialResamplingAlgorithm(*this);
+}
 
-	void Resample(ParticleFilter *particleFilter,const tVector &weights);
-// 	int ResampleWhenNecessary(ParticleFilter *particleFilter);
-};
-
-#endif
+void MultinomialResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
+{
+	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
+	particleFilter->KeepParticles(indexes);
+}
