@@ -58,8 +58,7 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libutil_a_AR = $(AR) $(ARFLAGS)
-libutil_a_DEPENDENCIES = $(top_builddir)/randomutil/librandomutil.a \
-	/usr/lib/liblapackpp.la
+libutil_a_LIBADD =
 am_libutil_a_OBJECTS = Util.$(OBJEXT)
 libutil_a_OBJECTS = $(am_libutil_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -182,11 +181,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 lib_LIBRARIES = libutil.a
 libutil_a_SOURCES = Util.cpp
-noinst_HEADERS = mylapack.h utilExceptions.h
+noinst_HEADERS = utilExceptions.h
 INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src -I/usr/local/include
-libutil_a_LIBADD = $(top_builddir)/randomutil/librandomutil.a \
-	/usr/lib/liblapackpp.la
-
 all: all-am
 
 .SUFFIXES:

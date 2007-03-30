@@ -63,7 +63,7 @@ public:
     template<class T> static void ScalarToStream(T scalar,string name,ofstream &f);
     static void StringsVectorToStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f);
-    template<class T> static T Max(const std::vector<T> &vector);
+    template<class T> static int Max(const std::vector<T> &vector);
     template<class T> static void Min(const std::vector<T> &vector,int &iMin);
     template<class T> static T Sum(const std::vector<T> &vector);
     static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
@@ -75,6 +75,7 @@ public:
     static tMatrix ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix Cholesky(const tMatrix &matrix);
     template<class T> static void NextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
+    template<class T> static void HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
 };
 
 #endif

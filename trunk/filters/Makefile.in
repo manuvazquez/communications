@@ -58,8 +58,7 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libfilters_a_AR = $(AR) $(ARFLAGS)
-libfilters_a_DEPENDENCIES = $(top_builddir)/util/libutil.a \
-	/usr/lib/liblapackpp.la
+libfilters_a_LIBADD =
 am_libfilters_a_OBJECTS = KalmanFilter.$(OBJEXT)
 libfilters_a_OBJECTS = $(am_libfilters_a_OBJECTS)
 DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
@@ -185,7 +184,6 @@ METASOURCES = AUTO
 lib_LIBRARIES = libfilters.a
 noinst_HEADERS = KalmanFilter.h
 libfilters_a_SOURCES = KalmanFilter.cpp
-libfilters_a_LIBADD = $(top_builddir)/util/libutil.a /usr/lib/liblapackpp.la
 all: all-am
 
 .SUFFIXES:

@@ -19,11 +19,25 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
-// #define DEBUG10
+#define DEBUG13
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
 _particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances)
+{
+	if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
+		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
+
+	if(channelMatrixVariances.rows()!=L || channelMatrixVariances.cols()!=(N*m))
+		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix variances dimensions are wrong.");
+
+    // at first, we assume that all observations from the preamble need to be processed
+    _startDetectionTime = _preamble.cols();
+}
+
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,const MIMOChannel *channel,const tMatrix *symbols): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
+// _variables initialization
+_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_channel(channel),_symbols(symbols)
 {
 	if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
 		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
@@ -111,6 +125,12 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     tRange rTrainingSequence(_preamble.cols(),preamblePlusTrainingSequenceLength-1);
 
     vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+
+    #ifdef DEBUG13
+    	tMatrix ultimaEstimada = trainingSequenceChannelMatrices[trainingSequenceChannelMatrices.size()-1];
+    	cout << "El error cometido despues de la secuencia de entrenamiento es " << Util::SquareError((*_channel)[preamblePlusTrainingSequenceLength],ultimaEstimada) << endl;
+    	cout << "Una tecla..."; getchar();
+    #endif
 
     InitializeParticles();
 
@@ -201,11 +221,28 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 	tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
 	tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 
+	#ifdef DEBUG13
+		vector<double> MSEs(_particleFilter->Nparticles());
+	#endif
+
 	// the initial estimation of the particles channel matrix estimators is set
     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-		processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+		tMatrix channelMatrixSample = Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
+
+		#ifdef DEBUG13
+			cout << "MSE partícula " << iParticle << ": " << (MSEs[iParticle] = Util::SquareError((*_channel)[_preamble.cols()],channelMatrixSample)) << endl;
+		#endif
+
+		processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(channelMatrixSample);
     }
+
+	#ifdef DEBUG13
+		int iMin;
+		Util::Min(MSEs,iMin);
+		cout << "El menor MSE es " << MSEs[iMin] << " en la partícula " << iMin << endl;
+		cout << "Una tecla..."; getchar();
+    #endif
 }

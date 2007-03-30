@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MultinomialResamplingAlgorithm.h"
 
-// #define DEBUG
+#define DEBUG
 
 using namespace std;
 
@@ -35,5 +35,15 @@ MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::Clone() const
 void MultinomialResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
 {
 	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
+	#ifdef DEBUG
+// 		cout << "Indices elegidos" << endl;
+// 		Util::Print(indexes);
+		vector<int> firstOcurrence,times;
+		Util::HowManyTimes(indexes,firstOcurrence,times);
+		Util::Print(times);
+		for(int i=0;i<times.size();i++)
+			cout << "La partícula " << indexes[firstOcurrence[i]] << " se remuestrea " << times[i] << " veces" << endl;
+		cout << "Una tecla..."; getchar();
+	#endif
 	particleFilter->KeepParticles(indexes);
 }

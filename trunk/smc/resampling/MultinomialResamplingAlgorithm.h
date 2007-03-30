@@ -40,7 +40,6 @@ public:
 	virtual MultinomialResamplingAlgorithm* Clone() const;
 
 	void Resample(ParticleFilter *particleFilter,const tVector &weights);
-// 	int ResampleWhenNecessary(ParticleFilter *particleFilter);
 };
 
 #endif

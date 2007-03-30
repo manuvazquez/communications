@@ -4,5 +4,3 @@ METASOURCES = AUTO
 lib_LIBRARIES = libstatistics.a
 noinst_HEADERS = ARprocess.h StatUtil.h
 libstatistics_a_SOURCES = ARprocess.cpp StatUtil.cpp
-libstatistics_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la

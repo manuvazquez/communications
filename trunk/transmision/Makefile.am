@@ -11,5 +11,3 @@ noinst_HEADERS = Bits.h Alphabet.h MIMOChannel.h ARchannel.h Noise.h \
 		ChannelDependentNoise.h Demodulator.h StillMemoryMIMOChannel.h SparklingMemoryMIMOChannel.h \
 		SparklingMemoryARMIMOChannel.h OneChannelOrderPerTransmitAtennaMIMOChannel.h \
 		ARoneChannelOrderPerTransmitAtennaMIMOChannel.h NullNoise.h
-libtransmision_a_LIBADD = $(top_builddir)/util/libutil.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/smc/resampling/libresampling.a /usr/lib/liblapackpp.la

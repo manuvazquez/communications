@@ -19,9 +19,14 @@
  ***************************************************************************/
 #include "LinearFilterBasedSMCAlgorithm.h"
 
-// #define DEBUG10
+#define DEBUG13
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+{
+}
+
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel *channel,const tMatrix *symbols): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances,channel,symbols)
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 {
 }
@@ -92,10 +97,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		{
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-// 			// predicted channel matrices are stored in a vector in order to stack them
+			// predicted channel matrices are stored in a vector in order to stack them
 
-			// matricesToStack[0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
-// 			Util::Add((processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),matricesToStack[0],_ARcoefficient,1.0);
+			// first one is obtained via a virtual method
 			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[0]);
 
             #ifdef DEBUG10
@@ -224,10 +228,14 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		}
 		_particleFilter->NormalizeWeights();
 
+		#ifdef DEBUG13
+			if(iObservationToBeProcessed==_startDetectionTime)
+				cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+		#endif
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
-	}
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 
 vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)

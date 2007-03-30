@@ -28,11 +28,11 @@ ByChannelOrderResamplingAlgorithm* ByChannelOrderResamplingAlgorithm::Clone() co
 	return new ByChannelOrderResamplingAlgorithm(*this);
 }
 
-int ByChannelOrderResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
+bool ByChannelOrderResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
     ParticleFilterWithChannelOrder *pf = dynamic_cast <ParticleFilterWithChannelOrder *> (particleFilter);
 
-	int resamplingHappened = 0;
+	int resamplingHappened = false;
     vector<vector <int> > indexesOfChannelOrders = pf->GetIndexesOfChannelOrders();
     tVector weights = pf->GetWeightsVector();
 
@@ -57,7 +57,7 @@ int ByChannelOrderResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *par
                     indexes[i] = indexesOfChannelOrders[iChannelOrder][auxIndexes[i]];
 
             pf->KeepParticles(indexes,indexesOfChannelOrders[iChannelOrder]);
-            resamplingHappened = 1;
+            resamplingHappened = true;
         }
     }
 

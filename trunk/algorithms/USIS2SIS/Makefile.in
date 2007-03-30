@@ -58,9 +58,7 @@ libLIBRARIES_INSTALL = $(INSTALL_DATA)
 LIBRARIES = $(lib_LIBRARIES)
 ARFLAGS = cru
 libUSIS2SIS_a_AR = $(AR) $(ARFLAGS)
-libUSIS2SIS_a_DEPENDENCIES =  \
-	$(top_builddir)/smc/resampling/libresampling.a \
-	$(top_builddir)/smc/libsmc.a
+libUSIS2SIS_a_LIBADD =
 am_libUSIS2SIS_a_OBJECTS = MaximumProbabilityCriterion.$(OBJEXT) \
 	USIS2SISAlgorithm.$(OBJEXT) UniformRelatedCriterion.$(OBJEXT)
 libUSIS2SIS_a_OBJECTS = $(am_libUSIS2SIS_a_OBJECTS)
@@ -194,9 +192,6 @@ noinst_HEADERS = MaximumProbabilityCriterion.h TransitionCriterion.h \
 
 libUSIS2SIS_a_SOURCES = MaximumProbabilityCriterion.cpp USIS2SISAlgorithm.cpp \
 	UniformRelatedCriterion.cpp
-
-libUSIS2SIS_a_LIBADD = $(top_builddir)/smc/resampling/libresampling.a \
-	$(top_builddir)/smc/libsmc.a
 
 all: all-am
 

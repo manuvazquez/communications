@@ -36,7 +36,7 @@ public:
 	virtual ByChannelOrderResamplingAlgorithm* Clone() const;
 
 	virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) {}
-    virtual int ResampleWhenNecessary(ParticleFilter *particleFilter);
+    virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter);
 
 };
 

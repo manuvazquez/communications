@@ -299,7 +299,7 @@ template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string 
 template void Util::ScalarsVectorToStream(std::vector<double> vector,string name,ofstream &f);
 template void Util::ScalarsVectorToStream(std::vector<int> vector,string name,ofstream &f);
 
-template<class T> T Util::Max(const std::vector<T> &vector)
+template<class T> int Util::Max(const std::vector<T> &vector)
 {
 	int iMax = 0;
 	T max = vector[0];
@@ -565,3 +565,36 @@ template<class T> void Util::NextVector(vector<T> &vector,const vector<vector<T>
 	}
 }
 template void Util::NextVector(vector<double> &vector,const vector<vector<double> > &alphabets);
+
+/**
+ * It finds out how many times appear each element. @param firstOccurrence and @param times will be deleted
+ * @param v
+ * @param firstOccurrence
+ * @param times
+ */
+template<class T> void Util::HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times)
+{
+	firstOccurrence.clear();
+	firstOccurrence.reserve(v.size());
+
+	times.clear();
+	times.reserve(v.size());
+
+	for(uint i=0;i<v.size();i++)
+	{
+		uint j;
+		for(j=0;j<firstOccurrence.size();j++)
+			// if v[i] has already been found
+			if(v[firstOccurrence[j]]==v[i])
+			{
+				times[j]++;
+				break;
+			}
+		if(j==firstOccurrence.size())
+		{
+			firstOccurrence.push_back(i);
+			times.push_back(1);
+		}
+	}
+}
+template void Util::HowManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);

@@ -13,7 +13,4 @@ libalgorithms_a_SOURCES = Algorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
 		KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedSMCAlgorithm.cpp \
 		MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp SMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
 		UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp LinearFilterBasedMKFAlgorithm.cpp
-libalgorithms_a_LIBADD = $(top_builddir)/smc/libsmc.a \
-	$(top_builddir)/smc/resampling/libresampling.a $(top_builddir)/transmision/libtransmision.a \
-	$(top_builddir)/statistics/libstatistics.a $(top_builddir)/randomutil/librandomutil.a
 SUBDIRS = USIS2SIS

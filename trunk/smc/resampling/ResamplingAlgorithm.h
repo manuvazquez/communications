@@ -40,16 +40,16 @@ public:
 
     virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) = 0;
 
-    virtual int ResampleWhenNecessary(ParticleFilter *particleFilter)
+    virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter)
     {
 		tVector weigths = particleFilter->GetWeightsVector();
 
 		if(_resamplingCriterion.ResamplingNeeded(weigths))
 		{
 			Resample(particleFilter,weigths);
-			return 1;
+			return true;
 		}
-		return 0;
+		return false;
     }
 };
 

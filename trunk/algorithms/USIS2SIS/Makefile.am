@@ -8,5 +8,3 @@ noinst_HEADERS = MaximumProbabilityCriterion.h TransitionCriterion.h \
 	USIS2SISAlgorithm.h UniformRelatedCriterion.h
 libUSIS2SIS_a_SOURCES = MaximumProbabilityCriterion.cpp USIS2SISAlgorithm.cpp \
 	UniformRelatedCriterion.cpp
-libUSIS2SIS_a_LIBADD = $(top_builddir)/smc/resampling/libresampling.a \
-	$(top_builddir)/smc/libsmc.a
