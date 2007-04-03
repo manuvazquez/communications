@@ -39,7 +39,9 @@ public:
 
 	virtual MultinomialResamplingAlgorithm* Clone() const;
 
-	void Resample(ParticleFilter *particleFilter,const tVector &weights);
+	std::vector<int> ObtainIndexes(int n,const tVector &weights) const;
+
+// 	void Resample(ParticleFilter *particleFilter,const tVector &weights);
 };
 
 #endif

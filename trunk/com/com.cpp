@@ -83,7 +83,6 @@
 #include <MultinomialResamplingAlgorithm.h>
 #include <ResidualResamplingAlgorithm.h>
 #include <WithThresholdResamplingAlgorithmWrapper.h>
-#include <ByChannelOrderResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
 
@@ -103,6 +102,10 @@ double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from
 double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
 void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2);
 
+int iteracionActual;
+int particulaMenorMSE;
+vector<double> MSEs;
+
 int main(int argc,char* argv[])
 {
     double pe,mse;
@@ -111,9 +114,9 @@ int main(int argc,char* argv[])
 
     // GLOBAL PARAMETERS
     int nFrames = 1;
-    int L=3,N=2,K=300;
+    int L=3,N=2,K=30;
     int trainSeqLength = 1;
-    int nParticles = 300;
+    int nParticles = 10;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -255,13 +258,10 @@ int main(int argc,char* argv[])
     ResidualResamplingAlgorithm residualResampling(criterioRemuestreo);
     WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
 
-    // resampling algorithm for the case of unknown channel order
-    ByChannelOrderResamplingAlgorithm unknownChannelOrderResamplingAlgorithm(criterioRemuestreo);
-
 	// vectors with the thresholds and the corresponding resampling algorithms
 	vector<double> thresholds;
 	vector<ResamplingAlgorithm*> resamplingAlgorithms;
-	for(double threshold=1.0/double(nParticles);threshold<1.0;threshold+=0.1)
+	for(double threshold=1.0/double(nParticles);threshold<0.5;threshold+=0.1)
 	{
 		thresholds.push_back(threshold);
 		resamplingAlgorithms.push_back(new WithThresholdResamplingAlgorithmWrapper(new ResidualResamplingAlgorithm(criterioRemuestreo),threshold));
@@ -377,7 +377,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
 //             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

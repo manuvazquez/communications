@@ -38,7 +38,9 @@ public:
 
 	ResamplingCriterion GetResamplingCriterion() { return _resamplingCriterion;}
 
-    virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) = 0;
+	virtual std::vector<int> ObtainIndexes(int n,const tVector &weights) const = 0;
+
+//     virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) = 0;
 
     virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter)
     {
@@ -46,7 +48,8 @@ public:
 
 		if(_resamplingCriterion.ResamplingNeeded(weigths))
 		{
-			Resample(particleFilter,weigths);
+// 			Resample(particleFilter,weigths);
+			particleFilter->KeepParticles(ObtainIndexes(particleFilter->Nparticles(),weigths));
 			return true;
 		}
 		return false;

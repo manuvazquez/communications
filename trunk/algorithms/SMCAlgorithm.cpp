@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
-#define DEBUG13
+// #define DEBUG13
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
@@ -222,7 +222,10 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 	tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 
 	#ifdef DEBUG13
-		vector<double> MSEs(_particleFilter->Nparticles());
+// 		vector<double> MSEs(_particleFilter->Nparticles());
+		extern vector<double> MSEs;
+		MSEs.resize(_particleFilter->Nparticles());
+		extern int particulaMenorMSE;
 	#endif
 
 	// the initial estimation of the particles channel matrix estimators is set
@@ -242,6 +245,7 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 	#ifdef DEBUG13
 		int iMin;
 		Util::Min(MSEs,iMin);
+		particulaMenorMSE = iMin;
 		cout << "El menor MSE es " << MSEs[iMin] << " en la partícula " << iMin << endl;
 		cout << "Una tecla..."; getchar();
     #endif

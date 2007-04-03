@@ -42,38 +42,65 @@ WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper
 {
 }
 
-void WithThresholdResamplingAlgorithmWrapper::Resample(ParticleFilter* particleFilter, const tVector& weights)
+tVector WithThresholdResamplingAlgorithmWrapper::FlattenWeights(const tVector &weights, double threshold) const
 {
 	double remainingWeight = 0.0;
 	int nParticlesOverThreshold = 0;
 
 	tVector newWeights = weights;
 
-	for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
-		if(newWeights(iParticle)>=_threshold)
+	for(int iWeight=0;iWeight<weights.size();iWeight++)
+		if(newWeights(iWeight)>=threshold)
 		{
 			nParticlesOverThreshold++;
-			remainingWeight += (newWeights(iParticle) - _threshold);
-			newWeights(iParticle) = _threshold;
+			remainingWeight += (newWeights(iWeight) - threshold);
+			newWeights(iWeight) = threshold;
 		}
 
 	if(nParticlesOverThreshold > 0)
 	{
-		double weightToAddToEachParticle = remainingWeight/double(particleFilter->Nparticles() - nParticlesOverThreshold);
+		double weightToAddToEachParticle = remainingWeight/double(weights.size() - nParticlesOverThreshold);
 
-		for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
-			// if it wasn't a "<=" the obtained weights wouldn't be normalized
-			if(newWeights(iParticle) < _threshold)
-				newWeights(iParticle) += weightToAddToEachParticle;
+		for(int iWeight=0;iWeight<weights.size();iWeight++)
+			if(newWeights(iWeight) < threshold)
+				newWeights(iWeight) += weightToAddToEachParticle;
 	}
 
-	#ifdef DEBUG
-		cout << "Los pesos originales" << endl << weights;
-		cout << "Los pesos modificados" << endl << newWeights;
-		cout << "Su suma: " << Util::Sum(newWeights) << endl;
-	#endif
-
-	_realResamplingAlgorithm->Resample(particleFilter,newWeights);
-
+	return newWeights;
 }
+
+// void WithThresholdResamplingAlgorithmWrapper::Resample(ParticleFilter* particleFilter, const tVector& weights)
+// {
+// 	double remainingWeight = 0.0;
+// 	int nParticlesOverThreshold = 0;
+//
+// 	tVector newWeights = weights;
+//
+// 	for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
+// 		if(newWeights(iParticle)>=_threshold)
+// 		{
+// 			nParticlesOverThreshold++;
+// 			remainingWeight += (newWeights(iParticle) - _threshold);
+// 			newWeights(iParticle) = _threshold;
+// 		}
+//
+// 	if(nParticlesOverThreshold > 0)
+// 	{
+// 		double weightToAddToEachParticle = remainingWeight/double(particleFilter->Nparticles() - nParticlesOverThreshold);
+//
+// 		for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
+// 			// if it wasn't a "<=" the obtained weights wouldn't be normalized
+// 			if(newWeights(iParticle) < _threshold)
+// 				newWeights(iParticle) += weightToAddToEachParticle;
+// 	}
+//
+// 	#ifdef DEBUG
+// 		cout << "Los pesos originales" << endl << weights;
+// 		cout << "Los pesos modificados" << endl << newWeights;
+// 		cout << "Su suma: " << Util::Sum(newWeights) << endl;
+// 	#endif
+//
+// 	_realResamplingAlgorithm->Resample(particleFilter,newWeights);
+//
+// }
 

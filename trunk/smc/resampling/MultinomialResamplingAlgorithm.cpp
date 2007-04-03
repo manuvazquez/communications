@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MultinomialResamplingAlgorithm.h"
 
-#define DEBUG
+// #define DEBUG
 
 using namespace std;
 
@@ -32,18 +32,37 @@ MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::Clone() const
 	return new MultinomialResamplingAlgorithm(*this);
 }
 
-void MultinomialResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
+vector<int> MultinomialResamplingAlgorithm::ObtainIndexes(int n,const tVector &weights) const
 {
-	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
-	#ifdef DEBUG
-// 		cout << "Indices elegidos" << endl;
-// 		Util::Print(indexes);
-		vector<int> firstOcurrence,times;
-		Util::HowManyTimes(indexes,firstOcurrence,times);
-		Util::Print(times);
-		for(int i=0;i<times.size();i++)
-			cout << "La partícula " << indexes[firstOcurrence[i]] << " se remuestrea " << times[i] << " veces" << endl;
-		cout << "Una tecla..."; getchar();
-	#endif
-	particleFilter->KeepParticles(indexes);
+	return StatUtil::Discrete_rnd(n,weights);
 }
+
+// void MultinomialResamplingAlgorithm::Resample(ParticleFilter *particleFilter,const tVector &weights)
+// {
+// 	vector<int> indexes = StatUtil::Discrete_rnd(particleFilter->Nparticles(),weights);
+// 	#ifdef DEBUG
+// 		extern int iteracionActual;
+// 		extern vector<double> MSEs;
+// // 		cout << "Indices elegidos" << endl;
+// // 		Util::Print(indexes);
+// 		if(iteracionActual==0)
+// 		{
+// 			vector<int> firstOcurrence,times;
+// 			Util::HowManyTimes(indexes,firstOcurrence,times);
+// 			Util::Print(times);
+//
+// 			// se ordenan
+// 			typedef struct
+// 			{
+// 				int indice;
+// 				double MSE;
+// 			} sortable;
+//
+//
+// 			for(int i=0;i<times.size();i++)
+// 				cout << "La partícula " << indexes[firstOcurrence[i]] << " se remuestrea " << times[i] << " veces. MSE = " << MSEs[indexes[firstOcurrence[i]]] << endl;
+// 			cout << "Una tecla..."; getchar();
+// 		}
+// 	#endif
+// 	particleFilter->KeepParticles(indexes);
+// }
