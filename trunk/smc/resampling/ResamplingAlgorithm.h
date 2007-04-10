@@ -40,20 +40,7 @@ public:
 
 	virtual std::vector<int> ObtainIndexes(int n,const tVector &weights) const = 0;
 
-//     virtual void Resample(ParticleFilter *particleFilter,const tVector &weights) = 0;
-
-    virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter)
-    {
-		tVector weigths = particleFilter->GetWeightsVector();
-
-		if(_resamplingCriterion.ResamplingNeeded(weigths))
-		{
-// 			Resample(particleFilter,weigths);
-			particleFilter->KeepParticles(ObtainIndexes(particleFilter->Nparticles(),weigths));
-			return true;
-		}
-		return false;
-    }
+    virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter);
 };
 
 #endif

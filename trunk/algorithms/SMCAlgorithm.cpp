@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "SMCAlgorithm.h"
 
-// #define DEBUG13
+#define DEBUG13
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
@@ -236,7 +236,7 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 		tMatrix channelMatrixSample = Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
 
 		#ifdef DEBUG13
-			cout << "MSE partícula " << iParticle << ": " << (MSEs[iParticle] = Util::SquareError((*_channel)[_preamble.cols()],channelMatrixSample)) << endl;
+			cout << "MSE partï¿½ula " << iParticle << ": " << (MSEs[iParticle] = Util::SquareError((*_channel)[_preamble.cols()],channelMatrixSample)) << endl;
 		#endif
 
 		processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(channelMatrixSample);
@@ -246,7 +246,7 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 		int iMin;
 		Util::Min(MSEs,iMin);
 		particulaMenorMSE = iMin;
-		cout << "El menor MSE es " << MSEs[iMin] << " en la partícula " << iMin << endl;
+		cout << "El menor MSE es " << MSEs[iMin] << " en la partï¿½ula " << iMin << endl;
 		cout << "Una tecla..."; getchar();
     #endif
 }

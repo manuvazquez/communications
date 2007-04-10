@@ -6,4 +6,4 @@ lib_LIBRARIES = libresampling.a
 noinst_HEADERS = MultinomialResamplingAlgorithm.h ResamplingAlgorithm.h \
 	ResidualResamplingAlgorithm.h WithThresholdResamplingAlgorithmWrapper.h
 libresampling_a_SOURCES = MultinomialResamplingAlgorithm.cpp \
-	ResidualResamplingAlgorithm.cpp WithThresholdResamplingAlgorithmWrapper.cpp
+		ResidualResamplingAlgorithm.cpp WithThresholdResamplingAlgorithmWrapper.cpp ResamplingAlgorithm.cpp
