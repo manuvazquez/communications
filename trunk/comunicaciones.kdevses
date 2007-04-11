@@ -1,10 +1,19 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
+ <DocsAndViews NumberOfDocuments="4" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 line="27" Type="Source" />
+   <View0 line="22" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h" >
+   <View0 line="0" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+   <View0 line="211" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/Alphabet.h" >
+   <View0 line="0" Type="Source" />
+  </Doc3>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -15,20 +24,20 @@
     <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="125" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="85" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
      <mark line="559" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="422" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="85" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
+     <mark line="44" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
      <mark line="58" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
-     <mark line="44" />
+    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="422" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
      <mark line="97" />
@@ -39,12 +48,11 @@
     <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
      <mark line="66" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="464" />
-     <mark line="117" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="244" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="464" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />

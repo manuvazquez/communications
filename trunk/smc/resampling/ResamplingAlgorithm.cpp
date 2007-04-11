@@ -17,44 +17,44 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KALMANESTIMATOR_H
-#define KALMANESTIMATOR_H
 
-#include <ChannelMatrixEstimator.h>
+#include "ResamplingAlgorithm.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+#define DEBUG
 
-#include <math.h>
-#include <KalmanFilter.h>
-#include <StatUtil.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-
-class KalmanEstimator : public ChannelMatrixEstimator
+bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
-private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
+    tVector weigths = particleFilter->GetWeightsVector();
 
-private:
-	tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
-public:
-    KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
-    KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance);
-	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
-	~KalmanEstimator();
+    if(_resamplingCriterion.ResamplingNeeded(weigths))
+    {
+        vector<int> indexes = ObtainIndexes(particleFilter->Nparticles(),weigths);
+        #ifdef DEBUG
+            extern int iteracionActual;
+            extern vector<double> MSEs;
+        //       cout << "Indices elegidos" << endl;
+        //       Util::Print(indexes);
+            if(iteracionActual==0)
+            {
+                vector<int> firstOcurrence,times;
+                Util::HowManyTimes(indexes,firstOcurrence,times);
+                Util::Print(times);
 
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone();
-	tMatrix SampleFromPredictive();
-	void SetFirstEstimatedChannelMatrix(const tMatrix &matrix) {}
-};
+                // se ordenan
+                typedef struct
+                {
+                    int indice;
+                    double MSE;
+                } sortable;
 
-#endif
+
+                for(int i=0;i<times.size();i++)
+                    cout << "La part�ula " << indexes[firstOcurrence[i]] << " se remuestrea " << times[i] << " veces. MSE = " << MSEs[indexes[firstOcurrence[i]]] << endl;
+                cout << "Una tecla..."; getchar();
+            }
+        #endif
+        particleFilter->KeepParticles(indexes);
+        return true;
+    }
+    return false;
+}

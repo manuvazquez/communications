@@ -102,9 +102,11 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		{
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-			// predicted channel matrices are stored in a vector in order to stack them
+            // the evaluated proposal function (necessary for computing the weights) is initialized
+            proposal = 1.0;
 
-			// first one is obtained via a virtual method
+			// predicted channel matrices are stored in a vector in order to stack them
+			// (first one is obtained via a virtual method)
 			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[0]);
 
             #ifdef DEBUG10
@@ -143,8 +145,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 			// s2qAux = s2qAux + stackedNoiseCovariance
 			Util::Add(s2qAux,stackedNoiseCovariance,s2qAux);
-
-			proposal = 1.0;
 
 			// sampling
 			for(iSampledSymbol=0;iSampledSymbol<(_N*(_d+1));iSampledSymbol++)

@@ -233,7 +233,7 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-		tMatrix channelMatrixSample = Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
+		tMatrix channelMatrixSample = Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
 
 		#ifdef DEBUG13
 			cout << "MSE part�ula " << iParticle << ": " << (MSEs[iParticle] = Util::SquareError((*_channel)[_preamble.cols()],channelMatrixSample)) << endl;
