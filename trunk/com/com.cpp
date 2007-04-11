@@ -115,8 +115,8 @@ int main(int argc,char* argv[])
     // GLOBAL PARAMETERS
     int nFrames = 1;
     int L=3,N=2,K=300;
-    int trainSeqLength = 1;
-    int nParticles = 30;
+    int trainSeqLength = 30;
+    int nParticles = 300;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;

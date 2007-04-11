@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ResidualResamplingAlgorithm.h"
 
-// #define DEBUG
+#define DEBUG
 
 ResidualResamplingAlgorithm::ResidualResamplingAlgorithm(ResamplingCriterion resamplingCriterion): ResamplingAlgorithm(resamplingCriterion)
 {
@@ -58,48 +58,3 @@ std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const tVector 
 
 	return indexes;
 }
-
-// void ResidualResamplingAlgorithm::Resample(ParticleFilter* particleFilter, const tVector& weights)
-// {
-// 	tVector residues(particleFilter->Nparticles());
-// 	int *timesToBeResampled = new int[particleFilter->Nparticles()];
-//
-// 	int nDeterministicParticles = 0;
-// 	for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
-// 	{
-// 		timesToBeResampled[iParticle] = particleFilter->Nparticles()*weights(iParticle);
-// 		nDeterministicParticles += timesToBeResampled[iParticle];
-// 		residues(iParticle) = double(particleFilter->Nparticles())*weights(iParticle) - double(timesToBeResampled[iParticle]);
-// 		#ifdef DEBUG
-// 			cout << "timesToBeResampled[iParticle] = " << timesToBeResampled[iParticle] << endl;
-// 			cout << "El residuo es " << residues(iParticle) << endl;
-// 		#endif
-// 	}
-// 	int nParticlesFromResidues = particleFilter->Nparticles() - nDeterministicParticles;
-// 	residues *= 1.0/double(nParticlesFromResidues);
-//
-// 	vector<int> indexes = StatUtil::Discrete_rnd(nParticlesFromResidues,residues);
-//
-// 	indexes.reserve(particleFilter->Nparticles());
-//
-// 	int vectorIndex = nParticlesFromResidues;
-//
-// 	for(int iParticle=0;iParticle<particleFilter->Nparticles();iParticle++)
-// 		for(int j=0;j<timesToBeResampled[iParticle];j++,vectorIndex++)
-// 			indexes.push_back(iParticle);
-//
-// 	particleFilter->KeepParticles(indexes);
-//
-// 	#ifdef DEBUG
-// 		cout << "Los pesos son" << endl << weights;
-// 		cout << "nº de veces sin residuo" << endl;
-// 		Util::Print(timesToBeResampled,particleFilter->Nparticles());
-// 		cout << "los residuos" << endl << residues;
-// 		cout << "los indices" << endl;
-// 		Util::Print(indexes);
-// 		cout << "nParticlesFromResidues = " << nParticlesFromResidues << endl;
-// 		cout << "Una tecla..."; getchar();
-// 	#endif
-//
-// 	delete[] timesToBeResampled;
-// }

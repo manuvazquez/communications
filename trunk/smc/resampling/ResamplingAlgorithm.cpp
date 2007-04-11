@@ -20,7 +20,7 @@
 
 #include "ResamplingAlgorithm.h"
 
-#define DEBUG
+// #define DEBUG
 
 bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
