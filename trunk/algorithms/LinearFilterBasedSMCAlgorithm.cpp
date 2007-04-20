@@ -69,11 +69,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	tMatrix forWeightUpdateNeededSymbols(_N,_m+_d);
 	tVector predictedNoiselessObservation(_L);
 
-	uint uniformSamplingDuration = 0;
-	tVector alphabetUniformProbabilities(_alphabet.Length());
-	alphabetUniformProbabilities = 1.0/double(_alphabet.Length());
-	uint uniformSamplingEnd = _startDetectionTime + uniformSamplingDuration;
-
 	#ifdef DEBUG13
 		extern int iteracionActual;
 		iteracionActual = 0;
@@ -107,108 +102,91 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
             // the evaluated proposal function (necessary for computing the weights) is initialized
             proposal = 1.0;
 
-            if(iObservationToBeProcessed>=uniformSamplingEnd)
-            {
-				// predicted channel matrices are stored in a vector in order to stack them
-				// (first one is obtained via a virtual method)
-				FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[0]);
+			// predicted channel matrices are stored in a vector in order to stack them
+			// (first one is obtained via a virtual method)
+			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[0]);
 
-				#ifdef DEBUG10
-					cout << "matricesToStack[0] vale" << endl << matricesToStack[0];
-				#endif
+			#ifdef DEBUG10
+				cout << "matricesToStack[0] vale" << endl << matricesToStack[0];
+			#endif
 
-				for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
-				{
-					// matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
-					Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
-				}
+			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
+			{
+				// matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
+				Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
+			}
 
-				// matrices are stacked to give
-				tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
+			// matrices are stacked to give
+			tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
+
+			#ifdef DEBUG
+				cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
+				cout << "stackedNoiseCovariance" << endl << stackedNoiseCovariance << endl;
+			#endif
+
+			// the estimated stacked channel matrix is used to obtain soft estimations
+			// of the transmitted symbols
+			tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+
+			#ifdef DEBUG2
+				cout << "softEstimations" << endl << softEstimations << endl;
+			#endif
+
+			tMatrix filter = processedParticle->GetLinearDetector(_estimatorIndex)->ComputedFilter();
+
+			// operations needed to computed the sampling variance
+
+			//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
+			Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+
+
+			// s2qAux = s2qAux + stackedNoiseCovariance
+			Util::Add(s2qAux,stackedNoiseCovariance,s2qAux);
+
+			// sampling
+			for(iSampledSymbol=0;iSampledSymbol<(_N*(_d+1));iSampledSymbol++)
+			{
+				// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
+				Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
+
+
+				s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(_m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
 				#ifdef DEBUG
-					cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
-					cout << "stackedNoiseCovariance" << endl << stackedNoiseCovariance << endl;
+					cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
+					cout << "filter" << endl << filter << endl;
+					cout << "s2q = " << s2q << endl;
+					getchar();
 				#endif
 
-				// the estimated stacked channel matrix is used to obtain soft estimations
-				// of the transmitted symbols
-				tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
-
-				#ifdef DEBUG2
-					cout << "softEstimations" << endl << softEstimations << endl;
-				#endif
-
-				tMatrix filter = processedParticle->GetLinearDetector(_estimatorIndex)->ComputedFilter();
-
-				// operations needed to computed the sampling variance
-
-				//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-				Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
-
-
-				// s2qAux = s2qAux + stackedNoiseCovariance
-				Util::Add(s2qAux,stackedNoiseCovariance,s2qAux);
-
-				// sampling
-				for(iSampledSymbol=0;iSampledSymbol<(_N*(_d+1));iSampledSymbol++)
+				sumProb = 0.0;
+				// the probability for each posible symbol alphabet is computed
+				for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 				{
-					// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
-					Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
+					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
 
-
-					s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(_m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-					#ifdef DEBUG
-						cout << "s2qAuxFilter" << endl << s2qAuxFilter << endl;
-						cout << "filter" << endl << filter << endl;
-						cout << "s2q = " << s2q << endl;
-						getchar();
-					#endif
-
-					sumProb = 0.0;
-					// the probability for each posible symbol alphabet is computed
-					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-					{
-						symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
-
-						// the computed pdf is accumulated for normalizing purposes
-						sumProb += symbolProb(iSampledSymbol,iAlphabet);
-					}
-
-					try {
-						for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-							symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
-					}catch(exception e){
-						cout << "The sum of the probabilities is null." << endl;
-// 						for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-// 							symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.Length());
-						symbolProb.row(iSampledSymbol).inject(alphabetUniformProbabilities);
-					}
-
-					iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
-					sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
-
-					proposal *= symbolProb(iSampledSymbol,iSampled);
+					// the computed pdf is accumulated for normalizing purposes
+					sumProb += symbolProb(iSampledSymbol,iAlphabet);
 				}
 
-				#ifdef DEBUG2
-					cout << "probabilidades calculadas" << endl << symbolProb << endl;
-				#endif
+				try {
+					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+						symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
+				}catch(exception e){
+					cout << "The sum of the probabilities is null." << endl;
+					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+						symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.Length());
+				}
 
-			} else
-			{
-				#ifdef DEBUG_UNIFORM
-					cout << "Uniform sampling..." << endl;
-				#endif
+				iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
+				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
-				processedParticle->GetLinearDetector(_estimatorIndex)->StateStep(stackedObservations);
-				vector<int> alphabetIndexes = StatUtil::Discrete_rnd(_N*(_d+1),alphabetUniformProbabilities);
-
-				// the symbols are sampled from a uniform
-				for(uint i=0;i<alphabetIndexes.size();i++)
-					sampledSmoothingVector(i) = _alphabet[alphabetIndexes[i]];
+				proposal *= symbolProb(iSampledSymbol,iSampled);
 			}
+
+			#ifdef DEBUG2
+				cout << "probabilidades calculadas" << endl << symbolProb << endl;
+			#endif
 
 			// sampled symbol vector is stored for the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(rAllSymbolRows));

@@ -1,10 +1,46 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="1" >
+ <DocsAndViews NumberOfDocuments="13" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="74" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/StochasticPSPAlgorithm.h" >
+   <View0 Encoding="" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/StochasticPSPAlgorithm.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/StatUtil.h" >
+   <View0 Encoding="" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/statistics/StatUtil.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/transmision/ARchannel.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/util/Util.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/util/Util.h" >
+   <View0 Encoding="" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/changelog" >
+   <View0 Encoding="" Type="Source" />
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/estimation/ChannelOrderEstimator.cpp" >
+   <View0 Encoding="" Type="Source" />
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/algorithms/ISIS.cpp" >
+   <View0 Encoding="" line="124" Type="Source" />
+  </Doc12>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -44,13 +80,13 @@
     <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
      <mark line="66" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
-     <mark line="204" />
-     <mark line="71" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="379" />
-     <mark line="464" />
+     <mark line="176" />
+     <mark line="486" />
+     <mark line="440" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/StochasticPSPAlgorithm.cpp" >
+     <mark line="198" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
@@ -62,7 +98,7 @@
   </kdevsubversion>
   <kdevvalgrind>
    <executable path="" params="" />
-   <valgrind path="/usr/bin/valgrind" params="--tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --tool=memcheck --leak-check=yes" />
+   <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />
   </kdevvalgrind>

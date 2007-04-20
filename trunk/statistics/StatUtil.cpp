@@ -22,6 +22,8 @@
 // the seed used to create the random objects is generated from the system time
 // #define RANDOM_SEED
 
+#define DEBUG
+
 using namespace std;
 
 int StatUtil::Discrete_rnd(const tVector &probabilities)
@@ -194,4 +196,82 @@ double StatUtil::Mean(const tMatrix &A)
 			sum += A(i,j);
 
 	return sum/(double)(A.rows()*A.cols());
+}
+
+vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &probabilities)
+{
+//     int i,j;
+	double uniform;
+
+// 	cout << "Tengo que elegir " << nSamples << endl;
+
+	#ifdef RANDOM_SEED
+		static Random randomGenerator;
+	#else
+		static Random randomGenerator(3);
+	#endif
+
+    int nProbabilities = probabilities.size();
+
+	if(nSamples>=nProbabilities)
+	{
+		vector<int> res(nProbabilities);
+		for(int i=0;i<nProbabilities;i++)
+			res[i] = i;
+		return res;
+	}
+
+    tVector normalizedProbabilities = Util::Normalize(probabilities);
+
+	bool **distributionFunctionActiveOperands;
+	distributionFunctionActiveOperands = new bool*[nProbabilities];
+
+	bool *remainingProbabilityActiveOperands;
+	remainingProbabilityActiveOperands = new bool[nProbabilities];
+	for(int i=0;i<nProbabilities;i++)
+	{
+		distributionFunctionActiveOperands[i] = new bool[nProbabilities];
+		for(int j=0;j<=i;j++)
+		{
+			distributionFunctionActiveOperands[i][j] = true;
+			remainingProbabilityActiveOperands[j] = true;
+		}
+		for(int j=i+1;j<nProbabilities;j++)
+		{
+			distributionFunctionActiveOperands[i][j] = false;
+			remainingProbabilityActiveOperands[j] = true;
+		}
+	}
+
+	int j;
+    vector<int> res(nSamples);
+    for(int i=0;i<nSamples;i++)
+    {
+		uniform = randomGenerator.rand()*ComputeFromActiveOperands(normalizedProbabilities,remainingProbabilityActiveOperands);
+
+		j=0;
+		while(uniform > ComputeFromActiveOperands(normalizedProbabilities,distributionFunctionActiveOperands[j]))
+			j++;
+		res[i] = j;
+
+		remainingProbabilityActiveOperands[j] = false;
+		for(int k=j;k<nProbabilities;k++)
+			distributionFunctionActiveOperands[k][j] = false;
+    }
+
+	for(int i=0;i<nProbabilities;i++)
+		delete[] distributionFunctionActiveOperands[i];
+	delete[] distributionFunctionActiveOperands;
+	delete[] remainingProbabilityActiveOperands;
+
+	return res;
+}
+
+inline double StatUtil::ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands)
+{
+	double res = 0.0;
+	for(int i=0;i<probabilities.size();i++)
+		if(activeOperands[i])
+			res += probabilities(i);
+	return res;
 }

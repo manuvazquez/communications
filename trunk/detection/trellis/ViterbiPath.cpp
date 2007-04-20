@@ -29,8 +29,12 @@ ViterbiPath::ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence):
 {
 }
 
-ViterbiPath::ViterbiPath(const ViterbiPath &path):_nTimeInstants(path._nTimeInstants),_cost(path._cost),_detectedSequence(new tMatrix(*(path._detectedSequence)))
+ViterbiPath::ViterbiPath(const ViterbiPath &path):_nTimeInstants(path._nTimeInstants),_cost(path._cost)
 {
+	if(path._detectedSequence!=NULL)
+		_detectedSequence = new tMatrix(*(path._detectedSequence));
+	else
+		_detectedSequence = NULL;
 }
 
 ViterbiPath::~ViterbiPath()

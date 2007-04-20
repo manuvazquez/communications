@@ -45,9 +45,6 @@ public:
 	{
 		return _realResamplingAlgorithm->ObtainIndexes(n,FlattenWeights(weights,_threshold));
 	}
-
-//     virtual void Resample(ParticleFilter* particleFilter, const tVector& weights);
-
 };
 
 #endif

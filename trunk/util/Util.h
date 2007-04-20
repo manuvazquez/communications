@@ -49,8 +49,8 @@ public:
 	static void Transpose(const tMatrix &A,tMatrix &B);
 	static tVector ToVector(const tMatrix &matrix,tOrder order);
 	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const vector<double> &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows);
+	static tMatrix ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
+	static tMatrix ToMatrix(const tVector &vector,tOrder order,uint rows);
 	static tMatrix Append(const tMatrix &A,const tMatrix &B);
 	static tVector Normalize(const tVector &v);
 	static double Sum(const tVector &v);

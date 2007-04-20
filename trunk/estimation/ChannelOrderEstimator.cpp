@@ -32,7 +32,7 @@ ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble, std::vecto
 tVector ChannelOrderEstimator::GetChannelOrderAPPsVector()
 {
 	tVector res(_channelOrderAPPs.size());
-	for(int i=0;i<_channelOrderAPPs.size();i++)
+	for(uint i=0;i<_channelOrderAPPs.size();i++)
 		res(i) = _channelOrderAPPs[i];
 	return res;
 }

@@ -38,7 +38,7 @@ std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const tVector 
 	int nDeterministicParticles = 0;
 	for(int iWeight=0;iWeight<weights.size();iWeight++)
 	{
-		timesToBeResampled[iWeight] = n*weights(iWeight);
+		timesToBeResampled[iWeight] = int(n*weights(iWeight));
 		nDeterministicParticles += timesToBeResampled[iWeight];
 		residues(iWeight) = double(n)*weights(iWeight) - double(timesToBeResampled[iWeight]);
 	}

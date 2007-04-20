@@ -5,12 +5,13 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/detection/trellis \
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h \
-		KnownChannelOrderAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h \
-		MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h SMCAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h \
-		ViterbiAlgorithm.h LinearFilterBasedMKFAlgorithm.h
+	KnownChannelOrderAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h \
+	LinearFilterBasedMKFAlgorithm.h MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h \
+	SMCAlgorithm.h StochasticPSPAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h \
+	ViterbiAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
-		KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
-		KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedSMCAlgorithm.cpp \
-		MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp SMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
-		UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp LinearFilterBasedMKFAlgorithm.cpp
+	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
+	KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedMKFAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+	MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp SMCAlgorithm.cpp StochasticPSPAlgorithm.cpp USIS.cpp \
+	UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp
 SUBDIRS = USIS2SIS

@@ -38,6 +38,16 @@
 #include <lapackpp/sybmd.h>
 
 class StatUtil{
+private:
+// 	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands)
+// 	{
+// 		double res = 0.0;
+// 		for(int i=0;i<probabilities.size();i++)
+// 			if(activeOperands[i])
+// 				res += probabilities(i);
+// 		return res;
+// 	}
+	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
 public:
     /**
      * It assumes that the probabilities are normalized
@@ -53,6 +63,7 @@ public:
 	static double NormalPdf(const tVector &x,const tVector &mean,double variance);
 	static double Variance(const tVector &v);
 	static double Mean(const tMatrix &A);
+	static vector<int> WithoutReplacementSampling(int nSamples,const tVector &probabilities);
 };
 
 #endif

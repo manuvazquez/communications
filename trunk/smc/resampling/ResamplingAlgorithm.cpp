@@ -20,7 +20,7 @@
 
 #include "ResamplingAlgorithm.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
@@ -54,6 +54,9 @@ bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
             }
         #endif
         particleFilter->KeepParticles(indexes);
+        #ifdef DEBUG2
+        	cout << "Remuestreando..." << endl;
+        #endif
         return true;
     }
     return false;

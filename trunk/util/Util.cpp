@@ -107,7 +107,7 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
 	return matrix;
 }
 
-tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,int rows,int cols)
+tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols)
 {
 	if(vector.size()> (rows*cols))
 		throw RuntimeException("Util::ToMatrix: The length of the vector is greater than rows by cols.");
@@ -123,7 +123,7 @@ tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,int rows,int co
 	return matrix;
 }
 
-tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows)
+tMatrix Util::ToMatrix(const tVector &vector,tOrder order,uint rows)
 {
 	int remainder = vector.size() % rows;
 	if(remainder!=0)
@@ -478,12 +478,12 @@ tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permut
 		cout << "hola" << endl;
 	#endif
 
-    int N = symbols.rows();
+    uint N = symbols.rows();
     if(permutation.size()!=N || signs.size()!=N)
         throw RuntimeException("Util::ApplyPermutation: length of the received permutation is not N.");
 
     tMatrix res(symbols.rows(),symbols.cols());
-    for(int i=0;i<N;i++)
+    for(uint i=0;i<N;i++)
     {
         res.row(i).inject(symbols.row(permutation[i]));
         res.row(i) *= signs[permutation[i]];
@@ -522,13 +522,13 @@ tMatrix Util::Cholesky(const tMatrix &matrix)
 	throw RuntimeException("Util::Cholesky: Matrix not square");
 
   tMatrix L_ = LaGenMatDouble::zeros(matrix.rows(), matrix.rows());
-  for (uint j = 0; j < matrix.rows(); j++)
+  for (int j = 0; j < matrix.rows(); j++)
 	{
 	  double d = 0;
-	  for (uint k = 0; k < j; k++)
+	  for (int k = 0; k < j; k++)
 		{
 		  double s = 0;
-		  for (uint i = 0; i < k; i++)
+		  for (int i = 0; i < k; i++)
 			{
 			  s += L_ (k, i) * L_ (j, i);
 			}
