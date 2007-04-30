@@ -160,11 +160,17 @@ int main(int argc,char* argv[])
 //
 // 	exit(0);
 
+// 	tVector si(5);
+// 	si(0) = 1.2342;si(1) = 3.2342;si(2) = -5.2342;si(3) = -2.2342;si(4) = -0.2342;
+// 	vector<int> ind = Util::NMax(3,si);
+// 	Util::Print(ind);
+// 	exit(0);
+
     // GLOBAL PARAMETERS
-    int nFrames = 1;
-    int L=3,N=2,K=300;
-    int trainSeqLength = 30;
-    int nParticles = 4;
+    int nFrames = 2;
+    int L=3,N=2,K=30;
+    int trainSeqLength = 10;
+    int nParticles = 10;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -174,8 +180,8 @@ int main(int argc,char* argv[])
     int MSEwindowStart = 0;
 
     // PSP
-    int nSurvivors = 4;
-    bool adjustParticlesNumberFromSurvivors = true;
+    int nSurvivors = 10;
+    bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 3;
@@ -333,8 +339,10 @@ int main(int argc,char* argv[])
     delete[] firstPermutation;
 
     // matrices for results
-    tMatrix overallPeMatrix;
-    tMatrix overallMseMatrix;
+    tMatrix overallPeMatrix,overallMseMatrix,presentFramePe,presentFrameMSE;
+    vector<tMatrix> peMatrices, MSEMatrices;
+    peMatrices.reserve(nFrames);
+    MSEMatrices.reserve(nFrames);
 
     #ifdef CHANNELORDERSAPP_SAVING
     	vector<tMatrix> channelOrdersAPPs(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K));
@@ -422,11 +430,11 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
+            algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
@@ -438,7 +446,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-            algorithms.push_back(new StochasticPSPAlgorithm("Stochastic PSP",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nParticles));
+//             algorithms.push_back(new StochasticPSPAlgorithm("Stochastic PSP",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nParticles,&StatUtil::WithoutReplacementSampling));
+
+//             algorithms.push_back(new StochasticPSPAlgorithm("Stochastic PSP choosing best",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nParticles,&Util::NMax));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm 5 supervivientes",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],5));
 
@@ -493,11 +503,13 @@ int main(int argc,char* argv[])
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)
             {
-                overallPeMatrix.resize(SNRs.size(),algorithms.size());
-                overallPeMatrix = 0.0;
+//                 overallPeMatrix.resize(SNRs.size(),algorithms.size());
+                overallPeMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+                presentFramePe = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
 
-                overallMseMatrix.resize(SNRs.size(),algorithms.size());
-                overallMseMatrix = 0.0;
+//                 overallMseMatrix.resize(SNRs.size(),algorithms.size());
+                overallMseMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+                presentFrameMSE = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
 
 				// Pe evolution
 				for(uint i=0;i<SNRs.size();i++)
@@ -516,8 +528,8 @@ int main(int argc,char* argv[])
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
-                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
+                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
@@ -530,9 +542,11 @@ int main(int argc,char* argv[])
 
                 // the error probability is accumulated
                 overallPeMatrix(iSNR,iAlgorithm) += pe;
+                presentFramePe(iSNR,iAlgorithm) = pe;
 
                 // and the MSE
                 overallMseMatrix(iSNR,iAlgorithm) += mse;
+                presentFrameMSE(iSNR,iAlgorithm) = mse;
 
                 #ifdef CHANNELORDERSAPP_SAVING
                 	if(!algorithms[iAlgorithm]->GetName().compare("UCO-SIS"))
@@ -555,17 +569,20 @@ int main(int argc,char* argv[])
             }
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-
 		// ----------------- VARIABLES SAVING ----------------------
 		ofstream f(outputFileName,ofstream::trunc);
 
-		tMatrix auxOverallPe = overallPeMatrix;
-		auxOverallPe *= 1.0/(double)(iFrame+1);
-		Util::MatrixToStream(auxOverallPe,"pe",f);
+// 		tMatrix auxOverallPe = overallPeMatrix;
+// 		auxOverallPe *= 1.0/(double)(iFrame+1);
+// 		Util::MatrixToStream(auxOverallPe,"pe",f);
+		peMatrices.push_back(presentFramePe);
+		Util::MatricesVectorToStream(peMatrices,"pe",f);
 
-		tMatrix auxOverallMse = overallMseMatrix;
-		auxOverallMse *= 1.0/(double)(iFrame+1);
-		Util::MatrixToStream(auxOverallMse,"mse",f);
+// 		tMatrix auxOverallMse = overallMseMatrix;
+// 		auxOverallMse *= 1.0/(double)(iFrame+1);
+// 		Util::MatrixToStream(auxOverallMse,"mse",f);
+		MSEMatrices.push_back(presentFrameMSE);
+		Util::MatricesVectorToStream(MSEMatrices,"mse",f);
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 			for(uint i=0;i<algorithmsNames.size();i++)

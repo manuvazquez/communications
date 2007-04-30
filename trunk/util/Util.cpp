@@ -240,7 +240,10 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
 void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)
 {
 	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].rows()==0)
+	{
+		cout << "Matrix " << name << " would be an empty matrix." << endl;
 		return;
+	}
 
 	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << endl;
 
@@ -598,3 +601,29 @@ template<class T> void Util::HowManyTimes(const vector<T> &v,vector<int> &firstO
 	}
 }
 template void Util::HowManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
+
+vector<int> Util::NMax(int n,const tVector &v)
+{
+	// a vector of length the minimum between the size of the vector and n is created
+	vector<int> res(n>v.size()?v.size():n);
+
+	vector<bool> alreadySelected(v.size(),false);
+
+	for(uint iRes=0;iRes<res.size();iRes++)
+	{
+		int index = 0;
+		while(alreadySelected[index])
+			index++;
+		double max = v(index);
+		for(int i=index+1;i<v.size();i++)
+			if(!alreadySelected[i] && v(i)>max)
+			{
+				max = v(i);
+				index = i;
+			}
+		res[iRes] = index;
+		alreadySelected[index] = true;
+	}
+
+	return res;
+}

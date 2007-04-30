@@ -21,7 +21,7 @@
 
 // #define NEWDEBUG
 
-StochasticPSPAlgorithm::StochasticPSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,K+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
+StochasticPSPAlgorithm::StochasticPSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors, vector<int> (*chooseSurvivors)(int,const tVector &)): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,K+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient),_chooseSurvivors(chooseSurvivors)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("StochasticPSPAlgorithm::StochasticPSPAlgorithm: preamble dimensions are wrong.");
@@ -29,15 +29,6 @@ StochasticPSPAlgorithm::StochasticPSPAlgorithm(string name, Alphabet alphabet, i
     _exitStage = new vector<PSPPath>[_trellis.Nstates()];
     _arrivalStage = new vector<PSPPath>[_trellis.Nstates()];
     _arrivingPaths = new vector<PSPPathCandidate>[_trellis.Nstates()];
-
-//     _exitStage[0].resize(23);
-
-//     for(int i=0;i<_trellis.Nstates();i++)
-//     {
-//     	_exitStage[i].reserve(100);
-//     	_arrivalStage[i].reserve(100);
-//     	_arrivingPaths[i].reserve(100);
-//     }
 
     _estimatedChannelMatrices.reserve(_K+_d-_preamble.cols());
 }
@@ -87,7 +78,8 @@ void StochasticPSPAlgorithm::ProcessOneObservation(const tVector &observations,d
     	cout << "Los pesos son " << endl << weights << endl;
     #endif
 
-	vector<int> indexesSelectedSurvivors = StatUtil::WithoutReplacementSampling(_nSurvivors,weights);
+// 	vector<int> indexesSelectedSurvivors = StatUtil::WithoutReplacementSampling(_nSurvivors,weights);
+	vector<int> indexesSelectedSurvivors = _chooseSurvivors(_nSurvivors,weights);
 
     #ifdef NEWDEBUG
     	cout << "Los índices seleccionados son" << endl;

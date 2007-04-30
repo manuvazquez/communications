@@ -55,12 +55,13 @@ protected:
 	double _ARcoefficient;
 // 	PSPPathCandidate **_arrivingPaths;
 	std::vector<PSPPathCandidate> *_arrivingPaths;
+	vector<int> (*_chooseSurvivors)(int,const tVector &);
 
 	void ProcessOneObservation(const tVector &observations,double noiseVariance);
 	void Process(const tMatrix &observations,vector<double> noiseVariances);
 	void DeployState(int iState,const tVector &observations, double noiseVariance);
 public:
-    StochasticPSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);
+    StochasticPSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors, vector<int> (*chooseSurvivors)(int,const tVector &));
 
     ~StochasticPSPAlgorithm();
 
