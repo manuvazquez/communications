@@ -84,7 +84,7 @@ void USIS::InitializeParticles()
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()),iParticle);
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
     }
 }
 

@@ -35,7 +35,7 @@ void ISIS::InitializeParticles()
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
 
 		// ... and passed within a vector to each particle
-		_particleFilter.SetParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators),iParticle);
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators));
     }
 }
 

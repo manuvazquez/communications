@@ -79,7 +79,7 @@ void SMCAlgorithm::InitializeParticles()
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
-        _particleFilter->SetParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone()),iParticle);
+        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 
@@ -134,7 +134,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     InitializeParticles();
 
-    for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+//     for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+    for(iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
@@ -229,7 +230,8 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 	#endif
 
 	// the initial estimation of the particles channel matrix estimators is set
-    for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+//     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 

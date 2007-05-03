@@ -39,26 +39,32 @@ public:
     ParticleFilterWithChannelOrder(int nParticles,vector<int> candidateOrders);
     ~ParticleFilterWithChannelOrder();
 
-    void SetParticle(ParticleWithChannelEstimation *particle,int n)
-    {
-        ParticleWithChannelEstimationAndChannelOrder *processedParticle;
+	virtual void AddParticle(ParticleWithChannelEstimation *particle)
+	{
+		ParticleFilter::AddParticle(particle);
+        _nParticlesPerChannelOrder[_channelOrder2index[dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (particle)->GetChannelOrder()]]++;
+	}
 
-        if(_particles[n]!=NULL)
-        {
-            // the counter for the channel order of the old particle is decreased
-            processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[n]);
-            _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]--;
-
-            delete _particles[n];
-        }
-
-        // the counter for the channel order of the new particle is increased
-        processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (particle);
-        _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
-
-        _particles[n] = particle;
-
-    }
+//     void SetParticle(ParticleWithChannelEstimation *particle,int n)
+//     {
+//         ParticleWithChannelEstimationAndChannelOrder *processedParticle;
+//
+//         if(_particles[n]!=NULL)
+//         {
+//             // the counter for the channel order of the old particle is decreased
+//             processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (_particles[n]);
+//             _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]--;
+//
+//             delete _particles[n];
+//         }
+//
+//         // the counter for the channel order of the new particle is increased
+//         processedParticle = dynamic_cast <ParticleWithChannelEstimationAndChannelOrder *> (particle);
+//         _nParticlesPerChannelOrder[_channelOrder2index[processedParticle->GetChannelOrder()]]++;
+//
+//         _particles[n] = particle;
+//
+//     }
 
     int NparticlesOfChannelOrderIndex(int iChannelOrder) { return _nParticlesPerChannelOrder[iChannelOrder];}
 

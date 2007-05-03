@@ -30,6 +30,9 @@
 // wether or not, data regarding the channel orders APP evolution is saved
 #define CHANNELORDERSAPP_SAVING
 
+// // for debug purposes
+// #define EXPORT_REAL_DATA
+
 #include <iostream>
 #include <iomanip>
 #include <cstdlib>
@@ -40,7 +43,8 @@
 #include <sys/time.h>
 #include <algorithm>
 
-#include "types.h"
+#include <types.h>
+#include <defines.h>
 #include <Alphabet.h>
 #include <Bits.h>
 #include <ARprocess.h>
@@ -77,6 +81,7 @@
 #include <UniformRelatedCriterion.h>
 #include <PSPAlgorithm.h>
 #include <StochasticPSPAlgorithm.h>
+#include <PSPBasedSMCAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -84,6 +89,7 @@
 #include <MultinomialResamplingAlgorithm.h>
 #include <ResidualResamplingAlgorithm.h>
 #include <WithThresholdResamplingAlgorithmWrapper.h>
+#include <WithoutReplacementResamplingAlgorithm.h>
 #include <StatUtil.h>
 #include <Util.h>
 
@@ -107,64 +113,17 @@ int iteracionActual;
 int particulaMenorMSE;
 vector<double> MSEs;
 
+#ifdef EXPORT_REAL_DATA
+	MIMOChannel *realChannel;
+	tMatrix *realSymbols;
+	Noise *realNoise;
+#endif
+
 int main(int argc,char* argv[])
 {
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
-
-// 	vector<int> holita;
-// 	cout << "El tamaño es " << holita.size() << endl;
-// 	cout << "La capacidad es de " << holita.capacity() << endl;
-// 	holita.push_back(1);
-// 	cout << "El tamaño es " << holita.size() << endl;
-// 	cout << "La capacidad es de " << holita.capacity() << endl;
-
-// 	vector<int> *ptrVector;
-// 	ptrVector = new vector<int>[5];
-// 	ptrVector[0].resize(10);
-// 	ptrVector[3].resize(10);
-// 	delete[] ptrVector;
-// 	exit(0);
-
-// 	cout << "El tamaño es " << holita.size() << endl;
-// 	holita.clear();
-// 	cout << "El tamaño es " << holita.size() << endl;
-// 	holita.push_back(3);holita.push_back(1);holita.push_back(7);holita.push_back(10);holita.push_back(20);holita.push_back(1);
-// 	Util::Print(holita);
-// 	sort(holita.begin(),holita.end());
-
-// 	Util::Print(holita);
-//
-// 	int globalIndex = 0;
-// 	vector<int>::iterator it=holita.begin();
-// 	while(it!=holita.end())
-// 	{
-// 		cout << "elemento es " << *it << endl;
-// 		if(globalIndex==1 || globalIndex==3)
-// 			it = holita.erase(it);
-// 		else
-// 			it++;
-// 		globalIndex++;
-// 	}
-// 	Util::Print(holita);
-
-
-
-// 	tVector probs(7);
-// 	probs(0) = 0.2;probs(1)=0.1;probs(2) = 0.15;probs(3) = 0.15;probs(4) = 0.3;probs(5) = 3.95;probs(6) = 0.05;
-// 	Util::Print(StatUtil::WithoutReplacementSampling(3,probs));
-// 	Util::Print(StatUtil::WithoutReplacementSampling(5,probs));
-// 	Util::Print(StatUtil::WithoutReplacementSampling(6,probs));
-// 	Util::Print(StatUtil::WithoutReplacementSampling(270,probs));
-//
-// 	exit(0);
-
-// 	tVector si(5);
-// 	si(0) = 1.2342;si(1) = 3.2342;si(2) = -5.2342;si(3) = -2.2342;si(4) = -0.2342;
-// 	vector<int> ind = Util::NMax(3,si);
-// 	Util::Print(ind);
-// 	exit(0);
 
     // GLOBAL PARAMETERS
     int nFrames = 2;
@@ -181,7 +140,7 @@ int main(int argc,char* argv[])
 
     // PSP
     int nSurvivors = 10;
-    bool adjustParticlesNumberFromSurvivors = false;
+    bool adjustParticlesNumberFromSurvivors = true;
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 3;
@@ -318,6 +277,7 @@ int main(int argc,char* argv[])
     MultinomialResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
     ResidualResamplingAlgorithm residualResampling(criterioRemuestreo);
     WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
+    WithoutReplacementResamplingAlgorithm withoutReplacementResampling(criterioRemuestreo);
 
 
 	vector<double> resamplingRates;
@@ -370,6 +330,10 @@ int main(int argc,char* argv[])
         // the preamble is set before the symbols to be transmitted
         symbols = Util::Append(preamble,symbols);
 
+		#ifdef EXPORT_REAL_DATA
+			realSymbols = &symbols;
+		#endif
+
 		// all the above symbols must be processed except those generated due to the smoothing
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
@@ -385,6 +349,10 @@ int main(int argc,char* argv[])
         ARchannel canal(N,L,m,symbols.cols(),ARchannelInitializationMatrix,ARcoefficients,ARvariance);
 
 // 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,symbols.cols(),antennasChannelOrders,channelMean,channelVariance,ARcoefficients,ARvariance);
+
+		#ifdef EXPORT_REAL_DATA
+			realChannel = &canal;
+		#endif
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
@@ -415,6 +383,10 @@ int main(int argc,char* argv[])
 		// absence of noise
 		NullNoise ruidoNulo(canal.Nr(),canal.Length());
 
+		#ifdef EXPORT_REAL_DATA
+			realNoise = &ruido;
+		#endif
+
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
         {
             cout << "SNR = " << SNRs[iSNR] << " [Trama " << iFrame << "]..." << endl;
@@ -430,11 +402,11 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
@@ -449,6 +421,8 @@ int main(int argc,char* argv[])
 //             algorithms.push_back(new StochasticPSPAlgorithm("Stochastic PSP",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nParticles,&StatUtil::WithoutReplacementSampling));
 
 //             algorithms.push_back(new StochasticPSPAlgorithm("Stochastic PSP choosing best",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nParticles,&Util::NMax));
+
+                algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&withoutReplacementResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0]));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm 5 supervivientes",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],5));
 
@@ -528,8 +502,8 @@ int main(int argc,char* argv[])
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
+                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
                 vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();

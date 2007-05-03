@@ -32,7 +32,8 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
-	tRange mFirstColumns(0,_m-1);
+	tRange mMinus1FirstColumns(0,_m-2);
+// 	tRange mFirstColumns(0,_m-1);
 
 	// it selects all rows in the symbols Matrix
 	tRange allSymbolRows(0,_N-1);
@@ -54,6 +55,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 		#endif
 
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
+		tRange mMinus1PrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
 			#ifdef DEBUG
@@ -63,7 +65,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
-			smoothingSymbolVectors(allSymbolRows,mFirstColumns).inject(processedParticle->GetSymbolVectors(mPrecedentColumns));
+			smoothingSymbolVectors(allSymbolRows,mMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(mMinus1PrecedentColumns));
 
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{

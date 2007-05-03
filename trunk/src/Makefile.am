@@ -10,3 +10,4 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/algorithms \
 
 
 noinst_HEADERS = types.h exceptions.h
+_SOURCES = defines.h

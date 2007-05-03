@@ -17,24 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MULTINOMIALRESAMPLINGALGORITHM_H
-#define MULTINOMIALRESAMPLINGALGORITHM_H
+#include "WithoutReplacementResamplingAlgorithm.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+WithoutReplacementResamplingAlgorithm::WithoutReplacementResamplingAlgorithm(ResamplingCriterion resamplingCriterion): ResamplingAlgorithm(resamplingCriterion)
+{
+}
 
-#include <vector>
-#include <types.h>
-#include <ResamplingAlgorithm.h>
+ResamplingAlgorithm* WithoutReplacementResamplingAlgorithm::Clone() const
+{
+	return new WithoutReplacementResamplingAlgorithm(*this);
+}
 
-class MultinomialResamplingAlgorithm : public ResamplingAlgorithm{
-public:
-    MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
+std::vector< int > WithoutReplacementResamplingAlgorithm::ObtainIndexes(int n, const tVector& weights) const
+{
+	return StatUtil::WithoutReplacementSampling(n,weights);
+}
 
-	virtual MultinomialResamplingAlgorithm* Clone() const;
-
-	std::vector<int> ObtainIndexes(int n,const tVector &weights) const;
-};
-
-#endif

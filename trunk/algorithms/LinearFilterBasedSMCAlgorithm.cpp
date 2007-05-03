@@ -49,7 +49,7 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 	// memory is reserved
 	for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 	{
-		_particleFilter->SetParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()),iParticle);
+		_particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
 	}

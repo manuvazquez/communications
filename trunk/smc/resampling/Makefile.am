@@ -4,6 +4,8 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 METASOURCES = AUTO
 lib_LIBRARIES = libresampling.a
 noinst_HEADERS = MultinomialResamplingAlgorithm.h ResamplingAlgorithm.h \
-	ResidualResamplingAlgorithm.h WithThresholdResamplingAlgorithmWrapper.h
+	ResidualResamplingAlgorithm.h WithThresholdResamplingAlgorithmWrapper.h \
+	WithoutReplacementResamplingAlgorithm.h
 libresampling_a_SOURCES = MultinomialResamplingAlgorithm.cpp \
-		ResidualResamplingAlgorithm.cpp WithThresholdResamplingAlgorithmWrapper.cpp ResamplingAlgorithm.cpp
+	ResamplingAlgorithm.cpp ResidualResamplingAlgorithm.cpp \
+	WithThresholdResamplingAlgorithmWrapper.cpp WithoutReplacementResamplingAlgorithm.cpp

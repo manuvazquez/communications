@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "StochasticPSPAlgorithm.h"
 
-// #define NEWDEBUG
+// #define DEBUG
 
 StochasticPSPAlgorithm::StochasticPSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors, vector<int> (*chooseSurvivors)(int,const tVector &)): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,K+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient),_chooseSurvivors(chooseSurvivors)
 {
@@ -188,7 +188,6 @@ void StochasticPSPAlgorithm::ProcessOneObservation(const tVector &observations,d
 		_arrivingPaths[iState].clear();
 	}
 
-// 	cout << "Una tecla..."; getchar();
 }
 
 void StochasticPSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVariances)
@@ -293,63 +292,12 @@ void StochasticPSPAlgorithm::Run(tMatrix observations,vector<double> noiseVarian
 	// the initial state is initalized
     _exitStage[initialState].push_back(PSPPath(_K+_d,1.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator)));
 
-// 	#ifdef NEWDEBUG
-// 		cout << "_exitStage[initialState] tiene capacidad " << _exitStage[initialState].capacity() << endl;
-// 		PSPPath tmp;
-// // 		PSPPath tmp2(_K+_d,1.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
-// // 		cout << "El tamaño es " << sizeof(tmp) << endl;
-// // 		cout << "El tamaño es " << sizeof(tmp2) << endl;
-// 		cout << "antes de meterlo" << endl;
-// 		cout << "tmp.prueba " << tmp.Prueba() << endl;
-// 		PSPPath hhhh = tmp;
-// // 		_exitStage[initialState].push_back(tmp);
-// // 		_exitStage[initialState].resize(10);
-//     	cout << "Antes de llamar a process" << endl;
-//     	cout << "el estado inicial tiene ahora " << _exitStage[initialState].size() << " elementos" << endl;
-//     #endif
-
 	Process(observations,noiseVariances);
 }
 
 void StochasticPSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-//     if(observations.rows()!=_L || trainingSequence.rows()!=_N)
-//         throw RuntimeException("StochasticPSPAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
-//
-//     // to process the training sequence, we need both the preamble and the symbol vectors related to it
-//     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
-//
-// 	_startDetectionTime = preambleTrainingSequence.cols();
-//
-//     vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
-//
-// 	// known symbol vectors are copied into the the vector with the final detected ones
-// 	(*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_startDetectionTime-1)).inject(trainingSequence);
-//
-// 	// and so the channel matrices
-// 	for(uint i=0;i<trainingSequenceChannelMatrices.size();i++)
-// 		_estimatedChannelMatrices.push_back(trainingSequenceChannelMatrices[i]);
-//
-//     // the last N*(m-1) symbols of the training sequence are copied into a c++ vector...
-//     int preambleTrainingSequenceLength = preambleTrainingSequence.rows()*preambleTrainingSequence.cols();
-//     vector<tSymbol> initialStateVector(_N*(_m-1));
-//
-//     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-//     int iFirstPreambleSymbolNeeded = (preambleTrainingSequence.cols()-(_m-1))*_N;
-//     for(int i=iFirstPreambleSymbolNeeded;i<preambleTrainingSequenceLength;i++)
-//         initialStateVector[i-iFirstPreambleSymbolNeeded] = preambleTrainingSequence(i % _N,i / _N);
-//
-//     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
-//     int initialState = _alphabet.SymbolsArrayToInt(initialStateVector);
-//
-// 	#ifdef DEBUG2
-//     	cout << "initialState es " << initialState << endl;
-//     #endif
-//
-// 	// the initial state is initalized
-//     _exitStage[initialState][0] = PSPPath(_K+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
-//
-// 	Process(observations,noiseVariances);
+	throw RuntimeException("StochasticPSPAlgorithm::Run: not implemented (with training sequence).");
 }
 
 void StochasticPSPAlgorithm::DeployState(int iState,const tVector &observations,double noiseVariance)
@@ -389,6 +337,10 @@ void StochasticPSPAlgorithm::DeployState(int iState,const tVector &observations,
 			// the cost is now the probability
 			newCost = _exitStage[iState][iSourceSurvivor].GetCost()* StatUtil::NormalPdf(observations,computedObservations,noiseVariance);
 
+			#ifdef DEBUG
+				cout << "El coste (peso) actualizado es " << newCost << endl;
+			#endif
+
 			_arrivingPaths[arrivalState].push_back(PSPPathCandidate());
 
 			// a reference to the new added PSPPathCandidate is set
@@ -404,6 +356,10 @@ void StochasticPSPAlgorithm::DeployState(int iState,const tVector &observations,
 
 		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
+
+    #ifdef DEBUG
+    	cout << "Una tecla..."; getchar();
+    #endif
 }
 
 tMatrix StochasticPSPAlgorithm::GetDetectedSymbolVectors()

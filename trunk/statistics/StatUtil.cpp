@@ -203,8 +203,6 @@ vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &pro
 //     int i,j;
 	double uniform;
 
-// 	cout << "Tengo que elegir " << nSamples << endl;
-
 	#ifdef RANDOM_SEED
 		static Random randomGenerator;
 	#else

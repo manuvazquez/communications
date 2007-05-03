@@ -362,6 +362,7 @@ template<class T> void Util::Print(const std::vector<T> &vector)
 template void Util::Print(const std::vector<int> &vector);
 template void Util::Print(const std::vector<uint> &vector);
 template void Util::Print(const std::vector<double> &vector);
+template void Util::Print(const std::vector<bool> &vector);
 
 template<class T> void Util::Print(const T* array,int nElements)
 {

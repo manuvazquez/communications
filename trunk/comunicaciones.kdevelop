@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>algorithms/libalgorithms.a</activetarget>
+      <activetarget>smc/resampling/libresampling.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

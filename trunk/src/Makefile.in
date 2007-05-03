@@ -163,6 +163,7 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/algorithms \
 
 # the library search path.
 noinst_HEADERS = types.h exceptions.h
+_SOURCES = defines.h
 all: all-am
 
 .SUFFIXES:

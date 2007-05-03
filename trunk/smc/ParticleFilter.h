@@ -24,13 +24,15 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+// #define DEBUG_PF
+
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
 #include <StatUtil.h>
 
 class ParticleFilter{
 protected:
-    int _nParticles;
+    int _nParticles,_nActualParticles;
     ParticleWithChannelEstimation **_particles;
 public:
 
@@ -39,18 +41,21 @@ public:
 
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
 	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+	/**
+	 *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
+	 * @param resamplingIndexes
+	 */
 	virtual void KeepParticles(std::vector<int> resamplingIndexes);
 
-	virtual void SetParticle(ParticleWithChannelEstimation *particle,int n)
+	virtual void AddParticle(ParticleWithChannelEstimation *particle)
 	{
-		delete _particles[n];
-		_particles[n] = particle;
+		_particles[_nActualParticles++] = particle;
 	}
 
     tVector GetWeightsVector()
     {
-        tVector weights(_nParticles);
-        for(int i=0;i<_nParticles;i++)
+        tVector weights(_nActualParticles);
+        for(int i=0;i<_nActualParticles;i++)
             weights(i) = _particles[i]->GetWeight();
         return weights;
     }
@@ -60,10 +65,10 @@ public:
         double sum = 0.0;
         int i;
 
-        for(i=0;i<_nParticles;i++)
+        for(i=0;i<_nActualParticles;i++)
             sum += _particles[i]->GetWeight();
 
-        for(i=0;i<_nParticles;i++)
+        for(i=0;i<_nActualParticles;i++)
             _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
     }
 
@@ -80,6 +85,7 @@ public:
     }
 
 	int Nparticles() { return _nParticles;}
+	int NactualParticles() { return _nActualParticles;}
 };
 
 #endif
