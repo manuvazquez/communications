@@ -30,8 +30,12 @@ class WithoutReplacementResamplingAlgorithm : public ResamplingAlgorithm
 public:
     WithoutReplacementResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-    virtual ResamplingAlgorithm* Clone() const;
-    virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const;
+    virtual WithoutReplacementResamplingAlgorithm* Clone() const;
+
+    virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
+    {
+    	return StatUtil::WithoutReplacementSampling(n,weights);
+    }
 
 };
 

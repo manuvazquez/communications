@@ -35,20 +35,6 @@ _particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(t
     _startDetectionTime = _preamble.cols();
 }
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,const MIMOChannel *channel,const tMatrix *symbols): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
-// _variables initialization
-_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_channel(channel),_symbols(symbols)
-{
-	if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
-		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
-
-	if(channelMatrixVariances.rows()!=L || channelMatrixVariances.cols()!=(N*m))
-		throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix variances dimensions are wrong.");
-
-    // at first, we assume that all observations from the preamble need to be processed
-    _startDetectionTime = _preamble.cols();
-}
-
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, preamble),
 // _variables initialization
 _particleFilter(particleFilter),_particleFilterNeedToBeDeleted(false),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0)
@@ -77,9 +63,9 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 void SMCAlgorithm::InitializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
-        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone()));
+        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 
@@ -134,8 +120,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     InitializeParticles();
 
-//     for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-    for(iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+//     for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+    for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
@@ -185,7 +171,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 // 	tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 //
 // 	int nDimensions = _L*_Nm;
-// 	int nPoinsByDimension = pow((double)_particleFilter->Nparticles(),1.0/(double)nDimensions);
+// 	int nPoinsByDimension = pow((double)_particleFilter->Capacity(),1.0/(double)nDimensions);
 //
 // 	vector<vector<double> > alphabets(nDimensions,vector<double>(nPoinsByDimension));
 // 	for(int i=0;i<nDimensions;i++)
@@ -205,7 +191,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 // 		channelSample[i] = alphabets[i][0];
 //
 // 	// the initial estimation of the particles channel matrix estimators is set
-//     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+//     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 //     {
 // 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 //
@@ -222,33 +208,14 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
 	tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
 	tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 
-	#ifdef DEBUG13
-// 		vector<double> MSEs(_particleFilter->Nparticles());
-		extern vector<double> MSEs;
-		MSEs.resize(_particleFilter->Nparticles());
-		extern int particulaMenorMSE;
-	#endif
-
 	// the initial estimation of the particles channel matrix estimators is set
-//     for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-    for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 		tMatrix channelMatrixSample = Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
 
-		#ifdef DEBUG13
-			cout << "MSE part�ula " << iParticle << ": " << (MSEs[iParticle] = Util::SquareError((*_channel)[_preamble.cols()],channelMatrixSample)) << endl;
-		#endif
-
 		processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(channelMatrixSample);
     }
 
-	#ifdef DEBUG13
-		int iMin;
-		Util::Min(MSEs,iMin);
-		particulaMenorMSE = iMin;
-		cout << "El menor MSE es " << MSEs[iMin] << " en la part�ula " << iMin << endl;
-		cout << "Una tecla..."; getchar();
-    #endif
 }

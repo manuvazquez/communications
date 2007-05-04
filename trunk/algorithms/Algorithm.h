@@ -51,11 +51,15 @@ public:
     * @return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
     */
     virtual tMatrix GetDetectedSymbolVectors() = 0;
+
     /**
      *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */
     virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
+
+    virtual bool PerformsChannelOrderAPPEstimation() { return false;}
+
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 

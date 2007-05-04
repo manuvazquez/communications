@@ -27,11 +27,6 @@ LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphab
 {
 }
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance,const MIMOChannel *channel,const tMatrix *symbols): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances,channel,symbols)
-,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
-{
-}
-
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, smoothingLag, particleFilter, resamplingAlgorithm)
 ,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
 {
@@ -47,9 +42,9 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     tRange rPreamble(0,_preamble.cols()-1);
 
 	// memory is reserved
-	for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+	for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 	{
-		_particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Nparticles(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()));
+		_particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
 	}
@@ -68,11 +63,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	tVector s2qAuxFilter(_L*(_d+1));
 	tMatrix forWeightUpdateNeededSymbols(_N,_m+_d);
 	tVector predictedNoiselessObservation(_L);
-
-	#ifdef DEBUG13
-		extern int iteracionActual;
-		iteracionActual = 0;
-	#endif
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
@@ -95,7 +85,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			cout << "-------------------------" << endl;
 		#endif
 
-		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
 			ParticleWithChannelEstimationAndLinearDetection *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (_particleFilter->GetParticle(iParticle));
 
@@ -238,9 +228,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		if(iObservationToBeProcessed<(_K-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
-		#ifdef DEBUG13
-			iteracionActual++;
-		#endif
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 

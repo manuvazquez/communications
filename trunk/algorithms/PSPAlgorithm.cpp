@@ -145,6 +145,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
         #ifdef DEBUG2
     	    cout << "iProcessedObservation = " << iProcessedObservation << endl;
         #endif
+
 		ProcessOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
     }
 

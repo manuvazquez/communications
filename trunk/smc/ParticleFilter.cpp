@@ -21,9 +21,9 @@
 
 // #define DEBUG
 
-ParticleFilter::ParticleFilter(int nParticles):_nParticles(nParticles),_nActualParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
+ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
-    for(int i=0;i<_nParticles;i++)
+    for(int i=0;i<_capacity;i++)
     {
         _particles[i] = NULL;
     }
@@ -31,7 +31,7 @@ ParticleFilter::ParticleFilter(int nParticles):_nParticles(nParticles),_nActualP
 
 ParticleFilter::~ParticleFilter()
 {
-    for(int i=0;i<_nActualParticles;i++)
+    for(int i=0;i<_nParticles;i++)
     {
         delete _particles[i];
     }
@@ -46,7 +46,7 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 
 	int nParticlesToBeResampled = indexes.size();
 
-	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
+	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_capacity];
 
 	// the particles given by indexes are resampled
 	for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
@@ -66,7 +66,7 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 		}
 		previousResampledParticle++;
 	}
-	while(previousResampledParticle<_nParticles)
+	while(previousResampledParticle<_capacity)
 	{
 		resParticles[previousResampledParticle] = _particles[previousResampledParticle];
 		previousResampledParticle++;
@@ -82,21 +82,21 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 
 void ParticleFilter::KeepParticles(vector<int> indexes)
 {
-	if(indexes.size()>_nParticles)
+	if(indexes.size()>_capacity)
 		throw RuntimeException("ParticleFilter::KeepParticles: the number of selected particles is bigger than the number of particles in the filter.");
 
 	#ifdef DEBUG
-		cout << "indexes.size() = " << indexes.size() << " _nActualParticles = " << _nActualParticles << " _nParticles = " << _nParticles << endl;
+		cout << "indexes.size() = " << indexes.size() << " _nParticles = " << _nParticles << " _capacity = " << _capacity << endl;
 	#endif
 
-	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
+	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_capacity];
 
-	vector<bool> particleNeeded(_nActualParticles,false);
+	vector<bool> particleNeeded(_nParticles,false);
 	for(uint iParticle=0;iParticle<indexes.size();iParticle++)
 		particleNeeded[indexes[iParticle]] = true;
 
 	// the memory occupied by the particles that are not gonna be resampled is released
-	for(int iParticle=0;iParticle<_nActualParticles;iParticle++)
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
 		if(!particleNeeded[iParticle])
 		{
 			delete _particles[iParticle];
@@ -122,39 +122,10 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 		cout << "despues de replicar" << endl;
 	#endif
 
-	for(int iParticle=0;iParticle<_nActualParticles;iParticle++)
+	for(int iParticle=0;iParticle<_nParticles;iParticle++)
 			delete _particles[iParticle];
 
 	delete[] _particles;
 	_particles = resParticles;
-	_nActualParticles = indexes.size();
+	_nParticles = indexes.size();
 }
-
-// void ParticleFilter::KeepParticles(vector<int> indexes)
-// {
-// 	ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_nParticles];
-//
-// 	vector<bool> particleNeeded(_nParticles,false);
-// 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-// 		particleNeeded[indexes[iParticle]] = true;
-//
-// 	// the memory occupied by the particles that are not gonna be resampled is released
-// 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-// 		if(!particleNeeded[iParticle])
-// 		{
-// 			delete _particles[iParticle];
-// 			_particles[iParticle] = NULL;
-// 		}
-//
-// 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-// 	{
-// 			resParticles[iParticle] = (_particles[indexes[iParticle]])->Clone();
-// 			resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
-// 	}
-//
-// 	for(int iParticle=0;iParticle<_nParticles;iParticle++)
-// 			delete _particles[iParticle];
-//
-// 	delete[] _particles;
-// 	_particles = resParticles;
-// }

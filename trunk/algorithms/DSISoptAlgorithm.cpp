@@ -56,7 +56,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 
 		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		tRange mMinus1PrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
-		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
 			#ifdef DEBUG
 				cout << "Particula: " << iParticle << endl;

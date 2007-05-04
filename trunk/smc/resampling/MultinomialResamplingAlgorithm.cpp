@@ -31,8 +31,3 @@ MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::Clone() const
 {
 	return new MultinomialResamplingAlgorithm(*this);
 }
-
-vector<int> MultinomialResamplingAlgorithm::ObtainIndexes(int n,const tVector &weights) const
-{
-	return StatUtil::Discrete_rnd(n,weights);
-}

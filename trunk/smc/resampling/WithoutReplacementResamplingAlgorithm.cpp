@@ -23,13 +23,7 @@ WithoutReplacementResamplingAlgorithm::WithoutReplacementResamplingAlgorithm(Res
 {
 }
 
-ResamplingAlgorithm* WithoutReplacementResamplingAlgorithm::Clone() const
+WithoutReplacementResamplingAlgorithm* WithoutReplacementResamplingAlgorithm::Clone() const
 {
 	return new WithoutReplacementResamplingAlgorithm(*this);
 }
-
-std::vector< int > WithoutReplacementResamplingAlgorithm::ObtainIndexes(int n, const tVector& weights) const
-{
-	return StatUtil::WithoutReplacementSampling(n,weights);
-}
-

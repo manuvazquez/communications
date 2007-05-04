@@ -43,7 +43,11 @@ public:
 
     ~USIS();
 
-    tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1));}
+	#ifdef CHANNELORDERSAPP_SAVING
+    	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1));}
+    #endif
+
+    bool PerformsChannelOrderAPPEstimation() { return true;}
 
 protected:
     vector<LinearDetector *> _linearDetectors;
@@ -51,12 +55,11 @@ protected:
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     tRange _rAllObservationRows;
-	tMatrix _channelOrderAPPs;
+    #ifdef CHANNELORDERSAPP_SAVING
+		tMatrix _channelOrderAPPs;
+	#endif
 	tRange _rCandidateOrders;
 	bool _processDoneExternally;
-
-// 	const MIMOChannel &_canal;
-// 	const tMatrix &_simbolos;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
     vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);

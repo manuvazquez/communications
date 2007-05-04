@@ -22,12 +22,12 @@
 
 #include <Particle.h>
 
-#define DO_NOT_STORE_CHANNEL_MATRICES
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <defines.h>
 #include <vector>
 #include <ChannelMatrixEstimator.h>
 
@@ -48,7 +48,7 @@ public:
 
     ~ParticleWithChannelEstimation();
 
-    tMatrix GetChannelMatrix(int iChannelOrder,int n)
+    tMatrix GetChannelMatrix(int iChannelOrder,int n) const
     {
     	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
 			return _estimatedChannelMatrices[iChannelOrder][n];
@@ -66,11 +66,14 @@ public:
      	#endif
     }
 
-    ChannelMatrixEstimator *GetChannelMatrixEstimator(int iChannelOrder) { return _channelMatrixEstimators[iChannelOrder];}
+    ChannelMatrixEstimator *GetChannelMatrixEstimator(int iChannelOrder) const { return _channelMatrixEstimators[iChannelOrder];}
 
-    int NchannelMatrixEstimators() {return _channelMatrixEstimators.size();}
+    int NchannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
 
-	ParticleWithChannelEstimation *Clone();
+	ParticleWithChannelEstimation *Clone()
+	{
+		return new ParticleWithChannelEstimation(*this);
+	}
 };
 
 #endif

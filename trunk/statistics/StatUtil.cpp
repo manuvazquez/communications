@@ -19,10 +19,9 @@
  ***************************************************************************/
 #include "StatUtil.h"
 
-// the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#include <defines.h>
 
-#define DEBUG
+// #define DEBUG
 
 using namespace std;
 

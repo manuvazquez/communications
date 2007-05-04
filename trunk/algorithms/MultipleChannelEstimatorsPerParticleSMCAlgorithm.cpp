@@ -63,7 +63,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
     this->InitializeParticles();
 
-    for(iParticle=0;iParticle<GetParticleFilterPointer()->Nparticles();iParticle++)
+    for(iParticle=0;iParticle<GetParticleFilterPointer()->Capacity();iParticle++)
     {
         ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (GetParticleFilterPointer()->GetParticle(iParticle));
 

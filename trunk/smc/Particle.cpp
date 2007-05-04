@@ -21,7 +21,7 @@
 
 using namespace std;
 
-Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectorLength(symbolVectorLength),_nTimeInstants(nTimeInstants),_symbolVectors(_symbolVectorLength,_nTimeInstants),_rAllSymbolRows(0,_symbolVectorLength-1)
+Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectors(symbolVectorLength,nTimeInstants)
 {
 }
 
@@ -31,21 +31,9 @@ Particle::~Particle()
 
 void Particle::operator=(const Particle &particle)
 {
-// 	double _weight;
-// 	int _symbolVectorLength,_nTimeInstants;
-// 	tMatrix _symbolVectors;
-// 	tRange _rAllSymbolRows;
 	if(this!=&particle)
 	{
 		_weight = particle._weight;
-		_symbolVectorLength = particle._symbolVectorLength;
-		_nTimeInstants = particle._nTimeInstants;
 		_symbolVectors = particle._symbolVectors;
-		_rAllSymbolRows = particle._rAllSymbolRows;
 	}
-}
-
-Particle *Particle::Clone()
-{
-	return new Particle(*this);
 }

@@ -17,40 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
-#define MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
+#ifndef BESTPARTICLESRESAMPLINGALGORITHM_H
+#define BESTPARTICLESRESAMPLINGALGORITHM_H
 
-#include <UnknownChannelOrderAlgorithm.h>
+#include <ResamplingAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <ResamplingAlgorithm.h>
-
-class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOrderAlgorithm
+class BestParticlesResamplingAlgorithm : public ResamplingAlgorithm
 {
-protected:
-    ResamplingAlgorithm *_resamplingAlgorithm;
-    int _d;
-//     int _startDetectionObservation,_startDetectionSymbolVector;
-	int _startDetectionTime;
-    tRange _allSymbolsRows;
-
-	virtual ParticleFilter* GetParticleFilterPointer() = 0;
-    virtual void InitializeParticles() = 0;
-    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-//     vector<vector<int> > GetIndexesOfChannelOrders();
-    int BestParticle();
 public:
-    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    BestParticlesResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-    ~MultipleChannelEstimatorsPerParticleSMCAlgorithm();
+    virtual BestParticlesResamplingAlgorithm* Clone() const;
 
-    void Run(tMatrix observations,vector<double> noiseVariances);
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-    tMatrix GetDetectedSymbolVectors();
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
+    {
+    	return Util::NMax(n,weights);
+    }
 
 };
 

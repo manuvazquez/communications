@@ -74,8 +74,3 @@ ParticleWithChannelEstimation::~ParticleWithChannelEstimation()
     	delete[] _estimatedChannelMatrices;
     #endif
 }
-
-ParticleWithChannelEstimation *ParticleWithChannelEstimation::Clone()
-{
-	return new ParticleWithChannelEstimation(*this);
-}

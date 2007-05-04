@@ -27,7 +27,7 @@ ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelM
 void ISIS::InitializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
     {
 		// a clone of each of the channel matrix estimators is constructed...
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -35,7 +35,7 @@ void ISIS::InitializeParticles()
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_N,_K,thisParticleChannelMatrixEstimators));
     }
 }
 
@@ -85,7 +85,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 
-		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 		{
 
             #ifdef DEBUG

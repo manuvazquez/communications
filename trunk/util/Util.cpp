@@ -239,7 +239,7 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
 
 void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)
 {
-	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].rows()==0)
+	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
 	{
 		cout << "Matrix " << name << " would be an empty matrix." << endl;
 		return;
@@ -252,6 +252,45 @@ void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream 
 		for(j=0;j<(matrices.at(iMatrix)).cols();j++)
 			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
+}
+
+void Util::MatricesVectoresVectorToStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
+{
+	if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
+	{
+		cout << "Matrix " << name << " would be an empty matrix." << endl;
+		return;
+	}
+
+	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 4" << endl << " " << matrices[0][0].rows() << " " << matrices[0][0].cols() << " " << matrices[0].size() << " " << matrices.size() << endl;
+
+	int i,j;
+	uint k;
+	for(uint l=0;l<matrices.size();l++)
+		for(k=0;k<matrices[l].size();k++)
+			for(j=0;j<matrices[l][k].cols();j++)
+				for(i=0;i<matrices[l][k].rows();i++)
+					f << " " << matrices[l][k](i,j) << endl;
+}
+
+void Util::MatricesVectoresVectoresVectorToStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
+{
+	if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
+	{
+		cout << "Matrix " << name << " would be an empty matrix." << endl;
+		return;
+	}
+
+	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 5" << endl << " " << matrices[0][0][0].rows() << " " << matrices[0][0][0].cols() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << endl;
+
+	int i,j;
+	uint k,l;
+	for(uint m=0;m<matrices.size();m++)
+		for(l=0;l<matrices[m].size();l++)
+			for(k=0;k<matrices[m][l].size();k++)
+				for(j=0;j<matrices[m][l][k].cols();j++)
+					for(i=0;i<matrices[m][l][k].rows();i++)
+						f << " " << matrices[m][l][k](i,j) << endl;
 }
 
 template<class T> void Util::ScalarToStream(T scalar,string name,ofstream &f)

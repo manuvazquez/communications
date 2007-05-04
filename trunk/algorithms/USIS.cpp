@@ -21,7 +21,11 @@
 
 // #define DEBUG
 
-USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_L-1),_channelOrderAPPs(_candidateOrders.size(),_K),_rCandidateOrders(0,_candidateOrders.size()-1),_processDoneExternally(false)
+USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_L-1)
+#ifdef CHANNELORDERSAPP_SAVING
+	,_channelOrderAPPs(_candidateOrders.size(),_K)
+#endif
+,_rCandidateOrders(0,_candidateOrders.size()-1),_processDoneExternally(false)
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
@@ -69,7 +73,7 @@ vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observatio
 void USIS::InitializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
     {
 		// a clone of each of the channel matrix estimators...
 		vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -84,7 +88,7 @@ void USIS::InitializeParticles()
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Nparticles(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_N,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
     }
 }
 
@@ -101,8 +105,10 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	// channel order APP saving
 	int iBestParticle;
 
-	// during the training sequence, the channel order APPs are assumed uniform
-	_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();
+	#ifdef CHANNELORDERSAPP_SAVING
+		// during the training sequence, the channel order APPs are assumed uniform
+		_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();
+	#endif
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
 	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length()));
@@ -142,7 +148,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
 		}
 
-		for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 		{
 			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iParticle));
 
@@ -309,18 +315,20 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			// the weight is updated
 			processedParticle->SetWeight((sumLikelihoodsProd/proposal)*processedParticle->GetWeight());
 
-		} // for(iParticle=0;iParticle<_particleFilter.Nparticles();iParticle++)
+		} // for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 
 		_particleFilter.NormalizeWeights();
 
 		// we find out which is the "best" particle at this time instant
 		Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
 
-		// its a posteriori channel order probabilities are stored
-		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
+		#ifdef CHANNELORDERSAPP_SAVING
+			// its a posteriori channel order probabilities are stored
+			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
 
-		for(uint i=0;i<_candidateOrders.size();i++)
-			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+			for(uint i=0;i<_candidateOrders.size();i++)
+				_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+		#endif
 
 		BeforeResamplingProcess(iObservationToBeProcessed,observations,noiseVariances);
 

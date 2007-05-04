@@ -63,7 +63,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		double weight;
 	}tParticleCandidate;
 
-	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Nparticles()*nSymbolVectors] ;
+	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors] ;
 
 	#ifdef DEBUG_PSPBASEDSMCALGORITHM
 		cout << "Despues del new" << endl;
@@ -89,7 +89,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		#endif
 
 		// the candidates from all the particles are generated
-		for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
@@ -170,7 +170,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 				cout << "Una tecla..."; getchar();
 			#endif
 
-		} // for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
 		#ifdef DEBUG_PSPBASEDSMCALGORITHM
 			cout << "Expandidas las particulas" << endl;
@@ -189,7 +189,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		#endif
 
 		// the candidates that are going to give particles are selected
-		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Nparticles(),weights);
+		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);
 
 		// every survivor candidate is associated with an old particle
 		vector<int> indexesParticles(indexesSelectedCandidates.size());
@@ -209,7 +209,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		#endif
 
 		// every surviving particle is modified according to what it says its corresponding candidate
-		for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 		{
 			#ifdef DEBUG_PSPBASEDSMCALGORITHM
 				cout << "iParticle " << iParticle << " iObservationToBeProcessed es " << iObservationToBeProcessed << endl;
@@ -237,7 +237,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			#ifdef DEBUG_PSPBASEDSMCALGORITHM
 // 				cout << "despues de SetWeight" << endl;
 			#endif
-		} // for(int iParticle=0;iParticle<_particleFilter->NactualParticles();iParticle++)
+		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
 		_particleFilter->NormalizeWeights();
 	}

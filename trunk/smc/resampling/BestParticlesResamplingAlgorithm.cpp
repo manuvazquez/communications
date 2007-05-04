@@ -17,27 +17,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MULTINOMIALRESAMPLINGALGORITHM_H
-#define MULTINOMIALRESAMPLINGALGORITHM_H
+#include "BestParticlesResamplingAlgorithm.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+BestParticlesResamplingAlgorithm::BestParticlesResamplingAlgorithm(ResamplingCriterion resamplingCriterion): ResamplingAlgorithm(resamplingCriterion)
+{
+}
 
-#include <vector>
-#include <types.h>
-#include <ResamplingAlgorithm.h>
-
-class MultinomialResamplingAlgorithm : public ResamplingAlgorithm{
-public:
-    MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
-
-	virtual MultinomialResamplingAlgorithm* Clone() const;
-
-	std::vector<int> ObtainIndexes(int n,const tVector &weights) const
-	{
-		return StatUtil::Discrete_rnd(n,weights);
-	}
-};
-
-#endif
+BestParticlesResamplingAlgorithm* BestParticlesResamplingAlgorithm::Clone() const
+{
+	return new BestParticlesResamplingAlgorithm(*this);
+}

@@ -28,32 +28,9 @@ bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 
     if(_resamplingCriterion.ResamplingNeeded(weigths))
     {
-        vector<int> indexes = ObtainIndexes(particleFilter->Nparticles(),weigths);
-        #ifdef DEBUG
-            extern int iteracionActual;
-            extern vector<double> MSEs;
-        //       cout << "Indices elegidos" << endl;
-        //       Util::Print(indexes);
-            if(iteracionActual==0)
-            {
-                vector<int> firstOcurrence,times;
-                Util::HowManyTimes(indexes,firstOcurrence,times);
-                Util::Print(times);
-
-                // se ordenan
-                typedef struct
-                {
-                    int indice;
-                    double MSE;
-                } sortable;
-
-
-                for(int i=0;i<times.size();i++)
-                    cout << "La part�ula " << indexes[firstOcurrence[i]] << " se remuestrea " << times[i] << " veces. MSE = " << MSEs[indexes[firstOcurrence[i]]] << endl;
-                cout << "Una tecla..."; getchar();
-            }
-        #endif
+        vector<int> indexes = ObtainIndexes(particleFilter->Capacity(),weigths);
         particleFilter->KeepParticles(indexes);
+
         #ifdef DEBUG2
         	cout << "Remuestreando..." << endl;
         #endif

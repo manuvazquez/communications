@@ -26,8 +26,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-// #define DEBUG13
-#define DO_NOT_STORE_CHANNEL_MATRICES
+#include <defines.h>
 #include <vector>
 #include <ChannelMatrixEstimator.h>
 
