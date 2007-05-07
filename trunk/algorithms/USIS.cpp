@@ -23,9 +23,9 @@
 
 USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance/*,const MIMOChannel &canal,const tMatrix &simbolos*/): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_L-1)
 #ifdef CHANNELORDERSAPP_SAVING
-	,_channelOrderAPPs(_candidateOrders.size(),_K)
+	,_channelOrderAPPs(LaGenMatDouble::zeros(_candidateOrders.size(),_K)),_rCandidateOrders(0,_candidateOrders.size()-1)
 #endif
-,_rCandidateOrders(0,_candidateOrders.size()-1),_processDoneExternally(false)
+,_processDoneExternally(false)
 // ,_canal(canal),_simbolos(simbolos)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
@@ -50,7 +50,11 @@ vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observatio
 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
 	// the estimated matrices are used to update the global channel order estimator
-	_channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,trainingSequence);
+	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,trainingSequence);
+
+	#ifdef CHANNELORDERSAPP_SAVING
+		_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
+	#endif
 
     uint iChannelOrder;
 
@@ -105,10 +109,12 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	// channel order APP saving
 	int iBestParticle;
 
-	#ifdef CHANNELORDERSAPP_SAVING
-		// during the training sequence, the channel order APPs are assumed uniform
-		_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();
-	#endif
+// 	#ifdef CHANNELORDERSAPP_SAVING
+// 		cout << "_startDetectionTime es " << _startDetectionTime << " _preamble.cols(): " << _preamble.cols() << endl;
+// 		// during the training sequence, the channel order APPs are assumed uniform
+// 		_channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_startDetectionTime-1)) = 1.0/(double)_candidateOrders.size();
+// 		cout << _channelOrderAPPs(_rCandidateOrders,tRange(0,20))  << endl;
+// 	#endif
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
 	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length()));

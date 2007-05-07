@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "USIS2SISAlgorithm.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion): USIS(name, alphabet, L, N, K, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_transitionCriterion(transitionCriterion)
 {
@@ -71,6 +71,11 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
         knownChannelOrderAlgorithm.SetEstimatorIndex(iMax);
         knownChannelOrderAlgorithm.RunFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
+
+        #ifdef CHANNELORDERSAPP_SAVING
+        	_channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_K-1)) = 1.0;
+        #endif
+
         return;
     }
 }

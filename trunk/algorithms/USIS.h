@@ -57,8 +57,8 @@ protected:
     tRange _rAllObservationRows;
     #ifdef CHANNELORDERSAPP_SAVING
 		tMatrix _channelOrderAPPs;
+		tRange _rCandidateOrders;
 	#endif
-	tRange _rCandidateOrders;
 	bool _processDoneExternally;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}

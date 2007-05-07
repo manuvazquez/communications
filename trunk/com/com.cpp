@@ -141,7 +141,7 @@ int main(int argc,char* argv[])
     // GLOBAL PARAMETERS
     int nFrames = 2;
     int L=3,N=2,K=300;
-    int trainSeqLength = 30;
+    int trainSeqLength = 10;
     int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -321,10 +321,10 @@ int main(int argc,char* argv[])
     tMatrix overallPeMatrix,overallMseMatrix,presentFramePe,presentFrameMSE;
 
    	#ifdef CHANNELORDERSAPP_SAVING
-    	vector<vector<vector<tMatrix> > > channelOrderAPPestimations;
-    	channelOrderAPPestimations.reserve(nFrames);
+    	vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;
+    	channelOrderAPPsAlongTime.reserve(nFrames);
 
-    	vector<vector<tMatrix> > presentFrameChannelOrderAPPevolution;
+    	vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
     #endif
 
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
@@ -516,7 +516,7 @@ int main(int argc,char* argv[])
 
 				#ifdef CHANNELORDERSAPP_SAVING
 					// channel order APP evolution
-					presentFrameChannelOrderAPPevolution = vector<vector<tMatrix> >(nAlgorithmsPerformingChannelOrderAPPestimation,vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+					presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(nAlgorithmsPerformingChannelOrderAPPestimation,vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
 				#endif
             }
 
@@ -550,11 +550,8 @@ int main(int argc,char* argv[])
                 #ifdef CHANNELORDERSAPP_SAVING
                 	if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
                 	{
-                		presentFrameChannelOrderAPPevolution[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <USIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+                		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <USIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
                 		iAlgorithmPerformingChannelOrderAPPestimation++;
-
-//                 		cout << "La matriz que devuelve " << endl << (dynamic_cast <USIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
-//                 		cout << "Una tecla..."; getchar();
                 	}
                 #endif
 
@@ -581,8 +578,8 @@ int main(int argc,char* argv[])
 		Util::MatricesVectorToStream(MSEMatrices,"mse",f);
 
 		#ifdef CHANNELORDERSAPP_SAVING
-			channelOrderAPPestimations.push_back(presentFrameChannelOrderAPPevolution);
-			Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPestimations,"channelOrderAPPevolution",f);
+			channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
+			Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
 		#endif
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)

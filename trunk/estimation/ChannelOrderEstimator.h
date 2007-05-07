@@ -48,7 +48,7 @@ public:
 
 	virtual void Update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolsVector,double noiseVariance)=0;
 
-	virtual std::vector<double> ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors)=0;
+	virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors)=0;
 
 };
 

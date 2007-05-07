@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "APPbasedChannelOrderEstimator.h"
 
-// #define DEBUG
+#define DEBUG
 
 APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders, vector<tMatrix> initialChannelMatrixEstimations,double ARcoefficient): ChannelOrderEstimator(N,preamble,candidateOrders),_lastEstimatedChannelMatrices(initialChannelMatrixEstimations),_rAllSymbolRows(0,_preamble.rows()-1),_unnormalizedChannelOrderAPPs(initialChannelMatrixEstimations.size()),_ARcoefficient(ARcoefficient),_maxChannelOrder(candidateOrders[Util::Max(candidateOrders)]),_NmaxChannelOrder(_N*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1),_symbolsVector(_NmaxChannelOrder)
 {
@@ -38,11 +38,12 @@ APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::Clone()
 }
 
 
-vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const vector<vector<tMatrix> > channelMatrices, vector< double > noiseVariances, tMatrix symbolVectors)
+tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const vector<vector<tMatrix> > channelMatrices, vector< double > noiseVariances, tMatrix symbolVectors)
 {
     tMatrix sequenceToProcess = Util::Append(_preamble,symbolVectors);
     int lengthSequenceToProcess = sequenceToProcess.cols();
     double normalizationCt;
+    tMatrix computedChannelOrderAPPs(_candidateOrders.size(),symbolVectors.cols());
 
     if(observations.cols() < lengthSequenceToProcess)
         throw RuntimeException("APPbasedChannelOrderEstimator::ComputeProbabilities: Insufficient number of observations.");
@@ -84,22 +85,17 @@ vector< double > APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatr
             for(uint iChannelOrder=0;iChannelOrder<channelMatrices.size();iChannelOrder++)
             {
                 _channelOrderAPPs[iChannelOrder] = _unnormalizedChannelOrderAPPs[iChannelOrder] / normalizationCt;
+                computedChannelOrderAPPs(iChannelOrder,i-_preamble.cols()) = _channelOrderAPPs[iChannelOrder];
             }
     }
 
-   	return _channelOrderAPPs;
+   	return computedChannelOrderAPPs;
 }
 
 void APPbasedChannelOrderEstimator::Update(const tVector &observations,const vector<tMatrix> &channelMatrices,const tVector &symbolsVector,double noiseVariance)
 {
 	if(channelMatrices.size()!=_candidateOrders.size())
 		throw RuntimeException("APPbasedChannelOrderEstimator::Update: insufficient number of channel matrices.");
-// 	if(channelMatrix.cols()!=symbolsVector.size())
-// 		throw RuntimeException("APPbasedChannelOrderEstimator::Update: channel matrix and symbols vector dimensions are not coherent.");
-
-// 	int iChannelOrder = _channelOrder2index[channelMatrix.cols()/_preamble.rows()];
-// 	if(iChannelOrder==-1)
-// 		throw RuntimeException("APPbasedChannelOrderEstimator::Update: the computed order of the channel matrix is none of the candidates.");
 
 	if(symbolsVector.size()!=_N)
 		throw RuntimeException("APPbasedChannelOrderEstimator::Update: symbols vector does not have the proper size.");
