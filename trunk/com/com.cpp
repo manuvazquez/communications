@@ -76,6 +76,7 @@
 #include <PSPAlgorithm.h>
 #include <StochasticPSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
+#include <UPSPBasedSMCAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -110,38 +111,14 @@ void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &det
 
 int main(int argc,char* argv[])
 {
-// 	tMatrix matriz(2,2);
-// 	matriz(0,0) = 1;matriz(1,0) = 2;matriz(0,1) = 3;matriz(1,1) = 4;
-//
-// 	vector<tMatrix> vectorMatrices(4,matriz);
-// 	for(uint i=0;i<vectorMatrices.size();i++)
-// 		vectorMatrices[i] += double(i*10);
-//
-// 	vector<vector<tMatrix> > vectorVectoresMatrices(3,vectorMatrices);
-// 	for(uint i=0;i<vectorVectoresMatrices.size();i++)
-// 		for(uint j=0;j<vectorVectoresMatrices[i].size();j++)
-// 			vectorVectoresMatrices[i][j] += double(i*100);
-//
-// 	vector<vector<vector<tMatrix> > > vectorVectoresVectoresMatrices(2,vectorVectoresMatrices);
-// 	for(uint i=0;i<vectorVectoresVectoresMatrices.size();i++)
-// 		for(uint j=0;j<vectorVectoresVectoresMatrices[i].size();j++)
-// 			for(uint k=0;k<vectorVectoresVectoresMatrices[i][j].size();k++)
-// 				vectorVectoresVectoresMatrices[i][j][k] += double(i*1000);
-//
-// 	ofstream f2("venga",ofstream::trunc);
-// 	Util::MatricesVectoresVectoresVectorToStream(vectorVectoresVectoresMatrices,"si",f2);
-// 	f2.close();
-// 	exit(0);
-
-
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 2;
+    int nFrames = 1;
     int L=3,N=2,K=300;
-    int trainSeqLength = 10;
+    int trainSeqLength = 30;
     int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -156,7 +133,7 @@ int main(int argc,char* argv[])
     bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 4;
+    int m = 3;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -182,7 +159,7 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
 	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
 		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
@@ -325,6 +302,7 @@ int main(int argc,char* argv[])
     	channelOrderAPPsAlongTime.reserve(nFrames);
 
     	vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
+    	vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
     #endif
 
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
@@ -424,7 +402,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
@@ -454,10 +432,14 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new USIS("USIS",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance/*,canal,symbols*/));
 
-            algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (maximum probability criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion/*,canal,symbols*/));
+//             algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (maximum probability criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion));
 
 
 //             algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (uniform criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISuniformRelatedCriterion/*,canal,symbols*/));
+
+//     UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
+
+            algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -502,21 +484,27 @@ int main(int argc,char* argv[])
 					overallErrorsNumberTimeEvolution[i] = LaGenMatInt::zeros(algorithms.size(),K);
 				}
 
-				// the number of algorithms that perform channel order APP estimation along time
-				int nAlgorithmsPerformingChannelOrderAPPestimation = 0;
+// 				#ifdef CHANNELORDERSAPP_SAVING
+// 					// the number of algorithms that perform channel order APP estimation along time
+// 					int nAlgorithmsPerformingChannelOrderAPPestimation = 0;
+// 				#endif
 
 				// we fill the vector with the names of the algorithms
 				for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
 				{
 					algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
 
-					if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
-						nAlgorithmsPerformingChannelOrderAPPestimation++;
+					#ifdef CHANNELORDERSAPP_SAVING
+						if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
+							// +1 is because in Octave/Matlab there is no 0 index
+							iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
+// 							nAlgorithmsPerformingChannelOrderAPPestimation++;
+					#endif
 				}
 
 				#ifdef CHANNELORDERSAPP_SAVING
 					// channel order APP evolution
-					presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(nAlgorithmsPerformingChannelOrderAPPestimation,vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+					presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
 				#endif
             }
 
@@ -580,6 +568,7 @@ int main(int argc,char* argv[])
 		#ifdef CHANNELORDERSAPP_SAVING
 			channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
 			Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+			Util::ScalarsVectorToStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 		#endif
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
@@ -665,6 +654,9 @@ void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,in
 
 double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
 {
+	if(bits2.NbitsByStream()==0 || bits2.Nstreams()==0)
+		return 0.0;
+
 	BERComputingChecks(bits1,from1,to1,bits2,from2,to2);
 
 	int length = to1-from1;
@@ -680,6 +672,9 @@ double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from
 
 double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
 {
+	if(detectedBits.NbitsByStream()==0 || detectedBits.Nstreams()==0)
+		return 0.0;
+
 	BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
 
 	int length = to1-from1;

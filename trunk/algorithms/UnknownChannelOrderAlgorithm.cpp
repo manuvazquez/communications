@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownChannelOrderAlgorithm.h"
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(channelEstimators[0]->Cols()/_N),_minOrder(channelEstimators[0]->Cols()/_N),_iFirstObservation(iFirstObservation),_preamble(preamble)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
 {
     for(uint i=0;i<channelEstimators.size();i++)
     {
@@ -45,6 +45,8 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
     _channelOrder2index = new int[_maxOrder+1];
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
+
+    _NmaxOrder = _N*_maxOrder;
 }
 
 

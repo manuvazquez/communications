@@ -41,8 +41,6 @@ protected:
 public:
     PSPPath();
 
-    int Prueba() {return _channelMatrixEstimators.size();}
-
     PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators);
 
     PSPPath(const PSPPath &path);

@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>smc/resampling/libresampling.a</activetarget>
+      <activetarget>com/com</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

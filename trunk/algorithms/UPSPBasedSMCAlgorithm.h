@@ -17,38 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
-#define MULTIPLECHANNELESTIMATORSPERPARTICLESMCALGORITHM_H
+#ifndef UPSPBASEDSMCALGORITHM_H
+#define UPSPBASEDSMCALGORITHM_H
 
-#include <UnknownChannelOrderAlgorithm.h>
+#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <ResamplingAlgorithm.h>
-
-class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOrderAlgorithm
+class UPSPBasedSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
-    ResamplingAlgorithm *_resamplingAlgorithm;
-    int _d;
-	int _startDetectionTime;
-    tRange _allSymbolsRows;
-
-	virtual ParticleFilter* GetParticleFilterPointer() = 0;
-    virtual void InitializeParticles() = 0;
-    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-    int BestParticle();
+	ParticleFilter *_particleFilter;
+	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
 public:
-    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 
-    ~MultipleChannelEstimatorsPerParticleSMCAlgorithm();
+    ~UPSPBasedSMCAlgorithm();
 
-    void Run(tMatrix observations,vector<double> noiseVariances);
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-    tMatrix GetDetectedSymbolVectors();
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    virtual ParticleFilter* GetParticleFilterPointer() {return _particleFilter;}
+    virtual void InitializeParticles();
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
 };
 

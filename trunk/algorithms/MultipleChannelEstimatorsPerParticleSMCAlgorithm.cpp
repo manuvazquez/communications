@@ -63,7 +63,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
     this->InitializeParticles();
 
-    for(iParticle=0;iParticle<GetParticleFilterPointer()->Capacity();iParticle++)
+    for(iParticle=0;iParticle<GetParticleFilterPointer()->Nparticles();iParticle++)
     {
         ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (GetParticleFilterPointer()->GetParticle(iParticle));
 
@@ -91,7 +91,6 @@ tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVecto
     int iBestParticle;
     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
-//     ParticleWithChannelEstimationAndChannelOrder *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrder *> ( GetParticleFilterPointer()->GetParticle(iBestParticle));
 
     return ((GetParticleFilterPointer()->GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }

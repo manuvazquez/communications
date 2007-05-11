@@ -64,7 +64,6 @@ tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &s
 	if(observations.size()!=_L || symbolsMatrix.rows()*symbolsMatrix.cols()!=_Nm)
 		throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
 
-// 	BuildFfromSymbolsMatrix(Util::ToVector(symbolsMatrix,columnwise));
 	tMatrix observationEquationCovariance = LaGenMatDouble::eye(_L);
 	observationEquationCovariance *= noiseVariance;
 	_kalmanFilter->Step(BuildFfromSymbolsMatrix(Util::ToVector(symbolsMatrix,columnwise)),observations,observationEquationCovariance);
