@@ -82,7 +82,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 		for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
 		{
 			// the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-			mse += Util::SquareError(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
+			mse += Util::SquareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
 		}
 	} catch (IncompatibleOperandsException) {
 		return 0.0;
@@ -90,6 +90,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 
     return mse/(double)windowSize;
 }
+
 
 tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 {

@@ -56,6 +56,7 @@ public:
 	static double Sum(const tVector &v);
 	static void Max(const tVector &v,int &index);
 	static void Min(const tVector &v,int &index);
+	static double SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
     static double SquareError(const tMatrix &A,const tMatrix &B);
     static void Print(const tMatrix &A);
 	static void MatrixToStream(tMatrix A,string name,ofstream &f);

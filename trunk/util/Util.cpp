@@ -214,6 +214,19 @@ double Util::SquareError(const tMatrix &A,const tMatrix &B)
     return res;
 }
 
+double Util::SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
+{
+    if(A.rows()!=B.rows())
+        throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
+
+    double res = 0.0;
+    int j1,j2;
+    for(int i=0;i<A.rows();i++)
+        for(j1=A.cols()-1,j2=B.cols()-1;(j1>=0 && j2>=0);j1--,j2--)
+            res += (A(i,j1)-B(i,j2))*(A(i,j1)-B(i,j2));
+    return res;
+}
+
 void Util::Print(const tMatrix &A)
 {
     int j;

@@ -25,7 +25,11 @@
 #define CHANNELORDERSAPP_SAVING
 
 // wether the estimated channel matrices are kept or discarded
-#define DO_NOT_STORE_CHANNEL_MATRICES
+// #define DO_NOT_STORE_CHANNEL_MATRICES
 
 // for debug purposes
 // #define EXPORT_REAL_DATA
+
+
+// MACROS
+#define MAX(a,b) (a)>(b)?(a):(b)

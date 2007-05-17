@@ -187,3 +187,20 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 	delete[] particleCandidates;
 }
 
+int UPSPBasedSMCAlgorithm::BestChannelOrderIndex(int iBestParticle)
+{
+	ParticleWithChannelEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimation *>(_particleFilter->GetParticle(iBestParticle));
+
+// 	int iMaxChannelOrderAPP = 0;
+// 	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iMaxChannelOrderAPP);
+//
+// 	for(uint i=1;i<_candidateOrders.size();i++)
+// 		if(bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i) > maxChannelOrderAPP)
+// 		{
+// 			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+// 			iMaxChannelOrderAPP = i;
+// 		}
+//
+// 	return iMaxChannelOrderAPP;
+	return 0;
+}

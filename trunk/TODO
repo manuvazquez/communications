@@ -8,7 +8,6 @@
 - en ML_SMCAlgorithm
   - nObservations ya no vale para nada
   - mFirstColumns pilla una columna de mas
-- StdResamplingAlgorithm no tiene codigo
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
 - añadir simbolos para suavizado, no bits
@@ -17,7 +16,6 @@
 - añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)
 - definir preambulo en algun lugar más alto de la jerarquía
-- meter todas las comprobaciones dentro de un #ifdef CHECKS_ON
 - eliminar "_d" de MultipleChannelEstimatorsPerParticleSMCAlgorithm y sus clases derivadas
 - para calcular la overallPe y mse, hacer la división al final
 - memcpy para hacer copias de arrays (en el remuestreo por ejemplo)
@@ -28,5 +26,3 @@
 - eliminar de ViterbiAlgorithm lo de "	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);"
 - en ViterbiAlgorith, que BestState() sea private
 - KalmanEstimator en NextMatrix: que use la media predictiva no la filtrada (revisar)
-- com.cpp
-  - la evolución de la probabilidad de error con el tiempo se hace con los símbolos (sin resolver la ambiguedad)

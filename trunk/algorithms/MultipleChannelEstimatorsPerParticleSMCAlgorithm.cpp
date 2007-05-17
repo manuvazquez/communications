@@ -97,6 +97,17 @@ tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVecto
 
 vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
 {
-    vector<tMatrix> channelMatrices(0);
+    vector<tMatrix> channelMatrices;
+    channelMatrices.reserve(_K-_preamble.cols());
+
+    // best particle is chosen
+    int iBestParticle;
+    Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
+
+	int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
+
+    for(int i=_preamble.cols();i<_K;i++)
+        channelMatrices.push_back((GetParticleFilterPointer()->GetParticle(iBestParticle))->GetChannelMatrix(iBestChannelOrder,i));
+
     return channelMatrices;
 }

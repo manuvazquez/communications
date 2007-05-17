@@ -133,7 +133,7 @@ int main(int argc,char* argv[])
     bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 3;
+    int m = 5;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -432,14 +432,12 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new USIS("USIS",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance/*,canal,symbols*/));
 
-//             algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (maximum probability criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion));
+            algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (maximum probability criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion));
 
 
 //             algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (uniform criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISuniformRelatedCriterion/*,canal,symbols*/));
 
-//     UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
-
-            algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -484,11 +482,6 @@ int main(int argc,char* argv[])
 					overallErrorsNumberTimeEvolution[i] = LaGenMatInt::zeros(algorithms.size(),K);
 				}
 
-// 				#ifdef CHANNELORDERSAPP_SAVING
-// 					// the number of algorithms that perform channel order APP estimation along time
-// 					int nAlgorithmsPerformingChannelOrderAPPestimation = 0;
-// 				#endif
-
 				// we fill the vector with the names of the algorithms
 				for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
 				{
@@ -498,7 +491,6 @@ int main(int argc,char* argv[])
 						if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
 							// +1 is because in Octave/Matlab there is no 0 index
 							iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
-// 							nAlgorithmsPerformingChannelOrderAPPestimation++;
 					#endif
 				}
 
@@ -519,7 +511,6 @@ int main(int argc,char* argv[])
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
-                vector<tMatrix> estimatedChannelMatrices = algorithms[iAlgorithm]->GetEstimatedChannelMatrices();
 
 				pe = ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K,permutations);
 

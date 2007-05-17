@@ -338,8 +338,26 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	} // while((iObservationToBeProcessed<_K) && !_processDoneExternally)
 }
 
-vector<tMatrix> USIS::GetEstimatedChannelMatrices()
+
+int USIS::BestChannelOrderIndex(int iBestParticle)
 {
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
+
+	int iMaxChannelOrderAPP = 0;
+	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iMaxChannelOrderAPP);
+
+	for(uint i=1;i<_candidateOrders.size();i++)
+		if(bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i) > maxChannelOrderAPP)
+		{
+			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+			iMaxChannelOrderAPP = i;
+		}
+
+	return iMaxChannelOrderAPP;
+}
+
+// vector<tMatrix> USIS::GetEstimatedChannelMatrices()
+// {
 //     vector<tMatrix> channelMatrices;
 //     channelMatrices.reserve(_K-_preamble.cols());
 //
@@ -347,8 +365,8 @@ vector<tMatrix> USIS::GetEstimatedChannelMatrices()
 //     int iBestParticle;
 //     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
 //
-//     for(int i=_preamble.cols();i<_K;i++)
-//         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
-
-    return vector<tMatrix>(0);
-}
+// //     for(int i=_preamble.cols();i<_K;i++)
+// //         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
+//
+//     return vector<tMatrix>(0);
+// }
