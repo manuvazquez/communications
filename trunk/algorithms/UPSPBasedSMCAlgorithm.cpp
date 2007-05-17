@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-UPSPBasedSMCAlgorithm::UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance)
+UPSPBasedSMCAlgorithm::UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
 }
 
@@ -46,7 +46,7 @@ void UPSPBasedSMCAlgorithm::InitializeParticles()
 	#endif
 
 	vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
-	for(int i=0;i<_candidateOrders.size();i++)
+	for(uint i=0;i<_candidateOrders.size();i++)
 		channelEstimatorsClone[i] = _channelEstimators[i]->Clone();
 
 	// we begin with only one particle
@@ -79,6 +79,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 	typedef struct{
 		int fromParticle;
 		tMatrix symbolVectorsMatrix;
+        int iBestChannelOrder;
 		double weight;
 	}tParticleCandidate;
 
@@ -138,6 +139,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
+                particleCandidates[iCandidate].iBestChannelOrder = iLeastCost;
 				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservationsVector[iLeastCost],noiseVariances[iObservationToBeProcessed]);
 
 				iCandidate++;
@@ -158,7 +160,10 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 		// every survivor candidate is associated with an old particle
 		vector<int> indexesParticles(indexesSelectedCandidates.size());
 		for(uint i=0;i<indexesSelectedCandidates.size();i++)
+        {
 			indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
+            _particlesBestChannelOrders[i] = particleCandidates[indexesSelectedCandidates[i]].iBestChannelOrder;
+        }
 
 		// the chosen particles are kept without modification (yet)
 		_particleFilter->KeepParticles(indexesParticles);
@@ -189,7 +194,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 
 int UPSPBasedSMCAlgorithm::BestChannelOrderIndex(int iBestParticle)
 {
-	ParticleWithChannelEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimation *>(_particleFilter->GetParticle(iBestParticle));
+// 	ParticleWithChannelEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimation *>(_particleFilter->GetParticle(iBestParticle));
 
 // 	int iMaxChannelOrderAPP = 0;
 // 	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iMaxChannelOrderAPP);
@@ -202,5 +207,9 @@ int UPSPBasedSMCAlgorithm::BestChannelOrderIndex(int iBestParticle)
 // 		}
 //
 // 	return iMaxChannelOrderAPP;
-	return 0;
+// 	return 0;
+
+    cout << "El orden bueno es " << _particlesBestChannelOrders[iBestParticle] << endl;
+
+    return _particlesBestChannelOrders[iBestParticle];
 }

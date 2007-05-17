@@ -220,10 +220,24 @@ double Util::SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
         throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
 
     double res = 0.0;
-    int j1,j2;
-    for(int i=0;i<A.rows();i++)
+    int i,j1,j2;
+    for(i=0;i<A.rows();i++)
         for(j1=A.cols()-1,j2=B.cols()-1;(j1>=0 && j2>=0);j1--,j2--)
             res += (A(i,j1)-B(i,j2))*(A(i,j1)-B(i,j2));
+
+    if(j1>=0)
+    {
+        for(;j1>=0;j1--)
+            for(i=0;i<A.rows();i++)
+                res += A(i,j1)*A(i,j1);
+    }
+    else if(j2>=0)
+    {
+        for(;j2>=0;j2--)
+            for(i=0;i<B.rows();i++)
+                res += B(i,j2)*B(i,j2);
+    }
+
     return res;
 }
 
@@ -482,7 +496,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
         #ifdef DEBUG13
-            cout << "probando permutación" << endl;
+            cout << "probando permutaciï¿½n" << endl;
             Print(permutations[iPermut]);
         #endif
 
@@ -491,14 +505,14 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
             tVector col1 = H1.col(iCol);
 
             #ifdef DEBUG13
-                cout << "columna de la 1ª matriz" << endl << col1;
+                cout << "columna de la 1ï¿½ matriz" << endl << col1;
             #endif
 
             // error without changing the sign
             tVector col2 = H2.col(permutations[iPermut][iCol]);
 
             #ifdef DEBUG13
-                cout << "columna de la 2ª matriz" << endl << col2;
+                cout << "columna de la 2ï¿½ matriz" << endl << col2;
             #endif
 
             Add(col1,col2,errorVector,1.0,-1.0);

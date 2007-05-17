@@ -28,7 +28,7 @@ USIS::USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelM
 ,_processDoneExternally(false)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
-        throw RuntimeException("USIS::USIS: nº of detectors and number of channel matrix estimators (and candidate orders) are different.");
+        throw RuntimeException("USIS::USIS: nï¿½ of detectors and number of channel matrix estimators (and candidate orders) are different.");
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->Clone();
@@ -355,18 +355,3 @@ int USIS::BestChannelOrderIndex(int iBestParticle)
 
 	return iMaxChannelOrderAPP;
 }
-
-// vector<tMatrix> USIS::GetEstimatedChannelMatrices()
-// {
-//     vector<tMatrix> channelMatrices;
-//     channelMatrices.reserve(_K-_preamble.cols());
-//
-//     // best particle is chosen
-//     int iBestParticle;
-//     Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
-//
-// //     for(int i=_preamble.cols();i<_K;i++)
-// //         channelMatrices.push_back((_particleFilter.GetParticle(iBestParticle))->GetChannelMatrix(1,i));
-//
-//     return vector<tMatrix>(0);
-// }

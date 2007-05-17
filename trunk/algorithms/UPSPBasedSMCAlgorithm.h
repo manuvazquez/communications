@@ -30,6 +30,7 @@ class UPSPBasedSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgo
 protected:
 	ParticleFilter *_particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    vector<int> _particlesBestChannelOrders;
 
     int BestChannelOrderIndex(int iBestParticle);
 public:

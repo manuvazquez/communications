@@ -68,7 +68,6 @@ protected:
 
 	virtual void BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances) {}
 
-// 	vector<tMatrix> GetEstimatedChannelMatrices();
     int BestChannelOrderIndex(int iBestParticle);
 };
 

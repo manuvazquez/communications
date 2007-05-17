@@ -437,7 +437,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm (uniform criterion)",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISuniformRelatedCriterion/*,canal,symbols*/));
 
-//             algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+            algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 			// the RLS algorithm considering all posible channel orders
 // 			for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
