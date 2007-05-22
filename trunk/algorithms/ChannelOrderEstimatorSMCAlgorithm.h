@@ -17,33 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELORDERALGORITHM_H
-#define UNKNOWNCHANNELORDERALGORITHM_H
+#ifndef CHANNELORDERESTIMATORSMCALGORITHM_H
+#define CHANNELORDERESTIMATORSMCALGORITHM_H
 
-#include <UnknownChannelAlgorithm.h>
+#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <vector>
-#include <ChannelMatrixEstimator.h>
-
-class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+class ChannelOrderEstimatorSMCAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
-    vector<int> _candidateOrders;
-	int _maxOrder,_iFirstObservation,_NmaxOrder;
-	int *_channelOrder2index;
-	tMatrix _preamble;
-
-
+	tMatrix _channelOrderAPPs;
+	tRange _rCandidateOrders;
 public:
-	virtual vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
+    ChannelOrderEstimatorSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
-    ~UnknownChannelOrderAlgorithm();
+	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1));}
+    bool PerformsChannelOrderAPPEstimation() { return true;}
 };
 
 #endif

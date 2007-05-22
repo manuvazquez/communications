@@ -32,7 +32,7 @@
 
 class ParticleFilter{
 protected:
-    int _capacity,_nParticles;
+    uint _capacity,_nParticles;
     ParticleWithChannelEstimation **_particles;
 public:
 
@@ -52,10 +52,12 @@ public:
 		_particles[_nParticles++] = particle;
 	}
 
+    int IndexBestParticle();
+
     tVector GetWeightsVector()
     {
         tVector weights(_nParticles);
-        for(int i=0;i<_nParticles;i++)
+        for(uint i=0;i<_nParticles;i++)
             weights(i) = _particles[i]->GetWeight();
         return weights;
     }
@@ -63,7 +65,7 @@ public:
     void NormalizeWeights()
     {
         double sum = 0.0;
-        int i;
+        uint i;
 
         for(i=0;i<_nParticles;i++)
             sum += _particles[i]->GetWeight();
@@ -75,7 +77,7 @@ public:
     void NormalizeWeights(std::vector<int> indexes)
     {
         double sum = 0.0;
-        int i,nParticles=indexes.size();
+        uint i,nParticles=indexes.size();
 
         for(i=0;i<nParticles;i++)
             sum += _particles[indexes[i]]->GetWeight();

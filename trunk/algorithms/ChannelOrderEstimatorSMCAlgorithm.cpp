@@ -17,33 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELORDERALGORITHM_H
-#define UNKNOWNCHANNELORDERALGORITHM_H
+#include "ChannelOrderEstimatorSMCAlgorithm.h"
 
-#include <UnknownChannelAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <vector>
-#include <ChannelMatrixEstimator.h>
-
-class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
+ChannelOrderEstimatorSMCAlgorithm::ChannelOrderEstimatorSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_channelOrderAPPs(LaGenMatDouble::zeros(_candidateOrders.size(),_K+_d)),_rCandidateOrders(0,_candidateOrders.size()-1)
 {
-protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
-    vector<int> _candidateOrders;
-	int _maxOrder,_iFirstObservation,_NmaxOrder;
-	int *_channelOrder2index;
-	tMatrix _preamble;
+}
 
 
-public:
-	virtual vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
-
-    ~UnknownChannelOrderAlgorithm();
-};
-
-#endif

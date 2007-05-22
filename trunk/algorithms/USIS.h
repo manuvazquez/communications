@@ -20,7 +20,7 @@
 #ifndef USIS_H
 #define USIS_H
 
-#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+#include <ChannelOrderEstimatorSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -36,18 +36,12 @@
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h>
 #include <MIMOChannel.h>
 
-class USIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class USIS : public ChannelOrderEstimatorSMCAlgorithm
 {
 public:
     USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator * channelOrderEstimator, double ARcoefficient,double samplingVariance,double ARprocessVariance);
 
     ~USIS();
-
-	#ifdef CHANNELORDERSAPP_SAVING
-    	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(_rCandidateOrders,tRange(_preamble.cols(),_K-1));}
-    #endif
-
-    bool PerformsChannelOrderAPPEstimation() { return true;}
 
 protected:
     vector<LinearDetector *> _linearDetectors;
@@ -55,10 +49,6 @@ protected:
 	ParticleFilter _particleFilter;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     tRange _rAllObservationRows;
-    #ifdef CHANNELORDERSAPP_SAVING
-		tMatrix _channelOrderAPPs;
-		tRange _rCandidateOrders;
-	#endif
 	bool _processDoneExternally;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}

@@ -38,11 +38,12 @@ protected:
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
- const MIMOChannel &_canal;
- const tMatrix &_simbolos;
+	// it's never gonna be called
+    int BestChannelOrderIndex(int iBestParticle) { return 0;}
 public:
     ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos);
 
+	vector<tMatrix> GetEstimatedChannelMatrices();
 };
 
 #endif

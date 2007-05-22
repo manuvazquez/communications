@@ -45,7 +45,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
 	}
 
     #ifdef DEBUG
-        cout << "Probabilidades globales para los órdenes de canal:" << endl << _weightedChannelOrderAPPs << endl;
+        cout << "Probabilidades globales para los ï¿½rdenes de canal:" << endl << _weightedChannelOrderAPPs << endl;
     #endif
 
     // the maximum probability is obtained
@@ -53,17 +53,16 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
     Util::Max(_weightedChannelOrderAPPs,iMax);
 
     #ifdef DEBUG
-        cout << "La probabilidad más alta es la " << iMax << endl;
+        cout << "La probabilidad mï¿½s alta es la " << iMax << endl;
         cout << "Pasa del umbral: " << (_weightedChannelOrderAPPs(iMax)>_threshold) << endl;
     #endif
 
-    // if the threshold is reached
-//     if(_weightedChannelOrderAPPs(iMax)>_threshold)
+    // if the transition criterion is satisfied
     if(_transitionCriterion->MakeTransition(_weightedChannelOrderAPPs))
     {
         #ifdef DEBUG
             cout << "Pasa del umbral: " << endl;
-            cout << "La probabilidad más alta es la " << iMax << endl;
+            cout << "La probabilidad mï¿½s alta es la " << iMax << endl;
         #endif
 
         LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_L,_N,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
@@ -72,9 +71,8 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
         knownChannelOrderAlgorithm.RunFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
 
-        #ifdef CHANNELORDERSAPP_SAVING
-        	_channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_K-1)) = 1.0;
-        #endif
+        // the APP of the selected channel order is set to 1.0
+        _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_K-1)) = 1.0;
 
         return;
     }

@@ -20,7 +20,6 @@
 #include "ISIS.h"
 
 ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,const MIMOChannel &canal,const tMatrix &simbolos): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
-,_canal(canal),_simbolos(simbolos)
 {
 }
 
@@ -59,27 +58,6 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
-
-//     // for efficiency's sake
-//     int *allNms = new int[_candidateOrders.size()];
-//     int *allNds = new int[_candidateOrders.size()];
-//     int *allds = new int[_candidateOrders.size()];
-//     int *allnSmoothingVectors = new int[_candidateOrders.size()];
-//     tRange *allr0mMinus2 = new tRange[_candidateOrders.size()];
-//
-//     for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-//     {
-//         allNms[iChannelOrder] = _N*_candidateOrders[iChannelOrder];
-//         allds[iChannelOrder] = _candidateOrders[iChannelOrder] - 1;
-//         allNds[iChannelOrder] = _N*allds[iChannelOrder];
-//         allnSmoothingVectors[iChannelOrder] = (int) pow((double)_alphabet.Length(),(double)(allNds[iChannelOrder]));
-//     }
-//
-//     delete[] allNms;
-//     delete[] allNds;
-//     delete[] allds;
-//     delete[] allnSmoothingVectors;
-//     delete[] allr0mMinus2;
 
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
@@ -213,18 +191,6 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,auxChannelEstimator->NextMatrix(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]));
 			}
 
-                // *******************************
-
-//             if(channelOrderAPPsNormConstant==0)
-// 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 					processedParticle->SetChannelOrderAPP(channelOrderAprioriProbability,iChannelOrder);
-// 			else
-// 				// all the channel order a posteriori probabilities are normalized by the previously computed constant
-// 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 					processedParticle->SetChannelOrderAPP(processedParticle->GetChannelOrderAPP(iChannelOrder)/channelOrderAPPsNormConstant,iChannelOrder);
-
-                // ********************************
-
             if(channelOrderAPPsNormConstant!=0)
                 // all the channel order a posteriori probabilities are normalized by the previously computed constant
                 for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -257,3 +223,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	delete[] newChannelOrderAPPs;
 }
 
+vector<tMatrix> ISIS::GetEstimatedChannelMatrices()
+{
+	return vector<tMatrix>(0);
+}

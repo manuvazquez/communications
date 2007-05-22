@@ -23,7 +23,7 @@
 
 ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
-    for(int i=0;i<_capacity;i++)
+    for(uint i=0;i<_capacity;i++)
     {
         _particles[i] = NULL;
     }
@@ -31,12 +31,27 @@ ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles
 
 ParticleFilter::~ParticleFilter()
 {
-    for(int i=0;i<_nParticles;i++)
+    for(uint i=0;i<_nParticles;i++)
     {
         delete _particles[i];
     }
 
     delete[] _particles;
+}
+
+int ParticleFilter::IndexBestParticle()
+{
+    int iBest = 0;
+    double best = _particles[0]->GetWeight();
+
+    for(uint i=1;i<_nParticles;i++)
+        if(_particles[i]->GetWeight()>best)
+        {
+            iBest = i;
+            best = _particles[i]->GetWeight();
+        }
+
+    return iBest;
 }
 
 void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
@@ -56,7 +71,7 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 	}
 
 	// the particles out of index are left the same. Their memory will not be released later
-	int previousResampledParticle = 0;
+	uint previousResampledParticle = 0;
 	for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
 	{
 		while(previousResampledParticle<indexes[iParticle])
@@ -96,7 +111,7 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 		particleNeeded[indexes[iParticle]] = true;
 
 	// the memory occupied by the particles that are not gonna be resampled is released
-	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+	for(uint iParticle=0;iParticle<_nParticles;iParticle++)
 		if(!particleNeeded[iParticle])
 		{
 			delete _particles[iParticle];
@@ -122,7 +137,7 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 		cout << "despues de replicar" << endl;
 	#endif
 
-	for(int iParticle=0;iParticle<_nParticles;iParticle++)
+	for(uint iParticle=0;iParticle<_nParticles;iParticle++)
 			delete _particles[iParticle];
 
 	delete[] _particles;

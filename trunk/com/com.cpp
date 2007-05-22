@@ -77,6 +77,7 @@
 #include <StochasticPSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
 #include <UPSPBasedSMCAlgorithm.h>
+#include <ChannelOrderEstimatorSMCAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -133,7 +134,7 @@ int main(int argc,char* argv[])
     bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 5;
+    int m = 3;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -297,13 +298,11 @@ int main(int argc,char* argv[])
 
     tMatrix overallPeMatrix,overallMseMatrix,presentFramePe,presentFrameMSE;
 
-   	#ifdef CHANNELORDERSAPP_SAVING
-    	vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;
-    	channelOrderAPPsAlongTime.reserve(nFrames);
+    vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;
+    channelOrderAPPsAlongTime.reserve(nFrames);
 
-    	vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
-    	vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
-    #endif
+    vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
+    vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
 
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
     vector<LaGenMatInt> overallErrorsNumberTimeEvolution(SNRs.size());
@@ -487,25 +486,19 @@ int main(int argc,char* argv[])
 				{
 					algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
 
-					#ifdef CHANNELORDERSAPP_SAVING
-						if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
-							// +1 is because in Octave/Matlab there is no 0 index
-							iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
-					#endif
+                    // ...besides we find out whether the algorithm performs channel order APP estimation
+					if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
+						// +1 is because in Octave/Matlab there is no 0 index
+						iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
 				}
 
-				#ifdef CHANNELORDERSAPP_SAVING
-					// channel order APP evolution
-					presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
-				#endif
+				// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms
+                // counted above
+				presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
             }
 
-			#ifdef CHANNELORDERSAPP_SAVING
-				int iAlgorithmPerformingChannelOrderAPPestimation = 0;
-			#endif
-
             // algorithms are executed
-            for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+            for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),trainingSequence);
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());
@@ -526,13 +519,13 @@ int main(int argc,char* argv[])
                 overallMseMatrix(iSNR,iAlgorithm) += mse;
                 presentFrameMSE(iSNR,iAlgorithm) = mse;
 
-                #ifdef CHANNELORDERSAPP_SAVING
-                	if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
-                	{
-                		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <USIS *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
-                		iAlgorithmPerformingChannelOrderAPPestimation++;
-                	}
-                #endif
+                // for the algorithm performing channel order estimation...
+                if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
+                {
+                    //...the probability of the different channel orders at each time instant is retrieved
+                    presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <ChannelOrderEstimatorSMCAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+                    iAlgorithmPerformingChannelOrderAPPestimation++;
+                }
 
                 // Pe evolution
                 tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));
@@ -550,17 +543,18 @@ int main(int argc,char* argv[])
 		// ----------------- VARIABLES SAVING ----------------------
 		ofstream f(outputFileName,ofstream::trunc);
 
+        // pe
 		peMatrices.push_back(presentFramePe);
 		Util::MatricesVectorToStream(peMatrices,"pe",f);
 
+        // MSE
 		MSEMatrices.push_back(presentFrameMSE);
 		Util::MatricesVectorToStream(MSEMatrices,"mse",f);
 
-		#ifdef CHANNELORDERSAPP_SAVING
-			channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-			Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
-			Util::ScalarsVectorToStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
-		#endif
+		// channel order APPs evolution along time
+		channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
+		Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+		Util::ScalarsVectorToStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 			for(uint i=0;i<algorithmsNames.size();i++)

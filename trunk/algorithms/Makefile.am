@@ -8,11 +8,11 @@ noinst_HEADERS = Algorithm.h DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h \
 	KnownChannelOrderAlgorithm.h KnownSymbolsKalmanBasedChannelEstimator.h \
 	LinearFilterBasedMKFAlgorithm.h MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h \
 	PSPBasedSMCAlgorithm.h SMCAlgorithm.h StochasticPSPAlgorithm.h UPSPBasedSMCAlgorithm.h USIS.h \
-	UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
+	UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h ChannelOrderEstimatorSMCAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
-	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
-	KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedMKFAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
-	MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp PSPBasedSMCAlgorithm.cpp SMCAlgorithm.cpp \
-	StochasticPSPAlgorithm.cpp UPSPBasedSMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
-	UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp
+		KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
+		KnownSymbolsKalmanBasedChannelEstimator.cpp LinearFilterBasedMKFAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+		MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp PSPBasedSMCAlgorithm.cpp SMCAlgorithm.cpp \
+		StochasticPSPAlgorithm.cpp UPSPBasedSMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp \
+		UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp ChannelOrderEstimatorSMCAlgorithm.cpp
 SUBDIRS = USIS2SIS

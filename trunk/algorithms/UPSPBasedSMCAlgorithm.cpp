@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-UPSPBasedSMCAlgorithm::UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
+UPSPBasedSMCAlgorithm::UPSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): ChannelOrderEstimatorSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
 }
 
@@ -80,10 +80,14 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 		int fromParticle;
 		tMatrix symbolVectorsMatrix;
         int iBestChannelOrder;
+        vector<tVector> computedObservationsVector;
 		double weight;
 	}tParticleCandidate;
 
-	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors] ;
+	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors];
+
+    double *unnormalizedChannelOrderAPPs = new double[_candidateOrders.size()];
+    double normConst;
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_N,_maxOrder);
@@ -140,6 +144,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
                 particleCandidates[iCandidate].iBestChannelOrder = iLeastCost;
+                particleCandidates[iCandidate].computedObservationsVector = computedObservationsVector;
 				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservationsVector[iLeastCost],noiseVariances[iObservationToBeProcessed]);
 
 				iCandidate++;
@@ -187,29 +192,68 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
 		_particleFilter->NormalizeWeights();
-	}
+
+        int iBestParticle = _particleFilter->IndexBestParticle();
+//         cout << "iBestParticle = " << iBestParticle << endl;
+
+        uint iChannelOrder;
+        normConst = 0.0;
+
+        for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        {
+//             cout << "particleCandidates[indexesSelectedCandidates[iBestParticle]].computedObservationsVector[iChannelOrder]" << endl << particleCandidates[indexesSelectedCandidates[iBestParticle]].computedObservationsVector[iChannelOrder];
+            unnormalizedChannelOrderAPPs[iChannelOrder] = StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iBestParticle]].computedObservationsVector[iChannelOrder],noiseVariances[iObservationToBeProcessed]);
+            normConst += unnormalizedChannelOrderAPPs[iChannelOrder];
+        }
+
+        if(normConst == 0.0)
+            throw RuntimeException("UPSPBasedSMCAlgorithm::Process: normalization constant is zero.");
+
+//         cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+        for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+            _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = unnormalizedChannelOrderAPPs[iChannelOrder]/normConst;
+
+
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
 
 	delete[] particleCandidates;
+    delete[] unnormalizedChannelOrderAPPs;
 }
 
 int UPSPBasedSMCAlgorithm::BestChannelOrderIndex(int iBestParticle)
 {
-// 	ParticleWithChannelEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimation *>(_particleFilter->GetParticle(iBestParticle));
-
-// 	int iMaxChannelOrderAPP = 0;
-// 	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iMaxChannelOrderAPP);
-//
-// 	for(uint i=1;i<_candidateOrders.size();i++)
-// 		if(bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i) > maxChannelOrderAPP)
-// 		{
-// 			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
-// 			iMaxChannelOrderAPP = i;
-// 		}
-//
-// 	return iMaxChannelOrderAPP;
-// 	return 0;
-
-    cout << "El orden bueno es " << _particlesBestChannelOrders[iBestParticle] << endl;
-
     return _particlesBestChannelOrders[iBestParticle];
+}
+
+vector<vector<tMatrix> > UPSPBasedSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+{
+    tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+
+    if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
+        throw RuntimeException("UPSPBasedSMCAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
+
+	// channel estimation for the training sequence is needed in order to compute the channel order APP
+	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+
+	tVector computedObservations(_L),unnormalizedChannelOrderAPPs(_candidateOrders.size());
+	tRange rAllSymbolsRows(0,_N-1);
+
+	for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
+	{
+		double normConst = 0.0;
+
+		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+		{
+			// computedObservations = estimatedMatrices[iOrder][i-_preamble.cols()] * Util::ToVector(sequenceToProcess(rAllSymbolsRows,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise)
+			Blas_Mat_Vec_Mult(estimatedMatrices[iOrder][i-_preamble.cols()],Util::ToVector(sequenceToProcess(rAllSymbolsRows,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise),computedObservations);
+
+			unnormalizedChannelOrderAPPs(iOrder) = StatUtil::NormalPdf(observations.col(i),computedObservations,noiseVariances[i]);
+			normConst += unnormalizedChannelOrderAPPs(iOrder);
+		}
+
+		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+			_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs(iOrder)/normConst;
+	}
+
+	return estimatedMatrices;
 }
