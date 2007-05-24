@@ -292,7 +292,9 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				} // for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 
 				// the estimation of the channel matrix is updated
-				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed, (processedParticle->GetChannelMatrixEstimator(iChannelOrder))->NextMatrix(observations.col(iObservationToBeProcessed),forWeightUpdateNeededSymbols(_allSymbolsRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
+				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,
+				(processedParticle->GetChannelMatrixEstimator(iChannelOrder))->NextMatrix(observations.col(iObservationToBeProcessed),
+					forWeightUpdateNeededSymbols(_allSymbolsRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
                 // the computed likelihood is accumulated
                 sumLikelihoodsProd += likelihoodsProd;
