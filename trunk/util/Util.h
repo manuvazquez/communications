@@ -80,6 +80,7 @@ public:
     template<class T> static void NextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> NMax(int n,const tVector &v);
+	static tMatrix FlipLR(const tMatrix &A);
 };
 
 #endif

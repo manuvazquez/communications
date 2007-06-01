@@ -219,3 +219,23 @@ void SMCAlgorithm::InitializeParticlesChannelMatrixEstimations()
     }
 
 }
+
+double SMCAlgorithm::SmoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+{
+	double likelihoodsProd = 1.0;
+
+	tVector predictedNoiselessObservation(_L);
+	tRange rAllSymbolRows(0,_N-1);
+
+	for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
+	{
+		tRange rSymbolVectors(iSmoothing,iSmoothing+_m-1);
+		tVector stackedSymbolVector = Util::ToVector(involvedSymbolVectors(rAllSymbolRows,rSymbolVectors),columnwise);
+
+		// predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
+		Blas_Mat_Vec_Mult(channelMatrices[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
+
+		likelihoodsProd *= StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
+	}
+	return likelihoodsProd;
+}

@@ -211,7 +211,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 // 				likelihoodsProd *= StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
 // 			}
 
-			likelihoodsProd = LikelihoodFromSampledChannelMatricesAndSymbolVectors(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+			likelihoodsProd = SmoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
 			// the weight is updated
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
@@ -248,25 +248,4 @@ vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMa
 	}
 
 	return SMCAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
-}
-
-double LinearFilterBasedSMCAlgorithm::LikelihoodFromSampledChannelMatricesAndSymbolVectors(const vector<tMatrix> &sampledChannelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
-{
-	double likelihoodsProd = 1.0;
-
-	tVector predictedNoiselessObservation(_L);
-	tRange rAllSymbolRows(0,_N-1);
-
-	for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
-	{
-		tRange rSymbolVectors(iSmoothing,iSmoothing+_m-1);
-		tVector stackedSymbolVector = Util::ToVector(involvedSymbolVectors(rAllSymbolRows,rSymbolVectors),columnwise);
-
-		// predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
-		Blas_Mat_Vec_Mult(sampledChannelMatrices[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
-
-		likelihoodsProd *= StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
-	}
-// 	exit(0);
-	return likelihoodsProd;
 }

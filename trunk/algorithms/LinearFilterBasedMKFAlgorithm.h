@@ -34,7 +34,7 @@ public:
     LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
 protected:
-    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix)
+    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
     {
     	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)))->SampleFromPredictive();
     }

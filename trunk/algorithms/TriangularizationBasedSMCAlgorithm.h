@@ -17,12 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef TRIANGULARIZATIONBASEDSMCALGORITHM_H
+#define TRIANGULARIZATIONBASEDSMCALGORITHM_H
 
-// the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#include <SMCAlgorithm.h>
 
-// wether the estimated channel matrices are kept or discarded
-// #define DO_NOT_STORE_CHANNEL_MATRICES
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-// MACROS
-#define MAX(a,b) (a)>(b)?(a):(b)
+#include <KalmanEstimator.h>
+
+class TriangularizationBasedSMCAlgorithm : public SMCAlgorithm
+{
+public:
+    TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance);
+
+    ~TriangularizationBasedSMCAlgorithm();
+
+protected:
+	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+};
+
+#endif

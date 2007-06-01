@@ -74,10 +74,10 @@
 #include <MaximumProbabilityCriterion.h>
 #include <UniformRelatedCriterion.h>
 #include <PSPAlgorithm.h>
-#include <StochasticPSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
 #include <UPSPBasedSMCAlgorithm.h>
 #include <ChannelOrderEstimatorSMCAlgorithm.h>
+#include <TriangularizationBasedSMCAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -112,6 +112,17 @@ void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &det
 
 int main(int argc,char* argv[])
 {
+// 	tMatrix A = StatUtil::RandnMatrix(2,3,0.0,1.0);
+// 	tMatrix B = A(tRange(0,1),tRange(1,2));
+//
+// 	cout << "A es" << endl << A << "B es" << endl << B;
+// 	B(0,0) = 10;
+// 	cout << "A es" << endl << A << "B es" << endl << B;
+//
+// 	cout << "A volteada" << endl << Util::FlipLR(A);
+//
+// 	exit(0);
+
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
@@ -119,7 +130,7 @@ int main(int argc,char* argv[])
     // GLOBAL PARAMETERS
     int nFrames = 1;
     int L=3,N=2,K=300;
-    int trainSeqLength = 30;
+    int trainSeqLength = 20;
     int nParticles = 30;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -160,7 +171,7 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);/*candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);*/
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);/*candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);*/
 
 	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
 		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
@@ -356,7 +367,6 @@ int main(int argc,char* argv[])
 		// ... and according to that m, channel estimators are constructed...
 		tMatrix initialChannelEstimation = LaGenMatDouble::zeros(L,N*m);
 
-// 		KalmanEstimator kalmanEstimator(initialChannelEstimation,N,ARcoefficients[0],ARvariance);
         KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
 	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
 		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
@@ -395,22 +405,15 @@ int main(int argc,char* argv[])
             // algorithms are created
             vector<Algorithm *> algorithms;
 
-	        // it stores the training sequence length employed by each algorithm
-	        vector<int> algorithmsTrainingSequences;
-
             // ----------------------- ALGORITHMS TO RUN ----------------------------
-
-	        for(uint iTestedTrainingSequenceLength=0;iTestedTrainingSequenceLength<testingTrainingSequences.size();iTestedTrainingSequenceLength++)
-	        {
-			char buffer[SPRINTF_BUFFER];
-
-			sprintf(buffer," (T=%d)",testingTrainingSequences[iTestedTrainingSequenceLength]);
 
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithmsTrainingSequences.push_back(testingTrainingSequences[iTestedTrainingSequenceLength]); algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS")+string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+
+	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
@@ -440,7 +443,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new USIS("USIS",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance/*,canal,symbols*/));
 
-		        algorithmsTrainingSequences.push_back(testingTrainingSequences[iTestedTrainingSequenceLength]); algorithms.push_back(new USIS2SISAlgorithm(string("USIS2SISAlgorithm (maximum probability criterion)")+string(buffer),pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion));
+// 		        algorithms.push_back(new USIS2SISAlgorithm("USIS2SISAlgorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&USISmaximumProbabilityCriterion));
 
 //             algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,&withoutReplacementResampling,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -469,12 +472,7 @@ int main(int argc,char* argv[])
 // 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,resamplingAlgorithms[iResamplingAlgorithm],initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 // 			}
 
-	        } // for(int iTestedTrainingSequenceLength=0;iTestedTrainingSequenceLength<testingTrainingSequences.size();iTestedTrainingSequenceLength++)
-
 			// ---------------------------------------------------------------------------------
-
-	        if(algorithms.size()!=algorithmsTrainingSequences.size())
-		        throw RuntimeException("missing some algorithm training sequence especification.");
 
             // here the number of algoriths is known. So, the first iteration:
             if(iFrame==0 && iSNR==0)
@@ -511,8 +509,7 @@ int main(int argc,char* argv[])
             // algorithms are executed
             for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-// 	            algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAllSymbolRows,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-	            algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAllSymbolRows,tRange(preambleLength,preambleLength+algorithmsTrainingSequences[iAlgorithm]-1)));
+	            algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAllSymbolRows,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());(preambleLength,preambleLength+trainSeqLength-1)
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
