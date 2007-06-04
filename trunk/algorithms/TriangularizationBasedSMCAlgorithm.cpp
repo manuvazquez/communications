@@ -20,16 +20,11 @@
 #include "TriangularizationBasedSMCAlgorithm.h"
 
 // #define DEBUG
+// #define DEBUG2
 
 TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
 {
 }
-
-
-TriangularizationBasedSMCAlgorithm::~TriangularizationBasedSMCAlgorithm()
-{
-}
-
 
 void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
@@ -63,10 +58,10 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 		tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 
 		// observation matrix columns that are involved in the smoothing
-		tRange smoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_d);
+		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_d);
 
 		// the stacked observations vector
-		tVector stackedObservations = Util::ToVector(observations(rAllObservationsRows,smoothingRange),columnwise);
+		tVector stackedObservations = Util::ToVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
 
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
@@ -79,7 +74,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 			// (first one is obtained via the Kalman Filter)
 			matricesToStack[0] = (dynamic_cast<KalmanEstimator *> (processedParticle->GetChannelMatrixEstimator(_estimatorIndex)))->SampleFromPredictive();
 
-			for(iSmoothing=1;iSmoothing<_d+1;iSmoothing++)
+			for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
 			{
 #ifdef DEBUG2
 				cout << "iSmoothing = " << iSmoothing << endl;
@@ -88,8 +83,16 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 				Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
 				// "stackedChannelMatrixSubstract" will be used to substract the contribution of the already detected symbol vectors from the observations
-				stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_L,iSmoothing*_L-1),tRange(_N*(iSmoothing-1),(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing)*_N-1)));
+//                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_L,iSmoothing*_L-1),tRange(_N*(iSmoothing-1),(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing)*_N-1)));
 			}
+
+            for(iSmoothing=0;iSmoothing<_d;iSmoothing++)
+            {
+#ifdef DEBUG
+              cout << "matricesToStack[iSmoothing]" << endl << matricesToStack[iSmoothing];
+#endif
+                stackedChannelMatrixSubstract(tRange(iSmoothing*_L,(iSmoothing+1)*_L-1),tRange(_N*iSmoothing,(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing-1)*_N-1)));
+            }
 
 #ifdef DEBUG2
 			cout << "fuera del bucle" << endl;
@@ -126,7 +129,10 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 			cout << "Se calcula cholesky de" << endl << stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped;
 #endif
 
+            // Cholesky decomposition is computed
 			L = Util::Cholesky(stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped);
+
+            // we also obtain the upper triangular matrix in U
 			Util::Transpose(L,U);
 
 #ifdef DEBUG2
@@ -138,8 +144,8 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 			LUFactorizeIP(invL,piv);
 			LaLUInverseIP(invL,piv);
 
-			// invLstackedChannelMatrixMinusTrans = invL*stackedChannelMatrixMinus'
-			Blas_Mat_Mat_Trans_Mult(invL,stackedChannelMatrixMinus,invLstackedChannelMatrixMinusTrans);
+			// invLstackedChannelMatrixMinusTrans = invL*stackedChannelMatrixMinusFlipped'
+			Blas_Mat_Mat_Trans_Mult(invL,stackedChannelMatrixMinusFlipped,invLstackedChannelMatrixMinusTrans);
 
 			// the transformed observations are computed
 			// transformedStackedObservationsMinus = invLstackedChannelMatrixMinusTrans * stackedObservationsMinus

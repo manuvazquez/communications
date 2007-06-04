@@ -128,7 +128,7 @@ int main(int argc,char* argv[])
     int d,lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1;
+    int nFrames = 5;
     int L=3,N=2,K=300;
     int trainSeqLength = 20;
     int nParticles = 30;
