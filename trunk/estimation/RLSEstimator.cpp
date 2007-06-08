@@ -19,12 +19,15 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
+// #define DEBUG
+
 RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_invForgettingFactor(1.0/forgettingFactor)
 {
 }
 
 RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm)),_pTilde(LaGenMatDouble::zeros(_L,_Nm))
 {
+	cout << "initialEstimation" << endl << initialEstimation;
 }
 
 ChannelMatrixEstimator* RLSEstimator::Clone()
@@ -46,8 +49,16 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 
     double auxDenominator = 1.0 + Blas_Dot_Prod(invForgettingFactorSymbolsVectorInvRtilde,symbolsVector);
 
+#ifdef DEBUG
+	cout << "auxDenominator = " << auxDenominator << endl;
+#endif
+
     tVector g = invForgettingFactorSymbolsVectorInvRtilde;
     g *= (1.0/auxDenominator);
+
+#ifdef DEBUG
+	cout << "g" << endl << g;
+#endif
 
 	tVector invForgettingFactorInvRtildeSymbolsVector(_Nm);
 
@@ -63,11 +74,26 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
     // _pTilde = _forgettingFactor*_pTilde
     _pTilde *= (1.0/_invForgettingFactor);
 
+#ifdef DEBUG
+	cout << "_pTilde antes" << endl << _pTilde;
+	cout << "observations" << endl << observations;
+	cout << "symbolsVector" << endl << symbolsVector;
+#endif
+
     // _pTilde = _pTilde + observations*symbolsVector'
     Blas_R1_Update(_pTilde,observations,symbolsVector);
 
+#ifdef DEBUG
+	cout << "_pTildeDespues" << endl << _pTilde;
+#endif
+
 	// _lastEstimatedChannelMatrix = _pTilde*_invRtilde
 	Blas_Mat_Mat_Mult(_pTilde,_invRtilde,_lastEstimatedChannelMatrix);
+
+#ifdef DEBUG
+	cout << "Voy a devolver" << endl << _lastEstimatedChannelMatrix;
+	cout << "Una tecla..."; getchar();
+#endif
 
 	return _lastEstimatedChannelMatrix;
 }

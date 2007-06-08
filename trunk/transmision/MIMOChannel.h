@@ -24,7 +24,6 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-// #include <lapackpp/gmd.h>
 #include <types.h>
 #include <Noise.h>
 #include <exceptions.h>
@@ -33,9 +32,7 @@
 class MIMOChannel{
 protected:
 	int _nTx, _nRx,_length,_nTxnRx;
-
 public:
-//     MIMOChannel();
 	MIMOChannel(int nTx,int nRx,int length);
 	virtual ~MIMOChannel() {};
 

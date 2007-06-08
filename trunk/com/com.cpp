@@ -123,6 +123,11 @@ int main(int argc,char* argv[])
 //
 // 	exit(0);
 
+// 	double s2u;
+// 	cout << "El vector de coeficientes es" << endl;
+// 	Util::Print(ARprocess::ParametersFromYuleWalker(2,90.0/3.6,2.4e9,1.0/40000,s2u));
+// 	exit(0);
+
     double pe,mse;
     uint iChannelOrder,iSNR;
     int d,lastSymbolVectorInstant;
@@ -160,6 +165,13 @@ int main(int argc,char* argv[])
     vector<double> ARcoefficients(1);
     ARcoefficients[0] = 0.99999;
     double ARvariance=0.0001;
+
+	// system parameters for generating the AR process
+	int ARprocessOrder = 3;
+	double velocity = 20.0; // (Km/h)
+	double carrierFrequency = 2.4e9; // (Hz)
+	double symbolRate = 40e3; // (Hz)
+
 
     // channel parameters
     double channelMean=0.0,channelVariance=1.0;
@@ -352,7 +364,8 @@ int main(int argc,char* argv[])
             ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
 
         // an AR channel is generated
-        ARchannel canal(N,L,m,symbols.cols(),ARchannelInitializationMatrix,ARcoefficients,ARvariance);
+// 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARcoefficients,ARvariance));
+		ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARprocessOrder,velocity/3.6,carrierFrequency,1.0/symbolRate));
 
 // 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,symbols.cols(),antennasChannelOrders,channelMean,channelVariance,ARcoefficients,ARvariance);
 
@@ -411,9 +424,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
+// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
@@ -551,6 +564,9 @@ int main(int argc,char* argv[])
 
 		// ----------------- VARIABLES SAVING ----------------------
 		ofstream f(outputFileName,ofstream::trunc);
+
+	    // channel
+	    Util::MatricesVectorToStream(canal.Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 
         // pe
 		peMatrices.push_back(presentFramePe);

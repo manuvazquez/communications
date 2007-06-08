@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
+#define DEBUG2
+
 using namespace std;
 
 ARchannel::ARchannel(int nTx, int nRx, int memory, int length,tMatrix initializationMatrix,vector<double> ARcoefficients,double ARvariance): StillMemoryMIMOChannel(nTx, nRx, memory, length),
@@ -33,6 +35,36 @@ _ARproc(initializationMatrix,ARcoefficients,ARvariance)
 	//initialization
 	for(int i=_memory-1;i<_length;i++)
 			_channelMatrices[i] = _ARproc.NextMatrix();
+}
+
+ARchannel::ARchannel(int nTx, int nRx, int memory, int length,ARprocess ARproc): StillMemoryMIMOChannel(nTx, nRx, memory, length),_ARproc(ARproc)
+{
+#ifdef DEBUG
+	cout << "Principio de ARchannel" << endl;
+#endif
+	if(ARproc.Rows()!=nRx || ARproc.Cols()!=(nTx*memory))
+		throw RuntimeException("ARchannel::ARchannel: the passed AR process is not compatible with the dimensions of the channel.");
+
+	_channelMatrices = new tMatrix[length];
+
+#ifdef DEBUG
+	cout << "Antes del for en ARchannel" << endl;
+#endif
+
+	//initialization
+	for(int i=_memory-1;i<_length;i++)
+	{
+			_channelMatrices[i] = _ARproc.NextMatrix();
+#ifdef DEBUG2
+		cout << _channelMatrices[i] << endl;
+		cout << "Una tecla..."; getchar();
+#endif
+	}
+
+#ifdef DEBUG
+	cout << "Fin de ARchannel" << endl;
+#endif
+	cout << "Generado el canal" << endl;
 }
 
 ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_channelMatrices(new tMatrix[_length]),_ARproc(archannel._ARproc)

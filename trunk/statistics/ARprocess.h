@@ -24,13 +24,15 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-// #include <iostream>
 #include <vector>
+#include <math.h>
+#include <stdlib.h>
 #include <types.h>
 #include <Util.h>
 #include <Random.h>
 #include <StatUtil.h>
 #include <lapackpp/gmd.h>
+#include <lapackpp/laslv.h>
 
 class ARprocess{
 
@@ -42,11 +44,19 @@ private:
 	int _iterationsForConvergence;
 	tMatrix **_buffer;
 
+	void CommonConstructorsCode();
+
 public:
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
+	ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T);
 	ARprocess(const ARprocess &arprocess);
 	~ARprocess();
+
 	tMatrix NextMatrix();
+	static vector<double> ParametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
+
+	int Rows() {return _rows;}
+	int Cols() {return _columns;}
 };
 
 #endif
