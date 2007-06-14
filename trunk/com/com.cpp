@@ -112,28 +112,12 @@ void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &det
 
 int main(int argc,char* argv[])
 {
-// 	tMatrix A = StatUtil::RandnMatrix(2,3,0.0,1.0);
-// 	tMatrix B = A(tRange(0,1),tRange(1,2));
-//
-// 	cout << "A es" << endl << A << "B es" << endl << B;
-// 	B(0,0) = 10;
-// 	cout << "A es" << endl << A << "B es" << endl << B;
-//
-// 	cout << "A volteada" << endl << Util::FlipLR(A);
-//
-// 	exit(0);
-
-// 	double s2u;
-// 	cout << "El vector de coeficientes es" << endl;
-// 	Util::Print(ARprocess::ParametersFromYuleWalker(2,90.0/3.6,2.4e9,1.0/40000,s2u));
-// 	exit(0);
-
     double pe,mse;
     uint iChannelOrder,iSNR;
-    int d,lastSymbolVectorInstant;
+    int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 5;
+    int nFrames = 1;
     int L=3,N=2,K=300;
     int trainSeqLength = 20;
     int nParticles = 30;
@@ -151,11 +135,15 @@ int main(int argc,char* argv[])
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 3;
+	int d = 2;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
     antennasChannelOrders[0] = 1;
     antennasChannelOrders[1] = 3;
+
+	// back smoothing
+	int c = 0;
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -168,9 +156,9 @@ int main(int argc,char* argv[])
 
 	// system parameters for generating the AR process
 	int ARprocessOrder = 3;
-	double velocity = 20.0; // (Km/h)
+	double velocity = 10.0; // (Km/h)
 	double carrierFrequency = 2.4e9; // (Hz)
-	double symbolRate = 40e3; // (Hz)
+	double symbolRate = 500e3; // (Hz)
 
 
     // channel parameters
@@ -240,7 +228,7 @@ int main(int argc,char* argv[])
 
     // some useful ranges
     tRange rAllSymbolRows(0,N-1);
-    tRange rAllObservationsRows(0,L-1),rLastNchannelMatrixColumns(N*m-N,N*m-1);
+    tRange rAllObservationsRows(0,L-1);
 
     // variances for generating the channel coefficients
     vector<double> subChannelMatrixVariances(m);
@@ -275,8 +263,8 @@ int main(int argc,char* argv[])
 			maxCandidateOrder = candidateChannelOrders[iChannelOrder];
 
 	// the algorithms with the higher smoothing lag require
-	int nSmoothingSymbolsVectors = maxCandidateOrder-1;
-
+// 	int nSmoothingSymbolsVectors = maxCandidateOrder-1;
+	int nSmoothingSymbolsVectors = 10;
 	int nSmoothingBitsVectors = nSmoothingSymbolsVectors*pam2.NbitsBySymbol();
 
 	// PSP
@@ -295,16 +283,11 @@ int main(int argc,char* argv[])
     BestParticlesResamplingAlgorithm bestParticlesResampling(criterioRemuestreo);
 
 
-	vector<double> resamplingRates;
-	resamplingRates.push_back(0.001);resamplingRates.push_back(0.05);resamplingRates.push_back(0.1);
-	resamplingRates.push_back(0.3);resamplingRates.push_back(0.5);resamplingRates.push_back(0.9);
-
-	vector<ResidualResamplingAlgorithm *> resamplingAlgorithms;
-	for(uint iResamplingAlgorithm=0;iResamplingAlgorithm<resamplingRates.size();iResamplingAlgorithm++)
-		resamplingAlgorithms.push_back(new ResidualResamplingAlgorithm(ResamplingCriterion(resamplingRates[iResamplingAlgorithm])));
-
-	vector<int> testingTrainingSequences;
-	testingTrainingSequences.push_back(3);testingTrainingSequences.push_back(5);testingTrainingSequences.push_back(10);testingTrainingSequences.push_back(20);testingTrainingSequences.push_back(30);
+	// ------------------------- test simulations ----------------------
+// 	#include <resamplingRate.h>
+// 	#include <backwardSmoothing.h>
+	#include <backwardForwardSmoothing.h>
+	// -----------------------------------------------------------------
 
 	// USIS2SIS transition criterion(s)
     MaximumProbabilityCriterion USISmaximumProbabilityCriterion(0.8);
@@ -338,6 +321,8 @@ int main(int argc,char* argv[])
 	#else
     	Random bitsRandomGenerator(0);
     #endif
+
+#define PARAMETERS_DEFINED
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -375,7 +360,7 @@ int main(int argc,char* argv[])
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
-		d = m-1;
+// 		d = m-1;
 
 		// ... and according to that m, channel estimators are constructed...
 		tMatrix initialChannelEstimation = LaGenMatDouble::zeros(L,N*m);
@@ -392,7 +377,8 @@ int main(int argc,char* argv[])
 // 		OneChannelOrderPerTransmitAtennaWrapperEstimator kalmanWrapper(initialChannelEstimation,N,antennasChannelOrders,new KalmanEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,antennasChannelOrders),N,ARcoefficients[0],ARvariance));
 
 		// ...and linear detectors
-		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
+		RMMSEDetector rmmseDetector(L*(c+d+1),N*(m+c+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
+// 		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
 // 		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
 
 		// noise is generated according to the channel
@@ -424,7 +410,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
 
@@ -475,15 +461,11 @@ int main(int argc,char* argv[])
 // 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,candidateChannelOrders[iChannelOrder],RLSchannelEstimators[iChannelOrder],RMMSElinearDetectors[iChannelOrder],preamble,candidateChannelOrders[iChannelOrder]-1,nParticles,&algoritmoRemuestreo,channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 // 			}
 
-// 			the RLS algorithm considering differente resampling rates
-// 			for(uint iResamplingAlgorithm=0;iResamplingAlgorithm<resamplingRates.size();iResamplingAlgorithm++)
-// 			{
-//                 char buffer[SPRINTF_BUFFER];
-//
-//                 sprintf(buffer," resampling rate = %f",resamplingRates[iResamplingAlgorithm]);
-//
-// 				algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,resamplingAlgorithms[iResamplingAlgorithm],initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
-// 			}
+	        // --------------------- testing simulations ------------------
+// 			#include <resamplingRate.h>
+// 			#include <backwardSmoothing.h>
+			#include <backwardForwardSmoothing.h>
+	        // ------------------------------------------------------------
 
 			// ---------------------------------------------------------------------------------
 
@@ -635,9 +617,6 @@ int main(int argc,char* argv[])
 		delete RMMSElinearDetectors[iChannelOrder];
 	}
 	delete channelOrderEstimator;
-
-	for(uint iResamplingAlgorithm=0;iResamplingAlgorithm<resamplingRates.size();iResamplingAlgorithm++)
-		delete resamplingAlgorithms[iResamplingAlgorithm];
 }
 
 void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)

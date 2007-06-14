@@ -19,10 +19,8 @@
  ***************************************************************************/
 #include "RMMSEDetector.h"
 
-RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_g(_channelMatrixRows),_invRtilde(LaGenMatDouble::eye(_channelMatrixRows)),_filter(_channelMatrixRows,_nSymbolsToBeDetected)
-// auxiliary
-// ,_identityL(LaGenMatDouble::eye(_channelMatrixRows)),_gObservations(_channelMatrixRows,_channelMatrixRows),_identityMinusgObservations(_channelMatrixRows,_channelMatrixRows)
-,_auxInvRtilde(_channelMatrixRows,_channelMatrixRows),_E(LaGenMatDouble::zeros(_channelMatrixCols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(_channelMatrixRows,_channelMatrixCols)
+RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_g(rows),_invRtilde(LaGenMatDouble::eye(rows)),_filter(rows,nSymbolsToBeDetected)
+,_auxInvRtilde(rows,rows),_E(LaGenMatDouble::zeros(cols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(rows,cols)
 {
 	tRange rowsRange(_channelMatrixCols-_nSymbolsToBeDetected,_channelMatrixCols-1);
 	tRange colsRange(0,_nSymbolsToBeDetected-1);
@@ -33,7 +31,7 @@ RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double f
 void RMMSEDetector::StateStep(tVector observations)
 {
 	if(observations.size()!= _channelMatrixRows)
-		throw RuntimeException("observations vector dimensions are wrong.");
+		throw RuntimeException("RMMSEDetector::StateStep: observations vector dimensions are wrong.");
 
 	// _g = _invRtilde*observations
 	Blas_Mat_Vec_Mult(_invRtilde,observations,_g);
@@ -42,13 +40,6 @@ void RMMSEDetector::StateStep(tVector observations)
 
 	// _g = _g / (_alphaPowerSumNow + observations'*_invRtilde*observations*_alphaPowerSumFactor
 	_g *= 1.0/(_alphaPowerSumNow + Blas_Dot_Prod(observations,_g)*_alphaPowerSumFactor);
-
-// 	// _gObservations = _g*observations
-// 	Util::Mult(,observations,_gObservations);
-//
-// 	// _identityMinusgObservations = _identityL - _alphaPowerSumFactor*_gObservations
-// 	Util::Add(_identityL,_gObservations,_identityMinusgObservations,1.0,-_alphaPowerSumFactor);
-
 
     tMatrix _identityMinusgObservations = LaGenMatDouble::eye(_channelMatrixRows);
 

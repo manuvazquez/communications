@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
-#define DEBUG2
+// #define DEBUG2
 
 using namespace std;
 

@@ -20,7 +20,6 @@
 #ifndef ARCHANNEL_H
 #define ARCHANNEL_H
 
-// #include <MIMOChannel.h>
 #include <StillMemoryMIMOChannel.h>
 #include <vector>
 #include <ARprocess.h>

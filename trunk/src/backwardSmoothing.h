@@ -17,9 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "LinearFilterBasedMKFAlgorithm.h"
 
-LinearFilterBasedMKFAlgorithm::LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance): LinearFilterBasedSMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, linearDetector, preamble, backwardsSmoothingLag, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances, ARcoefficient, samplingVariance, ARprocessVariance)
+#ifndef PARAMETERS_DEFINED
+vector<int> testingBackwardsSmoothings;
+
+testingBackwardsSmoothings.push_back(5);
+testingBackwardsSmoothings.push_back(3);
+testingBackwardsSmoothings.push_back(0);
+vector<LinearDetector *> RMMSEbackwardsSmoothingTesting;
+
+for(uint iBackwardsSmoothing=0;iBackwardsSmoothing<testingBackwardsSmoothings.size();iBackwardsSmoothing++)
+	RMMSEbackwardsSmoothingTesting.push_back(new RMMSEDetector(L*(testingBackwardsSmoothings[iBackwardsSmoothing]+m),N*(m+testingBackwardsSmoothings[iBackwardsSmoothing]+m-1),pam2.Variance(),forgettingFactorDetector,N*m));
+#else
+// the RLS-D-SIS algorithm for serveral backward smoothing parameters
+for(uint iBackwardsSmoothing=0;iBackwardsSmoothing<testingBackwardsSmoothings.size();iBackwardsSmoothing++)
 {
-}
+	char buffer[SPRINTF_BUFFER];
 
+	sprintf(buffer," backwards smoothing = %d",testingBackwardsSmoothings[iBackwardsSmoothing]);
+
+	algorithms.push_back(new LinearFilterBasedMKFAlgorithm(string("MKF") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,RMMSEbackwardsSmoothingTesting[iBackwardsSmoothing],preamble,testingBackwardsSmoothings[iBackwardsSmoothing],d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+}
+#endif

@@ -19,8 +19,8 @@
  ***************************************************************************/
 #include "ARprocess.h"
 
-#define DEBUG2
-#define DEBUG3
+// #define DEBUG2
+// #define DEBUG3
 // #define DEBUGDOPPLER
 
 using namespace std;
@@ -80,6 +80,7 @@ void ARprocess::CommonConstructorsCode()
 		Util::Add(*(_buffer[i-1]),noise,*(_buffer[i]));
 
 #ifdef DEBUG3
+		cout << "El ruido fue (_noiseMean = " << _noiseMean << ",_noiseVariance = " << _noiseVariance << endl << noise;
 		cout << "*(_buffer["<< i <<"])" << endl << *(_buffer[i]) << endl;
 #endif
 	}
@@ -202,5 +203,10 @@ vector<double> ARprocess::ParametersFromYuleWalker(int order,double velocity,dou
 	cout << "autocorrelationsMatrix" << endl << autocorrelationsMatrix;
 	cout << "autocorrelationsVector" << endl << autocorrelationsVector;
 #endif
+
+	// it takes into accout rounding errors
+	if(noiseVariance<0.0)
+		noiseVariance = 0.0;
+
 	return coefficientsCppVector;
 }
