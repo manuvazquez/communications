@@ -71,9 +71,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		// already detected symbol vectors involved in the current detection
 		tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 
-// 		// _c previous already estimated channel matrices
-// 		tRange rAlreadyEstimatedChannelMatrices(iObservationToBeProcessed-_c,iObservationToBeProcessed-1);
-
 		// observation matrix columns that are involved in the smoothing
 		tRange rSmoothingRange(iObservationToBeProcessed-_c,iObservationToBeProcessed+_d);
 
@@ -86,9 +83,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			for(iRow=0;iRow<_L;iRow++)
 				stackedNoiseCovariance((iSmoothing+_c)*_L+iRow,(iSmoothing+_c)*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
-		#ifdef DEBUG_UNIFORM
-			cout << "-------------------------" << endl;
-		#endif
+#ifdef DEBUG_UNIFORM
+		cout << "-------------------------" << endl;
+#endif
 
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{

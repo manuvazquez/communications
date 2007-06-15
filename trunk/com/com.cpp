@@ -58,6 +58,7 @@
 #include <LMSEstimator.h>
 #include <OneChannelOrderPerTransmitAtennaWrapperEstimator.h>
 #include <APPbasedChannelOrderEstimator.h>
+#include <KnownChannelChannelMatrixEstimator.h>
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
@@ -368,6 +369,7 @@ int main(int argc,char* argv[])
         KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
 	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
 		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
+	    KnownChannelChannelMatrixEstimator knownChannelEstimator(canal,preambleLength,N);
 
 		// wrapped channel estimators
 // 		OneChannelOrderPerTransmitAtennaWrapperEstimator rlsWrapper(initialChannelEstimation,N,antennasChannelOrders,new RLSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,antennasChannelOrders),N,forgettingFactor));
@@ -379,7 +381,7 @@ int main(int argc,char* argv[])
 		// ...and linear detectors
 		RMMSEDetector rmmseDetector(L*(c+d+1),N*(m+c+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
 // 		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
-// 		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
+		MMSEDetector MMSEdetector(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -410,7 +412,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+
+// 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
 

@@ -62,6 +62,7 @@ libestimation_a_LIBADD =
 am_libestimation_a_OBJECTS = APPbasedChannelOrderEstimator.$(OBJEXT) \
 	ChannelMatrixEstimator.$(OBJEXT) \
 	ChannelOrderEstimator.$(OBJEXT) KalmanEstimator.$(OBJEXT) \
+	KnownChannelChannelMatrixEstimator.$(OBJEXT) \
 	LMSEstimator.$(OBJEXT) \
 	OneChannelOrderPerTransmitAtennaWrapperEstimator.$(OBJEXT) \
 	RLSEstimator.$(OBJEXT)
@@ -191,12 +192,13 @@ INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil \
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = APPbasedChannelOrderEstimator.h ChannelMatrixEstimator.h \
-	ChannelOrderEstimator.h KalmanEstimator.h LMSEstimator.h \
+	ChannelOrderEstimator.h KalmanEstimator.h KnownChannelChannelMatrixEstimator.h LMSEstimator.h \
 	OneChannelOrderPerTransmitAtennaWrapperEstimator.h RLSEstimator.h
 
 libestimation_a_SOURCES = APPbasedChannelOrderEstimator.cpp \
-	ChannelMatrixEstimator.cpp ChannelOrderEstimator.cpp KalmanEstimator.cpp LMSEstimator.cpp \
-	OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp RLSEstimator.cpp
+	ChannelMatrixEstimator.cpp ChannelOrderEstimator.cpp KalmanEstimator.cpp \
+	KnownChannelChannelMatrixEstimator.cpp LMSEstimator.cpp OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp \
+	RLSEstimator.cpp
 
 all: all-am
 
@@ -275,6 +277,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelMatrixEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ChannelOrderEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KalmanEstimator.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/KnownChannelChannelMatrixEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/LMSEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/OneChannelOrderPerTransmitAtennaWrapperEstimator.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/RLSEstimator.Po@am__quote@
