@@ -14,7 +14,7 @@ class Random
 		double _smpl;
 
 	public:
-		Random () {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}
+		Random () : _havesmpl(false) {struct timeval tv; gettimeofday(&tv, NULL); _seed = tv.tv_sec * tv.tv_usec;}
 		Random (uint32_t seed) : _seed(seed),_havesmpl(false) {};
 		double randn();
 

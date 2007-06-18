@@ -5,3 +5,4 @@ lib_LIBRARIES = libchannel.a
 libchannel_a_SOURCES = ARchannel.cpp \
 	ARoneChannelOrderPerTransmitAtennaMIMOChannel.cpp MIMOChannel.cpp OneChannelOrderPerTransmitAtennaMIMOChannel.cpp \
 	SparklingMemoryARMIMOChannel.cpp SparklingMemoryMIMOChannel.cpp StillMemoryMIMOChannel.cpp
+SUBDIRS = delayPowerProfile

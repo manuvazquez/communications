@@ -5,9 +5,6 @@ using namespace std;
 
 double Random::randn ()
 {
-//   static bool _havesmpl = false;
-//   static double _smpl;
-
   if(_havesmpl)
   {
 	  _havesmpl = false;

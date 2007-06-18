@@ -3,10 +3,10 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="2" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="414" Type="Source" />
+   <View0 Encoding="" line="433" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="1" Type="Source" />
+   <View0 Encoding="" line="3" Type="Source" />
   </Doc1>
  </DocsAndViews>
  <pluginList>
@@ -60,10 +60,9 @@
      <mark line="224" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="242" />
-     <mark line="363" />
-     <mark line="467" />
-     <mark line="286" />
+     <mark line="377" />
+     <mark line="482" />
+     <mark line="299" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />

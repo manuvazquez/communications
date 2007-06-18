@@ -47,6 +47,9 @@
 #include <ARoneChannelOrderPerTransmitAtennaMIMOChannel.h>
 #include <SparklingMemoryARMIMOChannel.h>
 
+#include <ExponentialPowerProfile.h>
+#include <FlatPowerProfile.h>
+
 #include <ChannelDependentNoise.h>
 #include <NullNoise.h>
 #include <Modulator.h>
@@ -118,10 +121,10 @@ int main(int argc,char* argv[])
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1;
+    int nFrames = 100;
     int L=3,N=2,K=300;
     int trainSeqLength = 20;
-    int nParticles = 30;
+    int nParticles = 1000;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
@@ -135,8 +138,8 @@ int main(int argc,char* argv[])
     bool adjustParticlesNumberFromSurvivors = false;
 
     // - ONE CHANNEL ORDER SYSTEM
-    int m = 3;
-	int d = 2;
+    int m = 6;
+	int d/* = 2*/;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -160,10 +163,16 @@ int main(int argc,char* argv[])
 	double velocity = 10.0; // (Km/h)
 	double carrierFrequency = 2.4e9; // (Hz)
 	double symbolRate = 500e3; // (Hz)
-
+	double T = 1.0/symbolRate; // (s)
 
     // channel parameters
-    double channelMean=0.0,channelVariance=1.0;
+// 	double channelMean=0.0;
+	double channelVariance=1.0;
+
+
+	ExponentialPowerProfile powerProfile(L,N,T,0.00001);
+	powerProfile.Print();
+// 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
 
     // channel estimator parameters
 	double firstSampledChannelMatrixVariance = 0.0;
@@ -172,7 +181,8 @@ int main(int argc,char* argv[])
 
 	// unknown channel order
 	vector<int> candidateChannelOrders;
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);/*candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);*/
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
+	candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
 	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
 		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
@@ -182,11 +192,12 @@ int main(int argc,char* argv[])
 	vector<tMatrix> channelOrderCoefficientsVariances(candidateChannelOrders.size());
 	for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
-		channelOrderCoefficientsMeans[iChannelOrder] *= channelMean;
+		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
+// 		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
+// 		channelOrderCoefficientsMeans[iChannelOrder] *= channelMean;
 
 		channelOrderCoefficientsVariances[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
-		channelOrderCoefficientsVariances[iChannelOrder] *= channelVariance;
+// 		channelOrderCoefficientsVariances[iChannelOrder] *= channelVariance;
 	}
 
     // linear detectors parameters
@@ -229,17 +240,17 @@ int main(int argc,char* argv[])
 
     // some useful ranges
     tRange rAllSymbolRows(0,N-1);
-    tRange rAllObservationsRows(0,L-1);
+//     tRange rAllObservationsRows(0,L-1);
 
-    // variances for generating the channel coefficients
-    vector<double> subChannelMatrixVariances(m);
-    tMatrix channelCoefficientsVariances = LaGenMatDouble::ones(L,N*m);
-    for(int i=0;i<m;i++)
-    {
-        subChannelMatrixVariances[i] = channelVariance;
-//         subChannelMatrixVariances[i] = exp((i+1-m));
-        channelCoefficientsVariances(rAllObservationsRows,tRange(i*N,i*N+N-1)) *= subChannelMatrixVariances[i];
-    }
+//     // variances for generating the channel coefficients
+//     vector<double> subChannelMatrixVariances(m);
+//     tMatrix channelCoefficientsVariances = LaGenMatDouble::ones(L,N*m);
+//     for(int i=0;i<m;i++)
+//     {
+//         subChannelMatrixVariances[i] = channelVariance;
+// //         subChannelMatrixVariances[i] = exp((i+1-m));
+//         channelCoefficientsVariances(rAllObservationsRows,tRange(i*N,i*N+N-1)) *= subChannelMatrixVariances[i];
+//     }
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
@@ -287,7 +298,7 @@ int main(int argc,char* argv[])
 	// ------------------------- test simulations ----------------------
 // 	#include <resamplingRate.h>
 // 	#include <backwardSmoothing.h>
-	#include <backwardForwardSmoothing.h>
+// 	#include <backwardForwardSmoothing.h>
 	// -----------------------------------------------------------------
 
 	// USIS2SIS transition criterion(s)
@@ -318,9 +329,9 @@ int main(int argc,char* argv[])
 
     // we don't want the same bits to be generated over and over
 	#ifdef RANDOM_SEED
-		Random bitsRandomGenerator;
+		Random randomGenerator;
 	#else
-    	Random bitsRandomGenerator(0);
+    	Random randomGenerator(0);
     #endif
 
 #define PARAMETERS_DEFINED
@@ -328,7 +339,7 @@ int main(int argc,char* argv[])
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
         // bits are generated ...
-        Bits bits(N,K+nSmoothingBitsVectors,bitsRandomGenerator);
+        Bits bits(N,K+nSmoothingBitsVectors,randomGenerator);
 
         // ... and then modulated by means of the alphabet
         tMatrix symbols = Modulator::Modulate(bits,pam2);
@@ -343,15 +354,16 @@ int main(int argc,char* argv[])
 		// all the above symbols must be processed except those generated due to the smoothing
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
-        // ARchannel matrix intialization
-        tMatrix ARchannelInitializationMatrix(L,N*m);
-
-        for(int i=0;i<m;i++)
-            ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
+//         // ARchannel matrix intialization
+//         tMatrix ARchannelInitializationMatrix(L,N*m);
+//
+//         for(int i=0;i<m;i++)
+//             ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
 
         // an AR channel is generated
 // 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARcoefficients,ARvariance));
-		ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARprocessOrder,velocity/3.6,carrierFrequency,1.0/symbolRate));
+// 		ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARprocessOrder,velocity/3.6,carrierFrequency,1.0/symbolRate));
+	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARprocessOrder,velocity/3.6,carrierFrequency,1.0/symbolRate));
 
 // 		ARoneChannelOrderPerTransmitAtennaMIMOChannel canal(N,L,symbols.cols(),antennasChannelOrders,channelMean,channelVariance,ARcoefficients,ARvariance);
 
@@ -361,12 +373,13 @@ int main(int argc,char* argv[])
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
-// 		d = m-1;
+		d = m-1;
 
 		// ... and according to that m, channel estimators are constructed...
 		tMatrix initialChannelEstimation = LaGenMatDouble::zeros(L,N*m);
 
-        KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
+//         KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
+        KalmanEstimator kalmanEstimator(initialChannelEstimation,powerProfile.Variances(),N,ARcoefficients[0],ARvariance);
 	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
 		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
 	    KnownChannelChannelMatrixEstimator knownChannelEstimator(canal,preambleLength,N);
@@ -408,19 +421,19 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances()));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],ARvariance));
+// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
-//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
@@ -428,9 +441,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&withoutReplacementResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0]));
+// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&withoutReplacementResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0]));
 
-// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0]));
+// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
@@ -468,7 +481,7 @@ int main(int argc,char* argv[])
 	        // --------------------- testing simulations ------------------
 // 			#include <resamplingRate.h>
 // 			#include <backwardSmoothing.h>
-			#include <backwardForwardSmoothing.h>
+// 			#include <backwardForwardSmoothing.h>
 	        // ------------------------------------------------------------
 
 			// ---------------------------------------------------------------------------------
@@ -593,8 +606,8 @@ int main(int argc,char* argv[])
 		Util::ScalarToStream(ARvariance,"ARvariance",f);
 		Util::ScalarToStream(forgettingFactorDetector,"forgettingFactorDetector",f);
 		Util::MatrixToStream(preamble,"preamble",f);
-		Util::ScalarToStream(channelMean,"channelMean",f);
-		Util::ScalarToStream(channelVariance,"channelVariance",f);
+// 		Util::ScalarToStream(channelMean,"channelMean",f);
+// 		Util::ScalarToStream(channelVariance,"channelVariance",f);
 		Util::ScalarToStream(firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",f);
 		Util::ScalarToStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
 		Util::ScalarToStream(preambleLength,"preambleLength",f);
