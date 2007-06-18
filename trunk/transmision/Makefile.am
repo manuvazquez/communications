@@ -3,9 +3,9 @@ INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 	-I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
-libtransmision_a_SOURCES = Alphabet.cpp exceptions.h Bits.cpp Noise.cpp \
-	ChannelDependentNoise.cpp Modulator.cpp Demodulator.cpp NullNoise.cpp
+libtransmision_a_SOURCES = Alphabet.cpp Bits.cpp ChannelDependentNoise.cpp \
+	Demodulator.cpp Modulator.cpp Noise.cpp NullNoise.cpp TransmissionUtil.cpp exceptions.h
 
-noinst_HEADERS = Bits.h Alphabet.h Noise.h ChannelDependentNoise.h \
-	Demodulator.h NullNoise.h
+noinst_HEADERS = Alphabet.h Bits.h ChannelDependentNoise.h Demodulator.h \
+	Noise.h NullNoise.h TransmissionUtil.h
 SUBDIRS = channel

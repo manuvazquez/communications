@@ -63,8 +63,8 @@ ARchannel::ARchannel(int nTx, int nRx, int memory, int length,ARprocess ARproc):
 
 #ifdef DEBUG
 	cout << "Fin de ARchannel" << endl;
-#endif
 	cout << "Generado el canal" << endl;
+#endif
 }
 
 ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_channelMatrices(new tMatrix[_length]),_ARproc(archannel._ARproc)

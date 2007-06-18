@@ -28,7 +28,9 @@ using namespace std;
 ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols()),_buffer(new tMatrix*[_nCoefficients])
 {
 	_buffer[0] = new tMatrix(seed);
+#ifdef DEBUG
 	cout << "seed es " << endl << seed;
+#endif
 
 	CommonConstructorsCode();
 }
@@ -48,7 +50,9 @@ ARprocess::ARprocess(tMatrix seed,int order,double velocity,double carrierFreque
 	_buffer = new tMatrix*[_nCoefficients];
 	_buffer[0] = new tMatrix(seed);
 
+#ifdef DEBUG2
 	cout << "seed es " << endl << seed;
+#endif
 
 	CommonConstructorsCode();
 }

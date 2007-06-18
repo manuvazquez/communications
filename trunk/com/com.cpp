@@ -42,6 +42,7 @@
 
 #include <StatUtil.h>
 #include <Util.h>
+#include <TransmissionUtil.h>
 
 #include <ARchannel.h>
 #include <ARoneChannelOrderPerTransmitAtennaMIMOChannel.h>
@@ -104,9 +105,9 @@
 
 using namespace std;
 
-double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
-double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
-void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2);
+// double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
+// double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
+// void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2);
 
 #ifdef EXPORT_REAL_DATA
 	MIMOChannel *realChannel;
@@ -171,7 +172,7 @@ int main(int argc,char* argv[])
 
 
 	ExponentialPowerProfile powerProfile(L,N,T,0.00001);
-	powerProfile.Print();
+// 	powerProfile.Print();
 // 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
 
     // channel estimator parameters
@@ -193,11 +194,8 @@ int main(int argc,char* argv[])
 	for(iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
-// 		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
-// 		channelOrderCoefficientsMeans[iChannelOrder] *= channelMean;
 
 		channelOrderCoefficientsVariances[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
-// 		channelOrderCoefficientsVariances[iChannelOrder] *= channelVariance;
 	}
 
     // linear detectors parameters
@@ -240,17 +238,6 @@ int main(int argc,char* argv[])
 
     // some useful ranges
     tRange rAllSymbolRows(0,N-1);
-//     tRange rAllObservationsRows(0,L-1);
-
-//     // variances for generating the channel coefficients
-//     vector<double> subChannelMatrixVariances(m);
-//     tMatrix channelCoefficientsVariances = LaGenMatDouble::ones(L,N*m);
-//     for(int i=0;i<m;i++)
-//     {
-//         subChannelMatrixVariances[i] = channelVariance;
-// //         subChannelMatrixVariances[i] = exp((i+1-m));
-//         channelCoefficientsVariances(rAllObservationsRows,tRange(i*N,i*N+N-1)) *= subChannelMatrixVariances[i];
-//     }
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
@@ -353,12 +340,6 @@ int main(int argc,char* argv[])
 
 		// all the above symbols must be processed except those generated due to the smoothing
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
-
-//         // ARchannel matrix intialization
-//         tMatrix ARchannelInitializationMatrix(L,N*m);
-//
-//         for(int i=0;i<m;i++)
-//             ARchannelInitializationMatrix(rAllObservationsRows,tRange(i*N,i*N+N-1)).inject(StatUtil::RandnMatrix(L,N,channelMean,subChannelMatrixVariances[i]));
 
         // an AR channel is generated
 // 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(ARchannelInitializationMatrix,ARcoefficients,ARvariance));
@@ -526,7 +507,7 @@ int main(int argc,char* argv[])
 
                 tMatrix detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
-				pe = ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K,permutations);
+	            pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,pam2),BERwindowStart,K,permutations);
 
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 
@@ -634,85 +615,4 @@ int main(int argc,char* argv[])
 		delete RMMSElinearDetectors[iChannelOrder];
 	}
 	delete channelOrderEstimator;
-}
-
-void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
-{
-    if((to1-from1)!=(to2-from2))
-   	{
-   		cout << "Range 1: " << (to1-from1) << " | " << "Range 2: " << to2-from2 << endl;
-        throw RuntimeException("BERComputingChecks: comparisons range length are different.");
-    }
-
-    if(to1<from1)
-        throw RuntimeException("BERComputingChecks: comparisons range are negatives.");
-
-    if(to1>bits1.NbitsByStream() || to2>bits2.NbitsByStream() || from1<0 || from2<0)
-    {
-    	cout << "bits1.NbitsByStream(): " << bits1.NbitsByStream() << ",bits2.NbitsByStream(): " << bits2.NbitsByStream() << endl;
-    	cout << "from1: " << from1 << ", to1: " << to1 << " | " << "from2: " << from2 << ", to2: " << to2 << endl;
-        throw RuntimeException("BERComputingChecks: one or several comparison limits are wrong.");
-    }
-
-    if(bits1.Nstreams()!=bits2.Nstreams())
-        throw RuntimeException("BERComputingChecks: bits objects have different number of streams.");
-}
-
-double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
-{
-	if(bits2.NbitsByStream()==0 || bits2.Nstreams()==0)
-		return 0.0;
-
-	BERComputingChecks(bits1,from1,to1,bits2,from2,to2);
-
-	int length = to1-from1;
-    int errors = 0;
-
-    for(int iBits1=from1,iBits2=from2;iBits1<to1;iBits1++,iBits2++)
-        for(int iStream=0;iStream<bits1.Nstreams();iStream++)
-            if(bits1(iStream,iBits1)!=bits2(iStream,iBits2))
-                errors++;
-
-    return (double)errors/(double)(length*bits1.Nstreams());
-}
-
-double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
-{
-	if(detectedBits.NbitsByStream()==0 || detectedBits.Nstreams()==0)
-		return 0.0;
-
-	BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
-
-	int length = to1-from1;
-
-	// max number of errors is length*sourceBits.Nstreams()
-	int minErrors = length*sourceBits.Nstreams()+1;
-
-    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
-    {
-    	int errorsPermutation = 0;
-
-        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-        {
-        	int errorsInverting=0,errorsWithoutInverting=0;
-
-        	// without inverting bits
-        	for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
-        		errorsWithoutInverting += (sourceBits(iStream,iSourceStream) != detectedBits(permutations[iPermut][iStream],iDetectedStream));
-
-        	// inverting bits
-        	for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
-        		errorsInverting += (sourceBits(iStream,iSourceStream) == detectedBits(permutations[iPermut][iStream],iDetectedStream));
-
-        	if(errorsWithoutInverting<errorsInverting)
-        		errorsPermutation += errorsWithoutInverting;
-        	else
-        		errorsPermutation += errorsInverting;
-        }
-
-        if(errorsPermutation<minErrors)
-        	minErrors = errorsPermutation;
-    }
-
-    return (double)minErrors/(double)(length*sourceBits.Nstreams());
 }
