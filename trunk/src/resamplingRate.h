@@ -38,6 +38,6 @@ for(uint iResamplingAlgorithm=0;iResamplingAlgorithm<resamplingRates.size();iRes
 
 	sprintf(buffer," resampling rate = %f",resamplingRates[iResamplingAlgorithm]);
 
-	algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,0,d,nParticles,&(resamplingAlgorithms[iResamplingAlgorithm]),initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,0,d,nParticles,&(resamplingAlgorithms[iResamplingAlgorithm]),powerProfile.Means(),channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 #endif

@@ -36,6 +36,6 @@ for(uint iBackwardsSmoothing=0;iBackwardsSmoothing<testingBackwardsSmoothings.si
 
 	sprintf(buffer," backwards smoothing = %d",testingBackwardsSmoothings[iBackwardsSmoothing]);
 
-	algorithms.push_back(new LinearFilterBasedMKFAlgorithm(string("MKF") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,RMMSEbackwardsSmoothingTesting[iBackwardsSmoothing],preamble,testingBackwardsSmoothings[iBackwardsSmoothing],d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	algorithms.push_back(new LinearFilterBasedMKFAlgorithm(string("MKF") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,RMMSEbackwardsSmoothingTesting[iBackwardsSmoothing],preamble,testingBackwardsSmoothings[iBackwardsSmoothing],d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),channelCoefficientsVariances,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 #endif

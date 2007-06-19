@@ -18,11 +18,18 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-// the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+#ifndef PARAMETERS_DEFINED
+vector<int> __particlesNumberTesting;
+__particlesNumberTesting.push_back(30);__particlesNumberTesting.push_back(50);
+__particlesNumberTesting.push_back(100);__particlesNumberTesting.push_back(200);
+__particlesNumberTesting.push_back(500);__particlesNumberTesting.push_back(1000);
+#else
+for(uint i=0;i<__particlesNumberTesting.size();i++)
+{
+	char buffer[SPRINTF_BUFFER];
 
-// wether the estimated channel matrices are kept or discarded
-// #define DO_NOT_STORE_CHANNEL_MATRICES
+	sprintf(buffer," (%d particles)",__particlesNumberTesting[i]);
 
-// MACROS
-#define MAX(a,b) (a)>(b)?(a):(b)
+	algorithms.push_back(new LinearFilterBasedSMCAlgorithm(string("RLS-D-SIS") + string(buffer),pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,0,d,__particlesNumberTesting[i],&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+}
+#endif

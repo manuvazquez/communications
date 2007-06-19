@@ -105,10 +105,6 @@
 
 using namespace std;
 
-// double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
-// double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
-// void BERComputingChecks(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2);
-
 #ifdef EXPORT_REAL_DATA
 	MIMOChannel *realChannel;
 	tMatrix *realSymbols;
@@ -122,7 +118,7 @@ int main(int argc,char* argv[])
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 100;
+    int nFrames = 1000;
     int L=3,N=2,K=300;
     int trainSeqLength = 20;
     int nParticles = 1000;
@@ -283,9 +279,10 @@ int main(int argc,char* argv[])
 
 
 	// ------------------------- test simulations ----------------------
-// 	#include <resamplingRate.h>
-// 	#include <backwardSmoothing.h>
-// 	#include <backwardForwardSmoothing.h>
+// #include <resamplingRate.h>
+// #include <backwardSmoothing.h>
+// #include <backwardForwardSmoothing.h>
+#include <particlesNumber.h>
 	// -----------------------------------------------------------------
 
 	// USIS2SIS transition criterion(s)
@@ -356,21 +353,20 @@ int main(int argc,char* argv[])
 		m = canal.EffectiveMemory();
 		d = m-1;
 
-		// ... and according to that m, channel estimators are constructed...
-		tMatrix initialChannelEstimation = LaGenMatDouble::zeros(L,N*m);
+	    cout << "d es " << d << endl;
 
-//         KalmanEstimator kalmanEstimator(initialChannelEstimation,channelCoefficientsVariances,N,ARcoefficients[0],ARvariance);
-        KalmanEstimator kalmanEstimator(initialChannelEstimation,powerProfile.Variances(),N,ARcoefficients[0],ARvariance);
-	    RLSEstimator rlsEstimator(initialChannelEstimation,N,forgettingFactor);
-		LMSEstimator lmsEstimator(initialChannelEstimation,N,muLMS);
+//         KalmanEstimator kalmanEstimator(powerProfile.Means(),powerProfile.Variances(),N,ARcoefficients[0],ARvariance);
+        KalmanEstimator kalmanEstimator(powerProfile.Means(),powerProfile.Variances(),N,ARcoefficients[0],ARvariance);
+	    RLSEstimator rlsEstimator(powerProfile.Means(),N,forgettingFactor);
+		LMSEstimator lmsEstimator(powerProfile.Means(),N,muLMS);
 	    KnownChannelChannelMatrixEstimator knownChannelEstimator(canal,preambleLength,N);
 
 		// wrapped channel estimators
-// 		OneChannelOrderPerTransmitAtennaWrapperEstimator rlsWrapper(initialChannelEstimation,N,antennasChannelOrders,new RLSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,antennasChannelOrders),N,forgettingFactor));
+// 		OneChannelOrderPerTransmitAtennaWrapperEstimator rlsWrapper(powerProfile.Means(),N,antennasChannelOrders,new RLSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(powerProfile.Means(),N,antennasChannelOrders),N,forgettingFactor));
 
-// 		OneChannelOrderPerTransmitAtennaWrapperEstimator lmsWrapper(initialChannelEstimation,N,antennasChannelOrders,new LMSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,antennasChannelOrders),N,muLMS));
+// 		OneChannelOrderPerTransmitAtennaWrapperEstimator lmsWrapper(powerProfile.Means(),N,antennasChannelOrders,new LMSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(powerProfile.Means(),N,antennasChannelOrders),N,muLMS));
 
-// 		OneChannelOrderPerTransmitAtennaWrapperEstimator kalmanWrapper(initialChannelEstimation,N,antennasChannelOrders,new KalmanEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(initialChannelEstimation,N,antennasChannelOrders),N,ARcoefficients[0],ARvariance));
+// 		OneChannelOrderPerTransmitAtennaWrapperEstimator kalmanWrapper(powerProfile.Means(),N,antennasChannelOrders,new KalmanEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(powerProfile.Means(),N,antennasChannelOrders),N,ARcoefficients[0],ARvariance));
 
 		// ...and linear detectors
 		RMMSEDetector rmmseDetector(L*(c+d+1),N*(m+c+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
@@ -402,19 +398,19 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances()));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],ARvariance));
+// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
+//             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
-//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
@@ -422,9 +418,9 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&withoutReplacementResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0]));
+// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&withoutReplacementResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
-// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,initialChannelEstimation,powerProfile.Variances(),ARcoefficients[0]));
+// 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
@@ -460,9 +456,10 @@ int main(int argc,char* argv[])
 // 			}
 
 	        // --------------------- testing simulations ------------------
-// 			#include <resamplingRate.h>
-// 			#include <backwardSmoothing.h>
-// 			#include <backwardForwardSmoothing.h>
+// #include <resamplingRate.h>
+// #include <backwardSmoothing.h>
+// #include <backwardForwardSmoothing.h>
+#include <particlesNumber.h>
 	        // ------------------------------------------------------------
 
 			// ---------------------------------------------------------------------------------

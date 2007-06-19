@@ -9,5 +9,6 @@ INCLUDES = -I$(top_srcdir)/. -I$(top_srcdir)/algorithms \
 # the library search path.
 
 
-noinst_HEADERS = exceptions.h oneChannelOrderPerTransmitAntenna.h types.h
+noinst_HEADERS = exceptions.h oneChannelOrderPerTransmitAntenna.h \
+	particlesNumber.h types.h
 _SOURCES = defines.h
