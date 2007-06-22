@@ -1,7 +1,7 @@
 - comprobar de alguna manera que ML_SMCAlgorithm recibe como estimador de canal un KalmanEstimator
 - optimizar las Particles para que en el constructor copia solo se copien las matrices ocupadas
-- en ParticleWithCh... comprobar que la matriz pasada en los metodos Set tiene el tamaño adecuado
-- mas comprobaciones en los métodos de Particle y derivados
+- en ParticleWithCh... comprobar que la matriz pasada en los metodos Set tiene el tamaï¿½o adecuado
+- mas comprobaciones en los mï¿½todos de Particle y derivados
 - pasar todo lo que sea posible por referencia (los preamble a los algoritmos)
 - variable endResamplingTime en SMCAlgorithm::Resampling
 - pasar las observaciones por referencia
@@ -10,19 +10,21 @@
   - mFirstColumns pilla una columna de mas
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
-- añadir simbolos para suavizado, no bits
+- aï¿½adir simbolos para suavizado, no bits
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
-- añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
+- aï¿½adir el atributo _antennasChannelOrder a MIMOChannel (y el mï¿½todo get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)
-- definir preambulo en algun lugar más alto de la jerarquía
+- definir preambulo en algun lugar mï¿½s alto de la jerarquï¿½a
 - eliminar "_d" de MultipleChannelEstimatorsPerParticleSMCAlgorithm y sus clases derivadas
-- para calcular la overallPe y mse, hacer la división al final
+- para calcular la overallPe y mse, hacer la divisiï¿½n al final
 - memcpy para hacer copias de arrays (en el remuestreo por ejemplo)
-- que la función SetEstimatorIndex de SMCAlgorithm no sea pública
-- las variables _cost y _detectedSequence de ViterbiPath no sean públicas (amigas o algo así)
+- que la funciï¿½n SetEstimatorIndex de SMCAlgorithm no sea pï¿½blica
+- las variables _cost y _detectedSequence de ViterbiPath no sean pï¿½blicas (amigas o algo asï¿½)
 - que un ChannelMatrixEstimator reciba la memoria en el constructor
-- que los algoritmos en lugar de recibir K reciban endDetection o algo así
+- que los algoritmos en lugar de recibir K reciban endDetection o algo asï¿½
 - eliminar de ViterbiAlgorithm lo de "	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);"
 - en ViterbiAlgorith, que BestState() sea private
 - KalmanEstimator en NextMatrix: que use la media predictiva no la filtrada (revisar)
+- las variables _c y _d subirlas en la jerarquÃ­a
+- eliminar si es posible la distinciÃ³n entre Run y Run con secuencia de entrenamiento

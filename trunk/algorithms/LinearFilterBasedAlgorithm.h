@@ -17,21 +17,41 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UNKNOWNCHANNELALGORITHM_H
-#define UNKNOWNCHANNELALGORITHM_H
+#ifndef LINEARFILTERBASEDALGORITHM_H
+#define LINEARFILTERBASEDALGORITHM_H
 
-#include <Algorithm.h>
+#include <KnownChannelOrderAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ChannelMatrixEstimator.h>
+#include <vector>
+#include <LinearDetector.h>
 
-class UnknownChannelAlgorithm : public Algorithm
+class LinearFilterBasedAlgorithm : public KnownChannelOrderAlgorithm
 {
+private:
+	void Process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+protected:
+	int _c,_d;
+	LinearDetector *_linearDetector;
+	tMatrix _detectedSymbolVectors;
+	tMatrix *_estimatedChannelMatrices;
+	double _ARcoefficient;
+
+	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
-    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int K);
+    LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector, double ARcoefficient);
+
+    ~LinearFilterBasedAlgorithm();
+
+    void Run(tMatrix observations,vector<double> noiseVariances);
+    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+
+    tMatrix GetDetectedSymbolVectors();
+    vector<tMatrix> GetEstimatedChannelMatrices();
+
 };
 
 #endif

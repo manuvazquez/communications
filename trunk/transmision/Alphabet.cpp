@@ -70,7 +70,7 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 	if(numero>=pow((double)_length,(double)tamVector))
 		throw RuntimeException("Alphabet::IntToSymbolsArray: vector size is smaller than needed.");
 
-// 	// se reserva espacio para un vector de bits tamaño "tamVector"
+// 	// se reserva espacio para un vector de bits tamaï¿½o "tamVector"
 // 	vector<tBit> _bitsSequences(tamVector);
 
 	int resto,i;
@@ -118,18 +118,17 @@ tSymbol Alphabet::HardDecision(double softEstimation)
 {
 	double distance;
 
-	double minDistance = softEstimation - _symbols[0];
+	double minDistance = fabs(softEstimation - _symbols[0]);
 	int iMin = 0;
 
 	for(int i=1;i<_length;i++)
 	{
-		distance = softEstimation - _symbols[i];
+		distance = fabs(softEstimation - _symbols[i]);
 		if(distance<minDistance)
 		{
 			minDistance = distance;
 			iMin = i;
 		}
 	}
-
 	return _symbols[iMin];
 }
