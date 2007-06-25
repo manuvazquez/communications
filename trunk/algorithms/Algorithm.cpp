@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Algorithm.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int K):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(K)
 {
@@ -115,4 +115,52 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	}
 
 	return res;
+}
+
+tMatrix Algorithm::SubstractingChannelMatrix(const vector<tMatrix> &matrices,int m,int c,int d)
+{
+    if(matrices.size()!=c+d+1)
+      throw RuntimeException("Algorithm::SubstractingChannelMatrix: wrong number of matrices.");
+
+    int i;
+    tRange rAllObservationsRows(0,_L-1);
+    tMatrix res = LaGenMatDouble::zeros(_L*(c+d+1),_N*(m-1+c));
+
+    tRange rRows(0,_L-1);
+    tRange rCols(0,_N*m-1);
+
+    for(i=0;i<c;i++)
+    {
+        res(rRows,rCols).inject(matrices[i]);
+
+        rRows = rRows + _L;
+        rCols = rCols + _N;
+    }
+
+#ifdef DEBUG2
+    cout << "mitad" << endl;
+#endif
+
+    tRange rSourceCols(0,(m-1)*_N-1);
+    int rSourceColsEnd = (m-1)*_N-1;
+    for(i=c;i<c+m-1;i++)
+    {
+      rCols.set(_N*i,(c+m-1)*_N-1);
+#ifdef DEBUG2
+    cout << rRows << endl << rCols << endl << rSourceCols << endl;
+#endif
+      res(rRows,rCols).inject(matrices[i](rAllObservationsRows,rSourceCols));
+
+      rRows = rRows + _L;
+      rSourceColsEnd -= _N;
+      rSourceCols.set(0,rSourceColsEnd);
+    }
+
+    return res;
+
+//             for(iSmoothing=0;iSmoothing<_d;iSmoothing++)
+//             {
+//                 stackedChannelMatrixSubstract(tRange(iSmoothing*_L,(iSmoothing+1)*_L-1),tRange(_N*iSmoothing,(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing-1)*_N-1)));
+//             }
+
 }

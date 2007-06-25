@@ -53,7 +53,6 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 
 void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
-// 	int _c = 2;
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
 	vector<tMatrix> matricesToStack(_c+_d+1,tMatrix(_L,_Nm));
 	tRange rAllObservationsRows(0,_L-1),rAllSymbolRows(0,_N-1);
@@ -213,23 +212,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// ii) the just sampled
 			forWeightUpdateNeededSymbols(rAllSymbolRows,rSampledSymbolVectors).inject(Util::ToMatrix(sampledSmoothingVector,columnwise,_N));
 
-// 			likelihoodsProd = 1.0;
-//
-// 			for(iSmoothing=0;iSmoothing<=_d;iSmoothing++)
-// 			{
-// 				tRange rSymbolVectors(iSmoothing,iSmoothing+_m-1);
-// 				tVector stackedSymbolVector = Util::ToVector(forWeightUpdateNeededSymbols(rAllSymbolRows,rSymbolVectors),columnwise);
-//
-//                 #ifdef DEBUG10
-//                     cout << stackedSymbolVector << endl;
-//                 #endif
-//
-// 				// predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
-// 				Blas_Mat_Vec_Mult(matricesToStack[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
-//
-// 				likelihoodsProd *= StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
-// 			}
-
 			likelihoodsProd = SmoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
 			// the weight is updated
@@ -258,7 +240,6 @@ vector<tMatrix> LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMa
 {
 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
 	tRange allObservationRows(0,_L-1);
-// 	int _c = 2;
 
 #ifdef DEBUG22
 	cout << "_c es " << _c << " _d es " << _d << endl;

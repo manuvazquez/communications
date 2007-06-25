@@ -47,9 +47,6 @@ protected:
 	tMatrix _invRtilde;
 	tMatrix _filter;
 
-	// auxiliary
-// 	tMatrix _identityL,_gObservations;
-// 	tMatrix _identityMinusgObservations;
     tMatrix _auxInvRtilde;
 	tMatrix _E,_varianceInvRtildeChannelMatrix;
 public:

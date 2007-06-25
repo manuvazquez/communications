@@ -119,7 +119,7 @@ int main(int argc,char* argv[])
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1000;
+    int nFrames = 1;
     int L=3,N=2,K=300;
     int trainSeqLength = 20;
     int nParticles = 30;
@@ -158,21 +158,13 @@ int main(int argc,char* argv[])
 
 	// system parameters for generating the AR process
 	int ARprocessOrder = 3;
-	double velocity = 15.0; // (Km/h)
+	double velocity = 10.0; // (Km/h)
 	double carrierFrequency = 2.4e9; // (Hz)
 	double symbolRate = 500e3; // (Hz)
 	double T = 1.0/symbolRate; // (s)
 
     // channel parameters
 	double channelVariance=1.0;
-
-
-	tMatrix H = StatUtil::RandnMatrix(300,300,0,1.0);
-	tMatrix C(300,300);
-	Blas_Mat_Trans_Mat_Mult(H,H,C);
-	cout << "C es " << endl << C;
-	tMatrix A = Util::Cholesky(C);
-	cout << "El resultado es" << endl << A;
 
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.00001);
 	ExponentialPowerProfile powerProfile(L,N,T,0.01);
@@ -406,11 +398,11 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&MMSEdetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
+	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS with residual resampling",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,d,nParticles,&residualResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,&canal,&symbols));
 
