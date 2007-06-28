@@ -21,6 +21,8 @@
 
 // #define DEBUG3
 
+#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+
 LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector,  double ARcoefficient): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_c(backwardsSmoothingLag),_d(smoothingLag),_linearDetector(linearDetector->Clone()),_detectedSymbolVectors(N,K),_ARcoefficient(ARcoefficient)
 {
 	_estimatedChannelMatrices = new tMatrix[K];
@@ -62,7 +64,13 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 		_estimatedChannelMatrices[j] = trainingSequenceChannelMatrices[j-_preamble.cols()];
 	}
 
-// 	vector<tMatrix> matricesToStack;
+#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+	tRange rAllStackedObservationsRows(0,_L*(_c+_d+1)-1);
+
+	if(_linearDetector->ChannelMatrixCols() != _N*(_d+1))
+		throw RuntimeException("LinearFilterBasedAlgorithm::Process: SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS is defined. It shouldn't because it's not compatible with the current linear detector.");
+#endif
+
 	vector<tMatrix> matricesToStack(_c+_d+1);
 	int iSmoothing,iRow;
 	tRange rAllObservationsRows(0,_L-1),rAllSymbolRows(0,_N-1);
@@ -71,8 +79,10 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
 	for(int iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-		tMatrix predictedChannelMatrix = _channelEstimator->LastEstimatedChannelMatrix();
-		predictedChannelMatrix *= _ARcoefficient;
+
+#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+		tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_c-_m+1,iObservationToBeProcessed-1);
+#endif
 
 		// already estimated channel matrices are stored in a vector in order to stack them
 		for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)
@@ -101,7 +111,16 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 			for(iRow=0;iRow<_L;iRow++)
 				stackedNoiseCovariance((iSmoothing+_c)*_L+iRow,(iSmoothing+_c)*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
+#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+		stackedChannelMatrix = stackedChannelMatrix(rAllStackedObservationsRows,tRange((_c+_m-1)*_N,stackedChannelMatrix.cols()-1));
+		tVector softEstimations =  _linearDetector->Detect(
+			SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,rAlreadyDetectedSymbolVectors)),
+			stackedChannelMatrix,stackedNoiseCovariance);
+#else
 		tVector softEstimations =  _linearDetector->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+#endif
+
+// 		tVector softEstimations =  _linearDetector->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 
 		for(iRow=0;iRow<_N;iRow++)
 			_detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.HardDecision(softEstimations(iRow));

@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "TransmissionUtil.h"
 
+// #define DEBUG
+
 using namespace std;
 
 void TransmissionUtil::BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
@@ -100,4 +102,60 @@ double TransmissionUtil::ComputeBERsolvingAmbiguity(const Bits &sourceBits,int f
     }
 
     return (double)minErrors/(double)(length*sourceBits.Nstreams());
+}
+
+tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2)
+{
+
+	tVector res(to1-from1+1);
+
+    // if the algorithm didn't make channel estimation
+	if(estimatedChannelMatrices.size()==0)
+	{
+		res = 0.0;
+		return res;
+	}
+
+    if((to1-from1)!=(to2-from2))
+   	{
+   		cout << "Range 1: " << (to1-from1) << " | " << "Range 2: " << to2-from2 << endl;
+        throw RuntimeException("TransmissionUtil::MSEalongTime: comparisons range length are different.");
+    }
+
+    if(to1<from1)
+        throw RuntimeException("TransmissionUtil::MSEalongTime: comparisons range are negatives.");
+
+	if(to1>estimatedChannelMatrices.size() || to2>trueChannelMatrices.size() || from1<0 || from2<0)
+	{
+		cout << from1 << endl << to1 << endl << from2 << endl << to2 << endl << estimatedChannelMatrices.size() << endl << trueChannelMatrices.size() << endl;
+		throw RuntimeException("TransmissionUtil::MSEalongTime: one or several comparison limits are wrong.");
+	}
+
+#ifdef DEBUG
+	cout << "antes de inicializar res" << endl;
+#endif
+
+#ifdef DEBUG
+	cout << "hola" << endl;
+#endif
+
+	// if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
+	try {
+		for(int iSource1=from1,iSource2=from2,iRes=0;iSource1<=to1;iSource1++,iSource2++,iRes++)
+		{
+			// the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
+			res(iRes) = Util::SquareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(Blas_NormF(trueChannelMatrices.at(iSource2)),2.0);
+#ifdef DEBUG
+// 			cout << "comparando" << endl << trueChannelMatrices.at(iSource2) << "y" << endl << estimatedChannelMatrices.at(iSource1) << endl;
+			cout << "res(" << iRes << ") = " << res(iRes) << " res.size() = " << res.size() << endl;
+#endif
+		}
+	} catch (IncompatibleOperandsException) {
+		return res;
+	}
+#ifdef DEBUG
+	cout << "res.zie " << res.size() << endl;
+#endif
+
+	return res;
 }

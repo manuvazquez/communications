@@ -38,7 +38,7 @@ tMatrix DelayPowerProfile::GenerateChannelMatrix(Random &random)
 	return res;
 }
 
-void DelayPowerProfile::Print()
+void DelayPowerProfile::Print() const
 {
 	if(_delays.size()!=0)
 		for(uint i=0;i<_amplitudes.size();i++)

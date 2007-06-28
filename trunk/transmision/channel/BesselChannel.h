@@ -17,33 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARDETECTOR_H
-#define LINEARDETECTOR_H
+#ifndef BESSELCHANNEL_H
+#define BESSELCHANNEL_H
+
+#include <StillMemoryMIMOChannel.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <types.h>
+#include <math.h>
+#include <StatUtil.h>
+#include <DelayPowerProfile.h>
 
-class LinearDetector{
+class BesselChannel : public StillMemoryMIMOChannel
+{
 protected:
-	int _channelMatrixRows, _channelMatrixCols;
-	double _alphabetVariance;
+	tMatrix *_channelMatrices;
 public:
-    LinearDetector(int rows,int cols,double alphabetVariance);
-	virtual void StateStep(tVector observations) = 0;
-	virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
-	virtual tMatrix ComputedFilter() = 0;
-	/**
-	 *    Computes the variance related to the soft estimation provided for the n-th symbol. It NEVER must be called before a call to Detect
-	 * @param n
-	 * @return
-	 */
-	virtual double NthSymbolVariance(int n) = 0;
-	virtual ~LinearDetector() {}
-	int ChannelMatrixCols() { return _channelMatrixCols;}
-	virtual LinearDetector *Clone() = 0;
+    BesselChannel(int nTx, int nRx, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
+
+    ~BesselChannel();
+
+	tMatrix& operator[](int n) const { return _channelMatrices[n];};
 };
 
 #endif

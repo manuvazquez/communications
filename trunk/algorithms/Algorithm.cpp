@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Algorithm.h"
 
-// #define DEBUG2
+// #define DEBUG3
 
 Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int K):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(K)
 {
@@ -117,50 +117,49 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	return res;
 }
 
-tMatrix Algorithm::SubstractingChannelMatrix(const vector<tMatrix> &matrices,int m,int c,int d)
+tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &involvedSymbolVectors)
 {
     if(matrices.size()!=c+d+1)
-      throw RuntimeException("Algorithm::SubstractingChannelMatrix: wrong number of matrices.");
+      throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
+
+	if(observations.size()!=(_L*(c+d+1)))
+	   throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
+
+	if(involvedSymbolVectors.cols()!=c+m-1)
+		 throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     int i;
     tRange rAllObservationsRows(0,_L-1);
-    tMatrix res = LaGenMatDouble::zeros(_L*(c+d+1),_N*(m-1+c));
+    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_L*(c+d+1),_N*(m-1+c));
 
     tRange rRows(0,_L-1);
     tRange rCols(0,_N*m-1);
 
     for(i=0;i<c;i++)
     {
-        res(rRows,rCols).inject(matrices[i]);
+        substractingChannelMatrix(rRows,rCols).inject(matrices[i]);
 
         rRows = rRows + _L;
         rCols = rCols + _N;
     }
-
-#ifdef DEBUG2
-    cout << "mitad" << endl;
-#endif
 
     tRange rSourceCols(0,(m-1)*_N-1);
     int rSourceColsEnd = (m-1)*_N-1;
     for(i=c;i<c+m-1;i++)
     {
       rCols.set(_N*i,(c+m-1)*_N-1);
-#ifdef DEBUG2
-    cout << rRows << endl << rCols << endl << rSourceCols << endl;
-#endif
-      res(rRows,rCols).inject(matrices[i](rAllObservationsRows,rSourceCols));
+      substractingChannelMatrix(rRows,rCols).inject(matrices[i](rAllObservationsRows,rSourceCols));
 
       rRows = rRows + _L;
       rSourceColsEnd -= _N;
       rSourceCols.set(0,rSourceColsEnd);
     }
 
-    return res;
+	// substracting channel matrix built
 
-//             for(iSmoothing=0;iSmoothing<_d;iSmoothing++)
-//             {
-//                 stackedChannelMatrixSubstract(tRange(iSmoothing*_L,(iSmoothing+1)*_L-1),tRange(_N*iSmoothing,(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing-1)*_N-1)));
-//             }
+	tVector stackedObservationsMinus = observations;
+	// stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::ToVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
+	Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::ToVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);
 
+	return stackedObservationsMinus;
 }

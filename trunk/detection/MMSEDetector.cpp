@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "MMSEDetector.h"
 
+#define DEBUG
+
 MMSEDetector::MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_filter(_channelMatrixRows,_channelMatrixCols)
 ,_alphabetVarianceChannelMatrixChannelMatrixTrans(rows,rows),_Rx(rows,rows),_piv(rows),_softEstimations(cols),_rNsimbolsDetected(cols-nSymbolsToBeDetected,cols-1),_rAllChannelMatrixRows(0,rows-1)
 {
@@ -52,7 +54,15 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 	// _softEstimations = _filter'*observations
 	Blas_Mat_Trans_Vec_Mult(_filter,observations,_softEstimations);
 
+	// ----------------- required for NthSymbolVariance computing -------------------
+	_channelMatrix = channelMatrix;
+
+	// ------------------------------------------------------------------------------
+
 	return _softEstimations(_rNsimbolsDetected);
 }
 
-
+double MMSEDetector::NthSymbolVariance(int n)
+{
+	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
+}

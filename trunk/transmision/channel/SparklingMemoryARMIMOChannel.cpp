@@ -79,7 +79,7 @@ ARcoefficients,ARvariance)
 			}
 		}
 
-		getchar();
+// 		getchar();
 	}
 
 	// the first channel order is modified in the loop but it must be "initialChannelOrderIndex"

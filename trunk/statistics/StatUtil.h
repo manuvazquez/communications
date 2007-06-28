@@ -39,14 +39,6 @@
 
 class StatUtil{
 private:
-// 	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands)
-// 	{
-// 		double res = 0.0;
-// 		for(int i=0;i<probabilities.size();i++)
-// 			if(activeOperands[i])
-// 				res += probabilities(i);
-// 		return res;
-// 	}
 	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
 public:
     /**

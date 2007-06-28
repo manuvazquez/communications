@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "TriangularizationBasedSMCAlgorithm.h"
 
-// #define DEBUG3
+// #define DEBUG4
 // #define DEBUG2
 
 TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
@@ -86,37 +86,18 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 //                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_L,iSmoothing*_L-1),tRange(_N*(iSmoothing-1),(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing)*_N-1)));
 			}
 
-//             for(iSmoothing=0;iSmoothing<_d;iSmoothing++)
-//             {
-// #ifdef DEBUG
-//               cout << "matricesToStack[iSmoothing]" << endl << matricesToStack[iSmoothing];
-// #endif
-//                 stackedChannelMatrixSubstract(tRange(iSmoothing*_L,(iSmoothing+1)*_L-1),tRange(_N*iSmoothing,(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing-1)*_N-1)));
-//             }
-
-            stackedChannelMatrixSubstract = SubstractingChannelMatrix(matricesToStack,_m,0,_d);
-
-#ifdef DEBUG3
-			cout << "fuera del bucle" << endl;
-			cout << "stackedChannelMatrixSubstract: " << endl << stackedChannelMatrixSubstract << endl;
-            cout << "Calculada a lo chachi" << endl << SubstractingChannelMatrix(matricesToStack,_m,0,_d);
-#endif
 			// matrices are stacked to give
 			tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
-#ifdef DEBUG2
-			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
-#endif
-
 			stackedChannelMatrixMinus = stackedChannelMatrix(rAllStackedObservationsRows,tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
 
-#ifdef DEBUG2
-			cout << "stackedChannelMatrixMinus" << endl << stackedChannelMatrixMinus << endl;
-#endif
+			stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_m,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors));
 
-			stackedObservationsMinus = stackedObservations;
-			// stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::ToVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
-			Blas_Mat_Vec_Mult(stackedChannelMatrixSubstract,Util::ToVector(involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors),columnwise),stackedObservationsMinus,-1.0,1.0);
+#ifdef DEBUG4
+			cout << stackedObservationsMinus << endl;
+			cout << rAllSymbolRows << endl << rFirstmMinus1symbolVectors << endl;
+			cout << "con la funcion" << endl << SubstractKnownSymbolsContribution(matricesToStack,_m,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors)) << endl;
+#endif
 
 			// we want to start sampling the present symbol vector, not the future ones
 			stackedChannelMatrixMinusFlipped = Util::FlipLR(stackedChannelMatrixMinus);

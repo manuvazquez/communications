@@ -38,7 +38,7 @@ public:
     ChannelMatrixEstimator(tMatrix initialEstimation,int N);
 	virtual ~ChannelMatrixEstimator() {};
 
-	virtual void SetFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}
+	void SetFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}
 	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
 	virtual ChannelMatrixEstimator *Clone() = 0;
 

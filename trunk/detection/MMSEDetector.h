@@ -45,13 +45,17 @@ protected:
 	tLongIntVector _piv;
 	tVector _softEstimations;
 	tRange _rNsimbolsDetected,_rAllChannelMatrixRows;
+
+	// required for NthSymbolVariance computing
+	tMatrix _channelMatrix;
 public:
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
 
     virtual MMSEDetector * Clone();
 	virtual tMatrix ComputedFilter();
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
-    virtual void StateStep(tVector observations) {};
+    virtual void StateStep(tVector observations) {}
+	double NthSymbolVariance(int n);
 
 };
 

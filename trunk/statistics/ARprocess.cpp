@@ -19,49 +19,45 @@
  ***************************************************************************/
 #include "ARprocess.h"
 
-// #define DEBUG2
+// #define DEBUG5
 // #define DEBUG3
 // #define DEBUGDOPPLER
 
 using namespace std;
 
-ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_noiseMean(0),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols()),_buffer(new tMatrix*[_nCoefficients])
+ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
-	_buffer[0] = new tMatrix(seed);
-#ifdef DEBUG
-	cout << "seed es " << endl << seed;
-#endif
-
-	CommonConstructorsCode();
+	CommonConstructorsCode(seed);
 }
 
 ARprocess::ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
 {
 	_coefficients = ParametersFromYuleWalker(order,velocity,carrierFrequency,T,_noiseVariance);
 
-#ifdef DEBUG2
+#ifdef DEBUG4
 	cout << "Los coeficientes son " << endl;
 	Util::Print(_coefficients);
 	cout << "La varianza es " << _noiseVariance << endl;
 #endif
 
-	_noiseMean = 0.0;
 	_nCoefficients = _coefficients.size();
-	_buffer = new tMatrix*[_nCoefficients];
-	_buffer[0] = new tMatrix(seed);
 
 #ifdef DEBUG2
 	cout << "seed es " << endl << seed;
 #endif
 
-	CommonConstructorsCode();
+	CommonConstructorsCode(seed);
 }
 
-void ARprocess::CommonConstructorsCode()
+void ARprocess::CommonConstructorsCode(const tMatrix &seed)
 {
 	int i,j;
 
-	_iterationsForConvergence = 1000;
+	_iterationsForConvergence = 200;
+	_noiseMean = 0.0;
+
+	_buffer = new tMatrix*[_nCoefficients];
+	_buffer[0] = new tMatrix(seed);
 
 	//the buffer is filled
 	for(i=1;i<_nCoefficients;i++)
@@ -103,11 +99,20 @@ void ARprocess::CommonConstructorsCode()
 		// _buffer[i % _nCoefficients] = aux + noise;
 		Util::Add(aux,noise,*(_buffer[i % _nCoefficients]));
 
-#ifdef DEBUG3
+#ifdef DEBUG4
 		cout << "convergiendo" << endl << *(_buffer[i % _nCoefficients]);
+		cout << "noise" << endl << noise;
 		cout << "Una tecla..."; getchar();
 #endif
 	}
+
+#ifdef DEBUG5
+	tMatrix resta(_rows,_columns);
+	cout << "seed es" << endl << seed;
+	Util::Add(*(_buffer[i % _nCoefficients]),seed,resta);
+	cout << "resta es" << endl << resta;
+	cout << "Una tecla..."; getchar();
+#endif
 
 	// the index of the next matrix is gonna be returned is kept
 	_iNextMatrix = i;

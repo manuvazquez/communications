@@ -23,20 +23,6 @@
 
 using namespace std;
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,tMatrix initializationMatrix,vector<double> ARcoefficients,double ARvariance): StillMemoryMIMOChannel(nTx, nRx, memory, length),
-//ARprocess constructor call
-_ARproc(initializationMatrix,ARcoefficients,ARvariance)
-{
-	if(initializationMatrix.rows()!=nRx || initializationMatrix.cols()!=(nTx*memory))
-		throw RuntimeException("ARchannel::ARchannel: the initialization matrix dimensions are not coherent with the received parameters.");
-
-	_channelMatrices = new tMatrix[length];
-
-	//initialization
-	for(int i=_memory-1;i<_length;i++)
-			_channelMatrices[i] = _ARproc.NextMatrix();
-}
-
 ARchannel::ARchannel(int nTx, int nRx, int memory, int length,ARprocess ARproc): StillMemoryMIMOChannel(nTx, nRx, memory, length),_ARproc(ARproc)
 {
 #ifdef DEBUG

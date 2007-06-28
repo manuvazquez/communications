@@ -44,7 +44,7 @@ private:
 	int _iterationsForConvergence;
 	tMatrix **_buffer;
 
-	void CommonConstructorsCode();
+	void CommonConstructorsCode(const tMatrix &seed);
 
 public:
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);

@@ -63,7 +63,7 @@ public:
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-    tMatrix SubstractingChannelMatrix(const vector<tMatrix> &matrices,int m,int c,int d);
+	tVector SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
 
 	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);
 	tMatrix HsToStackedH(vector<tMatrix> matrices,int m)

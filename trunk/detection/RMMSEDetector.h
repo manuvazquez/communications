@@ -49,6 +49,10 @@ protected:
 
     tMatrix _auxInvRtilde;
 	tMatrix _E,_varianceInvRtildeChannelMatrix;
+
+	// required for NthSymbolVariance computing
+	tMatrix _channelMatrix;
+	tMatrix _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
 
@@ -56,6 +60,7 @@ public:
 	RMMSEDetector *Clone();
 	void StateStep(tVector observations);
 
+	double NthSymbolVariance(int n);
 	tMatrix ComputedFilter() { return _filter;}
 
 };

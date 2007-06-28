@@ -20,7 +20,7 @@
 #include "RMMSEDetector.h"
 
 RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_g(rows),_invRtilde(LaGenMatDouble::eye(rows)),_filter(rows,nSymbolsToBeDetected)
-,_auxInvRtilde(rows,rows),_E(LaGenMatDouble::zeros(cols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(rows,cols)
+,_auxInvRtilde(rows,rows),_E(LaGenMatDouble::zeros(cols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(rows,cols),_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance(rows,rows)
 {
 	tRange rowsRange(_channelMatrixCols-_nSymbolsToBeDetected,_channelMatrixCols-1);
 	tRange colsRange(0,_nSymbolsToBeDetected-1);
@@ -79,10 +79,34 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const 
 	// _softEstimations = _filter'*observations
 	Blas_Mat_Trans_Vec_Mult(_filter,observations,res);
 
+
+	// -------------------- required for NthSymbolVariance computing -----------------------
+	tMatrix alphabetVarianceChannelMatrixChannelMatrixTrans(_channelMatrixRows,_channelMatrixRows);
+
+	// _alphabetVarianceChannelMatrixChannelMatrixTrans = _alphabetVariance*channelMatrix*channelMatrix^T
+	Blas_Mat_Mat_Trans_Mult(channelMatrix,channelMatrix,alphabetVarianceChannelMatrixChannelMatrixTrans,_alphabetVariance);
+
+	// _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance = _alphabetVarianceChannelMatrixChannelMatrixTrans + noiseCovariance
+	Util::Add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance);
+
+	_channelMatrix = channelMatrix;
+
+	// -------------------------------------------------------------------------------------
+
     return res;
 }
 
 RMMSEDetector *RMMSEDetector::Clone()
 {
 	return new RMMSEDetector(*this);
+}
+
+double RMMSEDetector::NthSymbolVariance(int n)
+{
+	tVector _auxVector(_channelMatrixRows);
+
+	// _auxVector = _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance*_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n)
+	Blas_Mat_Vec_Mult(_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance,_filter.col(n),_auxVector);
+
+	return _alphabetVariance*(1.0 - 2.0*Blas_Dot_Prod(_filter.col(n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) + Blas_Dot_Prod(_filter.col(n),_auxVector);
 }

@@ -573,8 +573,8 @@ tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permut
 //
 // 	LaSymmBandMatDouble spdMatrix(matrix.rows(),2*matrix.rows()-1);
 // 	for(int i=0;i<matrix.rows();i++)
-// 		for(int j=0;j<matrix.cols();j++)
-// 			spdMatrix(i,j) = matrix(i,j);
+// 		for(int j=i;j<matrix.cols();j++)
+// 			spdMatrix(j,i) = spdMatrix(i,j) = matrix(i,j);
 //
 // 	LaSymmBandMatFactorizeIP(spdMatrix);
 //

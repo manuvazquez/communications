@@ -90,14 +90,14 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 
 					auxLikelihoodsProd = 1.0;
 
-					#ifdef DEBUG
+					#ifdef DEBUG2
 						cout << "Before clonig the channel estimator." << endl;
 					#endif
 
 					// a clone of the channel estimator is generated because this must not be modified
 					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->Clone();
 
-					#ifdef DEBUG
+					#ifdef DEBUG2
 						cout << "After clonig the channel estimator." << endl;
 					#endif
 
@@ -108,7 +108,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 						// the likelihood is computed and accumulated
 						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
-						#ifdef DEBUG
+						#ifdef DEBUG2
 							cout << "Despues de llamar a likelihood." << endl;
 						#endif
 

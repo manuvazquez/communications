@@ -42,10 +42,13 @@ public:
 	virtual ~DelayPowerProfile();
 
 	virtual tMatrix GenerateChannelMatrix(Random &random);
-	virtual void Print();
-	tMatrix Means() { return _means;}
-	tMatrix Variances() {return _variances;}
-	int Memory() {return _amplitudes.size();}
+	virtual void Print() const;
+	tMatrix Means() const { return _means;}
+	tMatrix Variances() const {return _variances;}
+	int Nt() { return _nTx;}
+	int Nr() { return _nRx;}
+	int Memory() const { return _amplitudes.size();}
+	std::vector<double> TapsAmplitudes() const { return _amplitudes;}
 };
 
 #endif

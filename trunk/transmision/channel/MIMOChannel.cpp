@@ -35,17 +35,17 @@ MIMOChannel::MIMOChannel(int nTx,int nRx,int length):_nTx(nTx),_nRx(nRx),_length
 tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 {
 	if(symbols.rows()!=_nTx)
-		throw RuntimeException("Symbol vectors _length is wrong.");
+		throw RuntimeException("MIMOChannel::Transmit: symbol vectors length is wrong.");
 	else if(symbols.cols()>_length)
-		throw RuntimeException("Channel _length is shorter than then number of symbol vectors.");
+		throw RuntimeException("MIMOChannel::Transmit: channel length is shorter than then number of symbol vectors.");
 	else if(noise.Nr()!=_nRx || symbols.cols()>noise.Length())
-		throw RuntimeException("Missmatched noise dimensions.");
+		throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
 
 	// the number of resulting observations depends on the channel _memory
 	int nObservations = symbols.cols() - (EffectiveMemory() - 1);
 
 	if(nObservations<1)
-		throw RuntimeException("Not enough symbol vectors for this channel _memory.");
+		throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
 
 	tMatrix observations = tMatrix(_nRx,symbols.cols());
 

@@ -28,3 +28,4 @@
 - KalmanEstimator en NextMatrix: que use la media predictiva no la filtrada (revisar)
 - las variables _c y _d subirlas en la jerarquía
 - eliminar si es posible la distinción entre Run y Run con secuencia de entrenamiento
+- proceso AR: multiplicar por la varianza
