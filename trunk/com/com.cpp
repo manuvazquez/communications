@@ -69,6 +69,7 @@
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
+#include <DecorrelatorDetector.h>
 
 #include <DSISoptAlgorithm.h>
 #include <LinearFilterBasedSMCAlgorithm.h>
@@ -87,6 +88,7 @@
 #include <ChannelOrderEstimatorSMCAlgorithm.h>
 #include <TriangularizationBasedSMCAlgorithm.h>
 #include <LinearFilterBasedAlgorithm.h>
+#include <SISoptAlgorithm.h>
 
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
@@ -174,8 +176,8 @@ int main(int argc,char* argv[])
 	double channelVariance=1.0;
 
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.00001); // m = 6
-	ExponentialPowerProfile powerProfile(L,N,T,0.01); // m = 3
-// 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
+// 	ExponentialPowerProfile powerProfile(L,N,T,0.01); // m = 3
+	FlatPowerProfile powerProfile(L,N,m,channelVariance);
 	cout << "memoria es " << powerProfile.Memory() << endl;
 
     // channel estimator parameters
@@ -350,11 +352,11 @@ int main(int argc,char* argv[])
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
         // an AR channel is generated
-// 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 // 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARprocessOrder,velocity/3.6,carrierFrequency,T));
 
 
-		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
+// 		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
@@ -374,9 +376,9 @@ int main(int argc,char* argv[])
 
 		// ...and linear detectors
 		RMMSEDetector rmmseDetector(L*(c+d+1),N*(m+c+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
-// 		RMMSEDetector rmmseDetector(L*(d+1),N*(m+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
-		MMSEDetector mmseDetectorLarge(L*(d+1),N*(m+d),pam2.Variance(),N*(d+1));
-		MMSEDetector mmseDetectorSmall(L*(d+1),N*(d+1),pam2.Variance(),N*(d+1));
+		MMSEDetector mmseDetectorLarge(L*(c+d+1),N*(m+c+d),pam2.Variance(),N*(d+1));
+		MMSEDetector mmseDetectorSmall(L*(c+d+1),N*(d+1),pam2.Variance(),N*(d+1));
+	    DecorrelatorDetector decorrelatorDetector(L*(c+d+1),N*(d+1),pam2.Variance());
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -407,6 +409,8 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
+            algorithms.push_back(new SISoptAlgorithm ("SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
+
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 			algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&rlsEstimator,&rmmseDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
@@ -415,9 +419,11 @@ int main(int argc,char* argv[])
 
 // 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-//             algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
+// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+
+//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
 //             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 

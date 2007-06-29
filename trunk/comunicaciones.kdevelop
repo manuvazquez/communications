@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>com/com</activetarget>
+      <activetarget>algorithms/libalgorithms.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>
