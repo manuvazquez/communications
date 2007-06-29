@@ -17,12 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "KnownSymbolsKalmanEstimator.h"
 
-// the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, double ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficient, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
+{
+}
 
-// wether the estimated channel matrices are kept or discarded
-// #define DO_NOT_STORE_CHANNEL_MATRICES
+tMatrix KnownSymbolsKalmanEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+{
+	_presentTime++;
+	return KalmanEstimator::NextMatrix(observations, _symbols(tRange(0,_N-1),tRange(_presentTime-_m,_presentTime-1)), noiseVariance);
+}
 
-// MACROS
-#define MAX(a,b) (a)>(b)?(a):(b)
+KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::Clone()
+{
+	return new KnownSymbolsKalmanEstimator(*this);
+}

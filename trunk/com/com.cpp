@@ -66,6 +66,7 @@
 #include <OneChannelOrderPerTransmitAtennaWrapperEstimator.h>
 #include <APPbasedChannelOrderEstimator.h>
 #include <KnownChannelChannelMatrixEstimator.h>
+#include <KnownSymbolsKalmanEstimator.h>
 
 #include <RMMSEDetector.h>
 #include <MMSEDetector.h>
@@ -366,6 +367,7 @@ int main(int argc,char* argv[])
 	    RLSEstimator rlsEstimator(powerProfile.Means(),N,forgettingFactor);
 		LMSEstimator lmsEstimator(powerProfile.Means(),N,muLMS);
 	    KnownChannelChannelMatrixEstimator knownChannelEstimator(canal,preambleLength,N);
+	    KnownSymbolsKalmanEstimator knownSymbolsKalmanEstimator(powerProfile.Means(),powerProfile.Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
 
 		// wrapped channel estimators
 // 		OneChannelOrderPerTransmitAtennaWrapperEstimator rlsWrapper(powerProfile.Means(),N,antennasChannelOrders,new RLSEstimator(OneChannelOrderPerTransmitAtennaMIMOChannel::WithZerosMatrixToWithoutZerosMatrix(powerProfile.Means(),N,antennasChannelOrders),N,forgettingFactor));
@@ -407,7 +409,7 @@ int main(int argc,char* argv[])
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
+            algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
             algorithms.push_back(new SISoptAlgorithm ("SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
@@ -417,15 +419,15 @@ int main(int argc,char* argv[])
 
 // 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
+	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
+            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
-//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
+            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
@@ -433,7 +435,9 @@ int main(int argc,char* argv[])
 
 // 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
-// 			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+
+	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));

@@ -1,16 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
+ <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="361" Type="Source" />
+   <View0 Encoding="" line="372" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.h" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc2>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -76,12 +70,13 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="425" />
-     <mark line="409" />
      <mark line="427" />
      <mark line="411" />
-     <mark line="435" />
-     <mark line="419" />
+     <mark line="429" />
+     <mark line="413" />
+     <mark line="437" />
      <mark line="421" />
+     <mark line="439" />
      <mark line="423" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >

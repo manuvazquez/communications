@@ -4,9 +4,10 @@ INCLUDES = -I$(top_srcdir)/filters -I$(top_srcdir)/randomutil \
 METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = APPbasedChannelOrderEstimator.h ChannelMatrixEstimator.h \
-	ChannelOrderEstimator.h KalmanEstimator.h KnownChannelChannelMatrixEstimator.h LMSEstimator.h \
-	OneChannelOrderPerTransmitAtennaWrapperEstimator.h RLSEstimator.h
+	ChannelOrderEstimator.h KalmanEstimator.h KnownChannelChannelMatrixEstimator.h \
+	KnownSymbolsKalmanEstimator.h LMSEstimator.h OneChannelOrderPerTransmitAtennaWrapperEstimator.h \
+	RLSEstimator.h
 libestimation_a_SOURCES = APPbasedChannelOrderEstimator.cpp \
 	ChannelMatrixEstimator.cpp ChannelOrderEstimator.cpp KalmanEstimator.cpp \
-	KnownChannelChannelMatrixEstimator.cpp LMSEstimator.cpp OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp \
-	RLSEstimator.cpp
+	KnownChannelChannelMatrixEstimator.cpp KnownSymbolsKalmanEstimator.cpp LMSEstimator.cpp \
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp RLSEstimator.cpp

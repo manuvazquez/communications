@@ -79,7 +79,6 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
 	for(int iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-
 #ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 		tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_c-_m+1,iObservationToBeProcessed-1);
 #endif
