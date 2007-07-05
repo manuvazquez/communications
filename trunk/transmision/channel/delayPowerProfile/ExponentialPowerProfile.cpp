@@ -26,7 +26,6 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, double T, dou
 
 	while((power=exp(-delay/1e-6))>threshold)
 	{
-		_delays.push_back(delay);
 		_amplitudes.push_back(power);
 		delay += T;
 		normConst += power;

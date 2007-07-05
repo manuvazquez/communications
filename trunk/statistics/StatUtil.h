@@ -40,6 +40,7 @@
 class StatUtil{
 private:
 	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
+	static Random _randomGenerator;
 public:
     /**
      * It assumes that the probabilities are normalized
@@ -56,6 +57,7 @@ public:
 	static double Variance(const tVector &v);
 	static double Mean(const tMatrix &A);
 	static vector<int> WithoutReplacementSampling(int nSamples,const tVector &probabilities);
+	static Random& GetRandomGenerator() { return _randomGenerator;}
 };
 
 #endif

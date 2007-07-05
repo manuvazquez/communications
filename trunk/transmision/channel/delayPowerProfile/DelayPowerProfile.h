@@ -31,7 +31,7 @@
 class DelayPowerProfile{
 protected:
 	int _nRx,_nTx;
-	std::vector<double> _delays,_amplitudes;
+	std::vector<double> _amplitudes;
 	double _generatedCoefficientsMean;
 	tMatrix _means,_variances;
 

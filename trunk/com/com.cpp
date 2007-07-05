@@ -53,6 +53,8 @@
 
 #include <ExponentialPowerProfile.h>
 #include <FlatPowerProfile.h>
+#include <ContinuousPowerProfile.h>
+#include <ConstantMeanDSPowerProfile.h>
 
 #include <ChannelDependentNoise.h>
 #include <NullNoise.h>
@@ -176,9 +178,33 @@ int main(int argc,char* argv[])
     // channel parameters
 	double channelVariance=1.0;
 
+
+	vector<double> differentialDelays,powers;
+	// suburban macro
+// 	differentialDelays.push_back(0);differentialDelays.push_back(0.1408e-6);differentialDelays.push_back(0.0626e-6);
+// 	differentialDelays.push_back(0.4015e-6);differentialDelays.push_back(1.3820e-6);differentialDelays.push_back(2.8280e-6);
+// 	powers.push_back(0);powers.push_back(-2.6682);powers.push_back(-6.2147);
+// 	powers.push_back(-10.4132);powers.push_back(-16.4735);powers.push_back(-22.1898);
+
+	// urban macro
+// 	differentialDelays.push_back(0);differentialDelays.push_back(0.3600e-6);differentialDelays.push_back(0.2527e-6);
+// 	differentialDelays.push_back(1.0387e-6);differentialDelays.push_back(2.7300e-6);differentialDelays.push_back(4.5977e-6);
+// 	powers.push_back(0);powers.push_back(-2.2204);powers.push_back(-1.7184);
+// 	powers.push_back(-5.1896);powers.push_back(-9.0516);powers.push_back(-12.5013);
+
+	// urban micro
+	differentialDelays.push_back(0);differentialDelays.push_back(0.2840e-6);differentialDelays.push_back(0.2047e-6);
+	differentialDelays.push_back(0.6623e-6);differentialDelays.push_back(0.8066e-6);differentialDelays.push_back(0.9227e-6);
+	powers.push_back(0);powers.push_back(-1.2661);powers.push_back(-2.7201);
+	powers.push_back(-4.2973);powers.push_back(-6.0140);powers.push_back(-8.4306);
+
+	ConstantMeanDSPowerProfile powerProfile(L,N,differentialDelays,powers,T);
+
+
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.00001); // m = 6
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.01); // m = 3
-	FlatPowerProfile powerProfile(L,N,m,channelVariance);
+// 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
+	powerProfile.Print();
 	cout << "memoria es " << powerProfile.Memory() << endl;
 
     // channel estimator parameters
@@ -323,6 +349,10 @@ int main(int argc,char* argv[])
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
     vector<LaGenMatInt> overallErrorsNumberTimeEvolution(SNRs.size());
 
+	vector<uint32_t> mainSeeds,statUtilSeeds;
+	mainSeeds.reserve(nFrames);
+	statUtilSeeds.reserve(nFrames);
+
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
 	vector<tMatrix> presentFrameMSEtimeEvolution(SNRs.size());
 	vector<vector<tMatrix> > MSEtimeEvolution;
@@ -338,8 +368,16 @@ int main(int argc,char* argv[])
 
 #define PARAMETERS_DEFINED
 
+	// for repeating simulations
+// 	randomGenerator.setSeed(2468960273);
+// 	StatUtil::GetRandomGenerator().setSeed(3255493677);
+
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
+		// the seeds are kept for saving later
+	    mainSeeds.push_back(randomGenerator.getSeed());
+	    statUtilSeeds.push_back(StatUtil::GetRandomGenerator().getSeed());
+
         // bits are generated ...
         Bits bits(N,K+nSmoothingBitsVectors,randomGenerator);
 
@@ -353,11 +391,11 @@ int main(int argc,char* argv[])
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
         // an AR channel is generated
-	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+// 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 // 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARprocessOrder,velocity/3.6,carrierFrequency,T));
 
 
-// 		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
+		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
@@ -557,10 +595,13 @@ int main(int argc,char* argv[])
                 // Pe evolution
                 tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));
 
-                for(int k=0;k<K;k++)
-                	for(int iUser=0;iUser<N;iUser++)
-                		if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
-                			overallErrorsNumberTimeEvolution[iSNR](iAlgorithm,k)++;
+	            if(detectedSymbols.rows()!=0)
+	            {
+					for(int k=0;k<K;k++)
+						for(int iUser=0;iUser<N;iUser++)
+							if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
+								overallErrorsNumberTimeEvolution[iSNR](iAlgorithm,k)++;
+	            }
 
                 delete algorithms[iAlgorithm];
             }
@@ -569,9 +610,6 @@ int main(int argc,char* argv[])
 
 		// ----------------- VARIABLES SAVING ----------------------
 		ofstream f(outputFileName,ofstream::trunc);
-
-	    // channel
-	    Util::MatricesVectorToStream(canal.Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 
         // pe
 		peMatrices.push_back(presentFramePe);
@@ -627,6 +665,10 @@ int main(int argc,char* argv[])
 		Util::ScalarToStream(velocity,"velocity",f);
 		Util::ScalarToStream(carrierFrequency,"carrierFrequency",f);
 		Util::ScalarToStream(symbolRate,"symbolRate",f);
+		Util::ScalarsVectorToStream(mainSeeds,"mainSeeds",f);
+		Util::ScalarsVectorToStream(statUtilSeeds,"statUtilSeeds",f);
+
+	    Util::MatricesVectorToStream(canal.Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 
 		f.close();
 		// ---------------------------------------------------------

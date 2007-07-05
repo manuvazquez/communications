@@ -17,42 +17,19 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "DelayPowerProfile.h"
+#ifndef CONSTANTMEANDSPOWERPROFILE_H
+#define CONSTANTMEANDSPOWERPROFILE_H
 
-DelayPowerProfile::DelayPowerProfile(int nRx,int nTx):_nRx(nRx),_nTx(nTx),_generatedCoefficientsMean(0.0)
+#include <ContinuousPowerProfile.h>
+
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class ConstantMeanDSPowerProfile : public ContinuousPowerProfile
 {
-}
+public:
+    ConstantMeanDSPowerProfile(int nRx, int nTx, std::vector< double > differentialDelays, std::vector< double > powers, double T);
 
-DelayPowerProfile::~DelayPowerProfile()
-{
-}
+};
 
-tMatrix DelayPowerProfile::GenerateChannelMatrix(Random &random)
-{
-	tMatrix res(_nRx,_nTx*_amplitudes.size());
-
-	for(int i=0;i<res.rows();i++)
-		for(int j=0;j<res.cols();j++)
-			res(i,j) = random.randn()*sqrt(_variances(i,j)) + _means(i,j);
-
-	return res;
-}
-
-void DelayPowerProfile::Print() const
-{
-	for(uint i=0;i<_amplitudes.size();i++)
-		std::cout << "amplitude = " << _amplitudes[i] << std::endl;
-}
-
-void DelayPowerProfile::GenerateMatrices()
-{
-	// the memory of the channel is "_amplitudes.size()"
-	_means = tMatrix(_nRx,_nTx*_amplitudes.size());
-	_means = _generatedCoefficientsMean;
-
-	_variances = tMatrix(_nRx,_nTx*_amplitudes.size());
-	tRange rAllRows(0,_nRx-1);
-	for(uint i=0;i<_amplitudes.size();i++)
-		//
-		_variances(rAllRows,tRange(i*_nTx,(i+1)*_nTx-1)) = _amplitudes[i];
-}
+#endif

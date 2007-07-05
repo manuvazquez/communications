@@ -17,42 +17,36 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "DelayPowerProfile.h"
+#include "ConstantMeanDSPowerProfile.h"
 
-DelayPowerProfile::DelayPowerProfile(int nRx,int nTx):_nRx(nRx),_nTx(nTx),_generatedCoefficientsMean(0.0)
+// #define DEBUG
+
+ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nRx, int nTx, std::vector< double > differentialDelays, std::vector< double > powers, double T): ContinuousPowerProfile(nRx, nTx, differentialDelays, powers)
 {
-}
+	double quotient;
+	int k;
+	int nDelays = int(ceil(_continuousDelays[_continuousDelays.size()-1]/T))+1;
+	_amplitudes.resize(nDelays,0.0);
 
-DelayPowerProfile::~DelayPowerProfile()
-{
-}
+#ifdef DEBUG
+	cout << "T = " << T << endl;
+	cout << "_continuousDelays.size() es " << _continuousDelays.size() << "floor(_continuousDelays[_continuousDelays.size()-1]/T) es " << floor(_continuousDelays[_continuousDelays.size()-1]/T) << endl;
+	cout << "nDelays es " << nDelays << endl;
+#endif
 
-tMatrix DelayPowerProfile::GenerateChannelMatrix(Random &random)
-{
-	tMatrix res(_nRx,_nTx*_amplitudes.size());
+	for(uint i=0;i<_continuousDelays.size();i++)
+	{
+		quotient = _continuousDelays[i] / T;
+		if(quotient == floor(quotient))
+		{
+			_amplitudes[int(quotient)] += _continuousPowers[i];
+			continue;
+		}
+		k = int(_continuousDelays[i] / T);
+		_amplitudes[k] += ((k+1)- _continuousDelays[i]/T)*_continuousPowers[i];
+		_amplitudes[k+1] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
+	}
 
-	for(int i=0;i<res.rows();i++)
-		for(int j=0;j<res.cols();j++)
-			res(i,j) = random.randn()*sqrt(_variances(i,j)) + _means(i,j);
-
-	return res;
-}
-
-void DelayPowerProfile::Print() const
-{
-	for(uint i=0;i<_amplitudes.size();i++)
-		std::cout << "amplitude = " << _amplitudes[i] << std::endl;
-}
-
-void DelayPowerProfile::GenerateMatrices()
-{
-	// the memory of the channel is "_amplitudes.size()"
-	_means = tMatrix(_nRx,_nTx*_amplitudes.size());
-	_means = _generatedCoefficientsMean;
-
-	_variances = tMatrix(_nRx,_nTx*_amplitudes.size());
-	tRange rAllRows(0,_nRx-1);
-	for(uint i=0;i<_amplitudes.size();i++)
-		//
-		_variances(rAllRows,tRange(i*_nTx,(i+1)*_nTx-1)) = _amplitudes[i];
+	GenerateMatrices();
+	Util::Print(_amplitudes);
 }

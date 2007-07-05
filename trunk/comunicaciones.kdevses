@@ -3,7 +3,7 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="372" Type="Source" />
+   <View0 Encoding="" line="451" Type="Source" />
   </Doc0>
  </DocsAndViews>
  <pluginList>
@@ -17,34 +17,34 @@
   </kdevastyle>
   <kdevbookmarks>
    <bookmarks>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
-     <mark line="93" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="87" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
      <mark line="559" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="87" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
+     <mark line="93" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="479" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+     <mark line="59" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="59" />
+    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="479" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="130" />
      <mark line="80" />
      <mark line="118" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-     <mark line="97" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
      <mark line="141" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+     <mark line="97" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
      <mark line="38" />
@@ -55,13 +55,13 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="138" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/statistics/ARprocess.cpp" >
-     <mark line="21" />
-     <mark line="82" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="359" />
      <mark line="402" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/statistics/ARprocess.cpp" >
+     <mark line="21" />
+     <mark line="82" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/TriangularizationBasedSMCAlgorithm.cpp" >
      <mark line="208" />
@@ -69,15 +69,15 @@
      <mark line="93" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="425" />
-     <mark line="427" />
-     <mark line="411" />
-     <mark line="429" />
-     <mark line="413" />
-     <mark line="437" />
-     <mark line="421" />
-     <mark line="439" />
-     <mark line="423" />
+     <mark line="459" />
+     <mark line="477" />
+     <mark line="461" />
+     <mark line="463" />
+     <mark line="465" />
+     <mark line="449" />
+     <mark line="467" />
+     <mark line="451" />
+     <mark line="475" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />

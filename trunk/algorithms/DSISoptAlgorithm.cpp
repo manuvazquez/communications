@@ -32,11 +32,10 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
-	tRange mMinus1FirstColumns(0,_m-2);
-// 	tRange mFirstColumns(0,_m-1);
+	tRange rmMinus1FirstColumns(0,_m-2);
 
 	// it selects all rows in the symbols Matrix
-	tRange allSymbolRows(0,_N-1);
+	tRange rAll;
 
 	// it includes all symbol vectors involved in the smoothing
 	tMatrix smoothingSymbolVectors(_N,_m+_d);
@@ -47,25 +46,19 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
+    tRange rmPrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime);
+    tRange rmMinus1PrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime-1);
+    tRange rmColumns;
+
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-		#ifdef DEBUG
-			cout << "Observacion procesada: " << iObservationToBeProcessed << endl;
-		#endif
-
-		tRange mPrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
-		tRange mMinus1PrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
-			#ifdef DEBUG
-				cout << "Particula: " << iParticle << endl;
-			#endif
-
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
-			smoothingSymbolVectors(allSymbolRows,mMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(mMinus1PrecedentColumns));
+			smoothingSymbolVectors(rAll,rmMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rmMinus1PrecedentColumns));
 
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
@@ -88,32 +81,22 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 					for(k=0;k<testedSmoothingVector.size();k++)
 						smoothingSymbolVectors((_Nm+k)%_N,(_Nm+k)/_N) = testedSmoothingVector[k];
 
-					auxLikelihoodsProd = 1.0;
-
-					#ifdef DEBUG2
-						cout << "Before clonig the channel estimator." << endl;
-					#endif
-
 					// a clone of the channel estimator is generated because this must not be modified
 					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->Clone();
 
-					#ifdef DEBUG2
-						cout << "After clonig the channel estimator." << endl;
-					#endif
+                    rmColumns.set(0,_m-1);
+					auxLikelihoodsProd = 1.0;
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
-						tRange mColumns(iSmoothingLag,iSmoothingLag+_m-1);
 
 						// the likelihood is computed and accumulated
-						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
-
-						#ifdef DEBUG2
-							cout << "Despues de llamar a likelihood." << endl;
-						#endif
+						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 						// a step in the Kalman Filter
-						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(allSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+
+                        rmColumns = rmColumns + 1;
 					} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 
 					// memory of the clone is freed
@@ -144,7 +127,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,(processedParticle->GetChannelMatrixEstimator(_estimatorIndex))->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
 
@@ -154,8 +137,10 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_K-1))
-// 			Resampling();
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
+
+        rmPrecedentColumns = rmPrecedentColumns + 1;
+        rmMinus1PrecedentColumns = rmMinus1PrecedentColumns + 1;
 
 	} // for each time instant
 }

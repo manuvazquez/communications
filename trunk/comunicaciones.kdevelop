@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>estimation/libestimation.a</activetarget>
+      <activetarget>transmision/channel/delayPowerProfile/libdelayPowerProfile.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

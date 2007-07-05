@@ -367,6 +367,7 @@ template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string 
 }
 template void Util::ScalarsVectorToStream(std::vector<double> vector,string name,ofstream &f);
 template void Util::ScalarsVectorToStream(std::vector<int> vector,string name,ofstream &f);
+template void Util::ScalarsVectorToStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
 template<class T> int Util::Max(const std::vector<T> &vector)
 {

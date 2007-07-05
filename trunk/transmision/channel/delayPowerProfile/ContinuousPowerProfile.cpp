@@ -17,42 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "DelayPowerProfile.h"
+#include "ContinuousPowerProfile.h"
 
-DelayPowerProfile::DelayPowerProfile(int nRx,int nTx):_nRx(nRx),_nTx(nTx),_generatedCoefficientsMean(0.0)
+using namespace std;
+
+ContinuousPowerProfile::ContinuousPowerProfile(int nRx, int nTx, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nRx, nTx),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
 {
-}
+	if(differentialDelays.size()!=powers.size())
+		throw RuntimeException("ContinuousPowerProfile::ContinuousPowerProfile: numbers of delays and powers differ.");
 
-DelayPowerProfile::~DelayPowerProfile()
-{
-}
-
-tMatrix DelayPowerProfile::GenerateChannelMatrix(Random &random)
-{
-	tMatrix res(_nRx,_nTx*_amplitudes.size());
-
-	for(int i=0;i<res.rows();i++)
-		for(int j=0;j<res.cols();j++)
-			res(i,j) = random.randn()*sqrt(_variances(i,j)) + _means(i,j);
-
-	return res;
-}
-
-void DelayPowerProfile::Print() const
-{
-	for(uint i=0;i<_amplitudes.size();i++)
-		std::cout << "amplitude = " << _amplitudes[i] << std::endl;
-}
-
-void DelayPowerProfile::GenerateMatrices()
-{
-	// the memory of the channel is "_amplitudes.size()"
-	_means = tMatrix(_nRx,_nTx*_amplitudes.size());
-	_means = _generatedCoefficientsMean;
-
-	_variances = tMatrix(_nRx,_nTx*_amplitudes.size());
-	tRange rAllRows(0,_nRx-1);
-	for(uint i=0;i<_amplitudes.size();i++)
-		//
-		_variances(rAllRows,tRange(i*_nTx,(i+1)*_nTx-1)) = _amplitudes[i];
+	double accumulatedDelay = _continuousDelays[0] = differentialDelays[0];
+	_continuousPowers[0] = pow(10.0,powers[0]/10.0);
+	for(uint i=1;i<differentialDelays.size();i++)
+	{
+		accumulatedDelay += differentialDelays[i];
+		_continuousDelays[i] = accumulatedDelay;
+		_continuousPowers[i] = pow(10.0,powers[i]/10.0);
+	}
 }
