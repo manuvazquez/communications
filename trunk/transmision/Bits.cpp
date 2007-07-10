@@ -20,7 +20,6 @@
 #include <iostream>
 #include <time.h>
 #include "Bits.h"
-// #include <Random.h>
 
 Bits::Bits()
 {

@@ -264,7 +264,7 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
     }
 }
 
-void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f)
+template<class T> void Util::MatricesVectorToStream(vector<T> matrices,string name,ofstream &f)
 {
 	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
 	{
@@ -280,6 +280,8 @@ void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream 
 			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
+template void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f);
+template void Util::MatricesVectorToStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
 
 void Util::MatricesVectoresVectorToStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
 {

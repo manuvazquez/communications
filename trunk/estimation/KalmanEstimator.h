@@ -52,7 +52,7 @@ public:
 
 	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
 	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone();
+	KalmanEstimator *Clone() const;
 	tMatrix SampleFromPredictive();
 };
 

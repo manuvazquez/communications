@@ -29,7 +29,7 @@ RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgett
 {
 }
 
-ChannelMatrixEstimator* RLSEstimator::Clone()
+ChannelMatrixEstimator* RLSEstimator::Clone() const
 {
 	// it relies on copy constructor
 	return new RLSEstimator(*this);

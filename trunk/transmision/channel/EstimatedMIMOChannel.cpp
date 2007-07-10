@@ -17,32 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "LMSEstimator.h"
+#include "EstimatedMIMOChannel.h"
 
-LMSEstimator::LMSEstimator(const tMatrix &initialEstimation,int N,double mu): ChannelMatrixEstimator(initialEstimation,N),_mu(mu)
+EstimatedMIMOChannel::EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nTx, nRx, memory, length),_channelMatrices(new tMatrix[length])
 {
+	int i;
+
+	ChannelMatrixEstimator *channelMatrixEstimatorClone = channelMatrixEstimator->Clone();
+
+
+	for(i=0;i<_memory-1;i++)
+		_channelMatrices[i] = 0.0;
+
+
+	tRange rAll,rInvolvedSymbolVectors(0,_memory-1);
+	for(i=_memory-1;i<_length;i++)
+	{
+		_channelMatrices[i] = channelMatrixEstimatorClone->NextMatrix(observations.col(i),symbols(rAll,rInvolvedSymbolVectors),noiseVariances[i]);
+		rInvolvedSymbolVectors = rInvolvedSymbolVectors + 1;
+	}
+
+	delete channelMatrixEstimatorClone;
 }
 
-LMSEstimator* LMSEstimator::Clone() const
+
+EstimatedMIMOChannel::~EstimatedMIMOChannel()
 {
-	return new LMSEstimator(*this);
+	delete[] _channelMatrices;
 }
 
-tMatrix LMSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
-{
-	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
-
-    // _error = observations
-    tVector error = observations;
-
-    // error = _lastEstimatedChannelMatrix*symbolsVector - error
-    // (note that error is initialized to observations, so that:
-    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
-    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
-
-    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
-    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu);
-
-	return _lastEstimatedChannelMatrix;
-}
 

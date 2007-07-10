@@ -40,7 +40,7 @@ public:
 
 	void SetFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}
 	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() = 0;
+	virtual ChannelMatrixEstimator *Clone() const = 0;
 
 	virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 	{

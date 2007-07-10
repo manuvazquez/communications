@@ -43,7 +43,7 @@ public:
 
     ~OneChannelOrderPerTransmitAtennaWrapperEstimator();
 
-    virtual ChannelMatrixEstimator* Clone();
+    virtual ChannelMatrixEstimator* Clone() const;
     virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);

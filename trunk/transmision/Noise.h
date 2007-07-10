@@ -26,7 +26,6 @@
 
 #include <vector>
 #include <types.h>
-#include <Random.h>
 #include <StatUtil.h>
 
 class Noise{

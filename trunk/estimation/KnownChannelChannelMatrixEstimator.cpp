@@ -23,13 +23,14 @@ KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIM
 {
 }
 
-KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::Clone()
+KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::Clone() const
 {
 		return new KnownChannelChannelMatrixEstimator(*this);
 }
 
 tMatrix KnownChannelChannelMatrixEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
-	return _channel[_iNextMatrix++];
+	_lastEstimatedChannelMatrix = _channel[_iNextMatrix++];
+	return _lastEstimatedChannelMatrix;
 }
 

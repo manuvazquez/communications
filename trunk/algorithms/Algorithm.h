@@ -47,7 +47,7 @@ public:
     string GetName() {return _name;}
 
     /**
-    * It also returns the symbol vectors corresponding to the training sequence (if exists)
+    * It also returns the symbol vectors corresponding to the training sequence (if it exists)
     * @return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
     */
     virtual tMatrix GetDetectedSymbolVectors() = 0;

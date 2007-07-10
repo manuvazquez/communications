@@ -27,7 +27,7 @@ OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAten
 {
 	#ifdef DEBUG
 		cout << "_antennasChannelOrders.size(): " << _antennasChannelOrders.size() << " _N: " << _N << endl;
-		cout << "El tamaño de involvedSymb... es " << _involvedSymbolsVector.size() << endl;
+		cout << "El tamaï¿½o de involvedSymb... es " << _involvedSymbolsVector.size() << endl;
 	#endif
 	if(_antennasChannelOrders.size()!=_N)
 		throw RuntimeException("OneChannelOrderPerTransmitAtennaWrapperEstimator::OneChannelOrderPerTransmitAtennaWrapperEstimator: antennasChannelOrders size is wrong.");
@@ -49,7 +49,7 @@ OneChannelOrderPerTransmitAtennaWrapperEstimator::~OneChannelOrderPerTransmitAte
 }
 
 
-ChannelMatrixEstimator* OneChannelOrderPerTransmitAtennaWrapperEstimator::Clone()
+ChannelMatrixEstimator* OneChannelOrderPerTransmitAtennaWrapperEstimator::Clone() const
 {
 	return new OneChannelOrderPerTransmitAtennaWrapperEstimator(*this);
 }

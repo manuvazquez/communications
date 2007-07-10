@@ -17,32 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "LMSEstimator.h"
+#ifndef ESTIMATEDMIMOCHANNEL_H
+#define ESTIMATEDMIMOCHANNEL_H
 
-LMSEstimator::LMSEstimator(const tMatrix &initialEstimation,int N,double mu): ChannelMatrixEstimator(initialEstimation,N),_mu(mu)
+#include <StillMemoryMIMOChannel.h>
+#include <ChannelMatrixEstimator.h>
+
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class EstimatedMIMOChannel : public StillMemoryMIMOChannel
 {
-}
+protected:
+	tMatrix *_channelMatrices;
+public:
+    EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances);
 
-LMSEstimator* LMSEstimator::Clone() const
-{
-	return new LMSEstimator(*this);
-}
+    ~EstimatedMIMOChannel();
 
-tMatrix LMSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
-{
-	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
+	tMatrix& operator[](int n) const { return _channelMatrices[n];}
+};
 
-    // _error = observations
-    tVector error = observations;
-
-    // error = _lastEstimatedChannelMatrix*symbolsVector - error
-    // (note that error is initialized to observations, so that:
-    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
-    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
-
-    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
-    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu);
-
-	return _lastEstimatedChannelMatrix;
-}
-
+#endif

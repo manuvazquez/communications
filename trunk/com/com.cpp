@@ -50,6 +50,7 @@
 #include <ARoneChannelOrderPerTransmitAtennaMIMOChannel.h>
 #include <SparklingMemoryARMIMOChannel.h>
 #include <BesselChannel.h>
+#include <EstimatedMIMOChannel.h>
 
 #include <ExponentialPowerProfile.h>
 #include <FlatPowerProfile.h>
@@ -127,19 +128,19 @@ int main(int argc,char* argv[])
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1000;
+    int nFrames = 1;
     int L=3,N=2,K=300;
     int trainSeqLength = 15;
-    int nParticles = 30;
+    int nParticles = 200;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
     int preambleLength = 10;
 
     // BER and MSE computing
     int BERwindowStart = trainSeqLength;
-// 	BERwindowStart = preambleLength + K*3/10;
+	BERwindowStart = preambleLength + K*3/10;
     int MSEwindowStart = 0;
-//     MSEwindowStart = preambleLength + K*9/10;
+    MSEwindowStart = preambleLength + K*9/10;
 
 	cout << "BERwindowStart = " << BERwindowStart << " MSEwindowStart = " << MSEwindowStart << endl;
 
@@ -161,7 +162,8 @@ int main(int argc,char* argv[])
 
     // SNRs to be processed
     vector<int> SNRs;
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(15);
 
     // AR process parameters
     vector<double> ARcoefficients(1);
@@ -307,11 +309,11 @@ int main(int argc,char* argv[])
 
     // always the same resampling criterion and algorithms
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
-    MultinomialResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
-    ResidualResamplingAlgorithm residualResampling(criterioRemuestreo);
-    WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
-    WithoutReplacementResamplingAlgorithm withoutReplacementResampling(criterioRemuestreo);
-    BestParticlesResamplingAlgorithm bestParticlesResampling(criterioRemuestreo);
+//     MultinomialResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
+    ResidualResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
+//     WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
+//     WithoutReplacementResamplingAlgorithm withoutReplacementResampling(criterioRemuestreo);
+//     BestParticlesResamplingAlgorithm bestParticlesResampling(criterioRemuestreo);
 
 
 	// ------------------------- test simulations ----------------------
@@ -349,9 +351,13 @@ int main(int argc,char* argv[])
     vector<tMatrix> overallPeTimeEvolution(SNRs.size());
     vector<LaGenMatInt> overallErrorsNumberTimeEvolution(SNRs.size());
 
+	// seeds
 	vector<uint32_t> mainSeeds,statUtilSeeds;
+	vector<LaGenMatLongInt> beforeRunStatUtilSeeds;
 	mainSeeds.reserve(nFrames);
 	statUtilSeeds.reserve(nFrames);
+	beforeRunStatUtilSeeds.reserve(nFrames);
+	LaGenMatLongInt presentFrameStatUtilSeeds;
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
 	vector<tMatrix> presentFrameMSEtimeEvolution(SNRs.size());
@@ -369,8 +375,8 @@ int main(int argc,char* argv[])
 #define PARAMETERS_DEFINED
 
 	// for repeating simulations
-// 	randomGenerator.setSeed(2468960273);
-// 	StatUtil::GetRandomGenerator().setSeed(3255493677);
+	randomGenerator.setSeed(657796750);
+	StatUtil::GetRandomGenerator().setSeed(2925137718);
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -442,14 +448,18 @@ int main(int argc,char* argv[])
             // transmission
             tMatrix observaciones = canal.Transmit(symbols,ruido);
 
+
+	    	// viterbi
+	        EstimatedMIMOChannel kalmanEstimatedChannel(N,L,m,symbols.cols(),&kalmanEstimator,symbols,observaciones,ruido.Variances());
+
             // algorithms are created
             vector<Algorithm *> algorithms;
 
             // ----------------------- ALGORITHMS TO RUN ----------------------------
 
-            algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
+//             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
-            algorithms.push_back(new SISoptAlgorithm ("SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
+//             algorithms.push_back(new SISoptAlgorithm ("SIS opt",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances()));
 
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",pam2,L,N,lastSymbolVectorInstant,m,&lmsEstimator,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -457,15 +467,15 @@ int main(int argc,char* argv[])
 
 // 	        algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (known channel)",pam2,L,N,lastSymbolVectorInstant,m,&knownChannelEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
+// 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-            algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
+//             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
-            algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
+//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
@@ -473,9 +483,9 @@ int main(int argc,char* argv[])
 
 // 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
-			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+// 			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
-	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+// 	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
@@ -554,11 +564,19 @@ int main(int argc,char* argv[])
 				for(uint i=0;i<SNRs.size();i++)
 					presentFrameMSEtimeEvolution[i] = tMatrix(algorithms.size(),K);
 #endif
+
+	            presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
             }
 
             // algorithms are executed
             for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
+	            // in order to repeat a concrete simulation...
+	            StatUtil::GetRandomGenerator().setSeed(1792308243);
+
+	            // the seed kept by the class StatUtil is saved
+	            presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
+
 	            algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAllSymbolRows,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());(preambleLength,preambleLength+trainSeqLength-1)
 
@@ -569,7 +587,7 @@ int main(int argc,char* argv[])
                 mse = algorithms[iAlgorithm]->MSE(canal.Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-	            tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->GetEstimatedChannelMatrices(),MSEwindowStart,K-1,canal.Range(preambleLength,preambleLength+K-1),MSEwindowStart,K-1);
+	            tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->GetEstimatedChannelMatrices(),0,K-1,canal.Range(preambleLength,preambleLength+K-1),0,K-1);
 	            for(int ik=0;ik<K;ik++)
 		            presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
@@ -628,6 +646,12 @@ int main(int argc,char* argv[])
 	    MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
 	    Util::MatricesVectoresVectorToStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
+
+	    // seeds just before the run of the algorithms
+// 	    beforeRunMainSeeds.push_back(presentFrameMainSeeds);
+	    beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
+// 	    Util::MatricesVectorToStream(beforeRunMainSeeds,"beforeRunMainSeeds",f);
+	    Util::MatricesVectorToStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 			for(uint i=0;i<algorithmsNames.size();i++)
