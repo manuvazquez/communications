@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MMSEDetector.h"
 
-#define DEBUG
+// #define DEBUG
 
 MMSEDetector::MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_filter(_channelMatrixRows,_channelMatrixCols)
 ,_alphabetVarianceChannelMatrixChannelMatrixTrans(rows,rows),_Rx(rows,rows),_piv(rows),_softEstimations(cols),_rNsimbolsDetected(cols-nSymbolsToBeDetected,cols-1),_rAllChannelMatrixRows(0,rows-1)
@@ -44,6 +44,8 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 	// _Rx = _alphabetVarianceChannelMatrixChannelMatrixTrans + noiseCovariance
 	Util::Add(_alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,_Rx);
 
+	_RxBak = _Rx;
+
 	// _invRx = inverse(_Rx)
 	LUFactorizeIP(_Rx,_piv);
 	LaLUInverseIP(_Rx,_piv);
@@ -59,10 +61,38 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 
 	// ------------------------------------------------------------------------------
 
+#ifdef DEBUG
+	tMatrix aux(_channelMatrixCols,_channelMatrixCols);
+	Blas_Mat_Trans_Mat_Mult(_filter,channelMatrix,aux);
+	cout << "filtro * canal" << endl << aux;
+#endif
+
 	return _softEstimations(_rNsimbolsDetected);
 }
 
 double MMSEDetector::NthSymbolVariance(int n)
 {
-	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
+#ifdef DEBUG
+	cout << "mu = " << Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)) << endl;
+#endif
+	tVector Rxf(_channelMatrixRows);
+
+#ifdef DEBUG
+	cout << "Lo que devolvía antes " << (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) << endl;
+#endif
+
+	// Rxf = __Rx * filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n)
+	Blas_Mat_Vec_Mult(_RxBak,_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),Rxf);
+
+#ifdef DEBUG
+	cout << "Lo que voy a devolver ahora: " << Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)),2.0) << endl;
+#endif
+
+	return Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)),2.0);
+// 	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
+}
+
+double MMSEDetector::NthSymbolGain(int n) const
+{
+	return Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n));
 }

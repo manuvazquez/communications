@@ -24,8 +24,10 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <math.h>
 #include <vector>
 #include <Bits.h>
+#include <Alphabet.h>
 #include <Util.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
@@ -37,6 +39,7 @@ public:
 	static double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
 	static double ComputeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
 	static tVector MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2);
+	static tMatrix GenerateTrainingSequence(const Alphabet &alphabet,int nTx,int length);
 };
 
 #endif

@@ -33,7 +33,6 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
     _mean /= _length;
     mediaSimbolosCuadrado /= _length;
     _variance = mediaSimbolosCuadrado - (_mean*_mean);
-//     cout << "Mean is " << _mean << " and variance " << _variance << endl;
 }
 
 tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)
@@ -59,7 +58,7 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 	return _bitsSequences[iterador - _symbols.begin()];
 }
 
-void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
+void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res) const
 {
 	int tamVector = res.size();
 
@@ -69,9 +68,6 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res)
 
 	if(numero>=pow((double)_length,(double)tamVector))
 		throw RuntimeException("Alphabet::IntToSymbolsArray: vector size is smaller than needed.");
-
-// 	// se reserva espacio para un vector de bits tama�o "tamVector"
-// 	vector<tBit> _bitsSequences(tamVector);
 
 	int resto,i;
 

@@ -21,9 +21,15 @@
 
 using namespace std;
 
-Noise::Noise(int nRx,int length): _nRx(nRx),_length(length),
-_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0))
+Noise::Noise(int nRx,int length): _nRx(nRx),_length(length)
+,_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0))
 {
+// 	Random randomGenerator;
+//
+// 	_matrix = tMatrix(_nRx,_length);
+// 	for(int i=0;i<_nRx;i++)
+// 		for(int j=0;j<_length;j++)
+// 			_matrix(i,j) = randomGenerator.randn();
 }
 
 vector<double> Noise::Variances()

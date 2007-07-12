@@ -19,6 +19,8 @@
  ***************************************************************************/
 
 // #define DEBUG
+// #define MISMO_CANAL
+#define EXPORT_REAL_DATA
 
 #define MSE_TIME_EVOLUTION_COMPUTING
 
@@ -130,7 +132,7 @@ int main(int argc,char* argv[])
     // GLOBAL PARAMETERS
     int nFrames = 1;
     int L=3,N=2,K=300;
-    int trainSeqLength = 15;
+    int trainSeqLength = 100;
     int nParticles = 200;
     double resamplingRatio = 0.9;
     char outputFileName[HOSTNAME_LENGTH+4] = "res_";
@@ -207,6 +209,8 @@ int main(int argc,char* argv[])
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.01); // m = 3
 // 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
 	powerProfile.Print();
+	cout << powerProfile.Means();
+	cout << powerProfile.Variances();
 	cout << "memoria es " << powerProfile.Memory() << endl;
 
     // channel estimator parameters
@@ -311,6 +315,7 @@ int main(int argc,char* argv[])
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
 //     MultinomialResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
     ResidualResamplingAlgorithm algoritmoRemuestreo(criterioRemuestreo);
+
 //     WithThresholdResamplingAlgorithmWrapper residualResamplingWithThreshold(new ResidualResamplingAlgorithm(criterioRemuestreo),0.2);
 //     WithoutReplacementResamplingAlgorithm withoutReplacementResampling(criterioRemuestreo);
 //     BestParticlesResamplingAlgorithm bestParticlesResampling(criterioRemuestreo);
@@ -375,11 +380,18 @@ int main(int argc,char* argv[])
 #define PARAMETERS_DEFINED
 
 	// for repeating simulations
-	randomGenerator.setSeed(657796750);
-	StatUtil::GetRandomGenerator().setSeed(2925137718);
+	randomGenerator.setSeed(2848936331);
+	StatUtil::GetRandomGenerator().setSeed(2969730736);
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
+
+#ifdef MISMO_CANAL
+	    cout << "hola" << endl;
+		randomGenerator.setSeed(657796750);
+		StatUtil::GetRandomGenerator().setSeed(2925137718);
+#endif
+
 		// the seeds are kept for saving later
 	    mainSeeds.push_back(randomGenerator.getSeed());
 	    statUtilSeeds.push_back(StatUtil::GetRandomGenerator().getSeed());
@@ -426,6 +438,13 @@ int main(int argc,char* argv[])
 		MMSEDetector mmseDetectorSmall(L*(c+d+1),N*(d+1),pam2.Variance(),N*(d+1));
 	    DecorrelatorDetector decorrelatorDetector(L*(c+d+1),N*(d+1),pam2.Variance());
 
+#ifdef MISMO_CANAL
+	    Random randomGen1,randomGen2;
+	    randomGenerator.setSeed(randomGen1.getSeed());
+	    StatUtil::GetRandomGenerator().setSeed(randomGen2.getSeed());
+#endif
+
+
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
 
@@ -469,7 +488,7 @@ int main(int argc,char* argv[])
 
 // 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorLarge,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -572,7 +591,7 @@ int main(int argc,char* argv[])
             for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
 	            // in order to repeat a concrete simulation...
-	            StatUtil::GetRandomGenerator().setSeed(1792308243);
+	            StatUtil::GetRandomGenerator().setSeed(3720678788);
 
 	            // the seed kept by the class StatUtil is saved
 	            presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();

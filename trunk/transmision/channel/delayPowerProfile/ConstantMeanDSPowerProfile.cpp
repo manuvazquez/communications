@@ -47,6 +47,10 @@ ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nRx, int nTx, std::ve
 		_amplitudes[k+1] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
 	}
 
+	vector<double> _amplitudesBak = _amplitudes;
+	for(uint i=0;i<_amplitudesBak.size();i++)
+		_amplitudes[_amplitudes.size()-1-i] = _amplitudesBak[i];
+
 	GenerateMatrices();
 	Util::Print(_amplitudes);
 }

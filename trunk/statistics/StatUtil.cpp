@@ -45,6 +45,10 @@ int StatUtil::Discrete_rnd(const tVector &probabilities)
            distributionFunction[i] = distributionFunction[i-1]+probabilities(i);
 
 	uniform = _randomGenerator.rand();
+#ifdef DEBUG
+	cout << "uniform es " << uniform << endl;
+	cout << "distributionFunction[0] = " << distributionFunction[0] << endl;
+#endif
 	int res = 0;
 	while(uniform>distributionFunction[res])
 		res++;

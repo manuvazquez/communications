@@ -159,3 +159,30 @@ tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChan
 
 	return res;
 }
+
+tMatrix TransmissionUtil::GenerateTrainingSequence(const Alphabet &alphabet,int nTx,int length)
+{
+	tMatrix res(nTx,length);
+
+// 	int nPossibleVectors = (int) pow(double(alphabet.Length()),double(nTx));
+// 	vector<tSymbol> v(nTx);
+// 	for(int i=0;i<length;i++)
+// 	{
+// 		alphabet.IntToSymbolsArray(i % nPossibleVectors,v);
+// 		for(int j=0;j<nTx;j++)
+// 			res(j,i) = v[j];
+// 	}
+// 	return res;
+
+	if((length % nTx) != 0)
+		throw RuntimeException("TransmissionUtil::GenerateTrainingSequence: length is not a multiple of the number of transmitting antennas.");
+
+	for(int i=0;i<length/nTx;i++)
+	{
+		res(0,i*nTx) = 1;
+		res(1,i*nTx) = 1;
+		res(0,i*nTx+1) = -1;
+		res(1,i*nTx+1) = 1;
+	}
+	return res;
+}

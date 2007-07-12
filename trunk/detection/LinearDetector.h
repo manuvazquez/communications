@@ -41,6 +41,7 @@ public:
 	 * @return
 	 */
 	virtual double NthSymbolVariance(int n) = 0;
+	virtual double NthSymbolGain(int n) const { return 1.0;}
 	virtual ~LinearDetector() {}
 	int ChannelMatrixCols() { return _channelMatrixCols;}
 	virtual LinearDetector *Clone() = 0;

@@ -41,6 +41,7 @@ public:
 	void Print() { cout << _matrix;};
 	virtual double StdDevAt(int n) = 0;
 	virtual tVector operator[](int n) = 0;
+	virtual tMatrix Range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}
 	double VarianceAt(int n){ double stdDev = StdDevAt(n); return stdDev*stdDev;};
 	vector<double> Variances();
 };

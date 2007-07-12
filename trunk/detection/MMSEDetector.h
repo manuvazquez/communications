@@ -48,6 +48,7 @@ protected:
 
 	// required for NthSymbolVariance computing
 	tMatrix _channelMatrix;
+	tMatrix _RxBak;
 public:
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
 
@@ -55,7 +56,8 @@ public:
 	virtual tMatrix ComputedFilter();
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
     virtual void StateStep(tVector observations) {}
-	double NthSymbolVariance(int n);
+	virtual double NthSymbolVariance(int n);
+	virtual double NthSymbolGain(int n) const;
 
 };
 

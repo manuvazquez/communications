@@ -21,7 +21,7 @@ class Alphabet
 		tSymbol operator [](int index) { return _symbols[index];}
 		std::vector<tBit> operator [](tSymbol simbolo);
 		int Length() const { return _length;}
-		void IntToSymbolsArray(int numero, std::vector<tSymbol> &res);
+		void IntToSymbolsArray(int numero, std::vector<tSymbol> &res) const;
 		int SymbolsArrayToInt(std::vector<tSymbol> symbolsVector);
 		tSymbol HardDecision(double softEstimation);
 };
