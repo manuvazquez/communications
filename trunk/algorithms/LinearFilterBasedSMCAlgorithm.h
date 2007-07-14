@@ -38,10 +38,10 @@
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int nParticles, ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int backwardSmoothingLag, int nParticles, ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance);
 
     /**
-     * Constructor for allowing the algorithm to operate over a already constructed particle filter
+     * Constructor for allowing the algorithm to operate over an already constructed particle filter
      * @param name
      * @param alphabet
      * @param L
@@ -49,21 +49,21 @@ public:
      * @param K
      * @param m
      * @param preamble
-     * @param smoothingLag
+     * @param SMCsmoothingLag
      * @param nParticles
      * @param resamplingAlgorithm
      * @param ARcoefficient
      * @param samplingVariance
      * @param ARprocessVariance
      */
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance);
 
     ~LinearFilterBasedSMCAlgorithm();
 
 protected:
 	LinearDetector *_linearDetector;
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-	int _c;
+	int _c,_e;
 
 	void InitializeParticles();
     void Process(const tMatrix &observations, vector< double > noiseVariances);

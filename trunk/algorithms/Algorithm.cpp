@@ -117,20 +117,20 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	return res;
 }
 
-tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &involvedSymbolVectors)
+tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
 {
-    if(matrices.size()!=c+d+1)
+    if(matrices.size()!=c+e+1)
       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
 
-	if(observations.size()!=(_L*(c+d+1)))
+	if(observations.size()!=(_L*(c+e+1)))
 	   throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
 
 	if(involvedSymbolVectors.cols()!=c+m-1)
 		 throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     int i;
-    tRange rAllObservationsRows(0,_L-1);
-    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_L*(c+d+1),_N*(m-1+c));
+    tRange rAll;
+    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_L*(c+e+1),_N*(m-1+c));
 
     tRange rRows(0,_L-1);
     tRange rCols(0,_N*m-1);
@@ -148,15 +148,14 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
     for(i=c;i<c+m-1;i++)
     {
       rCols.set(_N*i,(c+m-1)*_N-1);
-      substractingChannelMatrix(rRows,rCols).inject(matrices[i](rAllObservationsRows,rSourceCols));
+      substractingChannelMatrix(rRows,rCols).inject(matrices[i](rAll,rSourceCols));
 
       rRows = rRows + _L;
       rSourceColsEnd -= _N;
       rSourceCols.set(0,rSourceColsEnd);
     }
 
-	// substracting channel matrix built
-
+	// substracting built channel matrix
 	tVector stackedObservationsMinus = observations;
 	// stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::ToVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
 	Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::ToVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);

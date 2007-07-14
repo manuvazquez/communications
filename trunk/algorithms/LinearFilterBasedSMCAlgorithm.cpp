@@ -21,26 +21,26 @@
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>
 
-// #define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 
-#define DEBUG
-#define MUESTREO
-#define DEBUG_SIN_RESTAR
+// #define DEBUG
+// #define MUESTREO
+// #define DEBUG_RESTANDO
+// #define DEBUG_SIN_RESTAR
 
-
-#ifdef DEBUG_SIN_RESTAR
+#ifdef DEBUG
 extern MIMOChannel *realChannel;
 extern tMatrix *realSymbols;
 extern Noise *realNoise;
 #endif
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
-,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag)
 {
 }
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int smoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, smoothingLag, particleFilter, resamplingAlgorithm)
-,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
+,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0),_e(SMCsmoothingLag)
 {
 }
 
@@ -65,8 +65,8 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
-	vector<tMatrix> matricesToStack(_c+_d+1,tMatrix(_L,_Nm));
-	tRange rAll,rAllSymbolRows(0,_N-1);
+	vector<tMatrix> matricesToStack(_c+_e+1,tMatrix(_L,_Nm));
+	tRange rAll,rNfirst(0,_N-1);
 	tRange range0mMinus2(0,_m-2),rSampledSymbolVectors(_m-1,_m+_d-1);
 	tRange rFirstmSymbolVectors(0,_m-1);
 	tVector sampledVector(_N),sampledSmoothingVector(_N*(_d+1));
@@ -81,8 +81,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	double sumProbAntes;
 #endif
 #ifdef DEBUG_RESTANDO
-	MMSEDetector mmseDetector(_L*(_c+_d+1),_N*(_d+1),_alphabet.Variance(),_N*(_d+1));
-	DecorrelatorDetector decorrelatorDetector(_L*(_c+_d+1),_N*(_d+1),_alphabet.Variance());
+	MMSEDetector mmseDetector(_L*(_c+_e+1),_N*(_e+1),_alphabet.Variance(),_N*(_d+1),0);
+	DecorrelatorDetector decorrelatorDetector(_L*(_c+_e+1),_N*(_e+1),_alphabet.Variance());
 #endif
 
 #ifdef DEBUG_SIN_RESTAR
@@ -91,8 +91,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 #endif
 
 #ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-	tRange rColumnsStackedChannelMatrixMinus((_c+_m-1)*_N,(_c+_m+_d)*_N-1);
-	if(_linearDetector->ChannelMatrixCols() != _N*(_d+1))
+	tRange rColumnsStackedChannelMatrixMinus((_c+_m-1)*_N,(_c+_m+_e)*_N-1);
+	if(_linearDetector->ChannelMatrixCols() != _N*(_e+1))
 		throw RuntimeException("LinearFilterBasedSMCAlgorithm::Process: SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS is defined. It shouldn't because it's not compatible with the current linear detector.");
 #endif
 
@@ -100,7 +100,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	tRange rmMinus1AlreadyDetectedSymbolVectors(_startDetectionTime-_m+1,_startDetectionTime-1);
 
 	// observation matrix columns that are involved in the smoothing
-	tRange rSmoothingRange(_startDetectionTime-_c,_startDetectionTime+_d);
+	tRange rSmoothingRange(_startDetectionTime-_c,_startDetectionTime+_e);
 
 #ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 	tRange rAlreadyDetectedSymbolVectors(_startDetectionTime-_c-_m+1,_startDetectionTime-1);
@@ -108,16 +108,17 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-#ifdef DEBUG
-		cout << "----------------------------------------------------------------------" << endl;
-#endif
-
 		// the stacked observations vector
 		tVector stackedObservations = Util::ToVector(observations(rAll,rSmoothingRange),columnwise);
 
+#ifdef DEBUG
+		cout << "----------------- iObservationToBeProcessed = " << iObservationToBeProcessed << "--------------------------------" << endl;
+		cout << "stackedObservations" << endl << stackedObservations;
+#endif
+
 		// stacked noise covariance needs to be constructed
-		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*(_c+_d+1),_L*(_c+_d+1));
-		for(iSmoothing=-_c;iSmoothing<=_d;iSmoothing++)
+		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*(_c+_e+1),_L*(_c+_e+1));
+		for(iSmoothing=-_c;iSmoothing<=_e;iSmoothing++)
 			for(iRow=0;iRow<_L;iRow++)
 				stackedNoiseCovariance((iSmoothing+_c)*_L+iRow,(iSmoothing+_c)*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
@@ -132,7 +133,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// first of the predicted ones is obtained via a virtual method
 			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[_c]);
 
-			for(iSmoothing=_c+1;iSmoothing<=_c+_d;iSmoothing++)
+			for(iSmoothing=_c+1;iSmoothing<=_c+_e;iSmoothing++)
 				// matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
 				Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
@@ -157,26 +158,25 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 #endif
 
 #ifdef DEBUG_RESTANDO
-			vector<tMatrix> realMatricesToStack(_c+_d+1,tMatrix(_L,_Nm));
+			vector<tMatrix> realMatricesToStack(_c+_e+1,tMatrix(_L,_Nm));
 
-			for(iSmoothing=_c;iSmoothing<=_c+_d;iSmoothing++)
+			for(iSmoothing=_c;iSmoothing<=_c+_e;iSmoothing++)
 				realMatricesToStack[iSmoothing] = (*realChannel)[iObservationToBeProcessed+iSmoothing];
 
+
 			tMatrix realStackedChannelMatrix = HsToStackedH(realMatricesToStack);
-			tVector realTransformedObservations = SubstractKnownSymbolsContribution(realMatricesToStack,_m,_c,_d,stackedObservations,(*realSymbols)(rAll,rAlreadyDetectedSymbolVectors));
-			tVector stackedNoise = Util::ToVector(realNoise->Range(iObservationToBeProcessed-_c,iObservationToBeProcessed+_d),columnwise);
-			tVector allInvolvedSymbols = Util::ToVector((*realSymbols)(rAll,tRange(iObservationToBeProcessed-_c-_m+1,iObservationToBeProcessed+_d)),columnwise);
+			cout << "stackedChannelMatrix de verdad" << endl << realStackedChannelMatrix;
+			tVector realTransformedObservations = SubstractKnownSymbolsContribution(realMatricesToStack,_m,_c,_e,stackedObservations,(*realSymbols)(rAll,rAlreadyDetectedSymbolVectors));
+			tVector stackedNoise = Util::ToVector(realNoise->Range(iObservationToBeProcessed-_c,iObservationToBeProcessed+_e),columnwise);
+			tVector allInvolvedSymbols = Util::ToVector((*realSymbols)(rAll,tRange(iObservationToBeProcessed-_c-_m+1,iObservationToBeProcessed+_e)),columnwise);
 			cout << "todos los símbolos involucrados" << endl << allInvolvedSymbols;
 			cout << "ruido apilado" << endl << stackedNoise << endl;
 			tVector observacionesCalculadas = stackedNoise;
 			Blas_Mat_Vec_Mult(realStackedChannelMatrix,allInvolvedSymbols,observacionesCalculadas,1.0,1.0);
-// 			cout << "las observaciones calculadas aquí dentro son" << endl << observacionesCalculadas;
-// 			cout << "las que recibi" << endl << stackedObservations;
 			realStackedChannelMatrix = realStackedChannelMatrix(rAll,rColumnsStackedChannelMatrixMinus);
-			tVector unknownSymbols = Util::ToVector((*realSymbols)(rAll,tRange(iObservationToBeProcessed,iObservationToBeProcessed+_d)),columnwise);
+			tVector unknownSymbols = Util::ToVector((*realSymbols)(rAll,tRange(iObservationToBeProcessed,iObservationToBeProcessed+_e)),columnwise);
 			tVector realObservacionesTransformadas = stackedNoise;
 			Blas_Mat_Vec_Mult(realStackedChannelMatrix,unknownSymbols,realObservacionesTransformadas,1.0,1.0);
-// 			cout << "las observaciones transformadas de verdad" << endl << realObservacionesTransformadas;
 			cout << "las observaciones transformadas de verdad" << endl << realTransformedObservations;
 			cout << "la matriz de canal de verdad ya recortada" << endl << realStackedChannelMatrix;
 			cout << "los simbolos desconocidos" << endl << unknownSymbols;
@@ -186,22 +186,23 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// the estimated stacked channel matrix is used to obtain soft estimations of the transmitted symbols
 #ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 			stackedChannelMatrix = stackedChannelMatrix(rAll,rColumnsStackedChannelMatrixMinus);
-			tVector transformedObservations = SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_d,stackedObservations,processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
+			tVector transformedObservations = SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_e,stackedObservations,processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
 #ifdef DEBUG_RESTANDO
 			cout << "observaciones transformadas" << endl << transformedObservations;
+			tVector softEstimationsDecorrelator = decorrelatorDetector.Detect(transformedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 #endif
 			tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(transformedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 #else
 			tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 #endif
 
-			tMatrix filter = processedParticle->GetLinearDetector(_estimatorIndex)->ComputedFilter();
-
 #ifdef DEBUG_RESTANDO
+			tMatrix filter = processedParticle->GetLinearDetector(_estimatorIndex)->ComputedFilter();
 			cout << "stackedChannelMatrix:" << endl << stackedChannelMatrix;
 			cout << "filter:" << endl << filter;
 // 			cout << "true symbols:" << endl << realSymbols->col(iObservationToBeProcessed);
 			cout << "soft estimations:" << endl << softEstimations;
+			cout << "softEstimationsDecorrelator" << endl << softEstimationsDecorrelator;
 #endif
 
 #ifdef DEBUG_SIN_RESTAR
@@ -292,7 +293,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 #endif
 
 			// sampled symbol vector is stored for the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(rAllSymbolRows));
+			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(rNfirst));
 
 			// all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols"
 			// i) the already known:

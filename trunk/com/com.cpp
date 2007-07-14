@@ -20,7 +20,7 @@
 
 // #define DEBUG
 // #define MISMO_CANAL
-#define EXPORT_REAL_DATA
+// #define EXPORT_REAL_DATA
 
 #define MSE_TIME_EVOLUTION_COMPUTING
 
@@ -115,6 +115,8 @@
 #include <lapackpp/sybmd.h>
 #include <lapackpp/sybfd.h>
 
+#include <SMCSystem.h>
+
 using namespace std;
 
 #ifdef EXPORT_REAL_DATA
@@ -125,6 +127,10 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
+    SMCSystem holita;
+    holita.Simulate();
+    exit(0);
+
     double pe,mse;
     uint iChannelOrder,iSNR;
     int lastSymbolVectorInstant;
@@ -152,7 +158,7 @@ int main(int argc,char* argv[])
 
     // - ONE CHANNEL ORDER SYSTEM
     int m = 3;
-	int d/* = 2*/;
+	int d = m - 1;
 
     // - ONE CHANNEL ORDER PER ANTENNA SYSTEM
     vector<int> antennasChannelOrders(N);
@@ -161,6 +167,7 @@ int main(int argc,char* argv[])
 
 	// back smoothing
 	int c = 0;
+	int e = 50;
 
     // SNRs to be processed
     vector<int> SNRs;
@@ -326,6 +333,7 @@ int main(int argc,char* argv[])
 // #include <backwardSmoothing.h>
 // #include <backwardForwardSmoothing.h>
 // #include <particlesNumber.h>
+// #include <MMSEforwardSmoothing.h>
 	// -----------------------------------------------------------------
 
 	// USIS2SIS transition criterion(s)
@@ -436,6 +444,7 @@ int main(int argc,char* argv[])
 		RMMSEDetector rmmseDetector(L*(c+d+1),N*(m+c+d),pam2.Variance(),forgettingFactorDetector,N*(d+1));
 		MMSEDetector mmseDetectorLarge(L*(c+d+1),N*(m+c+d),pam2.Variance(),N*(d+1));
 		MMSEDetector mmseDetectorSmall(L*(c+d+1),N*(d+1),pam2.Variance(),N*(d+1));
+	    MMSEDetector mmseDetectorXL(L*(c+e+1),N*(e+1),pam2.Variance(),N*(d+1),0);
 	    DecorrelatorDetector decorrelatorDetector(L*(c+d+1),N*(d+1),pam2.Variance());
 
 #ifdef MISMO_CANAL
@@ -443,7 +452,6 @@ int main(int argc,char* argv[])
 	    randomGenerator.setSeed(randomGen1.getSeed());
 	    StatUtil::GetRandomGenerator().setSeed(randomGen2.getSeed());
 #endif
-
 
 		// noise is generated according to the channel
 		ChannelDependentNoise ruido(&canal);
@@ -488,9 +496,9 @@ int main(int argc,char* argv[])
 
 // 	        algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],ARvariance));
 
-	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorLarge,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&mmseDetectorSmall,preamble,c,d,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	        algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,&decorrelatorDetector,preamble,c,d,d,nParticles,&algoritmoRemuestreo,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
@@ -502,9 +510,9 @@ int main(int argc,char* argv[])
 
 // 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
-// 			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
-// 	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
@@ -544,6 +552,7 @@ int main(int argc,char* argv[])
 // #include <backwardSmoothing.h>
 // #include <backwardForwardSmoothing.h>
 // #include <particlesNumber.h>
+// #include <MMSEforwardSmoothing.h>
 	        // ------------------------------------------------------------
 
 			// ---------------------------------------------------------------------------------

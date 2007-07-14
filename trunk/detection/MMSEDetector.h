@@ -36,21 +36,15 @@
 class MMSEDetector : public LinearDetector
 {
 protected:
-	int _nSymbolsToBeDetected;
+	int _nSymbolsToBeDetected,_detectionStart;
 	tMatrix _filter;
-
-	// auxiliary variables
-	tMatrix _alphabetVarianceChannelMatrixChannelMatrixTrans;
-	tMatrix _Rx;
-	tLongIntVector _piv;
-	tVector _softEstimations;
-	tRange _rNsimbolsDetected,_rAllChannelMatrixRows;
 
 	// required for NthSymbolVariance computing
 	tMatrix _channelMatrix;
-	tMatrix _RxBak;
+	tMatrix _Rx;
 public:
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
+    MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected,int startingFrom);
 
     virtual MMSEDetector * Clone();
 	virtual tMatrix ComputedFilter();
