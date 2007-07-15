@@ -59,32 +59,32 @@ protected:
 
     // system parameters for generating the AR process
     int ARprocessOrder;
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
+//     double velocity; // (Km/h)
+//     double carrierFrequency; // (Hz)
+//     double symbolRate; // (Hz)
+//     double T; // (s)
 
-    DelayPowerProfile *powerProfile;
+//     DelayPowerProfile *powerProfile;
 
     std::vector<double> ARcoefficients;
     double ARvariance;
 
-    KalmanEstimator *kalmanEstimator;
-    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-    MMSEDetector *mmseDetectorLarge,*mmseDetectorSmall,*mmseDetectorXL;
-    DecorrelatorDetector *decorrelatorDetector;
+//     KalmanEstimator *kalmanEstimator;
+//     KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
+//     MMSEDetector *mmseDetectorLarge,*mmseDetectorSmall,*mmseDetectorXL;
+//     DecorrelatorDetector *decorrelatorDetector;
 
     ResamplingAlgorithm *algoritmoRemuestreo;
 
     double firstSampledChannelMatrixVariance;
+
+    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BuildChannel();
+//     virtual void AddAlgorithms();
 public:
     SMCSystem();
 
     ~SMCSystem();
-
-    virtual void BuildChannel();
-    virtual void AddAlgorithms();
-
 };
 
 #endif

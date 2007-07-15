@@ -19,6 +19,7 @@
  ***************************************************************************/
 #include "BaseSystem.h"
 
+#include <defines.h>
 #define DATE_LENGTH 100
 
 using namespace std;
@@ -103,6 +104,7 @@ BaseSystem::BaseSystem()
 #ifndef RANDOM_SEED
         randomGenerator.setSeed(0);
 #endif
+
 }
 
 BaseSystem::~BaseSystem()
@@ -174,6 +176,9 @@ void BaseSystem::Simulate()
 
 //                 cout << "El nombre es " << algorithms[iAlgorithm]->GetName() << endl;
 //                 Util::Print(ruido.Variances());
+//                 double suma = Util::Sum(ruido.Variances());
+//                 if(suma==0.1)
+//                     return;
 //                 cout << "los símbolos" << endl << symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1));
 
                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
@@ -191,7 +196,9 @@ void BaseSystem::Simulate()
             algorithms.clear();
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
+        f.open(outputFileName,ofstream::trunc);
         BeforeEndingFrame(iFrame);
+        f.close();
 
         // ---------------------------------------------------------
 
@@ -247,9 +254,6 @@ void BaseSystem::OnlyOnce()
 
 void BaseSystem::BeforeEndingFrame(int iFrame)
 {
-    // ----------------- VARIABLES SAVING ----------------------
-    ofstream f(outputFileName,ofstream::trunc);
-
     // pe
     peMatrices.push_back(presentFramePe);
     Util::MatricesVectorToStream(peMatrices,"pe",f);
@@ -296,8 +300,6 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarsVectorToStream(mainSeeds,"mainSeeds",f);
     Util::ScalarsVectorToStream(statUtilSeeds,"statUtilSeeds",f);
     Util::MatricesVectorToStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
-
-    f.close();
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)

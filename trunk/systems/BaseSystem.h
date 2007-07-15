@@ -119,6 +119,8 @@ protected:
     tMatrix symbols;
     tMatrix detectedSymbols;
 
+    ofstream f;
+
 
     virtual void AddAlgorithms() = 0;
     virtual void BuildChannel() = 0;

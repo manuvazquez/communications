@@ -1,16 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
+ <DocsAndViews NumberOfDocuments="1" >
   <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="697" Type="Source" />
+   <View0 Encoding="" line="126" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.h" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc2>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -23,37 +17,37 @@
   </kdevastyle>
   <kdevbookmarks>
    <bookmarks>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="87" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
-     <mark line="559" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
-     <mark line="93" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
      <mark line="361" />
      <mark line="266" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="59" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
+     <mark line="93" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
+     <mark line="559" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="87" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="479" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="479" />
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+     <mark line="59" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="25" />
      <mark line="33" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
-     <mark line="141" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
      <mark line="97" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
+     <mark line="141" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
      <mark line="38" />
@@ -64,17 +58,23 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="138" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="219" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/statistics/ARprocess.cpp" >
      <mark line="21" />
      <mark line="82" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="82" />
+    <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.h" >
+     <mark line="121" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/TriangularizationBasedSMCAlgorithm.cpp" >
      <mark line="208" />
      <mark line="227" />
      <mark line="93" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
+     <mark line="129" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="382" />
@@ -91,7 +91,7 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="" params="" />
+   <executable path="/home/manu/c++/comunicaciones/debug/com/com" params="" />
    <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />

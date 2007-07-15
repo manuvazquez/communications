@@ -116,6 +116,8 @@
 #include <lapackpp/sybfd.h>
 
 #include <SMCSystem.h>
+#include <Elsevier2007BesselChannelSystem.h>
+#include <Elsevier2007ARChannelSystem.h>
 
 using namespace std;
 
@@ -127,8 +129,9 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
-    SMCSystem holita;
-    holita.Simulate();
+//     Elsevier2007BesselChannelSystem system;
+    Elsevier2007ARChannelSystem  system;
+    system.Simulate();
     exit(0);
 
     double pe,mse;
@@ -136,7 +139,7 @@ int main(int argc,char* argv[])
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames = 1;
+    int nFrames = 2;
     int L=3,N=2,K=300;
     int trainSeqLength = 100;
     int nParticles = 200;
@@ -209,12 +212,12 @@ int main(int argc,char* argv[])
 	powers.push_back(0);powers.push_back(-1.2661);powers.push_back(-2.7201);
 	powers.push_back(-4.2973);powers.push_back(-6.0140);powers.push_back(-8.4306);
 
-	ConstantMeanDSPowerProfile powerProfile(L,N,differentialDelays,powers,T);
+// 	ConstantMeanDSPowerProfile powerProfile(L,N,differentialDelays,powers,T);
 
 
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.00001); // m = 6
 // 	ExponentialPowerProfile powerProfile(L,N,T,0.01); // m = 3
-// 	FlatPowerProfile powerProfile(L,N,m,channelVariance);
+	FlatPowerProfile powerProfile(L,N,m,channelVariance);
 	powerProfile.Print();
 	cout << powerProfile.Means();
 	cout << powerProfile.Variances();
@@ -417,11 +420,11 @@ int main(int argc,char* argv[])
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
         // an AR channel is generated
-// 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 // 	    ARchannel canal(N,L,m,symbols.cols(),ARprocess(powerProfile.GenerateChannelMatrix(randomGenerator),ARprocessOrder,velocity/3.6,carrierFrequency,T));
 
 
-		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
+// 		BesselChannel canal(N,L,m,symbols.cols(),velocity,carrierFrequency,T,powerProfile);
 
 		// "m" and "d" are obtained from the just built channel object ...
 		m = canal.EffectiveMemory();
@@ -510,9 +513,9 @@ int main(int argc,char* argv[])
 
 // 			algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (best particles resampling)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,nParticles,&bestParticlesResampling,powerProfile.Means(),powerProfile.Variances(),ARcoefficients[0]));
 
-			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+// 			algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
-	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
+// 	        algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",pam2,L,N,lastSymbolVectorInstant,m,&knownSymbolsKalmanEstimator,preamble,c,d,&mmseDetectorSmall,ARcoefficients[0]));
 
 							// -------- One channel order per antenna ------
 //             algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,d,nParticles,&algoritmoRemuestreo));
