@@ -21,8 +21,15 @@
 
 #include <defines.h>
 #define DATE_LENGTH 100
+// #define EXPORT_REAL_DATA
 
 using namespace std;
+
+#ifdef EXPORT_REAL_DATA
+	MIMOChannel *realChannel;
+	tMatrix *realSymbols;
+	Noise *realNoise;
+#endif
 
 BaseSystem::BaseSystem()
 {
@@ -110,6 +117,7 @@ BaseSystem::BaseSystem()
 BaseSystem::~BaseSystem()
 {
   delete alphabet;
+	delete ruido;
 }
 
 void BaseSystem::Simulate()
@@ -141,12 +149,12 @@ void BaseSystem::Simulate()
         BuildChannel();
 
         // noise is generated according to the channel
-        ChannelDependentNoise ruido(channel);
+        ruido = new ChannelDependentNoise(channel);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
             realChannel = channel;
-            realNoise = &ruido;
+            realNoise = ruido;
 #endif
 
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
@@ -154,10 +162,10 @@ void BaseSystem::Simulate()
             cout << "SNR = " << SNRs[iSNR] << " [Frame " << iFrame << "]..." << endl;
 
             // noise SNR is set
-            ruido.SetSNR(SNRs[iSNR],alphabet->Variance());
+            ruido->SetSNR(SNRs[iSNR],alphabet->Variance());
 
             // transmission
-            tMatrix observaciones = channel->Transmit(symbols,ruido);
+            observaciones = channel->Transmit(symbols,*ruido);
 
              AddAlgorithms();
 
@@ -181,7 +189,7 @@ void BaseSystem::Simulate()
 //                     return;
 //                 cout << "los símbolos" << endl << symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1));
 
-                algorithms[iAlgorithm]->Run(observaciones,ruido.Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());(preambleLength,preambleLength+trainSeqLength-1)
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();

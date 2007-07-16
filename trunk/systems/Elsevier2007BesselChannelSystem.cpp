@@ -27,6 +27,11 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
     symbolRate = 500e3; // (Hz)
     T = 1.0/symbolRate; // (s)
 
+
+	ARcoefficients = ARprocess::ParametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
+	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
+	Util::Print(ARcoefficients);
+
     vector<double> differentialDelays,powers;
     // suburban macro
 //  differentialDelays.push_back(0);differentialDelays.push_back(0.1408e-6);differentialDelays.push_back(0.0626e-6);
@@ -64,8 +69,6 @@ Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
 void Elsevier2007BesselChannelSystem::BuildChannel()
 {
   channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
-
-//   KnownChannelChannelMatrixEstimator knownChannelEstimator(*channel,preambleLength,N);
 }
 
 void Elsevier2007BesselChannelSystem::BeforeEndingFrame(int iFrame)

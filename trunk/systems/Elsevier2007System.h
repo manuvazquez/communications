@@ -25,6 +25,9 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <EstimatedMIMOChannel.h>
+
 class Elsevier2007System : public SMCSystem
 {
 protected:
@@ -36,8 +39,9 @@ protected:
 
     DelayPowerProfile *powerProfile;
 
+	EstimatedMIMOChannel *kalmanEstimatedChannel;
+
     virtual void AddAlgorithms();
-//     virtual void BeforeEndingFrame(int iFrame);
 public:
     Elsevier2007System();
     ~Elsevier2007System();

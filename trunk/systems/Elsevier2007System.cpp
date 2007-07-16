@@ -21,28 +21,29 @@
 
 Elsevier2007System::Elsevier2007System()
 {
-//     kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
-//     knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
-
-    // ...and linear detectors
+    // the required linear detectors are built
     mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),N*(d+1));
     mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->Variance(),N*(d+1));
     mmseDetectorXL = new MMSEDetector(L*(c+e+1),N*(e+1),alphabet->Variance(),N*(d+1),0);
     decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->Variance());
+
+	kalmanEstimatedChannel = NULL;
 }
 
 Elsevier2007System::~Elsevier2007System()
 {
-//   delete kalmanEstimator;
-//   delete knownSymbolsKalmanEstimator;
   delete mmseDetectorLarge;
   delete mmseDetectorSmall;
   delete mmseDetectorXL;
   delete decorrelatorDetector;
+	delete kalmanEstimatedChannel;
 }
 
 void Elsevier2007System::AddAlgorithms()
 {
+	delete kalmanEstimatedChannel;
+	 kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),kalmanEstimator,symbols,observaciones,ruido->Variances());
+
 //     algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
 
 //     algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
@@ -53,7 +54,9 @@ void Elsevier2007System::AddAlgorithms()
 
 //     algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-//     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+
+	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),preamble,d));
 
 //     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,symbols));
 
@@ -61,9 +64,3 @@ void Elsevier2007System::AddAlgorithms()
 
 //     algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",*alphabet,L,N,lastSymbolVectorInstant,m,knownSymbolsKalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0]));
 }
-
-// void Elsevier2007System::BeforeEndingFrame(int iFrame)
-// {
-//     SMCSystem::BeforeEndingFrame(iFrame);
-// }
-

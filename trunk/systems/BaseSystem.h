@@ -76,6 +76,9 @@ protected:
 
     Alphabet *alphabet;
 
+	ChannelDependentNoise *ruido;
+	tMatrix observaciones;
+
     // SNRs to be processed
     std::vector<int> SNRs;
 

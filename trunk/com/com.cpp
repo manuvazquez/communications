@@ -129,8 +129,8 @@ using namespace std;
 
 int main(int argc,char* argv[])
 {
-//     Elsevier2007BesselChannelSystem system;
-    Elsevier2007ARChannelSystem  system;
+    Elsevier2007BesselChannelSystem system;
+//     Elsevier2007ARChannelSystem  system;
     system.Simulate();
     exit(0);
 
