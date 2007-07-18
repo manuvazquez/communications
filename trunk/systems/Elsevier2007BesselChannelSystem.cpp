@@ -51,7 +51,11 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
     powers.push_back(0);powers.push_back(-1.2661);powers.push_back(-2.7201);
     powers.push_back(-4.2973);powers.push_back(-6.0140);powers.push_back(-8.4306);
 
-    powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
+//     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
+	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
+// 	powerProfile = new FlatPowerProfile(L,N,m,1.0);
+
+	powerProfile->Print();
 
     kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
     knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
@@ -68,7 +72,8 @@ Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
 
 void Elsevier2007BesselChannelSystem::BuildChannel()
 {
-  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+// 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
+	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
 }
 
 void Elsevier2007BesselChannelSystem::BeforeEndingFrame(int iFrame)

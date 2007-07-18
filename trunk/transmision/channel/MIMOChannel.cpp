@@ -54,7 +54,7 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 
 	tRange allChannelMatrixRows(0,_nRx-1);
 
-	for(int iSymbolVector=EffectiveMemory() - 1;iSymbolVector<symbols.cols();iSymbolVector++)
+	for(int iSymbolVector=EffectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
 	{
 		// just for the sake of clarity
 		tMatrix &currentChannelMatrix = (*this)[iSymbolVector];

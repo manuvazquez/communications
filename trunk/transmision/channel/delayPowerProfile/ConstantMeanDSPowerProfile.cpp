@@ -52,5 +52,4 @@ ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nRx, int nTx, std::ve
 		_amplitudes[_amplitudes.size()-1-i] = _amplitudesBak[i];
 
 	GenerateMatrices();
-	Util::Print(_amplitudes);
 }

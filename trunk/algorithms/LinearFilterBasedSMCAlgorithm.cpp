@@ -27,6 +27,7 @@
 // #define MUESTREO
 // #define DEBUG_RESTANDO
 // #define DEBUG_SIN_RESTAR
+#define DEBUG_SHOWVARIANCE
 
 #ifdef DEBUG
 extern MIMOChannel *realChannel;
@@ -108,6 +109,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
+#ifdef DEBUG_SHOWVARIANCE
+		cout << "variance at " << iObservationToBeProcessed << " is " << noiseVariances[iObservationToBeProcessed] << endl;
+#endif
 		// the stacked observations vector
 		tVector stackedObservations = Util::ToVector(observations(rAll,rSmoothingRange),columnwise);
 

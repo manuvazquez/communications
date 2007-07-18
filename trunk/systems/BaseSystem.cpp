@@ -34,16 +34,16 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames = 2;
+    nFrames = 1000;
     L=3,N=2,K=300;
     m = 3;
     d = m - 1;
-    trainSeqLength = 100;
+    trainSeqLength = 15;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-    SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(15);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -124,8 +124,8 @@ void BaseSystem::Simulate()
 {
   tRange rAll;
     // for repeating simulations
-    randomGenerator.setSeed(2848936331);
-    StatUtil::GetRandomGenerator().setSeed(2969730736);
+//     randomGenerator.setSeed(2848936331);
+//     StatUtil::GetRandomGenerator().setSeed(2969730736);
 
     for(int iFrame=0;iFrame<nFrames;iFrame++)
     {
@@ -177,17 +177,10 @@ void BaseSystem::Simulate()
             for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 // in order to repeat a concrete simulation...
-                StatUtil::GetRandomGenerator().setSeed(3720678788);
+//                 StatUtil::GetRandomGenerator().setSeed(3720678788);
 
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
-
-//                 cout << "El nombre es " << algorithms[iAlgorithm]->GetName() << endl;
-//                 Util::Print(ruido.Variances());
-//                 double suma = Util::Sum(ruido.Variances());
-//                 if(suma==0.1)
-//                     return;
-//                 cout << "los símbolos" << endl << symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1));
 
                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());(preambleLength,preambleLength+trainSeqLength-1)
@@ -239,18 +232,7 @@ void BaseSystem::OnlyOnce()
 
     // we fill the vector with the names of the algorithms
     for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
-    {
         algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
-
-        // ...besides we find out whether the algorithm performs channel order APP estimation
-    //                     if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
-    //                         // +1 is because in Octave/Matlab there is no 0 index
-    //                         iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
-    }
-
-    // we set the size of the results matrix for channel order APPs evolution according to the number of algorithms
-    // counted above
-    //                 presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
@@ -269,11 +251,6 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     // MSE
     MSEMatrices.push_back(presentFrameMSE);
     Util::MatricesVectorToStream(MSEMatrices,"mse",f);
-
-//         // channel order APPs evolution along time
-//         channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-//         Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
-//         Util::ScalarsVectorToStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
@@ -329,14 +306,6 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     // and the MSE
     overallMseMatrix(iSNR,iAlgorithm) += mse;
     presentFrameMSE(iSNR,iAlgorithm) = mse;
-
-    // for the algorithm performing channel order estimation...
-//                 if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
-//                 {
-//                     //...the probability of the different channel orders at each time instant is retrieved
-//                     presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <ChannelOrderEstimatorSMCAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
-//                     iAlgorithmPerformingChannelOrderAPPestimation++;
-//                 }
 
     // Pe evolution
     tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+K-1));

@@ -25,6 +25,10 @@
 /**
 	@author Manu <manu@rustneversleeps>
 */
+
+#include <ExponentialPowerProfile.h>
+#include <FlatPowerProfile.h>
+
 class Elsevier2007BesselChannelSystem : public Elsevier2007System
 {
 protected:

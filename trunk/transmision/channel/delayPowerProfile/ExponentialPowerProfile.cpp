@@ -37,3 +37,28 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, double T, dou
 
 	GenerateMatrices();
 }
+
+ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, int m, double tRMS, double T): DelayPowerProfile(nRx, nTx)
+{
+	double power,delay = 0.0;
+	double normConst = 0.0;
+
+	int i;
+	for(i=0;i<m;i++)
+	{
+		power = (1.0/tRMS)*exp(-(1.0/tRMS)*delay);
+		_amplitudes.push_back(power);
+		delay += T;
+		normConst += power;
+	}
+
+	for(i=0;i<m;i++)
+		// normalization
+		_amplitudes[i] /= normConst;
+
+	std::vector<double> _amplitudesBak = _amplitudes;
+	for(uint i=0;i<_amplitudesBak.size();i++)
+		_amplitudes[_amplitudes.size()-1-i] = _amplitudesBak[i];
+
+	GenerateMatrices();
+}
