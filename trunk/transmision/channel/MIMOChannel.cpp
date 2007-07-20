@@ -61,8 +61,8 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 
 		//currentObservationVector will accumulate the contributions of the
 		// different symbol vectors that participate in the current observation
-		// (_memory >= 1)
-		currentObservationVector = 0.0;
+		// (_memory >= 1). Besides, it will always accumulate the noise.
+		currentObservationVector = noise[iSymbolVector];
 
 		for(j=0;j<Memory(iSymbolVector);j++)
 		{
@@ -73,7 +73,7 @@ tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 
 		// the noise is added:
 		//currentObservationVector = currentObservationVector + noise[iSymbolVector]
-		Util::Add(currentObservationVector,noise[iSymbolVector],currentObservationVector);
+// 		Util::Add(currentObservationVector,noise[iSymbolVector],currentObservationVector);
 
 		// the just computed observation is set in the observations matrix
 		for(j=0;j<_nRx;j++)

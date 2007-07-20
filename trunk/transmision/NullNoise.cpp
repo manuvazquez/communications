@@ -23,10 +23,11 @@ NullNoise::NullNoise(int nRx, int length): Noise(nRx, length)
 {
 }
 
-tVector NullNoise::operator [ ](int n)
+tVector NullNoise::operator [ ](int n) const
 {
-	tVector res(_nRx);
-	res = 0.0;
-	return res;
+// 	tVector res(_nRx);
+// 	res = 0.0;
+// 	return res;
+	return LaGenMatDouble::zeros(_nRx,1);
 }
 

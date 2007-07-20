@@ -183,8 +183,8 @@ BesselChannel::BesselChannel(int nTx, int nRx, int memory, int length, double ve
 //
 // #ifdef DEBUG
 // 	ofstream f("canal",ofstream::trunc);
-// 	Util::MatricesVectorToStream(profiledChannelMatrices,"profiledChannelMatrices",f);
-// 	Util::ScalarsVectorToStream(powerProfile.Delays(),"retardos",f);
+// 	Util::MatricesVectorToOctaveFileStream(profiledChannelMatrices,"profiledChannelMatrices",f);
+// 	Util::ScalarsVectorToOctaveFileStream(powerProfile.Delays(),"retardos",f);
 // 	f.close();
 // 	cout << "Los retardos" << endl;
 // 	Util::Print(powerProfile.Delays());

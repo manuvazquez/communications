@@ -17,19 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "Noise.h"
+#ifndef POWERPROFILEDEPENDENTNOISE_H
+#define POWERPROFILEDEPENDENTNOISE_H
 
-using namespace std;
+#include <Noise.h>
 
-Noise::Noise(int nRx,int length): _nRx(nRx),_length(length)
-// ,_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0))
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+
+#include <math.h>
+#include <DelayPowerProfile.h>
+
+class PowerProfileDependentNoise : public Noise
 {
-}
+protected:
+	tMatrix _matrix;
+	double _varianceConstant,_stdDev;
+public:
+    PowerProfileDependentNoise(int nRx, int length, const DelayPowerProfile &powerProfile);
 
-vector<double> Noise::Variances() const
-{
-	vector<double> res(_length);
-	for(int i=0;i<_length;i++)
-		res[i] = VarianceAt(i);
-	return res;
-}
+	virtual double StdDevAt(int n) const {return _stdDev;}
+    virtual tVector operator [ ](int n) const;
+    virtual void SetSNR(int SNR, double alphabetVariance);
+	virtual void Print() const { cout << _matrix;}
+
+};
+
+#endif

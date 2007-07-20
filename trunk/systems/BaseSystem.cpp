@@ -112,6 +112,7 @@ BaseSystem::BaseSystem()
         randomGenerator.setSeed(0);
 #endif
 
+	powerProfile = NULL;
 }
 
 BaseSystem::~BaseSystem()
@@ -127,7 +128,8 @@ void BaseSystem::Simulate()
 //     randomGenerator.setSeed(2848936331);
 //     StatUtil::GetRandomGenerator().setSeed(2969730736);
 
-    for(int iFrame=0;iFrame<nFrames;iFrame++)
+	int iFrame = 0;
+	while((iFrame<nFrames) && (!__done))
     {
 
         // the seeds are kept for saving later
@@ -150,6 +152,7 @@ void BaseSystem::Simulate()
 
         // noise is generated according to the channel
         ruido = new ChannelDependentNoise(channel);
+// 	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -174,7 +177,7 @@ void BaseSystem::Simulate()
                 OnlyOnce();
 
             // algorithms are executed
-            for(uint iAlgorithm=0,iAlgorithmPerformingChannelOrderAPPestimation=0;iAlgorithm<algorithms.size();iAlgorithm++)
+            for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 // in order to repeat a concrete simulation...
 //                 StatUtil::GetRandomGenerator().setSeed(3720678788);
@@ -203,10 +206,11 @@ void BaseSystem::Simulate()
 
         // ---------------------------------------------------------
 
-    } // for(int iFrame=0;iFrame<nFrames;iFrame++)
+	    iFrame++;
+    } // while((iFrame<nFrames) && (!done))
 
-    overallPeMatrix *= 1.0/nFrames;
-    overallMseMatrix *= 1.0/nFrames;
+	overallPeMatrix *= 1.0/iFrame;
+	overallMseMatrix *= 1.0/iFrame;
 
     cout << "Overall SER:" << endl;
     Util::Print(overallPeMatrix);
@@ -246,45 +250,48 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 {
     // pe
     peMatrices.push_back(presentFramePe);
-    Util::MatricesVectorToStream(peMatrices,"pe",f);
+    Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
 
     // MSE
     MSEMatrices.push_back(presentFrameMSE);
-    Util::MatricesVectorToStream(MSEMatrices,"mse",f);
+    Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-    Util::MatricesVectoresVectorToStream(MSEtimeEvolution,"MSEtimeEvolution",f);
+    Util::MatricesVectoresVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
     // seeds just before the run of the algorithms
     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
-    Util::MatricesVectorToStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
+    Util::MatricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
         for(uint i=0;i<algorithmsNames.size();i++)
             for(int j=0;j<K;j++)
                 overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
-    Util::MatricesVectorToStream(overallPeTimeEvolution,"peTimeEvolution",f);
+    Util::MatricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
-    Util::ScalarToStream(iFrame+1,"nFrames",f);
+    Util::ScalarToOctaveFileStream(iFrame+1,"nFrames",f);
 
-    Util::StringsVectorToStream(algorithmsNames,"algorithmsNames",f);
-    Util::ScalarToStream(L,"L",f);
-    Util::ScalarToStream(N,"N",f);
-    Util::ScalarToStream(m,"m",f);
-    Util::ScalarToStream(K,"K",f);
-    Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
-    Util::ScalarToStream(d,"d",f);
-    Util::ScalarToStream(BERwindowStart,"BERwindowStart",f);
-    Util::ScalarToStream(MSEwindowStart,"MSEwindowStart",f);
-    Util::ScalarsVectorToStream(SNRs,"SNRs",f);
-    Util::MatrixToStream(preamble,"preamble",f);
-    Util::ScalarToStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
-    Util::ScalarToStream(preambleLength,"preambleLength",f);
-    Util::ScalarsVectorToStream(mainSeeds,"mainSeeds",f);
-    Util::ScalarsVectorToStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::MatricesVectorToStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+    Util::StringsVectorToOctaveFileStream(algorithmsNames,"algorithmsNames",f);
+    Util::ScalarToOctaveFileStream(L,"L",f);
+    Util::ScalarToOctaveFileStream(N,"N",f);
+    Util::ScalarToOctaveFileStream(m,"m",f);
+    Util::ScalarToOctaveFileStream(K,"K",f);
+    Util::ScalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
+    Util::ScalarToOctaveFileStream(d,"d",f);
+    Util::ScalarToOctaveFileStream(BERwindowStart,"BERwindowStart",f);
+    Util::ScalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
+    Util::ScalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
+    Util::MatrixToOctaveFileStream(preamble,"preamble",f);
+    Util::ScalarToOctaveFileStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
+    Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
+    Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
+    Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
+    Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+
+	if(powerProfile!=NULL)
+		Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)

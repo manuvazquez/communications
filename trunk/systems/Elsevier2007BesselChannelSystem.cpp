@@ -28,9 +28,9 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
     T = 1.0/symbolRate; // (s)
 
 
-	ARcoefficients = ARprocess::ParametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
-	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
-	Util::Print(ARcoefficients);
+// 	ARcoefficients = ARprocess::ParametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
+// 	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
+// 	Util::Print(ARcoefficients);
 
     vector<double> differentialDelays,powers;
     // suburban macro
@@ -51,8 +51,8 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
     powers.push_back(0);powers.push_back(-1.2661);powers.push_back(-2.7201);
     powers.push_back(-4.2973);powers.push_back(-6.0140);powers.push_back(-8.4306);
 
-//     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
-	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
+     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
+// 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
 // 	powerProfile = new FlatPowerProfile(L,N,m,1.0);
 
 	powerProfile->Print();
@@ -79,7 +79,7 @@ void Elsevier2007BesselChannelSystem::BuildChannel()
 void Elsevier2007BesselChannelSystem::BeforeEndingFrame(int iFrame)
 {
     Elsevier2007System::BeforeEndingFrame(iFrame);
-    Util::ScalarToStream(velocity,"velocity",f);
-    Util::ScalarToStream(carrierFrequency,"carrierFrequency",f);
-    Util::ScalarToStream(symbolRate,"symbolRate",f);
+    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
 }

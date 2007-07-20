@@ -17,19 +17,32 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "Noise.h"
+#include "PowerProfileDependentNoise.h"
 
-using namespace std;
-
-Noise::Noise(int nRx,int length): _nRx(nRx),_length(length)
-// ,_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0))
+PowerProfileDependentNoise::PowerProfileDependentNoise(int nRx, int length, const DelayPowerProfile &powerProfile): Noise(nRx, length),_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0)),_stdDev(1.0)
 {
+	tMatrix variancesMatrix = powerProfile.Variances();
+	int i,j;
+	double variancesSum = 0.0;
+	for(i=0;i<variancesMatrix.rows();i++)
+		for(j=0;j<variancesMatrix.cols();j++)
+			variancesSum += variancesMatrix(i,j);
+
+	_varianceConstant = variancesSum/double(_nRx);
 }
 
-vector<double> Noise::Variances() const
+tVector PowerProfileDependentNoise::operator [ ](int n) const
 {
-	vector<double> res(_length);
-	for(int i=0;i<_length;i++)
-		res[i] = VarianceAt(i);
+	tVector res(_nRx);
+	for(int i=0;i<_nRx;i++)
+		res(i) = _matrix(i,n);
 	return res;
+}
+
+void PowerProfileDependentNoise::SetSNR(int SNR, double alphabetVariance)
+{
+	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
+
+	_matrix *= (newStdDev/_stdDev);
+	_stdDev = newStdDev;
 }

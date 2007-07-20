@@ -49,7 +49,9 @@
 #include <StatUtil.h>
 #include <Random.h>
 #include <MIMOChannel.h>
+#include <Noise.h>
 #include <ChannelDependentNoise.h>
+#include <PowerProfileDependentNoise.h>
 #include <Algorithm.h>
 #include <TransmissionUtil.h>
 
@@ -63,6 +65,7 @@
     Noise *realNoise;
 #endif
 
+extern bool __done;
 
 class BaseSystem{
 protected:
@@ -76,7 +79,7 @@ protected:
 
     Alphabet *alphabet;
 
-	ChannelDependentNoise *ruido;
+	Noise *ruido;
 	tMatrix observaciones;
 
     // SNRs to be processed
@@ -124,6 +127,7 @@ protected:
 
     ofstream f;
 
+    DelayPowerProfile *powerProfile;
 
     virtual void AddAlgorithms() = 0;
     virtual void BuildChannel() = 0;

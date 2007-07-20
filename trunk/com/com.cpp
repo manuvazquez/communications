@@ -119,6 +119,8 @@
 #include <Elsevier2007BesselChannelSystem.h>
 #include <Elsevier2007ARChannelSystem.h>
 
+#include <signal.h>
+
 using namespace std;
 
 #ifdef EXPORT_REAL_DATA
@@ -127,8 +129,18 @@ using namespace std;
 	Noise *realNoise;
 #endif
 
+bool __done = false;
+
+void setDoneTrue(int signal)
+{
+	cout << "Ctl+C read. Finishing frame..." << endl;
+	__done  = true;
+}
+
 int main(int argc,char* argv[])
 {
+// 	signal(SIGINT,&setDoneTrue);
+
     Elsevier2007BesselChannelSystem system;
 //     Elsevier2007ARChannelSystem  system;
     system.Simulate();
@@ -187,7 +199,7 @@ int main(int argc,char* argv[])
 	double velocity = 50; // (Km/h)
 	double carrierFrequency = 2e9; // (Hz)
 	double symbolRate = 500e3; // (Hz)
-	double T = 1.0/symbolRate; // (s)
+// 	double T = 1.0/symbolRate; // (s)
 
     // channel parameters
 	double channelVariance=1.0;
@@ -460,7 +472,7 @@ int main(int argc,char* argv[])
 		ChannelDependentNoise ruido(&canal);
 
 		// absence of noise
-		NullNoise ruidoNulo(canal.Nr(),canal.Length());
+// 		NullNoise ruidoNulo(canal.Nr(),canal.Length());
 
 #ifdef EXPORT_REAL_DATA
 			realSymbols = &symbols;
@@ -662,68 +674,68 @@ int main(int argc,char* argv[])
 
         // pe
 		peMatrices.push_back(presentFramePe);
-		Util::MatricesVectorToStream(peMatrices,"pe",f);
+		Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
 
         // MSE
 		MSEMatrices.push_back(presentFrameMSE);
-		Util::MatricesVectorToStream(MSEMatrices,"mse",f);
+		Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
 
 		// channel order APPs evolution along time
 		channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-		Util::MatricesVectoresVectoresVectorToStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
-		Util::ScalarsVectorToStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
+		Util::MatricesVectoresVectoresVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+		Util::ScalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
 	    MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-	    Util::MatricesVectoresVectorToStream(MSEtimeEvolution,"MSEtimeEvolution",f);
+	    Util::MatricesVectoresVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
 	    // seeds just before the run of the algorithms
 // 	    beforeRunMainSeeds.push_back(presentFrameMainSeeds);
 	    beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
-// 	    Util::MatricesVectorToStream(beforeRunMainSeeds,"beforeRunMainSeeds",f);
-	    Util::MatricesVectorToStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
+// 	    Util::MatricesVectorToOctaveFileStream(beforeRunMainSeeds,"beforeRunMainSeeds",f);
+	    Util::MatricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
 		for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 			for(uint i=0;i<algorithmsNames.size();i++)
 				for(int j=0;j<K;j++)
 					overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
-		Util::MatricesVectorToStream(overallPeTimeEvolution,"peTimeEvolution",f);
+		Util::MatricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
-        Util::ScalarToStream(iFrame+1,"nFrames",f);
+        Util::ScalarToOctaveFileStream(iFrame+1,"nFrames",f);
 
-		Util::StringsVectorToStream(algorithmsNames,"algorithmsNames",f);
-        Util::ScalarToStream(L,"L",f);
-        Util::ScalarToStream(N,"N",f);
-        Util::ScalarToStream(m,"m",f);
-        Util::ScalarToStream(K,"K",f);
-        Util::ScalarToStream(trainSeqLength,"trainSeqLength",f);
-        Util::ScalarToStream(nParticles,"nParticles",f);
-        Util::ScalarToStream(nSurvivors,"nSurvivors",f);
-        Util::ScalarToStream(resamplingRatio,"resamplingRatio",f);
-        Util::ScalarToStream(d,"d",f);
-        Util::ScalarToStream(BERwindowStart,"BERwindowStart",f);
-        Util::ScalarToStream(MSEwindowStart,"MSEwindowStart",f);
-		Util::ScalarsVectorToStream(candidateChannelOrders,"candidateOrders",f);
-		Util::ScalarsVectorToStream(SNRs,"SNRs",f);
-		Util::ScalarToStream(forgettingFactor,"forgettingFactor",f);
-		Util::ScalarToStream(muLMS,"muLMS",f);
-		Util::ScalarsVectorToStream(ARcoefficients,"ARcoefficients",f);
-		Util::ScalarToStream(ARvariance,"ARvariance",f);
-		Util::ScalarToStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-		Util::MatrixToStream(preamble,"preamble",f);
-		Util::ScalarToStream(channelVariance,"channelVariance",f);
-		Util::ScalarToStream(firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",f);
-		Util::ScalarToStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
-		Util::ScalarToStream(preambleLength,"preambleLength",f);
-		Util::ScalarToStream(ARprocessOrder,"ARprocessOrder",f);
-		Util::ScalarToStream(velocity,"velocity",f);
-		Util::ScalarToStream(carrierFrequency,"carrierFrequency",f);
-		Util::ScalarToStream(symbolRate,"symbolRate",f);
-		Util::ScalarsVectorToStream(mainSeeds,"mainSeeds",f);
-		Util::ScalarsVectorToStream(statUtilSeeds,"statUtilSeeds",f);
+		Util::StringsVectorToOctaveFileStream(algorithmsNames,"algorithmsNames",f);
+        Util::ScalarToOctaveFileStream(L,"L",f);
+        Util::ScalarToOctaveFileStream(N,"N",f);
+        Util::ScalarToOctaveFileStream(m,"m",f);
+        Util::ScalarToOctaveFileStream(K,"K",f);
+        Util::ScalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
+        Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
+        Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+        Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
+        Util::ScalarToOctaveFileStream(d,"d",f);
+        Util::ScalarToOctaveFileStream(BERwindowStart,"BERwindowStart",f);
+        Util::ScalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
+		Util::ScalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
+		Util::ScalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
+		Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
+		Util::ScalarToOctaveFileStream(muLMS,"muLMS",f);
+		Util::ScalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
+		Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
+		Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+		Util::MatrixToOctaveFileStream(preamble,"preamble",f);
+		Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
+		Util::ScalarToOctaveFileStream(firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",f);
+		Util::ScalarToOctaveFileStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
+		Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
+		Util::ScalarToOctaveFileStream(ARprocessOrder,"ARprocessOrder",f);
+		Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+		Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+		Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+		Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
+		Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
 
-	    Util::MatricesVectorToStream(canal.Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+	    Util::MatricesVectorToOctaveFileStream(canal.Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 
 		f.close();
 		// ---------------------------------------------------------

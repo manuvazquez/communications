@@ -31,19 +31,20 @@
 class Noise{
 protected:
 	int _nRx,_length;
-	tMatrix _matrix;
+// 	tMatrix _matrix;
 public:
     Noise(int nRx,int length);
 	virtual ~Noise() {};
 
-	int Length() { return _length;}
-	int Nr() { return _nRx;}
-	void Print() { cout << _matrix;};
-	virtual double StdDevAt(int n) = 0;
-	virtual tVector operator[](int n) = 0;
+	int Length() const { return _length;}
+	int Nr() const { return _nRx;}
+	virtual void Print() const = 0;
+	virtual double StdDevAt(int n) const = 0;
+	virtual tVector operator[](int n) const = 0;
 	virtual tMatrix Range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}
-	double VarianceAt(int n){ double stdDev = StdDevAt(n); return stdDev*stdDev;};
-	vector<double> Variances();
+	double VarianceAt(int n) const { double stdDev = StdDevAt(n); return stdDev*stdDev;};
+	vector<double> Variances() const;
+	virtual void SetSNR(int SNR,double alphabetVariance) = 0;
 };
 
 #endif

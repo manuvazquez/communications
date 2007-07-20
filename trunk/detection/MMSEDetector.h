@@ -51,7 +51,7 @@ public:
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
     virtual void StateStep(tVector observations) {}
 	virtual double NthSymbolVariance(int n);
-	virtual double NthSymbolGain(int n) const;
+// 	virtual double NthSymbolGain(int n) const;
 
 };
 

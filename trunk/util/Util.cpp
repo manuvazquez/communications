@@ -252,7 +252,7 @@ void Util::Print(const tMatrix &A)
     }
 }
 
-void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
+void Util::MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
 
@@ -264,7 +264,7 @@ void Util::MatrixToStream(tMatrix A,string name,ofstream &f)
     }
 }
 
-template<class T> void Util::MatricesVectorToStream(vector<T> matrices,string name,ofstream &f)
+template<class T> void Util::MatricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f)
 {
 	if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
 	{
@@ -280,10 +280,10 @@ template<class T> void Util::MatricesVectorToStream(vector<T> matrices,string na
 			for(i=0;i<(matrices.at(iMatrix)).rows();i++)
 				f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
-template void Util::MatricesVectorToStream(vector<tMatrix> matrices,string name,ofstream &f);
-template void Util::MatricesVectorToStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
+template void Util::MatricesVectorToOctaveFileStream(vector<tMatrix> matrices,string name,ofstream &f);
+template void Util::MatricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
 
-void Util::MatricesVectoresVectorToStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
+void Util::MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
 {
 	if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
 	{
@@ -302,7 +302,7 @@ void Util::MatricesVectoresVectorToStream(vector<vector<tMatrix> > matrices,stri
 					f << " " << matrices[l][k](i,j) << endl;
 }
 
-void Util::MatricesVectoresVectoresVectorToStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
+void Util::MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
 {
 	if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
 	{
@@ -322,15 +322,15 @@ void Util::MatricesVectoresVectoresVectorToStream(vector<vector<vector<tMatrix> 
 						f << " " << matrices[m][l][k](i,j) << endl;
 }
 
-template<class T> void Util::ScalarToStream(T scalar,string name,ofstream &f)
+template<class T> void Util::ScalarToOctaveFileStream(T scalar,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
 }
 
-template void Util::ScalarToStream(int scalar,string name,ofstream &f);
-template void Util::ScalarToStream(double scalar,string name,ofstream &f);
+template void Util::ScalarToOctaveFileStream(int scalar,string name,ofstream &f);
+template void Util::ScalarToOctaveFileStream(double scalar,string name,ofstream &f);
 
-void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstream &f)
+void Util::StringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
 {
 	if(strings.size()==0)
 		return;
@@ -359,7 +359,7 @@ void Util::StringsVectorToStream(std::vector<string> strings,string name,ofstrea
 	}
 }
 
-template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string name,ofstream &f)
+template<class T> void Util::ScalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << vector.size() << endl;
 
@@ -367,9 +367,9 @@ template<class T> void Util::ScalarsVectorToStream(std::vector<T> vector,string 
 		f << vector[i] << " ";
 	f << endl;
 }
-template void Util::ScalarsVectorToStream(std::vector<double> vector,string name,ofstream &f);
-template void Util::ScalarsVectorToStream(std::vector<int> vector,string name,ofstream &f);
-template void Util::ScalarsVectorToStream(std::vector<uint32_t> vector,string name,ofstream &f);
+template void Util::ScalarsVectorToOctaveFileStream(std::vector<double> vector,string name,ofstream &f);
+template void Util::ScalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
+template void Util::ScalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
 template<class T> int Util::Max(const std::vector<T> &vector)
 {

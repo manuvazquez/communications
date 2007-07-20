@@ -107,11 +107,11 @@ double MMSEDetector::NthSymbolVariance(int n)
 	cout << "Lo que voy a devolver ahora: " << Blas_Dot_Prod(_filter.col(_detectionStart+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n)),2.0) << endl;
 #endif
 
-	return Blas_Dot_Prod(_filter.col(_detectionStart+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n)),2.0);
-// 	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
+// 	return Blas_Dot_Prod(_filter.col(_detectionStart+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n)),2.0);
+	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
 }
 
-double MMSEDetector::NthSymbolGain(int n) const
-{
-	return Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n));
-}
+// double MMSEDetector::NthSymbolGain(int n) const
+// {
+// 	return Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n));
+// }

@@ -44,5 +44,5 @@ void Elsevier2007ARChannelSystem::BuildChannel()
 void Elsevier2007ARChannelSystem::BeforeEndingFrame(int iFrame)
 {
     Elsevier2007System::BeforeEndingFrame(iFrame);
-    Util::ScalarToStream(channelVariance,"channelVariance",f);
+    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }

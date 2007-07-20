@@ -27,7 +27,7 @@
 // #define MUESTREO
 // #define DEBUG_RESTANDO
 // #define DEBUG_SIN_RESTAR
-#define DEBUG_SHOWVARIANCE
+// #define DEBUG_SHOWVARIANCE
 
 #ifdef DEBUG
 extern MIMOChannel *realChannel;

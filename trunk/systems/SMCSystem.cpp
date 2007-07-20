@@ -50,10 +50,10 @@ SMCSystem::~SMCSystem()
 void SMCSystem::BeforeEndingFrame(int iFrame)
 {
     BaseSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToStream(nParticles,"nParticles",f);
-    Util::ScalarToStream(resamplingRatio,"resamplingRatio",f);
-    Util::ScalarsVectorToStream(ARcoefficients,"ARcoefficients",f);
-    Util::ScalarToStream(ARvariance,"ARvariance",f);
-    Util::ScalarToStream(c,"c",f);
-    Util::ScalarToStream(e,"e",f);
+    Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
+    Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
+    Util::ScalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
+    Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
+    Util::ScalarToOctaveFileStream(c,"c",f);
+    Util::ScalarToOctaveFileStream(e,"e",f);
 }

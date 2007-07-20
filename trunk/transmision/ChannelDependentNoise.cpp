@@ -22,11 +22,11 @@
 // #define DEBUG
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
- : Noise(channel->Nr(),channel->Length()),_channel(channel)
+ : Noise(channel->Nr(),channel->Length()),_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0)),_channel(channel)
 {
 	_stdDevs = new double[_length];
 	for(int i=0;i<_length;i++)
-		_stdDevs[i] = 1;
+		_stdDevs[i] = 1.0;
 }
 
 ChannelDependentNoise::ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise):Noise(channelDependentNoise),_channel(channelDependentNoise._channel),_stdDevs(new double[_length])
@@ -67,12 +67,12 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 	}
 }
 
-double ChannelDependentNoise::StdDevAt(int n)
+double ChannelDependentNoise::StdDevAt(int n) const
 {
 	return _stdDevs[n];
 }
 
-tVector ChannelDependentNoise::operator[](int n)
+tVector ChannelDependentNoise::operator[](int n) const
 {
 	tVector res(_nRx);
 	for(int i=0;i<_nRx;i++)
