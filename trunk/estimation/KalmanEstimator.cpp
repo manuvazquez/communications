@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
@@ -61,6 +61,7 @@ KalmanEstimator::~KalmanEstimator()
 
 tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
 {
+// 	cout << "en Kalman" << endl;
 	if(observations.size()!=_L || symbolsMatrix.rows()*symbolsMatrix.cols()!=_Nm)
 		throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
 

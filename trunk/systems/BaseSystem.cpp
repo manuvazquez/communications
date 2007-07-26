@@ -36,7 +36,7 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
     nFrames = 1000;
     L=3,N=2,K=300;
-    m = 3;
+    m = 6;
     d = m - 1;
     trainSeqLength = 15;
     sprintf(outputFileName,"res_");

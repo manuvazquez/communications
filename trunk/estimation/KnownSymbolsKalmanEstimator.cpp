@@ -19,17 +19,19 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanEstimator.h"
 
+// #define DEBUG
+
 KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, double ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficient, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
 {
 }
 
-tMatrix KnownSymbolsKalmanEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+tMatrix KnownSymbolsKalmanEstimator::NextMatrix(const tVector &observations, const tMatrix &symbolsMatrix, double noiseVariance)
 {
 	_presentTime++;
 	return KalmanEstimator::NextMatrix(observations, _symbols(tRange(0,_N-1),tRange(_presentTime-_m,_presentTime-1)), noiseVariance);
 }
 
-KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::Clone()
+KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::Clone() const
 {
 	return new KnownSymbolsKalmanEstimator(*this);
 }

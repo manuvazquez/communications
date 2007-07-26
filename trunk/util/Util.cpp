@@ -385,6 +385,7 @@ template<class T> int Util::Max(const std::vector<T> &vector)
 	return iMax;
 }
 template int Util::Max(const std::vector<int> &vector);
+template int Util::Max(const std::vector<double> &vector);
 
 template<class T> void Util::Min(const std::vector<T> &vector,int &iMin)
 {

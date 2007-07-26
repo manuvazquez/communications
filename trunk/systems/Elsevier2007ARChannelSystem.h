@@ -39,7 +39,6 @@ public:
     Elsevier2007ARChannelSystem();
 
     ~Elsevier2007ARChannelSystem();
-
 };
 
 #endif

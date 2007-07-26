@@ -88,11 +88,11 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVectors()
 {
-    int iBestParticle;
-    Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
+//     int iBestParticle;
+//     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
 
-    return ((GetParticleFilterPointer()->GetParticle(iBestParticle))->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
+    return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }
 
 vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
@@ -101,8 +101,8 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
     channelMatrices.reserve(_K-_preamble.cols());
 
     // best particle is chosen
-    int iBestParticle;
-    Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
+	int iBestParticle = GetParticleFilterPointer()->BestParticle();
+//     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
 	int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 

@@ -88,6 +88,8 @@ public:
 
 	int Capacity() { return _capacity;}
 	int Nparticles() { return _nParticles;}
+	ParticleWithChannelEstimation *GetBestParticle() { return _particles[BestParticle()]; }
+	int BestParticle();
 };
 
 #endif

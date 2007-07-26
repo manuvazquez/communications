@@ -314,9 +314,9 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		_particleFilter.NormalizeWeights();
 
 		// we find out which is the "best" particle at this time instant
-		int iBestParticle;
-		Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
-		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
+// 		int iBestParticle;
+// 		Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
+		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetBestParticle());
 
         // its a posteriori channel order probabilities are stored
 		for(uint i=0;i<_candidateOrders.size();i++)

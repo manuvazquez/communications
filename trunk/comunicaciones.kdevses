@@ -2,11 +2,11 @@
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="2" >
-  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="238" Type="Source" />
+  <Doc0 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+   <View0 Encoding="" line="36" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/Elsevier2007System.cpp" >
-   <View0 Encoding="" line="45" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/manu/c%2B%2B/comunicaciones/systems/Elsevier2007System.cpp" >
+   <View0 Encoding="" line="63" Type="Source" />
   </Doc1>
  </DocsAndViews>
  <pluginList>
@@ -20,6 +20,9 @@
   </kdevastyle>
   <kdevbookmarks>
    <bookmarks>
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
+     <mark line="160" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
@@ -33,14 +36,14 @@
      <mark line="361" />
      <mark line="266" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="480" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
      <mark line="59" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="479" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="34" />
@@ -54,6 +57,9 @@
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
      <mark line="38" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/smc/ParticleFilter.cpp" >
+     <mark line="163" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.cpp" >
      <mark line="54" />
@@ -84,9 +90,6 @@
      <mark line="502" />
      <mark line="605" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="129" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="127" />
     </bookmark>
@@ -99,7 +102,7 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="/usr/local/.home/manu/c++/comunicaciones/debug/./com/com" params="" />
+   <executable path="" params="" />
    <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />

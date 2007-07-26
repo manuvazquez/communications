@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ParticleFilter.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
@@ -81,7 +81,7 @@ void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vecto
 		}
 		previousResampledParticle++;
 	}
-	while(previousResampledParticle<_capacity)
+	while(previousResampledParticle<_nParticles)
 	{
 		resParticles[previousResampledParticle] = _particles[previousResampledParticle];
 		previousResampledParticle++;
@@ -143,4 +143,45 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 	delete[] _particles;
 	_particles = resParticles;
 	_nParticles = indexes.size();
+}
+
+int ParticleFilter::BestParticle()
+{
+// 	int iBestParticle;
+// 	Util::Max(GetWeightsVector(),iBestParticle);
+// 	return iBestParticle;
+
+	vector<bool> particleAlreadyCounted(_nParticles,false);
+	vector<double> accumulatedWeights(_nParticles,0.0);
+	uint iParticle,iTestedParticle;
+	for(iParticle=0;iParticle<_nParticles;iParticle++)
+	{
+		if(particleAlreadyCounted[iParticle])
+			continue;
+
+		accumulatedWeights[iParticle] = _particles[iParticle]->GetWeight();
+
+		for(iTestedParticle=iParticle+1;iTestedParticle<_nParticles;iTestedParticle++)
+		{
+			if(particleAlreadyCounted[iTestedParticle])
+				continue;
+			if(GetParticle(iParticle)->GetAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->GetAllSymbolVectors()))
+			{
+#ifdef DEBUG2
+				cout << "La partícula " << iParticle << " y la " << iTestedParticle << " son iguales" << endl;
+#endif
+				accumulatedWeights[iParticle] += GetParticle(iTestedParticle)->GetWeight();
+				particleAlreadyCounted[iTestedParticle] = true;
+			}
+		}
+	}
+	int iBestParticle = Util::Max(accumulatedWeights);
+#ifdef DEBUG2
+	cout << "iBestParticle " << iBestParticle << " iBestParticle2 " << iBestParticle2 << endl;
+	cout << "Los pesos: " << endl << GetWeightsVector();
+	cout << "Los pesos acumulados" << endl;
+	Util::Print(accumulatedWeights);
+	getchar();
+#endif
+	return iBestParticle;
 }

@@ -33,9 +33,10 @@ protected:
 public:
     KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, double ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime);
 
-	KnownSymbolsKalmanEstimator* Clone();
+	KnownSymbolsKalmanEstimator* Clone() const;
 
-    tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+    virtual tMatrix NextMatrix(const tVector &observations, const tMatrix &symbolsMatrix, double noiseVariance);
+
 
 };
 

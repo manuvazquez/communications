@@ -50,9 +50,9 @@ public:
 	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
 	~KalmanEstimator();
 
-	tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
+	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
 	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	KalmanEstimator *Clone() const;
+	virtual KalmanEstimator *Clone() const;
 	tMatrix SampleFromPredictive();
 };
 

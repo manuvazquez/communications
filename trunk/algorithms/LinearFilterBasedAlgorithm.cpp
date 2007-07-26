@@ -19,7 +19,8 @@
  ***************************************************************************/
 #include "LinearFilterBasedAlgorithm.h"
 
-// #define DEBUG3
+// #define DEBUG
+#include <KnownSymbolsKalmanEstimator.h>
 
 #define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 
