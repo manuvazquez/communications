@@ -59,25 +59,12 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 {
 	int iState,iSurvivor;
 
-	#ifdef DEBUG
-		cout << "Al principio de ProcessOneObservation" << endl;
-	#endif
-
 	for(iState=0;iState<_trellis.Nstates();iState++)
 	{
 		// if the first survivor is empty, we assume that so are the remaining ones
 		if(!_exitStage[iState][0].IsEmpty())
-        {
-            #ifdef DEBUG2
-                cout << "Llamando a Deploy para el estado " << iState << endl;
-            #endif
 			DeployState(iState,observations,noiseVariance);
-        }
 	}
-
-	#ifdef DEBUG
-		cout << "Despues del 1er bucle en ProcessOneObservation" << endl;
-	#endif
 
 	// the best path arriving at each state is generated from the stored PathCandidate
 	for(iState=0;iState<_trellis.Nstates();iState++)
@@ -91,27 +78,11 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
 			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.GetChannelMatrixEstimator()->Clone();
 
-			#ifdef DEBUG
-				cout << "Antes de llamar a NextMatrix" << endl;
-			#endif
-
 			newChannelMatrixEstimator->NextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 
-			#ifdef DEBUG
-				cout << "Despues de llamar a NextMatrix" << endl;
-			#endif
-
 			_arrivalStage[iState][iSurvivor].Update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
-
-			#ifdef DEBUG
-				cout << "Despues de llamar a Update" << endl;
-			#endif
 		}
 	}
-
-	#ifdef DEBUG
-		cout << "Despues del 2º bucle en ProcessOneObservation" << endl;
-	#endif
 
 	// _arrivalStage becomes _exitStage for the next iteration
 	PSPPath **aux = _exitStage;
@@ -126,9 +97,6 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 			_arrivalStage[iState][iSurvivor].Clean();
 			_bestArrivingPaths[iState][iSurvivor].Clean();
 		}
-        #ifdef DEBUG2
-            PrintState(iState);
-        #endif
 	}
 }
 
@@ -136,47 +104,16 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 {
 	int iProcessedObservation,iBestState,iBestSurvivor;
 
-    #ifdef DEBUG3
-    	cout << "_startDetectionTime: " << _startDetectionTime <<  " y _firstSymbolVectorDetectedAt: " << _firstSymbolVectorDetectedAt << endl;
-    #endif
-
     for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
-    {
-        #ifdef DEBUG2
-    	    cout << "iProcessedObservation = " << iProcessedObservation << endl;
-        #endif
-
 		ProcessOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
-    }
-
-    #ifdef DEBUG3
-    	cout << "Despues del primer bucle en Process" << endl;
-    #endif
 
     BestPairStateSurvivor(iBestState,iBestSurvivor);
-
-    #ifdef DEBUG3
-    	cout << "Antes del inject" << endl;
-    #endif
 
     // the first detected vector is copied into "_detectedSymbolVectors"...
     _detectedSymbolVectors->col(_startDetectionTime).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(_startDetectionTime));
 
-    #ifdef DEBUG3
-    	cout << "Despues del inject" << endl;
-    #endif
-
-    #ifdef DEBUG2
-        cout << "detectado " << endl << _exitStage[iBestState][iBestSurvivor].GetSymbolVector(_startDetectionTime) << endl;
-    #endif
-
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(_startDetectionTime));
-//     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
-
-    #ifdef DEBUG3
-    	cout << "despues de _estimatedChannelMatrices.push_back" << endl;
-    #endif
 
     for( iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
@@ -187,43 +124,15 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
         _detectedSymbolVectors->col(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1));
 
     	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
-//     	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
     }
-
-    #ifdef DEBUG3
-    	cout << "antes del último bucle" << endl;
-    	cout << "empieza en " << _K+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1 << " y termina en " << _K+_d << endl;
-    	cout << "_detectedSymbolVectors->cols(): " << _detectedSymbolVectors->cols() << endl;
-    #endif
 
     // last detected symbol vectors are processed
     for(iProcessedObservation=_K+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1;iProcessedObservation<_K+_d;iProcessedObservation++)
     {
-		#ifdef DEBUG3
-			cout << "iProcessedObservation: " << iProcessedObservation << endl;
-		#endif
-
-		#ifdef DEBUG3
-			cout << "eso: " << _exitStage[iBestState][iBestSurvivor]._detectedSequence->cols();
-		#endif
-
         _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation));
 
-		#ifdef DEBUG4
-			cout << "en el medio" << iProcessedObservation << endl;
-		#endif
-
 		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
-// 		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix());
-        #ifdef DEBUG2
-            cout << "detectado " << endl << _exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation) << endl;
-        #endif
     }
-
-    #ifdef DEBUG3
-    	cout << "Final de process" << endl;
-    #endif
-
 }
 
 void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
@@ -243,16 +152,8 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.SymbolsArrayToInt(initialStateVector);
 
-	#ifdef DEBUG
-    	cout << "initialState es " << initialState << endl;
-    #endif
-
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_K+_d,0.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
-
-	#ifdef DEBUG
-    	cout << "Antes de llamar a process" << endl;
-    #endif
 
 	Process(observations,noiseVariances);
 }
@@ -287,10 +188,6 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.SymbolsArrayToInt(initialStateVector);
-
-	#ifdef DEBUG2
-    	cout << "initialState es " << initialState << endl;
-    #endif
 
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_K+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
@@ -329,10 +226,6 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 			if(_exitStage[iState][iSourceSurvivor].IsEmpty())
 				continue;
 
-            #ifdef DEBUG2
-                cout << "--------------- DeployState: (" << iState << "," << iSourceSurvivor << ") con la entrada " << iInput << "---------------" << endl;
-            #endif
-
 			tMatrix estimatedChannelMatrix = _exitStage[iState][iSourceSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix();
 			estimatedChannelMatrix *= _ARcoefficient;
 
@@ -353,9 +246,6 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 					// the ViterbiPath object at the arrival state is updated with that from the exit stage, the
 					// new symbol vector, and the new cost
 				{
-                #ifdef DEBUG2
-                    cout << "(" << iState << "," << iSourceSurvivor << ") --- " << iInput << " --->" << "(" << arrivalState << "," << iDisposableSurvivor << ") coste: " << newCost << " (coste añadido: " << Blas_Dot_Prod(error,error) << ")" << endl;
-                #endif
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._fromState = iState;
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._fromSurvivor = iSourceSurvivor;
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._input = iInput;
@@ -363,11 +253,6 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._newSymbolVector = symbolVectors.col(_m-1);
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolVectors;
 				}
-                #ifdef DEBUG2
-                else{
-                    cout << "NOOOOOOOOOOOOOOOO (" << iState << "," << iSourceSurvivor << ") --- " << iInput << " ---> " << "(" << arrivalState << "," << iDisposableSurvivor << ") coste: " << newCost << " (coste añadido: " << Blas_Dot_Prod(error,error) << ")" << endl;
-                }
-                #endif
 		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 }
@@ -379,11 +264,6 @@ tMatrix PSPAlgorithm::GetDetectedSymbolVectors()
 
 vector<tMatrix> PSPAlgorithm::GetEstimatedChannelMatrices()
 {
-	#ifdef DEBUG3
-		cout << "_d es " << _d << endl;
-		cout << "_estimatedChannelMatrices: " << _estimatedChannelMatrices.size() << endl;
-	#endif
-
 	vector<tMatrix> res = _estimatedChannelMatrices;
 
 	// the last "_d" estimated matrices need to be erased
@@ -409,9 +289,6 @@ void PSPAlgorithm::BestPairStateSurvivor(int &bestState,int &bestSurvivor)
 	for(int iState=1;iState<_trellis.Nstates();iState++)
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
-			#ifdef DEBUG2
-				cout << "[iState: " << iState << ",iSurvivor: " << iSurvivor << "] coste = " << _exitStage[iState][iSurvivor].GetCost() << endl;
-			#endif
 			if(_exitStage[iState][iSurvivor].GetCost() < bestCost)
 			{
 				bestState = iState;
@@ -419,10 +296,6 @@ void PSPAlgorithm::BestPairStateSurvivor(int &bestState,int &bestSurvivor)
 				bestCost = _exitStage[iState][iSurvivor].GetCost();
 			}
 		}
-
-	#ifdef DEBUG2
-		cout << "bestState es " << bestState << " y bestSurvivor " << bestSurvivor << endl;
-	#endif
 }
 
 int PSPAlgorithm::DisposableSurvivor(int iState)

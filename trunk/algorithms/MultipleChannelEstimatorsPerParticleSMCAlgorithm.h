@@ -39,7 +39,6 @@ protected:
 	virtual ParticleFilter* GetParticleFilterPointer() = 0;
     virtual void InitializeParticles() = 0;
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-    int BestParticle();
     virtual int BestChannelOrderIndex(int iBestParticle) = 0;
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);

@@ -81,7 +81,7 @@
 #include <LinearFilterBasedSMCAlgorithm.h>
 #include <LinearFilterBasedMKFAlgorithm.h>
 #include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimator.h>
+#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UnknownChannelOrderAlgorithm.h>
 #include <ISIS.h>
 #include <USIS.h>
@@ -118,6 +118,7 @@
 #include <SMCSystem.h>
 #include <Elsevier2007BesselChannelSystem.h>
 #include <Elsevier2007ARChannelSystem.h>
+#include <PSPBasedChannelOrderEstimationSystem.h>
 
 #include <signal.h>
 
@@ -142,7 +143,8 @@ int main(int argc,char* argv[])
 // 	signal(SIGINT,&setDoneTrue);
 
 //     Elsevier2007BesselChannelSystem system;
-    Elsevier2007ARChannelSystem  system;
+//     Elsevier2007ARChannelSystem  system;
+	PSPBasedChannelOrderEstimationSystem system;
     system.Simulate();
     exit(0);
 
@@ -517,7 +519,7 @@ int main(int argc,char* argv[])
 
 //             algorithms.push_back(new ViterbiAlgorithm("Viterbi",pam2,L,N,lastSymbolVectorInstant,canal,preamble,d));
 
-//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
+//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,symbols));
 
 //             algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",pam2,L,N,lastSymbolVectorInstant,m,&kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
@@ -536,7 +538,7 @@ int main(int argc,char* argv[])
 //
 //             algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&rlsWrapper,&rmmseDetector,preamble,d,nParticles,&algoritmoRemuestreo,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 //
-//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimator("Kalman Filter (Known Symbols) (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,symbols));
+//             algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols) (one channel order per antenna)",pam2,L,N,lastSymbolVectorInstant,m,&kalmanWrapper,preamble,symbols));
 							// ---------------------------------------------
 
 //             algorithms.push_back(new ISIS("ISIS",pam2,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,symbols));

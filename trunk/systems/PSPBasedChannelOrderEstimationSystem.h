@@ -17,43 +17,45 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "SMCSystem.h"
+#ifndef PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
+#define PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
 
-SMCSystem::SMCSystem()
- : BaseSystem(),ARcoefficients(1)
+#include <ChannelOrderEstimationSystem.h>
+
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+
+#include <UPSPBasedSMCAlgorithm.h>
+#include <RLSEstimator.h>
+#include <RMMSEDetector.h>
+#include <WithoutReplacementResamplingAlgorithm.h>
+#include <FlatPowerProfile.h>
+
+class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
 {
-    nParticles = 30;
-    resamplingRatio = 0.9;
+protected:
+    int nSurvivors;
+    bool adjustParticlesNumberFromSurvivors;
 
-    // back and forward smoothing
-    c = 0;
-    e = d;
+    double forgettingFactor;
+    double forgettingFactorDetector;
 
-    // AR process parameters
-    ARcoefficients[0] = 0.99999;
-    ARvariance=0.0001;
+	// vectors of channel estimators and linear detectors for unknown channel order algorithms
+	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
 
-    // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
+	RLSEstimator *rlsEstimator;
+	RMMSEDetector *rmmseDetector;
 
-    algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
+    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm;
 
-    firstSampledChannelMatrixVariance = 0.0;
-}
+    virtual void AddAlgorithms();
+    virtual void BuildChannel();
+    virtual void BeforeEndingFrame(int iFrame);
+public:
+    PSPBasedChannelOrderEstimationSystem();
 
+    ~PSPBasedChannelOrderEstimationSystem();
+};
 
-SMCSystem::~SMCSystem()
-{
-  delete algoritmoRemuestreo;
-}
-
-void SMCSystem::BeforeEndingFrame(int iFrame)
-{
-    BaseSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
-    Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
-    Util::ScalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
-    Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
-    Util::ScalarToOctaveFileStream(c,"c",f);
-    Util::ScalarToOctaveFileStream(e,"e",f);
-}
+#endif

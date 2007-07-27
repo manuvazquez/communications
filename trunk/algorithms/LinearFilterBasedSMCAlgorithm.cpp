@@ -21,7 +21,7 @@
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>
 
-#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
+// #define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
 
 // #define DEBUG
 // #define MUESTREO

@@ -39,21 +39,6 @@ ParticleFilter::~ParticleFilter()
     delete[] _particles;
 }
 
-int ParticleFilter::IndexBestParticle()
-{
-    int iBest = 0;
-    double best = _particles[0]->GetWeight();
-
-    for(uint i=1;i<_nParticles;i++)
-        if(_particles[i]->GetWeight()>best)
-        {
-            iBest = i;
-            best = _particles[i]->GetWeight();
-        }
-
-    return iBest;
-}
-
 void ParticleFilter::KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
 {
 	if(resamplingIndexes.size()!=indexes.size())
@@ -145,7 +130,7 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 	_nParticles = indexes.size();
 }
 
-int ParticleFilter::BestParticle()
+int ParticleFilter::iBestParticle()
 {
 // 	int iBestParticle;
 // 	Util::Max(GetWeightsVector(),iBestParticle);
@@ -185,3 +170,18 @@ int ParticleFilter::BestParticle()
 #endif
 	return iBestParticle;
 }
+
+// int ParticleFilter::IndexBestParticle()
+// {
+//     int iBest = 0;
+//     double best = _particles[0]->GetWeight();
+//
+//     for(uint i=1;i<_nParticles;i++)
+//         if(_particles[i]->GetWeight()>best)
+//         {
+//             iBest = i;
+//             best = _particles[i]->GetWeight();
+//         }
+//
+//     return iBest;
+// }

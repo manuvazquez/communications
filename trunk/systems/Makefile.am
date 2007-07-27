@@ -6,7 +6,9 @@ INCLUDES = -I$(top_srcdir)/algorithms -I$(top_srcdir)/algorithms/USIS2SIS \
 	-I$(top_srcdir)/transmision/channel/delayPowerProfile -I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libsys.a
-noinst_HEADERS = BaseSystem.h Elsevier2007ARChannelSystem.h \
-	Elsevier2007BesselChannelSystem.h Elsevier2007System.h SMCSystem.h
-libsys_a_SOURCES = BaseSystem.cpp Elsevier2007ARChannelSystem.cpp \
-	Elsevier2007BesselChannelSystem.cpp Elsevier2007System.cpp SMCSystem.cpp
+noinst_HEADERS = BaseSystem.h ChannelOrderEstimationSystem.h \
+	Elsevier2007ARChannelSystem.h Elsevier2007BesselChannelSystem.h Elsevier2007System.h \
+	PSPBasedChannelOrderEstimationSystem.h SMCSystem.h
+libsys_a_SOURCES = BaseSystem.cpp ChannelOrderEstimationSystem.cpp \
+	Elsevier2007ARChannelSystem.cpp Elsevier2007BesselChannelSystem.cpp Elsevier2007System.cpp \
+	PSPBasedChannelOrderEstimationSystem.cpp SMCSystem.cpp

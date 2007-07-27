@@ -17,43 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "SMCSystem.h"
+#ifndef CHANNELORDERESTIMATIONSYSTEM_H
+#define CHANNELORDERESTIMATIONSYSTEM_H
 
-SMCSystem::SMCSystem()
- : BaseSystem(),ARcoefficients(1)
+#include <SMCSystem.h>
+
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+
+#include <algorithm>
+
+class ChannelOrderEstimationSystem : public SMCSystem
 {
-    nParticles = 30;
-    resamplingRatio = 0.9;
+protected:
+	vector<int> candidateChannelOrders;
 
-    // back and forward smoothing
-    c = 0;
-    e = d;
+	vector<tMatrix> channelOrderCoefficientsMeans;
+	vector<tMatrix> channelOrderCoefficientsVariances;
+public:
+    ChannelOrderEstimationSystem();
+protected:
+    virtual void BeforeEndingFrame(int iFrame);
 
-    // AR process parameters
-    ARcoefficients[0] = 0.99999;
-    ARvariance=0.0001;
+};
 
-    // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
-
-    algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
-
-    firstSampledChannelMatrixVariance = 0.0;
-}
-
-
-SMCSystem::~SMCSystem()
-{
-  delete algoritmoRemuestreo;
-}
-
-void SMCSystem::BeforeEndingFrame(int iFrame)
-{
-    BaseSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
-    Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
-    Util::ScalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
-    Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
-    Util::ScalarToOctaveFileStream(c,"c",f);
-    Util::ScalarToOctaveFileStream(e,"e",f);
-}
+#endif

@@ -17,39 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "KnownSymbolsKalmanBasedChannelEstimator.h"
+#include "ChannelOrderEstimationSystem.h"
 
-KnownSymbolsKalmanBasedChannelEstimator::KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m,ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
+ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
+ : SMCSystem()
 {
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
+	candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
+
+	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
+		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
+
+	channelOrderCoefficientsMeans.resize(candidateChannelOrders.size());
+	channelOrderCoefficientsVariances.resize(candidateChannelOrders.size());
+
+	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	{
+		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
+		channelOrderCoefficientsVariances[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
+	}
 }
 
-KnownSymbolsKalmanBasedChannelEstimator::~KnownSymbolsKalmanBasedChannelEstimator()
+void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
 {
+	Util::ScalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
+    SMCSystem::BeforeEndingFrame(iFrame);
 }
 
-void KnownSymbolsKalmanBasedChannelEstimator::Run(tMatrix observations,vector<double> noiseVariances)
-{
-    _estimatedChannelMatrices.reserve(_K-_preamble.cols());
-
-    tRange rAllSymbolRows(0,_N-1);
-
-    for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
-    {
-        _estimatedChannelMatrices.push_back( _channelEstimator->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_m+1,iSymbolVector)),noiseVariances[iSymbolVector]));
-    }
-}
-
-void KnownSymbolsKalmanBasedChannelEstimator::Run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
-{
-    Run(observations,noiseVariances);
-}
-
-tMatrix KnownSymbolsKalmanBasedChannelEstimator::GetDetectedSymbolVectors()
-{
-    return tMatrix(0,0);
-}
-
-vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimator::GetEstimatedChannelMatrices()
-{
-    return _estimatedChannelMatrices;
-}

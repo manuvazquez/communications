@@ -52,7 +52,7 @@ public:
 		_particles[_nParticles++] = particle;
 	}
 
-    int IndexBestParticle();
+//     int IndexBestParticle();
 
     tVector GetWeightsVector()
     {
@@ -88,8 +88,8 @@ public:
 
 	int Capacity() { return _capacity;}
 	int Nparticles() { return _nParticles;}
-	ParticleWithChannelEstimation *GetBestParticle() { return _particles[BestParticle()]; }
-	int BestParticle();
+	ParticleWithChannelEstimation *GetBestParticle() { return _particles[iBestParticle()]; }
+	int iBestParticle();
 };
 
 #endif

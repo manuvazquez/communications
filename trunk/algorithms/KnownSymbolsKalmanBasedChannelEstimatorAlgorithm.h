@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATOR_H
-#define KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATOR_H
+#ifndef KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATORALGORITHM_H
+#define KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATORALGORITHM_H
 
 #include <KnownChannelOrderAlgorithm.h>
 
@@ -28,7 +28,7 @@
 
 #include <KalmanEstimator.h>
 
-class KnownSymbolsKalmanBasedChannelEstimator : public KnownChannelOrderAlgorithm
+class KnownSymbolsKalmanBasedChannelEstimatorAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
     tMatrix _symbolVectors;
@@ -44,9 +44,9 @@ public:
      * @param symbolVectors includes the preamble
      * @return
      */
-    KnownSymbolsKalmanBasedChannelEstimator(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
+    KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors);
 
-    ~KnownSymbolsKalmanBasedChannelEstimator();
+    ~KnownSymbolsKalmanBasedChannelEstimatorAlgorithm();
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

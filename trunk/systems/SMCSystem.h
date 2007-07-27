@@ -39,7 +39,7 @@
 #include <LinearFilterBasedSMCAlgorithm.h>
 #include <LinearFilterBasedMKFAlgorithm.h>
 #include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimator.h>
+#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <TriangularizationBasedSMCAlgorithm.h>
 #include <LinearFilterBasedAlgorithm.h>
 #include <SISoptAlgorithm.h>

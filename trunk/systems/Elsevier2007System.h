@@ -37,8 +37,6 @@ protected:
     MMSEDetector *mmseDetectorLarge,*mmseDetectorSmall,*mmseDetectorXL;
     DecorrelatorDetector *decorrelatorDetector;
 
-//     DelayPowerProfile *powerProfile;
-
 	EstimatedMIMOChannel *kalmanEstimatedChannel;
 
     virtual void AddAlgorithms();

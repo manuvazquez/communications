@@ -70,7 +70,7 @@ extern bool __done;
 class BaseSystem{
 protected:
     double pe,mse;
-    uint iChannelOrder,iSNR;
+    uint iSNR;
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
