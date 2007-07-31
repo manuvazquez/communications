@@ -21,6 +21,7 @@
 
 ChannelOrderEstimatorSMCAlgorithm::ChannelOrderEstimatorSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_channelOrderAPPs(LaGenMatDouble::zeros(_candidateOrders.size(),_K+_d)),_rCandidateOrders(0,_candidateOrders.size()-1)
 {
+	_channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
 }
 
 

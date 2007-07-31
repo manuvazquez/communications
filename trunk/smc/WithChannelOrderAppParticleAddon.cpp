@@ -33,7 +33,7 @@ WithChannelOrderAppParticleAddon::WithChannelOrderAppParticleAddon(const WithCha
 {
 }
 
-int WithChannelOrderAppParticleAddon::MaxChannelOrderAppIndex()
+int WithChannelOrderAppParticleAddon::iMaxChannelOrderAPP()
 {
 	double max;
 	int iMax;

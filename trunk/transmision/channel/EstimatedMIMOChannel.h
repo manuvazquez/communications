@@ -31,7 +31,7 @@ class EstimatedMIMOChannel : public StillMemoryMIMOChannel
 protected:
 	tMatrix *_channelMatrices;
 public:
-    EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances);
+    EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances);
 
     ~EstimatedMIMOChannel();
 

@@ -38,12 +38,13 @@ BaseSystem::BaseSystem()
     L=3,N=2,K=300;
     m = 6;
     d = m - 1;
-    trainSeqLength = 15;
+    trainSeqLength = 7;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(15);
+// 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(9);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -117,7 +118,7 @@ BaseSystem::BaseSystem()
 
 BaseSystem::~BaseSystem()
 {
-  delete alphabet;
+	delete alphabet;
 	delete ruido;
 }
 
@@ -186,7 +187,7 @@ void BaseSystem::Simulate()
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido.Variances());(preambleLength,preambleLength+trainSeqLength-1)
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 

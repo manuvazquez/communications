@@ -30,7 +30,12 @@
 #include <RLSEstimator.h>
 #include <RMMSEDetector.h>
 #include <WithoutReplacementResamplingAlgorithm.h>
+#include <BestParticlesResamplingAlgorithm.h>
 #include <FlatPowerProfile.h>
+#include <UTSAlgorithm.h>
+#include <PSPAlgorithm.h>
+#include <EstimatedMIMOChannel.h>
+#include <KnownChannelChannelMatrixEstimator.h>
 
 class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
 {
@@ -47,7 +52,15 @@ protected:
 	RLSEstimator *rlsEstimator;
 	RMMSEDetector *rmmseDetector;
 
-    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm;
+    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
+
+	EstimatedMIMOChannel *estimatedChannel,*subestimatedChannel,*overestimatedChannel;
+
+    KalmanEstimator *kalmanEstimator;
+	EstimatedMIMOChannel *kalmanEstimatedChannel;
+
+	KnownChannelChannelMatrixEstimator *knownChannelChannelMatrixEstimator;
+	EstimatedMIMOChannel *knownChannelChannelMatrixEstimatorEstimatedChannel;
 
     virtual void AddAlgorithms();
     virtual void BuildChannel();

@@ -17,28 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHCHANNELORDERAPPPARTICLEADDON_H
-#define WITHCHANNELORDERAPPPARTICLEADDON_H
+#ifndef UTSALGORITHM_H
+#define UTSALGORITHM_H
+
+#include <UPSPBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <vector>
+#include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
 
-class WithChannelOrderAppParticleAddon{
-protected:
-	std::vector<double> _channelOrderAPP;
+class UTSAlgorithm : public UPSPBasedSMCAlgorithm
+{
 public:
-    WithChannelOrderAppParticleAddon(std::vector<double> channelOrderAPP);
-    WithChannelOrderAppParticleAddon(int nChannelOrderAPP);
+    UTSAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-	WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon);
-
-	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
-
-	int iMaxChannelOrderAPP();
+    virtual void InitializeParticles();
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 };
 
 #endif

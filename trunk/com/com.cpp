@@ -494,7 +494,7 @@ int main(int argc,char* argv[])
 
 
 	    	// viterbi
-	        EstimatedMIMOChannel kalmanEstimatedChannel(N,L,m,symbols.cols(),&kalmanEstimator,symbols,observaciones,ruido.Variances());
+	        EstimatedMIMOChannel kalmanEstimatedChannel(N,L,m,symbols.cols(),preambleLength,&kalmanEstimator,symbols,observaciones,ruido.Variances());
 
             // algorithms are created
             vector<Algorithm *> algorithms;

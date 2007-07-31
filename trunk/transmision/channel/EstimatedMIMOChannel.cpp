@@ -19,22 +19,30 @@
  ***************************************************************************/
 #include "EstimatedMIMOChannel.h"
 
-EstimatedMIMOChannel::EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nTx, nRx, memory, length),_channelMatrices(new tMatrix[length])
+// #define DEBUG2
+
+EstimatedMIMOChannel::EstimatedMIMOChannel(int nTx, int nRx, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nTx, nRx, memory, length),_channelMatrices(new tMatrix[length])
 {
 	int i;
 
 	ChannelMatrixEstimator *channelMatrixEstimatorClone = channelMatrixEstimator->Clone();
 
 
-	for(i=0;i<_memory-1;i++)
+	for(i=0;i<preambleLength;i++)
 		_channelMatrices[i] = 0.0;
 
 
-	tRange rAll,rInvolvedSymbolVectors(0,_memory-1);
-	for(i=_memory-1;i<_length;i++)
+	tRange rAll,rInvolvedSymbolVectors(preambleLength-memory+1,preambleLength);
+	for(i=preambleLength;i<_length;i++)
 	{
 		_channelMatrices[i] = channelMatrixEstimatorClone->NextMatrix(observations.col(i),symbols(rAll,rInvolvedSymbolVectors),noiseVariances[i]);
 		rInvolvedSymbolVectors = rInvolvedSymbolVectors + 1;
+#ifdef DEBUG2
+		_channelMatrices[i](tRange(),tRange(0,1)) = 0;
+#endif
+#ifdef DEBUG
+		cout << _channelMatrices[i] << endl;
+#endif
 	}
 
 	delete channelMatrixEstimatorClone;

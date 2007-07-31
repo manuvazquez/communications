@@ -25,17 +25,23 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
 	candidateChannelOrders.push_back(5);candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
-	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
-		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
+// 	if(find(candidateChannelOrders.begin(),candidateChannelOrders.end(),m)==candidateChannelOrders.end())
+// 		throw RuntimeException("The memory of the channel is not one of the possible candidates.");
 
 	channelOrderCoefficientsMeans.resize(candidateChannelOrders.size());
 	channelOrderCoefficientsVariances.resize(candidateChannelOrders.size());
 
+	iTrueChannelOrder = -1;
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
 		channelOrderCoefficientsVariances[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
+		if(candidateChannelOrders[iChannelOrder] == m)
+			iTrueChannelOrder = iChannelOrder;
 	}
+
+	if(iTrueChannelOrder==-1)
+		throw RuntimeException("ChannelOrderEstimationSystem::ChannelOrderEstimationSystem: the memory of the channel is not one of the possible candidates.");
 }
 
 void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)

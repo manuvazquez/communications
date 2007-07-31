@@ -26,12 +26,11 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <algorithm>
-
 class ChannelOrderEstimationSystem : public SMCSystem
 {
 protected:
 	vector<int> candidateChannelOrders;
+	int iTrueChannelOrder;
 
 	vector<tMatrix> channelOrderCoefficientsMeans;
 	vector<tMatrix> channelOrderCoefficientsVariances;
