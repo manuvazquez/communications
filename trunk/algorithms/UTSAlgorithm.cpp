@@ -69,7 +69,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_N,_maxOrder);
-    tVector symbolsVector(_NmaxOrder);
+    tVector symbolsVector/*(_NmaxOrder)*/;
 
     int lastSymbolVectorStart = _NmaxOrder - _N;
 
@@ -84,7 +84,6 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 #ifdef DEBUG
 // 		cout << iObservationToBeProcessed << endl;
 #endif
-
 		// it keeps track of the place where a new tParticleCandidate will be stored within the array
 		iCandidate = 0;
 

@@ -33,7 +33,7 @@ Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()
 Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
 {
   delete powerProfile;
-  delete channel;
+//   delete channel;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
 }

@@ -88,9 +88,6 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVectors()
 {
-//     int iBestParticle;
-//     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
-
     return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }
 

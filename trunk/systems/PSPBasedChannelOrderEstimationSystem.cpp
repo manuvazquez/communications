@@ -41,7 +41,10 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
 
 	rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	{
 		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
+		kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients[0],ARvariance));
+	}
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
@@ -57,14 +60,17 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
 
 PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 {
-	delete channel;
+// 	delete channel;
 	delete powerProfile;
 
 	delete rmmseDetector;
 
 	delete rlsEstimator;
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	{
 		delete RLSchannelEstimators[iChannelOrder];
+		delete kalmanChannelEstimators[iChannelOrder];
+	}
 
 	delete withoutReplacementResamplingAlgorithm;
 	delete bestParticlesResamplingAlgorithm;
@@ -82,7 +88,8 @@ PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 
 void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+	channel = new BesselChannel(N,L,m,symbols.cols(),50,2e9,1.0/500.0e3,*powerProfile);
 }
 
 void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
@@ -111,21 +118,23 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 
 // 	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,withoutReplacementResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
+	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+
 // 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+//     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 
-	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated known channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (knownChannelChannelMatrixEstimatorEstimatedChannel)),preamble,d));
+// 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated known channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (knownChannelChannelMatrixEstimatorEstimatedChannel)),preamble,d));
 
-	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (estimatedChannel)),preamble,d));
+// 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (estimatedChannel)),preamble,d));
 
-	algorithms.push_back(new ViterbiAlgorithm("Viterbi (Kalman estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),preamble,d));
+// 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (Kalman estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),preamble,d));
 
 // 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (subestimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (subestimatedChannel)),preamble,candidateChannelOrders[iTrueChannelOrder-1]-1));
 
-	algorithms.push_back(new ViterbiAlgorithm("Viterbi (overestimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (overestimatedChannel)),preamble,candidateChannelOrders[iTrueChannelOrder+1]-1));
+// 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (overestimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (overestimatedChannel)),preamble,candidateChannelOrders[iTrueChannelOrder+1]-1));
 
-// 	algorithms.push_back(new ISIS("ISIS",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,&algoritmoRemuestreo,canal,symbols));
+// 	algorithms.push_back(new ISIS("ISIS",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,algoritmoRemuestreo));
 }
 
 void PSPBasedChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)

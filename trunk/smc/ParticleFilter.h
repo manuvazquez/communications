@@ -39,6 +39,8 @@ public:
     ParticleFilter(int nParticles);
     virtual ~ParticleFilter();
 
+	void Clear();
+
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
 	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
 	/**
@@ -51,8 +53,6 @@ public:
 	{
 		_particles[_nParticles++] = particle;
 	}
-
-//     int IndexBestParticle();
 
     tVector GetWeightsVector()
     {

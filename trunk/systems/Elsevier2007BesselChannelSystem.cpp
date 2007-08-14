@@ -22,7 +22,7 @@
 Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
  : Elsevier2007System()
 {
-    velocity = 50; // (Km/h)
+	velocity = 50/3.6; // (m/s)
     carrierFrequency = 2e9; // (Hz)
     symbolRate = 500e3; // (Hz)
     T = 1.0/symbolRate; // (s)
@@ -71,7 +71,7 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
 Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
 {
   delete powerProfile;
-  delete channel;
+//   delete channel;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
 }

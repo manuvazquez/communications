@@ -36,15 +36,15 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
     nFrames = 1000;
     L=3,N=2,K=300;
-    m = 6;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 7;
+    trainSeqLength = 15;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(9);
+    SNRs.push_back(9);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -113,21 +113,21 @@ BaseSystem::BaseSystem()
         randomGenerator.setSeed(0);
 #endif
 
+	channel = NULL;
 	powerProfile = NULL;
 }
 
 BaseSystem::~BaseSystem()
 {
 	delete alphabet;
-	delete ruido;
 }
 
 void BaseSystem::Simulate()
 {
   tRange rAll;
     // for repeating simulations
-//     randomGenerator.setSeed(2848936331);
-//     StatUtil::GetRandomGenerator().setSeed(2969730736);
+//     randomGenerator.setSeed();
+//     StatUtil::GetRandomGenerator().setSeed();
 
 	int iFrame = 0;
 	while((iFrame<nFrames) && (!__done))
@@ -181,7 +181,7 @@ void BaseSystem::Simulate()
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
                 // in order to repeat a concrete simulation...
-//                 StatUtil::GetRandomGenerator().setSeed(3720678788);
+//                 StatUtil::GetRandomGenerator().setSeed();
 
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
@@ -208,6 +208,9 @@ void BaseSystem::Simulate()
         // ---------------------------------------------------------
 
 	    iFrame++;
+
+	    delete channel;
+	    delete ruido;
     } // while((iFrame<nFrames) && (!done))
 
 	overallPeMatrix *= 1.0/iFrame;

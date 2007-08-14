@@ -34,6 +34,7 @@
 #include <FlatPowerProfile.h>
 #include <UTSAlgorithm.h>
 #include <PSPAlgorithm.h>
+#include <ISIS.h>
 #include <EstimatedMIMOChannel.h>
 #include <KnownChannelChannelMatrixEstimator.h>
 
@@ -48,6 +49,7 @@ protected:
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
+	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 
 	RLSEstimator *rlsEstimator;
 	RMMSEDetector *rmmseDetector;
