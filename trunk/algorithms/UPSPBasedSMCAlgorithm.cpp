@@ -51,6 +51,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 	vector<double> costs(_candidateOrders.size());
 	vector<tVector> computedObservationsVector(_candidateOrders.size());
 	int iCandidate;
+	double normConst;
 
 	typedef struct{
 		int fromParticle;
@@ -63,7 +64,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors];
 
     double *unnormalizedChannelOrderAPPs = new double[_candidateOrders.size()];
-    double normConst;
+//     double normConst;
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_N,_maxOrder);
@@ -78,6 +79,8 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 	{
 		// it keeps track of the place where a new tParticleCandidate will be stored within the array
 		iCandidate = 0;
+
+		normConst = 0.0;
 
 		// the candidates from all the particles are generated
 		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
@@ -122,6 +125,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
                 particleCandidates[iCandidate].iBestChannelOrder = iLeastCost;
                 particleCandidates[iCandidate].computedObservationsVector = computedObservationsVector;
 				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservationsVector[iLeastCost],noiseVariances[iObservationToBeProcessed]);
+				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;
 			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -133,7 +137,7 @@ void UPSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double 
 
 		// ...to store their weights
 		for(int i=0;i<iCandidate;i++)
-			weights(i) = particleCandidates[i].weight;
+			weights(i) = particleCandidates[i].weight/normConst;
 
 		// the candidates that are going to give particles are selected
 		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);

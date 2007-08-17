@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ResidualResamplingAlgorithm.h"
 
-#define DEBUG
+// #define DEBUG
 
 ResidualResamplingAlgorithm::ResidualResamplingAlgorithm(ResamplingCriterion resamplingCriterion): ResamplingAlgorithm(resamplingCriterion)
 {
@@ -32,6 +32,11 @@ ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::Clone() const
 
 std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const tVector &weights) const
 {
+#ifdef DEBUG
+	cout << "Los pesos" << endl << weights;
+	cout << "n = " << n << endl;
+	cout << "weights.size() = " << weights.size() << endl;
+#endif
 	tVector residues(weights.size());
 	int *timesToBeResampled = new int[weights.size()];
 
@@ -45,7 +50,17 @@ std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const tVector 
 	int nParticlesFromResidues = n - nDeterministicParticles;
 	residues *= 1.0/double(nParticlesFromResidues);
 
+#ifdef DEBUG
+	cout << "antes de Discrete_rnd" << endl;
+	cout << "nDeterministicParticles = " << nDeterministicParticles << endl;
+	cout << "nParticlesFromResidues = " << nParticlesFromResidues << endl;
+#endif
+
 	vector<int> indexes = StatUtil::Discrete_rnd(nParticlesFromResidues,residues);
+
+#ifdef DEBUG
+	cout << "despues de Discrete_rnd" << endl;
+#endif
 
 	indexes.reserve(n);
 

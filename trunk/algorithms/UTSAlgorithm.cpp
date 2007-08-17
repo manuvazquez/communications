@@ -50,10 +50,10 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 	vector<tSymbol> testedVector(_N);
 	tVector computedObservations(_L);
 	vector<tVector> computedObservationsVector(_candidateOrders.size());
-	int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle,iTestedVector;
-	uint iChannelOrder;
+	int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
+	uint iChannelOrder,iTestedVector;
 	ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
-	double likelihood;
+	double likelihood,normConst;
 
 	typedef struct{
 		int fromParticle;
@@ -86,6 +86,8 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 #endif
 		// it keeps track of the place where a new tParticleCandidate will be stored within the array
 		iCandidate = 0;
+
+		normConst = 0.0;
 
 		// the candidates from all the particles are generated
 		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
@@ -138,6 +140,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
                 particleCandidates[iCandidate].computedObservationsVector = computedObservationsVector;
                 particleCandidates[iCandidate].likelihood = likelihood;
 				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
+				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;
 			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -149,7 +152,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 
 		// ...to store their weights
 		for(int i=0;i<iCandidate;i++)
-			weights(i) = particleCandidates[i].weight;
+			weights(i) = particleCandidates[i].weight/normConst;
 
 		// the candidates that are going to give particles are selected
 		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);
@@ -173,7 +176,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
 
-			for(uint iChannelOrder=0;iChannelOrder<processedParticle->NchannelMatrixEstimators();iChannelOrder++)
+			for(int iChannelOrder=0;iChannelOrder<processedParticle->NchannelMatrixEstimators();iChannelOrder++)
 			{
 				// channel matrix is estimated by means of the particle channel estimator
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));

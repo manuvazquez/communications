@@ -17,62 +17,40 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
-#define PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
+#ifndef PSPVSPSPBASEDSMCSYSTEM_H
+#define PSPVSPSPBASEDSMCSYSTEM_H
 
-#include <ChannelOrderEstimationSystem.h>
+#include <SMCSystem.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <UPSPBasedSMCAlgorithm.h>
-#include <RLSEstimator.h>
-#include <RMMSEDetector.h>
-#include <WithoutReplacementResamplingAlgorithm.h>
-#include <BestParticlesResamplingAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <UTSAlgorithm.h>
-#include <UTSFeedBackAlgorithm.h>
+#include <KalmanEstimator.h>
+#include <ViterbiAlgorithm.h>
 #include <PSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
-#include <ISIS.h>
-#include <EstimatedMIMOChannel.h>
-#include <KnownChannelChannelMatrixEstimator.h>
+#include <FlatPowerProfile.h>
+#include <WithoutReplacementResamplingAlgorithm.h>
+#include <BestParticlesResamplingAlgorithm.h>
 
-class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
+class PSPvsPSPBasedSMCSystem : public SMCSystem
 {
+public:
+    PSPvsPSPBasedSMCSystem();
+
+    ~PSPvsPSPBasedSMCSystem();
+
 protected:
     int nSurvivors;
     bool adjustParticlesNumberFromSurvivors;
 
-    double forgettingFactor;
-    double forgettingFactorDetector;
-
-	// vectors of channel estimators and linear detectors for unknown channel order algorithms
-	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
-	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
-
-	RLSEstimator *rlsEstimator;
-	RMMSEDetector *rmmseDetector;
-
+    KalmanEstimator *kalmanEstimator;
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
 
-	EstimatedMIMOChannel *estimatedChannel,*subestimatedChannel,*overestimatedChannel;
-
-    KalmanEstimator *kalmanEstimator;
-	EstimatedMIMOChannel *kalmanEstimatedChannel;
-
-	KnownChannelChannelMatrixEstimator *knownChannelChannelMatrixEstimator;
-	EstimatedMIMOChannel *knownChannelChannelMatrixEstimatorEstimatedChannel;
-
+    virtual void BeforeEndingFrame(int iFrame);
     virtual void AddAlgorithms();
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
-public:
-    PSPBasedChannelOrderEstimationSystem();
-
-    ~PSPBasedChannelOrderEstimationSystem();
 };
 
 #endif

@@ -8,7 +8,7 @@ noinst_HEADERS = Algorithm.h ChannelOrderEstimatorSMCAlgorithm.h \
 	DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h KnownChannelOrderAlgorithm.h \
 	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h LinearFilterBasedAlgorithm.h LinearFilterBasedMKFAlgorithm.h \
 	MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h PSPBasedSMCAlgorithm.h SISoptAlgorithm.h SMCAlgorithm.h \
-	TriangularizationBasedSMCAlgorithm.h UPSPBasedSMCAlgorithm.h USIS.h UTSAlgorithm.h \
+	TriangularizationBasedSMCAlgorithm.h UPSPBasedSMCAlgorithm.h USIS.h UTSAlgorithm.h UTSFeedBackAlgorithm.h \
 	UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp ChannelOrderEstimatorSMCAlgorithm.cpp \
 	DSISoptAlgorithm.cpp ISIS.cpp KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
@@ -16,5 +16,6 @@ libalgorithms_a_SOURCES = Algorithm.cpp ChannelOrderEstimatorSMCAlgorithm.cpp \
 	LinearFilterBasedSMCAlgorithm.cpp MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp \
 	PSPBasedSMCAlgorithm.cpp SISoptAlgorithm.cpp SMCAlgorithm.cpp \
 	TriangularizationBasedSMCAlgorithm.cpp UPSPBasedSMCAlgorithm.cpp USIS.cpp UTSAlgorithm.cpp \
-	UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp
+	UTSFeedBackAlgorithm.cpp UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp \
+	ViterbiAlgorithm.cpp
 SUBDIRS = USIS2SIS

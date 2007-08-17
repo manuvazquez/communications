@@ -1,0 +1,68 @@
+/***************************************************************************
+ *   Copyright (C) 2006 by Manu   *
+ *   manu@rustneversleeps   *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, write to the                         *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+#include "UTSFeedBackAlgorithm.h"
+
+UTSFeedBackAlgorithm::UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): UTSAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
+{
+}
+
+
+// UTSFeedBackAlgorithm::~UTSFeedBackAlgorithm()
+// {
+// }
+
+
+// void UTSFeedBackAlgorithm::InitializeParticles()
+// {
+//     UTSAlgorithm::InitializeParticles();
+// }
+
+void UTSFeedBackAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+{
+    UTSAlgorithm::Process(observations, noiseVariances);
+
+	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle()->Clone());
+
+	int nParticles = _particleFilter->Capacity();
+
+	delete _particleFilter;
+
+	for(int iObservationToBeProcessed=_K+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
+	{
+		for(int iChannelOrder=0;iChannelOrder<bestParticle->NchannelMatrixEstimators();iChannelOrder++)
+		{
+			tMatrix symbolVectors = bestParticle->GetSymbolVectors(tRange(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed));
+			bestParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
+		}
+	}
+
+	bestParticle->SetWeight(1.0);
+
+// 	// the available APP's just before the _startDetectionTime instant are copied into the particle
+// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+// 		bestParticle->SetChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+
+	_particleFilter = new ParticleFilter(nParticles);
+
+	_particleFilter->AddParticle(bestParticle);
+
+    UTSAlgorithm::Process(observations, noiseVariances);
+}
+

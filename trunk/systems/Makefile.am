@@ -8,7 +8,7 @@ METASOURCES = AUTO
 lib_LIBRARIES = libsys.a
 noinst_HEADERS = BaseSystem.h ChannelOrderEstimationSystem.h \
 	Elsevier2007ARChannelSystem.h Elsevier2007BesselChannelSystem.h Elsevier2007System.h \
-	PSPBasedChannelOrderEstimationSystem.h SMCSystem.h
+	PSPBasedChannelOrderEstimationSystem.h PSPvsPSPBasedSMCSystem.h SMCSystem.h
 libsys_a_SOURCES = BaseSystem.cpp ChannelOrderEstimationSystem.cpp \
 	Elsevier2007ARChannelSystem.cpp Elsevier2007BesselChannelSystem.cpp Elsevier2007System.cpp \
-	PSPBasedChannelOrderEstimationSystem.cpp SMCSystem.cpp
+	PSPBasedChannelOrderEstimationSystem.cpp PSPvsPSPBasedSMCSystem.cpp SMCSystem.cpp
