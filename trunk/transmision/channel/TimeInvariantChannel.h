@@ -17,36 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef TIMEINVARIANTCHANNEL_H
+#define TIMEINVARIANTCHANNEL_H
+
+#include <StillMemoryMIMOChannel.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
-
-class MIMOChannel{
+class TimeInvariantChannel : public StillMemoryMIMOChannel
+{
 protected:
-	int _nTx, _nRx,_length,_nTxnRx;
+	tMatrix _channelMatrix;
 public:
-	MIMOChannel(int nTx,int nRx,int length);
-	virtual ~MIMOChannel() {};
+    TimeInvariantChannel(int nTx, int nRx, int memory, int length, tMatrix channelMatrix);
 
-	int Nt() const { return _nTx;};
-	int Nr() const { return _nRx;};
-	int Length() const {return _length;};
-	int NtNr() const {return _nTxnRx;};
-	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
-	int NtMemory(int n) const {return _nTx*Memory(n);};
-	virtual int Memory(int n) const = 0;
-	virtual int EffectiveMemory() const = 0;
-	virtual tMatrix operator[](int n) const = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
+	tMatrix operator[](int n) const { return _channelMatrix;};
 };
 
 #endif

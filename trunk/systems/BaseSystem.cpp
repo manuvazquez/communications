@@ -21,7 +21,7 @@
 
 #include <defines.h>
 #define DATE_LENGTH 100
-// #define EXPORT_REAL_DATA
+#define EXPORT_REAL_DATA
 
 using namespace std;
 
@@ -153,6 +153,7 @@ void BaseSystem::Simulate()
 
         // noise is generated according to the channel
         ruido = new ChannelDependentNoise(channel);
+// 	    ruido = new NullNoise(L,channel->Length());
 // 	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA

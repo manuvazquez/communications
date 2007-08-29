@@ -145,8 +145,8 @@ int main(int argc,char* argv[])
 
 //     Elsevier2007BesselChannelSystem system;
 //     Elsevier2007ARChannelSystem  system;
-// 	PSPBasedChannelOrderEstimationSystem system;
-	PSPvsPSPBasedSMCSystem system;
+	PSPBasedChannelOrderEstimationSystem system;
+// 	PSPvsPSPBasedSMCSystem system;
     system.Simulate();
     exit(0);
 

@@ -49,19 +49,17 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 	tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
 	vector<tSymbol> testedVector(_N);
 	tVector computedObservations(_L);
-	vector<tVector> computedObservationsVector(_candidateOrders.size());
 	int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
 	uint iChannelOrder,iTestedVector;
 	ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
-	double likelihood,normConst;
+	double channelOrderNormConst,normConst,likelihood,pdf;
 
 	typedef struct{
 		int fromParticle;
 		tMatrix symbolVectorsMatrix;
         int iBestChannelOrder;
-        vector<tVector> computedObservationsVector;
 		tVector unnormalizedChannelOrderAPPs;
-		double likelihood;
+		double channelOrderNormConst;
 		double weight;
 	}tParticleCandidate;
 
@@ -106,6 +104,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 				for(k=0;k<_N;k++)
 					symbolVectorsMatrix(k,_maxOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
 
+				channelOrderNormConst = 0.0;
 				likelihood = 0.0;
 
 				particleCandidates[iCandidate].unnormalizedChannelOrderAPPs = tVector(_candidateOrders.size());
@@ -120,26 +119,27 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 					// computedObservations = estimatedChannelMatrix * symbolVectorsMatrix(:)
 					Blas_Mat_Vec_Mult(estimatedChannelMatrix,symbolsVector(tRange(_NmaxOrder-m*_N,_NmaxOrder-1)),computedObservations);
 
-					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
+					pdf = StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
 
-					likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
+					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*pdf;
 
-					computedObservationsVector[iChannelOrder] = computedObservations;
+					channelOrderNormConst += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
+
+					likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder)*pdf;
 				}
 
-				// if the likelihood is zero, we don't generate a candidate for this particle and this symbol vector
-				if(likelihood==0.0)
+				// if the channelOrderNormConst is zero, we don't generate a candidate for this particle and this symbol vector
+				if(channelOrderNormConst==0.0)
 					continue;
-// 					throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
+// 					throw RuntimeException("UTSAlgorithm::Process: channelOrderNormConst is zero.");
 
 				Util::Max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
                 particleCandidates[iCandidate].iBestChannelOrder = iBestUnnormalizedChannelOrderAPP;
-                particleCandidates[iCandidate].computedObservationsVector = computedObservationsVector;
-                particleCandidates[iCandidate].likelihood = likelihood;
-				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
+                particleCandidates[iCandidate].channelOrderNormConst = channelOrderNormConst;
+				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood/channelOrderNormConst;
 				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;
@@ -181,7 +181,7 @@ void UTSAlgorithm::Process(const tMatrix& observations, vector< double > noiseVa
 				// channel matrix is estimated by means of the particle channel estimator
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
 
-				processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
+				processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].channelOrderNormConst,iChannelOrder);
 			}
 
 			processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);

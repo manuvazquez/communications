@@ -17,36 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef MIMOCHANNEL_H
-#define MIMOCHANNEL_H
+#ifndef CMEBASEDALGORITHM_H
+#define CMEBASEDALGORITHM_H
+
+#include <UnknownChannelOrderAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <types.h>
-#include <Noise.h>
-#include <exceptions.h>
-#include <Util.h>
+#include <math.h>
+#include <RLSEstimator.h>
 
-class MIMOChannel{
+class CMEBasedAlgorithm : public UnknownChannelOrderAlgorithm
+{
 protected:
-	int _nTx, _nRx,_length,_nTxnRx;
+    tMatrix _symbolVectors;
 public:
-	MIMOChannel(int nTx,int nRx,int length);
-	virtual ~MIMOChannel() {};
+    CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
 
-	int Nt() const { return _nTx;};
-	int Nr() const { return _nRx;};
-	int Length() const {return _length;};
-	int NtNr() const {return _nTxnRx;};
-	int NtNrMemory(int n) const {return _nTx*_nRx*Memory(n);};
-	int NtMemory(int n) const {return _nTx*Memory(n);};
-	virtual int Memory(int n) const = 0;
-	virtual int EffectiveMemory() const = 0;
-	virtual tMatrix operator[](int n) const = 0;
-	tMatrix Transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
+	virtual void Run(tMatrix observations,vector<double> noiseVariances);
+	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+
+    virtual tMatrix GetDetectedSymbolVectors();
+    virtual vector<tMatrix> GetEstimatedChannelMatrices();
+
+    ~CMEBasedAlgorithm();
+
 };
 
 #endif

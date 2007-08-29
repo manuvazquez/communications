@@ -102,7 +102,7 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
 	int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 
     for(int i=_preamble.cols();i<_K;i++)
-        channelMatrices.push_back((GetParticleFilterPointer()->GetParticle(iBestParticle))->GetChannelMatrix(iBestChannelOrder,i));
+        channelMatrices.push_back(GetParticleFilterPointer()->GetParticle(iBestParticle)->GetChannelMatrix(iBestChannelOrder,i));
 
     return channelMatrices;
 }

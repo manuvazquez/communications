@@ -52,18 +52,13 @@
 #include <Noise.h>
 #include <ChannelDependentNoise.h>
 #include <PowerProfileDependentNoise.h>
+#include <NullNoise.h>
 #include <Algorithm.h>
 #include <TransmissionUtil.h>
 
 #define HOSTNAME_LENGTH 50
 
 #define MSE_TIME_EVOLUTION_COMPUTING
-
-#ifdef EXPORT_REAL_DATA
-    MIMOChannel *realChannel;
-    tMatrix *realSymbols;
-    Noise *realNoise;
-#endif
 
 extern bool __done;
 

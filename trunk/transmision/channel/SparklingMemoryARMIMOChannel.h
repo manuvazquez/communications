@@ -44,7 +44,7 @@ public:
     ~SparklingMemoryARMIMOChannel();
 
 	int Memory(int n) const {return _candidateOrders[_channelOrders[n]];}
-	tMatrix& operator[](int n) const { return _channelMatrices[n];};
+	tMatrix operator[](int n) const { return _channelMatrices[n];};
 };
 
 #endif

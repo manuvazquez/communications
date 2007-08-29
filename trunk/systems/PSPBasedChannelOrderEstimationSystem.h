@@ -38,7 +38,9 @@
 #include <PSPBasedSMCAlgorithm.h>
 #include <ISIS.h>
 #include <EstimatedMIMOChannel.h>
+#include <TimeInvariantChannel.h>
 #include <KnownChannelChannelMatrixEstimator.h>
+#include <CMEBasedAlgorithm.h>
 
 class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
 {

@@ -89,7 +89,8 @@ PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	channel = new BesselChannel(N,L,m,symbols.cols(),50,2e9,1.0/500.0e3,*powerProfile);
+// 	channel = new BesselChannel(N,L,m,symbols.cols(),50,2e9,1.0/500.0e3,*powerProfile);
+	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->GenerateChannelMatrix(randomGenerator));
 }
 
 void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
@@ -111,6 +112,8 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 
 	delete overestimatedChannel;
 	overestimatedChannel = new EstimatedMIMOChannel(N,L,candidateChannelOrders[iTrueChannelOrder+1],symbols.cols(),preambleLength,RLSchannelEstimators[iTrueChannelOrder+1],symbols,observaciones,ruido->Variances());
+
+	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
 
 //     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Linear Filter Based SMC Algorithm (RLS + MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

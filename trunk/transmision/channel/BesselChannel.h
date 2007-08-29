@@ -41,7 +41,7 @@ public:
 
     ~BesselChannel();
 
-	tMatrix& operator[](int n) const { return _channelMatrices[n];};
+	tMatrix operator[](int n) const { return _channelMatrices[n];};
 };
 
 #endif

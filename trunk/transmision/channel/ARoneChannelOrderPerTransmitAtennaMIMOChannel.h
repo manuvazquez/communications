@@ -36,7 +36,7 @@ protected:
 public:
     ARoneChannelOrderPerTransmitAtennaMIMOChannel(int nTx, int nRx, int length,const std::vector<int> &antennasChannelOrders,double mean,double variance,vector<double> ARcoefficients,double ARvariance);
 
-	tMatrix& operator[](int n) const { return _channelMatrices[n];};
+	tMatrix operator[](int n) const { return _channelMatrices[n];};
 
     ~ARoneChannelOrderPerTransmitAtennaMIMOChannel();
 
