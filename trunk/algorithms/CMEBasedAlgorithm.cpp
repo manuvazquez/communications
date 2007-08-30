@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CMEBasedAlgorithm.h"
 
-#define DEBUG
+// #define DEBUG
 #define EXPORT_REAL_DATA
 
 #ifdef EXPORT_REAL_DATA

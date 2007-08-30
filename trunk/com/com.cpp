@@ -90,7 +90,6 @@
 #include <UniformRelatedCriterion.h>
 #include <PSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
-#include <UPSPBasedSMCAlgorithm.h>
 #include <ChannelOrderEstimatorSMCAlgorithm.h>
 #include <TriangularizationBasedSMCAlgorithm.h>
 #include <LinearFilterBasedAlgorithm.h>

@@ -129,7 +129,7 @@ protected:
     virtual void BeforeEndingFrame(int iFrame);
     virtual void BeforeEndingAlgorithm(int iAlgorithm);
     /**
-     * Actions performed only once (first SNR, firs frame)
+     * Actions performed only once (first SNR, first frame)
      */
     virtual void OnlyOnce();
 public:

@@ -20,12 +20,12 @@
 #ifndef UTSFEEDBACKALGORITHM_H
 #define UTSFEEDBACKALGORITHM_H
 
-#include <UTSAlgorithm.h>
+#include <UTrellisSearchAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class UTSFeedBackAlgorithm : public UTSAlgorithm
+class UTSFeedBackAlgorithm : public UTrellisSearchAlgorithm
 {
 public:
     UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);

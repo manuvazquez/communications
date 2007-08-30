@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTSALGORITHM_H
-#define UTSALGORITHM_H
+#ifndef UTRELLISSEARCHALGORITHM_H
+#define UTRELLISSEARCHALGORITHM_H
 
-#include <UPSPBasedSMCAlgorithm.h>
+#include <ChannelOrderEstimatorSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -28,13 +28,24 @@
 
 #include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
 
-class UTSAlgorithm : public UPSPBasedSMCAlgorithm
+class UTrellisSearchAlgorithm : public ChannelOrderEstimatorSMCAlgorithm
 {
-public:
-    UTSAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
+protected:
+	ParticleFilter *_particleFilter;
+	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    vector<int> _particlesBestChannelOrders;
 
+	vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    int BestChannelOrderIndex(int iBestParticle);
+public:
+    UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
+
+    ~UTrellisSearchAlgorithm();
+
+    virtual ParticleFilter* GetParticleFilterPointer() {return _particleFilter;}
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+
 };
 
 #endif

@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "SMCSystem.h"
 
+#define DEBUG
+
 SMCSystem::SMCSystem()
  : BaseSystem(),ARcoefficients(1)
 {
@@ -49,6 +51,9 @@ SMCSystem::~SMCSystem()
 
 void SMCSystem::BeforeEndingFrame(int iFrame)
 {
+#ifdef DEBUG
+	cout << "en SMCSystem::BeforeEndingFrame" << endl;
+#endif
     BaseSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
     Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);

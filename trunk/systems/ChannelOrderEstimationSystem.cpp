@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ChannelOrderEstimationSystem.h"
 
+// #define DEBUG
+
 ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
  : SMCSystem()
 {
@@ -39,11 +41,50 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 
 	if(iTrueChannelOrder==-1)
 		throw RuntimeException("ChannelOrderEstimationSystem::ChannelOrderEstimationSystem: the memory of the channel is not one of the possible candidates.");
+
+	// channel order APP evolution
+    channelOrderAPPsAlongTime.reserve(nFrames);
 }
 
 void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
 {
-	Util::ScalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
     SMCSystem::BeforeEndingFrame(iFrame);
+	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
+	Util::MatricesVectoresVectoresVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+	Util::ScalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
+
+	Util::ScalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
 }
 
+void ChannelOrderEstimationSystem::OnlyOnce()
+{
+	SMCSystem::OnlyOnce();
+
+	// we find out which algorithms perform channel order APP estimation
+	for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+	{
+		if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
+			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
+			iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
+	}
+
+	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
+	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+}
+
+void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
+{
+	SMCSystem::BeforeEndingAlgorithm(iAlgorithm);
+
+	if(algorithms[iAlgorithm]->PerformsChannelOrderAPPEstimation())
+	{
+		//...the probability of the different channel orders at each time instant is retrieved
+		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <ChannelOrderEstimatorSMCAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+		iAlgorithmPerformingChannelOrderAPPestimation++;
+	}
+}
+
+void ChannelOrderEstimationSystem::AddAlgorithms()
+{
+	iAlgorithmPerformingChannelOrderAPPestimation = 0;
+}

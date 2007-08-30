@@ -95,6 +95,8 @@ void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 
 void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 {
+	ChannelOrderEstimationSystem::AddAlgorithms();
+
 	delete kalmanEstimatedChannel;
 	kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observaciones,ruido->Variances());
 
@@ -117,13 +119,13 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 
 //     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Linear Filter Based SMC Algorithm (RLS + MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new UPSPBasedSMCAlgorithm("Unknown channel order PSP based SMC algorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,withoutReplacementResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	algorithms.push_back(new UTrellisSearchAlgorithm("UTrellisSearchAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 // 	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,withoutReplacementResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 	algorithms.push_back(new UTSFeedBackAlgorithm("UTSFeedBackAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
@@ -144,7 +146,7 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 
 void PSPBasedChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
 {
-    SMCSystem::BeforeEndingFrame(iFrame);
+    ChannelOrderEstimationSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
 	Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
 	Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);

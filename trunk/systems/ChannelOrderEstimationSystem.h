@@ -26,19 +26,30 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <ChannelOrderEstimatorSMCAlgorithm.h>
+
 class ChannelOrderEstimationSystem : public SMCSystem
 {
+private:
+	int iAlgorithmPerformingChannelOrderAPPestimation;
 protected:
 	vector<int> candidateChannelOrders;
 	int iTrueChannelOrder;
 
 	vector<tMatrix> channelOrderCoefficientsMeans;
 	vector<tMatrix> channelOrderCoefficientsVariances;
+
+	// channel order APP evolution
+    vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;
+    vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
+    vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
+
+	virtual void OnlyOnce();
+    virtual void BeforeEndingAlgorithm(int iAlgorithm);
+	virtual void AddAlgorithms();
+    virtual void BeforeEndingFrame(int iFrame);
 public:
     ChannelOrderEstimationSystem();
-protected:
-    virtual void BeforeEndingFrame(int iFrame);
-
 };
 
 #endif

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UTSFeedBackAlgorithm.h"
 
-UTSFeedBackAlgorithm::UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): UTSAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
+UTSFeedBackAlgorithm::UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): UTrellisSearchAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
 {
 }
 
@@ -36,7 +36,7 @@ UTSFeedBackAlgorithm::UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L
 
 void UTSFeedBackAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-    UTSAlgorithm::Process(observations, noiseVariances);
+    UTrellisSearchAlgorithm::Process(observations, noiseVariances);
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle()->Clone());
 
@@ -63,6 +63,6 @@ void UTSFeedBackAlgorithm::Process(const tMatrix& observations, vector< double >
 
 	_particleFilter->AddParticle(bestParticle);
 
-    UTSAlgorithm::Process(observations, noiseVariances);
+    UTrellisSearchAlgorithm::Process(observations, noiseVariances);
 }
 

@@ -26,13 +26,12 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <UPSPBasedSMCAlgorithm.h>
 #include <RLSEstimator.h>
 #include <RMMSEDetector.h>
 #include <WithoutReplacementResamplingAlgorithm.h>
 #include <BestParticlesResamplingAlgorithm.h>
 #include <FlatPowerProfile.h>
-#include <UTSAlgorithm.h>
+#include <UTrellisSearchAlgorithm.h>
 #include <UTSFeedBackAlgorithm.h>
 #include <PSPAlgorithm.h>
 #include <PSPBasedSMCAlgorithm.h>
