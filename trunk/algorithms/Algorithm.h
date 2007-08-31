@@ -58,7 +58,7 @@ public:
      */
     virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
 
-    virtual bool PerformsChannelOrderAPPEstimation() { return false;}
+    virtual bool PerformsChannelOrderAPPEstimation() const { return false;}
 
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);

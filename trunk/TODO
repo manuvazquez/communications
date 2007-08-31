@@ -10,10 +10,10 @@
   - mFirstColumns pilla una columna de mas
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
-- a�adir simbolos para suavizado, no bits
+- añadir simbolos para suavizado, no bits
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
-- a�adir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
+- añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
 - reestructurar las clases relacionadas con el ruido (que no se cree la matriz de ruido en la clase base)
 - definir preambulo en algun lugar más alto de la jerarquía
 - eliminar "_d" de MultipleChannelEstimatorsPerParticleSMCAlgorithm y sus clases derivadas
@@ -31,3 +31,4 @@
 - proceso AR: multiplicar por la varianza
 - el constructor de SMCAlgorithm no debería recibir smoothingLag
 - KnownSymbolsKalmanBasedChannelEstimatorAlgorithm no tiene que recibir necesariamente un estimador de Kalman => cambiarle el nombre KnownSymbolsChannelEstimatorAlgorithm
+- UnknownChannelOrderAlgorithm: hacer ProcessTrainingSequence protected

@@ -20,7 +20,7 @@
 #ifndef USIS_H
 #define USIS_H
 
-#include <ChannelOrderEstimatorSMCAlgorithm.h>
+#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -36,7 +36,7 @@
 #include <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h>
 #include <MIMOChannel.h>
 
-class USIS : public ChannelOrderEstimatorSMCAlgorithm
+class USIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 public:
     USIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator * channelOrderEstimator, double ARcoefficient,double samplingVariance,double ARprocessVariance);

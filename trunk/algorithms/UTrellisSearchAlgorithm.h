@@ -20,7 +20,7 @@
 #ifndef UTRELLISSEARCHALGORITHM_H
 #define UTRELLISSEARCHALGORITHM_H
 
-#include <ChannelOrderEstimatorSMCAlgorithm.h>
+#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -28,7 +28,7 @@
 
 #include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
 
-class UTrellisSearchAlgorithm : public ChannelOrderEstimatorSMCAlgorithm
+class UTrellisSearchAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
 	ParticleFilter *_particleFilter;

@@ -46,6 +46,8 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 	int m,iTxAntenna,iRxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
 	tRange rAll;
+	tVector invCMEs(_candidateOrders.size());
+
 #ifdef DEBUG
 	cout << "nº = " << nSymbolVectors << endl;
 	cout << "el primer canal es (sigma2 = " << noiseVariances[_preamble.cols()] << ")" << endl << (*realChannel)[_preamble.cols()];
@@ -126,12 +128,22 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 		CME += _L*log(fabs(detCTransC));
 		CME /= 2.0;
 
+		invCMEs(iChannelOrder) = 1.0/CME;
+
 #ifdef DEBUG
 		cout << "la varianza es " << variance << endl;
 		cout << "CME (m = " << m << ")" << " = " << endl << CME << endl;
 		cout << "Una tecla..."; getchar();
 #endif
 	} // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+
+	cout << "Los CMEs invertidos son" << endl << invCMEs;
+	tVector normalizedInvCMEs = Util::Normalize(invCMEs);
+	cout << "y normalizados.." << endl << normalizedInvCMEs;
+
+	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+		_channelOrderAPPs.row(iChannelOrder) = normalizedInvCMEs(iChannelOrder);
+
 }
 
 tMatrix CMEBasedAlgorithm::GetDetectedSymbolVectors()

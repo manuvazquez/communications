@@ -26,7 +26,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <ChannelOrderEstimatorSMCAlgorithm.h>
+#include <UnknownChannelOrderAlgorithm.h>
 
 class ChannelOrderEstimationSystem : public SMCSystem
 {
