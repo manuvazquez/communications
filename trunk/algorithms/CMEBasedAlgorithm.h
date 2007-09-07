@@ -42,8 +42,6 @@ public:
     virtual tMatrix GetDetectedSymbolVectors();
     virtual vector<tMatrix> GetEstimatedChannelMatrices();
 
-//     bool PerformsChannelOrderAPPEstimation() const { return false;}
-
     ~CMEBasedAlgorithm();
 
 };

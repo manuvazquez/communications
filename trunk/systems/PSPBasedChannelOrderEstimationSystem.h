@@ -31,6 +31,7 @@
 #include <WithoutReplacementResamplingAlgorithm.h>
 #include <BestParticlesResamplingAlgorithm.h>
 #include <FlatPowerProfile.h>
+#include <ExponentialPowerProfile.h>
 #include <UTrellisSearchAlgorithm.h>
 #include <UTSFeedBackAlgorithm.h>
 #include <PSPAlgorithm.h>

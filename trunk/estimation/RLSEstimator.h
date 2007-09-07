@@ -28,6 +28,7 @@
 
 #include <exceptions.h>
 #include <Util.h>
+#include <StatUtil.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
 #include <lapackpp/blas2pp.h>
@@ -48,6 +49,7 @@ public:
     virtual ChannelMatrixEstimator* Clone() const;
 
     virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+	virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 };
 
 #endif

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-// #define DEBUG
+// #define DEBUG2
 
 RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_invForgettingFactor(1.0/forgettingFactor)
 {
@@ -95,4 +95,21 @@ tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& sym
 #endif
 
 	return _lastEstimatedChannelMatrix;
+}
+
+double RLSEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+{
+#ifdef DEBUG2
+	cout << symbolsMatrix.rows() << " filas y " << symbolsMatrix.cols() << " cols" << endl;
+	cout << _lastEstimatedChannelMatrix << endl;
+	cout << symbolsMatrix << endl;
+#endif
+	tVector computedObservations(observations.size());
+	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,Util::ToVector(symbolsMatrix,columnwise),computedObservations);
+
+#ifdef DEBUG2
+	cout << "calculado" << endl;
+#endif
+
+	return StatUtil::NormalPdf(observations,computedObservations,noiseVariance);
 }

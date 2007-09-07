@@ -19,8 +19,8 @@
  ***************************************************************************/
 #include "CMEBasedAlgorithm.h"
 
-// #define DEBUG
-#define EXPORT_REAL_DATA
+// #define DEBUG2
+// #define EXPORT_REAL_DATA
 
 #ifdef EXPORT_REAL_DATA
 	extern MIMOChannel *realChannel;
@@ -38,25 +38,27 @@ CMEBasedAlgorithm::~CMEBasedAlgorithm()
 
 void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-	throw RuntimeException("CMEBasedAlgorithm::Run: not implemented yet.");
-}
-
-void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
-{
 	int m,iTxAntenna,iRxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
 	tRange rAll;
-	tVector invCMEs(_candidateOrders.size());
+	tVector invCMEs(_candidateOrders.size()),CMEs(_candidateOrders.size());
 
-#ifdef DEBUG
+#ifdef DEBUG2
 	cout << "nº = " << nSymbolVectors << endl;
 	cout << "el primer canal es (sigma2 = " << noiseVariances[_preamble.cols()] << ")" << endl << (*realChannel)[_preamble.cols()];
 	cout << "el ultimo canal es (sigma2 = " << noiseVariances[_symbolVectors.cols()-1] << ")" << endl << (*realChannel)[_symbolVectors.cols()-1];
 	cout << "Una tecla..."; getchar();
 #endif
 
+#ifdef EXPORT_REAL_DATA
 	tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
+#endif
 	double variance = noiseVariances[_symbolVectors.cols()-1];
+
+#ifdef DEBUG3
+	for(int hola=_preamble.cols();hola<_K;hola++)
+		cout << "varianza en " << hola << " = " << noiseVariances[hola] << endl;
+#endif
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 	{
@@ -74,6 +76,11 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 		tMatrix estimatedChannelMatrix = rlsEstimator.LastEstimatedChannelMatrix();
 
 #ifdef DEBUG
+		cout << "------------- m = " << m << " --------------------" << endl;
+		cout << "estimatedChannelMatrix es" << endl << estimatedChannelMatrix;
+#endif
+
+#ifdef DEBUG2
 		cout << "estimatedChannelMatrix es" << endl << estimatedChannelMatrix;
 		cout << "el canal de verdad es" << endl << channelMatrix;
 		cout << "Una tecla..."; getchar();
@@ -104,7 +111,7 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 
 			// error = error - C * hs[iRxAntenna]
 			Blas_Mat_Vec_Mult(C,hs[iRxAntenna],error,-1.0,1.0);
-#ifdef DEBUG
+#ifdef DEBUG2
 			cout << "error es" << endl << error;
 #endif
 			// CME += error'*error
@@ -129,21 +136,29 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 		CME /= 2.0;
 
 		invCMEs(iChannelOrder) = 1.0/CME;
+		CMEs(iChannelOrder) = CME;
 
-#ifdef DEBUG
+#ifdef DEBUG2
 		cout << "la varianza es " << variance << endl;
 		cout << "CME (m = " << m << ")" << " = " << endl << CME << endl;
 		cout << "Una tecla..."; getchar();
 #endif
 	} // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
-	cout << "Los CMEs invertidos son" << endl << invCMEs;
 	tVector normalizedInvCMEs = Util::Normalize(invCMEs);
+
+#ifdef DEBUG_PRINT_CMES
+	cout << "Los CMEs son" << endl << CMEs;
 	cout << "y normalizados.." << endl << normalizedInvCMEs;
+#endif
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 		_channelOrderAPPs.row(iChannelOrder) = normalizedInvCMEs(iChannelOrder);
+}
 
+void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+{
+	Run(observations,noiseVariances);
 }
 
 tMatrix CMEBasedAlgorithm::GetDetectedSymbolVectors()

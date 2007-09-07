@@ -20,8 +20,9 @@
 #include "BaseSystem.h"
 
 #include <defines.h>
+#include <typeinfo>
 #define DATE_LENGTH 100
-#define EXPORT_REAL_DATA
+// #define EXPORT_REAL_DATA
 
 using namespace std;
 
@@ -152,9 +153,9 @@ void BaseSystem::Simulate()
         BuildChannel();
 
         // noise is generated according to the channel
-        ruido = new ChannelDependentNoise(channel);
 // 	    ruido = new NullNoise(L,channel->Length());
-// 	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
+//         ruido = new ChannelDependentNoise(channel);
+	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -187,8 +188,8 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
@@ -293,10 +294,15 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+//     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
+	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*ruido).name())),"ruidoClass",f);
 
 	if(powerProfile!=NULL)
+	{
 		Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
+		Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
+	}
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)

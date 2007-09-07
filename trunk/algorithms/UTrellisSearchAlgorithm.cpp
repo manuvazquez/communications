@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UTrellisSearchAlgorithm.h"
 
-// #define DEBUG
+#define DEBUG3
 
 UTrellisSearchAlgorithm::UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
@@ -58,14 +58,14 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 	int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
 	uint iChannelOrder,iTestedVector;
 	ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
-	double channelOrderNormConst,normConst,likelihood,pdf;
+	double normConst,likelihood;
 
 	typedef struct{
 		int fromParticle;
 		tMatrix symbolVectorsMatrix;
         int iBestChannelOrder;
 		tVector unnormalizedChannelOrderAPPs;
-		double channelOrderNormConst;
+		double likelihood;
 		double weight;
 	}tParticleCandidate;
 
@@ -73,7 +73,7 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_N,_maxOrder);
-    tVector symbolsVector/*(_NmaxOrder)*/;
+    tVector symbolsVector;
 
     int lastSymbolVectorStart = _NmaxOrder - _N;
 
@@ -82,7 +82,6 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 	vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
 	int iBestChannelOrder = 0,timesBestChannelOrder = 0;
 
-	// at first, there is only one particle
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
 	{
 #ifdef DEBUG
@@ -110,7 +109,6 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 				for(k=0;k<_N;k++)
 					symbolVectorsMatrix(k,_maxOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
 
-				channelOrderNormConst = 0.0;
 				likelihood = 0.0;
 
 				particleCandidates[iCandidate].unnormalizedChannelOrderAPPs = tVector(_candidateOrders.size());
@@ -119,33 +117,37 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 				{
 					m = _candidateOrders[iChannelOrder];
 
-					tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix();
-					estimatedChannelMatrix *= _ARcoefficient;
+// 					tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix();
+// 					estimatedChannelMatrix *= _ARcoefficient;
+//
+// 					// computedObservations = estimatedChannelMatrix * symbolVectorsMatrix(:)
+// 					Blas_Mat_Vec_Mult(estimatedChannelMatrix,symbolsVector(tRange(_NmaxOrder-m*_N,_NmaxOrder-1)),computedObservations);
+//
+// 					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
 
-					// computedObservations = estimatedChannelMatrix * symbolVectorsMatrix(:)
-					Blas_Mat_Vec_Mult(estimatedChannelMatrix,symbolsVector(tRange(_NmaxOrder-m*_N,_NmaxOrder-1)),computedObservations);
+					tMatrix involvedSymbolVectors = symbolVectorsMatrix(rAll,tRange(_maxOrder-m,_maxOrder-1)).copy();
 
-					pdf = StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
+					// the AR coefficiented is accounted for
+					involvedSymbolVectors *= _ARcoefficient;
 
-					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*pdf;
+					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
-					channelOrderNormConst += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
 
-					likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder)*pdf;
+					likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
 				}
 
 				// if the channelOrderNormConst is zero, we don't generate a candidate for this particle and this symbol vector
-				if(channelOrderNormConst==0.0)
+				if(likelihood==0.0)
 					continue;
-// 					throw RuntimeException("UTSAlgorithm::Process: channelOrderNormConst is zero.");
+// 					throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
 
 				Util::Max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
                 particleCandidates[iCandidate].iBestChannelOrder = iBestUnnormalizedChannelOrderAPP;
-                particleCandidates[iCandidate].channelOrderNormConst = channelOrderNormConst;
-				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood/channelOrderNormConst;
+                particleCandidates[iCandidate].likelihood = likelihood;
+				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
 				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;
@@ -187,7 +189,7 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 				// channel matrix is estimated by means of the particle channel estimator
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
 
-				processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].channelOrderNormConst,iChannelOrder);
+				processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
 			}
 
 			processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
@@ -237,6 +239,9 @@ int UTrellisSearchAlgorithm::BestChannelOrderIndex(int iBestParticle)
 
 vector<vector<tMatrix> > UTrellisSearchAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
+#ifdef DEBUG3
+	cout << "en UTrellisSearchAlgorithm::ProcessTrainingSequence" << endl;
+#endif
     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))

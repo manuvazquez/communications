@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "SMCSystem.h"
 
-#define DEBUG
+// #define DEBUG
 
 SMCSystem::SMCSystem()
  : BaseSystem(),ARcoefficients(1)
