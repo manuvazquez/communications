@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UTrellisSearchAlgorithm.h"
 
-#define DEBUG3
+// #define DEBUG3
 
 UTrellisSearchAlgorithm::UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
@@ -154,6 +154,29 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+
+		if(iCandidate==0)
+		{
+			tVector uniformDistribution(_alphabet.Length());
+			for(int iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+				uniformDistribution(iAlphabet) = 1.0/_alphabet.Length();
+
+			for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+			{
+				processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
+				symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
+				for(k=0;k<_N;k++)
+					symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::Discrete_rnd(uniformDistribution)];
+				particleCandidates[iParticle].fromParticle = iParticle;
+				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
+
+				particleCandidates[iCandidate].iBestChannelOrder = processedParticle->iMaxChannelOrderAPP();
+                particleCandidates[iCandidate].likelihood = 1.0;
+				particleCandidates[iCandidate].weight = processedParticle->GetWeight();
+				normConst += particleCandidates[iCandidate].weight;
+			}
+			iCandidate = _particleFilter->Nparticles();
+		}
 
 		// a vector of size the number of generated candidates is declared...
 		tVector weights(iCandidate);

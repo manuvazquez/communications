@@ -26,6 +26,7 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <math.h>
 #include <RLSEstimator.h>
 #include <RMMSEDetector.h>
 #include <WithoutReplacementResamplingAlgorithm.h>
@@ -46,10 +47,12 @@ class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
 {
 protected:
     int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors;
+    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     double forgettingFactor;
     double forgettingFactorDetector;
+
+	double velocity;
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;

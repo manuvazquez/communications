@@ -39,13 +39,14 @@ BaseSystem::BaseSystem()
     L=3,N=2,K=300;
     m = 3;
     d = m - 1;
-    trainSeqLength = 15;
+    trainSeqLength = 5;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(15);
+// 	SNRs.push_back(12);SNRs.push_back(15);
+// 	SNRs.push_back(15);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -154,8 +155,8 @@ void BaseSystem::Simulate()
 
         // noise is generated according to the channel
 // 	    ruido = new NullNoise(L,channel->Length());
-//         ruido = new ChannelDependentNoise(channel);
-	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
+        ruido = new ChannelDependentNoise(channel);
+// 	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -188,8 +189,8 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
+                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
@@ -294,7 +295,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-//     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+    Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*ruido).name())),"ruidoClass",f);
 

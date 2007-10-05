@@ -24,11 +24,14 @@
 PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 2;
+    nSurvivors = 12;
+	adjustSurvivorsFromParticlesNumber = true;
 //     adjustParticlesNumberFromSurvivors = false;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
+
+	velocity = 50.0; // m/s
 
 
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
@@ -39,6 +42,13 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
 // 		nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
 //         cout << "Number of particles adjusted to " << nParticles << endl;
 //     }
+
+	if(adjustSurvivorsFromParticlesNumber)
+	{
+		cout << "number of survivors adjusted from " << nSurvivors;
+		nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+		cout << " to " << nSurvivors << endl;
+	}
 
 	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
 
@@ -92,7 +102,7 @@ PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	channel = new BesselChannel(N,L,m,symbols.cols(),50,2e9,1.0/500.0e3,*powerProfile);
+	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->GenerateChannelMatrix(randomGenerator));
 #ifdef DEBUG
 	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
@@ -125,25 +135,22 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 	delete overestimatedChannel;
 	overestimatedChannel = new EstimatedMIMOChannel(N,L,candidateChannelOrders[iTrueChannelOrder+1],symbols.cols(),preambleLength,RLSchannelEstimators[iTrueChannelOrder+1],symbols,observaciones,ruido->Variances());
 
-	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
+// 	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
 
 //     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Linear Filter Based SMC Algorithm (RLS + MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new UTrellisSearchAlgorithm("UTrellisSearchAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	algorithms.push_back(new UTrellisSearchAlgorithm("UTrellisSearchAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 	algorithms.push_back(new UTrellisSearchAlgorithm("MKF UTrellisSearchAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,withoutReplacementResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-
 // 	algorithms.push_back(new UTSFeedBackAlgorithm("UTSFeedBackAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-// 	algorithms.push_back(new UTSAlgorithm("UTSAlgorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+// 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
 // 	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,bestParticlesResamplingAlgorithm,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0]));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+//     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 
 // 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (estimatedChannel)),preamble,d));
 
@@ -165,5 +172,6 @@ void PSPBasedChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
 	Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
 	Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+	Util::ScalarToOctaveFileStream(velocity,"velocity",f);
 }
 
