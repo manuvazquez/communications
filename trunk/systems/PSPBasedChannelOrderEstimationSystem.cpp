@@ -135,7 +135,7 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 	delete overestimatedChannel;
 	overestimatedChannel = new EstimatedMIMOChannel(N,L,candidateChannelOrders[iTrueChannelOrder+1],symbols.cols(),preambleLength,RLSchannelEstimators[iTrueChannelOrder+1],symbols,observaciones,ruido->Variances());
 
-// 	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
+	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),symbols));
 
 //     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("Linear Filter Based SMC Algorithm (RLS + MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -150,7 +150,7 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 
 // 	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,bestParticlesResamplingAlgorithm,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0]));
 
-//     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 
 // 	algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (estimatedChannel)),preamble,d));
 

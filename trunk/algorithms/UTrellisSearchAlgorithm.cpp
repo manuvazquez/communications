@@ -155,6 +155,7 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
+		// if none of the candidates was valid
 		if(iCandidate==0)
 		{
 			tVector uniformDistribution(_alphabet.Length());

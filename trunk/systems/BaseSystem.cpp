@@ -39,14 +39,15 @@ BaseSystem::BaseSystem()
     L=3,N=2,K=300;
     m = 3;
     d = m - 1;
-    trainSeqLength = 5;
+    trainSeqLength = 300;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(15);
+	SNRs.push_back(3);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;

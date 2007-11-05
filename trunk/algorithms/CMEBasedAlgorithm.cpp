@@ -153,7 +153,8 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 #endif
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		_channelOrderAPPs.row(iChannelOrder) = normalizedInvCMEs(iChannelOrder);
+// 		_channelOrderAPPs.row(iChannelOrder) = normalizedInvCMEs(iChannelOrder);
+		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
 void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
