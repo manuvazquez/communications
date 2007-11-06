@@ -35,19 +35,19 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames = 1000;
-    L=3,N=2,K=300;
+    nFrames = 3;
+    L=3,N=3,K=300;
     m = 3;
     d = m - 1;
     trainSeqLength = 300;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(15);
-	SNRs.push_back(3);
+// 	SNRs.push_back(3);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -257,12 +257,12 @@ void BaseSystem::OnlyOnce()
 void BaseSystem::BeforeEndingFrame(int iFrame)
 {
     // pe
-    peMatrices.push_back(presentFramePe);
-    Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
+//     peMatrices.push_back(presentFramePe);
+//     Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
 
     // MSE
-    MSEMatrices.push_back(presentFrameMSE);
-    Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
+//     MSEMatrices.push_back(presentFrameMSE);
+//     Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
@@ -273,11 +273,11 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
     Util::MatricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
-    for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
-        for(uint i=0;i<algorithmsNames.size();i++)
-            for(int j=0;j<K;j++)
-                overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
-    Util::MatricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
+//     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
+//         for(uint i=0;i<algorithmsNames.size();i++)
+//             for(int j=0;j<K;j++)
+//                 overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
+//     Util::MatricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
     Util::ScalarToOctaveFileStream(iFrame+1,"nFrames",f);
 
@@ -296,7 +296,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+//     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*ruido).name())),"ruidoClass",f);
 

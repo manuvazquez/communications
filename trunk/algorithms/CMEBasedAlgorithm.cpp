@@ -32,10 +32,6 @@ CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int 
 {
 }
 
-CMEBasedAlgorithm::~CMEBasedAlgorithm()
-{
-}
-
 void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
 	int m,iTxAntenna,iRxAntenna,iDelay;
@@ -65,15 +61,15 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		m = _candidateOrders[iChannelOrder];
 
 		// channel estimation
-		RLSEstimator rlsEstimator(LaGenMatDouble::zeros(_L,_N*m),_N,1.0);
+// 		RLSEstimator rlsEstimator(LaGenMatDouble::zeros(_L,_N*m),_N,1.0);
 		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
 		for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
 		{
-			rlsEstimator.NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
+			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
 			rSymbolVectors = rSymbolVectors + 1;
 		}
 
-		tMatrix estimatedChannelMatrix = rlsEstimator.LastEstimatedChannelMatrix();
+		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
 
 #ifdef DEBUG
 		cout << "------------- m = " << m << " --------------------" << endl;

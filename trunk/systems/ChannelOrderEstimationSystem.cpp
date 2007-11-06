@@ -49,11 +49,12 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
-	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-	Util::MatricesVectoresVectoresVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
-	Util::ScalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 
 	Util::ScalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
+	Util::ScalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
+
+	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
+	Util::MatricesVectoresVectoresVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
 }
 
 void ChannelOrderEstimationSystem::OnlyOnce()
@@ -69,7 +70,9 @@ void ChannelOrderEstimationSystem::OnlyOnce()
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
-	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+// 	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+
+	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),1))); // <-----------------------------------
 }
 
 void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
@@ -82,7 +85,9 @@ void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
 		cout << "sí hace channel order estimation" << endl;
 #endif
 		//...the probability of the different channel orders at each time instant is retrieved
-		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+// 		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
+		tMatrix aux = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime(); // <-------------------------------
+		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = aux.col(K-1);
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}
 }

@@ -41,9 +41,6 @@ public:
 
     virtual tMatrix GetDetectedSymbolVectors();
     virtual vector<tMatrix> GetEstimatedChannelMatrices();
-
-    ~CMEBasedAlgorithm();
-
 };
 
 #endif

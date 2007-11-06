@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UTrellisSearchAlgorithm.h"
 
-// #define DEBUG3
+#define DEBUG4
 
 UTrellisSearchAlgorithm::UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
@@ -117,18 +117,10 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 				{
 					m = _candidateOrders[iChannelOrder];
 
-// 					tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->LastEstimatedChannelMatrix();
-// 					estimatedChannelMatrix *= _ARcoefficient;
-//
-// 					// computedObservations = estimatedChannelMatrix * symbolVectorsMatrix(:)
-// 					Blas_Mat_Vec_Mult(estimatedChannelMatrix,symbolsVector(tRange(_NmaxOrder-m*_N,_NmaxOrder-1)),computedObservations);
-//
-// 					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
-
 					tMatrix involvedSymbolVectors = symbolVectorsMatrix(rAll,tRange(_maxOrder-m,_maxOrder-1)).copy();
 
-					// the AR coefficiented is accounted for
-					involvedSymbolVectors *= _ARcoefficient;
+					// the AR coefficiente is accounted for
+// 					involvedSymbolVectors *= _ARcoefficient; <--------------------------------- (when Kalman estimator, it is already accounted for)
 
 					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
@@ -271,28 +263,63 @@ vector<vector<tMatrix> > UTrellisSearchAlgorithm::ProcessTrainingSequence(const 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("UTrellisSearchAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
 
-	// channel estimation for the training sequence is needed in order to compute the channel order APP
-	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+	vector<ChannelMatrixEstimator *> initialChannelEstimators(_candidateOrders.size());
+	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+	{
+		// the initial channel estimators are kept for computing the APP of the channel orders
+		initialChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
 
-	tVector computedObservations(_L),unnormalizedChannelOrderAPPs(_candidateOrders.size());
+		// at the beginning, all the channel orders have the same probability
+		_channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
+	}
+
 	tRange rAll;
+	double normConst;
+	vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
 
 	for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
 	{
-		double normConst = 0.0;
-
+		normConst = 0.0;
 		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
 		{
-			// computedObservations = estimatedMatrices[iOrder][i-_preamble.cols()] * Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise)
-			Blas_Mat_Vec_Mult(estimatedMatrices[iOrder][i-_preamble.cols()],Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise),computedObservations);
+			// unnormalized channel order APP
+			unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*initialChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+			normConst += unnormalizedChannelOrderAPPs[iOrder];
 
-			unnormalizedChannelOrderAPPs(iOrder) = StatUtil::NormalPdf(observations.col(i),computedObservations,noiseVariances[i]);
-			normConst += unnormalizedChannelOrderAPPs(iOrder);
+			initialChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
 		}
 
-		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-			_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs(iOrder)/normConst;
+		if(normConst!=0.0)
+			for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+				_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
 	}
 
-	return estimatedMatrices;
+	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+		delete initialChannelEstimators[iOrder];
+
+	// channel estimation for the training sequence is needed in order to compute the channel order APP
+// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+
+// 	tVector computedObservations(_L),unnormalizedChannelOrderAPPs(_candidateOrders.size());
+// 	tRange rAll;
+//
+// 	for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
+// 	{
+// 		double normConst = 0.0;
+//
+// 		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+// 		{
+// 			// computedObservations = estimatedMatrices[iOrder][i-_preamble.cols()] * Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise)
+// 			Blas_Mat_Vec_Mult(estimatedMatrices[iOrder][i-_preamble.cols()],Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise),computedObservations);
+//
+// 			unnormalizedChannelOrderAPPs(iOrder) = StatUtil::NormalPdf(observations.col(i),computedObservations,noiseVariances[i]);
+// 			normConst += unnormalizedChannelOrderAPPs(iOrder);
+// 		}
+//
+// 		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+// 			_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs(iOrder)/normConst;
+// 	}
+
+// 	return estimatedMatrices;
+	return UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 }
