@@ -35,7 +35,7 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames = 3;
+    nFrames =10000;
     L=3,N=3,K=300;
     m = 3;
     d = m - 1;
@@ -51,9 +51,9 @@ BaseSystem::BaseSystem()
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
-    BERwindowStart = preambleLength + K*3/10;
+    BERwindowStart = K*3/10;
     MSEwindowStart = 0;
-    MSEwindowStart = preambleLength + K*9/10;
+    MSEwindowStart = K*9/10;
 
     // alphabet is defined
     vector<vector<tBit> > secuenciasBits(2,vector<tBit>(1));
@@ -195,7 +195,7 @@ void BaseSystem::Simulate()
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
-                pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,*alphabet),BERwindowStart,K,permutations);
+                pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,preambleLength + BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,*alphabet),preambleLength + BERwindowStart,K,permutations);
 
                 BeforeEndingAlgorithm(iAlgorithm);
 

@@ -237,6 +237,7 @@ ContinuousPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/chan
 DATE_LENGTH	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^#define DATE_LENGTH /;"	d	file:
 DEBUG	/usr/local/.home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp	/^#define DEBUG$/;"	d	file:
 DEBUG	/usr/local/.home/manu/c++/comunicaciones/smc/resampling/MultinomialResamplingAlgorithm.cpp	/^#define DEBUG$/;"	d	file:
+DEBUG4	/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp	/^#define DEBUG4$/;"	d	file:
 DECORRELATORDETECTOR_H	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^#define DECORRELATORDETECTOR_H$/;"	d
 DELAYPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^#define DELAYPOWERPROFILE_H$/;"	d
 DEMODULATOR_H	/usr/local/.home/manu/c++/comunicaciones/transmision/Demodulator.h	/^#define DEMODULATOR_H$/;"	d
@@ -1640,8 +1641,6 @@ withoutReplacementResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/s
 ~BesselChannel	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/BesselChannel.h	/^    ~BesselChannel();$/;"	p	class:BesselChannel
 ~Bits	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^Bits::~Bits()$/;"	f	class:Bits
 ~Bits	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	~Bits();$/;"	p	class:Bits
-~CMEBasedAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^CMEBasedAlgorithm::~CMEBasedAlgorithm()$/;"	f	class:CMEBasedAlgorithm
-~CMEBasedAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^    ~CMEBasedAlgorithm();$/;"	p	class:CMEBasedAlgorithm
 ~ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::~ChannelDependentNoise()$/;"	f	class:ChannelDependentNoise
 ~ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.h	/^	~ChannelDependentNoise();$/;"	p	class:ChannelDependentNoise
 ~ChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^	virtual ~ChannelMatrixEstimator() {};$/;"	f	class:ChannelMatrixEstimator

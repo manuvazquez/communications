@@ -37,7 +37,7 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	int m,iTxAntenna,iRxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
 	tRange rAll;
-	tVector invCMEs(_candidateOrders.size()),CMEs(_candidateOrders.size());
+	tVector CMEs(_candidateOrders.size());
 
 #ifdef DEBUG2
 	cout << "nº = " << nSymbolVectors << endl;
@@ -61,7 +61,6 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		m = _candidateOrders[iChannelOrder];
 
 		// channel estimation
-// 		RLSEstimator rlsEstimator(LaGenMatDouble::zeros(_L,_N*m),_N,1.0);
 		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
 		for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
 		{
@@ -131,7 +130,6 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		CME += _L*log(fabs(detCTransC));
 		CME /= 2.0;
 
-		invCMEs(iChannelOrder) = 1.0/CME;
 		CMEs(iChannelOrder) = CME;
 
 #ifdef DEBUG2
@@ -141,15 +139,12 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 #endif
 	} // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
-	tVector normalizedInvCMEs = Util::Normalize(invCMEs);
-
 #ifdef DEBUG_PRINT_CMES
 	cout << "Los CMEs son" << endl << CMEs;
 	cout << "y normalizados.." << endl << normalizedInvCMEs;
 #endif
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 		_channelOrderAPPs.row(iChannelOrder) = normalizedInvCMEs(iChannelOrder);
 		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 

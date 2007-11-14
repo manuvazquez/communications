@@ -292,34 +292,13 @@ vector<vector<tMatrix> > UTrellisSearchAlgorithm::ProcessTrainingSequence(const 
 		if(normConst!=0.0)
 			for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
 				_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
+		else
+			for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+				_channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
 	}
 
 	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
 		delete initialChannelEstimators[iOrder];
 
-	// channel estimation for the training sequence is needed in order to compute the channel order APP
-// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
-
-// 	tVector computedObservations(_L),unnormalizedChannelOrderAPPs(_candidateOrders.size());
-// 	tRange rAll;
-//
-// 	for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
-// 	{
-// 		double normConst = 0.0;
-//
-// 		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-// 		{
-// 			// computedObservations = estimatedMatrices[iOrder][i-_preamble.cols()] * Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise)
-// 			Blas_Mat_Vec_Mult(estimatedMatrices[iOrder][i-_preamble.cols()],Util::ToVector(sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),columnwise),computedObservations);
-//
-// 			unnormalizedChannelOrderAPPs(iOrder) = StatUtil::NormalPdf(observations.col(i),computedObservations,noiseVariances[i]);
-// 			normConst += unnormalizedChannelOrderAPPs(iOrder);
-// 		}
-//
-// 		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-// 			_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs(iOrder)/normConst;
-// 	}
-
-// 	return estimatedMatrices;
 	return UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 }
