@@ -58,6 +58,10 @@ void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
 		variance = channelTranspChannel.trace();
 		stdDev = sqrt(variance);
 
+#ifdef DEBUG
+		cout << "stdDev en el instante " << j << " = " << stdDev << endl;
+#endif
+
 		for(i=0;i<_nRx;i++)
 		{
 			// normalize by dividing by the old standard deviation and multiplying by the new one

@@ -17,10 +17,10 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "CMEBasedAlgorithm.h"
+#include "TimeVaryingChannelCMEbasedAlgorithm.h"
 
 // #define DEBUG5
-#define DEBUG7
+// #define DEBUG7
 // #define EXPORT_REAL_DATA
 
 #ifdef EXPORT_REAL_DATA
@@ -29,11 +29,11 @@
 	extern Noise *realNoise;
 #endif
 
-CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
+TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
 {
 }
 
-void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
 	int m,iTxAntenna,iRxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
@@ -65,18 +65,9 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 		accumulatedSquaredObservationsError = 0.0;
 
-// 		tRange rSymbolVectors2(_preamble.cols()-m+1,_preamble.cols());
-// 		for(int iSymbolVector=_preamble.cols();iSymbolVector<_preamble.cols()+10;iSymbolVector++)
-// 		{
-// 			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors2),noiseVariances[iSymbolVector]);
-//
-// 			rSymbolVectors2 = rSymbolVectors2 + 1;
-// 		}
-
 		// channel estimation
 		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
 		int skipNumber = 0;
-// 		for(int iSymbolVector=_preamble.cols()+10;iSymbolVector<observations.cols();iSymbolVector++)
 		for(int iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
 		{
 			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
@@ -219,17 +210,17 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
-void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
 	Run(observations,noiseVariances);
 }
 
-tMatrix CMEBasedAlgorithm::GetDetectedSymbolVectors()
+tMatrix TimeVaryingChannelCMEbasedAlgorithm::GetDetectedSymbolVectors()
 {
 	return tMatrix(0,0);
 }
 
-vector<tMatrix> CMEBasedAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> TimeVaryingChannelCMEbasedAlgorithm::GetEstimatedChannelMatrices()
 {
 	return vector<tMatrix>(0);
 }

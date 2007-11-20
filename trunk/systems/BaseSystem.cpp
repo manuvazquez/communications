@@ -43,11 +43,13 @@ BaseSystem::BaseSystem()
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+	SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+// 	SNRs.push_back(10);SNRs.push_back(20);SNRs.push_back(50);SNRs.push_back(100);
+// 	SNRs.push_back(10);SNRs.push_back(20);SNRs.push_back(22);SNRs.push_back(24);SNRs.push_back(26);SNRs.push_back(28);SNRs.push_back(30);
 // 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 // 	SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(15);
-// 	SNRs.push_back(3);
+// 	SNRs.push_back(9);
+// 	SNRs.push_back(30);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -195,7 +197,7 @@ void BaseSystem::Simulate()
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
-                pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,preambleLength + BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,*alphabet),preambleLength + BERwindowStart,K,permutations);
+                pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,*alphabet),BERwindowStart,K,permutations);
 
                 BeforeEndingAlgorithm(iAlgorithm);
 
@@ -257,12 +259,12 @@ void BaseSystem::OnlyOnce()
 void BaseSystem::BeforeEndingFrame(int iFrame)
 {
     // pe
-//     peMatrices.push_back(presentFramePe);
-//     Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
+    peMatrices.push_back(presentFramePe);
+    Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
 
     // MSE
-//     MSEMatrices.push_back(presentFrameMSE);
-//     Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
+    MSEMatrices.push_back(presentFrameMSE);
+    Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
