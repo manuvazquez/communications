@@ -33,7 +33,7 @@
 #include <BestParticlesResamplingAlgorithm.h>
 #include <FlatPowerProfile.h>
 #include <ExponentialPowerProfile.h>
-#include <UTrellisSearchAlgorithm.h>
+#include <MLSDmAlgorithm.h>
 #include <PSPAlgorithm.h>
 #include <TimeInvariantChannel.h>
 #include <CMEBasedAlgorithm.h>

@@ -20,6 +20,7 @@
 #include "PSPAlgorithm.h"
 
 // #define DEBUG3
+#define DEBUG4
 
 PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,K+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
 {
@@ -105,7 +106,12 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 	int iProcessedObservation,iBestState,iBestSurvivor;
 
     for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
+    {
+#ifdef DEBUG4
+	    cout << "iProcessedObservation = " << iProcessedObservation << endl;
+#endif
 		ProcessOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
+    }
 
     BestPairStateSurvivor(iBestState,iBestSurvivor);
 

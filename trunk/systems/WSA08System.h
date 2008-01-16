@@ -17,24 +17,58 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTSFEEDBACKALGORITHM_H
-#define UTSFEEDBACKALGORITHM_H
+#ifndef WSA08SYSTEM_H
+#define WSA08SYSTEM_H
 
-#include <UTrellisSearchAlgorithm.h>
+#include <ChannelOrderEstimationSystem.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class UTSFeedBackAlgorithm : public UTrellisSearchAlgorithm
+
+#include <math.h>
+#include <RLSEstimator.h>
+#include <RMMSEDetector.h>
+#include <WithoutReplacementResamplingAlgorithm.h>
+#include <BestParticlesResamplingAlgorithm.h>
+#include <FlatPowerProfile.h>
+#include <ExponentialPowerProfile.h>
+#include <MLSDmAlgorithm.h>
+#include <PSPAlgorithm.h>
+#include <TimeInvariantChannel.h>
+#include <CMEBasedAlgorithm.h>
+#include <TimeVaryingChannelCMEbasedAlgorithm.h>
+
+class WSA08System : public ChannelOrderEstimationSystem
 {
+protected:
+    int nSurvivors;
+    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
+
+    double forgettingFactor;
+    double forgettingFactorDetector;
+
+	double velocity;
+
+	// vectors of channel estimators and linear detectors for unknown channel order algorithms
+	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
+	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
+	vector<ChannelMatrixEstimator *> noForgetRLSchannelEstimators;
+
+	RLSEstimator *rlsEstimator;
+	RMMSEDetector *rmmseDetector;
+
+    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
+
+    KalmanEstimator *kalmanEstimator;
+
+    virtual void AddAlgorithms();
+    virtual void BuildChannel();
+    virtual void BeforeEndingFrame(int iFrame);
 public:
-    UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
+    WSA08System();
 
-//     ~UTSFeedBackAlgorithm();
-
-//     virtual void InitializeParticles();
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
-
+    ~WSA08System();
 };
 
 #endif

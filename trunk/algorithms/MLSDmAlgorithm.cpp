@@ -17,21 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "UTrellisSearchAlgorithm.h"
+#include "MLSDmAlgorithm.h"
 
 #define DEBUG4
 
-UTrellisSearchAlgorithm::UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
+MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
 }
 
 
-UTrellisSearchAlgorithm::~UTrellisSearchAlgorithm()
+MLSDmAlgorithm::~MLSDmAlgorithm()
 {
 	delete _particleFilter;
 }
 
-void UTrellisSearchAlgorithm::InitializeParticles()
+void MLSDmAlgorithm::InitializeParticles()
 {
 	vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
 	for(uint i=0;i<_candidateOrders.size();i++)
@@ -49,7 +49,7 @@ void UTrellisSearchAlgorithm::InitializeParticles()
 	_particleFilter->AddParticle(particle);
 }
 
-void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
 	tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
@@ -248,20 +248,20 @@ void UTrellisSearchAlgorithm::Process(const tMatrix& observations, vector< doubl
 	delete[] particleCandidates;
 }
 
-int UTrellisSearchAlgorithm::BestChannelOrderIndex(int iBestParticle)
+int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
 {
     return _particlesBestChannelOrders[iBestParticle];
 }
 
-vector<vector<tMatrix> > UTrellisSearchAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<vector<tMatrix> > MLSDmAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 #ifdef DEBUG3
-	cout << "en UTrellisSearchAlgorithm::ProcessTrainingSequence" << endl;
+	cout << "en MLSDmAlgorithm::ProcessTrainingSequence" << endl;
 #endif
     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-        throw RuntimeException("UTrellisSearchAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
+        throw RuntimeException("MLSDmAlgorithm::ProcessTrainingSequence: Insufficient number of observations.");
 
 	vector<ChannelMatrixEstimator *> initialChannelEstimators(_candidateOrders.size());
 	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)

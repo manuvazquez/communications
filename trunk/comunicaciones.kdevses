@@ -1,31 +1,10 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="8" >
-  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/PSPBasedChannelOrderEstimationSystem.h" >
-   <View0 Encoding="" line="33" Type="Source" />
+ <DocsAndViews NumberOfDocuments="1" >
+  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 Encoding="" line="39" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/PSPBasedChannelOrderEstimationSystem.cpp" >
-   <View0 Encoding="" line="107" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-   <View0 Encoding="" line="144" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.h" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UTrellisSearchAlgorithm.h" >
-   <View0 Encoding="" line="23" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UTSFeedBackAlgorithm.cpp" >
-   <View0 Encoding="" line="65" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UTSFeedBackAlgorithm.h" >
-   <View0 Encoding="" line="27" Type="Source" />
-  </Doc7>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -86,14 +65,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.cpp" >
      <mark line="52" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/PSPBasedChannelOrderEstimationSystem.cpp" >
-     <mark line="154" />
-     <mark line="156" />
-     <mark line="160" />
-     <mark line="145" />
-     <mark line="163" />
-     <mark line="148" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UTSAlgorithm.cpp" >
      <mark line="195" />
      <mark line="77" />
@@ -118,6 +89,10 @@
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="320" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+     <mark line="21" />
+     <mark line="109" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/TriangularizationBasedSMCAlgorithm.cpp" >
      <mark line="208" />
      <mark line="227" />
@@ -126,12 +101,12 @@
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.h" >
      <mark line="121" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
-     <mark line="295" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp" >
      <mark line="72" />
      <mark line="47" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
+     <mark line="295" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="188" />
@@ -140,13 +115,17 @@
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
+     <mark line="112" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="51" />
-     <mark line="325" />
-     <mark line="267" />
-     <mark line="199" />
-     <mark line="236" />
-     <mark line="321" />
+     <mark line="205" />
+     <mark line="273" />
+     <mark line="53" />
+     <mark line="327" />
+     <mark line="242" />
+     <mark line="331" />
+     <mark line="161" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

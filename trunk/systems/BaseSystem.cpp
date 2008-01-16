@@ -24,6 +24,8 @@
 #define DATE_LENGTH 100
 // #define EXPORT_REAL_DATA
 
+// #define PRINT_PARAMETERS
+
 using namespace std;
 
 #ifdef EXPORT_REAL_DATA
@@ -35,11 +37,11 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames =10000;
+    nFrames =1000;
     L=3,N=3,K=300;
     m = 3;
     d = m - 1;
-    trainSeqLength = 300;
+    trainSeqLength = 10;
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
@@ -155,6 +157,10 @@ void BaseSystem::Simulate()
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
 
         BuildChannel();
+
+#ifdef PRINT_PARAMETERS
+	    cout << "lastSymbolVectorInstant = " << lastSymbolVectorInstant << endl;
+#endif
 
         // noise is generated according to the channel
 // 	    ruido = new NullNoise(L,channel->Length());

@@ -17,26 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "UTSFeedBackAlgorithm.h"
+#include "MLSDmFeedBackAlgorithm.h"
 
-UTSFeedBackAlgorithm::UTSFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): UTrellisSearchAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
+MLSDmFeedBackAlgorithm::MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): MLSDmAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
 {
 }
 
-
-// UTSFeedBackAlgorithm::~UTSFeedBackAlgorithm()
-// {
-// }
-
-
-// void UTSFeedBackAlgorithm::InitializeParticles()
-// {
-//     UTSAlgorithm::InitializeParticles();
-// }
-
-void UTSFeedBackAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-    UTrellisSearchAlgorithm::Process(observations, noiseVariances);
+    MLSDmAlgorithm::Process(observations, noiseVariances);
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle()->Clone());
 
@@ -63,6 +52,6 @@ void UTSFeedBackAlgorithm::Process(const tMatrix& observations, vector< double >
 
 	_particleFilter->AddParticle(bestParticle);
 
-    UTrellisSearchAlgorithm::Process(observations, noiseVariances);
+    MLSDmAlgorithm::Process(observations, noiseVariances);
 }
 

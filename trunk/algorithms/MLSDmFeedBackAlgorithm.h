@@ -17,32 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef MLSDMFEEDBACKALGORITHM_H
+#define MLSDMFEEDBACKALGORITHM_H
 
-#include <SMCSystem.h>
-#include <Elsevier2007BesselChannelSystem.h>
-#include <Elsevier2007ARChannelSystem.h>
-#include <PSPBasedChannelOrderEstimationSystem.h>
-#include <PSPvsPSPBasedSMCSystem.h>
-#include <WSA08System.h>
+#include <MLSDmAlgorithm.h>
 
-#include <signal.h>
-
-bool __done = false;
-
-void setDoneTrue(int signal)
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class MLSDmFeedBackAlgorithm : public MLSDmAlgorithm
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
-	__done  = true;
-}
+public:
+    MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-int main(int argc,char* argv[])
-{
-	signal(SIGINT,&setDoneTrue);
+    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
-//     Elsevier2007BesselChannelSystem system;
-//     Elsevier2007ARChannelSystem  system;
-// 	PSPBasedChannelOrderEstimationSystem system;
-	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
-    system.Simulate();
-}
+};
+
+#endif

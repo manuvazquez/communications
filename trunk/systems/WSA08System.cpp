@@ -17,16 +17,14 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "PSPBasedChannelOrderEstimationSystem.h"
+#include "WSA08System.h"
 
-// #define DEBUG
-
-PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
+WSA08System::WSA08System()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 12;
-	adjustSurvivorsFromParticlesNumber = true;
-//     adjustParticlesNumberFromSurvivors = false;
+    nSurvivors = 3;
+	adjustSurvivorsFromParticlesNumber = false;
+    adjustParticlesNumberFromSurvivors = true;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
@@ -37,11 +35,11 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
-// 	if(adjustParticlesNumberFromSurvivors)
-// 	{
-// 		nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
-//         cout << "Number of particles adjusted to " << nParticles << endl;
-//     }
+	if(adjustParticlesNumberFromSurvivors)
+	{
+		nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
+        cout << "Number of particles adjusted to " << nParticles << endl;
+    }
 
 	if(adjustSurvivorsFromParticlesNumber)
 	{
@@ -68,7 +66,7 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
 }
 
 
-PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
+WSA08System::~WSA08System()
 {
 // 	delete channel;
 	delete powerProfile;
@@ -89,7 +87,7 @@ PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 	delete kalmanEstimator;
 }
 
-void PSPBasedChannelOrderEstimationSystem::BuildChannel()
+void WSA08System::BuildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
@@ -100,26 +98,24 @@ void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 #endif
 }
 
-void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
+void WSA08System::AddAlgorithms()
 {
 	ChannelOrderEstimationSystem::AddAlgorithms();
 
-// 	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),symbols));
+// 	algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm (RLS no forget)",*alphabet,L,N,lastSymbolVectorInstant,noForgetRLSchannelEstimators,preamble,preamble.cols(),symbols));
+	algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
+	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-	algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (underestimated)",*alphabet,L,N,lastSymbolVectorInstant,candidateChannelOrders[iTrueChannelOrder-1],kalmanChannelEstimators[iTrueChannelOrder-1],preamble,candidateChannelOrders[iTrueChannelOrder-1]-1,lastSymbolVectorInstant+candidateChannelOrders[iTrueChannelOrder-1]-1,ARcoefficients[0],nSurvivors));
 
-	algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (overestimated)",*alphabet,L,N,lastSymbolVectorInstant,candidateChannelOrders[iTrueChannelOrder+1],kalmanChannelEstimators[iTrueChannelOrder+1],preamble,candidateChannelOrders[iTrueChannelOrder+1]-1,lastSymbolVectorInstant+candidateChannelOrders[iTrueChannelOrder+1]-1,ARcoefficients[0],nSurvivors));
 
-// 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
-
-//     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }
 
-void PSPBasedChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
+void WSA08System::BeforeEndingFrame(int iFrame)
 {
     ChannelOrderEstimationSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);

@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef UTRELLISSEARCHALGORITHM_H
-#define UTRELLISSEARCHALGORITHM_H
+#ifndef MLSDMALGORITHM_H
+#define MLSDMALGORITHM_H
 
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
@@ -28,7 +28,7 @@
 
 #include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
 
-class UTrellisSearchAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class MLSDmAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
 	ParticleFilter *_particleFilter;
@@ -38,9 +38,9 @@ protected:
 	vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     int BestChannelOrderIndex(int iBestParticle);
 public:
-    UTrellisSearchAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
+    MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 
-    ~UTrellisSearchAlgorithm();
+    ~MLSDmAlgorithm();
 
     virtual ParticleFilter* GetParticleFilterPointer() {return _particleFilter;}
     virtual void InitializeParticles();
