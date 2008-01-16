@@ -19,8 +19,7 @@
  ***************************************************************************/
 #include "CMEBasedAlgorithm.h"
 
-// #define DEBUG5
-#define DEBUG7
+// #define DEBUG2
 // #define EXPORT_REAL_DATA
 
 #ifdef EXPORT_REAL_DATA
@@ -39,8 +38,6 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
 	tRange rAll;
 	tVector CMEs(_candidateOrders.size());
-	tVector observationError;
-	double accumulatedSquaredObservationsError;
 
 #ifdef DEBUG2
 	cout << "nº = " << nSymbolVectors << endl;
@@ -63,55 +60,15 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	{
 		m = _candidateOrders[iChannelOrder];
 
-		accumulatedSquaredObservationsError = 0.0;
-
-// 		tRange rSymbolVectors2(_preamble.cols()-m+1,_preamble.cols());
-// 		for(int iSymbolVector=_preamble.cols();iSymbolVector<_preamble.cols()+10;iSymbolVector++)
-// 		{
-// 			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors2),noiseVariances[iSymbolVector]);
-//
-// 			rSymbolVectors2 = rSymbolVectors2 + 1;
-// 		}
-
 		// channel estimation
 		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
-		int skipNumber = 0;
-// 		for(int iSymbolVector=_preamble.cols()+10;iSymbolVector<observations.cols();iSymbolVector++)
-		for(int iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
+		for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
 		{
 			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
-
-			observationError = observations.col(iSymbolVector);
-			// observationError = observationError - _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix() * _symbolVectors(rAll,rSymbolVectors)
-			Blas_Mat_Vec_Mult(_channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix(),Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
-
-			accumulatedSquaredObservationsError += double(skipNumber>50)*Blas_Dot_Prod(observationError,observationError)/noiseVariances[iSymbolVector];
-
-			skipNumber++;
-
 			rSymbolVectors = rSymbolVectors + 1;
 		}
 
 		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
-
-// 		rSymbolVectors.set(_preamble.cols()-m+1,_preamble.cols(),1);
-// 		for(int iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
-// 		{
-// 			observationError = observations.col(iSymbolVector);
-// 			// observationError = observationError - _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix() * _symbolVectors(rAll,rSymbolVectors)
-// 			Blas_Mat_Vec_Mult(estimatedChannelMatrix,Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
-//
-// #ifdef DEBUG5
-// 			tVector observationWithouNoise = observationError;
-// 			observationWithouNoise = 0.0;
-// 			Blas_Mat_Vec_Mult(estimatedChannelMatrix,Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationWithouNoise);
-// 			cout << "observationWithouNoise = " << endl << observationWithouNoise;
-// #endif
-//
-// 			accumulatedSquaredObservationsError += Blas_Dot_Prod(observationError,observationError);
-//
-// 			rSymbolVectors = rSymbolVectors + 1;
-// 		}
 
 #ifdef DEBUG
 		cout << "------------- m = " << m << " --------------------" << endl;
@@ -141,45 +98,21 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 		// CME
 		double CME = 0.0;
+		tRange rAllObservationsCols(_preamble.cols(),_symbolVectors.cols()-1);
+		for(iRxAntenna=0;iRxAntenna<_L;iRxAntenna++)
+		{
+			// error = R
+			tVector error = observations(tRange(iRxAntenna),rAllObservationsCols);
 
-
-// 		tRange rAllObservationsCols(_preamble.cols(),_symbolVectors.cols()-1);
-// 		for(iRxAntenna=0;iRxAntenna<_L;iRxAntenna++)
-// 		{
-// 			// error = R
-// 			tVector error = observations(tRange(iRxAntenna),rAllObservationsCols);
-//
-// 			// error = error - C * hs[iRxAntenna]
-// 			Blas_Mat_Vec_Mult(C,hs[iRxAntenna],error,-1.0,1.0);
-// #ifdef DEBUG2
-// 			cout << "error es" << endl << error;
-// #endif
-//
-// #ifdef DEBUG5
-// 			tVector Ch(_symbolVectors.cols()-_preamble.cols());
-// 			Blas_Mat_Vec_Mult(C,hs[iRxAntenna],Ch);
-// 			cout << "Ch es" << endl << Ch;
-// 			cout << "Una tecla..."; getchar();
-// #endif
-//
-// #ifdef DEBUG4
-// 			cout << "el tamaño de R es " << error.size() << endl;
-// 			cout << "nSymbolVectors = " << nSymbolVectors << endl;
-// #endif
-// 			// CME += error'*error
-// 			CME += Blas_Dot_Prod(error,error);
-// 		}
-
-#ifdef DEBUG6
-		cout << "CME = " << CME << " y accumulatedSquaredObservationsError = " << accumulatedSquaredObservationsError << endl;
-		cout << "CME==accumulatedSquaredObservationsError: " << (CME == accumulatedSquaredObservationsError) << endl;
+			// error = error - C * hs[iRxAntenna]
+			Blas_Mat_Vec_Mult(C,hs[iRxAntenna],error,-1.0,1.0);
+#ifdef DEBUG2
+			cout << "error es" << endl << error;
 #endif
-
-
-
-		CME = accumulatedSquaredObservationsError;
-
-// 		CME /= variance;
+			// CME += error'*error
+			CME += Blas_Dot_Prod(error,error);
+		}
+		CME /= variance;
 
 		tMatrix CTransC(_N*m,_N*m);
 
@@ -198,10 +131,6 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		CME /= 2.0;
 
 		CMEs(iChannelOrder) = CME;
-
-#ifdef DEBUG7
-		cout << "El CME calculado es " << CME << endl;
-#endif
 
 #ifdef DEBUG2
 		cout << "la varianza es " << variance << endl;
