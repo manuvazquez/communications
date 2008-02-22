@@ -45,7 +45,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
 	}
 
     #ifdef DEBUG
-        cout << "Probabilidades globales para los �rdenes de canal:" << endl << _weightedChannelOrderAPPs << endl;
+        cout << "Probabilidades globales para los órdenes de canal:" << endl << _weightedChannelOrderAPPs << endl;
     #endif
 
     // the maximum probability is obtained
@@ -53,7 +53,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
     Util::Max(_weightedChannelOrderAPPs,iMax);
 
     #ifdef DEBUG
-        cout << "La probabilidad m�s alta es la " << iMax << endl;
+        cout << "La probabilidad más alta es la " << iMax << endl;
         cout << "Pasa del umbral: " << (_weightedChannelOrderAPPs(iMax)>_threshold) << endl;
     #endif
 
@@ -62,7 +62,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
     {
         #ifdef DEBUG
             cout << "Pasa del umbral: " << endl;
-            cout << "La probabilidad m�s alta es la " << iMax << endl;
+            cout << "La probabilidad más alta es la " << iMax << endl;
         #endif
 
         LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_L,_N,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);

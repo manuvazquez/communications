@@ -38,7 +38,7 @@ BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
     nFrames =1000;
-    L=3,N=3,K=300;
+    L=3,N=2,K=300;
     m = 3;
     d = m - 1;
     trainSeqLength = 10;
@@ -46,12 +46,7 @@ BaseSystem::BaseSystem()
     preambleLength = 10;
 
 	SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(10);SNRs.push_back(20);SNRs.push_back(50);SNRs.push_back(100);
-// 	SNRs.push_back(10);SNRs.push_back(20);SNRs.push_back(22);SNRs.push_back(24);SNRs.push_back(26);SNRs.push_back(28);SNRs.push_back(30);
-// 	SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(12);SNRs.push_back(15);
-// 	SNRs.push_back(9);
-// 	SNRs.push_back(30);
+// 	SNRs.push_back(3);/*SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);*/
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;

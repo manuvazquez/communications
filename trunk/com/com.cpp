@@ -24,6 +24,8 @@
 #include <PSPBasedChannelOrderEstimationSystem.h>
 #include <PSPvsPSPBasedSMCSystem.h>
 #include <WSA08System.h>
+#include <TesisOrdenCanalSystem.h>
+#include <TesisOrdenCanalMedianteSISSystem.h>
 
 #include <signal.h>
 
@@ -37,12 +39,14 @@ void setDoneTrue(int signal)
 
 int main(int argc,char* argv[])
 {
-	signal(SIGINT,&setDoneTrue);
+// 	signal(SIGINT,&setDoneTrue);
 
-//     Elsevier2007BesselChannelSystem system;
-//     Elsevier2007ARChannelSystem  system;
+// 	Elsevier2007BesselChannelSystem system;
+// 	Elsevier2007ARChannelSystem  system;
 // 	PSPBasedChannelOrderEstimationSystem system;
-	WSA08System system;
+// 	WSA08System system;
 // 	PSPvsPSPBasedSMCSystem system;
+// 	TesisOrdenCanalSystem system;
+	TesisOrdenCanalMedianteSISSystem system;
     system.Simulate();
 }

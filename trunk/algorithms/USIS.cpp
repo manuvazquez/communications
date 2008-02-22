@@ -119,6 +119,14 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	int iObservationToBeProcessed = _startDetectionTime;
 	while((iObservationToBeProcessed<_K) && !_processDoneExternally)
 	{
+#ifdef DEBUG
+		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+		cout << "_K = " << _K << endl;
+
+		if(iObservationToBeProcessed>20)
+			exit(0);
+#endif
+
 		// observation matrix columns that are involved in the smoothing
 		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
 
@@ -314,8 +322,6 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		_particleFilter.NormalizeWeights();
 
 		// we find out which is the "best" particle at this time instant
-// 		int iBestParticle;
-// 		Util::Max(_particleFilter.GetWeightsVector(),iBestParticle);
 		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetBestParticle());
 
         // its a posteriori channel order probabilities are stored

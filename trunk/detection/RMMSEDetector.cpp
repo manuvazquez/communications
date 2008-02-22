@@ -31,7 +31,10 @@ RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double f
 void RMMSEDetector::StateStep(tVector observations)
 {
 	if(observations.size()!= _channelMatrixRows)
+	{
+		cout << "observations.size() = " << observations.size() << " _channelMatrixRows = " << _channelMatrixRows << endl;
 		throw RuntimeException("RMMSEDetector::StateStep: observations vector dimensions are wrong.");
+	}
 
 	// _g = _invRtilde*observations
 	Blas_Mat_Vec_Mult(_invRtilde,observations,_g);

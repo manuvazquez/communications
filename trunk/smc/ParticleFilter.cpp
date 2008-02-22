@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ParticleFilter.h"
 
-// #define DEBUG2
+// #define DEBUG3
 
 ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
 {
@@ -146,11 +146,18 @@ int ParticleFilter::iBestParticle()
 // 	Util::Max(GetWeightsVector(),iBestParticle);
 // 	return iBestParticle;
 
+#ifdef DEBUG3
+	cout << "_nParticles = " << _nParticles << endl;
+#endif
+
 	vector<bool> particleAlreadyCounted(_nParticles,false);
 	vector<double> accumulatedWeights(_nParticles,0.0);
 	uint iParticle,iTestedParticle;
 	for(iParticle=0;iParticle<_nParticles;iParticle++)
 	{
+#ifdef DEBUG3
+// 		cout << "iParticle = " << iParticle << endl;
+#endif
 		if(particleAlreadyCounted[iParticle])
 			continue;
 
@@ -160,6 +167,12 @@ int ParticleFilter::iBestParticle()
 		{
 			if(particleAlreadyCounted[iTestedParticle])
 				continue;
+#ifdef DEBUG3
+			cout << GetParticle(iParticle)->GetAllSymbolVectors();
+			cout << "----------------" << endl;
+			cout << GetParticle(iTestedParticle)->GetAllSymbolVectors();
+// 			cout << "Una tecla..."; getchar();
+#endif
 			if(GetParticle(iParticle)->GetAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->GetAllSymbolVectors()))
 			{
 #ifdef DEBUG2

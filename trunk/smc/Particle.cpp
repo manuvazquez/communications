@@ -21,7 +21,7 @@
 
 using namespace std;
 
-Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectors(symbolVectorLength,nTimeInstants)
+Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectors(LaGenMatDouble::zeros(symbolVectorLength,nTimeInstants))
 {
 }
 

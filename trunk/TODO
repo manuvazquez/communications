@@ -32,3 +32,7 @@
 - el constructor de SMCAlgorithm no debería recibir smoothingLag
 - KnownSymbolsKalmanBasedChannelEstimatorAlgorithm no tiene que recibir necesariamente un estimador de Kalman => cambiarle el nombre KnownSymbolsChannelEstimatorAlgorithm
 - UnknownChannelOrderAlgorithm: hacer ProcessTrainingSequence protected
+- USIS2SISAlgorithm
+  - MakeTransition(_weightedChannelOrderAPPs) debería devolver el orden al que se pasa (no simplemente un bool) y ese debería usarse dentro del if
+- LinearFilterBasedSMCAlgorithm
+  - cuando se sustraiga la contribución de los símbolos anteriores automáticamente se elija el detector pequeño y lo contrario
