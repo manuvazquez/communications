@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
-#define PSPBASEDCHANNELORDERESTIMATIONSYSTEM_H
+#ifndef TVT2007SYSTEM_H
+#define TVT2007SYSTEM_H
 
 #include <ChannelOrderEstimationSystem.h>
 
@@ -39,7 +39,7 @@
 #include <CMEBasedAlgorithm.h>
 #include <TimeVaryingChannelCMEbasedAlgorithm.h>
 
-class PSPBasedChannelOrderEstimationSystem : public ChannelOrderEstimationSystem
+class TVT2007System : public ChannelOrderEstimationSystem
 {
 protected:
     int nSurvivors;
@@ -66,9 +66,9 @@ protected:
     virtual void BuildChannel();
     virtual void BeforeEndingFrame(int iFrame);
 public:
-    PSPBasedChannelOrderEstimationSystem();
+    TVT2007System();
 
-    ~PSPBasedChannelOrderEstimationSystem();
+    ~TVT2007System();
 };
 
 #endif

@@ -17,11 +17,11 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "PSPBasedChannelOrderEstimationSystem.h"
+#include "TVT2007System.h"
 
 // #define DEBUG
 
-PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
+TVT2007System::TVT2007System()
  : ChannelOrderEstimationSystem()
 {
     nSurvivors = 12;
@@ -68,7 +68,7 @@ PSPBasedChannelOrderEstimationSystem::PSPBasedChannelOrderEstimationSystem()
 }
 
 
-PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
+TVT2007System::~TVT2007System()
 {
 // 	delete channel;
 	delete powerProfile;
@@ -89,7 +89,7 @@ PSPBasedChannelOrderEstimationSystem::~PSPBasedChannelOrderEstimationSystem()
 	delete kalmanEstimator;
 }
 
-void PSPBasedChannelOrderEstimationSystem::BuildChannel()
+void TVT2007System::BuildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
@@ -100,7 +100,7 @@ void PSPBasedChannelOrderEstimationSystem::BuildChannel()
 #endif
 }
 
-void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
+void TVT2007System::AddAlgorithms()
 {
 	ChannelOrderEstimationSystem::AddAlgorithms();
 
@@ -117,7 +117,7 @@ void PSPBasedChannelOrderEstimationSystem::AddAlgorithms()
 //     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }
 
-void PSPBasedChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
+void TVT2007System::BeforeEndingFrame(int iFrame)
 {
     ChannelOrderEstimationSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);

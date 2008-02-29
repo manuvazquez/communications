@@ -255,9 +255,6 @@ int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
 
 vector<vector<tMatrix> > MLSDmAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
-#ifdef DEBUG3
-	cout << "en MLSDmAlgorithm::ProcessTrainingSequence" << endl;
-#endif
     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))

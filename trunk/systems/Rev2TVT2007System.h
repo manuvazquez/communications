@@ -17,38 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef REV2TVT2007SYSTEM_H
+#define REV2TVT2007SYSTEM_H
 
-#include <SMCSystem.h>
-#include <Elsevier2007BesselChannelSystem.h>
-#include <Elsevier2007ARChannelSystem.h>
 #include <TVT2007System.h>
-#include <PSPvsPSPBasedSMCSystem.h>
-#include <WSA08System.h>
-#include <TesisOrdenCanalSystem.h>
-#include <TesisOrdenCanalMedianteSISSystem.h>
-#include <Rev2TVT2007System.h>
 
-#include <signal.h>
-
-bool __done = false;
-
-void setDoneTrue(int signal)
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class Rev2TVT2007System : public TVT2007System
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
-	__done  = true;
-}
+protected:
+	vector<ChannelMatrixEstimator *> uniqueRLSchannelEstimator;
+	vector<ChannelMatrixEstimator *> uniquekalmanChannelEstimator;
+public:
+    Rev2TVT2007System();
 
-int main(int argc,char* argv[])
-{
-// 	signal(SIGINT,&setDoneTrue);
+//     ~Rev2TVT2007System();
 
-// 	Elsevier2007BesselChannelSystem system;
-// 	Elsevier2007ARChannelSystem  system;
-// 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
-// 	TesisOrdenCanalSystem system;
-// 	TesisOrdenCanalMedianteSISSystem system;
-	Rev2TVT2007System system;
-    system.Simulate();
-}
+protected:
+    virtual void AddAlgorithms();
+
+};
+
+#endif

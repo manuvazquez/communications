@@ -23,9 +23,6 @@
 
 UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, K),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
 {
-#ifdef DEBUG
-	cout << "empezando el constructor de UnknownChannelOrderAlgorithm" << endl;
-#endif
     for(uint i=0;i<channelEstimators.size();i++)
     {
         // the memory of this estimator is obtained from the number of columns of the channel matrix estimator and the algorithm parameter N
@@ -78,6 +75,10 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
  	// selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_N-1);
 
+#ifdef DEBUG
+	cout << "_channelOrderAPPs" << endl << _channelOrderAPPs;
+#endif
+
     uint iOrder;
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
@@ -88,6 +89,11 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::ProcessTrainingSequence(c
             estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
         }
     }
+
+#ifdef DEBUG
+	cout << "_channelOrderAPPs" << endl << _channelOrderAPPs;
+#endif
+
     return estimatedMatrices;
 }
 

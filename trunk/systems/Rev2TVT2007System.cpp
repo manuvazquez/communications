@@ -17,38 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#include "Rev2TVT2007System.h"
 
-#include <SMCSystem.h>
-#include <Elsevier2007BesselChannelSystem.h>
-#include <Elsevier2007ARChannelSystem.h>
-#include <TVT2007System.h>
-#include <PSPvsPSPBasedSMCSystem.h>
-#include <WSA08System.h>
-#include <TesisOrdenCanalSystem.h>
-#include <TesisOrdenCanalMedianteSISSystem.h>
-#include <Rev2TVT2007System.h>
-
-#include <signal.h>
-
-bool __done = false;
-
-void setDoneTrue(int signal)
+Rev2TVT2007System::Rev2TVT2007System(): TVT2007System()
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
-	__done  = true;
+	uniqueRLSchannelEstimator.push_back(RLSchannelEstimators[candidateChannelOrders.size()-1]);
+	uniquekalmanChannelEstimator.push_back(kalmanChannelEstimators[candidateChannelOrders.size()-1]);
 }
 
-int main(int argc,char* argv[])
-{
-// 	signal(SIGINT,&setDoneTrue);
 
-// 	Elsevier2007BesselChannelSystem system;
-// 	Elsevier2007ARChannelSystem  system;
-// 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
-// 	TesisOrdenCanalSystem system;
-// 	TesisOrdenCanalMedianteSISSystem system;
-	Rev2TVT2007System system;
-    system.Simulate();
+// Rev2TVT2007System::~Rev2TVT2007System()
+// {
+// }
+
+
+void Rev2TVT2007System::AddAlgorithms()
+{
+	ChannelOrderEstimationSystem::AddAlgorithms();
+
+	algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,uniquekalmanChannelEstimator,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
+
