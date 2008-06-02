@@ -33,8 +33,6 @@ protected:
 public:
     Rev2TVT2007System();
 
-//     ~Rev2TVT2007System();
-
 protected:
     virtual void AddAlgorithms();
 
