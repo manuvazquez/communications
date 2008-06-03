@@ -17,42 +17,37 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef TESISCOMPLEJIDADREDUCIDASYSTEM_H
+#define TESISCOMPLEJIDADREDUCIDASYSTEM_H
 
 #include <SMCSystem.h>
-#include <Elsevier2007BesselChannelSystem.h>
-#include <Elsevier2007ARChannelSystem.h>
-#include <TVT2007System.h>
-#include <PSPvsPSPBasedSMCSystem.h>
-#include <WSA08System.h>
-#include <Rev2TVT2007System.h>
-#include <TesisOrdenCanalSystem.h>
-#include <TesisOrdenCanalMedianteSISSystem.h>
-#include <TesisComplejidadReducidaSystem.h>
-#include <TesisVariablesAuxiliaresCanalBesselSystem.h>
 
-#include <signal.h>
+/**
+    @author Manu <manu@rustneversleeps>
+*/
 
-bool __done = false;
+#include <EstimatedMIMOChannel.h>
+#include <PSPAlgorithm.h>
 
-void setDoneTrue(int signal)
+class TesisComplejidadReducidaSystem : public SMCSystem
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
-	__done  = true;
-}
+protected:
 
-int main(int argc,char* argv[])
-{
-// 	signal(SIGINT,&setDoneTrue);
+    int nSurvivors;
+    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
-// 	Elsevier2007BesselChannelSystem system;
-// 	Elsevier2007ARChannelSystem  system;
-// 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
-//     Rev2TVT2007System system;
-// 	TesisOrdenCanalSystem system;
-// 	TesisOrdenCanalMedianteSISSystem system;
-//     TesisComplejidadReducidaSystem system;
-    TesisVariablesAuxiliaresCanalBesselSystem system;
-    system.Simulate();
-}
+    KalmanEstimator *kalmanEstimator;
+    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
+//     MMSEDetector *mmseDetectorSmall;
+//         ,*mmseDetectorLarge,*mmseDetectorXL;
+//     DecorrelatorDetector *decorrelatorDetector;
+
+    EstimatedMIMOChannel *kalmanEstimatedChannel;
+
+    virtual void AddAlgorithms();
+public:
+    TesisComplejidadReducidaSystem();
+    ~TesisComplejidadReducidaSystem();
+};
+
+#endif

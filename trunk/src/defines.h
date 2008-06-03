@@ -22,7 +22,4 @@
 #define RANDOM_SEED
 
 // wether the estimated channel matrices are kept or discarded
-// #define DO_NOT_STORE_CHANNEL_MATRICES
-
-// MACROS
-#define MAX(a,b) (a)>(b)?(a):(b)
+#define DO_NOT_STORE_CHANNEL_MATRICES

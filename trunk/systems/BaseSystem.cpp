@@ -37,8 +37,8 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames =1000;
-    L=3,N=3,K=300;
+    nFrames =1;
+    L=3,N=2,K=300;
     m = 3;
     d = m - 1;
     trainSeqLength = 10;
