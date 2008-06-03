@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedMKFAlgorithm.h"
 
-LinearFilterBasedMKFAlgorithm::LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance): LinearFilterBasedSMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, linearDetector, preamble, backwardsSmoothingLag, smoothingLag, forwardSmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances, ARcoefficient, samplingVariance, ARprocessVariance)
+LinearFilterBasedMKFAlgorithm::LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): LinearFilterBasedSMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, linearDetector, preamble, backwardsSmoothingLag, smoothingLag, forwardSmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances, ARcoefficient, samplingVariance, ARprocessVariance,substractContributionFromKnownSymbols)
 {
 }
 

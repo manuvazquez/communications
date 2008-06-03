@@ -40,9 +40,11 @@ protected:
 	tMatrix *_estimatedChannelMatrices;
 	double _ARcoefficient;
 
+    bool _substractContributionFromKnownSymbols;
+
 	virtual vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 public:
-    LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector, double ARcoefficient);
+    LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector, double ARcoefficient, bool substractContributionFromKnownSymbols=false);
 
     ~LinearFilterBasedAlgorithm();
 

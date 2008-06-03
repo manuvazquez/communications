@@ -21,15 +21,13 @@
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>
 
-#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
-,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
-,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0),_e(SMCsmoothingLag)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, K,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
+,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0),_e(SMCsmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -65,11 +63,12 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	tMatrix forWeightUpdateNeededSymbols(_N,_m+_d);
 	tVector predictedNoiselessObservation(_L);
 
-#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-	tRange rColumnsStackedChannelMatrixMinus((_c+_m-1)*_N,(_c+_m+_e)*_N-1);
-	if(_linearDetector->ChannelMatrixCols() != _N*(_e+1))
-		throw RuntimeException("LinearFilterBasedSMCAlgorithm::Process: SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS is defined. It shouldn't because it's not compatible with the current linear detector.");
-#endif
+    // just needed when substracting the contribution from the known symbols
+    tRange rAlreadyDetectedSymbolVectors;
+
+    if(_substractContributionFromKnownSymbols)
+	   if(_linearDetector->ChannelMatrixCols() != _N*(_e+1))
+		  throw RuntimeException("LinearFilterBasedSMCAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
 
 	// already detected symbol vectors involved in the current detection
 	tRange rmMinus1AlreadyDetectedSymbolVectors(_startDetectionTime-_m+1,_startDetectionTime-1);
@@ -77,9 +76,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	// observation matrix columns that are involved in the smoothing
 	tRange rSmoothingRange(_startDetectionTime-_c,_startDetectionTime+_e);
 
-#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-	tRange rAlreadyDetectedSymbolVectors(_startDetectionTime-_c-_m+1,_startDetectionTime-1);
-#endif
+    if(_substractContributionFromKnownSymbols)
+        rAlreadyDetectedSymbolVectors = tRange(_startDetectionTime-_c-_m+1,_startDetectionTime-1);
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
@@ -110,15 +108,23 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// matrices are stacked to give
 			tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
-			// the estimated stacked channel matrix is used to obtain soft estimations of the transmitted symbols
-#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-			stackedChannelMatrix = stackedChannelMatrix(rAll,rColumnsStackedChannelMatrixMinus);
-			tVector transformedObservations = SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_e,stackedObservations,processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
 
-			tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(transformedObservations,stackedChannelMatrix,stackedNoiseCovariance);
-#else
-			tVector softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
-#endif
+            tVector softEstimations;
+
+			// the estimated stacked channel matrix is used to obtain soft estimations of the transmitted symbols
+            if(_substractContributionFromKnownSymbols)
+            {
+                softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(
+                        // transformed observations
+                        SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_e,stackedObservations,processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors)),
+                        // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
+                        stackedChannelMatrix(rAll,tRange((_c+_m-1)*_N,(_c+_m+_e)*_N-1)),
+                        stackedNoiseCovariance);
+            } else
+            {
+                softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+            }
+
             // the evaluated proposal function (necessary for computing the weights) is initialized
             proposal = 1.0;
 
@@ -186,9 +192,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 		rmMinus1AlreadyDetectedSymbolVectors = rmMinus1AlreadyDetectedSymbolVectors + 1;
 		rSmoothingRange = rSmoothingRange + 1;
-#ifdef SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS
-		rAlreadyDetectedSymbolVectors = rAlreadyDetectedSymbolVectors + 1;
-#endif
+
+        if(_substractContributionFromKnownSymbols)
+		  rAlreadyDetectedSymbolVectors = rAlreadyDetectedSymbolVectors + 1;
 
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
