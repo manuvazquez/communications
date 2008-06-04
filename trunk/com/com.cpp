@@ -53,6 +53,6 @@ int main(int argc,char* argv[])
 // 	TesisOrdenCanalSystem system;
 // 	TesisOrdenCanalMedianteSISSystem system;
 //     TesisComplejidadReducidaSystem system;
-    TesisVariablesAuxiliaresCanalBesselSystem system;
+    TesisComplejidadReducidaSystem system;
     system.Simulate();
 }

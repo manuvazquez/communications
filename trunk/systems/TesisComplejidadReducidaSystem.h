@@ -28,22 +28,41 @@
 
 #include <EstimatedMIMOChannel.h>
 #include <PSPAlgorithm.h>
+#include <FlatPowerProfile.h>
+#include <RMMSEDetector.h>
+#include <RLSEstimator.h>
+#include <LMSEstimator.h>
 
 class TesisComplejidadReducidaSystem : public SMCSystem
 {
 protected:
+    double velocity; // (Km/h)
+    double carrierFrequency; // (Hz)
+    double symbolRate; // (Hz)
+    double T; // (s)
 
     int nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     KalmanEstimator *kalmanEstimator;
     KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-//     MMSEDetector *mmseDetectorSmall;
-//         ,*mmseDetectorLarge,*mmseDetectorXL;
-//     DecorrelatorDetector *decorrelatorDetector;
-
     EstimatedMIMOChannel *kalmanEstimatedChannel;
 
+    // variables auxiliars
+    MMSEDetector *mmseDetectorSmall;
+//             ,*mmseDetectorLarge;
+    DecorrelatorDetector *decorrelatorDetector;
+
+    // estimacion conjunta del canal y los datos
+    double forgettingFactor;
+    double forgettingFactorDetector;
+    double muLMS;
+    RLSEstimator *rlsEstimator;
+    LMSEstimator *lmsEstimator;
+    RMMSEDetector *rmmseDetector;
+
+    virtual void BuildChannel();
+    virtual void BeforeEndingFrame(int iFrame);
     virtual void AddAlgorithms();
 public:
     TesisComplejidadReducidaSystem();

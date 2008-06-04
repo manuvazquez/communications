@@ -22,10 +22,52 @@
 TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 {
 
-    nSurvivors = 2;
+    nSurvivors = 1;
+
+    forgettingFactor = 0.99;
+    forgettingFactorDetector = 0.95;
+    muLMS = 0.01;
+
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
+    velocity = 50/3.6; // (m/s)
+    carrierFrequency = 2e9; // (Hz)
+    symbolRate = 500e3; // (Hz)
+    T = 1.0/symbolRate; // (s)
+
+    vector<double> differentialDelays,powers;
+
+//     // suburban macro
+//     differentialDelays.push_back(0);differentialDelays.push_back(0.1408e-6);differentialDelays.push_back(0.0626e-6);
+//     differentialDelays.push_back(0.4015e-6);differentialDelays.push_back(1.3820e-6);differentialDelays.push_back(2.8280e-6);
+//     powers.push_back(0);powers.push_back(-2.6682);powers.push_back(-6.2147);
+//     powers.push_back(-10.4132);powers.push_back(-16.4735);powers.push_back(-22.1898);
+
+//     if(m==6)
+//     {
+//         // urban macro
+//         differentialDelays.push_back(0);differentialDelays.push_back(0.3600e-6);differentialDelays.push_back(0.2527e-6);
+//         differentialDelays.push_back(1.0387e-6);differentialDelays.push_back(2.7300e-6);differentialDelays.push_back(4.5977e-6);
+//         powers.push_back(0);powers.push_back(-2.2204);powers.push_back(-1.7184);
+//         powers.push_back(-5.1896);powers.push_back(-9.0516);powers.push_back(-12.5013);
+//     }else if(m==3)
+//     {
+//         // urban micro
+//         differentialDelays.push_back(0);differentialDelays.push_back(0.2840e-6);differentialDelays.push_back(0.2047e-6);
+//         differentialDelays.push_back(0.6623e-6);differentialDelays.push_back(0.8066e-6);differentialDelays.push_back(0.9227e-6);
+//         powers.push_back(0);powers.push_back(-1.2661);powers.push_back(-2.7201);
+//         powers.push_back(-4.2973);powers.push_back(-6.0140);powers.push_back(-8.4306);
+//     }else
+//         throw RuntimeException("TesisVariablesAuxiliaresCanalBesselSystem::TesisVariablesAuxiliaresCanalBesselSystem: memory has to be 3 or 6.");
+
+//     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
+//     powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
+    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+
+    powerProfile->Print();
+
+    // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
         throw RuntimeException("adjustParticlesNumberFromSurvivors y adjustSurvivorsFromParticlesNumber no pueden ser true a la vez.");
 
@@ -42,11 +84,18 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
         cout << " to " << nSurvivors << endl;
     }
 
-    // the required linear detectors are built
+    // variables auxiliares
 //     mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),N*(d+1));
-//     mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->Variance(),N*(d+1));
-//     mmseDetectorXL = new MMSEDetector(L*(c+e+1),N*(e+1),alphabet->Variance(),N*(d+1),0);
-//     decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->Variance());
+    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->Variance(),N*(d+1));
+    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->Variance());
+
+    // estimacion conjunta del canal y los datos
+    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
+    rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
+    lmsEstimator = new LMSEstimator(powerProfile->Means(),N,muLMS);
+
+    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
 
     kalmanEstimatedChannel = NULL;
 }
@@ -54,14 +103,42 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 TesisComplejidadReducidaSystem::~TesisComplejidadReducidaSystem()
 {
 //     delete mmseDetectorLarge;
-//     delete mmseDetectorSmall;
-//     delete mmseDetectorXL;
-//     delete decorrelatorDetector;
+    delete mmseDetectorSmall;
+    delete decorrelatorDetector;
+
+    delete rmmseDetector;
+    delete rlsEstimator;
+    delete lmsEstimator;
+
     delete kalmanEstimatedChannel;
+    delete kalmanEstimator;
+    delete knownSymbolsKalmanEstimator;
+    delete powerProfile;
 }
 
 void TesisComplejidadReducidaSystem::AddAlgorithms()
 {
+    // ---------------------------------------------------------- con variables auxiliares ----------------------------------------------------
+    algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],ARvariance));
+
+    // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
+    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,mmseDetectorSmall,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+
+    // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
+    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+
+    algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0],true));
+
+    algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",*alphabet,L,N,lastSymbolVectorInstant,m,knownSymbolsKalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0],true));
+
+    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+
+    // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,lmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+
+    // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
+    // common to all simulation algorithms
     delete kalmanEstimatedChannel;
      kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observaciones,ruido->Variances());
 
@@ -69,21 +146,27 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
 
     algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
 
-//     algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],ARvariance));
-
-    // si no se resta la contribución de los símbolos anteriores (#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS en LinearFilterBasedSMCAlgorithm) entonces
-    // se debe usar mmseDetectorLarge
-//     algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,mmseDetectorLarge,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-
-//     algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-
     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 
     algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),preamble,d));
 
     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,symbols));
+}
 
-//     algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0]));
-//
-//     algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",*alphabet,L,N,lastSymbolVectorInstant,m,knownSymbolsKalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0]));
+void TesisComplejidadReducidaSystem::BuildChannel()
+{
+//  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
+    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+}
+
+void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
+{
+    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+
+    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
+    Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+    Util::ScalarToOctaveFileStream(muLMS,"muLMS",f);
 }
