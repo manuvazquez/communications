@@ -22,7 +22,7 @@
 TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 {
 
-    nSurvivors = 1;
+    nSurvivors = 2;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
@@ -161,6 +161,7 @@ void TesisComplejidadReducidaSystem::BuildChannel()
 
 void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
 {
+    SMCSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(velocity,"velocity",f);
     Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
     Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);

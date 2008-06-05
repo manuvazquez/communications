@@ -28,7 +28,6 @@
 #include <TesisOrdenCanalSystem.h>
 #include <TesisOrdenCanalMedianteSISSystem.h>
 #include <TesisComplejidadReducidaSystem.h>
-#include <TesisVariablesAuxiliaresCanalBesselSystem.h>
 
 #include <signal.h>
 
