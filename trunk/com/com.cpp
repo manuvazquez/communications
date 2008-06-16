@@ -28,6 +28,8 @@
 #include <TesisOrdenCanalSystem.h>
 #include <TesisOrdenCanalMedianteSISSystem.h>
 #include <TesisComplejidadReducidaSystem.h>
+#include <LMSmuTestSystem.h>
+#include <PSPvsSMCSystem.h>
 
 #include <signal.h>
 
@@ -52,6 +54,7 @@ int main(int argc,char* argv[])
 // 	TesisOrdenCanalSystem system;
 // 	TesisOrdenCanalMedianteSISSystem system;
 //     TesisComplejidadReducidaSystem system;
-    TesisComplejidadReducidaSystem system;
+//     LMSmuTestSystem system;
+    PSPvsSMCSystem system;
     system.Simulate();
 }

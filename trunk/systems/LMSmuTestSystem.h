@@ -17,11 +17,45 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef LMSMUTESTSYSTEM_H
+#define LMSMUTESTSYSTEM_H
 
-// the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+#include <SMCSystem.h>
 
-// wether the estimated channel matrices are kept or discarded
-// #define DO_NOT_STORE_CHANNEL_MATRICES
+/**
+    @author Manu <manu@rustneversleeps>
+*/
 
-#define ALGORITHM_NAME_MAX_LENGTH 50
+#include <PSPAlgorithm.h>
+#include <FlatPowerProfile.h>
+#include <RMMSEDetector.h>
+#include <RLSEstimator.h>
+#include <LMSEstimator.h>
+
+class LMSmuTestSystem : public SMCSystem
+{
+protected:
+    double velocity; // (Km/h)
+    double carrierFrequency; // (Hz)
+    double symbolRate; // (Hz)
+    double T; // (s)
+
+    int nSurvivors;
+    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
+
+    // estimacion conjunta del canal y los datos
+    double forgettingFactorDetector;
+    RMMSEDetector *rmmseDetector;
+
+    vector<double> musLMS;
+    vector<ChannelMatrixEstimator *> LMSchannelEstimators;
+
+    virtual void BuildChannel();
+    virtual void BeforeEndingFrame(int iFrame);
+    virtual void AddAlgorithms();
+public:
+    LMSmuTestSystem();
+    ~LMSmuTestSystem();
+};
+
+#endif
