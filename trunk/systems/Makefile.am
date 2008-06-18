@@ -9,10 +9,11 @@ lib_LIBRARIES = libsys.a
 noinst_HEADERS = BaseSystem.h ChannelOrderEstimationSystem.h \
 	Elsevier2007ARChannelSystem.h Elsevier2007BesselChannelSystem.h Elsevier2007System.h \
 	PSPvsPSPBasedSMCSystem.h PSPvsSMCSystem.h Rev2TVT2007System.h SMCSystem.h TVT2007System.h \
-	TesisComplejidadReducidaSystem.h TesisOrdenCanalMedianteSISSystem.h TesisOrdenCanalSystem.h \
-	WSA08System.h
+	TesisComplejidadReducidaARSystem.h TesisComplejidadReducidaBesselSystem.h TesisComplejidadReducidaSystem.h \
+	TesisOrdenCanalMedianteSISSystem.h TesisOrdenCanalSystem.h WSA08System.h
 libsys_a_SOURCES = BaseSystem.cpp ChannelOrderEstimationSystem.cpp \
 	Elsevier2007ARChannelSystem.cpp Elsevier2007BesselChannelSystem.cpp Elsevier2007System.cpp \
 	LMSmuTestSystem.cpp PSPvsPSPBasedSMCSystem.cpp PSPvsSMCSystem.cpp Rev2TVT2007System.cpp \
-	SMCSystem.cpp TVT2007System.cpp TesisComplejidadReducidaSystem.cpp \
-	TesisOrdenCanalMedianteSISSystem.cpp TesisOrdenCanalSystem.cpp WSA08System.cpp
+	SMCSystem.cpp TVT2007System.cpp TesisComplejidadReducidaARSystem.cpp \
+	TesisComplejidadReducidaBesselSystem.cpp TesisComplejidadReducidaSystem.cpp TesisOrdenCanalMedianteSISSystem.cpp \
+	TesisOrdenCanalSystem.cpp WSA08System.cpp

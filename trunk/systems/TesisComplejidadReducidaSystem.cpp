@@ -31,11 +31,6 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
-    velocity = 50/3.6; // (m/s)
-    carrierFrequency = 2e9; // (Hz)
-    symbolRate = 500e3; // (Hz)
-    T = 1.0/symbolRate; // (s)
-
     vector<double> differentialDelays,powers;
 
 //     // suburban macro
@@ -153,18 +148,9 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,symbols));
 }
 
-void TesisComplejidadReducidaSystem::BuildChannel()
-{
-//  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
-}
-
 void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
-    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
 
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
     Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);

@@ -17,50 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TESISCOMPLEJIDADREDUCIDASYSTEM_H
-#define TESISCOMPLEJIDADREDUCIDASYSTEM_H
+#include "TesisComplejidadReducidaARSystem.h"
 
-#include <SMCSystem.h>
-
-/**
-    @author Manu <manu@rustneversleeps>
-*/
-
-#include <EstimatedMIMOChannel.h>
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-
-class TesisComplejidadReducidaSystem : public SMCSystem
+TesisComplejidadReducidaARSystem::TesisComplejidadReducidaARSystem(): TesisComplejidadReducidaSystem()
 {
-protected:
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
+    channelVariance = 1.0;
+    powerProfile = new FlatPowerProfile(L,N,m,channelVariance);
+}
 
-    KalmanEstimator *kalmanEstimator;
-    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-    EstimatedMIMOChannel *kalmanEstimatedChannel;
 
-    // variables auxiliars
-    MMSEDetector *mmseDetectorSmall;
-//             ,*mmseDetectorLarge;
-    DecorrelatorDetector *decorrelatorDetector;
+TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
+{
+}
 
-    // estimacion conjunta del canal y los datos
-    double forgettingFactor;
-    double forgettingFactorDetector;
-    double muLMS;
-    RLSEstimator *rlsEstimator;
-    LMSEstimator *lmsEstimator;
-    RMMSEDetector *rmmseDetector;
 
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
-public:
-    TesisComplejidadReducidaSystem();
-    ~TesisComplejidadReducidaSystem();
-};
+void TesisComplejidadReducidaARSystem::BuildChannel()
+{
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+}
 
-#endif
+void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
+{
+    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
+    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
+}

@@ -17,50 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TESISCOMPLEJIDADREDUCIDASYSTEM_H
-#define TESISCOMPLEJIDADREDUCIDASYSTEM_H
+#include "TesisComplejidadReducidaBesselSystem.h"
 
-#include <SMCSystem.h>
-
-/**
-    @author Manu <manu@rustneversleeps>
-*/
-
-#include <EstimatedMIMOChannel.h>
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-
-class TesisComplejidadReducidaSystem : public SMCSystem
+TesisComplejidadReducidaBesselSystem::TesisComplejidadReducidaBesselSystem(): TesisComplejidadReducidaSystem()
 {
-protected:
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
-    KalmanEstimator *kalmanEstimator;
-    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-    EstimatedMIMOChannel *kalmanEstimatedChannel;
+    velocity = 50/3.6; // (m/s)
+    carrierFrequency = 2e9; // (Hz)
+    symbolRate = 500e3; // (Hz)
+    T = 1.0/symbolRate; // (s)
+}
 
-    // variables auxiliars
-    MMSEDetector *mmseDetectorSmall;
-//             ,*mmseDetectorLarge;
-    DecorrelatorDetector *decorrelatorDetector;
 
-    // estimacion conjunta del canal y los datos
-    double forgettingFactor;
-    double forgettingFactorDetector;
-    double muLMS;
-    RLSEstimator *rlsEstimator;
-    LMSEstimator *lmsEstimator;
-    RMMSEDetector *rmmseDetector;
+TesisComplejidadReducidaBesselSystem::~TesisComplejidadReducidaBesselSystem()
+{
+}
 
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
-public:
-    TesisComplejidadReducidaSystem();
-    ~TesisComplejidadReducidaSystem();
-};
 
-#endif
+void TesisComplejidadReducidaBesselSystem::BeforeEndingFrame(int iFrame)
+{
+    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
+    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+}
+
+void TesisComplejidadReducidaBesselSystem::BuildChannel()
+{
+//  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
+    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+}
+

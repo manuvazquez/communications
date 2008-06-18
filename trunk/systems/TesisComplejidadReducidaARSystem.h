@@ -17,50 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TESISCOMPLEJIDADREDUCIDASYSTEM_H
-#define TESISCOMPLEJIDADREDUCIDASYSTEM_H
+#ifndef TESISCOMPLEJIDADREDUCIDAARSYSTEM_H
+#define TESISCOMPLEJIDADREDUCIDAARSYSTEM_H
 
-#include <SMCSystem.h>
+#include <TesisComplejidadReducidaSystem.h>
 
 /**
-    @author Manu <manu@rustneversleeps>
+	@author Manu <manu@rustneversleeps>
 */
-
-#include <EstimatedMIMOChannel.h>
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-
-class TesisComplejidadReducidaSystem : public SMCSystem
+class TesisComplejidadReducidaARSystem : public TesisComplejidadReducidaSystem
 {
 protected:
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
-
-    KalmanEstimator *kalmanEstimator;
-    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-    EstimatedMIMOChannel *kalmanEstimatedChannel;
-
-    // variables auxiliars
-    MMSEDetector *mmseDetectorSmall;
-//             ,*mmseDetectorLarge;
-    DecorrelatorDetector *decorrelatorDetector;
-
-    // estimacion conjunta del canal y los datos
-    double forgettingFactor;
-    double forgettingFactorDetector;
-    double muLMS;
-    RLSEstimator *rlsEstimator;
-    LMSEstimator *lmsEstimator;
-    RMMSEDetector *rmmseDetector;
-
+    double channelVariance;
+    virtual void BuildChannel();
     virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
 public:
-    TesisComplejidadReducidaSystem();
-    ~TesisComplejidadReducidaSystem();
+    TesisComplejidadReducidaARSystem();
+
+    ~TesisComplejidadReducidaARSystem();
+
 };
 
 #endif

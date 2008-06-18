@@ -17,50 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TESISCOMPLEJIDADREDUCIDASYSTEM_H
-#define TESISCOMPLEJIDADREDUCIDASYSTEM_H
+#ifndef TESISCOMPLEJIDADREDUCIDABESSELSYSTEM_H
+#define TESISCOMPLEJIDADREDUCIDABESSELSYSTEM_H
 
-#include <SMCSystem.h>
+#include <TesisComplejidadReducidaSystem.h>
 
 /**
-    @author Manu <manu@rustneversleeps>
+	@author Manu <manu@rustneversleeps>
 */
-
-#include <EstimatedMIMOChannel.h>
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-
-class TesisComplejidadReducidaSystem : public SMCSystem
+class TesisComplejidadReducidaBesselSystem : public TesisComplejidadReducidaSystem
 {
+public:
+    TesisComplejidadReducidaBesselSystem();
+
+    ~TesisComplejidadReducidaBesselSystem();
+
 protected:
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
-
-    KalmanEstimator *kalmanEstimator;
-    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;
-    EstimatedMIMOChannel *kalmanEstimatedChannel;
-
-    // variables auxiliars
-    MMSEDetector *mmseDetectorSmall;
-//             ,*mmseDetectorLarge;
-    DecorrelatorDetector *decorrelatorDetector;
-
-    // estimacion conjunta del canal y los datos
-    double forgettingFactor;
-    double forgettingFactorDetector;
-    double muLMS;
-    RLSEstimator *rlsEstimator;
-    LMSEstimator *lmsEstimator;
-    RMMSEDetector *rmmseDetector;
+    double velocity; // (Km/h)
+    double carrierFrequency; // (Hz)
+    double symbolRate; // (Hz)
+    double T; // (s)
 
     virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
-public:
-    TesisComplejidadReducidaSystem();
-    ~TesisComplejidadReducidaSystem();
+    virtual void BuildChannel();
+
 };
 
 #endif

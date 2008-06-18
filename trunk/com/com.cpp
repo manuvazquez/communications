@@ -28,6 +28,8 @@
 #include <TesisOrdenCanalSystem.h>
 #include <TesisOrdenCanalMedianteSISSystem.h>
 #include <TesisComplejidadReducidaSystem.h>
+#include <TesisComplejidadReducidaBesselSystem.h>
+#include <TesisComplejidadReducidaARSystem.h>
 #include <LMSmuTestSystem.h>
 #include <PSPvsSMCSystem.h>
 
@@ -45,16 +47,18 @@ int main(int argc,char* argv[])
 {
 // 	signal(SIGINT,&setDoneTrue);
 
-// 	Elsevier2007BesselChannelSystem system;
-// 	Elsevier2007ARChannelSystem  system;
-// 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
+//     Elsevier2007BesselChannelSystem system;
+//     Elsevier2007ARChannelSystem  system;
+//     TVT2007System system;
+//     WSA08System system;
+//     PSPvsPSPBasedSMCSystem system;
 //     Rev2TVT2007System system;
-// 	TesisOrdenCanalSystem system;
-// 	TesisOrdenCanalMedianteSISSystem system;
+//     TesisOrdenCanalSystem system;
+//     TesisOrdenCanalMedianteSISSystem system;
 //     TesisComplejidadReducidaSystem system;
+    TesisComplejidadReducidaBesselSystem system;
+//     TesisComplejidadReducidaARSystem system;
 //     LMSmuTestSystem system;
-    PSPvsSMCSystem system;
+//     PSPvsSMCSystem system;
     system.Simulate();
 }
