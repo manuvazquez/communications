@@ -303,6 +303,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 //     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*ruido).name())),"ruidoClass",f);
+    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
 
 	if(powerProfile!=NULL)
 	{

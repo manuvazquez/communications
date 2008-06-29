@@ -22,9 +22,9 @@
 TesisOrdenCanalMedianteSISSystem::TesisOrdenCanalMedianteSISSystem()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 3;
-	adjustSurvivorsFromParticlesNumber = true;
-    adjustParticlesNumberFromSurvivors = false;
+    nSurvivors = 2;
+	adjustSurvivorsFromParticlesNumber = false;
+    adjustParticlesNumberFromSurvivors = true;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
@@ -82,7 +82,6 @@ TesisOrdenCanalMedianteSISSystem::TesisOrdenCanalMedianteSISSystem()
 
 TesisOrdenCanalMedianteSISSystem::~TesisOrdenCanalMedianteSISSystem()
 {
-// 	delete channel;
 	delete powerProfile;
 
 	delete rmmseDetector;
@@ -109,13 +108,8 @@ TesisOrdenCanalMedianteSISSystem::~TesisOrdenCanalMedianteSISSystem()
 
 void TesisOrdenCanalMedianteSISSystem::BuildChannel()
 {
-//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
-// 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->GenerateChannelMatrix(randomGenerator));
-#ifdef DEBUG
-	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
-	cout << "El canal al final" << endl << (*channel)[K];
-#endif
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+// 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
 }
 
 void TesisOrdenCanalMedianteSISSystem::AddAlgorithms()
@@ -132,7 +126,7 @@ void TesisOrdenCanalMedianteSISSystem::AddAlgorithms()
 
 	algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
 
-	algorithms.push_back(new ISIS("ISIS",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm));
+// 	algorithms.push_back(new ISIS("ISIS",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm));
 
 	algorithms.push_back(new USIS("USIS",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

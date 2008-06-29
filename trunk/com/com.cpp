@@ -53,11 +53,13 @@ int main(int argc,char* argv[])
 //     WSA08System system;
 //     PSPvsPSPBasedSMCSystem system;
 //     Rev2TVT2007System system;
+
 //     TesisOrdenCanalSystem system;
 //     TesisOrdenCanalMedianteSISSystem system;
-//     TesisComplejidadReducidaSystem system;
-    TesisComplejidadReducidaBesselSystem system;
-//     TesisComplejidadReducidaARSystem system;
+
+//     TesisComplejidadReducidaBesselSystem system;
+    TesisComplejidadReducidaARSystem system;
+
 //     LMSmuTestSystem system;
 //     PSPvsSMCSystem system;
     system.Simulate();
