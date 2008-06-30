@@ -30,7 +30,8 @@
 #include <TesisComplejidadReducidaSystem.h>
 #include <TesisComplejidadReducidaBesselSystem.h>
 #include <TesisComplejidadReducidaARSystem.h>
-#include <TesisOrdenCanalDesconocidoSystem.h>
+#include <TesisOrdenCanalDesconocidoARSystem.h>
+#include <TesisOrdenCanalDesconocidoBesselSystem.h>
 #include <LMSmuTestSystem.h>
 #include <PSPvsSMCSystem.h>
 
@@ -57,7 +58,9 @@ int main(int argc,char* argv[])
 
 //     TesisOrdenCanalSystem system;
 //     TesisOrdenCanalMedianteSISSystem system;
-    TesisOrdenCanalDesconocidoSystem system;
+
+//     TesisOrdenCanalDesconocidoARSystem system;
+    TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
 //     TesisComplejidadReducidaARSystem system;

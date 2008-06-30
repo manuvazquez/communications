@@ -21,7 +21,6 @@
 
 TesisComplejidadReducidaBesselSystem::TesisComplejidadReducidaBesselSystem(): TesisComplejidadReducidaSystem()
 {
-
     velocity = 50/3.6; // (m/s)
     carrierFrequency = 2e9; // (Hz)
     symbolRate = 500e3; // (Hz)

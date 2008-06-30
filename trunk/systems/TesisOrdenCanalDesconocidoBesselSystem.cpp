@@ -17,26 +17,27 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "TesisComplejidadReducidaARSystem.h"
+#include "TesisOrdenCanalDesconocidoBesselSystem.h"
 
-TesisComplejidadReducidaARSystem::TesisComplejidadReducidaARSystem(): TesisComplejidadReducidaSystem()
+TesisOrdenCanalDesconocidoBesselSystem::TesisOrdenCanalDesconocidoBesselSystem()
+ : TesisOrdenCanalDesconocidoSystem()
 {
-    channelVariance = 1.0;
+    velocity = 50/3.6; // (m/s)
+    carrierFrequency = 2e9; // (Hz)
+    symbolRate = 500e3; // (Hz)
+    T = 1.0/symbolRate; // (s)
 }
 
-
-TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
+void TesisOrdenCanalDesconocidoBesselSystem::BuildChannel()
 {
+    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
 }
 
-
-void TesisComplejidadReducidaARSystem::BuildChannel()
+void TesisOrdenCanalDesconocidoBesselSystem::BeforeEndingFrame(int iFrame)
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
+    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
 }
 
-void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
-{
-    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
-}

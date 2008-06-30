@@ -17,26 +17,50 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "TesisComplejidadReducidaARSystem.h"
+#ifndef TESISORDENCANALDESCONOCIDOBESSELSYSTEM_H
+#define TESISORDENCANALDESCONOCIDOBESSELSYSTEM_H
 
-TesisComplejidadReducidaARSystem::TesisComplejidadReducidaARSystem(): TesisComplejidadReducidaSystem()
+#include <TesisOrdenCanalDesconocidoSystem.h>
+
+/**
+    @author Manu <manu@rustneversleeps>
+*/
+
+#include <math.h>
+#include <RLSEstimator.h>
+#include <RMMSEDetector.h>
+#include <WithoutReplacementResamplingAlgorithm.h>
+#include <BestParticlesResamplingAlgorithm.h>
+#include <MultinomialResamplingAlgorithm.h>
+#include <FlatPowerProfile.h>
+#include <ExponentialPowerProfile.h>
+#include <MLSDmAlgorithm.h>
+#include <PSPAlgorithm.h>
+#include <TimeInvariantChannel.h>
+#include <CMEBasedAlgorithm.h>
+#include <TimeVaryingChannelCMEbasedAlgorithm.h>
+#include <TransitionCriterion.h>
+#include <MaximumProbabilityCriterion.h>
+#include <UniformRelatedCriterion.h>
+#include <ISIS.h>
+#include <USIS.h>
+#include <USIS2SISAlgorithm.h>
+#include <APPbasedChannelOrderEstimator.h>
+#include <LinearFilterBasedSMCAlgorithm.h>
+
+class TesisOrdenCanalDesconocidoBesselSystem : public TesisOrdenCanalDesconocidoSystem
 {
-    channelVariance = 1.0;
-}
+protected:
+    double velocity; // (Km/h)
+    double carrierFrequency; // (Hz)
+    double symbolRate; // (Hz)
+    double T; // (s)
 
+    virtual void BuildChannel();
+    virtual void BeforeEndingFrame(int iFrame);
+public:
+    TesisOrdenCanalDesconocidoBesselSystem();
 
-TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
-{
-}
+};
 
-
-void TesisComplejidadReducidaARSystem::BuildChannel()
-{
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-}
-
-void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
-{
-    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
-}
+#endif

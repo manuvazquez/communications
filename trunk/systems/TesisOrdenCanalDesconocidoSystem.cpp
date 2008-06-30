@@ -29,8 +29,6 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
 
-    velocity = 50.0; // m/s
-
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
 //  powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
@@ -105,12 +103,6 @@ TesisOrdenCanalDesconocidoSystem::~TesisOrdenCanalDesconocidoSystem()
 //  delete USISuniformRelatedCriterion;
 }
 
-void TesisOrdenCanalDesconocidoSystem::BuildChannel()
-{
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-//  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
-}
-
 void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
 {
     ChannelOrderEstimationSystem::AddAlgorithms();
@@ -148,6 +140,5 @@ void TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
     Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
     Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
 }
 

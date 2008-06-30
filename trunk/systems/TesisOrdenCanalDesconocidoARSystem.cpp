@@ -17,26 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "TesisComplejidadReducidaARSystem.h"
+#include "TesisOrdenCanalDesconocidoARSystem.h"
 
-TesisComplejidadReducidaARSystem::TesisComplejidadReducidaARSystem(): TesisComplejidadReducidaSystem()
+TesisOrdenCanalDesconocidoARSystem::TesisOrdenCanalDesconocidoARSystem()
+ : TesisOrdenCanalDesconocidoSystem()
 {
     channelVariance = 1.0;
+//     powerProfile = new FlatPowerProfile(L,N,m,channelVariance);
 }
 
-
-TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
-{
-}
-
-
-void TesisComplejidadReducidaARSystem::BuildChannel()
+void TesisOrdenCanalDesconocidoARSystem::BuildChannel()
 {
     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
-void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
+void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame(int iFrame)
 {
-    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
+    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }
+
