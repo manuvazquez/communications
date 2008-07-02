@@ -52,7 +52,7 @@ protected:
 	bool _processDoneExternally;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
-    vector<vector<tMatrix> > ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 

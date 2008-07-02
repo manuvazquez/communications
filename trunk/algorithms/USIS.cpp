@@ -40,10 +40,10 @@ USIS::~USIS()
 	delete _channelOrderEstimator;
 }
 
-vector<vector<tMatrix> > USIS::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<vector<tMatrix> > USIS::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 	// channel estimation for the training sequence is needed in order to compute the channel order APP
-	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
     // during the training sequence

@@ -58,7 +58,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 
-    vector<vector<tMatrix> > trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+    vector<vector<tMatrix> > trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
     this->InitializeParticles();
 

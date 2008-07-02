@@ -34,13 +34,13 @@ KnownChannelOrderAlgorithm::~ KnownChannelOrderAlgorithm()
 	delete _channelEstimator;
 }
 
-vector<tMatrix> KnownChannelOrderAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<tMatrix> KnownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
 	tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
 	int lengthToProcessSequence = toProcessSequence.cols();
 
 	if(observations.cols()<lengthToProcessSequence)
-		throw RuntimeException("KnownChannelOrderAlgorithm::ProcessTrainingSequence: insufficient number of observations.");
+		throw RuntimeException("KnownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence: insufficient number of observations.");
 
 	vector<tMatrix> estimatedMatrices(trainingSequence.cols());
 

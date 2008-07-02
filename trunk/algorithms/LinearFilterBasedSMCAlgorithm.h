@@ -67,7 +67,7 @@ protected:
 
 	void InitializeParticles();
     void Process(const tMatrix &observations, vector< double > noiseVariances);
-	vector<tMatrix> ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+// 	vector<tMatrix> EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 
     bool _substractContributionFromKnownSymbols;
 
@@ -76,6 +76,8 @@ protected:
 		// firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
 		Util::Add(_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
 	}
+
+    virtual void ProcessTrainingSequence(const tMatrix &observations, const tMatrix &trainingSequence);
 };
 
 #endif

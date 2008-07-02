@@ -110,7 +110,9 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     tRange rTrainingSequence(_preamble.cols(),preamblePlusTrainingSequenceLength-1);
 
-    vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+    ProcessTrainingSequence(observations,trainingSequence);
+
+    vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
     #ifdef DEBUG13
     	tMatrix ultimaEstimada = trainingSequenceChannelMatrices[trainingSequenceChannelMatrices.size()-1];
