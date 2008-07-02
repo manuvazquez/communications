@@ -17,46 +17,32 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LMSMUTESTSYSTEM_H
-#define LMSMUTESTSYSTEM_H
+#include "NLMSEstimator.h"
 
-#include <SMCSystem.h>
-
-/**
-    @author Manu <manu@rustneversleeps>
-*/
-
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-#include <NLMSEstimator.h>
-
-class LMSmuTestSystem : public SMCSystem
+NLMSEstimator::NLMSEstimator(const tMatrix& initialEstimation, int N, double mu): LMSEstimator(initialEstimation, N, mu)
 {
-protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
+}
 
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
+LMSEstimator* NLMSEstimator::Clone() const
+{
+    return new NLMSEstimator(*this);
+}
 
-    // estimacion conjunta del canal y los datos
-    double forgettingFactorDetector;
-    RMMSEDetector *rmmseDetector;
+tMatrix NLMSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+{
+    tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-    vector<double> musLMS;
-    vector<ChannelMatrixEstimator *> LMSchannelEstimators;
+    // _error = observations
+    tVector error = observations;
 
-    virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
-public:
-    LMSmuTestSystem();
-    ~LMSmuTestSystem();
-};
+    // error = _lastEstimatedChannelMatrix*symbolsVector - error
+    // (note that error is initialized to observations, so that:
+    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
+    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
 
-#endif
+    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
+    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu/Blas_Dot_Prod(error,error));
+
+    return _lastEstimatedChannelMatrix;
+}
+

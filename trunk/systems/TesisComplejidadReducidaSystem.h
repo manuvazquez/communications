@@ -32,6 +32,7 @@
 #include <RMMSEDetector.h>
 #include <RLSEstimator.h>
 #include <LMSEstimator.h>
+#include <NLMSEstimator.h>
 
 class TesisComplejidadReducidaSystem : public SMCSystem
 {
@@ -51,9 +52,10 @@ protected:
     // estimacion conjunta del canal y los datos
     double forgettingFactor;
     double forgettingFactorDetector;
-    double muLMS;
+    double muLMS,muNLMS;
     RLSEstimator *rlsEstimator;
     LMSEstimator *lmsEstimator;
+    NLMSEstimator *nlmsEstimator;
     RMMSEDetector *rmmseDetector;
 
     virtual void BeforeEndingFrame(int iFrame);

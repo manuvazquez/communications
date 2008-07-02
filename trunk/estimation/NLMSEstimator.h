@@ -17,46 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LMSMUTESTSYSTEM_H
-#define LMSMUTESTSYSTEM_H
+#ifndef NLMSESTIMATOR_H
+#define NLMSESTIMATOR_H
 
-#include <SMCSystem.h>
+#include <LMSEstimator.h>
 
 /**
-    @author Manu <manu@rustneversleeps>
+	@author Manu <manu@rustneversleeps>
 */
-
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-#include <NLMSEstimator.h>
-
-class LMSmuTestSystem : public SMCSystem
+class NLMSEstimator : public LMSEstimator
 {
-protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
-
-    // estimacion conjunta del canal y los datos
-    double forgettingFactorDetector;
-    RMMSEDetector *rmmseDetector;
-
-    vector<double> musLMS;
-    vector<ChannelMatrixEstimator *> LMSchannelEstimators;
-
-    virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void AddAlgorithms();
 public:
-    LMSmuTestSystem();
-    ~LMSmuTestSystem();
+    NLMSEstimator(const tMatrix& initialEstimation, int N, double mu);
+
+    virtual LMSEstimator* Clone() const;
+    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+
 };
 
 #endif

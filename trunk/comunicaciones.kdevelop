@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>com/com</activetarget>
+      <activetarget>estimation/libestimation.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

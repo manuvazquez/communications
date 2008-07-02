@@ -34,7 +34,7 @@ class LMSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _mu;
-	tVector _predictedObservations;
+// 	tVector _predictedObservations;
 public:
     LMSEstimator(const tMatrix &initialEstimation,int N,double mu);
 

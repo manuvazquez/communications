@@ -22,11 +22,12 @@
 TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 {
 
-    nSurvivors = 12;
+    nSurvivors = 1;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
     muLMS = 0.01;
+    muNLMS = 0.1;
 
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
@@ -88,6 +89,7 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
     rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
     rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
     lmsEstimator = new LMSEstimator(powerProfile->Means(),N,muLMS);
+    nlmsEstimator = new NLMSEstimator(powerProfile->Means(),N,muNLMS);
 
     kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
     knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
@@ -131,6 +133,7 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,lmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("NLMS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,nlmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
     // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
     // common to all simulation algorithms
@@ -156,4 +159,5 @@ void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
     Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
     Util::ScalarToOctaveFileStream(muLMS,"muLMS",f);
+    Util::ScalarToOctaveFileStream(muNLMS,"muNLMS",f);
 }

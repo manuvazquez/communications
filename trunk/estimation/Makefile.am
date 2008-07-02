@@ -5,9 +5,9 @@ METASOURCES = AUTO
 lib_LIBRARIES = libestimation.a
 noinst_HEADERS = APPbasedChannelOrderEstimator.h ChannelMatrixEstimator.h \
 	ChannelOrderEstimator.h KalmanEstimator.h KnownChannelChannelMatrixEstimator.h \
-	KnownSymbolsKalmanEstimator.h LMSEstimator.h OneChannelOrderPerTransmitAtennaWrapperEstimator.h \
-	RLSEstimator.h
+	KnownSymbolsKalmanEstimator.h LMSEstimator.h NLMSEstimator.h \
+	OneChannelOrderPerTransmitAtennaWrapperEstimator.h RLSEstimator.h
 libestimation_a_SOURCES = APPbasedChannelOrderEstimator.cpp \
 	ChannelMatrixEstimator.cpp ChannelOrderEstimator.cpp KalmanEstimator.cpp \
-	KnownChannelChannelMatrixEstimator.cpp KnownSymbolsKalmanEstimator.cpp LMSEstimator.cpp \
+	KnownChannelChannelMatrixEstimator.cpp KnownSymbolsKalmanEstimator.cpp LMSEstimator.cpp NLMSEstimator.cpp \
 	OneChannelOrderPerTransmitAtennaWrapperEstimator.cpp RLSEstimator.cpp

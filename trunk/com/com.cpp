@@ -60,9 +60,9 @@ int main(int argc,char* argv[])
 //     TesisOrdenCanalMedianteSISSystem system;
 
 //     TesisOrdenCanalDesconocidoARSystem system;
-    TesisOrdenCanalDesconocidoBesselSystem system;
+//     TesisOrdenCanalDesconocidoBesselSystem system;
 
-//     TesisComplejidadReducidaBesselSystem system;
+    TesisComplejidadReducidaBesselSystem system;
 //     TesisComplejidadReducidaARSystem system;
 
 //     LMSmuTestSystem system;
