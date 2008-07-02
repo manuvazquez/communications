@@ -30,6 +30,7 @@
 #include <exceptions.h>
 #include <Alphabet.h>
 #include <MIMOChannel.h>
+#include <LinearDetector.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas3pp.h>
 

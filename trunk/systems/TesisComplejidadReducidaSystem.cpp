@@ -140,7 +140,7 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     delete kalmanEstimatedChannel;
      kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observaciones,ruido->Variances());
 
-    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
+//     algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
 
     algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
 

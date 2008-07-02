@@ -25,6 +25,7 @@
 */
 
 #include <types.h>
+#include <Util.h>
 
 class LinearDetector{
 protected:
@@ -45,6 +46,7 @@ public:
 	virtual ~LinearDetector() {}
 	int ChannelMatrixCols() { return _channelMatrixCols;}
 	virtual LinearDetector *Clone() = 0;
+    void StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
 };
 
 #endif

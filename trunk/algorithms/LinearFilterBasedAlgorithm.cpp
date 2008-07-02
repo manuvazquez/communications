@@ -57,6 +57,8 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
 	vector<tMatrix> trainingSequenceChannelMatrices = ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
 
+    _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
+
 	for(int j=_preamble.cols();j<startDetectionTime;j++)
 	{
 		_detectedSymbolVectors.col(j).inject(trainingSequence.col(j-_preamble.cols()));
@@ -143,17 +145,17 @@ vector<tMatrix> LinearFilterBasedAlgorithm::GetEstimatedChannelMatrices()
     return channelMatrices;
 }
 
-vector<tMatrix> LinearFilterBasedAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-{
-	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
-	tRange rAllObservationRows(0,_L-1);
-
-	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
-	{
-		tRange rSmoothingRange(i-_c,i+_d);
-		tVector stackedObservationsVector = Util::ToVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
-		_linearDetector->StateStep(stackedObservationsVector);
-	}
-
-	return KnownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
-}
+// vector<tMatrix> LinearFilterBasedAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+// {
+// 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
+// 	tRange rAllObservationRows(0,_L-1);
+//
+// 	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
+// 	{
+// 		tRange rSmoothingRange(i-_c,i+_d);
+// 		tVector stackedObservationsVector = Util::ToVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
+// 		_linearDetector->StateStep(stackedObservationsVector);
+// 	}
+//
+// 	return KnownChannelOrderAlgorithm::ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+// }
