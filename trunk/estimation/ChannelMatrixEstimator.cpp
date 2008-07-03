@@ -55,7 +55,7 @@ vector<tMatrix> ChannelMatrixEstimator::NextMatricesFromObservationsSequence(con
 //     int lengthToProcessSequence = toProcessSequence.cols();
 
     if(observations.cols()<iTo)
-        throw RuntimeException("ChannelMatrixEstimator::EstimateChannelFromTrainingSequence: insufficient number of observations.");
+        throw RuntimeException("ChannelMatrixEstimator::NextMatricesFromObservationsSequence: insufficient number of observations.");
 
     vector<tMatrix> estimatedMatrices(iTo-iFrom);
 

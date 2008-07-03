@@ -37,6 +37,7 @@ protected:
 
 	vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     int BestChannelOrderIndex(int iBestParticle);
+//     virtual void ProcessTrainingSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
 public:
     MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 

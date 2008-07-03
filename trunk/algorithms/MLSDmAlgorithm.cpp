@@ -299,3 +299,48 @@ vector<vector<tMatrix> > MLSDmAlgorithm::EstimateChannelFromTrainingSequence(con
 
 	return UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 }
+
+// void MLSDmAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+// {
+//     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+//
+//     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
+//         throw RuntimeException("ProcessTrainingSequence::ProcessTrainingSequence: Insufficient number of observations.");
+//
+//     vector<ChannelMatrixEstimator *> clonedChannelEstimators(_candidateOrders.size());
+//     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+//     {
+//         // the initial channel estimators are kept for computing the APP of the channel orders
+//         clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
+//
+//         // at the beginning, all the channel orders have the same probability
+//         _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
+//     }
+//
+//     tRange rAll;
+//     double normConst;
+//     vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
+//
+//     for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
+//     {
+//         normConst = 0.0;
+//         for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+//         {
+//             // unnormalized channel order APP
+//             unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*clonedChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+//             normConst += unnormalizedChannelOrderAPPs[iOrder];
+//
+//             clonedChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+//         }
+//
+//         if(normConst!=0.0)
+//             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+//                 _channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
+//         else
+//             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+//                 _channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
+//     }
+//
+//     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+//         delete clonedChannelEstimators[iOrder];
+// }

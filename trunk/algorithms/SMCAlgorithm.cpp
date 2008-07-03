@@ -138,7 +138,6 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-//         vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,processedParticle->GetChannelMatrixEstimator(_estimatorIndex));
         vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
 
         //the channel estimation given by the training sequence is copied into each particle...
