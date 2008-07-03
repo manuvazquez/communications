@@ -22,7 +22,7 @@
 TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 12;
+    nSurvivors = 1;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 

@@ -123,7 +123,9 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle,j;
-    int preamblePlusTrainingSequenceLength = _preamble.cols() + trainingSequence.cols();
+    tMatrix preamblePlusTrainingSequence = Util::Append(_preamble,trainingSequence);
+    int preamblePlusTrainingSequenceLength = preamblePlusTrainingSequence.cols();
+//     int preamblePlusTrainingSequenceLength = _preamble.cols() + trainingSequence.cols();
 
     tRange rTrainingSequence(_preamble.cols(),preamblePlusTrainingSequenceLength-1);
 
@@ -136,7 +138,8 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-        vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,processedParticle->GetChannelMatrixEstimator(_estimatorIndex));
+//         vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,processedParticle->GetChannelMatrixEstimator(_estimatorIndex));
+        vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
 
         //the channel estimation given by the training sequence is copied into each particle...
         for(j=_preamble.cols();j<preamblePlusTrainingSequenceLength;j++)

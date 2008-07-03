@@ -48,3 +48,26 @@ int ChannelMatrixEstimator::Memory()
     else
         throw RuntimeException("ChannelMatrixEstimator::Memory: this may not be a real channel matrix estimator: its number of columns is not a multiple of the number of transmitting antennas.");
 }
+
+vector<tMatrix> ChannelMatrixEstimator::NextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo)
+{
+//     tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
+//     int lengthToProcessSequence = toProcessSequence.cols();
+
+    if(observations.cols()<iTo)
+        throw RuntimeException("ChannelMatrixEstimator::EstimateChannelFromTrainingSequence: insufficient number of observations.");
+
+    vector<tMatrix> estimatedMatrices(iTo-iFrom);
+
+    // selects all the rows from a symbols matrix
+    tRange allSymbolRows;
+
+    tRange mColumns(iFrom-_m+1,iFrom);
+
+    for(int i=iFrom;i<iTo;i++)
+    {
+        estimatedMatrices[i-iFrom] = NextMatrix(observations.col(i),symbolVectors(allSymbolRows,mColumns),noiseVariances[i]);
+        mColumns = mColumns + 1;
+    }
+    return estimatedMatrices;
+}

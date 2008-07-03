@@ -37,7 +37,7 @@ protected:
 	int _m,_Nm;
 	tMatrix _preamble;
 
-	virtual vector<tMatrix> EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence,ChannelMatrixEstimator *channelEstimator);
+// 	virtual vector<tMatrix> EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence,ChannelMatrixEstimator *channelEstimator);
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble);

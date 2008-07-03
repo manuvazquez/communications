@@ -26,6 +26,7 @@
 
 #include <types.h>
 #include <exceptions.h>
+#include <vector>
 
 class ChannelMatrixEstimator{
 protected:
@@ -50,7 +51,7 @@ public:
 	int Rows() { return _L;}
     int Memory();
 	virtual tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
-
+    vector<tMatrix> NextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo);
 };
 
 #endif

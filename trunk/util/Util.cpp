@@ -291,6 +291,10 @@ void Util::MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > mat
 		return;
 	}
 
+    cout << "matrices.size " << matrices.size() << endl;
+    cout << "matrices[0].size() " << matrices[0].size() << endl;
+    cout << "matrices[0][0].size() " << matrices[0][0].cols() << endl;
+
 	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 4" << endl << " " << matrices[0][0].rows() << " " << matrices[0][0].cols() << " " << matrices[0].size() << " " << matrices.size() << endl;
 
 	int i,j;

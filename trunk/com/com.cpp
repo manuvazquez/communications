@@ -56,9 +56,6 @@ int main(int argc,char* argv[])
 //     PSPvsPSPBasedSMCSystem system;
 //     Rev2TVT2007System system;
 
-//     TesisOrdenCanalSystem system;
-//     TesisOrdenCanalMedianteSISSystem system;
-
 //     TesisOrdenCanalDesconocidoARSystem system;
 //     TesisOrdenCanalDesconocidoBesselSystem system;
 

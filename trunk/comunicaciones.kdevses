@@ -1,43 +1,49 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="12" >
-  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+ <DocsAndViews NumberOfDocuments="14" >
+  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelOrderAlgorithm.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h" >
+  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/TesisComplejidadReducidaSystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h" >
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h" >
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelOrderAlgorithm.cpp" >
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.h" >
    <View0 Encoding="" Type="Source" />
   </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/TesisComplejidadReducidaBesselSystem.cpp" >
+  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/TesisComplejidadReducidaSystem.cpp" >
+  <Doc10 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelMatrixEstimator.h" >
    <View0 Encoding="" Type="Source" />
   </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/src/defines.h" >
-   <View0 Encoding="" line="21" Type="Source" />
+  <Doc11 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelMatrixEstimator.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h" >
+   <View0 Encoding="" line="39" Type="Source" />
+  </Doc12>
+  <Doc13 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/src/defines.h" >
+   <View0 Encoding="" line="21" Type="Source" />
+  </Doc13>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -53,10 +59,6 @@
     <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="160" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="361" />
-     <mark line="266" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
      <mark line="93" />
     </bookmark>
@@ -65,6 +67,10 @@
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="364" />
+     <mark line="266" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
      <mark line="44" />
@@ -121,10 +127,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="138" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-     <mark line="21" />
-     <mark line="109" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="320" />
     </bookmark>
@@ -133,8 +135,12 @@
      <mark line="82" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp" >
-     <mark line="59" />
-     <mark line="113" />
+     <mark line="61" />
+     <mark line="115" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+     <mark line="21" />
+     <mark line="109" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
      <mark line="295" />
@@ -167,6 +173,7 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="196" />
+     <mark line="321" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
