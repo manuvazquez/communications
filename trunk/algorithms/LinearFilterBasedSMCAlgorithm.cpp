@@ -199,21 +199,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 
-// vector<tMatrix> LinearFilterBasedSMCAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-// {
-// 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
-// 	tRange allObservationRows(0,_L-1);
-//
-// 	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
-// 	{
-// 		tRange rSmoothingRange(i-_c,i+_d);
-// 		tVector stackedObservationsVector = Util::ToVector(observations(allObservationRows,rSmoothingRange),columnwise);
-// 		_linearDetector->StateStep(stackedObservationsVector);
-// 	}
-//
-// 	return SMCAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
-// }
-
 void LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations, const tMatrix &trainingSequence)
 {
     _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),_preamble.cols()+trainingSequence.cols());

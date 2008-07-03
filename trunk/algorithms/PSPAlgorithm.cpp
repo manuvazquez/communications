@@ -174,7 +174,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
 	_startDetectionTime = preambleTrainingSequence.cols();
 
-    vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+    vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,_channelEstimator);
 
 	// known symbol vectors are copied into the the vector with the final detected ones
 	(*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_startDetectionTime-1)).inject(trainingSequence);

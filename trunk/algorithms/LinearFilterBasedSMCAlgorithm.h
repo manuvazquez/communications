@@ -67,7 +67,6 @@ protected:
 
 	void InitializeParticles();
     void Process(const tMatrix &observations, vector< double > noiseVariances);
-// 	vector<tMatrix> EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 
     bool _substractContributionFromKnownSymbols;
 

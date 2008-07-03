@@ -60,18 +60,35 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 	_estimatorIndex = n;
 }
 
+// void SMCAlgorithm::InitializeParticles()
+// {
+//     // memory is reserved
+//     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+//     {
+//         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone()));
+//
+//         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+//
+//         #ifdef DEBUG10
+//             cout << "lo que acabo de meter" << endl << _particleFilter->GetParticle(iParticle)->GetSymbolVectors(tRange(0,_preamble.cols()-1));
+//         #endif
+//     }
+// }
+
 void SMCAlgorithm::InitializeParticles()
 {
+    ChannelMatrixEstimator *channelMatrixEstimatorClone;
+    tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
+    tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
+
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
-        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone()));
+        channelMatrixEstimatorClone = _channelEstimator->Clone();
+        channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
-
-        #ifdef DEBUG10
-            cout << "lo que acabo de meter" << endl << _particleFilter->GetParticle(iParticle)->GetSymbolVectors(tRange(0,_preamble.cols()-1));
-        #endif
     }
 }
 
@@ -112,20 +129,14 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     ProcessTrainingSequence(observations,trainingSequence);
 
-    vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
-
-    #ifdef DEBUG13
-    	tMatrix ultimaEstimada = trainingSequenceChannelMatrices[trainingSequenceChannelMatrices.size()-1];
-    	cout << "El error cometido despues de la secuencia de entrenamiento es " << Util::SquareError((*_channel)[preamblePlusTrainingSequenceLength],ultimaEstimada) << endl;
-    	cout << "Una tecla..."; getchar();
-    #endif
-
     InitializeParticles();
 
 //     for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
     {
 		ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+
+        vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,processedParticle->GetChannelMatrixEstimator(_estimatorIndex));
 
         //the channel estimation given by the training sequence is copied into each particle...
         for(j=_preamble.cols();j<preamblePlusTrainingSequenceLength;j++)

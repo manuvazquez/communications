@@ -55,7 +55,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
     if(nObservations<(startDetectionTime+1+_d))
         throw RuntimeException("LinearFilterBasedAlgorithm::Process: Not enough observations.");
 
-	vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+	vector<tMatrix> trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence,_channelEstimator);
 
     _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
 
@@ -144,18 +144,3 @@ vector<tMatrix> LinearFilterBasedAlgorithm::GetEstimatedChannelMatrices()
 
     return channelMatrices;
 }
-
-// vector<tMatrix> LinearFilterBasedAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-// {
-// 	int lengthSequenceToProcess = _preamble.cols() + trainingSequence.cols();
-// 	tRange rAllObservationRows(0,_L-1);
-//
-// 	for(int i=_preamble.cols();i<lengthSequenceToProcess;i++)
-// 	{
-// 		tRange rSmoothingRange(i-_c,i+_d);
-// 		tVector stackedObservationsVector = Util::ToVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
-// 		_linearDetector->StateStep(stackedObservationsVector);
-// 	}
-//
-// 	return KnownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
-// }
