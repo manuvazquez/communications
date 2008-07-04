@@ -52,6 +52,10 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
 	_channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_K+_maxOrder-1);
 	_channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
+
+#ifdef DEBUG
+    cout << "UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: _candidateOrders.size " << _candidateOrders.size() << endl;
+#endif
 }
 
 
@@ -75,10 +79,6 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::EstimateChannelFromTraini
  	// selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_N-1);
 
-#ifdef DEBUG
-	cout << "_channelOrderAPPs" << endl << _channelOrderAPPs;
-#endif
-
     uint iOrder;
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
     {
@@ -89,10 +89,6 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::EstimateChannelFromTraini
             estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
         }
     }
-
-#ifdef DEBUG
-	cout << "_channelOrderAPPs" << endl << _channelOrderAPPs;
-#endif
 
     return estimatedMatrices;
 }

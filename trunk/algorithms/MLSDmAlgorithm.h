@@ -23,7 +23,7 @@
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
@@ -31,13 +31,13 @@
 class MLSDmAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 {
 protected:
-	ParticleFilter *_particleFilter;
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    ParticleFilter *_particleFilter;
+    double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     vector<int> _particlesBestChannelOrders;
 
-	vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+    vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     int BestChannelOrderIndex(int iBestParticle);
-//     virtual void ProcessTrainingSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
+    virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
 public:
     MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 

@@ -52,21 +52,6 @@ vector<vector<tMatrix> > USIS::EstimateChannelFromTrainingSequence(const tMatrix
     // the APP of the candidate channel orders are set accordingly
 	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
 
-    uint iChannelOrder;
-
-    for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
-    {
-        for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        {
-            // the observations from i to i+d are stacked
-            tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
-
-            tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-            _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
-        }
-
-    }
-
     return estimatedMatrices;
 }
 
@@ -84,6 +69,9 @@ void USIS::InitializeParticles()
 		for(uint iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
 		{
 			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->Clone();
+            // the first matrix of the channel matrix estimator is initialized randomly
+
+
 			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->Clone();
 		}
 
@@ -354,4 +342,33 @@ int USIS::BestChannelOrderIndex(int iBestParticle)
 		}
 
 	return iMaxChannelOrderAPP;
+}
+
+void USIS::BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+{
+//     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
+//     {
+//         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+//         {
+//             // the observations from i to i+d are stacked
+//             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
+//
+//             tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
+//             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
+//         }
+//
+//     }
+
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        _linearDetectors[iChannelOrder]->StateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
+//     {
+//         // the observations from i to i+d are stacked
+//         tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
+//
+//         tVector stackedObservationsVector = Util::ToVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
+//         _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
+//     }
+
+    // the APP of the candidate channel orders are set accordingly
+    _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());
 }

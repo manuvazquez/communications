@@ -19,17 +19,34 @@
  ***************************************************************************/
 #include "MultipleChannelEstimatorsPerParticleSMCAlgorithm.h"
 
+// #define DEBUG
+
 MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation)
 //variables initialization
 ,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1)
 {
     // at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionTime = _preamble.cols();
-}
 
+    _channelUniqueMean = 0.0;
+    _channelUniqueVariance = 1.0;
 
-MultipleChannelEstimatorsPerParticleSMCAlgorithm::~MultipleChannelEstimatorsPerParticleSMCAlgorithm()
-{
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    {
+        tMatrix channelMatrixMeansOrVariances(_L,_N*_candidateOrders[iChannelOrder]);
+
+        channelMatrixMeansOrVariances = _channelUniqueMean;
+        _channelMatrixMeans.push_back(channelMatrixMeansOrVariances);
+
+        channelMatrixMeansOrVariances = _channelUniqueVariance;
+        _channelMatrixVariances.push_back(channelMatrixMeansOrVariances);
+    }
+
+    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    {
+        _channelMeanVectors.push_back(Util::ToVector(_channelMatrixMeans[iChannelOrder],rowwise));
+        _channelCovariances.push_back(LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances[iChannelOrder],rowwise)));
+    }
 }
 
 void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
@@ -60,7 +77,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
     vector<vector<tMatrix> > trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
-    ProcessTrainingSequence(observations,noiseVariances,trainingSequence);
+    BeforeInitializingParticles(observations,noiseVariances,trainingSequence);
 
     this->InitializeParticles();
 
@@ -102,10 +119,10 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
     channelMatrices.reserve(_K-_preamble.cols());
 
     // best particle is chosen
-	int iBestParticle = GetParticleFilterPointer()->iBestParticle();
+    int iBestParticle = GetParticleFilterPointer()->iBestParticle();
 //     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
-	int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
+    int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 
     for(int i=_preamble.cols();i<_K;i++)
         channelMatrices.push_back(GetParticleFilterPointer()->GetParticle(iBestParticle)->GetChannelMatrix(iBestChannelOrder,i));

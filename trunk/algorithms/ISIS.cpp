@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "ISIS.h"
 
+// #define DEBUG3
+
 ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
 {
 }
@@ -31,7 +33,10 @@ void ISIS::InitializeParticles()
 		// a clone of each of the channel matrix estimators is constructed...
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
 		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
+        {
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
+//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_L));
+        }
 
 		// ... and passed within a vector to each particle
 		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_N,_K,thisParticleChannelMatrixEstimators));
@@ -62,11 +67,14 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
+#ifdef DEBUG2
+        cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+#endif
 
 		for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 		{
 
-            #ifdef DEBUG
+            #ifdef DEBUG2
             cout << " ---------------- Particula " << iParticle << " ------------------------" << endl;
             #endif
 

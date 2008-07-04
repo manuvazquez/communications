@@ -35,12 +35,12 @@
 
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
-private:
-	void InitializeParticlesChannelMatrixEstimations();
+// private:
+//     void InitializeParticlesChannelMatrixEstimations();
 protected:
-	ParticleFilter *_particleFilter;
-	bool _particleFilterNeedToBeDeleted;
-	ResamplingAlgorithm *_resamplingAlgorithm;
+    ParticleFilter *_particleFilter;
+    bool _particleFilterNeedToBeDeleted;
+    ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionTime;
     tRange _allSymbolsRows;
 
@@ -51,22 +51,22 @@ protected:
 
     virtual void InitializeParticles();
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
-	/**
-	 *    Computes the smoothed likelihood, i.e., the product of the likelihoods of the observations involved in the smoothing from @param iObservationToBeProcessed to @param iObservationToBeProcessed + d (the smoothing lag)
-	 * @param channelMatrices
-	 * @param involvedSymbolVectors
-	 * @param particle
-	 * @param iObservationToBeProcessed
-	 * @param observations
-	 * @param noiseVariances
-	 * @return
-	 */
-	double SmoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
+    /**
+     *    Computes the smoothed likelihood, i.e., the product of the likelihoods of the observations involved in the smoothing from @param iObservationToBeProcessed to @param iObservationToBeProcessed + d (the smoothing lag)
+     * @param channelMatrices
+     * @param involvedSymbolVectors
+     * @param particle
+     * @param iObservationToBeProcessed
+     * @param observations
+     * @param noiseVariances
+     * @return
+     */
+    double SmoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
 
     const MIMOChannel *_channel;
     const tMatrix *_symbols;
 
-    virtual void ProcessTrainingSequence(const tMatrix &observations, const tMatrix &trainingSequence) {}
+    virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence) {}
 
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);
@@ -89,12 +89,12 @@ public:
 
     ~SMCAlgorithm();
 
-	void SetEstimatorIndex(int n);
+    void SetEstimatorIndex(int n);
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-	void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);
+    void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);
 
     tMatrix GetDetectedSymbolVectors();
     vector<tMatrix> GetEstimatedChannelMatrices();

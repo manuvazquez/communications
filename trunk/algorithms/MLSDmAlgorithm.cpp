@@ -28,48 +28,48 @@ MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int
 
 MLSDmAlgorithm::~MLSDmAlgorithm()
 {
-	delete _particleFilter;
+    delete _particleFilter;
 }
 
 void MLSDmAlgorithm::InitializeParticles()
 {
-	vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
-	for(uint i=0;i<_candidateOrders.size();i++)
-		channelEstimatorsClone[i] = _channelEstimators[i]->Clone();
+    vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
+    for(uint i=0;i<_candidateOrders.size();i++)
+        channelEstimatorsClone[i] = _channelEstimators[i]->Clone();
 
-	// we begin with only one particle
-	ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_N,_K+_d,channelEstimatorsClone);
+    // we begin with only one particle
+    ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_N,_K+_d,channelEstimatorsClone);
 
-	particle->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+    particle->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 
-	// the available APP's just before the _startDetectionTime instant are copied into the particle
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		particle->SetChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+    // the available APP's just before the _startDetectionTime instant are copied into the particle
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        particle->SetChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
 
-	_particleFilter->AddParticle(particle);
+    _particleFilter->AddParticle(particle);
 }
 
 void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-	uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
-	tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
-	vector<tSymbol> testedVector(_N);
-	tVector computedObservations(_L);
-	int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
-	uint iChannelOrder,iTestedVector;
-	ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
-	double normConst,likelihood;
+    uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+    tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
+    vector<tSymbol> testedVector(_N);
+    tVector computedObservations(_L);
+    int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
+    uint iChannelOrder,iTestedVector;
+    ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
+    double normConst,likelihood;
 
-	typedef struct{
-		int fromParticle;
-		tMatrix symbolVectorsMatrix;
+    typedef struct{
+        int fromParticle;
+        tMatrix symbolVectorsMatrix;
         int iBestChannelOrder;
-		tVector unnormalizedChannelOrderAPPs;
-		double likelihood;
-		double weight;
-	}tParticleCandidate;
+        tVector unnormalizedChannelOrderAPPs;
+        double likelihood;
+        double weight;
+    }tParticleCandidate;
 
-	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors];
+    tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors];
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_N,_maxOrder);
@@ -77,175 +77,161 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
 
     int lastSymbolVectorStart = _NmaxOrder - _N;
 
-	tRange rMaxChannelOrderMinus1PrecedentColumns(_startDetectionTime-_maxOrder+1,_startDetectionTime-1);
+    tRange rMaxChannelOrderMinus1PrecedentColumns(_startDetectionTime-_maxOrder+1,_startDetectionTime-1);
 
-	vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
-	int iBestChannelOrder = 0,timesBestChannelOrder = 0;
+    vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
+    int iBestChannelOrder = 0,timesBestChannelOrder = 0;
 
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
-	{
+    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
+    {
 #ifdef DEBUG
-// 		cout << iObservationToBeProcessed << endl;
+//      cout << iObservationToBeProcessed << endl;
 #endif
-		// it keeps track of the place where a new tParticleCandidate will be stored within the array
-		iCandidate = 0;
+        // it keeps track of the place where a new tParticleCandidate will be stored within the array
+        iCandidate = 0;
 
-		normConst = 0.0;
+        normConst = 0.0;
 
-		// the candidates from all the particles are generated
-		for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-		{
-			processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
+        // the candidates from all the particles are generated
+        for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+        {
+            processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
 
-			symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
-			symbolsVector = Util::ToVector(symbolVectorsMatrix,columnwise);
+            symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
+            symbolsVector = Util::ToVector(symbolVectorsMatrix,columnwise);
 
-			for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
-			{
-				// the corresponding testing vector is generated from the index
-				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+            for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+            {
+                // the corresponding testing vector is generated from the index
+                _alphabet.IntToSymbolsArray(iTestedVector,testedVector);
 
-				// current tested vector is copied in the m-th position
-				for(k=0;k<_N;k++)
-					symbolVectorsMatrix(k,_maxOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
+                // current tested vector is copied in the m-th position
+                for(k=0;k<_N;k++)
+                    symbolVectorsMatrix(k,_maxOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
 
-				likelihood = 0.0;
+                likelihood = 0.0;
 
-				particleCandidates[iCandidate].unnormalizedChannelOrderAPPs = tVector(_candidateOrders.size());
+                particleCandidates[iCandidate].unnormalizedChannelOrderAPPs = tVector(_candidateOrders.size());
 
-				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-				{
-					m = _candidateOrders[iChannelOrder];
+                for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+                {
+                    m = _candidateOrders[iChannelOrder];
 
-					tMatrix involvedSymbolVectors = symbolVectorsMatrix(rAll,tRange(_maxOrder-m,_maxOrder-1)).copy();
+                    tMatrix involvedSymbolVectors = symbolVectorsMatrix(rAll,tRange(_maxOrder-m,_maxOrder-1)).copy();
 
-					// the AR coefficiente is accounted for
-// 					involvedSymbolVectors *= _ARcoefficient; <--------------------------------- (when Kalman estimator, it is already accounted for)
+                    // the AR coefficiente is accounted for
+//                  involvedSymbolVectors *= _ARcoefficient; <--------------------------------- (when Kalman estimator, it is already accounted for)
 
-					particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
+                    particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
 
-					likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
-				}
+                    likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
+                }
 
-				// if the channelOrderNormConst is zero, we don't generate a candidate for this particle and this symbol vector
-				if(likelihood==0.0)
-					continue;
-// 					throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
+                // if the channelOrderNormConst is zero, we don't generate a candidate for this particle and this symbol vector
+                if(likelihood==0.0)
+                    continue;
+//                  throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
 
-				Util::Max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
+                Util::Max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
 
-				particleCandidates[iCandidate].fromParticle = iParticle;
-				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
+                particleCandidates[iCandidate].fromParticle = iParticle;
+                particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
                 particleCandidates[iCandidate].iBestChannelOrder = iBestUnnormalizedChannelOrderAPP;
                 particleCandidates[iCandidate].likelihood = likelihood;
-				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
-				normConst += particleCandidates[iCandidate].weight;
+                particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
+                normConst += particleCandidates[iCandidate].weight;
 
-				iCandidate++;
-			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+                iCandidate++;
+            } // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+        } // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
-		// if none of the candidates was valid
-		if(iCandidate==0)
-		{
-			tVector uniformDistribution(_alphabet.Length());
-			for(int iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-				uniformDistribution(iAlphabet) = 1.0/_alphabet.Length();
-
-			for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-			{
-				processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
-				symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
-				for(k=0;k<_N;k++)
-					symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::Discrete_rnd(uniformDistribution)];
-				particleCandidates[iParticle].fromParticle = iParticle;
-				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
-
-				particleCandidates[iCandidate].iBestChannelOrder = processedParticle->iMaxChannelOrderAPP();
-                particleCandidates[iCandidate].likelihood = 1.0;
-				particleCandidates[iCandidate].weight = processedParticle->GetWeight();
-				normConst += particleCandidates[iCandidate].weight;
-			}
-			iCandidate = _particleFilter->Nparticles();
-		}
-
-		// a vector of size the number of generated candidates is declared...
-		tVector weights(iCandidate);
-
-		// ...to store their weights
-		for(int i=0;i<iCandidate;i++)
-			weights(i) = particleCandidates[i].weight/normConst;
-
-		// the candidates that are going to give particles are selected
-		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);
-
-		// every survivor candidate is associated with an old particle
-		vector<int> indexesParticles(indexesSelectedCandidates.size());
-		for(uint i=0;i<indexesSelectedCandidates.size();i++)
+        // if none of the candidates was valid
+        if(iCandidate==0)
         {
-			indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
+            tVector uniformDistribution(_alphabet.Length());
+            for(int iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+                uniformDistribution(iAlphabet) = 1.0/_alphabet.Length();
+
+            for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+            {
+                processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
+                symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
+                for(k=0;k<_N;k++)
+                    symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::Discrete_rnd(uniformDistribution)];
+                particleCandidates[iParticle].fromParticle = iParticle;
+                particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
+
+                particleCandidates[iCandidate].iBestChannelOrder = processedParticle->iMaxChannelOrderAPP();
+                particleCandidates[iCandidate].likelihood = 1.0;
+                particleCandidates[iCandidate].weight = processedParticle->GetWeight();
+                normConst += particleCandidates[iCandidate].weight;
+            }
+            iCandidate = _particleFilter->Nparticles();
+        }
+
+        // a vector of size the number of generated candidates is declared...
+        tVector weights(iCandidate);
+
+        // ...to store their weights
+        for(int i=0;i<iCandidate;i++)
+            weights(i) = particleCandidates[i].weight/normConst;
+
+        // the candidates that are going to give particles are selected
+        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);
+
+        // every survivor candidate is associated with an old particle
+        vector<int> indexesParticles(indexesSelectedCandidates.size());
+        for(uint i=0;i<indexesSelectedCandidates.size();i++)
+        {
+            indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
             _particlesBestChannelOrders[i] = particleCandidates[indexesSelectedCandidates[i]].iBestChannelOrder;
         }
 
-		// the chosen particles are kept without modification (yet)
-		_particleFilter->KeepParticles(indexesParticles);
+        // the chosen particles are kept without modification (yet)
+        _particleFilter->KeepParticles(indexesParticles);
 
-		// every surviving particle is modified according to what it says its corresponding candidate
-		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
-		{
-			processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
+        // every surviving particle is modified according to what it says its corresponding candidate
+        for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+        {
+            processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
 
-			// sampled symbols are copied into the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
+            // sampled symbols are copied into the corresponding particle
+            processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
 
-			for(int iChannelOrder=0;iChannelOrder<processedParticle->NchannelMatrixEstimators();iChannelOrder++)
-			{
-				// channel matrix is estimated by means of the particle channel estimator
-				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
+            for(int iChannelOrder=0;iChannelOrder<processedParticle->NchannelMatrixEstimators();iChannelOrder++)
+            {
+                // channel matrix is estimated by means of the particle channel estimator
+                processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
 
-				processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
-			}
+                processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
+            }
 
-			processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
+            processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
 
-		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+        } // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
-		_particleFilter->NormalizeWeights();
+        _particleFilter->NormalizeWeights();
 
-		processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle());
+        processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle());
 
         for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-	        _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = processedParticle->GetChannelOrderAPP(iChannelOrder);
+            _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = processedParticle->GetChannelOrderAPP(iChannelOrder);
 
-		if(_particlesBestChannelOrders[_particleFilter->iBestParticle()]==iBestChannelOrder)
-			timesBestChannelOrder++;
-		else
-		{
-			iBestChannelOrder = _particlesBestChannelOrders[_particleFilter->iBestParticle()];
-			timesBestChannelOrder = 0;
-		}
+        if(_particlesBestChannelOrders[_particleFilter->iBestParticle()]==iBestChannelOrder)
+            timesBestChannelOrder++;
+        else
+        {
+            iBestChannelOrder = _particlesBestChannelOrders[_particleFilter->iBestParticle()];
+            timesBestChannelOrder = 0;
+        }
 
-#ifdef DEBUG
-		if(timesBestChannelOrder > 10)
-			cout << "iBestChannelOrder = " << iBestChannelOrder << " ha sido el mejor durante " << timesBestChannelOrder << endl;
-#endif
+        rMaxChannelOrderMinus1PrecedentColumns = rMaxChannelOrderMinus1PrecedentColumns + 1;
 
-#ifdef DEBUG
-		cout << _channelOrderAPPs.col(iObservationToBeProcessed);
-		cout << "---------------------" << endl;
-#endif
+    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
 
-		rMaxChannelOrderMinus1PrecedentColumns = rMaxChannelOrderMinus1PrecedentColumns + 1;
-
-	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
-
-#ifdef DEBUG
-// 	cout << _channelOrderAPPs(rAll,tRange(250,260)) << endl;
-#endif
-
-	delete[] particleCandidates;
+    delete[] particleCandidates;
 }
 
 int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
@@ -260,87 +246,89 @@ vector<vector<tMatrix> > MLSDmAlgorithm::EstimateChannelFromTrainingSequence(con
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("MLSDmAlgorithm::EstimateChannelFromTrainingSequence: Insufficient number of observations.");
 
-	vector<ChannelMatrixEstimator *> initialChannelEstimators(_candidateOrders.size());
-	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-	{
-		// the initial channel estimators are kept for computing the APP of the channel orders
-		initialChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
+    vector<ChannelMatrixEstimator *> initialChannelEstimators(_candidateOrders.size());
+    for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+    {
+        // the initial channel estimators are kept for computing the APP of the channel orders
+        initialChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
 
-		// at the beginning, all the channel orders have the same probability
-		_channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
-	}
+        // at the beginning, all the channel orders have the same probability
+        _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
+    }
 
-	tRange rAll;
-	double normConst;
-	vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
+    tRange rAll;
+    double normConst;
+    vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
 
-	for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
-	{
-		normConst = 0.0;
-		for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-		{
-			// unnormalized channel order APP
-			unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*initialChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
-			normConst += unnormalizedChannelOrderAPPs[iOrder];
+    for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
+    {
+        normConst = 0.0;
+        for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+        {
+            // unnormalized channel order APP
+            unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*initialChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+            normConst += unnormalizedChannelOrderAPPs[iOrder];
 
-			initialChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
-		}
+            initialChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+        }
 
-		if(normConst!=0.0)
-			for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-				_channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
-		else
-			for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-				_channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
-	}
+        if(normConst!=0.0)
+            for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+                _channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
+        else
+            for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+                _channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
+    }
 
-	for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-		delete initialChannelEstimators[iOrder];
+    for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+        delete initialChannelEstimators[iOrder];
 
-	return UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+    return UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 }
 
-// void MLSDmAlgorithm::ProcessTrainingSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
-// {
-//     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
-//
-//     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-//         throw RuntimeException("ProcessTrainingSequence::ProcessTrainingSequence: Insufficient number of observations.");
-//
-//     vector<ChannelMatrixEstimator *> clonedChannelEstimators(_candidateOrders.size());
-//     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//     {
-//         // the initial channel estimators are kept for computing the APP of the channel orders
-//         clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
-//
-//         // at the beginning, all the channel orders have the same probability
-//         _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
-//     }
-//
-//     tRange rAll;
-//     double normConst;
-//     vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
-//
-//     for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
-//     {
-//         normConst = 0.0;
-//         for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//         {
-//             // unnormalized channel order APP
-//             unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*clonedChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
-//             normConst += unnormalizedChannelOrderAPPs[iOrder];
-//
-//             clonedChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
-//         }
-//
-//         if(normConst!=0.0)
-//             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//                 _channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
-//         else
-//             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//                 _channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
-//     }
-//
-//     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-//         delete clonedChannelEstimators[iOrder];
-// }
+void MLSDmAlgorithm::BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+{
+    // in this case BeforeInitializingParticles computes the APP probabilities that are obtained after the training sequence
+
+    tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+
+    if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
+        throw RuntimeException("BeforeInitializingParticles::BeforeInitializingParticles: Insufficient number of observations.");
+
+    vector<ChannelMatrixEstimator *> clonedChannelEstimators(_candidateOrders.size());
+    for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+    {
+        // the initial channel estimators are kept for computing the APP of the channel orders
+        clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
+
+        // at the beginning, all the channel orders have the same probability
+        _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
+    }
+
+    tRange rAll;
+    double normConst;
+    vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
+
+    for(int i=_preamble.cols();i<sequenceToProcess.cols();i++)
+    {
+        normConst = 0.0;
+        for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+        {
+            // unnormalized channel order APP
+            unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*clonedChannelEstimators[iOrder]->Likelihood(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+            normConst += unnormalizedChannelOrderAPPs[iOrder];
+
+            clonedChannelEstimators[iOrder]->NextMatrix(observations.col(i),sequenceToProcess(rAll,tRange(i-_candidateOrders[iOrder]+1,i)),noiseVariances[i]);
+        }
+
+        if(normConst!=0.0)
+            for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+                _channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
+        else
+            for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+                _channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
+    }
+
+    for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
+        delete clonedChannelEstimators[iOrder];
+}

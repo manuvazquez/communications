@@ -39,14 +39,6 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 {
     tRange rPreamble(0,_preamble.cols()-1);
-/*
-	// memory is reserved
-	for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
-	{
-		_particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone(),_linearDetector->Clone()));
-
-        _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
-	}*/
 
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
@@ -57,7 +49,6 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
-//         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
         _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone,_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
@@ -214,7 +205,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 
-void LinearFilterBasedSMCAlgorithm::ProcessTrainingSequence(const tMatrix &observations, const tMatrix &trainingSequence)
+void LinearFilterBasedSMCAlgorithm::BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence)
 {
     _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 }

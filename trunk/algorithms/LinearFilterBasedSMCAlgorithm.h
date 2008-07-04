@@ -76,7 +76,7 @@ protected:
 		Util::Add(_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)->LastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
 	}
 
-    virtual void ProcessTrainingSequence(const tMatrix &observations, const tMatrix &trainingSequence);
+    virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence);
 };
 
 #endif

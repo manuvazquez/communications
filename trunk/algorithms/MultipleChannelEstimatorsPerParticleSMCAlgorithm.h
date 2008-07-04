@@ -23,7 +23,7 @@
 #include <UnknownChannelOrderAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <ResamplingAlgorithm.h>
@@ -33,19 +33,24 @@ class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOr
 protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _d;
-	int _startDetectionTime;
+    int _startDetectionTime;
     tRange _allSymbolsRows;
 
-	virtual ParticleFilter* GetParticleFilterPointer() = 0;
+    double _channelUniqueMean, _channelUniqueVariance;
+    vector<tMatrix> _channelMatrixMeans;
+    vector<tMatrix> _channelMatrixVariances;
+
+    vector<tMatrix> _channelMeanVectors;
+    vector<tMatrix> _channelCovariances;
+
+    virtual ParticleFilter* GetParticleFilterPointer() = 0;
     virtual void InitializeParticles() = 0;
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
     virtual int BestChannelOrderIndex(int iBestParticle) = 0;
 
-    virtual void ProcessTrainingSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence) {}
+    virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence) {}
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
-
-    ~MultipleChannelEstimatorsPerParticleSMCAlgorithm();
 
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
