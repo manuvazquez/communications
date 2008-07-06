@@ -74,7 +74,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     USISmaximumProbabilityCriterion = new MaximumProbabilityCriterion(0.8);
 //     USISuniformRelatedCriterion = new UniformRelatedCriterion(2.0);
 
-    channelOrderEstimator= new APPbasedChannelOrderEstimator(N,preamble,candidateChannelOrders,channelOrderCoefficientsMeans,ARcoefficients[0]);
+    channelOrderEstimator= new APPbasedChannelOrderEstimator(N,preamble,candidateChannelOrders);
 }
 
 

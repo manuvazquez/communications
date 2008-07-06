@@ -21,7 +21,7 @@
 #define CHANNELORDERESTIMATOR_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -29,9 +29,9 @@
 
 class ChannelOrderEstimator{
 protected:
-	int _N;
-	tMatrix _preamble;
-	std::vector<int> _candidateOrders;
+    int _N;
+    tMatrix _preamble;
+    std::vector<int> _candidateOrders;
     std::vector<double> _channelOrderAPPs;
 public:
     ChannelOrderEstimator(int N, const tMatrix &preamble, std::vector<int> candidateOrders);
@@ -46,9 +46,9 @@ public:
 
     virtual ChannelOrderEstimator *Clone() = 0;
 
-	virtual void Update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolsVector,double noiseVariance)=0;
+    virtual void Update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance) = 0;
 
-	virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors)=0;
+    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix sequenceToProcess, int iFrom) = 0;
 
 };
 

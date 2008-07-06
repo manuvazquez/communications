@@ -53,14 +53,8 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
-#ifdef DEBUG
-        cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
-#endif
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
-#ifdef DEBUG
-            cout << "iParticle = " << iParticle << endl;
-#endif
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:

@@ -34,23 +34,21 @@
 class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 {
 protected:
-    vector<tMatrix> _lastEstimatedChannelMatrices;
     tRange _rAllSymbolRows;
     vector<double> _unnormalizedChannelOrderAPPs;
-    double _ARcoefficient;
     int _maxChannelOrder,_NmaxChannelOrder;
     vector<int> _channelOrder2index;
-    tVector _symbolsVector;
+    tVector _symbolVector;
 public:
-    APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders, vector<tMatrix> initialChannelMatrixEstimations,double ARcoefficient);
+    APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders);
 
     ~APPbasedChannelOrderEstimator();
 
     virtual APPbasedChannelOrderEstimator *Clone();
 
-    void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolsVector,double noiseVariance);
+    void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance);
 
-    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix symbolVectors);
+    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix sequenceToProcess, int iFrom);
 
 };
 

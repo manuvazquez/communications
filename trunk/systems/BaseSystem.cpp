@@ -160,9 +160,9 @@ void BaseSystem::Simulate()
 #endif
 
         // noise is generated according to the channel
-// 	    ruido = new NullNoise(L,channel->Length());
-        ruido = new ChannelDependentNoise(channel);
-// 	    ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
+//         ruido = new NullNoise(L,channel->Length());
+//         ruido = new ChannelDependentNoise(channel);
+        ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
