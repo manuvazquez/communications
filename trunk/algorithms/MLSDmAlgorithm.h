@@ -35,7 +35,7 @@ protected:
     double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     vector<int> _particlesBestChannelOrders;
 
-    vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+//     vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     int BestChannelOrderIndex(int iBestParticle);
     virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
 public:

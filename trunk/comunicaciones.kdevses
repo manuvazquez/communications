@@ -1,28 +1,16 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="7" >
-  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelOrderEstimator.h" >
-   <View0 Encoding="" Type="Source" />
+ <DocsAndViews NumberOfDocuments="3" >
+  <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/statistics/StatUtil.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelOrderEstimator.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/statistics/StatUtil.h" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/USIS.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/APPbasedChannelOrderEstimator.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/TesisOrdenCanalDesconocidoSystem.cpp" >
-   <View0 Encoding="" line="66" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="45" Type="Source" />
-  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -86,9 +74,9 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.cpp" >
      <mark line="51" />
-     <mark line="313" />
-     <mark line="110" />
-     <mark line="372" />
+     <mark line="314" />
+     <mark line="111" />
+     <mark line="373" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UTSAlgorithm.cpp" >
      <mark line="195" />
@@ -148,9 +136,6 @@
      <mark line="188" />
      <mark line="38" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="55" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
     </bookmark>
@@ -168,7 +153,7 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="/usr/local/.home/manu/c++/comunicaciones/debug/./com/com" params="" />
+   <executable path="" params="" />
    <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="" />
    <kcachegrind path="kcachegrind" />

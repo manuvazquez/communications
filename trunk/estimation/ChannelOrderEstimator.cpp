@@ -21,11 +21,11 @@
 
 using namespace std;
 
-ChannelOrderEstimator::ChannelOrderEstimator(int N, const tMatrix &preamble, std::vector<int> candidateOrders):_N(N),_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
+ChannelOrderEstimator::ChannelOrderEstimator(int N, std::vector<int> candidateOrders):_N(N),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
 {
 }
 
-ChannelOrderEstimator::ChannelOrderEstimator(const tMatrix &preamble, std::vector<int> candidateOrders, vector<double> channelOrderAPPs):_preamble(preamble),_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
+ChannelOrderEstimator::ChannelOrderEstimator(std::vector<int> candidateOrders, vector<double> channelOrderAPPs):_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
 {
 }
 

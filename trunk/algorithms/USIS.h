@@ -52,7 +52,7 @@ protected:
 	bool _processDoneExternally;
 
     virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
-    vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+//     vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 
@@ -61,6 +61,7 @@ protected:
     int BestChannelOrderIndex(int iBestParticle);
 
     virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
+    virtual void UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess);
 };
 
 #endif

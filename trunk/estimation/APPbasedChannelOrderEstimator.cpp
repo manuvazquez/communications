@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders): ChannelOrderEstimator(N,preamble,candidateOrders),_rAllSymbolRows(0,_preamble.rows()-1),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::Max(candidateOrders)]),_NmaxChannelOrder(_N*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1),_symbolVector(_NmaxChannelOrder)
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(int N,std::vector<int> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::Max(candidateOrders)]),_NmaxChannelOrder(_N*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1),_symbolVector(_NmaxChannelOrder)
 {
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 		_channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
@@ -38,7 +38,7 @@ APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::Clone()
 }
 
 
-tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const vector<vector<tMatrix> > channelMatrices, vector< double > noiseVariances, tMatrix sequenceToProcess, int iFrom)
+tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)
 {
     int nProbabilitiesToCompute = sequenceToProcess.cols() - iFrom;
     double normalizationCt;

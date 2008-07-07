@@ -70,12 +70,15 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
     uint j;
     uint iChannelOrder;
 
+    // needed for UpdateParticleChannelOrderEstimators in the USIS algorithm
+    vector<vector<tMatrix> > channelOrderTrainingSequenceChannelMatrices(_candidateOrders.size());
+
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
 
     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 
-    vector<vector<tMatrix> > trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+//     vector<vector<tMatrix> > trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
     BeforeInitializingParticles(observations,noiseVariances,trainingSequence);
 
@@ -87,16 +90,19 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         {
-//             vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols());
+            vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols());
+            channelOrderTrainingSequenceChannelMatrices[iChannelOrder] = trainingSequenceChannelMatrices;
 
             //the channel estimation given by the training sequence is copied into each particle...
-            for(j=0;j<trainingSequenceChannelMatrices[iChannelOrder].size();j++)
-//             for(j=0;j<trainingSequenceChannelMatrices.size();j++)
+//             for(j=0;j<trainingSequenceChannelMatrices[iChannelOrder].size();j++)
+            for(j=0;j<trainingSequenceChannelMatrices.size();j++)
             {
-                processedParticle->SetChannelMatrix(iChannelOrder,_preamble.cols()+j,trainingSequenceChannelMatrices[iChannelOrder][j]);
-//                 processedParticle->SetChannelMatrix(iChannelOrder,_preamble.cols()+j,trainingSequenceChannelMatrices[j]);
+//                 processedParticle->SetChannelMatrix(iChannelOrder,_preamble.cols()+j,trainingSequenceChannelMatrices[iChannelOrder][j]);
+                processedParticle->SetChannelMatrix(iChannelOrder,_preamble.cols()+j,trainingSequenceChannelMatrices[j]);
             }
         }
+
+        UpdateParticleChannelOrderEstimators(processedParticle,observations,channelOrderTrainingSequenceChannelMatrices,noiseVariances,preambleTrainingSequence);
 
         //... the symbols are considered detected...
         processedParticle->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);

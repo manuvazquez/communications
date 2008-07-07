@@ -40,20 +40,20 @@ USIS::~USIS()
 	delete _channelOrderEstimator;
 }
 
-vector<vector<tMatrix> > USIS::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-{
-	// channel estimation for the training sequence is needed in order to compute the channel order APP
-	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
-
-	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
-    // during the training sequence
-	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols());
-
-    // the APP of the candidate channel orders are set accordingly
-	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
-
-    return estimatedMatrices;
-}
+// vector<vector<tMatrix> > USIS::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+// {
+// 	// channel estimation for the training sequence is needed in order to compute the channel order APP
+// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+//
+// 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
+//     // during the training sequence
+// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols());
+//
+//     // the APP of the candidate channel orders are set accordingly
+// 	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
+//
+//     return estimatedMatrices;
+// }
 
 void USIS::InitializeParticles()
 {
@@ -69,8 +69,9 @@ void USIS::InitializeParticles()
 		for(uint iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
 		{
 			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->Clone();
-            // the first matrix of the channel matrix estimator is initialized randomly
 
+            // the first matrix of the channel matrix estimator is initialized randomly
+            thisParticleChannelMatrixEstimators[iCandidateOrder]->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder]),rowwise,_L));
 
 			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->Clone();
 		}
@@ -371,4 +372,11 @@ void USIS::BeforeInitializingParticles(const tMatrix &observations,vector<double
 
     // the APP of the candidate channel orders are set accordingly
     _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());
+}
+
+void USIS::UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess)
+{
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* convertedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *> (particle);
+
+    convertedParticle->GetChannelOrderEstimator()->ComputeProbabilities(observations,channelMatrices,noiseVariances,sequenceToProcess,_preamble.cols());
 }

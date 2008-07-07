@@ -40,7 +40,7 @@ protected:
     vector<int> _channelOrder2index;
     tVector _symbolVector;
 public:
-    APPbasedChannelOrderEstimator(int N, const tMatrix& preamble, std::vector<int> candidateOrders);
+    APPbasedChannelOrderEstimator(int N,std::vector<int> candidateOrders);
 
     ~APPbasedChannelOrderEstimator();
 
@@ -48,7 +48,7 @@ public:
 
     void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance);
 
-    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > channelMatrices, std::vector< double > noiseVariances, tMatrix sequenceToProcess, int iFrom);
+    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom);
 
 };
 
