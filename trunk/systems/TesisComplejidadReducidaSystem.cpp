@@ -22,7 +22,7 @@
 TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 {
 
-    nSurvivors = 12;
+    nSurvivors = 1;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;

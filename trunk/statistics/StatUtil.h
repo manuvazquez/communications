@@ -42,21 +42,24 @@ private:
 	static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
 	static Random _randomGenerator;
 public:
+    static Random _particlesInitializerRandomGenerator;
+
+
     /**
      * It assumes that the probabilities are normalized
      * @param probabilities
      * @return
      */
-    static int Discrete_rnd(const tVector &probabilities);
-    static vector<int> Discrete_rnd(int nSamples,const tVector &probabilities);
-	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance);
-	static tVector RandMatrix(const tVector &mean,const tMatrix &covariance);
+    static int Discrete_rnd(const tVector &probabilities,Random &randomGenerator = _randomGenerator);
+    static vector<int> Discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
+	static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
+	static tVector RandMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator = _randomGenerator);
 	static double NormalPdf(double x,double mean,double variance);
 	static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
 	static double NormalPdf(const tVector &x,const tVector &mean,double variance);
 	static double Variance(const tVector &v);
 	static double Mean(const tMatrix &A);
-	static vector<int> WithoutReplacementSampling(int nSamples,const tVector &probabilities);
+	static vector<int> WithoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
 	static Random& GetRandomGenerator() { return _randomGenerator;}
 };
 

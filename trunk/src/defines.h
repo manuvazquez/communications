@@ -25,3 +25,6 @@
 // #define DO_NOT_STORE_CHANNEL_MATRICES
 
 #define ALGORITHM_NAME_MAX_LENGTH 50
+
+// the channel estimations of the different particles (their means) are initialized randomly
+#define PARTICLES_RANDOM_INITIALIZATION

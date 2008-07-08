@@ -30,7 +30,6 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     forgettingFactorDetector = 0.95;
 
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
-//  powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
         throw RuntimeException("adjustParticlesNumberFromSurvivors y adjustSurvivorsFromParticlesNumber no pueden ser true a la vez.");
@@ -50,9 +49,6 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
 
     rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
     rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
-
-//     cout << "antes = " << channelOrderCoefficientsMeans.size() << " despues = " << candidateChannelOrders.size() << endl;
-//     channelOrderCoefficientsMeans.resize(candidateChannelOrders.size());
 
     for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
     {

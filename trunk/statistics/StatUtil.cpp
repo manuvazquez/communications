@@ -27,11 +27,13 @@ using namespace std;
 
 #ifdef RANDOM_SEED
 Random StatUtil::_randomGenerator;
+Random StatUtil::_particlesInitializerRandomGenerator;
 #else
 Random StatUtil::_randomGenerator(10);
+Random StatUtil::_particlesInitializerRandomGenerator(20);
 #endif
 
-int StatUtil::Discrete_rnd(const tVector &probabilities)
+int StatUtil::Discrete_rnd(const tVector &probabilities,Random &randomGenerator)
 {
     int i;
 	double uniform;
@@ -44,7 +46,7 @@ int StatUtil::Discrete_rnd(const tVector &probabilities)
     for(i=1;i<nProbabilities;i++)
            distributionFunction[i] = distributionFunction[i-1]+probabilities(i);
 
-	uniform = _randomGenerator.rand();
+	uniform = randomGenerator.rand();
 #ifdef DEBUG
 	cout << "uniform es " << uniform << endl;
 	cout << "distributionFunction[0] = " << distributionFunction[0] << endl;
@@ -59,7 +61,7 @@ int StatUtil::Discrete_rnd(const tVector &probabilities)
 	return res;
 }
 
-vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities)
+vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator)
 {
     int i,j;
 	double uniform;
@@ -76,7 +78,7 @@ vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities)
 
     for(i=0;i<nSamples;i++)
     {
-		uniform = _randomGenerator.rand();
+		uniform = randomGenerator.rand();
 		j=0;
 		while(uniform>distributionFunction[j])
 			j++;
@@ -89,7 +91,7 @@ vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities)
 	return res;
 }
 
-tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
+tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
 {
 	tMatrix res(rows,cols);
 	double stdDv = sqrt(variance);
@@ -97,19 +99,19 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance)
 	int j;
 	for(int i=0;i<rows;i++)
 		for(j=0;j<cols;j++)
-			res(i,j) = 	_randomGenerator.randn()*stdDv + mean;
+			res(i,j) = 	randomGenerator.randn()*stdDv + mean;
 
 	return res;
 }
 
-tVector StatUtil::RandMatrix(const tVector &mean,const tMatrix &covariance)
+tVector StatUtil::RandMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator)
 {
 	if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
 		throw RuntimeException("StatUtil::RandnMatrix: dimensions of the mean or the covariance are wrong.");
 
 	tVector res = mean;
 	// res = mean + L*RandnMatrix(mean.size(),1,0.0,1.0)
-	Blas_Mat_Vec_Mult(Util::Cholesky(covariance),RandnMatrix(mean.size(),1,0.0,1.0),res,1.0,1.0);
+	Blas_Mat_Vec_Mult(Util::Cholesky(covariance),RandnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
 
 	return res;
 }
@@ -182,7 +184,7 @@ double StatUtil::Mean(const tMatrix &A)
 	return sum/(double)(A.rows()*A.cols());
 }
 
-vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &probabilities)
+vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator)
 {
 //     int i,j;
 	double uniform;
@@ -223,7 +225,7 @@ vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &pro
     vector<int> res(nSamples);
     for(int i=0;i<nSamples;i++)
     {
-		uniform = _randomGenerator.rand()*ComputeFromActiveOperands(normalizedProbabilities,remainingProbabilityActiveOperands);
+		uniform = randomGenerator.rand()*ComputeFromActiveOperands(normalizedProbabilities,remainingProbabilityActiveOperands);
 
 		j=0;
 		while(uniform > ComputeFromActiveOperands(normalizedProbabilities,distributionFunctionActiveOperands[j]))

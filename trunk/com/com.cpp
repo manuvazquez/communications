@@ -57,10 +57,10 @@ int main(int argc,char* argv[])
 //     Rev2TVT2007System system;
 
 //     TesisOrdenCanalDesconocidoARSystem system;
-    TesisOrdenCanalDesconocidoBesselSystem system;
+//     TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
-//     TesisComplejidadReducidaARSystem system;
+    TesisComplejidadReducidaARSystem system;
 
 //     LMSmuTestSystem system;
 //     PSPvsSMCSystem system;

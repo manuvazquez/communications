@@ -33,7 +33,7 @@ TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string 
 
 void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-	int m,iTxAntenna,iRxAntenna,iDelay;
+	int m,iTxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
 	tRange rAll;
 	tVector CMEs(_candidateOrders.size());
@@ -43,7 +43,6 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 #ifdef EXPORT_REAL_DATA
 	tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
 #endif
-	double variance = noiseVariances[_symbolVectors.cols()-1];
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 	{

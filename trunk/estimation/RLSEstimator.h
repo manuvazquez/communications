@@ -40,7 +40,7 @@ class RLSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _invForgettingFactor;
-	tMatrix _invRtilde,_pTilde;
+	tMatrix _invRtilde/*,_pTilde*/;
 
     RLSEstimator(int N,double forgettingFactor);
 public:

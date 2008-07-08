@@ -77,6 +77,9 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 
 void SMCAlgorithm::InitializeParticles()
 {
+#ifdef PARTICLES_RANDOM_INITIALIZATION
+        cout << "SMCAlgorithm::InitializeParticles: random particles initialization" << endl;
+#endif
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
@@ -85,7 +88,9 @@ void SMCAlgorithm::InitializeParticles()
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
+#ifdef PARTICLES_RANDOM_INITIALIZATION
         channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+#endif
         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
