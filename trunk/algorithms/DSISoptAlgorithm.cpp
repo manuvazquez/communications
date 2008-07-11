@@ -23,6 +23,7 @@
 
 DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
 {
+//     _randomParticlesInitilization = true;
 }
 
 void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)

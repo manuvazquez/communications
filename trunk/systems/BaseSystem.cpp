@@ -312,11 +312,11 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 		Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
 	}
 
-#ifdef PARTICLES_RANDOM_INITIALIZATION
-    Util::ScalarToOctaveFileStream(1,"randomParticlesInitialization",f);
-#else
-    Util::ScalarToOctaveFileStream(0,"randomParticlesInitialization",f);
-#endif
+// #ifdef PARTICLES_RANDOM_INITIALIZATION
+//     Util::ScalarToOctaveFileStream(1,"randomParticlesInitialization",f);
+// #else
+//     Util::ScalarToOctaveFileStream(0,"randomParticlesInitialization",f);
+// #endif
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)

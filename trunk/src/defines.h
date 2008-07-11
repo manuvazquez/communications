@@ -26,5 +26,5 @@
 
 #define ALGORITHM_NAME_MAX_LENGTH 50
 
-// the channel estimations of the different particles (their means) are initialized randomly
-#define PARTICLES_RANDOM_INITIALIZATION
+// // the channel estimations of the different particles (their means) are initialized randomly
+// #define PARTICLES_RANDOM_INITIALIZATION

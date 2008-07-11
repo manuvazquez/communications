@@ -23,7 +23,8 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, K,m, channelEstimator, preamble),
 // _variables initialization
-_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances)
+_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),
+_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_randomParticlesInitilization(false)
 {
     if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
         throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
@@ -77,9 +78,9 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 
 void SMCAlgorithm::InitializeParticles()
 {
-#ifdef PARTICLES_RANDOM_INITIALIZATION
-        cout << "SMCAlgorithm::InitializeParticles: random particles initialization" << endl;
-#endif
+// #ifdef PARTICLES_RANDOM_INITIALIZATION
+//         cout << "SMCAlgorithm::InitializeParticles: random particles initialization" << endl;
+// #endif
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
@@ -88,9 +89,10 @@ void SMCAlgorithm::InitializeParticles()
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
-#ifdef PARTICLES_RANDOM_INITIALIZATION
-        channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
-#endif
+// #ifdef PARTICLES_RANDOM_INITIALIZATION
+        if(_randomParticlesInitilization)
+            channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+// #endif
         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
@@ -137,6 +139,9 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     BeforeInitializingParticles(observations,trainingSequence);
 
     InitializeParticles();
+
+//     if(_randomParticlesInitilization)
+//         cout << _name << ": particles are initialized randomly..." << endl;
 
 //     for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)

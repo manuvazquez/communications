@@ -66,6 +66,8 @@ protected:
     const MIMOChannel *_channel;
     const tMatrix *_symbols;
 
+    bool _randomParticlesInitilization;
+
     virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence) {}
 
 public:

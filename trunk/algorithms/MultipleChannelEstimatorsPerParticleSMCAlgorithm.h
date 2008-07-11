@@ -43,6 +43,8 @@ protected:
     vector<tMatrix> _channelMeanVectors;
     vector<tMatrix> _channelCovariances;
 
+    bool _randomParticlesInitilization;
+
     virtual ParticleFilter* GetParticleFilterPointer() = 0;
     virtual void InitializeParticles() = 0;
     virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
