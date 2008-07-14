@@ -116,6 +116,12 @@ void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
 
     algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,preamble,preamble.cols(),symbols));
 
+    // -----------------------------------------------
+//     algorithms.push_back(new LinearFilterBasedCMEapplyingAlgorithm("Linear Filter with CME based order estimation", *alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble, MMSEsmallLinearDetectors, ARcoefficients[0], true));
+
+//     algorithms.push_back(new KnownSymbolsCMEapplyingAlgorithm("KnownSymbolsCMEapplyingAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,noForgetRLSchannelEstimators,preamble,symbols));
+    // -----------------------------------------------
+
 //     algorithms.push_back(new ISIS("ISIS",*alphabet,L,N,lastSymbolVectorInstant,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm));
 
     algorithms.push_back(new USIS("USIS",*alphabet,L,N,lastSymbolVectorInstant,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));

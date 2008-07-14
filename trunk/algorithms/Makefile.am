@@ -4,16 +4,19 @@ INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/detection/trellis \
 	-I$(top_srcdir)/transmision -I$(top_srcdir)/transmision/channel -I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
-noinst_HEADERS = Algorithm.h CMEBasedAlgorithm.h DSISoptAlgorithm.h ISIS.h \
-	KnownChannelAlgorithm.h KnownChannelOrderAlgorithm.h \
-	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h LinearFilterBasedAlgorithm.h LinearFilterBasedMKFAlgorithm.h \
+noinst_HEADERS = Algorithm.h CMEBasedAlgorithm.h CMEapplyingAlgorithm.h \
+	DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h KnownChannelOrderAlgorithm.h \
+	KnownSymbolsCMEapplyingAlgorithm.h KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h \
+	LinearFilterBasedAlgorithm.h LinearFilterBasedCMEapplyingAlgorithm.h LinearFilterBasedMKFAlgorithm.h \
 	MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h PSPBasedSMCAlgorithm.h SISoptAlgorithm.h SMCAlgorithm.h \
 	TimeVaryingChannelCMEbasedAlgorithm.h TriangularizationBasedSMCAlgorithm.h USIS.h \
 	UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp CMEBasedAlgorithm.cpp \
-	DSISoptAlgorithm.cpp ISIS.cpp KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
-	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp LinearFilterBasedAlgorithm.cpp LinearFilterBasedMKFAlgorithm.cpp \
-	LinearFilterBasedSMCAlgorithm.cpp MLSDmAlgorithm.cpp MLSDmFeedBackAlgorithm.cpp \
+	CMEapplyingAlgorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp KnownChannelAlgorithm.cpp \
+	KnownChannelOrderAlgorithm.cpp KnownSymbolsCMEapplyingAlgorithm.cpp \
+	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp LinearFilterBasedAlgorithm.cpp \
+	LinearFilterBasedCMEapplyingAlgorithm.cpp LinearFilterBasedMKFAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp \
+	MLSDmAlgorithm.cpp MLSDmFeedBackAlgorithm.cpp \
 	MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp PSPBasedSMCAlgorithm.cpp SISoptAlgorithm.cpp \
 	SMCAlgorithm.cpp TimeVaryingChannelCMEbasedAlgorithm.cpp \
 	TriangularizationBasedSMCAlgorithm.cpp USIS.cpp UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp \
