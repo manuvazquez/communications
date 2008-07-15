@@ -44,14 +44,14 @@ std::vector< tMatrix > LinearFilterBasedCMEapplyingAlgorithm::estimatedChannelMa
     return algorithms[iChannelOrder]->GetEstimatedChannelMatrices();
 }
 
-tMatrix LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint ichannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence)
+tMatrix LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence)
 {
-    if(!_algorithmAlreadyExecuted[ichannelOrder])
+    if(!_algorithmAlreadyExecuted[iChannelOrder])
     {
-        algorithms[ichannelOrder]->Run(observations,noiseVariances,trainingSequence);
-        _algorithmAlreadyExecuted[ichannelOrder] = true;
+        algorithms[iChannelOrder]->Run(observations,noiseVariances,trainingSequence);
+        _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[ichannelOrder]->GetDetectedSymbolVectors();
+    return algorithms[iChannelOrder]->GetDetectedSymbolVectors();
 }
 

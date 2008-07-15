@@ -25,7 +25,7 @@ RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimato
 {
 }
 
-RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm))/*,_pTilde(LaGenMatDouble::zeros(_L,_Nm))*/
+RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm))
 {
 }
 

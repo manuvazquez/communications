@@ -47,7 +47,7 @@ std::vector< tMatrix > KnownSymbolsCMEapplyingAlgorithm::estimatedChannelMatrice
     return estimatedChannelMatrices;
 }
 
-tMatrix KnownSymbolsCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint ichannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence)
+tMatrix KnownSymbolsCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence)
 {
     return _symbolVectors(tRange(),tRange(_preamble.cols(),_K-1));
 }

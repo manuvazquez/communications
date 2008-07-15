@@ -34,7 +34,7 @@ public:
 
 protected:
     virtual std::vector< tMatrix > estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);
-    virtual tMatrix detectedSymbolsForChannelOrder(uint ichannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);
+    virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);
 
 private:
     vector<bool> _algorithmAlreadyExecuted;

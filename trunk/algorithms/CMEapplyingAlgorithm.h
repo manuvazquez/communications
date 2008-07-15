@@ -37,7 +37,7 @@ class CMEapplyingAlgorithm : public UnknownChannelOrderAlgorithm
 protected:
     std::vector<Algorithm *> algorithms;
 
-    virtual tMatrix detectedSymbolsForChannelOrder(uint ichannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;
+    virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;
     virtual std::vector<tMatrix> estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;
 public:
     CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble);
