@@ -17,55 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
+#ifndef TESISCOMPLEJIDADREDUCIDABESSELNUMEROPARTICULASSYSTEM_H
+#define TESISCOMPLEJIDADREDUCIDABESSELNUMEROPARTICULASSYSTEM_H
 
-#include <SMCSystem.h>
-#include <Elsevier2007BesselChannelSystem.h>
-#include <Elsevier2007ARChannelSystem.h>
-#include <TVT2007System.h>
-#include <PSPvsPSPBasedSMCSystem.h>
-#include <WSA08System.h>
-#include <Rev2TVT2007System.h>
-#include <TesisOrdenCanalSystem.h>
-#include <TesisOrdenCanalMedianteSISSystem.h>
-#include <TesisComplejidadReducidaSystem.h>
 #include <TesisComplejidadReducidaBesselSystem.h>
-#include <TesisComplejidadReducidaARSystem.h>
-#include <TesisOrdenCanalDesconocidoARSystem.h>
-#include <TesisOrdenCanalDesconocidoBesselSystem.h>
-#include <TesisComplejidadReducidaBesselNumeroParticulasSystem.h>
-#include <LMSmuTestSystem.h>
-#include <PSPvsSMCSystem.h>
 
-#include <signal.h>
-
-bool __done = false;
-
-void setDoneTrue(int signal)
+/**
+	@author Manu <manu@rustneversleeps>
+*/
+class TesisComplejidadReducidaBesselNumeroParticulasSystem : public TesisComplejidadReducidaBesselSystem
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
-	__done  = true;
-}
+public:
+    TesisComplejidadReducidaBesselNumeroParticulasSystem();
 
-int main(int argc,char* argv[])
-{
-// 	signal(SIGINT,&setDoneTrue);
+protected:
+    vector<int> particlesNumbers;
 
-//     Elsevier2007BesselChannelSystem system;
-//     Elsevier2007ARChannelSystem  system;
-//     TVT2007System system;
-//     WSA08System system;
-//     PSPvsPSPBasedSMCSystem system;
-//     Rev2TVT2007System system;
+    virtual void BeforeEndingFrame(int iFrame);
+    virtual void AddAlgorithms();
+};
 
-//     TesisOrdenCanalDesconocidoARSystem system;
-//     TesisOrdenCanalDesconocidoBesselSystem system;
-
-//     TesisComplejidadReducidaBesselSystem system;
-//     TesisComplejidadReducidaARSystem system;
-
-    TesisComplejidadReducidaBesselNumeroParticulasSystem system;
-
-//     LMSmuTestSystem system;
-//     PSPvsSMCSystem system;
-    system.Simulate();
-}
+#endif
