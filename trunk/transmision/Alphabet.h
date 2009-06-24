@@ -2,6 +2,7 @@
 #define ALPHABET_H
 
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <types.h>
 

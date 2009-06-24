@@ -2,6 +2,7 @@
 #define RANDOM_H 1
 
 #include <stdint.h>
+#include <stdlib.h>
 #include <sys/time.h>
 #include <complex>
 

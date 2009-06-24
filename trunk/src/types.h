@@ -7,11 +7,13 @@
 #include <lapackpp/lavli.h>
 
 typedef double tSymbol;
-typedef unsigned	 short int tBit;
+typedef unsigned short int tBit;
 // typedef char tBit;
 typedef LaGenMatDouble tMatrix;
 typedef LaVectorDouble tVector;
 typedef LaVectorLongInt tLongIntVector;
 typedef LaIndex tRange;
+
+typedef unsigned int uint;
 
 #endif

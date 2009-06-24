@@ -25,6 +25,7 @@
 */
 
 #include <vector>
+#include <types.h>
 
 class WithChannelOrderAppParticleAddon{
 protected:

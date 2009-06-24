@@ -21,9 +21,9 @@
 
 #include <defines.h>
 #include <typeinfo>
+#include <string.h>
 #define DATE_LENGTH 100
 // #define EXPORT_REAL_DATA
-
 // #define PRINT_PARAMETERS
 
 using namespace std;
