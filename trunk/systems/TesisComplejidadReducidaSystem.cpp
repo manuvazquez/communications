@@ -139,7 +139,7 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
     // common to all simulation algorithms
     delete kalmanEstimatedChannel;
-     kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observaciones,ruido->Variances());
+     kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observations,noise->Variances());
 
     algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
 

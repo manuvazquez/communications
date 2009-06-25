@@ -19,12 +19,9 @@
  ***************************************************************************/
 
 // the seed used to create the random objects is generated from the system time
-#define RANDOM_SEED
+// #define RANDOM_SEED
 
 // wether the estimated channel matrices are kept or discarded
 // #define DO_NOT_STORE_CHANNEL_MATRICES
 
 #define ALGORITHM_NAME_MAX_LENGTH 80
-
-// // the channel estimations of the different particles (their means) are initialized randomly
-// #define PARTICLES_RANDOM_INITIALIZATION

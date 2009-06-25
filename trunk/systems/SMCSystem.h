@@ -58,7 +58,7 @@ protected:
     int c,e;
 
     // system parameters for generating the AR process
-    int ARprocessOrder;
+//     int ARprocessOrder;
 
     std::vector<double> ARcoefficients;
     double ARvariance;

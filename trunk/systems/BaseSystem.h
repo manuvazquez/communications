@@ -58,7 +58,7 @@
 
 #define HOSTNAME_LENGTH 50
 
-#define MSE_TIME_EVOLUTION_COMPUTING
+// #define MSE_TIME_EVOLUTION_COMPUTING
 
 extern bool __done;
 
@@ -74,8 +74,8 @@ protected:
 
     Alphabet *alphabet;
 
-	Noise *ruido;
-	tMatrix observaciones;
+	Noise *noise;
+	tMatrix observations;
 
     // SNRs to be processed
     std::vector<int> SNRs;
@@ -95,7 +95,13 @@ protected:
     // matrices for results
     vector<tMatrix> peMatrices, MSEMatrices;
 
-    tMatrix overallPeMatrix,overallMseMatrix,presentFramePe,presentFrameMSE;
+    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
+    // ...so that they can be printed when the program finishes (they are not saved)
+    tMatrix overallPeMatrix,overallMseMatrix;
+    
+    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms
+    // in order to save them
+    tMatrix presentFramePe,presentFrameMSE;
 
     // BER time evolution
     std::vector<tMatrix> overallPeTimeEvolution;

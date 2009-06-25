@@ -1,28 +1,34 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="7" >
+ <DocsAndViews NumberOfDocuments="9" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="10" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.h" >
-   <View0 Encoding="" line="29" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.cpp" >
-   <View0 Encoding="" line="112" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.h" >
-   <View0 Encoding="" line="22" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MultiuserCDMAchannel.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
-   <View0 Encoding="" line="88" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MultiuserCDMAchannel.h" >
+   <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/ARchannel.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+   <View0 Encoding="" line="316" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/ARchannel.cpp" >
-   <View0 Encoding="" line="25" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.h" >
+   <View0 Encoding="" line="60" Type="Source" />
   </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.h" >
+   <View0 Encoding="" line="60" Type="Source" />
+  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -69,8 +75,8 @@
      <mark line="44" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
-     <mark line="136" />
-     <mark line="113" />
+     <mark line="108" />
+     <mark line="131" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
      <mark line="141" />
@@ -84,14 +90,13 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPBasedSMCAlgorithm.cpp" >
      <mark line="124" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.cpp" >
-     <mark line="379" />
-     <mark line="76" />
-     <mark line="114" />
-     <mark line="320" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
      <mark line="38" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.cpp" >
+     <mark line="377" />
+     <mark line="112" />
+     <mark line="318" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UTSAlgorithm.cpp" >
      <mark line="195" />
@@ -160,10 +165,6 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="55" />
-     <mark line="328" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

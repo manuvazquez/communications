@@ -38,9 +38,6 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
 
 void LinearFilterBasedSMCAlgorithm::InitializeParticles()
 {
-// #ifdef PARTICLES_RANDOM_INITIALIZATION
-//         cout << "LinearFilterBasedSMCAlgorithm::InitializeParticles: random particles initialization" << endl;
-// #endif
     tRange rPreamble(0,_preamble.cols()-1);
 
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
@@ -51,10 +48,8 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
-// #ifdef PARTICLES_RANDOM_INITIALIZATION
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
-// #endif
         _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone,_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);

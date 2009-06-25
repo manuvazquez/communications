@@ -25,8 +25,6 @@
 #include <PSPvsPSPBasedSMCSystem.h>
 #include <WSA08System.h>
 #include <Rev2TVT2007System.h>
-#include <TesisOrdenCanalSystem.h>
-#include <TesisOrdenCanalMedianteSISSystem.h>
 #include <TesisComplejidadReducidaSystem.h>
 #include <TesisComplejidadReducidaBesselSystem.h>
 #include <TesisComplejidadReducidaARSystem.h>

@@ -4,6 +4,8 @@ INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/randomutil \
 METASOURCES = AUTO
 lib_LIBRARIES = libchannel.a
 libchannel_a_SOURCES = ARchannel.cpp BesselChannel.cpp EstimatedMIMOChannel.cpp \
-	MIMOChannel.cpp StillMemoryMIMOChannel.cpp TimeInvariantChannel.cpp
+	MIMOChannel.cpp MultiuserCDMAchannel.cpp StillMemoryMIMOChannel.cpp \
+	TimeInvariantChannel.cpp
 SUBDIRS = delayPowerProfile
-noinst_HEADERS = BesselChannel.h EstimatedMIMOChannel.h TimeInvariantChannel.h
+noinst_HEADERS = BesselChannel.h EstimatedMIMOChannel.h MultiuserCDMAchannel.h \
+	TimeInvariantChannel.h

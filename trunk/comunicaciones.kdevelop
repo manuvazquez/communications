@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>systems/libsys.a</activetarget>
+      <activetarget>transmision/channel/libchannel.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>
@@ -203,7 +203,9 @@
     <dest>/home/manu/c++/comunicaciones</dest>
   </substmap>
   <kdevcppsupport>
-    <references/>
+    <references>
+      <pcs>lapackpp</pcs>
+    </references>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

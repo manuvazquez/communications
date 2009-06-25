@@ -23,8 +23,9 @@
 #include <typeinfo>
 #include <string.h>
 #define DATE_LENGTH 100
+
 // #define EXPORT_REAL_DATA
-// #define PRINT_PARAMETERS
+#define PRINT_PARAMETERS
 
 using namespace std;
 
@@ -45,11 +46,11 @@ BaseSystem::BaseSystem()
     sprintf(outputFileName,"res_");
     preambleLength = 10;
 
-//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(3);SNRs.push_back(6);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(3);
-    SNRs.push_back(15);
+//     SNRs.push_back(15);
 
     // BER and MSE computing
     BERwindowStart = trainSeqLength;
@@ -58,11 +59,11 @@ BaseSystem::BaseSystem()
     MSEwindowStart = K*9/10;
 
     // alphabet is defined
-    vector<vector<tBit> > secuenciasBits(2,vector<tBit>(1));
-    secuenciasBits[0][0] = 0; secuenciasBits[1][0] = 1;
-    vector<tSymbol> simbolos(2);
-    simbolos[0] = -1; simbolos[1] = 1;
-    alphabet = new Alphabet(1,2,secuenciasBits,simbolos);
+    vector<vector<tBit> > alphabetBitSequences(2,vector<tBit>(1));
+    alphabetBitSequences[0][0] = 0; alphabetBitSequences[1][0] = 1;
+    vector<tSymbol> alphabetSymbols(2);
+    alphabetSymbols[0] = -1; alphabetSymbols[1] = 1;
+    alphabet = new Alphabet(1,2,alphabetBitSequences,alphabetSymbols);
 
     // host name is concatenated into the file name
     char hostname[HOSTNAME_LENGTH];
@@ -113,8 +114,8 @@ BaseSystem::BaseSystem()
     MSEtimeEvolution.reserve(nFrames);
 #endif
 
-    // we don't want the same bits to be generated over and over
 #ifndef RANDOM_SEED
+        // we don't want the same bits to be generated over and over
         randomGenerator.setSeed(0);
 #endif
 
@@ -130,6 +131,7 @@ BaseSystem::~BaseSystem()
 void BaseSystem::Simulate()
 {
   tRange rAll;
+
     // for repeating simulations
 //     randomGenerator.setSeed();
 //     StatUtil::GetRandomGenerator().setSeed();
@@ -161,14 +163,14 @@ void BaseSystem::Simulate()
 #endif
 
         // noise is generated according to the channel
-//         ruido = new NullNoise(L,channel->Length());
-//         ruido = new ChannelDependentNoise(channel);
-        ruido = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
+//         noise = new NullNoise(L,channel->Length());
+//         noise = new ChannelDependentNoise(channel);
+        noise = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
             realChannel = channel;
-            realNoise = ruido;
+            realNoise = noise;
 #endif
 
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
@@ -176,10 +178,10 @@ void BaseSystem::Simulate()
             cout << "SNR = " << SNRs[iSNR] << " [Frame " << iFrame << "]..." << endl;
 
             // noise SNR is set
-            ruido->SetSNR(SNRs[iSNR],alphabet->Variance());
+            noise->SetSNR(SNRs[iSNR],alphabet->Variance());
 
             // transmission
-            observaciones = channel->Transmit(symbols,*ruido);
+            observations = channel->Transmit(symbols,*noise);
 
              AddAlgorithms();
 
@@ -196,8 +198,8 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observaciones,ruido->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-//                 algorithms[iAlgorithm]->Run(observaciones,ruido->Variances());
+                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+//                 algorithms[iAlgorithm]->Run(observations,noise->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
 
@@ -220,7 +222,7 @@ void BaseSystem::Simulate()
 	    iFrame++;
 
 	    delete channel;
-	    delete ruido;
+	    delete noise;
     } // while((iFrame<nFrames) && (!done))
 
 	overallPeMatrix *= 1.0/iFrame;
@@ -304,7 +306,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
 //     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
 	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
-	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*ruido).name())),"ruidoClass",f);
+	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
 
 	if(powerProfile!=NULL)
@@ -312,12 +314,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 		Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
 		Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
 	}
-
-// #ifdef PARTICLES_RANDOM_INITIALIZATION
-//     Util::ScalarToOctaveFileStream(1,"randomParticlesInitialization",f);
-// #else
-//     Util::ScalarToOctaveFileStream(0,"randomParticlesInitialization",f);
-// #endif
+    
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)

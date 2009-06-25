@@ -70,11 +70,9 @@ void USIS::InitializeParticles()
 		{
 			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->Clone();
 
-// #ifdef PARTICLES_RANDOM_INITIALIZATION
             if(_randomParticlesInitilization)
                 // the first matrix of the channel matrix estimator is initialized randomly
                 thisParticleChannelMatrixEstimators[iCandidateOrder]->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_L));
-// #endif
 
 			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->Clone();
 		}
