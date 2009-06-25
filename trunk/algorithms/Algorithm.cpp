@@ -105,12 +105,12 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	tMatrix res(_L*nMatricesToStack,_N*(m+nMatricesToStack-1));
     res = 0.0;
 
-	int iShifted;
+	int iStartingFromZero;
 	for(int i=start;i<=d;i++)
 	{
-		iShifted = i - start;
-		tRange rowsRange(iShifted*_L,(iShifted+1)*_L-1);
-		tRange colsRange(iShifted*_N,iShifted*_N+_N*m-1);
+		iStartingFromZero = i - start;
+		tRange rowsRange(iStartingFromZero*_L,(iStartingFromZero+1)*_L-1);
+		tRange colsRange(iStartingFromZero*_N,iStartingFromZero*_N+_N*m-1);
 		res(rowsRange,colsRange).inject(matrices[i]);
 	}
 

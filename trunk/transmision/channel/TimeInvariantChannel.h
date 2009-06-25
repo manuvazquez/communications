@@ -31,7 +31,7 @@ class TimeInvariantChannel : public StillMemoryMIMOChannel
 protected:
 	tMatrix _channelMatrix;
 public:
-    TimeInvariantChannel(int nTx, int nRx, int memory, int length, tMatrix channelMatrix);
+    TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, tMatrix channelMatrix);
 
 	tMatrix operator[](int n) const { return _channelMatrix;};
 };

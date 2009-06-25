@@ -30,14 +30,14 @@
 
 class Noise{
 protected:
-	int _nRx,_length;
+	int _nOutputs,_length;
 // 	tMatrix _matrix;
 public:
-    Noise(int nRx,int length);
+    Noise(int nOutputs,int length);
 	virtual ~Noise() {};
 
 	int Length() const { return _length;}
-	int Nr() const { return _nRx;}
+	int nOutputs() const { return _nOutputs;}
 	virtual void Print() const = 0;
 	virtual double StdDevAt(int n) const = 0;
 	virtual tVector operator[](int n) const = 0;

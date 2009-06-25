@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nRx, int nTx, std::vector< double > differentialDelays, std::vector< double > powers, double T): ContinuousPowerProfile(nRx, nTx, differentialDelays, powers)
+ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nOutputs, int nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T): ContinuousPowerProfile(nOutputs, nInputs, differentialDelays, powers)
 {
 	double quotient;
 	int k;

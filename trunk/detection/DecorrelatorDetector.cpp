@@ -23,7 +23,7 @@ DecorrelatorDetector::DecorrelatorDetector(int rows, int cols, double alphabetVa
 {
 }
 
-double DecorrelatorDetector::NthSymbolVariance(int n)
+double DecorrelatorDetector::nthSymbolVariance(int n)
 {
 	return Blas_Dot_Prod(_filter.row(n),_filter.row(n));
 }

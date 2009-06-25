@@ -28,7 +28,7 @@
 class FlatPowerProfile : public DelayPowerProfile
 {
 public:
-    FlatPowerProfile(int nRx, int nTx, int m, double variance);
+    FlatPowerProfile(int nOutputs, int nInputs, int m, double variance);
 };
 
 #endif

@@ -21,7 +21,7 @@
 #define LINEARDETECTOR_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -29,23 +29,23 @@
 
 class LinearDetector{
 protected:
-	int _channelMatrixRows, _channelMatrixCols;
-	double _alphabetVariance;
+    int _channelMatrixRows, _channelMatrixCols;
+    double _alphabetVariance;
 public:
     LinearDetector(int rows,int cols,double alphabetVariance);
-	virtual void StateStep(tVector observations) = 0;
-	virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
-	virtual tMatrix ComputedFilter() = 0;
-	/**
-	 *    Computes the variance related to the soft estimation provided for the n-th symbol. It NEVER must be called before a call to Detect
-	 * @param n
-	 * @return
-	 */
-	virtual double NthSymbolVariance(int n) = 0;
-	virtual double NthSymbolGain(int n) const { return 1.0;}
-	virtual ~LinearDetector() {}
-	int ChannelMatrixCols() { return _channelMatrixCols;}
-	virtual LinearDetector *Clone() = 0;
+    virtual void StateStep(tVector observations) = 0;
+    virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
+    virtual tMatrix ComputedFilter() = 0;
+    /**
+     *    Computes the variance related to the soft estimation provided for the n-th symbol. It NEVER must be called before a call to Detect
+     * @param n
+     * @return
+     */
+    virtual double nthSymbolVariance(int n) = 0;
+    virtual double nthSymbolGain(int n) const { return 1.0;}
+    virtual ~LinearDetector() {}
+    int ChannelMatrixCols() { return _channelMatrixCols;}
+    virtual LinearDetector *Clone() = 0;
     void StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
 };
 

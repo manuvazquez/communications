@@ -67,7 +67,7 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 	// _softEstimations = _filter'*observations
 	Blas_Mat_Trans_Vec_Mult(_filter,observations,softEstimations);
 
-	// ----------------- required for NthSymbolVariance computing -------------------
+	// ----------------- required for nthSymbolVariance computing -------------------
 	_channelMatrix = channelMatrix;
 
 	// ------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 	return softEstimations(rNsimbolsDetected);
 }
 
-double MMSEDetector::NthSymbolVariance(int n)
+double MMSEDetector::nthSymbolVariance(int n)
 {
 #ifdef DEBUG
 	cout << "mu = " << Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n)) << endl;
@@ -111,7 +111,7 @@ double MMSEDetector::NthSymbolVariance(int n)
 	return (1.0 - Blas_Dot_Prod(_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
 }
 
-// double MMSEDetector::NthSymbolGain(int n) const
+// double MMSEDetector::nthSymbolGain(int n) const
 // {
 // 	return Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n));
 // }

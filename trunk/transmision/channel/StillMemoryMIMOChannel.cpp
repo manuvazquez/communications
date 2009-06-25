@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "StillMemoryMIMOChannel.h"
 
-StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nTx, int nRx, int memory, int length): MIMOChannel(nTx, nRx, length),_memory(memory),_nTxnRxMemory(_nTx*_nRx*_memory),_nTxMemory(_nTx*_memory)
+StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory, int length): MIMOChannel(nInputs, nOutputs, length),_memory(memory),_nInputsnOutputsMemory(_nInputs*_nOutputs*_memory),_nInputsMemory(_nInputs*_memory)
 {
 }
 

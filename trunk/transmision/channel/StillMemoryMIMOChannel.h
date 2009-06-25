@@ -28,15 +28,15 @@
 class StillMemoryMIMOChannel : public MIMOChannel
 {
 protected:
-	int _memory,_nTxnRxMemory,_nTxMemory;
+	int _memory,_nInputsnOutputsMemory,_nInputsMemory;
 public:
-    StillMemoryMIMOChannel(int nTx, int nRx, int memory,int length);
+    StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory,int length);
 
 	int Memory() const {return _memory;};
 	int Memory(int n) const {return _memory;}
 	int EffectiveMemory() const {return _memory;}
-	int NtNrMemory() const {return _nTxnRxMemory;};
-	int NtMemory() const {return _nTxMemory;};
+	int nInputsnOutputsMemory() const {return _nInputsnOutputsMemory;};
+	int nInputsMemory() const {return _nInputsMemory;};
 };
 
 #endif

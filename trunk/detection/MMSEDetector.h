@@ -39,7 +39,7 @@ protected:
 	int _nSymbolsToBeDetected,_detectionStart;
 	tMatrix _filter;
 
-	// required for NthSymbolVariance computing
+	// required for nthSymbolVariance computing
 	tMatrix _channelMatrix;
 	tMatrix _Rx;
 public:
@@ -50,8 +50,8 @@ public:
 	virtual tMatrix ComputedFilter();
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
     virtual void StateStep(tVector observations) {}
-	virtual double NthSymbolVariance(int n);
-// 	virtual double NthSymbolGain(int n) const;
+	virtual double nthSymbolVariance(int n);
+// 	virtual double nthSymbolGain(int n) const;
 
 };
 

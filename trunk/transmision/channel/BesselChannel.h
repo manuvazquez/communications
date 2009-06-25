@@ -36,8 +36,8 @@ class BesselChannel : public StillMemoryMIMOChannel
 protected:
 	tMatrix *_channelMatrices;
 public:
-    BesselChannel(int nTx, int nRx, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
-//     BesselChannel(int nTx, int nRx, int memory, int length, double velocity, double carrierFrequency, double T, const ContinuousPowerProfile &powerProfile);
+    BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
+//     BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const ContinuousPowerProfile &powerProfile);
 
     ~BesselChannel();
 

@@ -23,7 +23,7 @@
 #include <LinearDetector.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <exceptions.h>
@@ -38,30 +38,30 @@
 class RMMSEDetector : public LinearDetector
 {
 protected:
-	double _forgettingFactor,_invForgettingFactor;
-	int _nSymbolsToBeDetected;
-	double _alphaPowerSumNow,_alphaPowerSumPrevious;
-	double _alphaPower,_alphaPowerSumFactor;
+    double _forgettingFactor,_invForgettingFactor;
+    int _nSymbolsToBeDetected;
+    double _alphaPowerSumNow,_alphaPowerSumPrevious;
+    double _alphaPower,_alphaPowerSumFactor;
 
-	tVector _g;
-	tMatrix _invRtilde;
-	tMatrix _filter;
+    tVector _g;
+    tMatrix _invRtilde;
+    tMatrix _filter;
 
     tMatrix _auxInvRtilde;
-	tMatrix _E,_varianceInvRtildeChannelMatrix;
+    tMatrix _E,_varianceInvRtildeChannelMatrix;
 
-	// required for NthSymbolVariance computing
-	tMatrix _channelMatrix;
-	tMatrix _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;
+    // required for nthSymbolVariance computing
+    tMatrix _channelMatrix;
+    tMatrix _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
 
     tVector Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);
-	RMMSEDetector *Clone();
-	void StateStep(tVector observations);
+    RMMSEDetector *Clone();
+    void StateStep(tVector observations);
 
-	double NthSymbolVariance(int n);
-	tMatrix ComputedFilter() { return _filter;}
+    double nthSymbolVariance(int n);
+    tMatrix ComputedFilter() { return _filter;}
 
 };
 

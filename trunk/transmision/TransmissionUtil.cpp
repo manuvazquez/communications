@@ -160,29 +160,29 @@ tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChan
 	return res;
 }
 
-tMatrix TransmissionUtil::GenerateTrainingSequence(const Alphabet &alphabet,int nTx,int length)
+tMatrix TransmissionUtil::GenerateTrainingSequence(const Alphabet &alphabet,int nInputs,int length)
 {
-	tMatrix res(nTx,length);
+	tMatrix res(nInputs,length);
 
-// 	int nPossibleVectors = (int) pow(double(alphabet.Length()),double(nTx));
-// 	vector<tSymbol> v(nTx);
+// 	int nPossibleVectors = (int) pow(double(alphabet.Length()),double(nInputs));
+// 	vector<tSymbol> v(nInputs);
 // 	for(int i=0;i<length;i++)
 // 	{
 // 		alphabet.IntToSymbolsArray(i % nPossibleVectors,v);
-// 		for(int j=0;j<nTx;j++)
+// 		for(int j=0;j<nInputs;j++)
 // 			res(j,i) = v[j];
 // 	}
 // 	return res;
 
-	if((length % nTx) != 0)
+	if((length % nInputs) != 0)
 		throw RuntimeException("TransmissionUtil::GenerateTrainingSequence: length is not a multiple of the number of transmitting antennas.");
 
-	for(int i=0;i<length/nTx;i++)
+	for(int i=0;i<length/nInputs;i++)
 	{
-		res(0,i*nTx) = 1;
-		res(1,i*nTx) = 1;
-		res(0,i*nTx+1) = -1;
-		res(1,i*nTx+1) = 1;
+		res(0,i*nInputs) = 1;
+		res(1,i*nInputs) = 1;
+		res(0,i*nInputs+1) = -1;
+		res(1,i*nInputs+1) = 1;
 	}
 	return res;
 }

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "PowerProfileDependentNoise.h"
 
-PowerProfileDependentNoise::PowerProfileDependentNoise(int nRx, int length, const DelayPowerProfile &powerProfile): Noise(nRx, length),_matrix(StatUtil::RandnMatrix(_nRx,_length,0.0,1.0)),_stdDev(1.0)
+PowerProfileDependentNoise::PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::RandnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0)
 {
 	tMatrix variancesMatrix = powerProfile.Variances();
 	int i,j;
@@ -28,13 +28,13 @@ PowerProfileDependentNoise::PowerProfileDependentNoise(int nRx, int length, cons
 		for(j=0;j<variancesMatrix.cols();j++)
 			variancesSum += variancesMatrix(i,j);
 
-	_varianceConstant = variancesSum/double(_nRx);
+	_varianceConstant = variancesSum/double(_nOutputs);
 }
 
 tVector PowerProfileDependentNoise::operator [ ](int n) const
 {
-	tVector res(_nRx);
-	for(int i=0;i<_nRx;i++)
+	tVector res(_nOutputs);
+	for(int i=0;i<_nOutputs;i++)
 		res(i) = _matrix(i,n);
 	return res;
 }

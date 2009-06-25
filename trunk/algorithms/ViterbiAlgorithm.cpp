@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_inputVector(channel.Nt()),_stateVector(channel.Nt()*(channel.Memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.Nt()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.Memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
 {
     if(preamble.cols() < (channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
@@ -50,7 +50,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
-    _detectedSymbolVectors = new tMatrix(channel.Nt(),_K+_d);
+    _detectedSymbolVectors = new tMatrix(channel.nInputs(),_K+_d);
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
@@ -122,15 +122,15 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
     double newCost;
     int arrivalState;
-    tVector computedObservations(channel.Nr()),error(channel.Nr());
+    tVector computedObservations(channel.nOutputs()),error(channel.nOutputs());
 
     // "symbolVectors" will contain all the symbols involved in the current observation
-    tMatrix symbolVectors(channel.Nt(),channel.Memory());
+    tMatrix symbolVectors(channel.nInputs(),channel.Memory());
 
 	// the state determines the first "channel.Memory()" symbol vectors involved in the "observations"
 	_alphabet.IntToSymbolsArray(iState,_stateVector);
-	for(int i=0;i<channel.Nt()*(channel.Memory()-1);i++)
-		symbolVectors(i % channel.Nt(),i / channel.Nt()) = _stateVector[i];
+	for(int i=0;i<channel.nInputs()*(channel.Memory()-1);i++)
+		symbolVectors(i % channel.nInputs(),i / channel.nInputs()) = _stateVector[i];
 
     // now we compute the cost for each possible input
     for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
@@ -139,7 +139,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         _alphabet.IntToSymbolsArray(iInput,_inputVector);
 
         // it's copied into "symbolVectors"
-        for(int i=0;i<channel.Nt();i++)
+        for(int i=0;i<channel.nInputs();i++)
             symbolVectors(i,channel.Memory()-1) = _inputVector[i];
 
         // computedObservations = channelMatrix * symbolVectors(:)

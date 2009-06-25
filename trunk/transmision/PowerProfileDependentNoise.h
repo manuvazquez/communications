@@ -35,7 +35,7 @@ protected:
 	tMatrix _matrix;
 	double _varianceConstant,_stdDev;
 public:
-    PowerProfileDependentNoise(int nRx, int length, const DelayPowerProfile &powerProfile);
+    PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
 
 	virtual double StdDevAt(int n) const {return _stdDev;}
     virtual tVector operator [ ](int n) const;

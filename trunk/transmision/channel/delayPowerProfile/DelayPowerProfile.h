@@ -30,14 +30,14 @@
 
 class DelayPowerProfile{
 protected:
-	int _nRx,_nTx;
+	int _nOutputs,_nInputs;
 	std::vector<double> _amplitudes;
 	double _generatedCoefficientsMean;
 	tMatrix _means,_variances;
 
 	void GenerateMatrices();
 public:
-    DelayPowerProfile(int nRx,int nTx);
+    DelayPowerProfile(int nOutputs,int nInputs);
 
 	virtual ~DelayPowerProfile();
 
@@ -45,8 +45,8 @@ public:
 	virtual void Print() const;
 	tMatrix Means() const { return _means;}
 	tMatrix Variances() const {return _variances;}
-	int Nt() { return _nTx;}
-	int Nr() { return _nRx;}
+	int nInputs() { return _nInputs;}
+	int nOutputs() { return _nOutputs;}
 	int Memory() const { return _amplitudes.size();}
 	std::vector<double> TapsAmplitudes() const { return _amplitudes;}
 };

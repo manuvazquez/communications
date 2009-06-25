@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "FlatPowerProfile.h"
 
-FlatPowerProfile::FlatPowerProfile(int nRx, int nTx, int m, double variance): DelayPowerProfile(nRx, nTx)
+FlatPowerProfile::FlatPowerProfile(int nOutputs, int nInputs, int m, double variance): DelayPowerProfile(nOutputs, nInputs)
 {
 	for(int i=0;i<m;i++)
 		_amplitudes.push_back(variance);

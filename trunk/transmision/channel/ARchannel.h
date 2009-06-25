@@ -34,7 +34,7 @@ protected:
 	tMatrix* _channelMatrices;
 	ARprocess _ARproc;
 public:
-	ARchannel(int nTx, int nRx, int memory, int length,ARprocess ARproc);
+	ARchannel(int nInputs, int nOutputs, int memory, int length,ARprocess ARproc);
 	ARchannel(const ARchannel &archannel);
 	~ARchannel();
 

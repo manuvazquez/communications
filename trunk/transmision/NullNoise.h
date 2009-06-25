@@ -28,7 +28,7 @@
 class NullNoise : public Noise
 {
 public:
-    NullNoise(int nRx, int length);
+    NullNoise(int nOutputs, int length);
 
     virtual double StdDevAt(int n) const {return 0.0;}
     virtual tVector operator [ ](int n) const;

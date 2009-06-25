@@ -143,7 +143,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// sampling
 			for(iSampledSymbol=0;iSampledSymbol<(_N*(_d+1));iSampledSymbol++)
 			{
-				s2q = processedParticle->GetLinearDetector(_estimatorIndex)->NthSymbolVariance(iSampledSymbol);
+				s2q = processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol);
 
 				sumProb = 0.0;
 
@@ -151,7 +151,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
 				{
 // 					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
-					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->NthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
+					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
 					// the computed pdf is accumulated for normalizing purposes
 					sumProb += symbolProb(iSampledSymbol,iAlphabet);

@@ -19,13 +19,11 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
-// #define DEBUG2
-
 using namespace std;
 
-ARchannel::ARchannel(int nTx, int nRx, int memory, int length,ARprocess ARproc): StillMemoryMIMOChannel(nTx, nRx, memory, length),_ARproc(ARproc)
+ARchannel::ARchannel(int nInputs, int nOutputs, int memory, int length, ARprocess ARproc): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_ARproc(ARproc)
 {
-	if(ARproc.Rows()!=nRx || ARproc.Cols()!=(nTx*memory))
+	if(ARproc.Rows()!=nOutputs || ARproc.Cols()!=(nInputs*memory))
 		throw RuntimeException("ARchannel::ARchannel: the passed AR process is not compatible with the dimensions of the channel.");
 
 	_channelMatrices = new tMatrix[length];

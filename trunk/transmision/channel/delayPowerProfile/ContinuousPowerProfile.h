@@ -39,7 +39,7 @@ public:
 	vector<double> Powers() const { return _continuousPowers;}
 	vector <double> Delays() const { return _continuousDelays;}
 	int Ndelays() const {return _continuousDelays.size();}
-	ContinuousPowerProfile(int nRx, int nTx, std::vector<double> differentialDelays, std::vector<double> powers);
+	ContinuousPowerProfile(int nOutputs, int nInputs, std::vector<double> differentialDelays, std::vector<double> powers);
 
 };
 

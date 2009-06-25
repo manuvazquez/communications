@@ -19,15 +19,15 @@
  ***************************************************************************/
 #include "NullNoise.h"
 
-NullNoise::NullNoise(int nRx, int length): Noise(nRx, length)
+NullNoise::NullNoise(int nOutputs, int length): Noise(nOutputs, length)
 {
 }
 
 tVector NullNoise::operator [ ](int n) const
 {
-// 	tVector res(_nRx);
+// 	tVector res(_nOutputs);
 // 	res = 0.0;
 // 	return res;
-	return LaGenMatDouble::zeros(_nRx,1);
+	return LaGenMatDouble::zeros(_nOutputs,1);
 }
 

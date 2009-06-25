@@ -21,7 +21,7 @@
 
 using namespace std;
 
-ContinuousPowerProfile::ContinuousPowerProfile(int nRx, int nTx, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nRx, nTx),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
+ContinuousPowerProfile::ContinuousPowerProfile(int nOutputs, int nInputs, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nOutputs, nInputs),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
 {
 	if(differentialDelays.size()!=powers.size())
 		throw RuntimeException("ContinuousPowerProfile::ContinuousPowerProfile: numbers of delays and powers differ.");

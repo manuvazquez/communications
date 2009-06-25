@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ExponentialPowerProfile.h"
 
-ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, double T, double threshold): DelayPowerProfile(nRx, nTx)
+ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, double T, double threshold): DelayPowerProfile(nOutputs, nInputs)
 {
 	double power,delay = 0.0;
 	double normConst = 0.0;
@@ -38,7 +38,7 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, double T, dou
 	GenerateMatrices();
 }
 
-ExponentialPowerProfile::ExponentialPowerProfile(int nRx, int nTx, int m, double tRMS, double T): DelayPowerProfile(nRx, nTx)
+ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, int m, double tRMS, double T): DelayPowerProfile(nOutputs, nInputs)
 {
 	double power,delay = 0.0;
 	double normConst = 0.0;

@@ -22,7 +22,7 @@
 
 using namespace la;
 
-MIMOChannel::MIMOChannel(int nTx,int nRx,int length):_nTx(nTx),_nRx(nRx),_length(length),_nTxnRx(_nTx*_nRx)
+MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {
 }
 
@@ -34,53 +34,49 @@ MIMOChannel::MIMOChannel(int nTx,int nRx,int length):_nTx(nTx),_nRx(nRx),_length
  */
 tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
 {
-	if(symbols.rows()!=_nTx)
-		throw RuntimeException("MIMOChannel::Transmit: symbol vectors length is wrong.");
-	else if(symbols.cols()>_length)
-		throw RuntimeException("MIMOChannel::Transmit: channel length is shorter than then number of symbol vectors.");
-	else if(noise.Nr()!=_nRx || symbols.cols()>noise.Length())
-		throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
+    if(symbols.rows()!=_nInputs)
+        throw RuntimeException("MIMOChannel::Transmit: symbol vectors length is wrong.");
+    else if(symbols.cols()>_length)
+        throw RuntimeException("MIMOChannel::Transmit: channel length is shorter than then number of symbol vectors.");
+    else if(noise.nOutputs()!=_nOutputs || symbols.cols()>noise.Length())
+        throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
 
-	// the number of resulting observations depends on the channel _memory
-	int nObservations = symbols.cols() - (EffectiveMemory() - 1);
+    // the number of resulting observations depends on the channel _memory
+    int nObservations = symbols.cols() - (EffectiveMemory() - 1);
 
-	if(nObservations<1)
-		throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
+    if(nObservations<1)
+        throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
 
-	tMatrix observations = tMatrix(_nRx,symbols.cols());
+    tMatrix observations = tMatrix(_nOutputs,symbols.cols());
 
-	int j;
-	tVector currentObservationVector(_nRx);
+    int j;
+    tVector currentObservationVector(_nOutputs);
 
-	tRange allChannelMatrixRows(0,_nRx-1);
+    tRange allChannelMatrixRows(0,_nOutputs-1);
 
-	for(int iSymbolVector=EffectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
-	{
-		// just for the sake of clarity
-		tMatrix currentChannelMatrix = (*this)[iSymbolVector];
+    for(int iSymbolVector=EffectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
+    {
+        // just for the sake of clarity
+        tMatrix currentChannelMatrix = (*this)[iSymbolVector];
 
-		//currentObservationVector will accumulate the contributions of the
-		// different symbol vectors that participate in the current observation
-		// (_memory >= 1). Besides, it will always accumulate the noise.
-		currentObservationVector = noise[iSymbolVector];
+        //currentObservationVector will accumulate the contributions of the
+        // different symbol vectors that participate in the current observation
+        // (_memory >= 1). Besides, it will always accumulate the noise.
+        currentObservationVector = noise[iSymbolVector];
 
-		for(j=0;j<Memory(iSymbolVector);j++)
-		{
-			// currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*_nTx,(j+1)*_nTx-1)))*symbols.col(iSymbolVector-_memory+1+j)
-			tRange rowsRange(j*_nTx,(j+1)*_nTx-1);
-			Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-Memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
-		}
+        for(j=0;j<Memory(iSymbolVector);j++)
+        {
+            // currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*_nInputs,(j+1)*_nInputs-1)))*symbols.col(iSymbolVector-_memory+1+j)
+            tRange rowsRange(j*_nInputs,(j+1)*_nInputs-1);
+            Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-Memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
+        }
 
-		// the noise is added:
-		//currentObservationVector = currentObservationVector + noise[iSymbolVector]
-// 		Util::Add(currentObservationVector,noise[iSymbolVector],currentObservationVector);
+        // the just computed observation is set in the observations matrix
+        for(j=0;j<_nOutputs;j++)
+            observations(j,iSymbolVector) = currentObservationVector(j);
+    }
 
-		// the just computed observation is set in the observations matrix
-		for(j=0;j<_nRx;j++)
-			observations(j,iSymbolVector) = currentObservationVector(j);
-	}
-
-	return observations;
+    return observations;
 }
 
 vector<tMatrix> MIMOChannel::Range(int a,int b)

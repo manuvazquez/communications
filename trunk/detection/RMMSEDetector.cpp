@@ -83,7 +83,7 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const 
 	Blas_Mat_Trans_Vec_Mult(_filter,observations,res);
 
 
-	// -------------------- required for NthSymbolVariance computing -----------------------
+	// -------------------- required for nthSymbolVariance computing -----------------------
 	tMatrix alphabetVarianceChannelMatrixChannelMatrixTrans(_channelMatrixRows,_channelMatrixRows);
 
 	// _alphabetVarianceChannelMatrixChannelMatrixTrans = _alphabetVariance*channelMatrix*channelMatrix^T
@@ -104,7 +104,7 @@ RMMSEDetector *RMMSEDetector::Clone()
 	return new RMMSEDetector(*this);
 }
 
-double RMMSEDetector::NthSymbolVariance(int n)
+double RMMSEDetector::nthSymbolVariance(int n)
 {
 	tVector _auxVector(_channelMatrixRows);
 
