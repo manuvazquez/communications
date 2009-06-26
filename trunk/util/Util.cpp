@@ -707,3 +707,14 @@ tMatrix Util::FlipLR(const tMatrix &A)
 			res(i,j) = A(i,A.cols()-1-j);
 	return res;
 }
+
+tMatrix Util::sign(const tMatrix &A)
+{
+    tMatrix res(A.rows(),A.cols());
+    
+    for(int i=0;i<A.rows();i++)
+        for(int j=0;j<A.cols();j++)
+            res(i,j) = (A(i,j) > 0.0)*2.0 - 1.0;
+            
+    return res;
+}

@@ -17,58 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SMCSYSTEM_H
-#define SMCSYSTEM_H
+#ifndef ARMULTIUSERCDMACHANNEL_H
+#define ARMULTIUSERCDMACHANNEL_H
 
-#include <BaseSystem.h>
+#include <MultiuserCDMAchannel.h>
+#include <ARprocess.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+It models a multiuser CDMA channel in which each user has a single coefficent (tantamount to transmitting power). The different coefficients evolve according to a order 2 AutoRegressive process.
+
+    @author Manu <manu@rustneversleeps>
 */
-
-#include <DelayPowerProfile.h>
-#include <ConstantMeanDSPowerProfile.h>
-#include <BesselChannel.h>
-#include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
-#include <MMSEDetector.h>
-#include <DecorrelatorDetector.h>
-
-#include <DSISoptAlgorithm.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
-#include <LinearFilterBasedMKFAlgorithm.h>
-#include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <TriangularizationBasedSMCAlgorithm.h>
-#include <LinearFilterBasedAlgorithm.h>
-#include <SISoptAlgorithm.h>
-
-#include <ResamplingCriterion.h>
-#include <ResamplingAlgorithm.h>
-#include <ResidualResamplingAlgorithm.h>
-
-class SMCSystem : public BaseSystem
+class ARMultiuserCDMAchannel : public MultiuserCDMAchannel
 {
-protected:
-    int nParticles;
-    double resamplingRatio;
-
-    // back and forward smoothing
-    int c,e;
-
-    std::vector<double> ARcoefficients;
-    double ARvariance;
-
-    ResamplingAlgorithm *algoritmoRemuestreo;
-
-    double firstSampledChannelMatrixVariance;
-
-    virtual void BeforeEndingFrame(int iFrame);
 public:
-    SMCSystem();
+    ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes,const ARprocess &arProcess);
 
-    ~SMCSystem();
+    ~ARMultiuserCDMAchannel();
+
+protected:
+    ARprocess _ARprocess;
+    tMatrix _userCoeffs;
+    
+    virtual tVector getUsersCoefficientsAtTime(int n) const;
+
 };
 
 #endif

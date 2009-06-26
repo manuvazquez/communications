@@ -82,6 +82,7 @@ public:
     template<class T> static void HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> NMax(int n,const tVector &v);
 	static tMatrix FlipLR(const tMatrix &A);
+    static tMatrix sign(const tMatrix &A);   
 };
 
 #endif

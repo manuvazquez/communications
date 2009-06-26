@@ -17,58 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SMCSYSTEM_H
-#define SMCSYSTEM_H
+#ifndef MULTIUSERCDMACHANNEL_H
+#define MULTIUSERCDMACHANNEL_H
 
-#include <BaseSystem.h>
+#include <StillMemoryMIMOChannel.h>
 
 /**
+Meant to model a CDMA multiuser communication sytem (whose channel is flat) as a MIMO system
+
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <DelayPowerProfile.h>
-#include <ConstantMeanDSPowerProfile.h>
-#include <BesselChannel.h>
-#include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
-#include <MMSEDetector.h>
-#include <DecorrelatorDetector.h>
-
-#include <DSISoptAlgorithm.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
-#include <LinearFilterBasedMKFAlgorithm.h>
-#include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <TriangularizationBasedSMCAlgorithm.h>
-#include <LinearFilterBasedAlgorithm.h>
-#include <SISoptAlgorithm.h>
-
-#include <ResamplingCriterion.h>
-#include <ResamplingAlgorithm.h>
-#include <ResidualResamplingAlgorithm.h>
-
-class SMCSystem : public BaseSystem
+class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 {
 protected:
-    int nParticles;
-    double resamplingRatio;
-
-    // back and forward smoothing
-    int c,e;
-
-    std::vector<double> ARcoefficients;
-    double ARvariance;
-
-    ResamplingAlgorithm *algoritmoRemuestreo;
-
-    double firstSampledChannelMatrixVariance;
-
-    virtual void BeforeEndingFrame(int iFrame);
+    tMatrix _spreadingCodes;
+    
+    virtual tVector getUsersCoefficientsAtTime(int n) const = 0;
 public:
-    SMCSystem();
+    MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes);    
 
-    ~SMCSystem();
+    ~MultiuserCDMAchannel();
+
+    virtual tMatrix operator[](int n) const;
 };
 
 #endif

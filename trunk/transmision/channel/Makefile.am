@@ -3,9 +3,9 @@ INCLUDES = -I$(top_srcdir)/estimation -I$(top_srcdir)/randomutil \
 	-I$(top_srcdir)/transmision/channel/delayPowerProfile -I$(top_srcdir)/util -I/usr/local/include
 METASOURCES = AUTO
 lib_LIBRARIES = libchannel.a
-libchannel_a_SOURCES = ARchannel.cpp BesselChannel.cpp EstimatedMIMOChannel.cpp \
-	MIMOChannel.cpp MultiuserCDMAchannel.cpp StillMemoryMIMOChannel.cpp \
-	TimeInvariantChannel.cpp
+libchannel_a_SOURCES = ARMultiuserCDMAchannel.cpp ARchannel.cpp \
+	BesselChannel.cpp EstimatedMIMOChannel.cpp MIMOChannel.cpp MultiuserCDMAchannel.cpp \
+	StillMemoryMIMOChannel.cpp TimeInvariantChannel.cpp
 SUBDIRS = delayPowerProfile
-noinst_HEADERS = BesselChannel.h EstimatedMIMOChannel.h MultiuserCDMAchannel.h \
-	TimeInvariantChannel.h
+noinst_HEADERS = ARMultiuserCDMAchannel.h BesselChannel.h \
+	EstimatedMIMOChannel.h MultiuserCDMAchannel.h TimeInvariantChannel.h

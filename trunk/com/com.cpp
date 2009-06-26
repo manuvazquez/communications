@@ -33,6 +33,7 @@
 #include <TesisComplejidadReducidaBesselNumeroParticulasSystem.h>
 #include <LMSmuTestSystem.h>
 #include <PSPvsSMCSystem.h>
+#include <CDMASystem.h>
 
 #include <signal.h>
 
@@ -55,15 +56,18 @@ int main(int argc,char* argv[])
 //     PSPvsPSPBasedSMCSystem system;
 //     Rev2TVT2007System system;
 
+//     LMSmuTestSystem system;
+//     PSPvsSMCSystem system;
+
 //     TesisOrdenCanalDesconocidoARSystem system;
 //     TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
 //     TesisComplejidadReducidaARSystem system;
 
-    TesisComplejidadReducidaBesselNumeroParticulasSystem system;
+//     TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
-//     LMSmuTestSystem system;
-//     PSPvsSMCSystem system;
+    CDMASystem system;
+
     system.Simulate();
 }

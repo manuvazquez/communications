@@ -17,58 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SMCSYSTEM_H
-#define SMCSYSTEM_H
+#include "ARMultiuserCDMAchannel.h"
 
-#include <BaseSystem.h>
+#define DEBUG
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <DelayPowerProfile.h>
-#include <ConstantMeanDSPowerProfile.h>
-#include <BesselChannel.h>
-#include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
-#include <MMSEDetector.h>
-#include <DecorrelatorDetector.h>
-
-#include <DSISoptAlgorithm.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
-#include <LinearFilterBasedMKFAlgorithm.h>
-#include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <TriangularizationBasedSMCAlgorithm.h>
-#include <LinearFilterBasedAlgorithm.h>
-#include <SISoptAlgorithm.h>
-
-#include <ResamplingCriterion.h>
-#include <ResamplingAlgorithm.h>
-#include <ResidualResamplingAlgorithm.h>
-
-class SMCSystem : public BaseSystem
+ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_nInputs,_length)
 {
-protected:
-    int nParticles;
-    double resamplingRatio;
 
-    // back and forward smoothing
-    int c,e;
+    //initialization
+    for(uint i=_memory-1;i<_length;i++)
+            _userCoeffs.col(i).inject(_ARprocess.NextMatrix());
 
-    std::vector<double> ARcoefficients;
-    double ARvariance;
-
-    ResamplingAlgorithm *algoritmoRemuestreo;
-
-    double firstSampledChannelMatrixVariance;
-
-    virtual void BeforeEndingFrame(int iFrame);
-public:
-    SMCSystem();
-
-    ~SMCSystem();
-};
-
+#ifdef DEBUG
+    cout << "_userCoeffs" << endl << _userCoeffs;
 #endif
+    
+}
+
+
+ARMultiuserCDMAchannel::~ARMultiuserCDMAchannel()
+{
+}
+
+
+tVector ARMultiuserCDMAchannel::getUsersCoefficientsAtTime(int n) const
+{
+    return _userCoeffs.col(n);
+}
+

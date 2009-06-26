@@ -35,7 +35,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 	tRange rAllObservationsRows(0,_L-1),rAllSymbolRows(0,_N-1);
 	tRange rAllStackedObservationsRows(0,_L*(_d+1)-1);
 	tRange rFirstmMinus1symbolVectors(0,_m-2),rFirstmSymbolVectors(0,_m-1);
-	tMatrix stackedChannelMatrixSubstract/*(_L*(_d+1),_N*(_m-1))*/;
+	tMatrix stackedChannelMatrixSubstract;
 	tMatrix stackedChannelMatrixMinus(_L*(_d+1),_N*(_d+1)),stackedChannelMatrixMinusFlipped;
 	tMatrix stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped(_N*(_d+1),_N*(_d+1));
 	tVector stackedObservationsMinus(_L*(_d+1));

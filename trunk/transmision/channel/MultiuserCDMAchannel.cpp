@@ -17,58 +17,23 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SMCSYSTEM_H
-#define SMCSYSTEM_H
+#include "MultiuserCDMAchannel.h"
 
-#include <BaseSystem.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <DelayPowerProfile.h>
-#include <ConstantMeanDSPowerProfile.h>
-#include <BesselChannel.h>
-#include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
-#include <MMSEDetector.h>
-#include <DecorrelatorDetector.h>
-
-#include <DSISoptAlgorithm.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
-#include <LinearFilterBasedMKFAlgorithm.h>
-#include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <TriangularizationBasedSMCAlgorithm.h>
-#include <LinearFilterBasedAlgorithm.h>
-#include <SISoptAlgorithm.h>
-
-#include <ResamplingCriterion.h>
-#include <ResamplingAlgorithm.h>
-#include <ResidualResamplingAlgorithm.h>
-
-class SMCSystem : public BaseSystem
+MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(spreadingCodes)
 {
-protected:
-    int nParticles;
-    double resamplingRatio;
+}
 
-    // back and forward smoothing
-    int c,e;
 
-    std::vector<double> ARcoefficients;
-    double ARvariance;
+MultiuserCDMAchannel::~MultiuserCDMAchannel()
+{
+}
 
-    ResamplingAlgorithm *algoritmoRemuestreo;
-
-    double firstSampledChannelMatrixVariance;
-
-    virtual void BeforeEndingFrame(int iFrame);
-public:
-    SMCSystem();
-
-    ~SMCSystem();
-};
-
-#endif
+tMatrix MultiuserCDMAchannel::operator[](int n) const
+{
+    tMatrix spreadingCodesXcoeffs(_nOutputs,_nInputs);
+    
+    // spreadingCodesXcoeffs = _spreadingCodes * diag(getUsersCoefficientsAtTime(n))
+    Blas_Mat_Mat_Mult(_spreadingCodes,LaGenMatDouble::from_diag(getUsersCoefficientsAtTime(n)),spreadingCodesXcoeffs);
+    
+    return spreadingCodesXcoeffs;
+}

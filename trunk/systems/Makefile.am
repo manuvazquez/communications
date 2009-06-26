@@ -6,16 +6,16 @@ INCLUDES = -I$(top_srcdir)/algorithms -I$(top_srcdir)/algorithms/USIS2SIS \
 	-I$(top_srcdir)/transmision/channel/delayPowerProfile -I$(top_srcdir)/util
 METASOURCES = AUTO
 lib_LIBRARIES = libsys.a
-noinst_HEADERS = BaseSystem.h ChannelOrderEstimationSystem.h \
+noinst_HEADERS = BaseSystem.h CDMASystem.h ChannelOrderEstimationSystem.h \
 	Elsevier2007ARChannelSystem.h Elsevier2007BesselChannelSystem.h Elsevier2007System.h \
 	PSPvsPSPBasedSMCSystem.h PSPvsSMCSystem.h Rev2TVT2007System.h SMCSystem.h TVT2007System.h \
 	TesisComplejidadReducidaARSystem.h TesisComplejidadReducidaBesselNumeroParticulasSystem.h \
 	TesisComplejidadReducidaBesselSystem.h TesisComplejidadReducidaSystem.h TesisOrdenCanalDesconocidoARSystem.h \
 	TesisOrdenCanalDesconocidoBesselSystem.h TesisOrdenCanalDesconocidoSystem.h WSA08System.h
-libsys_a_SOURCES = BaseSystem.cpp ChannelOrderEstimationSystem.cpp \
-	Elsevier2007ARChannelSystem.cpp Elsevier2007BesselChannelSystem.cpp Elsevier2007System.cpp \
-	LMSmuTestSystem.cpp PSPvsPSPBasedSMCSystem.cpp PSPvsSMCSystem.cpp Rev2TVT2007System.cpp \
-	SMCSystem.cpp TVT2007System.cpp TesisComplejidadReducidaARSystem.cpp \
+libsys_a_SOURCES = BaseSystem.cpp CDMASystem.cpp \
+	ChannelOrderEstimationSystem.cpp Elsevier2007ARChannelSystem.cpp Elsevier2007BesselChannelSystem.cpp \
+	Elsevier2007System.cpp LMSmuTestSystem.cpp PSPvsPSPBasedSMCSystem.cpp PSPvsSMCSystem.cpp \
+	Rev2TVT2007System.cpp SMCSystem.cpp TVT2007System.cpp TesisComplejidadReducidaARSystem.cpp \
 	TesisComplejidadReducidaBesselNumeroParticulasSystem.cpp TesisComplejidadReducidaBesselSystem.cpp \
 	TesisComplejidadReducidaSystem.cpp TesisOrdenCanalDesconocidoARSystem.cpp \
 	TesisOrdenCanalDesconocidoBesselSystem.cpp TesisOrdenCanalDesconocidoSystem.cpp WSA08System.cpp

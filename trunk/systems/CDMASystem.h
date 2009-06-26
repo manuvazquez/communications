@@ -17,58 +17,45 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef SMCSYSTEM_H
-#define SMCSYSTEM_H
+#ifndef CDMASYSTEM_H
+#define CDMASYSTEM_H
 
 #include <BaseSystem.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <DelayPowerProfile.h>
-#include <ConstantMeanDSPowerProfile.h>
-#include <BesselChannel.h>
-#include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
-#include <MMSEDetector.h>
-#include <DecorrelatorDetector.h>
-
-#include <DSISoptAlgorithm.h>
-#include <LinearFilterBasedSMCAlgorithm.h>
-#include <LinearFilterBasedMKFAlgorithm.h>
-#include <ViterbiAlgorithm.h>
-#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <TriangularizationBasedSMCAlgorithm.h>
-#include <LinearFilterBasedAlgorithm.h>
-#include <SISoptAlgorithm.h>
-
-#include <ResamplingCriterion.h>
+#include <FlatPowerProfile.h>
+#include <ARMultiuserCDMAchannel.h>
 #include <ResamplingAlgorithm.h>
 #include <ResidualResamplingAlgorithm.h>
 
-class SMCSystem : public BaseSystem
+/**
+    @author Manu <manu@rustneversleeps>
+*/
+class CDMASystem : public BaseSystem
 {
+public:
+    CDMASystem();
+
+    ~CDMASystem();
+
 protected:
-    int nParticles;
-    double resamplingRatio;
-
-    // back and forward smoothing
-    int c,e;
-
+    tMatrix _spreadingCodes;
+    
+    // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
+    tMatrix _usersActivity;
+    
+    double userPersistenceProb,userActivityProb,userPriorProb;
+    
     std::vector<double> ARcoefficients;
     double ARvariance;
 
-    ResamplingAlgorithm *algoritmoRemuestreo;
+    int nParticles;
+    double resamplingRatio;
+    ResamplingAlgorithm *algoritmoRemuestreo;    
 
-    double firstSampledChannelMatrixVariance;
-
+    virtual void AddAlgorithms();
+    virtual void BeforeEndingAlgorithm(int iAlgorithm);
     virtual void BeforeEndingFrame(int iFrame);
-public:
-    SMCSystem();
+    virtual void BuildChannel();
 
-    ~SMCSystem();
 };
 
 #endif
