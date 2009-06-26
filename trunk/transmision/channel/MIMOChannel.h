@@ -39,14 +39,14 @@ public:
     
     int nInputs() const { return _nInputs;};
     int nOutputs() const { return _nOutputs;};
-    int Length() const {return _length;};
+    int length() const {return _length;};
     int nInputsnOutputs() const {return _nInputsnOutputs;};
     int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*Memory(n);};
     int nInputsMemory(int n) const {return _nInputs*Memory(n);};
     virtual int Memory(int n) const = 0;
     virtual int EffectiveMemory() const = 0;
     virtual tMatrix operator[](int n) const = 0;
-    tMatrix Transmit(tMatrix &symbols,Noise &noise);
+    tMatrix transmit(tMatrix &symbols,Noise &noise);
     vector<tMatrix> Range(int a,int b);
 };
 

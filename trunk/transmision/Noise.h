@@ -36,7 +36,7 @@ public:
     Noise(int nOutputs,int length);
 	virtual ~Noise() {};
 
-	int Length() const { return _length;}
+	int length() const { return _length;}
 	int nOutputs() const { return _nOutputs;}
 	virtual void Print() const = 0;
 	virtual double StdDevAt(int n) const = 0;
@@ -44,7 +44,7 @@ public:
 	virtual tMatrix Range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}
 	double VarianceAt(int n) const { double stdDev = StdDevAt(n); return stdDev*stdDev;};
 	vector<double> Variances() const;
-	virtual void SetSNR(int SNR,double alphabetVariance) = 0;
+	virtual void setSNR(int SNR,double alphabetVariance) = 0;
 };
 
 #endif

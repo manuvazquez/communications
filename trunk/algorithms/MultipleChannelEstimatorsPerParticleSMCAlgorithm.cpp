@@ -117,7 +117,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
     this->Process(observations,noiseVariances);
 }
 
-tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetDetectedSymbolVectors()
+tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()
 {
     return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }

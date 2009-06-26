@@ -39,7 +39,7 @@ tVector PowerProfileDependentNoise::operator [ ](int n) const
 	return res;
 }
 
-void PowerProfileDependentNoise::SetSNR(int SNR, double alphabetVariance)
+void PowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)
 {
 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
 

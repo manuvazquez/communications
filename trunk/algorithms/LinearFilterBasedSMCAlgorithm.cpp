@@ -65,7 +65,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	tRange rFirstmSymbolVectors(0,_m-1);
 	tVector sampledVector(_N),sampledSmoothingVector(_N*(_d+1));
 	double proposal,s2q,sumProb,likelihoodsProd;
-	tMatrix s2qAux(_L*(_c+_d+1),_L*(_c+_d+1)),symbolProb(_N*(_d+1),_alphabet.Length());
+	tMatrix s2qAux(_L*(_c+_d+1),_L*(_c+_d+1)),symbolProb(_N*(_d+1),_alphabet.length());
 	tVector s2qAuxFilter(_L*(_c+_d+1));
 	tMatrix forWeightUpdateNeededSymbols(_N,_m+_d);
 	tVector predictedNoiselessObservation(_L);
@@ -143,7 +143,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				sumProb = 0.0;
 
 				// the probability for each posible symbol alphabet is computed
-				for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+				for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 				{
 // 					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
 					symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
@@ -153,17 +153,17 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 				}
 
 				try {
-					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+					for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 					{
 						symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
 					}
 				}catch(exception e){
 					cout << "The sum of the probabilities is null." << endl;
-					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-						symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.Length());
+					for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+						symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.length());
 				}
 
-				iSampled = StatUtil::Discrete_rnd(symbolProb.row(iSampledSymbol));
+				iSampled = StatUtil::discrete_rnd(symbolProb.row(iSampledSymbol));
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
 				proposal *= symbolProb(iSampledSymbol,iSampled);

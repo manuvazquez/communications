@@ -42,7 +42,7 @@ protected:
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
     tMatrix _usersActivity;
     
-    double userPersistenceProb,userActivityProb,userPriorProb;
+    double userPersistenceProb,newActiveUserProb,userPriorProb;
     
     std::vector<double> ARcoefficients;
     double ARvariance;

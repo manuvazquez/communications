@@ -21,7 +21,7 @@
 #define UTIL_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <iomanip>
@@ -43,34 +43,35 @@ class Util{
 
 public:
 
-	static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-	static void Add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
+    static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
+    static void Add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
     static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
-	static void Transpose(const tMatrix &A,tMatrix &B);
-	static tVector ToVector(const tMatrix &matrix,tOrder order);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
-	static tMatrix ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
-	static tMatrix ToMatrix(const tVector &vector,tOrder order,uint rows);
-	static tMatrix Append(const tMatrix &A,const tMatrix &B);
-	static tVector Normalize(const tVector &v);
-	static double Sum(const tVector &v);
-	static void Max(const tVector &v,int &index);
-	static void Min(const tVector &v,int &index);
-	static double SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
+    static void Transpose(const tMatrix &A,tMatrix &B);
+    static tVector ToVector(const tMatrix &matrix,tOrder order);
+    static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
+    static tMatrix ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
+    static tMatrix ToMatrix(const tVector &vector,tOrder order,uint rows);
+    static tMatrix Append(const tMatrix &A,const tMatrix &B);
+    static tVector Normalize(const tVector &v);
+    static double Sum(const tVector &v);
+    static void Max(const tVector &v,int &index);
+    static void Min(const tVector &v,int &index);
+    static double SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
     static double SquareError(const tMatrix &A,const tMatrix &B);
     static void Print(const tMatrix &A);
-	static void MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
-	template<class T> static void MatricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
-	static void LongIntMatricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
-	static void MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f);
-	static void MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f);
+    static void MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
+    template<class T> static void MatricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
+    static void LongIntMatricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
+    static void MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f);
+    static void MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f);
     template<class T> static void ScalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void StringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void ScalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static int Max(const std::vector<T> &vector);
     template<class T> static void Min(const std::vector<T> &vector,int &iMin);
     template<class T> static T Sum(const std::vector<T> &vector);
-    static void ElementByElementDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
+    static void elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
+    static void elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C);    
     template<class T> static void Print(const std::vector<T> &vector);
     template<class T> static void Print(const T* array,int nElements);
     static void ShiftUp(tVector &v,int n);
@@ -81,7 +82,7 @@ public:
     template<class T> static void NextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> NMax(int n,const tVector &v);
-	static tMatrix FlipLR(const tMatrix &A);
+    static tMatrix FlipLR(const tMatrix &A);
     static tMatrix sign(const tMatrix &A);   
 };
 

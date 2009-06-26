@@ -35,7 +35,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 	// it includes all symbol vectors involved in the smoothing
 	tMatrix involvedSymbolVectors(_N,_m);
 
-	uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
@@ -75,7 +75,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 			}
 
 			// one sample from the discrete distribution is taken
-			iSampledVector = StatUtil::Discrete_rnd(probabilities);
+			iSampledVector = StatUtil::discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);

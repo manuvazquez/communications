@@ -51,7 +51,7 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(1)
     algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
 
     userPersistenceProb = 0.8;
-    userActivityProb = 0.2;
+    newActiveUserProb = 0.2;
     userPriorProb = 0.5;
 //     exit(0);
 }
@@ -83,19 +83,53 @@ void CDMASystem::BeforeEndingFrame(int iFrame)
 
 void CDMASystem::BuildChannel()
 {
-    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+  
+#ifdef DEBUG
+  cout << "symbols before" << endl << symbols;
+#endif
     
     // when users are not transmitting, their symbols are zero
-    _usersActivity.resize(symbols.rows(),symbols.cols());
+    _usersActivity = LaGenMatDouble::ones(symbols.rows(),symbols.cols());
+    
+    tVector userActivePriorPdf(2);
+    userActivePriorPdf(0) = 1.0 - userPriorProb;
+    userActivePriorPdf(1) = userPriorProb;
+    
+    tVector userActiveGivenItWasPdf(2);
+    userActiveGivenItWasPdf(0) = 1.0 - userPersistenceProb;
+    userActiveGivenItWasPdf(1) = userPersistenceProb;    
+    
+    tVector userActiveGivenItWasNotPdf(2);
+    userActiveGivenItWasNotPdf(0) = 1.0 - newActiveUserProb;
+    userActiveGivenItWasNotPdf(1) = newActiveUserProb;        
+    
+    vector<int> usersActive = StatUtil::discrete_rnd(symbols.rows(),userActivePriorPdf);
     
     // at the first time instant the prior probability is used to decide which users are active
-//     for(uint iUser=0;iUser<symbols.rows();iUser++)
+    for(uint iUser=0;iUser<symbols.rows();iUser++)
+      _usersActivity(iUser,preambleLength+trainSeqLength) = double(usersActive[iUser]);
       
-  
+    // set of active users evolves according to the given probabilities
     for(uint iTime=preambleLength+trainSeqLength+1;iTime<symbols.cols();iTime++)
         for(uint iUser=0;iUser<symbols.rows();iUser++)
-        {
+            // the user was active in the last time instant
+            if(_usersActivity(iUser,iTime-1)==1.0) 
+                _usersActivity(iUser,iTime)= StatUtil::discrete_rnd(userActiveGivenItWasPdf);
+            // the user was NOT active in the last time instant
+            else
+                _usersActivity(iUser,iTime)= StatUtil::discrete_rnd(userActiveGivenItWasNotPdf);
             
-        }
+#ifdef DEBUG
+    Util::Print(usersActive);
+    cout << "users activity at time 0" << endl << _usersActivity;
+#endif            
+            
+    Util::elementWiseMult(symbols,_usersActivity,symbols);
+    
+#ifdef DEBUG
+    cout << "symbols after" << endl << symbols;
+#endif    
+    
+    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 

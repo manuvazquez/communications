@@ -42,18 +42,6 @@ Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): _nStreams(nStreams),_nB
 {
 }
 
-// Bits& Bits::operator=(const Bits& bits)
-// {
-// 	_nStreams = bits._nStreams;
-// 	_nBitsByStream = bits._nBitsByStream;
-// 	if(_matrix!=NULL)
-// 		delete[] _matrix;
-// 	_matrix = new tBit[bits._nStreams*bits._nBitsByStream];
-// 	for(int i=_nStreams*_nBitsByStream;i--;)
-// 		_matrix[i] = bits._matrix[i];
-// 	return *this;
-// }
-
 Bits& Bits::operator=(const Bits& bits)
 {
 	if(_nStreams!=bits._nStreams || _nBitsByStream!=bits._nBitsByStream)

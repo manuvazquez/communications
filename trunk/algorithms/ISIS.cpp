@@ -59,7 +59,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	// it selects all rows in the symbols Matrix
 	tRange rAllSymbolRows(0,_N-1);
 
-	int nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+	int nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
@@ -96,7 +96,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 					Nm = _N*m;
 // 					d = m-1;
 					d = _maxOrder-1;
-					nSmoothingVectors = (int) pow((double)_alphabet.Length(),(double)(_N*d));
+					nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_N*d));
 					vector<tSymbol> testedSmoothingVector(_N*d);
 					// it includes all symbol vectors involved in the smoothing
 					tMatrix smoothingSymbolVectors(_N,m+d);
@@ -162,7 +162,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
             #endif
 
 			// one sample from the discrete distribution is taken
-			iSampledVector = StatUtil::Discrete_rnd(probabilities);
+			iSampledVector = StatUtil::discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
 			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);

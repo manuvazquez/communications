@@ -163,7 +163,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
 }
 
-tMatrix ViterbiAlgorithm::GetDetectedSymbolVectors()
+tMatrix ViterbiAlgorithm::getDetectedSymbolVectors()
 {
     return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_preamble.cols(),_K-1));
 }

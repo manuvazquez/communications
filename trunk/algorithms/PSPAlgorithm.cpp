@@ -263,7 +263,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 }
 
-tMatrix PSPAlgorithm::GetDetectedSymbolVectors()
+tMatrix PSPAlgorithm::getDetectedSymbolVectors()
 {
     return (*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_K-1));
 }

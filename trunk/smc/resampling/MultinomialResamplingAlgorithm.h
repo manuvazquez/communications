@@ -36,7 +36,7 @@ public:
 
 	std::vector<int> ObtainIndexes(int n,const tVector &weights) const
 	{
-		return StatUtil::Discrete_rnd(n,weights);
+		return StatUtil::discrete_rnd(n,weights);
 	}
 };
 

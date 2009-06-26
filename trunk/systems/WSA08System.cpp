@@ -37,7 +37,7 @@ WSA08System::WSA08System()
 
 	if(adjustParticlesNumberFromSurvivors)
 	{
-		nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
+		nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
@@ -48,7 +48,7 @@ WSA08System::WSA08System()
 		cout << " to " << nSurvivors << endl;
 	}
 
-	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
+	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
 	rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)

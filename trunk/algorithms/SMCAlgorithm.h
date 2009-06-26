@@ -98,7 +98,7 @@ public:
 
     void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);
 
-    tMatrix GetDetectedSymbolVectors();
+    tMatrix getDetectedSymbolVectors();
     vector<tMatrix> GetEstimatedChannelMatrices();
 };
 

@@ -21,8 +21,8 @@
 
 Trellis::Trellis(const Alphabet &alphabet, int N, int m)
 {
-    _nStates = (int)pow((double)alphabet.Length(),N*(m-1));
-    _nPossibleInputs = (int)pow((double)alphabet.Length(),N);
+    _nStates = (int)pow((double)alphabet.length(),N*(m-1));
+    _nPossibleInputs = (int)pow((double)alphabet.length(),N);
 
     _stateTransitionMatrix = new int*[_nStates];
 

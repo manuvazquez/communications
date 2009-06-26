@@ -52,6 +52,6 @@ tMatrix LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(ui
         _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[iChannelOrder]->GetDetectedSymbolVectors();
+    return algorithms[iChannelOrder]->getDetectedSymbolVectors();
 }
 

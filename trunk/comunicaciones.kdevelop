@@ -16,10 +16,10 @@
     </ignoreparts>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <versioncontrol>kdevsubversion</versioncontrol>
     <projectname>comunicaciones</projectname>
-    <defaultencoding></defaultencoding>
+    <defaultencoding/>
   </general>
   <kdevautoproject>
     <general>
@@ -27,7 +27,7 @@
       <useconfiguration>debug</useconfiguration>
     </general>
     <run>
-      <mainprogram></mainprogram>
+      <mainprogram/>
       <terminal>true</terminal>
       <directoryradio>executable</directoryradio>
       <runarguments>
@@ -35,10 +35,10 @@
         <com/>
       </runarguments>
       <customdirectory>/</customdirectory>
-      <programargs></programargs>
+      <programargs/>
       <autocompile>true</autocompile>
       <envvars/>
-      <globaldebugarguments></globaldebugarguments>
+      <globaldebugarguments/>
       <globalcwd>/home/manu/c++/comunicaciones/optimized</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
@@ -98,7 +98,7 @@
       <runmultiplejobs>false</runmultiplejobs>
       <numberofjobs>1</numberofjobs>
       <dontact>false</dontact>
-      <makebin></makebin>
+      <makebin/>
       <prio>0</prio>
     </make>
   </kdevautoproject>
@@ -254,11 +254,11 @@
   <kdevdebugger>
     <general>
       <programargs/>
-      <gdbpath></gdbpath>
-      <dbgshell></dbgshell>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <gdbpath/>
+      <dbgshell/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

@@ -45,7 +45,7 @@ public:
     ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise);
 	~ChannelDependentNoise();
 
-	virtual void SetSNR(int SNR,double alphabetVariance);
+	virtual void setSNR(int SNR,double alphabetVariance);
 	virtual void Print() const { cout << _matrix;}
 	double StdDevAt(int n) const;
 	tVector operator[](int n) const;

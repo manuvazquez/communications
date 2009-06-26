@@ -36,7 +36,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
@@ -47,7 +47,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
         cout << " to " << nSurvivors << endl;
     }
 
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
+    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
     rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
 
     for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
@@ -56,7 +56,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
         kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients[0],ARvariance));
         noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,1.0));
 
-        RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),alphabet->Variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
+        RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),alphabet->variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
     }
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);

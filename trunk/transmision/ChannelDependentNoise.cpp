@@ -22,7 +22,7 @@
 // #define DEBUG
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
- : Noise(channel->nOutputs(),channel->Length()),_matrix(StatUtil::RandnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel)
+ : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::RandnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel)
 {
     _stdDevs = new double[_length];
     for(int i=0;i<_length;i++)
@@ -40,7 +40,7 @@ ChannelDependentNoise::~ChannelDependentNoise()
     delete[] _stdDevs;
 }
 
-void ChannelDependentNoise::SetSNR(int SNR,double alphabetVariance)
+void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
 {
     int i,j,memory;
     double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nOutputs;

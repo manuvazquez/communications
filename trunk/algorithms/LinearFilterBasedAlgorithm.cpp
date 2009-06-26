@@ -129,7 +129,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 
-tMatrix LinearFilterBasedAlgorithm::GetDetectedSymbolVectors()
+tMatrix LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
 	return _detectedSymbolVectors(tRange(0,_N-1),tRange(_preamble.cols(),_K-1));
 }

@@ -116,7 +116,7 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, 
 	Run(observations,noiseVariances);
 }
 
-tMatrix CMEBasedAlgorithm::GetDetectedSymbolVectors()
+tMatrix CMEBasedAlgorithm::getDetectedSymbolVectors()
 {
 	return tMatrix(0,0);
 }

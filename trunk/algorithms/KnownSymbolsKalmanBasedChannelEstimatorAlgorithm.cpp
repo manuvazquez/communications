@@ -44,7 +44,7 @@ void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,
     Run(observations,noiseVariances);
 }
 
-tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::GetDetectedSymbolVectors()
+tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors()
 {
     return tMatrix(0,0);
 }

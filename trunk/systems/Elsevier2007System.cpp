@@ -22,10 +22,10 @@
 Elsevier2007System::Elsevier2007System()
 {
     // the required linear detectors are built
-    mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),N*(d+1));
-    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->Variance(),N*(d+1));
-    mmseDetectorXL = new MMSEDetector(L*(c+e+1),N*(e+1),alphabet->Variance(),N*(d+1),0);
-    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->Variance());
+    mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),N*(d+1));
+    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->variance(),N*(d+1));
+    mmseDetectorXL = new MMSEDetector(L*(c+e+1),N*(e+1),alphabet->variance(),N*(d+1),0);
+    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->variance());
 
 	kalmanEstimatedChannel = NULL;
 }

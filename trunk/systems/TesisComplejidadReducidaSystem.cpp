@@ -69,7 +69,7 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
@@ -81,12 +81,12 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
     }
 
     // variables auxiliares
-//     mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),N*(d+1));
-    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->Variance(),N*(d+1));
-    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->Variance());
+//     mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),N*(d+1));
+    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->variance(),N*(d+1));
+    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->variance());
 
     // estimacion conjunta del canal y los datos
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
+    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
     rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
     lmsEstimator = new LMSEstimator(powerProfile->Means(),N,muLMS);
     nlmsEstimator = new NLMSEstimator(powerProfile->Means(),N,muNLMS);

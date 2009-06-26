@@ -32,13 +32,13 @@ MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),
  * @param noise
  * @return
  */
-tMatrix MIMOChannel::Transmit(tMatrix &symbols,Noise &noise)
+tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
 {
     if(symbols.rows()!=_nInputs)
         throw RuntimeException("MIMOChannel::Transmit: symbol vectors length is wrong.");
     else if(symbols.cols()>_length)
         throw RuntimeException("MIMOChannel::Transmit: channel length is shorter than then number of symbol vectors.");
-    else if(noise.nOutputs()!=_nOutputs || symbols.cols()>noise.Length())
+    else if(noise.nOutputs()!=_nOutputs || symbols.cols()>noise.length())
         throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
 
     // the number of resulting observations depends on the channel _memory

@@ -48,7 +48,7 @@ public:
 	Bits DifferentialDecoding();
 	tBit operator()(int i,int j) const {return _matrix[i*_nBitsByStream+j];}
 	int Nstreams() const { return _nStreams;}
-	int NbitsByStream() const {return _nBitsByStream;}
+	int nBitsPerStream() const {return _nBitsByStream;}
 	bool operator==(const Bits &bits) const;
 	std::vector<tBit> GetStream(int index) const;
 	void Inject(int index,const std::vector<tBit> &stream);

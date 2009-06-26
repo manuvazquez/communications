@@ -33,7 +33,7 @@ Random StatUtil::_randomGenerator(10);
 Random StatUtil::_particlesInitializerRandomGenerator(20);
 #endif
 
-int StatUtil::Discrete_rnd(const tVector &probabilities,Random &randomGenerator)
+int StatUtil::discrete_rnd(const tVector &probabilities,Random &randomGenerator)
 {
     int i;
 	double uniform;
@@ -61,7 +61,7 @@ int StatUtil::Discrete_rnd(const tVector &probabilities,Random &randomGenerator)
 	return res;
 }
 
-vector<int> StatUtil::Discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator)
+vector<int> StatUtil::discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator)
 {
     int i,j;
 	double uniform;

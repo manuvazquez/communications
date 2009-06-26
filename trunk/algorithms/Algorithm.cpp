@@ -29,7 +29,7 @@ double Algorithm::SER(const tMatrix &symbols)
 {
     int windowSize = symbols.cols();
 
-    tMatrix detectedSymbolVectors = GetDetectedSymbolVectors();
+    tMatrix detectedSymbolVectors = getDetectedSymbolVectors();
     int nDetectedVectors = detectedSymbolVectors.cols();
 
     // if the algorithm did know the symbols

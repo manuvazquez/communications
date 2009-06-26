@@ -50,7 +50,7 @@ public:
     void Run(tMatrix observations,vector<double> noiseVariances);
     void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-    tMatrix GetDetectedSymbolVectors();
+    tMatrix getDetectedSymbolVectors();
     vector<tMatrix> GetEstimatedChannelMatrices();
 
 };

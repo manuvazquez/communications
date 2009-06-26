@@ -115,7 +115,7 @@ void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariance
         _channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
-tMatrix CMEapplyingAlgorithm::GetDetectedSymbolVectors()
+tMatrix CMEapplyingAlgorithm::getDetectedSymbolVectors()
 {
     return tMatrix(0,0);
 }

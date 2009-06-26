@@ -19,13 +19,9 @@
  ***************************************************************************/
 #include "Demodulator.h"
 
-Demodulator::Demodulator()
+Bits Demodulator::demodulate(const tMatrix &symbols,Alphabet alphabet)
 {
-}
-
-Bits Demodulator::Demodulate(const tMatrix &symbols,Alphabet alphabet)
-{
-	int nBitsByStream = symbols.cols()*alphabet.NbitsBySymbol();
+	int nBitsByStream = symbols.cols()*alphabet.nBitsPerSymbol();
 	int nStreams = symbols.rows();
 	tBit *matrix = new tBit[nStreams*nBitsByStream];
 
@@ -37,7 +33,7 @@ Bits Demodulator::Demodulate(const tMatrix &symbols,Alphabet alphabet)
 		for(j=0;j<symbols.cols();j++)
 		{
 			vector<tBit> bitsSequence = alphabet[(tSymbol)symbols(i,j)];
-			for(k=0;k<alphabet.NbitsBySymbol();k++,iBit++)
+			for(k=0;k<alphabet.nBitsPerSymbol();k++,iBit++)
 				matrix[i*nBitsByStream+iBit] = bitsSequence[k];
 		}
 	}

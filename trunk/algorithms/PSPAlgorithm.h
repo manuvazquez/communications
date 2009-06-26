@@ -64,7 +64,7 @@ public:
 	void Run(tMatrix observations,vector<double> noiseVariances);
 	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-	tMatrix GetDetectedSymbolVectors();
+	tMatrix getDetectedSymbolVectors();
 	std::vector<tMatrix> GetEstimatedChannelMatrices();
     void PrintState(int iState);
 

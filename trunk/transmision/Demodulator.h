@@ -31,9 +31,7 @@
 
 class Demodulator{
 public:
-    Demodulator();
-
-	static Bits Demodulate(const tMatrix &simbolos,Alphabet alfabeto);
+	static Bits demodulate(const tMatrix &simbolos,Alphabet alfabeto);
 };
 
 #endif

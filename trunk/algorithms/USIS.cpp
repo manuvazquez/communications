@@ -93,10 +93,10 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	vector<tMatrix> channelOrderEstimatorNeededSampledMatrices(_candidateOrders.size());
 
 	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
-	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.Length()));
+	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_N*_maxOrder,_alphabet.length()));
 
 	// "overallSymbolProb" will combine the previous probabilities accordin to the APP of the channel order
-	tMatrix overallSymbolProb(_N*_maxOrder,_alphabet.Length());
+	tMatrix overallSymbolProb(_N*_maxOrder,_alphabet.length());
 
 	// 2*_maxOrder-1 = m_{max} + d_{max}
 	tMatrix forWeightUpdateNeededSymbols(_N,2*_maxOrder-1);
@@ -191,8 +191,8 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 					// operations needed to computed the sampling variance
 
-					//s2qAux = _alphabet.Variance() * stackedChannelMatrix * stackedChannelMatrix^H
-            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.Variance());
+					//s2qAux = _alphabet.variance() * stackedChannelMatrix * stackedChannelMatrix^H
+            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
 					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
@@ -208,11 +208,11 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 						// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
 						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
 
-                		s2q = _alphabet.Variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
+                		s2q = _alphabet.variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_N*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
 
 						sumProb = 0.0;
 						// the probability for each posible symbol alphabet is computed
-						for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+						for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 						{
 							symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
 
@@ -221,11 +221,11 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 						}
 
 						try {
-							for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) /= sumProb;
 						}catch(exception e){
 							cout << "The sum of the probabilities is null." << endl;
-							for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;
 						}
 					}
@@ -248,7 +248,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			// the symbols are sampled from the above combined probabilities
 			for(iSampledSymbol=0;iSampledSymbol<_N*_maxOrder;iSampledSymbol++)
 			{
-				iSampled = StatUtil::Discrete_rnd(overallSymbolProb.row(iSampledSymbol));
+				iSampled = StatUtil::discrete_rnd(overallSymbolProb.row(iSampledSymbol));
 
 				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 

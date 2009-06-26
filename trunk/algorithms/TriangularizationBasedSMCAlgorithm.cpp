@@ -48,7 +48,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 	tMatrix U(_N*(_d+1),_N*(_d+1));
 	tMatrix involvedSymbolVectors = LaGenMatDouble::zeros(_N,_m+_d);
 	int NmMinus1 = _N*(_m-1);
-	tVector symbolProbabilities(_alphabet.Length());
+	tVector symbolProbabilities(_alphabet.length());
 
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
@@ -167,7 +167,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 				sumProb = 0.0;
 
 				// the probability for each posible symbol alphabet is computed
-				for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+				for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 				{
 #ifdef DEBUG2
 					cout << "jU = " << jU << " iSampledSymbol = " << iSampledSymbol << endl;
@@ -180,20 +180,20 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 				}
 
 				try {
-					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
+					for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 						symbolProbabilities(iAlphabet) /= sumProb;
 				}catch(exception e){
 					cout << "TriangularizationBasedSMCAlgorithm::Process: the sum of the probabilities is null." << endl;
 					cout <<  __FILE__  << "(line " << __LINE__ << ") :" << endl;
-					for(iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-						symbolProbabilities(iAlphabet) = 1.0/double(_alphabet.Length());
+					for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+						symbolProbabilities(iAlphabet) = 1.0/double(_alphabet.length());
 				}
 
 #ifdef DEBUG
 				cout << "Las probabilidades calculadas" << endl << symbolProbabilities;
 #endif
 
-				iSampled = StatUtil::Discrete_rnd(symbolProbabilities);
+				iSampled = StatUtil::discrete_rnd(symbolProbabilities);
 				involvedSymbolVectors(iWithinMatrix % _N,iWithinMatrix / _N) = _alphabet[iSampled];
 				proposal *= symbolProbabilities(iSampled);
 

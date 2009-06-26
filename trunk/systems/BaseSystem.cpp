@@ -30,27 +30,27 @@
 using namespace std;
 
 #ifdef EXPORT_REAL_DATA
-	MIMOChannel *realChannel;
-	tMatrix *realSymbols;
-	Noise *realNoise;
+    MIMOChannel *realChannel;
+    tMatrix *realSymbols;
+    Noise *realNoise;
 #endif
 
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1000;
-//     L=3,N=2,K=300;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
+    nFrames = 1;
+    L=3,N=2,K=50;
+    m = 3;
+    d = m - 1;
+    trainSeqLength = 10;
+    preambleLength = 10;
     
-    nFrames = 10;
+/*    nFrames = 10;
     L=10,N=5,K=5;
     m = 1;
     d = m - 1;
     trainSeqLength = 0;
-    preambleLength = 0;    
+    preambleLength = 0;   */ 
 
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
@@ -95,7 +95,7 @@ BaseSystem::BaseSystem()
 
     // the algorithms with the higher smoothing lag require
     nSmoothingSymbolsVectors = 10;
-    nSmoothingBitsVectors = nSmoothingSymbolsVectors*alphabet->NbitsBySymbol();
+    nSmoothingBitsVectors = nSmoothingSymbolsVectors*alphabet->nBitsPerSymbol();
 
 
     // ambiguity resolution
@@ -124,13 +124,13 @@ BaseSystem::BaseSystem()
         randomGenerator.setSeed(0);
 #endif
 
-	channel = NULL;
-	powerProfile = NULL;
+    channel = NULL;
+    powerProfile = NULL;
 }
 
 BaseSystem::~BaseSystem()
 {
-	delete alphabet;
+    delete alphabet;
 }
 
 void BaseSystem::Simulate()
@@ -141,8 +141,8 @@ void BaseSystem::Simulate()
 //     randomGenerator.setSeed();
 //     StatUtil::GetRandomGenerator().setSeed();
 
-	int iFrame = 0;
-	while((iFrame<nFrames) && (!__done))
+    int iFrame = 0;
+    while((iFrame<nFrames) && (!__done))
     {
 
         // the seeds are kept for saving later
@@ -164,13 +164,13 @@ void BaseSystem::Simulate()
         BuildChannel();
 
 #ifdef PRINT_PARAMETERS
-	    cout << "lastSymbolVectorInstant = " << lastSymbolVectorInstant << endl;
+        cout << "lastSymbolVectorInstant = " << lastSymbolVectorInstant << endl;
 #endif
 
         // noise is generated according to the channel
-//         noise = new NullNoise(L,channel->Length());
+//         noise = new NullNoise(L,channel->length());
 //         noise = new ChannelDependentNoise(channel);
-        noise = new PowerProfileDependentNoise(L,channel->Length(),*powerProfile);
+        noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -183,10 +183,10 @@ void BaseSystem::Simulate()
             cout << "SNR = " << SNRs[iSNR] << " [Frame " << iFrame << "]..." << endl;
 
             // noise SNR is set
-            noise->SetSNR(SNRs[iSNR],alphabet->Variance());
+            noise->setSNR(SNRs[iSNR],alphabet->variance());
 
             // transmission
-            observations = channel->Transmit(symbols,*noise);
+            observations = channel->transmit(symbols,*noise);
 
              AddAlgorithms();
 
@@ -206,9 +206,9 @@ void BaseSystem::Simulate()
                 algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observations,noise->Variances());
 
-                detectedSymbols = algorithms[iAlgorithm]->GetDetectedSymbolVectors();
+                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
 
-                pe = TransmissionUtil::ComputeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::Demodulate(detectedSymbols,*alphabet),BERwindowStart,K,permutations);
+                pe = TransmissionUtil::computeBERsolvingAmbiguity(bits,BERwindowStart,K,Demodulator::demodulate(detectedSymbols,*alphabet),BERwindowStart,K,permutations);
 
                 BeforeEndingAlgorithm(iAlgorithm);
 
@@ -224,14 +224,14 @@ void BaseSystem::Simulate()
 
         // ---------------------------------------------------------
 
-	    iFrame++;
+        iFrame++;
 
-	    delete channel;
-	    delete noise;
+        delete channel;
+        delete noise;
     } // while((iFrame<nFrames) && (!done))
 
-	overallPeMatrix *= 1.0/iFrame;
-	overallMseMatrix *= 1.0/iFrame;
+    overallPeMatrix *= 1.0/iFrame;
+    overallMseMatrix *= 1.0/iFrame;
 
     cout << "Overall SER:" << endl;
     Util::Print(overallPeMatrix);
@@ -310,15 +310,15 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
 //     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
-	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
-	Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
+    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
+    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
 
-	if(powerProfile!=NULL)
-	{
-		Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
-		Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
-	}
+    if(powerProfile!=NULL)
+    {
+        Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
+        Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
+    }
     
 }
 

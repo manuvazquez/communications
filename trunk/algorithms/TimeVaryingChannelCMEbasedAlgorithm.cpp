@@ -112,7 +112,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 	Run(observations,noiseVariances);
 }
 
-tMatrix TimeVaryingChannelCMEbasedAlgorithm::GetDetectedSymbolVectors()
+tMatrix TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
 {
 	return tMatrix(0,0);
 }

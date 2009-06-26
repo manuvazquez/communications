@@ -39,7 +39,7 @@ public:
 	virtual void Run(tMatrix observations,vector<double> noiseVariances);
 	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-    virtual tMatrix GetDetectedSymbolVectors();
+    virtual tMatrix getDetectedSymbolVectors();
     virtual vector<tMatrix> GetEstimatedChannelMatrices();
 };
 

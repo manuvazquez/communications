@@ -45,7 +45,7 @@ public:
      *
      * @return the number of time instants
      */
-	int TrajectoryLength() const { return _symbolVectors.cols();}
+	int Trajectorylength() const { return _symbolVectors.cols();}
 
 	double GetWeight() const { return _weight;}
 	void SetWeight(double weight) { _weight = weight;}

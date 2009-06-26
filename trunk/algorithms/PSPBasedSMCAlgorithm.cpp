@@ -42,7 +42,7 @@ void PSPBasedSMCAlgorithm::InitializeParticles()
 
 void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-	uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
 	tRange rmMinus1FirstColumns(0,_m-2),rAllSymbolRows(0,_N-1);
 	vector<tSymbol> testedVector(_N);
 	tVector computedObservations(_L);

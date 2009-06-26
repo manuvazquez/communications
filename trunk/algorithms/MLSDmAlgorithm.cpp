@@ -51,7 +51,7 @@ void MLSDmAlgorithm::InitializeParticles()
 
 void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-    uint nSymbolVectors = (int) pow((double)_alphabet.Length(),(double)_N);
+    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
     tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
     vector<tSymbol> testedVector(_N);
     tVector computedObservations(_L);
@@ -150,16 +150,16 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
         // if none of the candidates was valid
         if(iCandidate==0)
         {
-            tVector uniformDistribution(_alphabet.Length());
-            for(int iAlphabet=0;iAlphabet<_alphabet.Length();iAlphabet++)
-                uniformDistribution(iAlphabet) = 1.0/_alphabet.Length();
+            tVector uniformDistribution(_alphabet.length());
+            for(int iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+                uniformDistribution(iAlphabet) = 1.0/_alphabet.length();
 
             for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
             {
                 processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
                 symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
                 for(k=0;k<_N;k++)
-                    symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::Discrete_rnd(uniformDistribution)];
+                    symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::discrete_rnd(uniformDistribution)];
                 particleCandidates[iParticle].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
 

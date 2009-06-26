@@ -161,7 +161,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     Process(observations,noiseVariances);
 }
 
-tMatrix SMCAlgorithm::GetDetectedSymbolVectors()
+tMatrix SMCAlgorithm::getDetectedSymbolVectors()
 {
     // best particle is chosen
 //     int iBestParticle = _particleFilter->iBestParticle();

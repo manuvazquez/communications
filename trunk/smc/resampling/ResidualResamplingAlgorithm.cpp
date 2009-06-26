@@ -51,15 +51,15 @@ std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const tVector 
 	residues *= 1.0/double(nParticlesFromResidues);
 
 #ifdef DEBUG
-	cout << "antes de Discrete_rnd" << endl;
+	cout << "antes de discrete_rnd" << endl;
 	cout << "nDeterministicParticles = " << nDeterministicParticles << endl;
 	cout << "nParticlesFromResidues = " << nParticlesFromResidues << endl;
 #endif
 
-	vector<int> indexes = StatUtil::Discrete_rnd(nParticlesFromResidues,residues);
+	vector<int> indexes = StatUtil::discrete_rnd(nParticlesFromResidues,residues);
 
 #ifdef DEBUG
-	cout << "despues de Discrete_rnd" << endl;
+	cout << "despues de discrete_rnd" << endl;
 #endif
 
 	indexes.reserve(n);

@@ -49,7 +49,7 @@ LMSmuTestSystem::LMSmuTestSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->Length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
@@ -61,7 +61,7 @@ LMSmuTestSystem::LMSmuTestSystem()
     }
 
     // estimacion conjunta del canal y los datos
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->Variance(),forgettingFactorDetector,N*(d+1));
+    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
     for(uint iMu=0;iMu<musLMS.size();iMu++)
         LMSchannelEstimators.push_back(new NLMSEstimator(powerProfile->Means(),N,musLMS[iMu]));
