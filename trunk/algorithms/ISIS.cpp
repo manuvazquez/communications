@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
+ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
 {
 }
 
@@ -86,7 +86,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				likelihoods(iTestedVector) = 0.0;
 
 				// the corresponding testing vector is generated from the index
-				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 				{
@@ -113,7 +113,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 					for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
 					{
 						// a testing smoothing vector is generated for the index
-						_alphabet.IntToSymbolsArray(iSmoothingVector,testedSmoothingVector);
+						_alphabet.int2symbolsArray(iSmoothingVector,testedSmoothingVector);
 
 						// symbols used for smoothing are copied into "smoothingSymbolVectors"
 						for(k=0;k<testedSmoothingVector.size();k++)
@@ -165,7 +165,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			iSampledVector = StatUtil::discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
-			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
+			_alphabet.int2symbolsArray(iSampledVector,sampledVector);
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);

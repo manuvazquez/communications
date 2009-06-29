@@ -27,7 +27,7 @@
     extern Noise *realNoise;
 #endif
 
-CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble): UnknownChannelOrderAlgorithm(name, alphabet, L, N, K, channelEstimators, preamble, preamble.cols())
+CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble): UnknownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, preamble.cols())
 {
 }
 

@@ -40,7 +40,7 @@ protected:
     tMatrix _spreadingCodes;
     
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
-    tMatrix _usersActivity;
+    vector<vector<bool> > _usersActivity;
     
     double userPersistenceProb,newActiveUserProb,userPriorProb;
     

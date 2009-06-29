@@ -21,7 +21,7 @@
 #define BASESYSTEM_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 
@@ -69,26 +69,31 @@ protected:
     int lastSymbolVectorInstant;
 
     // GLOBAL PARAMETERS
-    int nFrames,L,N,K,m,d,trainSeqLength,preambleLength;
+    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;
     char outputFileName[HOSTNAME_LENGTH+4];
 
     Alphabet *alphabet;
 
-	Noise *noise;
-	tMatrix observations;
+    Noise *noise;
+    tMatrix observations;
 
     // SNRs to be processed
     std::vector<int> SNRs;
 
     // BER and MSE computing
-    int BERwindowStart,MSEwindowStart;
+    int BERwindowStart,MSEwindowStart,symbolsDetectionWindowStart;
 
     // a vector that will contain the names of the algorithms
     std::vector<std::string> algorithmsNames;
 
     tMatrix preamble;
 
-    int nSmoothingSymbolsVectors,nSmoothingBitsVectors;
+    int nSmoothingSymbolsVectors;
+//     int nSmoothingBitsVectors;
+    
+//     tMatrix isSymbolAccountedForDetection;
+//     bool *isSymbolAccountedForDetection[];
+    vector<vector<bool> > isSymbolAccountedForDetection;
 
     std::vector<std::vector<uint> > permutations;
 

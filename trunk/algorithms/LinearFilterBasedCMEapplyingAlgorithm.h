@@ -28,7 +28,7 @@
 class LinearFilterBasedCMEapplyingAlgorithm : public CMEapplyingAlgorithm
 {
 public:
-    LinearFilterBasedCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, vector< LinearDetector *> linearDetectors, double ARcoefficient, bool substractContributionFromKnownSymbols);
+    LinearFilterBasedCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, vector< LinearDetector *> linearDetectors, double ARcoefficient, bool substractContributionFromKnownSymbols);
 
     ~LinearFilterBasedCMEapplyingAlgorithm();
 

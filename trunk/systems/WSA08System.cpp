@@ -94,7 +94,7 @@ void WSA08System::BuildChannel()
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->GenerateChannelMatrix(randomGenerator));
 #ifdef DEBUG
 	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
-	cout << "El canal al final" << endl << (*channel)[K];
+	cout << "El canal al final" << endl << (*channel)[frameLength];
 #endif
 }
 

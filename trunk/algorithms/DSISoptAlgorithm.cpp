@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, K,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
+DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, frameLength,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
 {
 //     _randomParticlesInitilization = true;
 }
@@ -64,7 +64,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
 				// the corresponding testing vector is generated from the index
-				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
 				for(k=0;k<_N;k++)
@@ -76,7 +76,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 				for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
 				{
 					// a testing smoothing vector is generated for the index
-					_alphabet.IntToSymbolsArray(iSmoothingVector,testedSmoothingVector);
+					_alphabet.int2symbolsArray(iSmoothingVector,testedSmoothingVector);
 
 					// symbols used for smoothing are copied into "smoothingSymbolVectors"
 					for(k=0;k<testedSmoothingVector.size();k++)
@@ -122,7 +122,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			iSampledVector = StatUtil::discrete_rnd(probabilities);
 
 			// the above index is turned into a vector
-			_alphabet.IntToSymbolsArray(iSampledVector,sampledVector);
+			_alphabet.int2symbolsArray(iSampledVector,sampledVector);
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);

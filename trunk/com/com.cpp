@@ -59,7 +59,7 @@ int main(int argc,char* argv[])
 //     LMSmuTestSystem system;
 //     PSPvsSMCSystem system;
 
-    TesisOrdenCanalDesconocidoARSystem system;
+//     TesisOrdenCanalDesconocidoARSystem system;
 //     TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
@@ -67,7 +67,7 @@ int main(int argc,char* argv[])
 
 //     TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
-//     CDMASystem system;
+    CDMASystem system;
 
     system.Simulate();
 }

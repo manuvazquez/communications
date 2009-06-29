@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int K, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, K,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.Memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, frameLength,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.Memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
 {
     if(preamble.cols() < (channel.Memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
@@ -62,7 +62,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet"
-    int initialState = _alphabet.SymbolsArrayToInt(preambleVector);
+    int initialState = _alphabet.symbolsArray2int(preambleVector);
 
     _exitStage[initialState] = ViterbiPath(_K,0.0,_preamble);
 
@@ -128,7 +128,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     tMatrix symbolVectors(channel.nInputs(),channel.Memory());
 
 	// the state determines the first "channel.Memory()" symbol vectors involved in the "observations"
-	_alphabet.IntToSymbolsArray(iState,_stateVector);
+	_alphabet.int2symbolsArray(iState,_stateVector);
 	for(int i=0;i<channel.nInputs()*(channel.Memory()-1);i++)
 		symbolVectors(i % channel.nInputs(),i / channel.nInputs()) = _stateVector[i];
 
@@ -136,7 +136,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
     {
         // the decimal input is converted to a symbol vector according to the alphabet
-        _alphabet.IntToSymbolsArray(iInput,_inputVector);
+        _alphabet.int2symbolsArray(iInput,_inputVector);
 
         // it's copied into "symbolVectors"
         for(int i=0;i<channel.nInputs();i++)

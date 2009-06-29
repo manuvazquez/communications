@@ -73,6 +73,7 @@ public:
     static void elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
     static void elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C);    
     template<class T> static void Print(const std::vector<T> &vector);
+    template<class T> static void Print(const std::vector<std::vector<T> > &matrix);
     template<class T> static void Print(const T* array,int nElements);
     static void ShiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);

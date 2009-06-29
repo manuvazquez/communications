@@ -34,7 +34,7 @@ class TimeVaryingChannelCMEbasedAlgorithm : public UnknownChannelOrderAlgorithm
 protected:
     tMatrix _symbolVectors;
 public:
-    TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
+    TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
 
 	virtual void Run(tMatrix observations,vector<double> noiseVariances);
 	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

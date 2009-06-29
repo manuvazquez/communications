@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int K):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(K)
+Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int frameLength):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(frameLength)
 {
 }
 

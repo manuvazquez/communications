@@ -40,7 +40,7 @@ protected:
 
 	tMatrix _channelOrderAPPs;
 public:
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
+    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 

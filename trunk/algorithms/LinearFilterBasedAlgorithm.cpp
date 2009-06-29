@@ -22,9 +22,9 @@
 // #define DEBUG
 #include <KnownSymbolsKalmanEstimator.h>
 
-LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_c(backwardsSmoothingLag),_d(smoothingLag),_linearDetector(linearDetector->Clone()),_detectedSymbolVectors(N,K),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble),_c(backwardsSmoothingLag),_d(smoothingLag),_linearDetector(linearDetector->Clone()),_detectedSymbolVectors(N,frameLength),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
-	_estimatedChannelMatrices = new tMatrix[K];
+	_estimatedChannelMatrices = new tMatrix[frameLength];
 }
 
 
@@ -122,7 +122,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
         }
 
 		for(iRow=0;iRow<_N;iRow++)
-			_detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.HardDecision(softEstimations(iRow));
+			_detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
 		tRange rInvolvedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors(rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[iObservationToBeProcessed]);

@@ -19,13 +19,13 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(channelEstimator->Clone()),_m(m),_Nm(channelEstimator->Cols()),_preamble(preamble)
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,frameLength),_channelEstimator(channelEstimator->Clone()),_m(m),_Nm(channelEstimator->Cols()),_preamble(preamble)
 {
     if(_m!=(_Nm/_N))
         throw RuntimeException("KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm: the channel order parameter is not coherent with the channel estimator.");
 }
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,K),_channelEstimator(NULL),_m(m),_Nm(_N*m),_preamble(preamble)
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,N,frameLength),_channelEstimator(NULL),_m(m),_Nm(_N*m),_preamble(preamble)
 {
 }
 

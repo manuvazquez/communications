@@ -58,7 +58,7 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 	return _bitsSequences[iterador - _symbols.begin()];
 }
 
-void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res) const
+void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const
 {
 	int tamVector = res.size();
 
@@ -67,7 +67,7 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res) const
 	#endif
 
 	if(numero>=pow((double)_length,(double)tamVector))
-		throw RuntimeException("Alphabet::IntToSymbolsArray: vector size is smaller than needed.");
+		throw RuntimeException("Alphabet::int2symbolsArray: vector size is smaller than needed.");
 
 	int resto,i;
 
@@ -84,7 +84,7 @@ void Alphabet::IntToSymbolsArray(int numero, vector<tSymbol> &res) const
 		res[tamVector-i] = _symbols[0];
 }
 
-int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
+int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector)
 {
 	int size = symbolsVector.size();
 
@@ -102,7 +102,7 @@ int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
 		{
-			throw RuntimeException("Alphabet::SymbolsArrayToInt: Symbol not found.");
+			throw RuntimeException("Alphabet::symbolsArray2int: Symbol not found.");
 		}
 		res += base*(iterator - _symbols.begin());
 		base *= _length;
@@ -110,7 +110,7 @@ int Alphabet::SymbolsArrayToInt(vector<tSymbol> symbolsVector)
 	return res;
 }
 
-tSymbol Alphabet::HardDecision(double softEstimation)
+tSymbol Alphabet::hardDecision(double softEstimation)
 {
 	double distance;
 

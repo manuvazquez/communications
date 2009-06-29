@@ -71,7 +71,7 @@ void ChannelOrderEstimationSystem::OnlyOnce()
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
-	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),K)));
+	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),frameLength)));
 
 // 	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),1))); // <-----------------------------------
 }
@@ -86,7 +86,7 @@ void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
 		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime();
 
 // 		tMatrix aux = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->GetChannelOrderAPPsAlongTime(); // <-------------------------------
-// 		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = aux.col(K-1);
+// 		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = aux.col(frameLength-1);
 
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}

@@ -38,8 +38,8 @@ protected:
 	tMatrix _preamble;
 
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int K,int m,tMatrix preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m,tMatrix preamble);
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::HsToStackedH;

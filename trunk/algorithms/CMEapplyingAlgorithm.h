@@ -40,7 +40,7 @@ protected:
     virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;
     virtual std::vector<tMatrix> estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;
 public:
-    CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int K,vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble);
+    CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength,vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble);
 
     virtual void Run(tMatrix observations,vector<double> noiseVariances);
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

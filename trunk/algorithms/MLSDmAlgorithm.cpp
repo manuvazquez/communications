@@ -21,7 +21,7 @@
 
 #define DEBUG4
 
-MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int K, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, K, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
+MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
 }
 
@@ -103,7 +103,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
             {
                 // the corresponding testing vector is generated from the index
-                _alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+                _alphabet.int2symbolsArray(iTestedVector,testedVector);
 
                 // current tested vector is copied in the m-th position
                 for(k=0;k<_N;k++)

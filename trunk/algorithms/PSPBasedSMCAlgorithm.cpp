@@ -29,7 +29,7 @@
 	extern Noise *realNoise;
 #endif
 
-PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient): SMCAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient)
+PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient): SMCAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient)
 {
 }
 
@@ -87,7 +87,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
 				// the corresponding testing vector is generated from the index
-				_alphabet.IntToSymbolsArray(iTestedVector,testedVector);
+				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
 				for(int k=0;k<_N;k++)

@@ -445,6 +445,20 @@ template void Util::Print(const std::vector<uint> &vector);
 template void Util::Print(const std::vector<double> &vector);
 template void Util::Print(const std::vector<bool> &vector);
 
+template<class T> void Util::Print(const std::vector<std::vector<T> > &matrix)
+{
+    cout << "[\n";
+    for(uint i=0;i<matrix.size();i++)
+    {
+        for(uint j=0;j<matrix[i].size()-1;j++)
+            cout << matrix[i][j] << ",";
+        cout << matrix[i][matrix[i].size()-1] << "\n" << endl;
+    }
+   cout << "]\n";
+}
+
+template void Util::Print(const std::vector<std::vector<bool> > &matrix);
+
 template<class T> void Util::Print(const T* array,int nElements)
 {
     cout << "[";

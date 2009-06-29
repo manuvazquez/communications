@@ -22,7 +22,7 @@
 // #define DEBUG3
 // #define DEBUG4
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int K, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, K, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,K+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,frameLength+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");
@@ -156,7 +156,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
         initialStateVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _N,i / _N);
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
-    int initialState = _alphabet.SymbolsArrayToInt(initialStateVector);
+    int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_K+_d,0.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
@@ -193,7 +193,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         initialStateVector[i-iFirstPreambleSymbolNeeded] = preambleTrainingSequence(i % _N,i / _N);
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
-    int initialState = _alphabet.SymbolsArrayToInt(initialStateVector);
+    int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_K+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
@@ -211,7 +211,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
     tMatrix symbolVectors(_N,_m);
 
 	// the state determines the first "_m" symbol vectors involved in the "observations"
-	_alphabet.IntToSymbolsArray(iState,_stateVector);
+	_alphabet.int2symbolsArray(iState,_stateVector);
 	for(int i=0;i<_N*(_m-1);i++)
 		symbolVectors(i % _N,i / _N) = _stateVector[i];
 
@@ -221,7 +221,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
         arrivalState = _trellis(iState,iInput);
 
         // the decimal input is converted to a symbol vector according to the alphabet
-        _alphabet.IntToSymbolsArray(iInput,_inputVector);
+        _alphabet.int2symbolsArray(iInput,_inputVector);
 
         // it's copied into "symbolVectors"
         for(int i=0;i<_N;i++)
