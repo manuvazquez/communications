@@ -458,6 +458,7 @@ template<class T> void Util::Print(const std::vector<std::vector<T> > &matrix)
 }
 
 template void Util::Print(const std::vector<std::vector<bool> > &matrix);
+template void Util::Print(const std::vector<std::vector<uint> > &matrix);
 
 template<class T> void Util::Print(const T* array,int nElements)
 {

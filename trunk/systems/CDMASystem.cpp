@@ -89,7 +89,6 @@ void CDMASystem::BuildChannel()
 #endif
     
     // when users are not transmitting, their symbols are zero
-//     _usersActivity = LaGenMatDouble::ones(symbols.rows(),frameLength);
     _usersActivity = vector<vector<bool> >(symbols.rows(),vector<bool>(frameLength));
     
     tVector userActivePriorPdf(2);
@@ -109,8 +108,6 @@ void CDMASystem::BuildChannel()
     // at the first time instant the prior probability is used to decide which users are active
     for(uint iUser=0;iUser<symbols.rows();iUser++)
     {
-//         _usersActivity(iUser,trainSeqLength) = double(usersActive[iUser]);
-//         symbols(iUser,preambleLength+trainSeqLength) = _usersActivity(iUser,trainSeqLength)*symbols(iUser,preambleLength+trainSeqLength);
         _usersActivity[iUser][trainSeqLength] = bool(usersActive[iUser]);
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
     }
@@ -118,16 +115,7 @@ void CDMASystem::BuildChannel()
     // set of active users evolves according to the given probabilities
     for(uint iTime=trainSeqLength+1;iTime<frameLength;iTime++)    
         for(uint iUser=0;iUser<symbols.rows();iUser++)
-        {
-//             // the user was active in the last time instant
-//             if(_usersActivity(iUser,iTime-1)==1.0) 
-//                 _usersActivity(iUser,iTime)= StatUtil::discrete_rnd(userActiveGivenItWasPdf);
-//             // the user was NOT active in the last time instant
-//             else
-//                 _usersActivity(iUser,iTime)= StatUtil::discrete_rnd(userActiveGivenItWasNotPdf);
-//             
-//             symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*_usersActivity(iUser,iTime);
-            
+        {   
             // the user was active in the last time instant
             if(_usersActivity[iUser][iTime-1]) 
                 _usersActivity[iUser][iTime]= bool(StatUtil::discrete_rnd(userActiveGivenItWasPdf));
@@ -140,7 +128,6 @@ void CDMASystem::BuildChannel()
             
 #ifdef DEBUG
     Util::Print(usersActive);
-//     cout << "users activity at time 0" << endl << _usersActivity;
     cout << "users activity at time 0" << endl;
     Util::Print(_usersActivity);
 #endif            

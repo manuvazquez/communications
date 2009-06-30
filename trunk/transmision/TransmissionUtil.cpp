@@ -63,58 +63,93 @@ double TransmissionUtil::ComputeBER(const Bits &bits1,int from1,int to1,const Bi
     return (double)errors/(double)(length*bits1.nStreams());
 }
 
-double TransmissionUtil::ComputeBER(const tMatrix &symbols1,const tMatrix &symbols2,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
+double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
 {
-    if(symbols1.rows()!= symbols2.rows() || symbols2.rows()!= mask.size())
-      throw RuntimeException("TransmissionUtil::ComputeBER: matrix row numbers differ.");
+    if(detectedSymbols.rows() == 0)
+        return 0.0;
 
-    if(symbols1.cols()!= symbols2.cols() || symbols2.cols()!= mask[0].size())
-      throw RuntimeException("TransmissionUtil::ComputeBER: matrix column numbers differ.");
-        
-    if(permutations.size() != symbols1.rows())
-      throw RuntimeException("TransmissionUtil::ComputeBER: number of permutations and number of inputs don't match.");        
-    
-/*    // max number of errors is length*sourceBits.nStreams()
-    int minErrors = length*sourceBits.nStreams()+1;
-
-    bool bitsDiffer;
-    
-    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
     {
-      int errorsPermutation = 0;
-
-      for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-      {
-        int errorsInverting=0,errorsWithoutInverting=0;
-
-        for(uint iTime=0;iTime<symbols1.cols();iTime++)
-        {
-          if(mask(permutations[iPermut][iStream],iTime)
-        }
-        
-        for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
-        {
-                // do bits differ?
-          bitsDiffer = (sourceBits(iStream,iSourceStream) != detectedBits(permutations[iPermut][iStream],iDetectedStream));
-                
-                // if they do, this entails an error
-          errorsWithoutInverting += bitsDiffer;
-                
-                // or no error if the bit needs to be inverted due to the ambiguity
-          errorsInverting += !bitsDiffer;
-        }
-
-        if(errorsWithoutInverting<errorsInverting)
-          errorsPermutation += errorsWithoutInverting;
-        else
-          errorsPermutation += errorsInverting;
-      }
-
-      if(errorsPermutation<minErrors)
-        minErrors = errorsPermutation;
+        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+        throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
     }
 
-    return (double)minErrors/(double)(length*sourceBits.nStreams());  */  
+    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+      throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
+        
+    if(permutations.size() != sourceSymbols.rows())
+      throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match.");        
+
+#ifdef DEBUG
+    cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
+    Util::Print(mask);
+#endif
+
+    uint iBestPermutation = 0;
+    vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
+
+    // max number of errors
+    int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
+    
+    bool symbolsDiffer;
+    uint nAccountedSymbols = 0;
+    uint iInput;
+
+    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    {
+        int permutationErrors = 0;
+        
+        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        {
+            iInput = permutations[iPermut][iStream];
+          
+            int errorsInverting=0,errorsWithoutInverting=0;
+            
+            for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+            {
+                // if this symbol is not accounted for
+                if(!mask[iInput][iTime])
+                    continue;
+                    
+                // symbols differ?
+                symbolsDiffer = sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+                
+                // if they do, this entails an error
+                errorsWithoutInverting += symbolsDiffer;
+                
+                // or no error if the symbol needs to be inverted due to the ambiguity
+                errorsInverting += !symbolsDiffer;
+                
+                nAccountedSymbols++;
+            }
+            
+            if(errorsWithoutInverting<errorsInverting)
+            {
+                permutationErrors += errorsWithoutInverting;
+                bestPermutationSigns[iStream] = 1;
+            }
+            else
+            {
+                permutationErrors += errorsInverting;
+                bestPermutationSigns[iStream] = -1;
+            }
+        } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        
+        if(permutationErrors<minErrors)
+        {
+            minErrors = permutationErrors;
+            iBestPermutation = iPermut;
+        }
+    }
+    
+    nAccountedSymbols /= permutations.size();
+    
+#ifdef DEBUG
+    cout << "dividing " << minErrors << " by " << nAccountedSymbols << endl;
+    cout << "iBestPermutation = " << iBestPermutation << " and the signs" << endl;
+    Util::Print(bestPermutationSigns);
+#endif
+    return (double)minErrors/(double)(nAccountedSymbols);
 }
 
 double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
@@ -122,9 +157,19 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
     if(detectedBits.nBitsPerStream()==0 || detectedBits.nStreams()==0)
         return 0.0;
 
+#ifdef DEBUG
+    cout << "source bits...to be revised from " << from1 << " to " << to1 << endl;
+    sourceBits.Print();
+    cout << "detected bits...to be revised from " << from2 << " to " << to2 << endl;
+    detectedBits.Print();    
+#endif
+
     BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
 
     int length = to1-from1;
+
+    uint iBestPermutation = 0;
+    vector<int> bestPermutationSigns(sourceBits.nStreams(),1);
 
     // max number of errors is length*sourceBits.nStreams()
     int minErrors = length*sourceBits.nStreams()+1;
@@ -152,15 +197,30 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
             }
 
             if(errorsWithoutInverting<errorsInverting)
+            {
                 errorsPermutation += errorsWithoutInverting;
+                bestPermutationSigns[iStream] = 1;
+            }
             else
+            {
                 errorsPermutation += errorsInverting;
+                bestPermutationSigns[iStream] = -1;
+            }
         }
 
         if(errorsPermutation<minErrors)
+        {
             minErrors = errorsPermutation;
+            iBestPermutation = iPermut;
+        }
     }
 
+#ifdef DEBUG
+    cout << "dividing " << minErrors << " by " << length*sourceBits.nStreams() << endl;
+    cout << "iBestPermutation = " << iBestPermutation << " and the signs" << endl;
+    Util::Print(bestPermutationSigns);
+    Util::Print(permutations);    
+#endif
     return (double)minErrors/(double)(length*sourceBits.nStreams());
 }
 
@@ -191,31 +251,17 @@ tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChan
         throw RuntimeException("TransmissionUtil::MSEalongTime: one or several comparison limits are wrong.");
     }
 
-#ifdef DEBUG
-    cout << "antes de inicializar res" << endl;
-#endif
-
-#ifdef DEBUG
-    cout << "hola" << endl;
-#endif
-
     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
     try {
         for(int iSource1=from1,iSource2=from2,iRes=0;iSource1<=to1;iSource1++,iSource2++,iRes++)
         {
             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
             res(iRes) = Util::SquareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(Blas_NormF(trueChannelMatrices.at(iSource2)),2.0);
-#ifdef DEBUG
-//          cout << "comparando" << endl << trueChannelMatrices.at(iSource2) << "y" << endl << estimatedChannelMatrices.at(iSource1) << endl;
-            cout << "res(" << iRes << ") = " << res(iRes) << " res.size() = " << res.size() << endl;
-#endif
+
         }
     } catch (IncompatibleOperandsException) {
         return res;
     }
-#ifdef DEBUG
-    cout << "res.zie " << res.size() << endl;
-#endif
 
     return res;
 }

@@ -16,7 +16,7 @@ class Alphabet
         double _mean,_variance;
     public:
         Alphabet(int nBitsPorSimbolo,int longitudAlphabet,std::vector<std::vector<tBit> > secuenciasBits,std::vector<tSymbol> simbolos);
-        int nBitsPerSymbol() { return _nBitsBySymbol;}
+        int nBitsPerSymbol() const { return _nBitsBySymbol;}
         double variance() { return _variance;}
         tSymbol operator [](std::vector<tBit> secuenciaBitsBuscada);
         tSymbol operator [](int index) { return _symbols[index];}

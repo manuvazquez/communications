@@ -81,18 +81,16 @@ protected:
     std::vector<int> SNRs;
 
     // BER and MSE computing
-    int BERwindowStart,MSEwindowStart,symbolsDetectionWindowStart;
+    int MSEwindowStart,symbolsDetectionWindowStart;
 
     // a vector that will contain the names of the algorithms
     std::vector<std::string> algorithmsNames;
 
     tMatrix preamble;
 
+    // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     int nSmoothingSymbolsVectors;
-//     int nSmoothingBitsVectors;
     
-//     tMatrix isSymbolAccountedForDetection;
-//     bool *isSymbolAccountedForDetection[];
     vector<vector<bool> > isSymbolAccountedForDetection;
 
     std::vector<std::vector<uint> > permutations;
@@ -104,8 +102,7 @@ protected:
     // ...so that they can be printed when the program finishes (they are not saved)
     tMatrix overallPeMatrix,overallMseMatrix;
     
-    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms
-    // in order to save them
+    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms in order to save them
     tMatrix presentFramePe,presentFrameMSE;
 
     // BER time evolution
@@ -121,6 +118,9 @@ protected:
     vector<tMatrix> presentFrameMSEtimeEvolution;
     vector<vector<tMatrix> > MSEtimeEvolution;
 #endif
+
+    // some useful ranges
+    tRange rFrameDuration,rTrainingSeqDuration,rAll;
 
     Random randomGenerator;
 

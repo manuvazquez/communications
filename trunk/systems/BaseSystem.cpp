@@ -27,7 +27,7 @@
 // #define EXPORT_REAL_DATA
 #define PRINT_PARAMETERS
 
-// #define DEBUG
+#define DEBUG
 
 using namespace std;
 
@@ -40,31 +40,29 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1;
-//     L=3,N=2,frameLength=50;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
-    nFrames = 10;
-    L=10,N=5,frameLength=5;
-    m = 1;
+    nFrames = 1;
+    L=3,N=2,frameLength=50;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 10;    
+    nSmoothingSymbolsVectors = 10;
+    
+//     nFrames = 10;
+//     L=10,N=5,frameLength=5;
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 10;
 
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
     // BER and MSE computing
-    BERwindowStart = trainSeqLength;
-    BERwindowStart = frameLength*3/10;
     symbolsDetectionWindowStart = trainSeqLength;
     symbolsDetectionWindowStart = frameLength*3/10;    
     MSEwindowStart = 0;
@@ -103,20 +101,13 @@ BaseSystem::BaseSystem()
     preamble = tMatrix(N,preambleLength);
     preamble = -1.0;
     
-//     // ...which, in turn, entail...
-//     nSmoothingBitsVectors = nSmoothingSymbolsVectors*alphabet->nBitsPerSymbol();
-
     // the frame length in bits is
     nBitsGenerated = (frameLength+nSmoothingSymbolsVectors)*alphabet->nBitsPerSymbol();
     
     // which symbols are to be taken into account when detecting
-//     isSymbolAccountedForDetection = LaGenMatDouble::ones(N,frameLength);
-    
-//     isSymbolAccountedForDetection = new bool[N][frameLength];
     isSymbolAccountedForDetection = vector<vector<bool> >(N,vector<bool>(frameLength));
     
 #ifdef DEBUG
-//     cout << isSymbolAccountedForDetection.cols() << endl;
     cout << isSymbolAccountedForDetection[0].size() << endl;    
 #endif
     
@@ -124,17 +115,25 @@ BaseSystem::BaseSystem()
     for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
         for(int iInput=0;iInput<N;iInput++)
             isSymbolAccountedForDetection[iInput][iTime] = false;        
-//             isSymbolAccountedForDetection(iInput,iTime) = 0.0;
   
     for(int iTime=symbolsDetectionWindowStart;iTime<frameLength;iTime++)
         for(int iInput=0;iInput<N;iInput++)
             isSymbolAccountedForDetection[iInput][iTime] = true;   
+    
+#ifdef DEBUG
+    cout << "isSymbolAccountedForDetection" << endl;
+    Util::Print(isSymbolAccountedForDetection);
+#endif    
     
     // ambiguity resolution
     uint *firstPermutation = new uint[N];
     for(int i=0;i<N;i++) firstPermutation[i] = i;
     permutations = Util::Permutations(firstPermutation,N);
     delete[] firstPermutation;
+
+    // useful ranges are initialized
+    rFrameDuration = tRange(preambleLength,preambleLength+frameLength-1);
+    rTrainingSeqDuration = tRange(preambleLength,preambleLength+trainSeqLength-1);
 
     peMatrices.reserve(nFrames);
     MSEMatrices.reserve(nFrames);
@@ -167,7 +166,7 @@ BaseSystem::~BaseSystem()
 
 void BaseSystem::Simulate()
 {
-  tRange rAll;
+//   tRange rAll;
 
     // for repeating simulations
 //     randomGenerator.setSeed();
@@ -182,7 +181,6 @@ void BaseSystem::Simulate()
         statUtilSeeds.push_back(StatUtil::GetRandomGenerator().getSeed());
 
         // bits are generated ...
-//         Bits bits(N,frameLength+nSmoothingBitsVectors,randomGenerator);
         Bits bits(N,nBitsGenerated,randomGenerator);        
 
         // ... and then modulated by means of the alphabet
@@ -236,14 +234,14 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,rTrainingSeqDuration));
 //                 algorithms[iAlgorithm]->Run(observations,noise->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
 
-//                 pe = TransmissionUtil::computeBERsolvingAmbiguity(bits,BERwindowStart,frameLength,Demodulator::demodulate(detectedSymbols,*alphabet),BERwindowStart,frameLength,permutations);
-
-                pe = TransmissionUtil::computeBERsolvingAmbiguity(bits,symbolsDetectionWindowStart,frameLength,Demodulator::demodulate(detectedSymbols,*alphabet),symbolsDetectionWindowStart,frameLength,permutations);                
+//                 pe = TransmissionUtil::computeBERsolvingAmbiguity(bits,symbolsDetectionWindowStart,frameLength,Demodulator::demodulate(detectedSymbols,*alphabet),symbolsDetectionWindowStart,frameLength,permutations);                
+                
+                pe = TransmissionUtil::computeSER(symbols(tRange(),rFrameDuration),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
                 
                 BeforeEndingAlgorithm(iAlgorithm);
 
@@ -336,11 +334,10 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(frameLength,"frameLength",f);
     Util::ScalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
     Util::ScalarToOctaveFileStream(d,"d",f);
-    Util::ScalarToOctaveFileStream(BERwindowStart,"BERwindowStart",f);
+    Util::ScalarToOctaveFileStream(symbolsDetectionWindowStart,"symbolsDetectionWindowStart",f);
     Util::ScalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
     Util::ScalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
     Util::MatrixToOctaveFileStream(preamble,"preamble",f);
-//     Util::ScalarToOctaveFileStream(nSmoothingBitsVectors,"nSmoothingBitsVectors",f);
     Util::ScalarToOctaveFileStream(nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",f);    
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
@@ -379,7 +376,8 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     presentFrameMSE(iSNR,iAlgorithm) = mse;
 
     // Pe evolution
-    tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+frameLength-1));
+//     tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+frameLength-1));
+    tMatrix transmittedSymbols = symbols(tRange(0,N-1),rFrameDuration);
 
     if(detectedSymbols.rows()!=0)
     {
