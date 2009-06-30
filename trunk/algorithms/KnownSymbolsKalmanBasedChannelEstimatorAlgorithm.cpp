@@ -35,7 +35,7 @@ void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,
 
     for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
     {
-        _estimatedChannelMatrices.push_back( _channelEstimator->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_m+1,iSymbolVector)),noiseVariances[iSymbolVector]));
+        _estimatedChannelMatrices.push_back( _channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_m+1,iSymbolVector)),noiseVariances[iSymbolVector]));
     }
 }
 

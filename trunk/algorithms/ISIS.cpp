@@ -35,7 +35,7 @@ void ISIS::InitializeParticles()
 		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
         {
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
-//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_L));
+//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_L));
         }
 
 		// ... and passed within a vector to each particle
@@ -129,10 +129,10 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 							tRange mColumns(iSmoothingLag,iSmoothingLag+m-1);
 
 							// the likelihood is computed and accumulated
-							auxLikelihoodsProd *= auxChannelEstimator->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAllSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+							auxLikelihoodsProd *= auxChannelEstimator->likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAllSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 							// a step in the Kalman Filter
-							auxChannelEstimator->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAllSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+							auxChannelEstimator->nextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAllSymbolRows,mColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 						} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 
 						// memory of the clone is freed
@@ -189,14 +189,14 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
                 // the a posteriori probability for each channel order must be updated with the previous app for this order and the likelihood at the present instant with the sampled symbol vector
                 newChannelOrderAPPs[iChannelOrder] = processedParticle->GetChannelOrderAPP(iChannelOrder)*
-                auxChannelEstimator->Likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
+                auxChannelEstimator->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
                 channelOrderAPPsNormConstant += newChannelOrderAPPs[iChannelOrder];
 
 // 				processedParticle->SetChannelOrderAPP(newChannelOrderAPP,iChannelOrder);
 
 				// channel matrix is estimated with each of the channel estimators within the particle
-				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,auxChannelEstimator->NextMatrix(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]));
+				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,auxChannelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]));
 			}
 
             if(channelOrderAPPsNormConstant!=0)

@@ -52,11 +52,11 @@ public:
 	ARprocess(const ARprocess &arprocess);
 	~ARprocess();
 
-	tMatrix NextMatrix();
+	tMatrix nextMatrix();
 	static vector<double> ParametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 
-	int Rows() {return _rows;}
-	int Cols() {return _columns;}
+	int rows() {return _rows;}
+	int cols() {return _columns;}
 };
 
 #endif

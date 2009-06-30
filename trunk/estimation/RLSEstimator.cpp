@@ -35,7 +35,7 @@ ChannelMatrixEstimator* RLSEstimator::Clone() const
 	return new RLSEstimator(*this);
 }
 
-// tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+// tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 // {
 // 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
 // 		throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
@@ -102,7 +102,7 @@ ChannelMatrixEstimator* RLSEstimator::Clone() const
 // 	return _lastEstimatedChannelMatrix;
 // }
 
-double RLSEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+double RLSEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
 #ifdef DEBUG2
 	cout << symbolsMatrix.rows() << " filas y " << symbolsMatrix.cols() << " cols" << endl;
@@ -119,7 +119,7 @@ double RLSEstimator::Likelihood(const tVector &observations,const tMatrix symbol
 	return StatUtil::NormalPdf(observations,computedObservations,noiseVariance);
 }
 
-tMatrix RLSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
     if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
         throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");

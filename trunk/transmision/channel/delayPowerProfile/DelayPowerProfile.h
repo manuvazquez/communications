@@ -47,7 +47,7 @@ public:
 	tMatrix Variances() const {return _variances;}
 	int nInputs() { return _nInputs;}
 	int nOutputs() { return _nOutputs;}
-	int Memory() const { return _amplitudes.size();}
+	int memory() const { return _amplitudes.size();}
 	std::vector<double> TapsAmplitudes() const { return _amplitudes;}
 };
 

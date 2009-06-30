@@ -51,11 +51,11 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
 		for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
 		{
-			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
+			_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
 			rSymbolVectors = rSymbolVectors + 1;
 		}
 
-		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
+		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
 		vector<tVector> hs(_L,LaGenMatDouble::zeros(_N*m,1));
 

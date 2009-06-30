@@ -110,6 +110,7 @@ void CDMASystem::BuildChannel()
     {
         _usersActivity[iUser][trainSeqLength] = bool(usersActive[iUser]);
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
+        isSymbolAccountedForDetection[iUser][trainSeqLength] = false;
     }
       
     // set of active users evolves according to the given probabilities
@@ -123,7 +124,8 @@ void CDMASystem::BuildChannel()
             else
                 _usersActivity[iUser][iTime]= bool(StatUtil::discrete_rnd(userActiveGivenItWasNotPdf));
             
-            symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*double(_usersActivity[iUser][iTime]);            
+            symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
+            isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
         }
             
 #ifdef DEBUG

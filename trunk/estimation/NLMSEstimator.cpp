@@ -28,7 +28,7 @@ LMSEstimator* NLMSEstimator::Clone() const
     return new NLMSEstimator(*this);
 }
 
-tMatrix NLMSEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+tMatrix NLMSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
     tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 

@@ -44,7 +44,7 @@ public:
     virtual double nthSymbolVariance(int n) = 0;
     virtual double nthSymbolGain(int n) const { return 1.0;}
     virtual ~LinearDetector() {}
-    int ChannelMatrixCols() { return _channelMatrixCols;}
+    int ChannelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *Clone() = 0;
     void StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
 };

@@ -28,7 +28,7 @@ KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::Clone() 
 		return new KnownChannelChannelMatrixEstimator(*this);
 }
 
-tMatrix KnownChannelChannelMatrixEstimator::NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+tMatrix KnownChannelChannelMatrixEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
 	_lastEstimatedChannelMatrix = _channel[_iNextMatrix++];
 	return _lastEstimatedChannelMatrix;

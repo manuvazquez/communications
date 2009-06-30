@@ -48,8 +48,8 @@ public:
 
     virtual ChannelMatrixEstimator* Clone() const;
 
-    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
-	virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+	virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 };
 
 #endif

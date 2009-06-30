@@ -87,7 +87,7 @@ void SMCAlgorithm::InitializeParticles()
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
@@ -143,7 +143,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     {
         ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-        vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
+        vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
 
         //the channel estimation given by the training sequence is copied into each particle...
         for(j=_preamble.cols();j<preamblePlusTrainingSequenceLength;j++)
@@ -216,10 +216,10 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 //      ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 //
 //      // a sample of the a priori channel distribution is drawn based on the mean and the covariance
-//      processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(Util::ToMatrix( channelSample,rowwise,_L,_Nm));
+//      processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( channelSample,rowwise,_L,_Nm));
 //      Util::NextVector(channelSample,alphabets);
 //
-// //       processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+// //       processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
 //     }
 // }
 
@@ -235,12 +235,12 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 //
 //         tMatrix channelMatrixSample = Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
 //
-//         processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->SetFirstEstimatedChannelMatrix(channelMatrixSample);
+//         processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(channelMatrixSample);
 //     }
 //
 // }
 
-double SMCAlgorithm::SmoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+double SMCAlgorithm::Smoothedlikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
 {
     double likelihoodsProd = 1.0;
 

@@ -25,10 +25,10 @@ KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const tMatrix& initialE
 {
 }
 
-tMatrix KnownSymbolsKalmanEstimator::NextMatrix(const tVector &observations, const tMatrix &symbolsMatrix, double noiseVariance)
+tMatrix KnownSymbolsKalmanEstimator::nextMatrix(const tVector &observations, const tMatrix &symbolsMatrix, double noiseVariance)
 {
 	_presentTime++;
-	return KalmanEstimator::NextMatrix(observations, _symbols(tRange(0,_N-1),tRange(_presentTime-_m,_presentTime-1)), noiseVariance);
+	return KalmanEstimator::nextMatrix(observations, _symbols(tRange(0,_N-1),tRange(_presentTime-_m,_presentTime-1)), noiseVariance);
 }
 
 KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::Clone() const

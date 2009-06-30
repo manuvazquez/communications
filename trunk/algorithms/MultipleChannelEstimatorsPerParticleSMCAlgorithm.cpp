@@ -93,7 +93,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         {
-            vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->NextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols());
+            vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(iChannelOrder)->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols());
             channelOrderTrainingSequenceChannelMatrices[iChannelOrder] = trainingSequenceChannelMatrices;
 
             //the channel estimation given by the training sequence is copied into each particle...

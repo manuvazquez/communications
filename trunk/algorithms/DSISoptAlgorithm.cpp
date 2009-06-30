@@ -92,10 +92,10 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 					{
 
 						// the likelihood is computed and accumulated
-						auxLikelihoodsProd *= channelEstimatorClone->Likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+						auxLikelihoodsProd *= channelEstimatorClone->likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 						// a step in the Kalman Filter
-						channelEstimatorClone->NextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+						channelEstimatorClone->nextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
                         rmColumns = rmColumns + 1;
 					} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
@@ -128,7 +128,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
 

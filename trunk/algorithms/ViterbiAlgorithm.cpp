@@ -21,9 +21,9 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, frameLength,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.Memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.Memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.Memory()-2)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, frameLength,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.memory()-2)
 {
-    if(preamble.cols() < (channel.Memory()-1))
+    if(preamble.cols() < (channel.memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
 
     _exitStage = new ViterbiPath[_trellis.Nstates()];
@@ -54,10 +54,10 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
-    vector<tSymbol> preambleVector(_N*(channel.Memory()-1));
+    vector<tSymbol> preambleVector(_N*(channel.memory()-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.Memory()-1))*_N;
+    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_N;
     for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
 
@@ -125,11 +125,11 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
     tVector computedObservations(channel.nOutputs()),error(channel.nOutputs());
 
     // "symbolVectors" will contain all the symbols involved in the current observation
-    tMatrix symbolVectors(channel.nInputs(),channel.Memory());
+    tMatrix symbolVectors(channel.nInputs(),channel.memory());
 
-	// the state determines the first "channel.Memory()" symbol vectors involved in the "observations"
+	// the state determines the first "channel.memory()" symbol vectors involved in the "observations"
 	_alphabet.int2symbolsArray(iState,_stateVector);
-	for(int i=0;i<channel.nInputs()*(channel.Memory()-1);i++)
+	for(int i=0;i<channel.nInputs()*(channel.memory()-1);i++)
 		symbolVectors(i % channel.nInputs(),i / channel.nInputs()) = _stateVector[i];
 
     // now we compute the cost for each possible input
@@ -140,7 +140,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
         // it's copied into "symbolVectors"
         for(int i=0;i<channel.nInputs();i++)
-            symbolVectors(i,channel.Memory()-1) = _inputVector[i];
+            symbolVectors(i,channel.memory()-1) = _inputVector[i];
 
         // computedObservations = channelMatrix * symbolVectors(:)
         Blas_Mat_Vec_Mult(channelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
@@ -158,7 +158,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 			(_arrivalStage[arrivalState].GetCost() > newCost))
 				// the ViterbiPath object at the arrival state is updated with that from the exit stage, the
 				// new symbol vector, and the new cost
-				_arrivalStage[arrivalState].Update(_exitStage[iState],symbolVectors.col(channel.Memory()-1),newCost);
+				_arrivalStage[arrivalState].Update(_exitStage[iState],symbolVectors.col(channel.memory()-1),newCost);
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 
 }

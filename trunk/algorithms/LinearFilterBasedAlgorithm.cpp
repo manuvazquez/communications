@@ -55,7 +55,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
     if(nObservations<(startDetectionTime+1+_d))
         throw RuntimeException("LinearFilterBasedAlgorithm::Process: Not enough observations.");
 
-    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->NextMatricesFromObservationsSequence(observations,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
+    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
 
     _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
 
@@ -67,7 +67,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
     if(_substractContributionFromKnownSymbols)
     {
-        if(_linearDetector->ChannelMatrixCols() != _N*(_d+1))
+        if(_linearDetector->ChannelMatrixcols() != _N*(_d+1))
             throw RuntimeException("LinearFilterBasedAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
     }
 
@@ -125,7 +125,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 			_detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
 		tRange rInvolvedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
-		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->NextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors(rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[iObservationToBeProcessed]);
+		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors(rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[iObservationToBeProcessed]);
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 

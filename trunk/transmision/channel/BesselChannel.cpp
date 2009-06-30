@@ -24,7 +24,7 @@
 
 BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length)
 {
-	if(powerProfile.Memory()!=memory)
+	if(powerProfile.memory()!=memory)
 		throw RuntimeException("BesselChannel::BesselChannel: memory is wrong.");
 
 	int iRow,iCol,iTime;

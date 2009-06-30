@@ -35,7 +35,7 @@ EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory
 	tRange rAll,rInvolvedSymbolVectors(preambleLength-memory+1,preambleLength);
 	for(i=preambleLength;i<_length;i++)
 	{
-		_channelMatrices[i] = channelMatrixEstimatorClone->NextMatrix(observations.col(i),symbols(rAll,rInvolvedSymbolVectors),noiseVariances[i]);
+		_channelMatrices[i] = channelMatrixEstimatorClone->nextMatrix(observations.col(i),symbols(rAll,rInvolvedSymbolVectors),noiseVariances[i]);
 		rInvolvedSymbolVectors = rInvolvedSymbolVectors + 1;
 #ifdef DEBUG2
 		_channelMatrices[i](tRange(),tRange(0,1)) = 0;

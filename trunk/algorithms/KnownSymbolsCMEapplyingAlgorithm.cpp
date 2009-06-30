@@ -38,7 +38,7 @@ std::vector< tMatrix > KnownSymbolsCMEapplyingAlgorithm::estimatedChannelMatrice
     tRange rSymbolVectors(_preamble.cols()-_candidateOrders[iChannelOrder]+1,_preamble.cols());
     for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
     {
-        estimatedChannelMatrices.push_back(_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]));
+        estimatedChannelMatrices.push_back(_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]));
         rSymbolVectors = rSymbolVectors + 1;
     }
 

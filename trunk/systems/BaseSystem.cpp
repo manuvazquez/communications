@@ -133,7 +133,7 @@ BaseSystem::BaseSystem()
 
     // useful ranges are initialized
     rFrameDuration = tRange(preambleLength,preambleLength+frameLength-1);
-    rTrainingSeqDuration = tRange(preambleLength,preambleLength+trainSeqLength-1);
+//     rTrainingSeqDuration = tRange(preambleLength,preambleLength+trainSeqLength-1);
 
     peMatrices.reserve(nFrames);
     MSEMatrices.reserve(nFrames);
@@ -166,9 +166,8 @@ BaseSystem::~BaseSystem()
 
 void BaseSystem::Simulate()
 {
-//   tRange rAll;
 
-    // for repeating simulations
+//     // for repeating simulations
 //     randomGenerator.setSeed();
 //     StatUtil::GetRandomGenerator().setSeed();
 
@@ -228,18 +227,16 @@ void BaseSystem::Simulate()
             // algorithms are executed
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-                // in order to repeat a concrete simulation...
+//                 // in order to repeat a concrete simulation...
 //                 StatUtil::GetRandomGenerator().setSeed();
 
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,rTrainingSeqDuration));
+                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
 //                 algorithms[iAlgorithm]->Run(observations,noise->Variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
-
-//                 pe = TransmissionUtil::computeBERsolvingAmbiguity(bits,symbolsDetectionWindowStart,frameLength,Demodulator::demodulate(detectedSymbols,*alphabet),symbolsDetectionWindowStart,frameLength,permutations);                
                 
                 pe = TransmissionUtil::computeSER(symbols(tRange(),rFrameDuration),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
                 
@@ -376,8 +373,7 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     presentFrameMSE(iSNR,iAlgorithm) = mse;
 
     // Pe evolution
-//     tMatrix transmittedSymbols = symbols(tRange(0,N-1),tRange(preambleLength,preambleLength+frameLength-1));
-    tMatrix transmittedSymbols = symbols(tRange(0,N-1),rFrameDuration);
+    tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
 
     if(detectedSymbols.rows()!=0)
     {

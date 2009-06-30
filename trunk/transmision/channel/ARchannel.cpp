@@ -23,14 +23,14 @@ using namespace std;
 
 ARchannel::ARchannel(int nInputs, int nOutputs, int memory, int length, ARprocess ARproc): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_ARproc(ARproc)
 {
-	if(ARproc.Rows()!=nOutputs || ARproc.Cols()!=(nInputs*memory))
+	if(ARproc.rows()!=nOutputs || ARproc.cols()!=(nInputs*memory))
 		throw RuntimeException("ARchannel::ARchannel: the passed AR process is not compatible with the dimensions of the channel.");
 
 	_channelMatrices = new tMatrix[length];
 
 	//initialization
 	for(int i=_memory-1;i<_length;i++)
-			_channelMatrices[i] = _ARproc.NextMatrix();
+			_channelMatrices[i] = _ARproc.nextMatrix();
 }
 
 ARchannel::ARchannel(const ARchannel &archannel):StillMemoryMIMOChannel(archannel),_channelMatrices(new tMatrix[_length]),_ARproc(archannel._ARproc)

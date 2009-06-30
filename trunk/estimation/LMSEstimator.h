@@ -39,7 +39,7 @@ public:
     LMSEstimator(const tMatrix &initialEstimation,int N,double mu);
 
     virtual LMSEstimator* Clone() const;
-    virtual tMatrix NextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 
 };
 

@@ -26,7 +26,7 @@ ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spread
 
     //initialization
     for(uint i=_memory-1;i<_length;i++)
-            _userCoeffs.col(i).inject(_ARprocess.NextMatrix());
+            _userCoeffs.col(i).inject(_ARprocess.nextMatrix());
 
 #ifdef DEBUG
     cout << "_userCoeffs" << endl << _userCoeffs;

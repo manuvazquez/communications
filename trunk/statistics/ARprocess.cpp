@@ -134,7 +134,7 @@ ARprocess::~ARprocess()
 	delete[] _buffer;
 }
 
-tMatrix ARprocess::NextMatrix()
+tMatrix ARprocess::nextMatrix()
 {
 	tMatrix aux(_rows,_columns);
 

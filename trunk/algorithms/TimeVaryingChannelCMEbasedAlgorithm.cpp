@@ -55,11 +55,11 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 		int skipNumber = 0;
 		for(int iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
 		{
-			_channelEstimators[iChannelOrder]->NextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
+			_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
 
 			observationError = observations.col(iSymbolVector);
-			// observationError = observationError - _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix() * _symbolVectors(rAll,rSymbolVectors)
-			Blas_Mat_Vec_Mult(_channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix(),Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
+			// observationError = observationError - _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix() * _symbolVectors(rAll,rSymbolVectors)
+			Blas_Mat_Vec_Mult(_channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix(),Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
 
 			accumulatedSquaredObservationsError += double(skipNumber>50)*Blas_Dot_Prod(observationError,observationError)/noiseVariances[iSymbolVector];
 
@@ -68,7 +68,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 			rSymbolVectors = rSymbolVectors + 1;
 		}
 
-		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->LastEstimatedChannelMatrix();
+		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
 		vector<tVector> hs(_L,LaGenMatDouble::zeros(_N*m,1));
 

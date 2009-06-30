@@ -51,14 +51,14 @@ public:
 	tMatrix GetChannelMatrix(int n)
 	{
 		#ifdef DEBUG13
-			cout << "nº de vectores de símbolos detectados " << _detectedSequence->cols() << endl;
+			cout << "nï¿½ de vectores de sï¿½mbolos detectados " << _detectedSequence->cols() << endl;
 			cout << "DEvolviendo" << endl << _estimatedChannelMatrices[0][n] << endl;
 		#endif
 
 		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
 			return _estimatedChannelMatrices[0][n];
 		#endif
-		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->Rows(),_channelMatrixEstimators[0]->Cols());
+		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
 	}
     void Clean();
     void Print() const;

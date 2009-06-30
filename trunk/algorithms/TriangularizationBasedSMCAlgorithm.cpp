@@ -205,14 +205,14 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 			cout << "involvedSymbolVectors" << endl << involvedSymbolVectors;
 #endif
 
-			likelihoodsProd = SmoothedLikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+			likelihoodsProd = Smoothedlikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
 			// the weight is updated
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
 
 			// and the estimation of the channel matrix
 			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
-			                                    processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatrix(observations.col(iObservationToBeProcessed),
+			                                    processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
 				                                    involvedSymbolVectors(rAllSymbolRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
 		} // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)

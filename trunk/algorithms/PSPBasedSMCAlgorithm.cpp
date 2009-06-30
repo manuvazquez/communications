@@ -81,7 +81,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 
 			symbolsVector = Util::ToVector(symbolVectorsMatrix,columnwise);
 
-			tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->LastEstimatedChannelMatrix();
+			tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
 			estimatedChannelMatrix *= _ARcoefficient;
 
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -142,7 +142,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_m-1));
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));
+			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)

@@ -49,7 +49,7 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->SetFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
         _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone,_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
@@ -74,7 +74,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
     tRange rAlreadyDetectedSymbolVectors;
 
     if(_substractContributionFromKnownSymbols)
-	   if(_linearDetector->ChannelMatrixCols() != _N*(_e+1))
+	   if(_linearDetector->ChannelMatrixcols() != _N*(_e+1))
 		  throw RuntimeException("LinearFilterBasedSMCAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
 
 	// already detected symbol vectors involved in the current detection
@@ -179,14 +179,14 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// ii) the just sampled
 			forWeightUpdateNeededSymbols(rAll,rSampledSymbolVectors).inject(Util::ToMatrix(sampledSmoothingVector,columnwise,_N));
 
-			likelihoodsProd = SmoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+			likelihoodsProd = Smoothedlikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
 			// the weight is updated
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
 
 			// and the estimation of the channel matrix
 			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
-			                                    processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->NextMatrix(observations.col(iObservationToBeProcessed),
+			                                    processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
 				                                    forWeightUpdateNeededSymbols(rAll,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
 		} // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)

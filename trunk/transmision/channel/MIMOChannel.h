@@ -44,7 +44,7 @@ public:
     int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*Memory(n);};
     int nInputsMemory(int n) const {return _nInputs*Memory(n);};
     virtual int Memory(int n) const = 0;
-    virtual int EffectiveMemory() const = 0;
+    virtual int Effectivememory() const = 0;
     virtual tMatrix operator[](int n) const = 0;
     tMatrix transmit(tMatrix &symbols,Noise &noise);
     vector<tMatrix> Range(int a,int b);

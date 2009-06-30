@@ -19,15 +19,11 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-// #define DEBUG2
+// #define DEBUG
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance)
  : ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
 {
-	#ifdef DEBUG
-		cout << "_L: " << _L << " _Nm: " << _Nm << endl;
-		cout << "initialEstimation" << endl << initialEstimation << endl;
-	#endif
 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
 	R *= ARcoefficient;
 	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
@@ -59,9 +55,8 @@ KalmanEstimator::~KalmanEstimator()
 	delete _kalmanFilter;
 }
 
-tMatrix KalmanEstimator::NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
+tMatrix KalmanEstimator::nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
 {
-// 	cout << "en Kalman" << endl;
 	if(observations.size()!=_L || symbolsMatrix.rows()*symbolsMatrix.cols()!=_Nm)
 		throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
 
@@ -89,7 +84,7 @@ tMatrix KalmanEstimator::BuildFfromSymbolsMatrix(const tVector &symbolsVector)
 	return res;
 }
 
-double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+double KalmanEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
 		throw RuntimeException("KalmanEstimator::Likelihood: observations vector length or symbols matrix length are wrong.");
@@ -99,6 +94,7 @@ double KalmanEstimator::Likelihood(const tVector &observations,const tMatrix sym
 
 	tMatrix invPredictiveCovariance = _kalmanFilter->PredictiveCovariance();
 	LUFactorizeIP(invPredictiveCovariance,piv);
+    
 	// detPredictiveCovariance = det(_kalmanFilter->PredictiveCovariance())
 	double detPredictiveCovariance = 1.0;
 	for(int i=0;i<_nChannelCoefficients;i++)
@@ -169,9 +165,9 @@ tMatrix KalmanEstimator::SampleFromPredictive()
 	return Util::ToMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_L);
 }
 
-void KalmanEstimator::SetFirstEstimatedChannelMatrix(const tMatrix &matrix)
+void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)
 {
-    ChannelMatrixEstimator::SetFirstEstimatedChannelMatrix(matrix);
+    ChannelMatrixEstimator::setFirstEstimatedChannelMatrix(matrix);
 
     _kalmanFilter->SetFilteredMean(Util::ToVector(matrix,columnwise));
 }

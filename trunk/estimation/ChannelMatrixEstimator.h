@@ -21,7 +21,7 @@
 #define CHANNELMATRIXESTIMATOR_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -30,28 +30,28 @@
 
 class ChannelMatrixEstimator{
 protected:
-	int _L,_Nm,_N,_m;
-	tMatrix _lastEstimatedChannelMatrix;
+    int _L,_Nm,_N,_m;
+    tMatrix _lastEstimatedChannelMatrix;
 
-	ChannelMatrixEstimator(int N);
+    ChannelMatrixEstimator(int N);
 public:
-	// initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
+    // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
     ChannelMatrixEstimator(tMatrix initialEstimation,int N);
-	virtual ~ChannelMatrixEstimator() {};
+    virtual ~ChannelMatrixEstimator() {};
 
-	virtual void SetFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
-	virtual ChannelMatrixEstimator *Clone() const = 0;
+    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}
+    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
+    virtual ChannelMatrixEstimator *Clone() const = 0;
 
-	virtual double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
-	{
-		throw RuntimeException("ChannelMatrixEstimator::Likelihood: not implemented yet.");
-	}
-	int Cols() { return _Nm;}
-	int Rows() { return _L;}
-    int Memory();
-	virtual tMatrix LastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
-    vector<tMatrix> NextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo);
+    virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+    {
+        throw RuntimeException("ChannelMatrixEstimator::Likelihood: not implemented yet.");
+    }
+    int cols() { return _Nm;}
+    int rows() { return _L;}
+    int memory();
+    virtual tMatrix lastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
+    vector<tMatrix> nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo);
 };
 
 #endif

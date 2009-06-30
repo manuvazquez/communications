@@ -42,7 +42,7 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
         throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
 
     // the number of resulting observations depends on the channel _memory
-    int nObservations = symbols.cols() - (EffectiveMemory() - 1);
+    int nObservations = symbols.cols() - (Effectivememory() - 1);
 
     if(nObservations<1)
         throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
@@ -54,7 +54,7 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
 
     tRange allChannelMatrixRows(0,_nOutputs-1);
 
-    for(int iSymbolVector=EffectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
+    for(int iSymbolVector=Effectivememory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
         tMatrix currentChannelMatrix = (*this)[iSymbolVector];

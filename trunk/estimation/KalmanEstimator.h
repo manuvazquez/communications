@@ -50,11 +50,11 @@ public:
 	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
 	~KalmanEstimator();
 
-	virtual tMatrix NextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double Likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+	virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
+	double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 	virtual KalmanEstimator *Clone() const;
 	tMatrix SampleFromPredictive();
-    virtual void SetFirstEstimatedChannelMatrix(const tMatrix &matrix);
+    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix);
 };
 
 #endif

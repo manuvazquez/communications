@@ -79,7 +79,7 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
 			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.GetChannelMatrixEstimator()->Clone();
 
-			newChannelMatrixEstimator->NextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
+			newChannelMatrixEstimator->nextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 
 			_arrivalStage[iState][iSurvivor].Update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
 		}
@@ -174,7 +174,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
 	_startDetectionTime = preambleTrainingSequence.cols();
 
-    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->NextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),_startDetectionTime);
+    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),_startDetectionTime);
 
 	// known symbol vectors are copied into the the vector with the final detected ones
 	(*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_startDetectionTime-1)).inject(trainingSequence);
@@ -232,7 +232,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 			if(_exitStage[iState][iSourceSurvivor].IsEmpty())
 				continue;
 
-			tMatrix estimatedChannelMatrix = _exitStage[iState][iSourceSurvivor].GetChannelMatrixEstimator()->LastEstimatedChannelMatrix();
+			tMatrix estimatedChannelMatrix = _exitStage[iState][iSourceSurvivor].GetChannelMatrixEstimator()->lastEstimatedChannelMatrix();
 			estimatedChannelMatrix *= _ARcoefficient;
 
 			// computedObservations = estimatedChannelMatrix * symbolVectors(:)
