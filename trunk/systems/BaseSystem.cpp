@@ -27,7 +27,7 @@
 // #define EXPORT_REAL_DATA
 #define PRINT_PARAMETERS
 
-#define DEBUG
+// #define DEBUG
 
 using namespace std;
 
@@ -40,25 +40,25 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames = 1;
-    L=3,N=2,frameLength=50;
-    m = 3;
-    d = m - 1;
-    trainSeqLength = 10;
-    preambleLength = 10;
-  
-    // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 10;
-    
-//     nFrames = 10;
-//     L=10,N=5,frameLength=5;
-//     m = 1;
+//     nFrames = 1;
+//     L=3,N=2,frameLength=50;
+//     m = 3;
 //     d = m - 1;
-//     trainSeqLength = 0;
-//     preambleLength = 0;
-//     
+//     trainSeqLength = 10;
+//     preambleLength = 10;
+//   
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
+    
+    nFrames = 10;
+    L=10,N=5,frameLength=5;
+    m = 1;
+    d = m - 1;
+    trainSeqLength = 0;
+    preambleLength = 0;
+    
+    // the algorithms with the higher smoothing lag require
+    nSmoothingSymbolsVectors = 10;
 
     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 
@@ -186,7 +186,7 @@ void BaseSystem::Simulate()
         symbols = Modulator::Modulate(bits,*alphabet);
 
         // the preamble is set before the symbols to be transmitted
-        symbols = Util::Append(preamble,symbols);
+        symbols = Util::append(preamble,symbols);
 
         // all the above symbols must be processed except those generated due to the smoothing
         lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
@@ -233,8 +233,8 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observations,noise->Variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-//                 algorithms[iAlgorithm]->Run(observations,noise->Variances());
+                algorithms[iAlgorithm]->Run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+//                 algorithms[iAlgorithm]->Run(observations,noise->variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
                 
@@ -333,12 +333,12 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(d,"d",f);
     Util::ScalarToOctaveFileStream(symbolsDetectionWindowStart,"symbolsDetectionWindowStart",f);
     Util::ScalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
-    Util::ScalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
+    Util::scalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
     Util::MatrixToOctaveFileStream(preamble,"preamble",f);
     Util::ScalarToOctaveFileStream(nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",f);    
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
-    Util::ScalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
-    Util::ScalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
+    Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
+    Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
 //     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
@@ -346,7 +346,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 
     if(powerProfile!=NULL)
     {
-        Util::ScalarsVectorToOctaveFileStream(powerProfile->TapsAmplitudes(),"powerProfileVariances",f);
+        Util::scalarsVectorToOctaveFileStream(powerProfile->tapsAmplitudes(),"powerProfileVariances",f);
         Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
     }
     

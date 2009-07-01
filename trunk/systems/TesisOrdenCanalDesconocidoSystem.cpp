@@ -48,7 +48,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     }
 
     rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
-    rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
+    rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
 
     for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
     {
@@ -64,7 +64,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
     multinomialResamplingAlgorithm = new MultinomialResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
 
     // USIS2SIS transition criterion(s)
     USISmaximumProbabilityCriterion = new MaximumProbabilityCriterion(0.8);
@@ -106,7 +106,7 @@ void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
 
     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*alphabet,L,N,lastSymbolVectorInstant,m-1,RLSchannelEstimators[iTrueChannelOrder-1],RMMSElinearDetectors[iTrueChannelOrder-1],preamble,c,d-1,d-1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder-1],channelOrderCoefficientsVariances[iTrueChannelOrder-1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,RLSchannelEstimators[iTrueChannelOrder],RMMSElinearDetectors[iTrueChannelOrder],preamble,c,d,d,nParticles,multinomialResamplingAlgorithm,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,N,lastSymbolVectorInstant,m,RLSchannelEstimators[iTrueChannelOrder],RMMSElinearDetectors[iTrueChannelOrder],preamble,c,d,d,nParticles,multinomialResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*alphabet,L,N,lastSymbolVectorInstant,m+1,RLSchannelEstimators[iTrueChannelOrder+1],RMMSElinearDetectors[iTrueChannelOrder+1],preamble,c,d+1,d+1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder+1],channelOrderCoefficientsVariances[iTrueChannelOrder+1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

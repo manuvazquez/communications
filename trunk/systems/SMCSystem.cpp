@@ -58,7 +58,7 @@ void SMCSystem::BeforeEndingFrame(int iFrame)
     BaseSystem::BeforeEndingFrame(iFrame);
     Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
     Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
-    Util::ScalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
+    Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
     Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
     Util::ScalarToOctaveFileStream(c,"c",f);
     Util::ScalarToOctaveFileStream(e,"e",f);

@@ -69,7 +69,7 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 
 vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
-    tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+    tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence: Insufficient number of observations.");

@@ -28,7 +28,7 @@ TesisOrdenCanalDesconocidoARSystem::TesisOrdenCanalDesconocidoARSystem()
 
 void TesisOrdenCanalDesconocidoARSystem::BuildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
 void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame(int iFrame)

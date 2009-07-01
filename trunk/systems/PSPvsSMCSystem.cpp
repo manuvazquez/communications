@@ -80,7 +80,7 @@ PSPvsSMCSystem::PSPvsSMCSystem()
         cout << " to " << nSurvivors << endl;
     }
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
 }
 
 PSPvsSMCSystem::~PSPvsSMCSystem()
@@ -93,7 +93,7 @@ void PSPvsSMCSystem::AddAlgorithms()
 {
     algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
 
-    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances()));
+    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 }
 
 void PSPvsSMCSystem::BuildChannel()

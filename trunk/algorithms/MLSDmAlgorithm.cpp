@@ -241,7 +241,7 @@ int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
 
 // vector<vector<tMatrix> > MLSDmAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 // {
-//     tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+//     tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 //
 //     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
 //         throw RuntimeException("MLSDmAlgorithm::EstimateChannelFromTrainingSequence: Insufficient number of observations.");
@@ -290,7 +290,7 @@ void MLSDmAlgorithm::BeforeInitializingParticles(const tMatrix &observations,vec
 {
     // in this case BeforeInitializingParticles computes the APP probabilities that are obtained after the training sequence
 
-    tMatrix sequenceToProcess = Util::Append(_preamble,trainingSequence);
+    tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("BeforeInitializingParticles::BeforeInitializingParticles: Insufficient number of observations.");

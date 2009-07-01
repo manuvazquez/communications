@@ -26,7 +26,7 @@ Noise::Noise(int nOutputs,int length): _nOutputs(nOutputs),_length(length)
 {
 }
 
-vector<double> Noise::Variances() const
+vector<double> Noise::variances() const
 {
 	vector<double> res(_length);
 	for(int i=0;i<_length;i++)

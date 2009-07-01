@@ -91,7 +91,7 @@ void APPbasedChannelOrderEstimator::Update(const tVector &observations,const vec
 		throw RuntimeException("APPbasedChannelOrderEstimator::Update: symbols vector does not have the proper size.");
 
 	// the vector with the symbols involved in the observation is shifted by N
-	Util::ShiftUp(_symbolVector,_N);
+	Util::shiftUp(_symbolVector,_N);
 
 	// the just detected vector is stored at the end
 	for(int i=0;i<_N;i++)

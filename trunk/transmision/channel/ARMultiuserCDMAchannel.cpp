@@ -21,17 +21,11 @@
 
 #define DEBUG
 
-ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_nInputs,_length)
+ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_length)
 {
-
     //initialization
     for(uint i=_memory-1;i<_length;i++)
-            _userCoeffs.col(i).inject(_ARprocess.nextMatrix());
-
-#ifdef DEBUG
-    cout << "_userCoeffs" << endl << _userCoeffs;
-#endif
-    
+            _userCoeffs[i] = _ARprocess.nextMatrix();    
 }
 
 
@@ -42,6 +36,6 @@ ARMultiuserCDMAchannel::~ARMultiuserCDMAchannel()
 
 tVector ARMultiuserCDMAchannel::getUsersCoefficientsAtTime(int n) const
 {
-    return _userCoeffs.col(n);
+    return _userCoeffs[n];
 }
 

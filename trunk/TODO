@@ -36,3 +36,4 @@
   - MakeTransition(_weightedChannelOrderAPPs) debería devolver el orden al que se pasa (no simplemente un bool) y ese debería usarse dentro del if
 - LinearFilterBasedSMCAlgorithm
   - cuando se sustraiga la contribución de los símbolos anteriores automáticamente se elija el detector pequeño y lo contrario
+- delete observationVectorLength from KalmanFilter constructor

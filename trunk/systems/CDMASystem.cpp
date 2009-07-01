@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-#define DEBUG
+// #define DEBUG
 
-CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(1)
+CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
 {
     nParticles = 192;
     resamplingRatio = 0.9;
@@ -39,12 +39,15 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(1)
     
     // AR process parameters
     ARcoefficients[0] = 0.99999;
+    ARcoefficients[1] = 0.95;
+//     ARcoefficients[2] = 0.93;    
     ARvariance=0.0001;    
     
     // a flat power profile is generated. Notice:
     //      i) that m should be 1, otherwise an exception would have been thrown
-    //     ii) we only need to generate a coefficient per user, i.e., a Nx1 vector
-    powerProfile = new FlatPowerProfile(N,1,m,1.0);
+    //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
+//     powerProfile = new FlatPowerProfile(N,1,m,1.0);
+    powerProfile = new FlatPowerProfile(1,N,m,1.0);
 
     // particle filtering
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
@@ -53,6 +56,9 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(1)
     userPersistenceProb = 0.8;
     newActiveUserProb = 0.2;
     userPriorProb = 0.5;
+    
+    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),N,ARcoefficients,ARvariance);
+    
 //     exit(0);
 }
 
@@ -61,6 +67,7 @@ CDMASystem::~CDMASystem()
 {
     delete powerProfile;
     delete algoritmoRemuestreo;
+    delete cdmaKalmanEstimator;
 }
 
 
@@ -138,6 +145,6 @@ void CDMASystem::BuildChannel()
     cout << "symbols after" << endl << symbols;
 #endif    
     
-    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 

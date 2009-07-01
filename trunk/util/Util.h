@@ -46,12 +46,13 @@ public:
     static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
     static void Add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
     static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
-    static void Transpose(const tMatrix &A,tMatrix &B);
+    static void transpose(const tMatrix &A,tMatrix &B);
     static tVector ToVector(const tMatrix &matrix,tOrder order);
     static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
     static tMatrix ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
     static tMatrix ToMatrix(const tVector &vector,tOrder order,uint rows);
-    static tMatrix Append(const tMatrix &A,const tMatrix &B);
+    static tMatrix append(const tMatrix &A,const tMatrix &B);
+    static tMatrix verticalAppend(const tMatrix &A,const tMatrix &B);
     static tVector Normalize(const tVector &v);
     static double Sum(const tVector &v);
     static void Max(const tVector &v,int &index);
@@ -66,7 +67,7 @@ public:
     static void MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f);
     template<class T> static void ScalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void StringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
-    template<class T> static void ScalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
+    template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static int Max(const std::vector<T> &vector);
     template<class T> static void Min(const std::vector<T> &vector,int &iMin);
     template<class T> static T Sum(const std::vector<T> &vector);
@@ -75,15 +76,15 @@ public:
     template<class T> static void Print(const std::vector<T> &vector);
     template<class T> static void Print(const std::vector<std::vector<T> > &matrix);
     template<class T> static void Print(const T* array,int nElements);
-    static void ShiftUp(tVector &v,int n);
+    static void shiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
-    static tMatrix ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
-    static tMatrix Cholesky(const tMatrix &matrix);
+    static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
+    static tMatrix cholesky(const tMatrix &matrix);
     template<class T> static void NextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
-    static std::vector<int> NMax(int n,const tVector &v);
-    static tMatrix FlipLR(const tMatrix &A);
+    static std::vector<int> nMax(int n,const tVector &v);
+    static tMatrix flipLR(const tMatrix &A);
     static tMatrix sign(const tMatrix &A);   
 };
 

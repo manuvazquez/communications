@@ -39,7 +39,7 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 	for(iTime=0;iTime<length;iTime++)
 		_channelMatrices[iTime] = tMatrix(nOutputs,nInputs*memory);
 
-	vector<double> tapsVariances = powerProfile.TapsAmplitudes();
+	vector<double> tapsVariances = powerProfile.tapsAmplitudes();
 	vector<tMatrix> Ls(memory);
 	tMatrix covarianceMatrix(length,length);
 
@@ -57,7 +57,7 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 			covarianceMatrix(iRow,iRow) = tapsVariances[iTap] + EPSILON;
 
 		// cholesky decomposition
-		Ls[iTap] = Util::Cholesky(covarianceMatrix);
+		Ls[iTap] = Util::cholesky(covarianceMatrix);
 	}
 
 	for(iRow=0;iRow<nOutputs;iRow++)

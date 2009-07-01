@@ -27,7 +27,7 @@ DelayPowerProfile::~DelayPowerProfile()
 {
 }
 
-tMatrix DelayPowerProfile::GenerateChannelMatrix(Random &random)
+tMatrix DelayPowerProfile::generateChannelMatrix(Random &random)
 {
 	tMatrix res(_nOutputs,_nInputs*_amplitudes.size());
 

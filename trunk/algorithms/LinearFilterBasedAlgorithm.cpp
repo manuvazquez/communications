@@ -55,7 +55,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
     if(nObservations<(startDetectionTime+1+_d))
         throw RuntimeException("LinearFilterBasedAlgorithm::Process: Not enough observations.");
 
-    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
+    vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
 
     _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
 

@@ -34,7 +34,7 @@ public:
 
     virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
     {
-    	return Util::NMax(n,weights);
+    	return Util::nMax(n,weights);
     }
 
 };

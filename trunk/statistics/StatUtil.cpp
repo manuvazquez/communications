@@ -111,7 +111,7 @@ tVector StatUtil::RandMatrix(const tVector &mean,const tMatrix &covariance,Rando
 
 	tVector res = mean;
 	// res = mean + L*RandnMatrix(mean.size(),1,0.0,1.0)
-	Blas_Mat_Vec_Mult(Util::Cholesky(covariance),RandnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
+	Blas_Mat_Vec_Mult(Util::cholesky(covariance),RandnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
 
 	return res;
 }

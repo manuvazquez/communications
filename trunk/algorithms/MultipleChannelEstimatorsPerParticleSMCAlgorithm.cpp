@@ -74,7 +74,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
     vector<vector<tMatrix> > channelOrderTrainingSequenceChannelMatrices(_candidateOrders.size());
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
-    tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
+    tMatrix preambleTrainingSequence = Util::append(_preamble,trainingSequence);
 
     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 

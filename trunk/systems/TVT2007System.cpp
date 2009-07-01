@@ -52,7 +52,7 @@ TVT2007System::TVT2007System()
 
 	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
-	rlsEstimator = new RLSEstimator(powerProfile->Means(),N,forgettingFactor);
+	rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
@@ -64,7 +64,7 @@ TVT2007System::TVT2007System()
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
 }
 
 
@@ -91,9 +91,9 @@ TVT2007System::~TVT2007System()
 
 void TVT2007System::BuildChannel()
 {
-//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
-// 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->GenerateChannelMatrix(randomGenerator));
+// 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
 #ifdef DEBUG
 	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
 	cout << "El canal al final" << endl << (*channel)[frameLength];

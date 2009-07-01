@@ -47,7 +47,7 @@ USIS::~USIS()
 //
 // 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
 //     // during the training sequence
-// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,Util::Append(_preamble,trainingSequence),_preamble.cols());
+// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols());
 //
 //     // the APP of the candidate channel orders are set accordingly
 // 	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);

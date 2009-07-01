@@ -125,7 +125,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle,j;
-    tMatrix preamblePlusTrainingSequence = Util::Append(_preamble,trainingSequence);
+    tMatrix preamblePlusTrainingSequence = Util::append(_preamble,trainingSequence);
     int preamblePlusTrainingSequenceLength = preamblePlusTrainingSequence.cols();
 //     int preamblePlusTrainingSequenceLength = _preamble.cols() + trainingSequence.cols();
 

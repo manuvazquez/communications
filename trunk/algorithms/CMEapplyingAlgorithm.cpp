@@ -51,7 +51,7 @@ void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariance
         vector<tMatrix> estimatedChannelMatrices = estimatedChannelMatricesForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
         tMatrix detectedSymbolVectors = detectedSymbolsForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
 
-        tMatrix preambleDetectedSymbolVectors = Util::Append(_preamble,detectedSymbolVectors);
+        tMatrix preambleDetectedSymbolVectors = Util::append(_preamble,detectedSymbolVectors);
 
         int nSymbolVectors = detectedSymbolVectors.cols();
         double variance = noiseVariances[detectedSymbolVectors.cols()-1];

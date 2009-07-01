@@ -28,7 +28,7 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
     T = 1.0/symbolRate; // (s)
 
 
-// 	ARcoefficients = ARprocess::ParametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
+// 	ARcoefficients = ARprocess::parametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
 // 	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
 // 	Util::Print(ARcoefficients);
 
@@ -63,8 +63,8 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
 
 	powerProfile->Print();
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
 }
 
 

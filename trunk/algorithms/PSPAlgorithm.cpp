@@ -170,7 +170,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         throw RuntimeException("PSPAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
-    tMatrix preambleTrainingSequence = Util::Append(_preamble,trainingSequence);
+    tMatrix preambleTrainingSequence = Util::append(_preamble,trainingSequence);
 
 	_startDetectionTime = preambleTrainingSequence.cols();
 

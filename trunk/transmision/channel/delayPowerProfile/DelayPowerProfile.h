@@ -21,7 +21,7 @@
 #define DELAYPOWERPROFILE_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -30,25 +30,25 @@
 
 class DelayPowerProfile{
 protected:
-	int _nOutputs,_nInputs;
-	std::vector<double> _amplitudes;
-	double _generatedCoefficientsMean;
-	tMatrix _means,_variances;
+    int _nOutputs,_nInputs;
+    std::vector<double> _amplitudes;
+    double _generatedCoefficientsMean;
+    tMatrix _means,_variances;
 
-	void GenerateMatrices();
+    void GenerateMatrices();
 public:
     DelayPowerProfile(int nOutputs,int nInputs);
 
-	virtual ~DelayPowerProfile();
+    virtual ~DelayPowerProfile();
 
-	virtual tMatrix GenerateChannelMatrix(Random &random);
-	virtual void Print() const;
-	tMatrix Means() const { return _means;}
-	tMatrix Variances() const {return _variances;}
-	int nInputs() { return _nInputs;}
-	int nOutputs() { return _nOutputs;}
-	int memory() const { return _amplitudes.size();}
-	std::vector<double> TapsAmplitudes() const { return _amplitudes;}
+    virtual tMatrix generateChannelMatrix(Random &random);
+    virtual void Print() const;
+    tMatrix means() const { return _means;}
+    tMatrix variances() const {return _variances;}
+    int nInputs() { return _nInputs;}
+    int nOutputs() { return _nOutputs;}
+    int memory() const { return _amplitudes.size();}
+    std::vector<double> tapsAmplitudes() const { return _amplitudes;}
 };
 
 #endif

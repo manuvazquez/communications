@@ -43,7 +43,7 @@ public:
 	virtual tVector operator[](int n) const = 0;
 	virtual tMatrix Range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}
 	double VarianceAt(int n) const { double stdDev = StdDevAt(n); return stdDev*stdDev;};
-	vector<double> Variances() const;
+	vector<double> variances() const;
 	virtual void setSNR(int SNR,double alphabetVariance) = 0;
 };
 

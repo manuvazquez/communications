@@ -64,7 +64,7 @@ LMSmuTestSystem::LMSmuTestSystem()
     rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
     for(uint iMu=0;iMu<musLMS.size();iMu++)
-        LMSchannelEstimators.push_back(new NLMSEstimator(powerProfile->Means(),N,musLMS[iMu]));
+        LMSchannelEstimators.push_back(new NLMSEstimator(powerProfile->means(),N,musLMS[iMu]));
 }
 
 LMSmuTestSystem::~LMSmuTestSystem()
@@ -84,7 +84,7 @@ void LMSmuTestSystem::AddAlgorithms()
     for(uint iMu=0;iMu<musLMS.size();iMu++)
     {
         sprintf(algorithmName,"LMS-D-SIS mu = %f",musLMS[iMu]);
-        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,N,lastSymbolVectorInstant,m,LMSchannelEstimators[iMu],rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->Means(),powerProfile->Variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,N,lastSymbolVectorInstant,m,LMSchannelEstimators[iMu],rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
     }
 }
 
@@ -103,5 +103,5 @@ void LMSmuTestSystem::BeforeEndingFrame(int iFrame)
 
     Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
     Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-    Util::ScalarsVectorToOctaveFileStream(musLMS,"musLMS",f);
+    Util::scalarsVectorToOctaveFileStream(musLMS,"musLMS",f);
 }

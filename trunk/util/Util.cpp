@@ -64,7 +64,7 @@ void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
     }
 }
 
-void Util::Transpose(const tMatrix &A,tMatrix &B)
+void Util::transpose(const tMatrix &A,tMatrix &B)
 {
     if(A.cols()!=B.rows())
         throw RuntimeException("Util::Transpose: Matrix dimensions are wrong.");
@@ -132,10 +132,10 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,uint rows)
     return ToMatrix(vector,order,rows,cols);
 }
 
-tMatrix Util::Append(const tMatrix &A,const tMatrix &B)
+tMatrix Util::append(const tMatrix &A,const tMatrix &B)
 {
     if(A.rows()!=B.rows())
-        throw RuntimeException("Matrices have different number of rows.");
+        throw RuntimeException("Util::append: matrices have different number of rows.");
 
     tMatrix res(A.rows(),A.cols()+B.cols());
     int i,j;
@@ -145,6 +145,23 @@ tMatrix Util::Append(const tMatrix &A,const tMatrix &B)
             res(i,j) = A(i,j);
         for(j=0;j<B.cols();j++)
             res(i,A.cols()+j) = B(i,j);
+    }
+    return res;
+}
+
+tMatrix Util::verticalAppend(const tMatrix &A,const tMatrix &B)
+{
+    if(A.cols()!=B.cols())
+        throw RuntimeException("Util::verticalAppend: matrices have different number of cols.");
+
+    tMatrix res(A.rows()+B.rows(),A.cols());
+    int i,j;
+    for(j=0;j<res.cols();j++)
+    {
+        for(i=0;i<A.rows();i++)
+            res(i,j) = A(i,j);
+        for(i=0;i<B.rows();i++)
+            res(A.rows()+i,j) = B(i,j);
     }
     return res;
 }
@@ -359,7 +376,7 @@ void Util::StringsVectorToOctaveFileStream(std::vector<string> strings,string na
     }
 }
 
-template<class T> void Util::ScalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f)
+template<class T> void Util::scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << vector.size() << endl;
 
@@ -367,9 +384,9 @@ template<class T> void Util::ScalarsVectorToOctaveFileStream(std::vector<T> vect
         f << vector[i] << " ";
     f << endl;
 }
-template void Util::ScalarsVectorToOctaveFileStream(std::vector<double> vector,string name,ofstream &f);
-template void Util::ScalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
-template void Util::ScalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
+template void Util::scalarsVectorToOctaveFileStream(std::vector<double> vector,string name,ofstream &f);
+template void Util::scalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
+template void Util::scalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
 template<class T> int Util::Max(const std::vector<T> &vector)
 {
@@ -469,7 +486,7 @@ template<class T> void Util::Print(const T* array,int nElements)
 }
 template void Util::Print(const int* array,int nElements);
 
-void Util::ShiftUp(tVector &v,int n)
+void Util::shiftUp(tVector &v,int n)
 {
     if(n>=v.size())
         throw RuntimeException("Util::ShiftUp: vector is too short for this shift.");
@@ -572,7 +589,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     return signs[iBestPermutation];
 }
 
-tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
+tMatrix Util::applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {
     #ifdef DEBUG
         cout << "hola" << endl;
@@ -594,7 +611,7 @@ tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permut
     return res;
 }
 
-// tMatrix Util::Cholesky(const tMatrix &matrix)
+// tMatrix Util::cholesky(const tMatrix &matrix)
 // {
 //  if(matrix.rows()!=matrix.cols())
 //      throw RuntimeException("Util::Cholesky: matrix is not square.");
@@ -616,7 +633,7 @@ tMatrix Util::ApplyPermutation(const tMatrix &symbols,const vector<uint> &permut
 //  return res;
 // }
 
-tMatrix Util::Cholesky(const tMatrix &matrix)
+tMatrix Util::cholesky(const tMatrix &matrix)
 {
   if (matrix.rows() != matrix.cols())
     throw RuntimeException("Util::Cholesky: Matrix not square");
@@ -699,7 +716,7 @@ template<class T> void Util::HowManyTimes(const vector<T> &v,vector<int> &firstO
 }
 template void Util::HowManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
 
-vector<int> Util::NMax(int n,const tVector &v)
+vector<int> Util::nMax(int n,const tVector &v)
 {
     // a vector of length the minimum between the size of the vector and n is created
     vector<int> res(n>v.size()?v.size():n);
@@ -724,7 +741,7 @@ vector<int> Util::NMax(int n,const tVector &v)
 
     return res;
 }
-tMatrix Util::FlipLR(const tMatrix &A)
+tMatrix Util::flipLR(const tMatrix &A)
 {
     tMatrix res(A.rows(),A.cols());
 

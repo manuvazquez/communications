@@ -51,7 +51,7 @@ int ChannelMatrixEstimator::memory()
 
 vector<tMatrix> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo)
 {
-//     tMatrix toProcessSequence = Util::Append(_preamble,trainingSequence);
+//     tMatrix toProcessSequence = Util::append(_preamble,trainingSequence);
 //     int lengthToProcessSequence = toProcessSequence.cols();
 
     if(observations.cols()<iTo)

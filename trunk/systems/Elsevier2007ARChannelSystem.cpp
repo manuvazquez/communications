@@ -25,8 +25,8 @@ Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()
     channelVariance = 1.0;
     powerProfile = new FlatPowerProfile(L,N,m,channelVariance);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->Means(),powerProfile->Variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
 }
 
 
@@ -40,7 +40,7 @@ Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
 
 void Elsevier2007ARChannelSystem::BuildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->GenerateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
 void Elsevier2007ARChannelSystem::BeforeEndingFrame(int iFrame)

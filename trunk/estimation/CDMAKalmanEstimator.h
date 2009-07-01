@@ -17,26 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "TesisComplejidadReducidaARSystem.h"
+#ifndef CDMAKALMANESTIMATOR_H
+#define CDMAKALMANESTIMATOR_H
 
-TesisComplejidadReducidaARSystem::TesisComplejidadReducidaARSystem(): TesisComplejidadReducidaSystem()
+#include <ChannelMatrixEstimator.h>
+#include <KalmanFilter.h>
+#include <Util.h>
+
+/**
+It implements a channel matrix estimator for a Multiuser CDMA autoregressive channel
+
+	@author Manu <manu@rustneversleeps>
+*/
+class CDMAKalmanEstimator : public ChannelMatrixEstimator
 {
-    channelVariance = 1.0;
-}
+protected:
+    uint _stateVectorLength;
+    KalmanFilter *_kalmanFilter;
+public:
+    CDMAKalmanEstimator(tMatrix initialEstimation, int N, const vector<double> &ARprocCoeffs, double ARprocVar);
+    
+    CDMAKalmanEstimator(int N);
 
+    ~CDMAKalmanEstimator();
 
-TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
-{
-}
+    virtual ChannelMatrixEstimator* Clone() const;
+    virtual double likelihood(const tVector& observations, const tMatrix symbolsMatrix, double noiseVariance);
+    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 
+};
 
-void TesisComplejidadReducidaARSystem::BuildChannel()
-{
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-}
-
-void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
-{
-    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
-}
+#endif
