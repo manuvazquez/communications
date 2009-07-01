@@ -256,7 +256,7 @@ tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChan
         for(int iSource1=from1,iSource2=from2,iRes=0;iSource1<=to1;iSource1++,iSource2++,iRes++)
         {
             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-            res(iRes) = Util::SquareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(Blas_NormF(trueChannelMatrices.at(iSource2)),2.0);
+            res(iRes) = Util::squareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(Blas_NormF(trueChannelMatrices.at(iSource2)),2.0);
 
         }
     } catch (IncompatibleOperandsException) {

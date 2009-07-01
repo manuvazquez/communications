@@ -143,7 +143,7 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 int ParticleFilter::iBestParticle()
 {
 // 	int iBestParticle;
-// 	Util::Max(GetWeightsVector(),iBestParticle);
+// 	Util::max(GetWeightsVector(),iBestParticle);
 // 	return iBestParticle;
 
 #ifdef DEBUG3
@@ -183,7 +183,7 @@ int ParticleFilter::iBestParticle()
 			}
 		}
 	}
-	int iBestParticle = Util::Max(accumulatedWeights);
+	int iBestParticle = Util::max(accumulatedWeights);
 #ifdef DEBUG2
 	cout << "iBestParticle " << iBestParticle << " iBestParticle2 " << iBestParticle2 << endl;
 	cout << "Los pesos: " << endl << GetWeightsVector();

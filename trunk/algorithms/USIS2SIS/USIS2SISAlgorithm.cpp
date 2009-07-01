@@ -41,7 +41,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
 		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iParticle));
 
 		tVector particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPPsVector();
-		Util::Add(_weightedChannelOrderAPPs,particleChannelOrderAPPs,_weightedChannelOrderAPPs,1.0,processedParticle->GetWeight());
+		Util::add(_weightedChannelOrderAPPs,particleChannelOrderAPPs,_weightedChannelOrderAPPs,1.0,processedParticle->GetWeight());
 	}
 
     #ifdef DEBUG
@@ -50,7 +50,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
 
     // the maximum probability is obtained
     int iMax;
-    Util::Max(_weightedChannelOrderAPPs,iMax);
+    Util::max(_weightedChannelOrderAPPs,iMax);
 
     #ifdef DEBUG
         cout << "La probabilidad más alta es la " << iMax << endl;

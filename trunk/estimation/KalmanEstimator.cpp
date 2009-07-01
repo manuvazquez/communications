@@ -31,7 +31,7 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double A
 	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
 	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 
-	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
+	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
 }
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
@@ -43,7 +43,7 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix 
 	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
     tMatrix initialCovariance = LaGenMatDouble::from_diag(Util::ToVector(variances,rowwise));
 
-	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance,_L);
+	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
 }
 
 KalmanEstimator::KalmanEstimator(const KalmanEstimator &kalmanEstimator):ChannelMatrixEstimator(kalmanEstimator),_kalmanFilter(new KalmanFilter(*(kalmanEstimator._kalmanFilter))),_nChannelCoefficients(kalmanEstimator._nChannelCoefficients)
@@ -87,7 +87,7 @@ tMatrix KalmanEstimator::BuildFfromSymbolsMatrix(const tVector &symbolsVector)
 double KalmanEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 {
 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
-		throw RuntimeException("KalmanEstimator::Likelihood: observations vector length or symbols matrix length are wrong.");
+		throw RuntimeException("KalmanEstimator::likelihood: observations vector length or symbols matrix length are wrong.");
 
 	// pivots vector needed for factorizations
 	tLongIntVector piv(_nChannelCoefficients);
@@ -132,7 +132,8 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
 	double auxArgExp = Blas_Dot_Prod(auxAuxArgExpInvB,auxAuxArgExp);
 
 	tVector observationsNoiseCovariance = observations;
-	observationsNoiseCovariance *= noiseVariance;
+// 	observationsNoiseCovariance *= noiseVariance;
+    observationsNoiseCovariance *= 1.0/noiseVariance; // <--------------------------------------------------------------------------------------
 
 	// _observationsNoiseCovarianceObservations = observationsNoiseCovariance . observations
 	double observationsNoiseCovarianceObservations = Blas_Dot_Prod(observationsNoiseCovariance,observations);
@@ -142,7 +143,7 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
 
 	double argExp = -0.5*(observationsNoiseCovarianceObservations + predictiveMeanInvPredictiveCovariancePredictiveMean - auxArgExp);
 
-	//detInvB = inv(B)
+	//detInvB = det(B) (recall B = inv(B))
 	LUFactorizeIP(B,piv);
 	double detInvB = 1.0;
 	for(int i=0;i<_nChannelCoefficients;i++)
@@ -159,8 +160,8 @@ KalmanEstimator *KalmanEstimator::Clone() const
 
 tMatrix KalmanEstimator::SampleFromPredictive()
 {
-	const tVector &predictiveMean = _kalmanFilter->PredictiveMean();
-	const tMatrix &predictiveCovariance = _kalmanFilter->PredictiveCovariance();
+	tVector predictiveMean = _kalmanFilter->PredictiveMean();
+	tMatrix predictiveCovariance = _kalmanFilter->PredictiveCovariance();
 
 	return Util::ToMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_L);
 }

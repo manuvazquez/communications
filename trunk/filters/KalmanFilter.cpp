@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanFilter.h"
 
-KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength):
+KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance):
 _R(R),_stateEquationCovariance(stateEquationCovariance),_nElementsToEstimate(initialMean.size()),_predictiveMean(R.rows()),_filteredMean(initialMean),_predictiveCovariance(R.rows(),R.rows()),_filteredCovariance(initialCovariance)
 {
 	if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
@@ -44,7 +44,7 @@ _R(R),_stateEquationCovariance(stateEquationCovariance),_nElementsToEstimate(ini
 
 void KalmanFilter::Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)
 {
-	if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size()/* || observation.size()!=_observationVectorLength*/)
+	if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size())
 		throw RuntimeException("The matrix F or observation vector dimensions are wrong.");
 
 	tMatrix predictiveCovarianceFtrans(_nElementsToEstimate,observation.size());

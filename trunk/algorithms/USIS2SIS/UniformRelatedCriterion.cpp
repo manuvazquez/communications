@@ -28,7 +28,7 @@ bool UniformRelatedCriterion::MakeTransition(tVector channelOrderAPPs)
 	double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
 
 	int iMax;
-    Util::Max(channelOrderAPPs,iMax);
+    Util::max(channelOrderAPPs,iMax);
 
     return (channelOrderAPPs(iMax)>(_ratio*uniformProbability));
 }

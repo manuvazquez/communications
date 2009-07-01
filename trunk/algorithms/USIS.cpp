@@ -158,12 +158,12 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				// predicted channel matrices are sampled and stored in a vector in order to stack them
 
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,Nm)*_samplingVariance
-				Util::Add(processedParticle->GetChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
+				Util::add(processedParticle->GetChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
 
 				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					// matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient * matricesToStack[iChannelOrder][iSmoothing-1] + rand(_L,Nm)*_ARprocessVariance
-					Util::Add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::RandnMatrix(_L,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
+					Util::add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::RandnMatrix(_L,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
 				}
 
 				// for sampling s_{t:t+d} we need to build
@@ -195,7 +195,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
             		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.variance());
 
 					// s2qAux = s2qAux + stackedNoiseCovariance
-					Util::Add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
+					Util::add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
 
 					// the real symbol we are sampling (it depends on "iLinearFilterNeeded")
 					int iSampledSymbolPos = iLinearFilterNeeded*_N - 1;
@@ -241,7 +241,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			overallSymbolProb *= processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(0);
 			for(iChannelOrder=1;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
-				Util::Add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iChannelOrder));
+				Util::add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iChannelOrder));
 			}
 
 			proposal = 1.0;

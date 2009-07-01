@@ -141,7 +141,7 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &c
 
 	tVector xMinusMean(N);
 	// xMinusMean = x - mean
-	Util::Add(x,mean,xMinusMean,1.0,-1.0);
+	Util::add(x,mean,xMinusMean,1.0,-1.0);
 
 	tVector invCovarianceXminusMean(N);
 	// invCovarianceXminusMean = -0.5 * invCovariance * xMinusMean

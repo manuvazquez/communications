@@ -67,17 +67,17 @@ void ARprocess::CommonConstructorsCode(const tMatrix &seed)
 
 //      for(j=0;j<i;j++)
 //          // _buffer[i] = _buffer[i] + _buffer[j]*_coefficients[j];
-//          Util::Add(*(_buffer[i]),*(_buffer[j]),*(_buffer[i]),1.0,_coefficients[j]);
+//          Util::add(*(_buffer[i]),*(_buffer[j]),*(_buffer[i]),1.0,_coefficients[j]);
 //
 //      tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 //
 //      //_buffer[i] = _buffer[i] + noise;
-//      Util::Add(*(_buffer[i]),noise,*(_buffer[i]));
+//      Util::add(*(_buffer[i]),noise,*(_buffer[i]));
 
         tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
         //_buffer[i] = _buffer[i] + noise;
-        Util::Add(*(_buffer[i-1]),noise,*(_buffer[i]));
+        Util::add(*(_buffer[i-1]),noise,*(_buffer[i]));
 
 #ifdef DEBUG3
         cout << "El ruido fue (_noiseMean = " << _noiseMean << ",_noiseVariance = " << _noiseVariance << endl << noise;
@@ -92,12 +92,12 @@ void ARprocess::CommonConstructorsCode(const tMatrix &seed)
         aux = 0.0;
         for(j=0;j<_nCoefficients;j++)
             // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
-            Util::Add(aux,*(_buffer[(i+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
+            Util::add(aux,*(_buffer[(i+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
 
         tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
         // _buffer[i % _nCoefficients] = aux + noise;
-        Util::Add(aux,noise,*(_buffer[i % _nCoefficients]));
+        Util::add(aux,noise,*(_buffer[i % _nCoefficients]));
 
 #ifdef DEBUG4
         cout << "convergiendo" << endl << *(_buffer[i % _nCoefficients]);
@@ -109,7 +109,7 @@ void ARprocess::CommonConstructorsCode(const tMatrix &seed)
 #ifdef DEBUG5
     tMatrix resta(_rows,_columns);
     cout << "seed es" << endl << seed;
-    Util::Add(*(_buffer[i % _nCoefficients]),seed,resta);
+    Util::add(*(_buffer[i % _nCoefficients]),seed,resta);
     cout << "resta es" << endl << resta;
     cout << "Una tecla..."; getchar();
 #endif
@@ -141,12 +141,12 @@ tMatrix ARprocess::nextMatrix()
     aux = 0.0;
     for(int j=0;j<_nCoefficients;j++)
         // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
-        Util::Add(aux,*(_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
+        Util::add(aux,*(_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
 
     tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
     // _buffer[i % _nCoefficients] = aux + noise;
-    Util::Add(aux,noise,*(_buffer[_iNextMatrix % _nCoefficients]));
+    Util::add(aux,noise,*(_buffer[_iNextMatrix % _nCoefficients]));
 
 #ifdef DEBUG
     cout << "Otra matriz" << endl << *(_buffer[_iNextMatrix++ % _nCoefficients]);

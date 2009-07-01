@@ -23,7 +23,7 @@
 
 using namespace std;
 
-void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
+void Util::add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
 {
     #ifdef DEBUG2
         cout << "A.rows(): " << A.rows() << " A.cols(): " << A.cols() << " B.rows(): " << B.rows() << " B.cols(): " << B.cols() << endl;
@@ -39,7 +39,7 @@ void Util::Add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double 
             C(i,j) = alpha*A(i,j) + beta*B(i,j);
 }
 
-void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)
+void Util::add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)
 {
     int nElements = a.size();
 
@@ -50,11 +50,11 @@ void Util::Add(const tVector &a,const tVector &b,tVector &c,double alpha,double 
         c(i) = alpha*a(i) + beta*b(i);
 }
 
-void Util::Mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
+void Util::mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
 {
 //     if(a.size()!=b.size() || a.size()!=C.rows() || C.rows()!=C.cols())
     if(C.rows()!=a.size() || C.cols()!=b.size())
-        throw RuntimeException("Util::Mult: Resultant matrix dimensions are wrong.");
+        throw RuntimeException("Util::mult: Resultant matrix dimensions are wrong.");
 
     int j;
     for(int i=0;i<a.size();i++)
@@ -194,7 +194,7 @@ double Util::Sum(const tVector &v)
     return res;
 }
 
-void Util::Max(const tVector &v,int &index)
+void Util::max(const tVector &v,int &index)
 {
     double max = v(0);
     index = 0;
@@ -206,7 +206,7 @@ void Util::Max(const tVector &v,int &index)
         }
 }
 
-void Util::Min(const tVector &v,int &index)
+void Util::min(const tVector &v,int &index)
 {
     double min = v(0);
     index = 0;
@@ -218,7 +218,7 @@ void Util::Min(const tVector &v,int &index)
         }
 }
 
-double Util::SquareError(const tMatrix &A,const tMatrix &B)
+double Util::squareError(const tMatrix &A,const tMatrix &B)
 {
     if(A.cols()!=B.cols() || A.rows()!=B.rows())
         throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
@@ -231,7 +231,7 @@ double Util::SquareError(const tMatrix &A,const tMatrix &B)
     return res;
 }
 
-double Util::SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
+double Util::squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
 {
     if(A.rows()!=B.rows())
         throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
@@ -388,7 +388,7 @@ template void Util::scalarsVectorToOctaveFileStream(std::vector<double> vector,s
 template void Util::scalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
 template void Util::scalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
-template<class T> int Util::Max(const std::vector<T> &vector)
+template<class T> int Util::max(const std::vector<T> &vector)
 {
     int iMax = 0;
     T max = vector[0];
@@ -401,10 +401,10 @@ template<class T> int Util::Max(const std::vector<T> &vector)
         }
     return iMax;
 }
-template int Util::Max(const std::vector<int> &vector);
-template int Util::Max(const std::vector<double> &vector);
+template int Util::max(const std::vector<int> &vector);
+template int Util::max(const std::vector<double> &vector);
 
-template<class T> void Util::Min(const std::vector<T> &vector,int &iMin)
+template<class T> void Util::min(const std::vector<T> &vector,int &iMin)
 {
     iMin = 0;
     T min = vector[0];
@@ -416,7 +416,7 @@ template<class T> void Util::Min(const std::vector<T> &vector,int &iMin)
             min = vector[i];
         }
 }
-template void Util::Min(const std::vector<double> &vector,int &iMin);
+template void Util::min(const std::vector<double> &vector,int &iMin);
 
 template<class T> T Util::Sum(const std::vector<T> &vector)
 {
@@ -562,11 +562,11 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
                 cout << "columna de la 2� matriz" << endl << col2;
             #endif
 
-            Add(col1,col2,errorVector,1.0,-1.0);
+            add(col1,col2,errorVector,1.0,-1.0);
             errorWithoutChangingSign = Blas_Dot_Prod(errorVector,errorVector);
 
             // error changing the sign
-            Add(col1,col2,errorVector,1.0,1.0);
+            add(col1,col2,errorVector,1.0,1.0);
             errorChangingSign = Blas_Dot_Prod(errorVector,errorVector);
 
             if(errorChangingSign<errorWithoutChangingSign)
@@ -585,7 +585,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
         Print(permutationError);
     #endif
 
-    Min(permutationError,iBestPermutation);
+    min(permutationError,iBestPermutation);
     return signs[iBestPermutation];
 }
 

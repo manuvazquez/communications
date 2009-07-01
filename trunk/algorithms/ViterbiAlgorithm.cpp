@@ -146,7 +146,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
         Blas_Mat_Vec_Mult(channelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
 
         // error = observations - computedObservations
-        Util::Add(observations,computedObservations,error,1.0,-1.0);
+        Util::add(observations,computedObservations,error,1.0,-1.0);
 
         newCost = _exitStage[iState].GetCost() + Blas_Dot_Prod(error,error);
 

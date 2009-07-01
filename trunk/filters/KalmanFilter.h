@@ -41,7 +41,7 @@ private:
 	tMatrix _predictiveCovariance,_filteredCovariance;
 
 public:
-    KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance,int observationVectorLength);
+    KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance);
 
 	void Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
 	tVector PredictiveMean() { return _predictiveMean;}

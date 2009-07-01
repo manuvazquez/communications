@@ -31,11 +31,14 @@ It implements a channel matrix estimator for a Multiuser CDMA autoregressive cha
 */
 class CDMAKalmanEstimator : public ChannelMatrixEstimator
 {
+private:
+    tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
 protected:
-    uint _stateVectorLength;
+    uint _stateVectorLength,_nOutputs;
     KalmanFilter *_kalmanFilter;
+    tMatrix _spreadingCodes;
 public:
-    CDMAKalmanEstimator(tMatrix initialEstimation, int N, const vector<double> &ARprocCoeffs, double ARprocVar);
+    CDMAKalmanEstimator(tMatrix initialEstimation, const tMatrix &spreadingCodes, const vector<double> &ARprocCoeffs, double ARprocVar);
     
     CDMAKalmanEstimator(int N);
 

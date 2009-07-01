@@ -51,7 +51,7 @@ tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const 
 
 	tMatrix Rx(_channelMatrixRows,_channelMatrixRows);
 	// Rx = alphabetVarianceChannelMatrixChannelMatrixTrans + noiseCovariance
-	Util::Add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,Rx);
+	Util::add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,Rx);
 
 	_Rx = Rx;
 

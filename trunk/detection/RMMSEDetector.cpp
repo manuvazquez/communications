@@ -90,7 +90,7 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const 
 	Blas_Mat_Mat_Trans_Mult(channelMatrix,channelMatrix,alphabetVarianceChannelMatrixChannelMatrixTrans,_alphabetVariance);
 
 	// _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance = _alphabetVarianceChannelMatrixChannelMatrixTrans + noiseCovariance
-	Util::Add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance);
+	Util::add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance);
 
 	_channelMatrix = channelMatrix;
 

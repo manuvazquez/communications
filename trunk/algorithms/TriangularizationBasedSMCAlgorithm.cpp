@@ -81,7 +81,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
                 cout << "iSmoothing = " << iSmoothing << endl;
 #endif
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
-                Util::Add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
+                Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
                 // "stackedChannelMatrixSubstract" will be used to substract the contribution of the already detected symbol vectors from the observations
 //                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_L,iSmoothing*_L-1),tRange(_N*(iSmoothing-1),(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing)*_N-1)));

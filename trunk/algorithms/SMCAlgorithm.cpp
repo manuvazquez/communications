@@ -165,7 +165,7 @@ tMatrix SMCAlgorithm::getDetectedSymbolVectors()
 {
     // best particle is chosen
 //     int iBestParticle = _particleFilter->iBestParticle();
-//     Util::Max(_particleFilter->GetWeightsVector(),iBestParticle);
+//     Util::max(_particleFilter->GetWeightsVector(),iBestParticle);
 
     return (_particleFilter->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
 }
@@ -177,7 +177,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 
     // best particle is chosen
     int iBestParticle = _particleFilter->iBestParticle();
-//     Util::Max(_particleFilter->GetWeightsVector(),iBestParticle);
+//     Util::max(_particleFilter->GetWeightsVector(),iBestParticle);
 
     for(int i=_preamble.cols();i<_K;i++)
         channelMatrices.push_back((_particleFilter->GetParticle(iBestParticle))->GetChannelMatrix(_estimatorIndex,i));

@@ -133,7 +133,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                     continue;
 //                  throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
 
-                Util::Max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
+                Util::max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
 
                 particleCandidates[iCandidate].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;

@@ -129,7 +129,7 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
 
     // best particle is chosen
     int iBestParticle = GetParticleFilterPointer()->iBestParticle();
-//     Util::Max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
+//     Util::max(GetParticleFilterPointer()->GetWeightsVector(),iBestParticle);
 
     int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 

@@ -239,7 +239,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 			Blas_Mat_Vec_Mult(estimatedChannelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
 
 			// error = observations - computedObservations
-			Util::Add(observations,computedObservations,error,1.0,-1.0);
+			Util::add(observations,computedObservations,error,1.0,-1.0);
 
 			newCost = _exitStage[iState][iSourceSurvivor].GetCost() + Blas_Dot_Prod(error,error);
 

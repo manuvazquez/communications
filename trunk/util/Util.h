@@ -43,9 +43,9 @@ class Util{
 
 public:
 
-    static void Add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-    static void Add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
-    static void Mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
+    static void add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
+    static void add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
+    static void mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
     static void transpose(const tMatrix &A,tMatrix &B);
     static tVector ToVector(const tMatrix &matrix,tOrder order);
     static tMatrix ToMatrix(const tVector &vector,tOrder order,int rows,int cols);
@@ -55,10 +55,10 @@ public:
     static tMatrix verticalAppend(const tMatrix &A,const tMatrix &B);
     static tVector Normalize(const tVector &v);
     static double Sum(const tVector &v);
-    static void Max(const tVector &v,int &index);
-    static void Min(const tVector &v,int &index);
-    static double SquareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
-    static double SquareError(const tMatrix &A,const tMatrix &B);
+    static void max(const tVector &v,int &index);
+    static void min(const tVector &v,int &index);
+    static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
+    static double squareError(const tMatrix &A,const tMatrix &B);
     static void Print(const tMatrix &A);
     static void MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
     template<class T> static void MatricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
@@ -68,8 +68,8 @@ public:
     template<class T> static void ScalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void StringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
-    template<class T> static int Max(const std::vector<T> &vector);
-    template<class T> static void Min(const std::vector<T> &vector,int &iMin);
+    template<class T> static int max(const std::vector<T> &vector);
+    template<class T> static void min(const std::vector<T> &vector,int &iMin);
     template<class T> static T Sum(const std::vector<T> &vector);
     static void elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
     static void elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C);    

@@ -46,7 +46,6 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
     // a flat power profile is generated. Notice:
     //      i) that m should be 1, otherwise an exception would have been thrown
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
-//     powerProfile = new FlatPowerProfile(N,1,m,1.0);
     powerProfile = new FlatPowerProfile(1,N,m,1.0);
 
     // particle filtering
@@ -57,7 +56,7 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
     newActiveUserProb = 0.2;
     userPriorProb = 0.5;
     
-    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),N,ARcoefficients,ARvariance);
+    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),_spreadingCodes,ARcoefficients,ARvariance);
     
 //     exit(0);
 }
