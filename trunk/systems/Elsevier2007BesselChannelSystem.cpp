@@ -63,8 +63,8 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
 
 	powerProfile->Print();
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance,symbols,preambleLength);
 }
 
 

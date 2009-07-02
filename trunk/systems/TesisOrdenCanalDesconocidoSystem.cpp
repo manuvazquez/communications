@@ -53,7 +53,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
     {
         RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
-        kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients[0],ARvariance));
+        kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients,ARvariance));
         noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,1.0));
 
         RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),alphabet->variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
@@ -64,7 +64,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
     multinomialResamplingAlgorithm = new MultinomialResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
 
     // USIS2SIS transition criterion(s)
     USISmaximumProbabilityCriterion = new MaximumProbabilityCriterion(0.8);

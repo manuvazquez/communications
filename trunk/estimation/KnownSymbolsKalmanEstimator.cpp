@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, double ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficient, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
+KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector<double> ARcoefficients, double ARvariance,const tMatrix &symbols,int startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficients, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
 {
 }
 

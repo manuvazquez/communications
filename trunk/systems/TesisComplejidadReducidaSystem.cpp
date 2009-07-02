@@ -91,8 +91,8 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
     lmsEstimator = new LMSEstimator(powerProfile->means(),N,muLMS);
     nlmsEstimator = new NLMSEstimator(powerProfile->means(),N,muNLMS);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance,symbols,preambleLength);
 
     kalmanEstimatedChannel = NULL;
 }

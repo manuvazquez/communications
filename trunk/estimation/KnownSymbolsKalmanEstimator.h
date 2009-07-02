@@ -31,7 +31,7 @@ protected:
 	int _presentTime;
 	const tMatrix &_symbols;
 public:
-    KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, double ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime);
+    KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector<double> ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime);
 
 	KnownSymbolsKalmanEstimator* Clone() const;
 

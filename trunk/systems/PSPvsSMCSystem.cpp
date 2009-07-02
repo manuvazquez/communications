@@ -80,7 +80,7 @@ PSPvsSMCSystem::PSPvsSMCSystem()
         cout << " to " << nSurvivors << endl;
     }
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients[0],ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
 }
 
 PSPvsSMCSystem::~PSPvsSMCSystem()

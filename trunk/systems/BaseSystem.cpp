@@ -41,7 +41,7 @@ BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
     nFrames = 1;
-    L=3,N=2,frameLength=300;
+    L=3,N=2,frameLength=50;
     m = 3;
     d = m - 1;
     trainSeqLength = 10;

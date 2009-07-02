@@ -21,23 +21,23 @@
 
 // #define DEBUG
 
-KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance)
- : ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
+// KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance)
+//  : ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
+// {
+// 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
+// 	R *= ARcoefficient;
+// 	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
+// 	stateEquationCovariance *= ARvariance;
+// 	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
+// 	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
+// 
+// 	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
+// }
+
+KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
 {
 	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
-	R *= ARcoefficient;
-	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
-	stateEquationCovariance *= ARvariance;
-	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
-	tMatrix initialCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
-
-	_kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
-}
-
-KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,double ARcoefficient,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nChannelCoefficients(_L*_Nm)
-{
-	tMatrix R = LaGenMatDouble::eye(_nChannelCoefficients);
-	R *= ARcoefficient;
+	R *= ARcoefficients[0];
 	tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nChannelCoefficients);
 	stateEquationCovariance *= ARvariance;
 	tVector initialMeanVector = Util::ToVector(initialEstimation,rowwise);
