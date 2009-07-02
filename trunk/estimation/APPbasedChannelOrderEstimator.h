@@ -36,7 +36,7 @@ class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 protected:
     tRange _rAllSymbolRows;
     vector<double> _unnormalizedChannelOrderAPPs;
-    int _maxChannelOrder,_NmaxChannelOrder;
+    int _maxChannelOrder,_nInputsXchannelOrderaxChannelOrder;
     vector<int> _channelOrder2index;
     tVector _symbolVector;
 public:

@@ -54,10 +54,10 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
-    vector<tSymbol> preambleVector(_N*(channel.memory()-1));
+    vector<tSymbol> preambleVector(_nInputs*(channel.memory()-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_N;
+    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_nInputs;
     for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
 

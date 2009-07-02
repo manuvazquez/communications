@@ -35,11 +35,11 @@ void ISIS::InitializeParticles()
 		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
         {
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
-//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_L));
+//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_nOutputs));
         }
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_N,_K,thisParticleChannelMatrixEstimators));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_nInputs,_K,thisParticleChannelMatrixEstimators));
     }
 }
 
@@ -48,7 +48,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	int m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;
 	uint iChannelOrder,k;
-	vector<tSymbol> testedVector(_N),sampledVector(_N);
+	vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
 	double auxLikelihoodsProd,channelOrderAPPsNormConstant/*,newChannelOrderAPP*/;
 	KalmanEstimator *auxChannelEstimator;
 // 	double channelOrderAprioriProbability = 1.0/(double)_candidateOrders.size();
@@ -57,9 +57,9 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
     double *newChannelOrderAPPs = new double[_candidateOrders.size()];
 
 	// it selects all rows in the symbols Matrix
-	tRange rAllSymbolRows(0,_N-1);
+	tRange rAllSymbolRows(0,_nInputs-1);
 
-	int nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
+	int nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
@@ -93,20 +93,20 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 					m = _candidateOrders[iChannelOrder];
 
 					// channel order dependent variables
-					Nm = _N*m;
+					Nm = _nInputs*m;
 // 					d = m-1;
 					d = _maxOrder-1;
-					nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_N*d));
-					vector<tSymbol> testedSmoothingVector(_N*d);
+					nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*d));
+					vector<tSymbol> testedSmoothingVector(_nInputs*d);
 					// it includes all symbol vectors involved in the smoothing
-					tMatrix smoothingSymbolVectors(_N,m+d);
+					tMatrix smoothingSymbolVectors(_nInputs,m+d);
 
 					// the m-1 already detected symbol vectors are copied into the matrix (just needed if m>1):
 					if(m>1)
 						smoothingSymbolVectors(rAllSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1));
 
 					// current tested vector is copied in the m-th position
-					for(k=0;k<_N;k++)
+					for(k=0;k<_nInputs;k++)
 						smoothingSymbolVectors(k,m-1) = testedVector[k];
 
 					// every possible smoothing sequence is tested
@@ -117,7 +117,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 						// symbols used for smoothing are copied into "smoothingSymbolVectors"
 						for(k=0;k<testedSmoothingVector.size();k++)
-							smoothingSymbolVectors((Nm+k)%_N,(Nm+k)/_N) = testedSmoothingVector[k];
+							smoothingSymbolVectors((Nm+k)%_nInputs,(Nm+k)/_nInputs) = testedSmoothingVector[k];
 
 						auxLikelihoodsProd = 1.0;
 

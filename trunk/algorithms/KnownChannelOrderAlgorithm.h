@@ -34,7 +34,7 @@ class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
 	ChannelMatrixEstimator *_channelEstimator;
-	int _m,_Nm;
+	int _channelOrder,_nInputsXchannelOrder;
 	tMatrix _preamble;
 
 public:
@@ -43,7 +43,7 @@ public:
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::HsToStackedH;
-	tMatrix HsToStackedH(vector<tMatrix> matrices) { return HsToStackedH(matrices,_m);}
+	tMatrix HsToStackedH(vector<tMatrix> matrices) { return HsToStackedH(matrices,_channelOrder);}
 };
 
 #endif

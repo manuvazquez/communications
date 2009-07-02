@@ -38,7 +38,7 @@ class Algorithm{
 protected:
 	string _name;
 	Alphabet _alphabet;
-    int _L,_N,_K;
+    int _nOutputs,_nInputs,_K;
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int N, int frameLength);
 	virtual ~Algorithm() {};

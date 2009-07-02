@@ -72,8 +72,8 @@ protected:
 
 	virtual void FillFirstEstimatedChannelMatrix(int iParticle,tMatrix &firstEstimatedChannelMatrix) const
 	{
-		// firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_L,_Nm)*_samplingVariance
-		Util::add(_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_L,_Nm,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
+		// firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
+		Util::add(_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
 	}
 
     virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence);

@@ -38,7 +38,7 @@ void MLSDmAlgorithm::InitializeParticles()
         channelEstimatorsClone[i] = _channelEstimators[i]->Clone();
 
     // we begin with only one particle
-    ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_N,_K+_d,channelEstimatorsClone);
+    ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_nInputs,_K+_d,channelEstimatorsClone);
 
     particle->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 
@@ -51,10 +51,10 @@ void MLSDmAlgorithm::InitializeParticles()
 
 void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
+    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
     tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
-    vector<tSymbol> testedVector(_N);
-    tVector computedObservations(_L);
+    vector<tSymbol> testedVector(_nInputs);
+    tVector computedObservations(_nOutputs);
     int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
     uint iChannelOrder,iTestedVector;
     ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
@@ -72,10 +72,10 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
     tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors];
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
-    tMatrix symbolVectorsMatrix(_N,_maxOrder);
+    tMatrix symbolVectorsMatrix(_nInputs,_maxOrder);
     tVector symbolsVector;
 
-    int lastSymbolVectorStart = _NmaxOrder - _N;
+    int lastSymbolVectorStart = _nInputsXchannelOrderaxOrder - _nInputs;
 
     tRange rMaxChannelOrderMinus1PrecedentColumns(_startDetectionTime-_maxOrder+1,_startDetectionTime-1);
 
@@ -106,7 +106,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                 _alphabet.int2symbolsArray(iTestedVector,testedVector);
 
                 // current tested vector is copied in the m-th position
-                for(k=0;k<_N;k++)
+                for(k=0;k<_nInputs;k++)
                     symbolVectorsMatrix(k,_maxOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
 
                 likelihood = 0.0;
@@ -158,7 +158,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             {
                 processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
                 symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
-                for(k=0;k<_N;k++)
+                for(k=0;k<_nInputs;k++)
                     symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::discrete_rnd(uniformDistribution)];
                 particleCandidates[iParticle].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;

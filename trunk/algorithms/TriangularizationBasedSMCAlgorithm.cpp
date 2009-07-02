@@ -31,23 +31,23 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 {
     int iParticle,iSmoothing,iAlphabet,iSampled;
     double proposal,observationWithouNoise,sumProb,likelihoodsProd;
-    vector<tMatrix> matricesToStack(_d+1,tMatrix(_L,_Nm));
-    tRange rAllObservationsRows(0,_L-1),rAllSymbolRows(0,_N-1);
-    tRange rAllStackedObservationsRows(0,_L*(_d+1)-1);
-    tRange rFirstmMinus1symbolVectors(0,_m-2),rFirstmSymbolVectors(0,_m-1);
+    vector<tMatrix> matricesToStack(_d+1,tMatrix(_nOutputs,_nInputsXchannelOrder));
+    tRange rAllObservationsRows(0,_nOutputs-1),rAllSymbolRows(0,_nInputs-1);
+    tRange rAllStackedObservationsRows(0,_nOutputs*(_d+1)-1);
+    tRange rFirstmMinus1symbolVectors(0,_channelOrder-2),rFirstmSymbolVectors(0,_channelOrder-1);
     tMatrix stackedChannelMatrixSubstract;
-    tMatrix stackedChannelMatrixMinus(_L*(_d+1),_N*(_d+1)),stackedChannelMatrixMinusFlipped;
-    tMatrix stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped(_N*(_d+1),_N*(_d+1));
-    tVector stackedObservationsMinus(_L*(_d+1));
-    tMatrix L,invLstackedChannelMatrixMinusTrans(_N*(_d+1),_L*(_d+1));
-    tMatrix observationsCovariance = LaGenMatDouble::zeros(_L*(_d+1),_L*(_d+1));
-    tLongIntVector piv(_N*(_d+1));
-    tVector transformedStackedObservationsMinus(_N*(_d+1));
-    tMatrix transformedStackedObservationsCovariance(_N*(_d+1),_N*(_d+1));
-    tMatrix invLstackedChannelMatrixMinusTransObservationsCovariance(_N*(_d+1),_L*(_d+1));
-    tMatrix U(_N*(_d+1),_N*(_d+1));
-    tMatrix involvedSymbolVectors = LaGenMatDouble::zeros(_N,_m+_d);
-    int NmMinus1 = _N*(_m-1);
+    tMatrix stackedChannelMatrixMinus(_nOutputs*(_d+1),_nInputs*(_d+1)),stackedChannelMatrixMinusFlipped;
+    tMatrix stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped(_nInputs*(_d+1),_nInputs*(_d+1));
+    tVector stackedObservationsMinus(_nOutputs*(_d+1));
+    tMatrix L,invLstackedChannelMatrixMinusTrans(_nInputs*(_d+1),_nOutputs*(_d+1));
+    tMatrix observationsCovariance = LaGenMatDouble::zeros(_nOutputs*(_d+1),_nOutputs*(_d+1));
+    tLongIntVector piv(_nInputs*(_d+1));
+    tVector transformedStackedObservationsMinus(_nInputs*(_d+1));
+    tMatrix transformedStackedObservationsCovariance(_nInputs*(_d+1),_nInputs*(_d+1));
+    tMatrix invLstackedChannelMatrixMinusTransObservationsCovariance(_nInputs*(_d+1),_nOutputs*(_d+1));
+    tMatrix U(_nInputs*(_d+1),_nInputs*(_d+1));
+    tMatrix involvedSymbolVectors = LaGenMatDouble::zeros(_nInputs,_channelOrder+_d);
+    int NmMinus1 = _nInputs*(_channelOrder-1);
     tVector symbolProbabilities(_alphabet.length());
 
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
@@ -56,7 +56,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
         cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
 #endif
         // already detected symbol vectors involved in the current detection
-        tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
+        tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
         // observation matrix columns that are involved in the smoothing
         tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_d);
@@ -80,24 +80,24 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 #ifdef DEBUG2
                 cout << "iSmoothing = " << iSmoothing << endl;
 #endif
-                // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_L,_Nm)*_ARprocessVariance
-                Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_L,_Nm,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
+                // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
+                Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
                 // "stackedChannelMatrixSubstract" will be used to substract the contribution of the already detected symbol vectors from the observations
-//                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_L,iSmoothing*_L-1),tRange(_N*(iSmoothing-1),(_m-1)*_N-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_m-iSmoothing)*_N-1)));
+//                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_nOutputs,iSmoothing*_nOutputs-1),tRange(_nInputs*(iSmoothing-1),(_channelOrder-1)*_nInputs-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_channelOrder-iSmoothing)*_nInputs-1)));
             }
 
             // matrices are stacked to give
             tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
-            stackedChannelMatrixMinus = stackedChannelMatrix(rAllStackedObservationsRows,tRange((_m-1)*_N,stackedChannelMatrix.cols()-1));
+            stackedChannelMatrixMinus = stackedChannelMatrix(rAllStackedObservationsRows,tRange((_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1));
 
-            stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_m,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors));
+            stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors));
 
 #ifdef DEBUG4
             cout << stackedObservationsMinus << endl;
             cout << rAllSymbolRows << endl << rFirstmMinus1symbolVectors << endl;
-            cout << "con la funcion" << endl << SubstractKnownSymbolsContribution(matricesToStack,_m,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors)) << endl;
+            cout << "con la funcion" << endl << SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors)) << endl;
 #endif
 
             // we want to start sampling the present symbol vector, not the future ones
@@ -140,8 +140,8 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 
             // ...starting by the covariance of the normal observations
             for(iSmoothing=0;iSmoothing<_d+1;iSmoothing++)
-                for(int i=0;i<_L;i++)
-                    observationsCovariance(iSmoothing*_L+i,iSmoothing*_L+i) = noiseVariances[iObservationToBeProcessed+iSmoothing];
+                for(int i=0;i<_nOutputs;i++)
+                    observationsCovariance(iSmoothing*_nOutputs+i,iSmoothing*_nOutputs+i) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
             // invLstackedChannelMatrixMinusTransObservationsCovariance = invLstackedChannelMatrixMinusTrans * observationsCovariance
             Blas_Mat_Mat_Mult(invLstackedChannelMatrixMinusTrans,observationsCovariance,invLstackedChannelMatrixMinusTransObservationsCovariance);
@@ -157,12 +157,12 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             // the evaluated proposal function (necessary for computing the weights) is initialized
             proposal = 1.0;
 
-            for(int iSampledSymbol=_N*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
+            for(int iSampledSymbol=_nInputs*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
             {
                 observationWithouNoise = 0.0;
                 int jU,iS;
-                for(jU=_N*(_d+1)-1,iS=NmMinus1;jU>iSampledSymbol;jU--,iS++)
-                    observationWithouNoise += U(iSampledSymbol,jU)*involvedSymbolVectors(iS % _N,iS / _N);
+                for(jU=_nInputs*(_d+1)-1,iS=NmMinus1;jU>iSampledSymbol;jU--,iS++)
+                    observationWithouNoise += U(iSampledSymbol,jU)*involvedSymbolVectors(iS % _nInputs,iS / _nInputs);
 
                 sumProb = 0.0;
 
@@ -194,12 +194,12 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 #endif
 
                 iSampled = StatUtil::discrete_rnd(symbolProbabilities);
-                involvedSymbolVectors(iWithinMatrix % _N,iWithinMatrix / _N) = _alphabet[iSampled];
+                involvedSymbolVectors(iWithinMatrix % _nInputs,iWithinMatrix / _nInputs) = _alphabet[iSampled];
                 proposal *= symbolProbabilities(iSampled);
 
-            } // for(int iSampledSymbol=_N*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
+            } // for(int iSampledSymbol=_nInputs*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
 
-            processedParticle->SetSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_m-1));
+            processedParticle->SetSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_channelOrder-1));
 
 #ifdef DEBUG
             cout << "involvedSymbolVectors" << endl << involvedSymbolVectors;

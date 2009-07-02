@@ -29,7 +29,7 @@
 
 class ChannelOrderEstimator{
 protected:
-    int _N;
+    int _nInputs;
     std::vector<int> _candidateOrders;
     std::vector<double> _channelOrderAPPs;
 public:

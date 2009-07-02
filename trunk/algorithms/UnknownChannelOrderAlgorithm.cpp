@@ -26,11 +26,11 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
     for(uint i=0;i<channelEstimators.size();i++)
     {
         // the memory of this estimator is obtained from the number of columns of the channel matrix estimator and the algorithm parameter N
-        if((channelEstimators[i]->cols() % _N) !=0)
+        if((channelEstimators[i]->cols() % _nInputs) !=0)
             throw RuntimeException("UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: the number of columns of (at least) one of the estimators is not coherent with the number of transmitting antennas (N).");
 
         // the memory associated with this channel estimator is stored in the corresponding position of _candidateOrders
-         _candidateOrders[i] = channelEstimators[i]->cols() / _N;
+         _candidateOrders[i] = channelEstimators[i]->cols() / _nInputs;
 
         // the maximun of the channel matrix estimator orders is obtained
         if(_candidateOrders[i]>_maxOrder)
@@ -48,7 +48,7 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 
-    _NmaxOrder = _N*_maxOrder;
+    _nInputsXchannelOrderaxOrder = _nInputs*_maxOrder;
 
 	_channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_K+_maxOrder-1);
 	_channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
@@ -77,7 +77,7 @@ vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::EstimateChannelFromTraini
     vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
 
  	// selects all the rows from a symbols matrix
-    tRange rAllSymbolRows(0,_N-1);
+    tRange rAllSymbolRows(0,_nInputs-1);
 
     uint iOrder;
     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)

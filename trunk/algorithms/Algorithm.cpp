@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int frameLength):_name(name),_alphabet(alphabet),_L(L),_N(N),_K(frameLength)
+Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int frameLength):_name(name),_alphabet(alphabet),_nOutputs(L),_nInputs(N),_K(frameLength)
 {
 }
 
@@ -102,15 +102,15 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 	if(matrices.size()< nMatricesToStack)
 		throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
 
-	tMatrix res(_L*nMatricesToStack,_N*(m+nMatricesToStack-1));
+	tMatrix res(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
     res = 0.0;
 
 	int iStartingFromZero;
 	for(int i=start;i<=d;i++)
 	{
 		iStartingFromZero = i - start;
-		tRange rowsRange(iStartingFromZero*_L,(iStartingFromZero+1)*_L-1);
-		tRange colsRange(iStartingFromZero*_N,iStartingFromZero*_N+_N*m-1);
+		tRange rowsRange(iStartingFromZero*_nOutputs,(iStartingFromZero+1)*_nOutputs-1);
+		tRange colsRange(iStartingFromZero*_nInputs,iStartingFromZero*_nInputs+_nInputs*m-1);
 		res(rowsRange,colsRange).inject(matrices[i]);
 	}
 
@@ -122,7 +122,7 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
     if(matrices.size()!=c+e+1)
       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
 
-	if(observations.size()!=(_L*(c+e+1)))
+	if(observations.size()!=(_nOutputs*(c+e+1)))
 	   throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
 
 	if(involvedSymbolVectors.cols()!=c+m-1)
@@ -130,28 +130,28 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
 
     int i;
     tRange rAll;
-    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_L*(c+e+1),_N*(m-1+c));
+    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_nOutputs*(c+e+1),_nInputs*(m-1+c));
 
-    tRange rRows(0,_L-1);
-    tRange rCols(0,_N*m-1);
+    tRange rRows(0,_nOutputs-1);
+    tRange rCols(0,_nInputs*m-1);
 
     for(i=0;i<c;i++)
     {
         substractingChannelMatrix(rRows,rCols).inject(matrices[i]);
 
-        rRows = rRows + _L;
-        rCols = rCols + _N;
+        rRows = rRows + _nOutputs;
+        rCols = rCols + _nInputs;
     }
 
-    tRange rSourceCols(0,(m-1)*_N-1);
-    int rSourceColsEnd = (m-1)*_N-1;
+    tRange rSourceCols(0,(m-1)*_nInputs-1);
+    int rSourceColsEnd = (m-1)*_nInputs-1;
     for(i=c;i<c+m-1;i++)
     {
-      rCols.set(_N*i,(c+m-1)*_N-1);
+      rCols.set(_nInputs*i,(c+m-1)*_nInputs-1);
       substractingChannelMatrix(rRows,rCols).inject(matrices[i](rAll,rSourceCols));
 
-      rRows = rRows + _L;
-      rSourceColsEnd -= _N;
+      rRows = rRows + _nOutputs;
+      rSourceColsEnd -= _nInputs;
       rSourceCols.set(0,rSourceColsEnd);
     }
 

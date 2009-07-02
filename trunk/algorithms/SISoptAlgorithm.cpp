@@ -26,22 +26,22 @@ SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int N, i
 void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int k,iParticle,iSampledVector;
-	vector<tSymbol> testedVector(_N),sampledVector(_N);
-	tRange mMinus1FirstColumns(0,_m-2);
+	vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
+	tRange mMinus1FirstColumns(0,_channelOrder-2);
 
 	// it selects all rows in the symbols Matrix
-	tRange rAllSymbolRows(0,_N-1);
+	tRange rAllSymbolRows(0,_nInputs-1);
 
 	// it includes all symbol vectors involved in the smoothing
-	tMatrix involvedSymbolVectors(_N,_m);
+	tMatrix involvedSymbolVectors(_nInputs,_channelOrder);
 
-	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
+	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
-	tRange mPrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime);
-	tRange mMinus1PrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime-1);
+	tRange mPrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime);
+	tRange mMinus1PrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
 
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
@@ -59,8 +59,8 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
-				for(k=0;k<_N;k++)
-					involvedSymbolVectors(k,_m-1) = testedVector[k];
+				for(k=0;k<_nInputs;k++)
+					involvedSymbolVectors(k,_channelOrder-1) = testedVector[k];
 
 				likelihoods(iTestedVector) = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)

@@ -19,32 +19,32 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(int N):_L(0),_Nm(0),_N(N),_nChannelCoeffsToBeEstimated(0)
+ChannelMatrixEstimator::ChannelMatrixEstimator(int N):_nOutputs(0),_nChannelMatrixRows(0),_nInputsXchannelOrder(0),_nInputs(N),_nChannelCoeffsToBeEstimated(0)
 {
 }
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_L(initialEstimation.rows()),_Nm(initialEstimation.cols()),_N(N),_lastEstimatedChannelMatrix(initialEstimation),_nChannelCoeffsToBeEstimated(initialEstimation.rows()*initialEstimation.cols())
+ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_lastEstimatedChannelMatrix(initialEstimation),_nChannelCoeffsToBeEstimated(initialEstimation.rows()*initialEstimation.cols())
 {
-    if(_Nm < _N)
+    if(_nInputsXchannelOrder < _nInputs)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
 
     // check erased because of "OneChannelOrderPerTransmitAtennaWrapperEstimator"
     /*
-    if((_Nm % _N) != 0)
+    if((_nInputsXchannelOrder % _nInputs) != 0)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
     */
 
-    if((_Nm % _N) == 0)
-        _m = _Nm/_N;
-    // _m=-1 accounts for the case of a "OneChannelOrderPerTransmitAtennaWrapperEstimator" being used, whose internal ChannelMatrixEstimator does not need to have a number of columns multiple of _N
+    if((_nInputsXchannelOrder % _nInputs) == 0)
+        _channelOrder = _nInputsXchannelOrder/_nInputs;
+    // _channelOrder=-1 accounts for the case of a "OneChannelOrderPerTransmitAtennaWrapperEstimator" being used, whose internal ChannelMatrixEstimator does not need to have a number of columns multiple of _nInputs
     else
-        _m = -1;
+        _channelOrder = -1;
 }
 
 int ChannelMatrixEstimator::memory()
 {
-    if(_m!=-1)
-        return _m;
+    if(_channelOrder!=-1)
+        return _channelOrder;
     else
         throw RuntimeException("ChannelMatrixEstimator::Memory: this may not be a real channel matrix estimator: its number of columns is not a multiple of the number of transmitting antennas.");
 }
@@ -62,7 +62,7 @@ vector<tMatrix> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(con
     // selects all the rows from a symbols matrix
     tRange allSymbolRows;
 
-    tRange mColumns(iFrom-_m+1,iFrom);
+    tRange mColumns(iFrom-_channelOrder+1,iFrom);
 
     for(int i=iFrom;i<iTo;i++)
     {

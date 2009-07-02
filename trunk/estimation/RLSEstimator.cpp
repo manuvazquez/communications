@@ -25,7 +25,7 @@ RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimato
 {
 }
 
-RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_Nm))
+RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_nInputsXchannelOrder))
 {
 }
 
@@ -37,12 +37,12 @@ ChannelMatrixEstimator* RLSEstimator::Clone() const
 
 // tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 // {
-// 	if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
+// 	if(observations.size()!=_nOutputs || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_nInputsXchannelOrder)
 // 		throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
 //
 // 	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 //
-// 	tVector invForgettingFactorSymbolsVectorInvRtilde(_Nm);
+// 	tVector invForgettingFactorSymbolsVectorInvRtilde(_nInputsXchannelOrder);
 //     // invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
 //     Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
 //
@@ -59,7 +59,7 @@ ChannelMatrixEstimator* RLSEstimator::Clone() const
 // 	cout << "g" << endl << g;
 // #endif
 //
-// 	tVector invForgettingFactorInvRtildeSymbolsVector(_Nm);
+// 	tVector invForgettingFactorInvRtildeSymbolsVector(_nInputsXchannelOrder);
 //
 //     // invForgettingFactorInvRtildeSymbolsVector = _invForgettingFactor*_invRtilde*symbolsVector
 //     Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorInvRtildeSymbolsVector,_invForgettingFactor);
@@ -121,12 +121,12 @@ double RLSEstimator::likelihood(const tVector &observations,const tMatrix symbol
 
 tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
-    if(observations.size()!=_L || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_Nm)
+    if(observations.size()!=_nOutputs || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_nInputsXchannelOrder)
         throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
 
     tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
 
-    tVector invForgettingFactorSymbolsVectorInvRtilde(_Nm);
+    tVector invForgettingFactorSymbolsVectorInvRtilde(_nInputsXchannelOrder);
     // invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
     Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
 
@@ -143,7 +143,7 @@ tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& sym
     // _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix + observationsMinusPredictedObservations*g
     Blas_R1_Update(_lastEstimatedChannelMatrix,observationsMinusPredictedObservations,g);
 
-    tVector invForgettingFactorInvRtildeSymbolsVector(_Nm);
+    tVector invForgettingFactorInvRtildeSymbolsVector(_nInputsXchannelOrder);
 
     // invForgettingFactorInvRtildeSymbolsVector = _invForgettingFactor*_invRtilde*symbolsVector
     Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorInvRtildeSymbolsVector,_invForgettingFactor);

@@ -23,7 +23,7 @@
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength,m, channelEstimator, preamble),
 // _variables initialization
-_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0),
+_particleFilter(new ParticleFilter(nParticles)),_particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_estimatorIndex(0),
 _channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_randomParticlesInitilization(false)
 {
     if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
@@ -38,7 +38,7 @@ _channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVaria
 
 SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, tMatrix preamble,int smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength,m, preamble),
 // _variables initialization
-_particleFilter(particleFilter),_particleFilterNeedToBeDeleted(false),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_estimatorIndex(0)
+_particleFilter(particleFilter),_particleFilterNeedToBeDeleted(false),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_estimatorIndex(0)
 {
     // at first, we assume that all observations from the preamble need to be processed
     _startDetectionTime = _preamble.cols();
@@ -66,7 +66,7 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 //     // memory is reserved
 //     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 //     {
-//         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,_channelEstimator->Clone()));
+//         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_nInputs,_K,_channelEstimator->Clone()));
 //
 //         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 //
@@ -87,8 +87,8 @@ void SMCAlgorithm::InitializeParticles()
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
-        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_N,_K,channelMatrixEstimatorClone));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
+        _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_nInputs,_K,channelMatrixEstimatorClone));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     }
@@ -121,7 +121,7 @@ void SMCAlgorithm::RunFrom(int n,tMatrix observations,vector<double> noiseVarian
 
 void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-    if(observations.rows()!=_L || trainingSequence.rows()!=_N)
+    if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle,j;
@@ -190,7 +190,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 //  tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
 //  tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
 //
-//  int nDimensions = _L*_Nm;
+//  int nDimensions = _nOutputs*_nInputsXchannelOrder;
 //  int nPoinsByDimension = pow((double)_particleFilter->Capacity(),1.0/(double)nDimensions);
 //
 //  vector<vector<double> > alphabets(nDimensions,vector<double>(nPoinsByDimension));
@@ -216,10 +216,10 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 //      ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 //
 //      // a sample of the a priori channel distribution is drawn based on the mean and the covariance
-//      processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( channelSample,rowwise,_L,_Nm));
+//      processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( channelSample,rowwise,_nOutputs,_nInputsXchannelOrder));
 //      Util::NextVector(channelSample,alphabets);
 //
-// //       processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L));
+// //       processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(Util::ToMatrix( StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
 //     }
 // }
 
@@ -233,7 +233,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
 //     {
 //         ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 //
-//         tMatrix channelMatrixSample = Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_L);
+//         tMatrix channelMatrixSample = Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs);
 //
 //         processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->setFirstEstimatedChannelMatrix(channelMatrixSample);
 //     }
@@ -244,12 +244,12 @@ double SMCAlgorithm::Smoothedlikelihood(const vector<tMatrix> &channelMatrices,c
 {
     double likelihoodsProd = 1.0;
 
-    tVector predictedNoiselessObservation(_L);
-    tRange rAllSymbolRows(0,_N-1);
+    tVector predictedNoiselessObservation(_nOutputs);
+    tRange rAllSymbolRows(0,_nInputs-1);
 
     for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
     {
-        tRange rSymbolVectors(iSmoothing,iSmoothing+_m-1);
+        tRange rSymbolVectors(iSmoothing,iSmoothing+_channelOrder-1);
         tVector stackedSymbolVector = Util::ToVector(involvedSymbolVectors(rAllSymbolRows,rSymbolVectors),columnwise);
 
         // predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector

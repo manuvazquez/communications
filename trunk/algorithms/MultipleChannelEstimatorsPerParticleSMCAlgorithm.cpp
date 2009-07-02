@@ -23,7 +23,7 @@
 
 MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation)
 //variables initialization
-,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_N-1),_randomParticlesInitilization(false)
+,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_randomParticlesInitilization(false)
 {
     // at first, we assume that all symbol vectors from the preamble need to be processed
     _startDetectionTime = _preamble.cols();
@@ -33,7 +33,7 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
 
     for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
     {
-        tMatrix channelMatrixMeansOrVariances(_L,_N*_candidateOrders[iChannelOrder]);
+        tMatrix channelMatrixMeansOrVariances(_nOutputs,_nInputs*_candidateOrders[iChannelOrder]);
 
         channelMatrixMeansOrVariances = _channelUniqueMean;
         _channelMatrixMeans.push_back(channelMatrixMeansOrVariances);
@@ -63,7 +63,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-    if(observations.rows()!=_L || trainingSequence.rows()!=_N)
+    if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     int iParticle;

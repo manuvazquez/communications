@@ -36,16 +36,16 @@ PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L
 void PSPBasedSMCAlgorithm::InitializeParticles()
 {
 	// we begin with only one particle
-	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_N,_K+_d,_channelEstimator->Clone()));
+	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_K+_d,_channelEstimator->Clone()));
 	_particleFilter->GetParticle(0)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 
 void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
 {
-	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
-	tRange rmMinus1FirstColumns(0,_m-2),rAllSymbolRows(0,_N-1);
-	vector<tSymbol> testedVector(_N);
-	tVector computedObservations(_L);
+	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+	tRange rmMinus1FirstColumns(0,_channelOrder-2),rAllSymbolRows(0,_nInputs-1);
+	vector<tSymbol> testedVector(_nInputs);
+	tVector computedObservations(_nOutputs);
 	double normConst;
 
 	typedef struct{
@@ -57,15 +57,15 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors] ;
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
-    tMatrix symbolVectorsMatrix(_N,_m);
-    tVector symbolsVector(_Nm);
+    tMatrix symbolVectorsMatrix(_nInputs,_channelOrder);
+    tVector symbolsVector(_nInputsXchannelOrder);
 
-    int lastSymbolVectorStart = _Nm - _N;
+    int lastSymbolVectorStart = _nInputsXchannelOrder - _nInputs;
 
 	// at first, there is only one particle
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
 	{
-		tRange rmMinus1PrecedentColumns(iObservationToBeProcessed-_m+1,iObservationToBeProcessed-1);
+		tRange rmMinus1PrecedentColumns(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
 		// it keeps track of the place where a new tParticleCandidate will be stored within the vector
 		int iCandidate = 0;
@@ -90,8 +90,8 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
-				for(int k=0;k<_N;k++)
-					symbolVectorsMatrix(k,_m-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
+				for(int k=0;k<_nInputs;k++)
+					symbolVectorsMatrix(k,_channelOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
 
 				// computedObservations = estimatedChannelMatrix * symbolVectorsMatrix(:)
 				Blas_Mat_Vec_Mult(estimatedChannelMatrix,symbolsVector,computedObservations);
@@ -139,7 +139,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// sampled symbols are copied into the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_m-1));
+			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_channelOrder-1));
 
 			// channel matrix is estimated by means of the particle channel estimator
 			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));

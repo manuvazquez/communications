@@ -65,7 +65,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
             cout << "La probabilidad más alta es la " << iMax << endl;
         #endif
 
-        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_L,_N,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
+        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nInputs,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
         knownChannelOrderAlgorithm.SetEstimatorIndex(iMax);
         knownChannelOrderAlgorithm.RunFrom(iProcessedObservation,observations,noiseVariances);

@@ -57,10 +57,10 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
-		vector<tVector> hs(_L,LaGenMatDouble::zeros(_N*m,1));
+		vector<tVector> hs(_nOutputs,LaGenMatDouble::zeros(_nInputs*m,1));
 
-		tMatrix C(nSymbolVectors,_N*m);
-		for(iTxAntenna=0;iTxAntenna<_N;iTxAntenna++)
+		tMatrix C(nSymbolVectors,_nInputs*m);
+		for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
 			for(iDelay=0;iDelay<m;iDelay++)
 			{
 				// symbols are transformed
@@ -68,14 +68,14 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 					C(CmatrixRow,iTxAntenna*m+iDelay) = _symbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
 
 				// channel is transformed
-				for(iRxAntenna=0;iRxAntenna<_L;iRxAntenna++)
-					hs[iRxAntenna](iTxAntenna*m+iDelay) = estimatedChannelMatrix(iRxAntenna,iTxAntenna+(m-1-iDelay)*_N);
+				for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
+					hs[iRxAntenna](iTxAntenna*m+iDelay) = estimatedChannelMatrix(iRxAntenna,iTxAntenna+(m-1-iDelay)*_nInputs);
 			}
 
 		// CME
 		double CME = 0.0;
 		tRange rAllObservationsCols(_preamble.cols(),_symbolVectors.cols()-1);
-		for(iRxAntenna=0;iRxAntenna<_L;iRxAntenna++)
+		for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
 		{
 			// error = R
 			tVector error = observations(tRange(iRxAntenna),rAllObservationsCols);
@@ -88,20 +88,20 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		}
 		CME /= variance;
 
-		tMatrix CTransC(_N*m,_N*m);
+		tMatrix CTransC(_nInputs*m,_nInputs*m);
 
 		//  CTransC = C'*C
 		Blas_Mat_Trans_Mat_Mult(C,C,CTransC);
 
 		// LU decomposition is applied: in CTransC wil now be U
-		tLongIntVector piv(_N*m);
+		tLongIntVector piv(_nInputs*m);
 		LUFactorizeIP(CTransC,piv);
 
 		double detCTransC = 1.0;
 		for(int iDiag=0;iDiag<CTransC.cols();iDiag++)
 			detCTransC *= CTransC(iDiag,iDiag);
 
-		CME += _L*log(fabs(detCTransC));
+		CME += _nOutputs*log(fabs(detCTransC));
 		CME /= 2.0;
 
 		CMEs(iChannelOrder) = CME;

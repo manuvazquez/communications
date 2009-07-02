@@ -46,7 +46,7 @@ void LinearFilterBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVa
 
 void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-	if(observations.rows()!=_L || trainingSequence.rows()!=_N)
+	if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
 		throw RuntimeException("LinearFilterBasedAlgorithm::Process: Observations matrix or training sequence dimensions are wrong.");
 
 	int startDetectionTime = _preamble.cols() + trainingSequence.cols();
@@ -67,14 +67,14 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
     if(_substractContributionFromKnownSymbols)
     {
-        if(_linearDetector->ChannelMatrixcols() != _N*(_d+1))
+        if(_linearDetector->ChannelMatrixcols() != _nInputs*(_d+1))
             throw RuntimeException("LinearFilterBasedAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
     }
 
 	vector<tMatrix> matricesToStack(_c+_d+1);
 	int iSmoothing,iRow;
-	tRange rAllObservationsRows(0,_L-1),rAllSymbolRows(0,_N-1);
-	tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_L*(_c+_d+1),_L*(_c+_d+1));
+	tRange rAllObservationsRows(0,_nOutputs-1),rAllSymbolRows(0,_nInputs-1);
+	tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_nOutputs*(_c+_d+1),_nOutputs*(_c+_d+1));
 	double ARcoefficientPower;
 
 	for(int iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
@@ -103,8 +103,8 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
 		// stacked noise covariance needs to be constructed
 		for(iSmoothing=-_c;iSmoothing<=_d;iSmoothing++)
-			for(iRow=0;iRow<_L;iRow++)
-				stackedNoiseCovariance((iSmoothing+_c)*_L+iRow,(iSmoothing+_c)*_L+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
+			for(iRow=0;iRow<_nOutputs;iRow++)
+				stackedNoiseCovariance((iSmoothing+_c)*_nOutputs+iRow,(iSmoothing+_c)*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
         tVector softEstimations;
 
@@ -112,26 +112,26 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
         {
             softEstimations =  _linearDetector->Detect(
                 // the last range chooses all the already detected symbol vectors
-                SubstractKnownSymbolsContribution(matricesToStack,_m,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,tRange(iObservationToBeProcessed-_c-_m+1,iObservationToBeProcessed-1))),
+                SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,tRange(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1))),
                 // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
-                stackedChannelMatrix(tRange(0,_L*(_c+_d+1)-1),tRange((_c+_m-1)*_N,stackedChannelMatrix.cols()-1)),
+                stackedChannelMatrix(tRange(0,_nOutputs*(_c+_d+1)-1),tRange((_c+_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1)),
                 stackedNoiseCovariance);
         } else
         {
             softEstimations =  _linearDetector->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
         }
 
-		for(iRow=0;iRow<_N;iRow++)
+		for(iRow=0;iRow<_nInputs;iRow++)
 			_detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
-		tRange rInvolvedSymbolVectors(iObservationToBeProcessed-_m+1,iObservationToBeProcessed);
+		tRange rInvolvedSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed);
 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors(rAllSymbolRows,rInvolvedSymbolVectors),noiseVariances[iObservationToBeProcessed]);
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 }
 
 tMatrix LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
-	return _detectedSymbolVectors(tRange(0,_N-1),tRange(_preamble.cols(),_K-1));
+	return _detectedSymbolVectors(tRange(0,_nInputs-1),tRange(_preamble.cols(),_K-1));
 }
 
 vector<tMatrix> LinearFilterBasedAlgorithm::GetEstimatedChannelMatrices()

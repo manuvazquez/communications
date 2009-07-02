@@ -22,7 +22,7 @@
 // #define DEBUG3
 // #define DEBUG4
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble),_rAllSymbolRows(0,_N-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,frameLength+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble),_rAllSymbolRows(0,_nInputs-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,frameLength+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");
@@ -148,12 +148,12 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
     // the last N*(m-1) symbols of the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
-    vector<tSymbol> initialStateVector(_N*(_m-1));
+    vector<tSymbol> initialStateVector(_nInputs*(_channelOrder-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(_m-1))*_N;
+    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(_channelOrder-1))*_nInputs;
     for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
-        initialStateVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _N,i / _N);
+        initialStateVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _nInputs,i / _nInputs);
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
@@ -166,7 +166,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 
 void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-    if(observations.rows()!=_L || trainingSequence.rows()!=_N)
+    if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("PSPAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
@@ -185,12 +185,12 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     // the last N*(m-1) symbols of the training sequence are copied into a c++ vector...
     int preambleTrainingSequenceLength = preambleTrainingSequence.rows()*preambleTrainingSequence.cols();
-    vector<tSymbol> initialStateVector(_N*(_m-1));
+    vector<tSymbol> initialStateVector(_nInputs*(_channelOrder-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (preambleTrainingSequence.cols()-(_m-1))*_N;
+    int iFirstPreambleSymbolNeeded = (preambleTrainingSequence.cols()-(_channelOrder-1))*_nInputs;
     for(int i=iFirstPreambleSymbolNeeded;i<preambleTrainingSequenceLength;i++)
-        initialStateVector[i-iFirstPreambleSymbolNeeded] = preambleTrainingSequence(i % _N,i / _N);
+        initialStateVector[i-iFirstPreambleSymbolNeeded] = preambleTrainingSequence(i % _nInputs,i / _nInputs);
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
@@ -205,15 +205,15 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 {
     double newCost;
     int arrivalState,iDisposableSurvivor;
-    tVector computedObservations(_L),error(_L);
+    tVector computedObservations(_nOutputs),error(_nOutputs);
 
     // "symbolVectors" will contain all the symbols involved in the current observation
-    tMatrix symbolVectors(_N,_m);
+    tMatrix symbolVectors(_nInputs,_channelOrder);
 
-	// the state determines the first "_m" symbol vectors involved in the "observations"
+	// the state determines the first "_channelOrder" symbol vectors involved in the "observations"
 	_alphabet.int2symbolsArray(iState,_stateVector);
-	for(int i=0;i<_N*(_m-1);i++)
-		symbolVectors(i % _N,i / _N) = _stateVector[i];
+	for(int i=0;i<_nInputs*(_channelOrder-1);i++)
+		symbolVectors(i % _nInputs,i / _nInputs) = _stateVector[i];
 
     // now we compute the cost for each possible input
     for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
@@ -224,8 +224,8 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
         _alphabet.int2symbolsArray(iInput,_inputVector);
 
         // it's copied into "symbolVectors"
-        for(int i=0;i<_N;i++)
-            symbolVectors(i,_m-1) = _inputVector[i];
+        for(int i=0;i<_nInputs;i++)
+            symbolVectors(i,_channelOrder-1) = _inputVector[i];
 
 		for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
 		{
@@ -256,7 +256,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._fromSurvivor = iSourceSurvivor;
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._input = iInput;
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._cost = newCost;
-					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._newSymbolVector = symbolVectors.col(_m-1);
+					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._newSymbolVector = symbolVectors.col(_channelOrder-1);
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolVectors;
 				}
 		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)

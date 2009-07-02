@@ -70,10 +70,10 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 
 		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
-		vector<tVector> hs(_L,LaGenMatDouble::zeros(_N*m,1));
+		vector<tVector> hs(_nOutputs,LaGenMatDouble::zeros(_nInputs*m,1));
 
-		tMatrix C(nSymbolVectors,_N*m);
-		for(iTxAntenna=0;iTxAntenna<_N;iTxAntenna++)
+		tMatrix C(nSymbolVectors,_nInputs*m);
+		for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
 			for(iDelay=0;iDelay<m;iDelay++)
 				// symbols are transformed
 				for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
@@ -84,20 +84,20 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 
 		CME = accumulatedSquaredObservationsError;
 
-		tMatrix CTransC(_N*m,_N*m);
+		tMatrix CTransC(_nInputs*m,_nInputs*m);
 
 		//  CTransC = C'*C
 		Blas_Mat_Trans_Mat_Mult(C,C,CTransC);
 
 		// LU decomposition is applied: in CTransC wil now be U
-		tLongIntVector piv(_N*m);
+		tLongIntVector piv(_nInputs*m);
 		LUFactorizeIP(CTransC,piv);
 
 		double detCTransC = 1.0;
 		for(int iDiag=0;iDiag<CTransC.cols();iDiag++)
 			detCTransC *= CTransC(iDiag,iDiag);
 
-		CME += _L*log(fabs(detCTransC));
+		CME += _nOutputs*log(fabs(detCTransC));
 		CME /= 2.0;
 
 		CMEs(iChannelOrder) = CME;

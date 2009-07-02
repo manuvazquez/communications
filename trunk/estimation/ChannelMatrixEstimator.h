@@ -30,7 +30,7 @@
 
 class ChannelMatrixEstimator{
 protected:
-    int _L,_Nm,_N,_m,_nChannelCoeffsToBeEstimated;
+    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffsToBeEstimated;
     tMatrix _lastEstimatedChannelMatrix;
 
     ChannelMatrixEstimator(int N);
@@ -47,8 +47,8 @@ public:
     {
         throw RuntimeException("ChannelMatrixEstimator::Likelihood: not implemented yet.");
     }
-    int cols() { return _Nm;}
-    int rows() { return _L;}
+    int cols() { return _nInputsXchannelOrder;}
+    int rows() { return _nOutputs;}
     int memory();
     virtual tMatrix lastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
     vector<tMatrix> nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo);

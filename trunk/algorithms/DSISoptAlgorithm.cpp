@@ -30,25 +30,25 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 {
 	uint k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;
-	vector<tSymbol> testedVector(_N),testedSmoothingVector(_N*_d),sampledVector(_N);
+	vector<tSymbol> testedVector(_nInputs),testedSmoothingVector(_nInputs*_d),sampledVector(_nInputs);
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
-	tRange rmMinus1FirstColumns(0,_m-2);
+	tRange rmMinus1FirstColumns(0,_channelOrder-2);
 
 	// it selects all rows in the symbols Matrix
 	tRange rAll;
 
 	// it includes all symbol vectors involved in the smoothing
-	tMatrix smoothingSymbolVectors(_N,_m+_d);
+	tMatrix smoothingSymbolVectors(_nInputs,_channelOrder+_d);
 
-	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_N);
-	uint nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_N*_d));
+	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+	uint nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*_d));
 
 	// a likelihood is computed for every possible symbol vector
 	tVector likelihoods(nSymbolVectors);
 
-    tRange rmPrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime);
-    tRange rmMinus1PrecedentColumns(_startDetectionTime-_m+1,_startDetectionTime-1);
+    tRange rmPrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime);
+    tRange rmMinus1PrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
     tRange rmColumns;
 
 	// for each time instant
@@ -67,8 +67,8 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
-				for(k=0;k<_N;k++)
-					smoothingSymbolVectors(k,_m-1) = testedVector[k];
+				for(k=0;k<_nInputs;k++)
+					smoothingSymbolVectors(k,_channelOrder-1) = testedVector[k];
 
 				likelihoods(iTestedVector) = 0.0;
 
@@ -80,12 +80,12 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 
 					// symbols used for smoothing are copied into "smoothingSymbolVectors"
 					for(k=0;k<testedSmoothingVector.size();k++)
-						smoothingSymbolVectors((_Nm+k)%_N,(_Nm+k)/_N) = testedSmoothingVector[k];
+						smoothingSymbolVectors((_nInputsXchannelOrder+k)%_nInputs,(_nInputsXchannelOrder+k)/_nInputs) = testedSmoothingVector[k];
 
 					// a clone of the channel estimator is generated because this must not be modified
 					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->Clone();
 
-                    rmColumns.set(0,_m-1);
+                    rmColumns.set(0,_channelOrder-1);
 					auxLikelihoodsProd = 1.0;
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
