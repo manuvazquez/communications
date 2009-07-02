@@ -30,7 +30,7 @@
 
 class ChannelMatrixEstimator{
 protected:
-    int _L,_Nm,_N,_m;
+    int _L,_Nm,_N,_m,_nChannelCoeffsToBeEstimated;
     tMatrix _lastEstimatedChannelMatrix;
 
     ChannelMatrixEstimator(int N);

@@ -23,7 +23,7 @@
 #include <ChannelMatrixEstimator.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <math.h>
@@ -39,21 +39,20 @@
 class KalmanEstimator : public ChannelMatrixEstimator
 {
 private:
-	KalmanFilter *_kalmanFilter;
-	int _nChannelCoefficients;
+    KalmanFilter *_kalmanFilter;
+    int _stateVectorLength;
 
 private:
-	tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
+    tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
 public:
-//     KalmanEstimator(const tMatrix &initialEstimation,int N,double ARcoefficient,double ARvariance);
     KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance);
-	KalmanEstimator(const KalmanEstimator &kalmanEstimator);
-	~KalmanEstimator();
+    KalmanEstimator(const KalmanEstimator &kalmanEstimator);
+    ~KalmanEstimator();
 
-	virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
-	double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-	virtual KalmanEstimator *Clone() const;
-	tMatrix SampleFromPredictive();
+    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
+    double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+    virtual KalmanEstimator *Clone() const;
+    tMatrix SampleFromPredictive();
     virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix);
 };
 
