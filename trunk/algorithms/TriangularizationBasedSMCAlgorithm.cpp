@@ -73,7 +73,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 
             // predicted channel matrices are stored in a vector in order to stack them
             // (first one is obtained via the Kalman Filter)
-            matricesToStack[0] = (dynamic_cast<KalmanEstimator *> (processedParticle->GetChannelMatrixEstimator(_estimatorIndex)))->SampleFromPredictive();
+            matricesToStack[0] = (dynamic_cast<KalmanEstimator *> (processedParticle->GetChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
 
             for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
             {

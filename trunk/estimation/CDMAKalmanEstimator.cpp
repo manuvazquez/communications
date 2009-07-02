@@ -17,28 +17,42 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDMKFALGORITHM_H
-#define LINEARFILTERBASEDMKFALGORITHM_H
+#include "CDMAKalmanEstimator.h"
 
-#include <LinearFilterBasedSMCAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <KalmanEstimator.h>
-
-class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
+CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, N, ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
 {
-public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    if(spreadingCodes.cols()!=_nInputs)
+        throw RuntimeException("CDMAKalmanEstimator::CDMAKalmanEstimator: the number of spreading codes doesn't match the number of users.");
+    
+    _nOutputs = _spreadingCodes.rows();
+}
 
-protected:
-    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
-    {
-    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
-    }
 
-};
+CDMAKalmanEstimator::~CDMAKalmanEstimator()
+{
+}
 
-#endif
+
+CDMAKalmanEstimator::CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator):KalmanEstimator(cdmaKalmanEstimator),_spreadingCodes(cdmaKalmanEstimator._spreadingCodes)
+{
+}
+
+CDMAKalmanEstimator* CDMAKalmanEstimator::Clone() const
+{
+    return new CDMAKalmanEstimator(*this);
+}
+
+tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVector)
+{
+    if(symbolsVector.size()!=_nInputs)
+        throw RuntimeException("CDMAKalmanEstimator::BuildFfromSymbolsMatrix: symbols vector length is wrong.");
+
+    tMatrix CS(_nOutputs,_nInputs);
+    
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=0;j<_nInputs;j++)
+            CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);
+            
+    return CS;
+}
+

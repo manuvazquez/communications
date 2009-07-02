@@ -38,12 +38,14 @@
 
 class KalmanEstimator : public ChannelMatrixEstimator
 {
-private:
+protected:
     KalmanFilter *_kalmanFilter;
-    int _stateVectorLength;
-
-private:
-    tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
+    int _nExtStateVectorCoeffs;
+    
+    // the coefficients of the channel at the present time (the ones we are interested in)
+    tRange _rChannelCoefficients;
+    
+    virtual tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
 public:
     KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
@@ -52,7 +54,7 @@ public:
     virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
     virtual KalmanEstimator *Clone() const;
-    tMatrix SampleFromPredictive();
+    tMatrix sampleFromPredictive();
     virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix);
 };
 

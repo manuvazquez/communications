@@ -17,27 +17,30 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDMKFALGORITHM_H
-#define LINEARFILTERBASEDMKFALGORITHM_H
-
-#include <LinearFilterBasedSMCAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+#ifndef CDMAKALMANESTIMATOR_H
+#define CDMAKALMANESTIMATOR_H
 
 #include <KalmanEstimator.h>
 
-class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
+/**
+It implements a channel matrix estimator for a Multiuser CDMA autoregressive channel. It assumes a single receiving antenna.
+
+	@author Manu <manu@rustneversleeps>
+*/
+class CDMAKalmanEstimator : public KalmanEstimator
 {
+protected:
+    tMatrix _spreadingCodes;
 public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
+
+    ~CDMAKalmanEstimator();
+
+    CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
+    virtual CDMAKalmanEstimator* Clone() const;
 
 protected:
-    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
-    {
-    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->GetParticle(iParticle)->GetChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
-    }
+    virtual tMatrix BuildFfromSymbolsMatrix(const tVector& symbolsVector);
 
 };
 
