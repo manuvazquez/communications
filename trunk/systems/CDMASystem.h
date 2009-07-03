@@ -20,23 +20,18 @@
 #ifndef CDMASYSTEM_H
 #define CDMASYSTEM_H
 
-#include <BaseSystem.h>
+#include <SMCSystem.h>
 #include <FlatPowerProfile.h>
 #include <ARMultiuserCDMAchannel.h>
-#include <ResamplingAlgorithm.h>
-#include <ResidualResamplingAlgorithm.h>
 #include <CDMAKalmanEstimator.h>
+#include <CDMAunknownActiveUsersSISopt.h>
+
 
 /**
-    @author Manu <manu@rustneversleeps>
+	@author Manu <manu@rustneversleeps>
 */
-class CDMASystem : public BaseSystem
+class CDMASystem : public SMCSystem
 {
-public:
-    CDMASystem();
-
-    ~CDMASystem();
-
 protected:
     tMatrix _spreadingCodes;
     
@@ -45,19 +40,16 @@ protected:
     
     double userPersistenceProb,newActiveUserProb,userPriorProb;
     
-    std::vector<double> ARcoefficients;
-    double ARvariance;
-
-    int nParticles;
-    double resamplingRatio;
-    ResamplingAlgorithm *algoritmoRemuestreo;
-    
     CDMAKalmanEstimator *cdmaKalmanEstimator;
-
+    
     virtual void AddAlgorithms();
     virtual void BeforeEndingAlgorithm(int iAlgorithm);
     virtual void BeforeEndingFrame(int iFrame);
-    virtual void BuildChannel();
+    virtual void BuildChannel();    
+public:
+    CDMASystem();
+
+    ~CDMASystem();
 
 };
 

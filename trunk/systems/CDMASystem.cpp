@@ -19,13 +19,10 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-// #define DEBUG
+#define DEBUG
 
-CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
+CDMASystem::CDMASystem(): SMCSystem()
 {
-    nParticles = 192;
-    resamplingRatio = 0.9;
-    
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
     
@@ -38,6 +35,7 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
 #endif
     
     // AR process parameters
+    ARcoefficients = vector<double>(2);
     ARcoefficients[0] = 0.99999;
     ARcoefficients[1] = 0.95;
 //     ARcoefficients[2] = 0.93;    
@@ -47,10 +45,6 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
     //      i) that m should be 1, otherwise an exception would have been thrown
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
     powerProfile = new FlatPowerProfile(1,N,m,1.0);
-
-    // particle filtering
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
-    algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
 
     userPersistenceProb = 0.8;
     newActiveUserProb = 0.2;
@@ -63,18 +57,15 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
 CDMASystem::~CDMASystem()
 {
     delete powerProfile;
-    delete algoritmoRemuestreo;
     delete cdmaKalmanEstimator;
 }
-
 
 void CDMASystem::AddAlgorithms()
 {
 #ifdef DEBUG
     cout << "observations are" << endl << observations;
 #endif
-// CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances)
-//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 }
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)
@@ -146,4 +137,3 @@ void CDMASystem::BuildChannel()
     
     channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
-
