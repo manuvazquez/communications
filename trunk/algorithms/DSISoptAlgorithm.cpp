@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, frameLength,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
+DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
 {
 //     _randomParticlesInitilization = true;
 }
@@ -52,7 +52,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
     tRange rmColumns;
 
 	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
@@ -137,7 +137,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 		_particleFilter->NormalizeWeights();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
+		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
         rmPrecedentColumns = rmPrecedentColumns + 1;

@@ -49,7 +49,7 @@ public:
 	virtual void print() const { cout << _matrix;}
 	double StdDevAt(int n) const;
 	tVector operator[](int n) const;
-	virtual tMatrix Range(int start,int end) const;
+	virtual tMatrix range(int start,int end) const;
 };
 
 #endif

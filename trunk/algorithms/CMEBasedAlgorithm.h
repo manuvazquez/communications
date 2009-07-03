@@ -34,7 +34,7 @@ class CMEBasedAlgorithm : public UnknownChannelOrderAlgorithm
 protected:
     tMatrix _symbolVectors;
 public:
-    CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
+    CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
 
 	virtual void Run(tMatrix observations,vector<double> noiseVariances);
 	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);

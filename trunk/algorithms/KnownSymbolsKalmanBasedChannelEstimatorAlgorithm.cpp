@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h"
 
-KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m,ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected,int m,ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
 {
 }
 
@@ -29,11 +29,11 @@ KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::~KnownSymbolsKalmanBasedChanne
 
 void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-    _estimatedChannelMatrices.reserve(_K-_preamble.cols());
+    _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
     tRange rAllSymbolRows(0,_nInputs-1);
 
-    for(int iSymbolVector=_preamble.cols();iSymbolVector<_K;iSymbolVector++)
+    for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
     {
         _estimatedChannelMatrices.push_back( _channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_channelOrder+1,iSymbolVector)),noiseVariances[iSymbolVector]));
     }

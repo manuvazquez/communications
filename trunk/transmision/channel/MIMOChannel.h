@@ -47,7 +47,7 @@ public:
     virtual int Effectivememory() const = 0;
     virtual tMatrix operator[](int n) const = 0;
     tMatrix transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> Range(int a,int b);
+    vector<tMatrix> range(int a,int b);
 };
 
 #endif

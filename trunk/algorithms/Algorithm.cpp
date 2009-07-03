@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int frameLength):_name(name),_alphabet(alphabet),_nOutputs(L),_nInputs(N),_K(frameLength)
+Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
 }
 

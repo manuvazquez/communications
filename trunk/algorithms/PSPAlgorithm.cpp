@@ -22,7 +22,7 @@
 // #define DEBUG3
 // #define DEBUG4
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble),_rAllSymbolRows(0,_nInputs-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,frameLength+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_rAllSymbolRows(0,_nInputs-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");
@@ -38,7 +38,7 @@ PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int N, int fra
     	_bestArrivingPaths[i] = new PSPPathCandidate[_nSurvivors];
     }
 
-    _estimatedChannelMatrices.reserve(_K+_d-_preamble.cols());
+    _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected+_d-_preamble.cols());
 }
 
 
@@ -121,7 +121,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(_startDetectionTime));
 
-    for( iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
+    for( iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
 		ProcessOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
 
@@ -133,7 +133,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     }
 
     // last detected symbol vectors are processed
-    for(iProcessedObservation=_K+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1;iProcessedObservation<_K+_d;iProcessedObservation++)
+    for(iProcessedObservation=_iLastSymbolVectorToBeDetected+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
         _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation));
 
@@ -159,7 +159,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
 	// the initial state is initalized
-    _exitStage[initialState][0] = PSPPath(_K+_d,0.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
+    _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
 	Process(observations,noiseVariances);
 }
@@ -196,7 +196,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
 	// the initial state is initalized
-    _exitStage[initialState][0] = PSPPath(_K+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
+    _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
 	Process(observations,noiseVariances);
 }
@@ -265,7 +265,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 
 tMatrix PSPAlgorithm::getDetectedSymbolVectors()
 {
-    return (*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_K-1));
+    return (*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 vector<tMatrix> PSPAlgorithm::GetEstimatedChannelMatrices()

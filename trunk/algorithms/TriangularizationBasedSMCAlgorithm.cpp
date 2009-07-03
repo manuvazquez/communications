@@ -22,7 +22,7 @@
 // #define DEBUG4
 // #define DEBUG2
 
-TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
+TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
 {
 //     _randomParticlesInitilization = true;
 }
@@ -50,7 +50,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
     int NmMinus1 = _nInputs*(_channelOrder-1);
     tVector symbolProbabilities(_alphabet.length());
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
 #ifdef DEBUG
         cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
@@ -205,7 +205,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             cout << "involvedSymbolVectors" << endl << involvedSymbolVectors;
 #endif
 
-            likelihoodsProd = Smoothedlikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+            likelihoodsProd = smoothedLikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
             // the weight is updated
             processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
@@ -220,9 +220,9 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
         _particleFilter->NormalizeWeights();
 
         // if it's not the last time instant
-        if(iObservationToBeProcessed<(_K-1))
+        if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 

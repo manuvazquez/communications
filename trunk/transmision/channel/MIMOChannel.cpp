@@ -79,7 +79,7 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
     return observations;
 }
 
-vector<tMatrix> MIMOChannel::Range(int a,int b)
+vector<tMatrix> MIMOChannel::range(int a,int b)
 {
     int nMatrices = b - a + 1;
 

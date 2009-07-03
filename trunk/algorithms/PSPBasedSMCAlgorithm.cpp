@@ -29,14 +29,14 @@
 	extern Noise *realNoise;
 #endif
 
-PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient): SMCAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient)
+PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient)
 {
 }
 
 void PSPBasedSMCAlgorithm::InitializeParticles()
 {
 	// we begin with only one particle
-	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_K+_d,_channelEstimator->Clone()));
+	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->Clone()));
 	_particleFilter->GetParticle(0)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 
@@ -63,7 +63,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
     int lastSymbolVectorStart = _nInputsXchannelOrder - _nInputs;
 
 	// at first, there is only one particle
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 	{
 		tRange rmMinus1PrecedentColumns(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
@@ -148,7 +148,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
 		_particleFilter->NormalizeWeights();
-	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K+_d;iObservationToBeProcessed++)
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 
 	delete[] particleCandidates;
 }

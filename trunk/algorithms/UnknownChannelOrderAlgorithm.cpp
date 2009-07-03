@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, frameLength),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
 {
     for(uint i=0;i<channelEstimators.size();i++)
     {
@@ -50,7 +50,7 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
     _nInputsXchannelOrderaxOrder = _nInputs*_maxOrder;
 
-	_channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_K+_maxOrder-1);
+	_channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
 	_channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
 
 #ifdef DEBUG

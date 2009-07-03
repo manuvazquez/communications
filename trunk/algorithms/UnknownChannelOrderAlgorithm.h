@@ -40,12 +40,12 @@ protected:
 
 	tMatrix _channelOrderAPPs;
 public:
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
+    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 
 	virtual vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_K-1));}
+	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));}
     bool PerformsChannelOrderAPPEstimation() const { return true;}
 };
 

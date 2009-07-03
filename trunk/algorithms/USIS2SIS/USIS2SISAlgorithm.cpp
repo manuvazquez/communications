@@ -21,7 +21,7 @@
 
 // #define DEBUG2
 
-USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion): USIS(name, alphabet, L, N, frameLength, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_transitionCriterion(transitionCriterion)
+USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion): USIS(name, alphabet, L, N, iLastSymbolVectorToBeDetected, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_transitionCriterion(transitionCriterion)
 {
 }
 
@@ -65,14 +65,14 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
             cout << "La probabilidad más alta es la " << iMax << endl;
         #endif
 
-        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nInputs,_K,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
+        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
         knownChannelOrderAlgorithm.SetEstimatorIndex(iMax);
         knownChannelOrderAlgorithm.RunFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
 
         // the APP of the selected channel order is set to 1.0
-        _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_K-1)) = 1.0;
+        _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_iLastSymbolVectorToBeDetected-1)) = 1.0;
 
         return;
     }

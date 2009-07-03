@@ -17,25 +17,40 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TRIANGULARIZATIONBASEDSMCALGORITHM_H
-#define TRIANGULARIZATIONBASEDSMCALGORITHM_H
+#include "CDMAunknownActiveUsersSISopt.h"
 
-#include <SMCAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <KalmanEstimator.h>
-
-class TriangularizationBasedSMCAlgorithm : public SMCAlgorithm
+CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 {
-public:
-    TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance);
+}
 
-protected:
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
-};
 
-#endif
+CDMAunknownActiveUsersSISopt::~CDMAunknownActiveUsersSISopt()
+{
+}
+
+
+tMatrix CDMAunknownActiveUsersSISopt::getDetectedSymbolVectors()
+{
+    return SMCAlgorithm::getDetectedSymbolVectors();
+}
+
+vector< tMatrix > CDMAunknownActiveUsersSISopt::GetEstimatedChannelMatrices()
+{
+    return SMCAlgorithm::GetEstimatedChannelMatrices();
+}
+
+void CDMAunknownActiveUsersSISopt::BeforeInitializingParticles(const tMatrix& observations, const tMatrix& trainingSequence)
+{
+    SMCAlgorithm::BeforeInitializingParticles(observations, trainingSequence);
+}
+
+void CDMAunknownActiveUsersSISopt::InitializeParticles()
+{
+    SMCAlgorithm::InitializeParticles();
+}
+
+void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< double > noiseVariances)
+{
+    cout << "it rocks..." << endl;
+}
+

@@ -1,37 +1,40 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="10" >
+ <DocsAndViews NumberOfDocuments="11" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" Type="Source" />
+   <View0 Encoding="" line="5" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.h" >
    <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.cpp" >
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.h" >
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h" >
+   <View0 Encoding="" line="29" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.h" >
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/TesisComplejidadReducidaSystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MultiuserCDMAchannel.cpp" >
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="381" Type="Source" />
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/Elsevier2007System.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.h" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc10>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -115,6 +118,9 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.cpp" >
      <mark line="56" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+     <mark line="75" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="258" />
     </bookmark>
@@ -171,18 +177,19 @@
      <mark line="187" />
      <mark line="102" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="124" />
-     <mark line="29" />
-     <mark line="66" />
-     <mark line="237" />
-     <mark line="135" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
+     <mark line="124" />
+     <mark line="192" />
+     <mark line="29" />
+     <mark line="66" />
+     <mark line="135" />
+     <mark line="237" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
@@ -190,7 +197,7 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="/usr/local/.home/manu/c++/comunicaciones/debug/./com/com" params="" />
+   <executable path="" params="" />
    <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="--tool=callgrind" />
    <kcachegrind path="kcachegrind" />

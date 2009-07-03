@@ -17,25 +17,31 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef TRIANGULARIZATIONBASEDSMCALGORITHM_H
-#define TRIANGULARIZATIONBASEDSMCALGORITHM_H
+#ifndef CDMAUNKNOWNACTIVEUSERSSISOPT_H
+#define CDMAUNKNOWNACTIVEUSERSSISOPT_H
 
 #include <SMCAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+It implements an (optimal) algorithm that aims to detect the active users in a SISO CDMA system along with the transmitted data
+
+    @author Manu <manu@rustneversleeps>
 */
-
-#include <KalmanEstimator.h>
-
-class TriangularizationBasedSMCAlgorithm : public SMCAlgorithm
+class CDMAunknownActiveUsersSISopt : public SMCAlgorithm
 {
 public:
-    TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance);
+    CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances);
+
+    ~CDMAunknownActiveUsersSISopt();
+
+    tMatrix getDetectedSymbolVectors();
+    vector< tMatrix > GetEstimatedChannelMatrices();
 
 protected:
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    virtual void BeforeInitializingParticles(const tMatrix& observations, const tMatrix& trainingSequence);
+    virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+
 };
 
 #endif

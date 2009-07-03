@@ -66,7 +66,7 @@ class BaseSystem{
 protected:
     double pe,mse;
     uint iSNR;
-    int lastSymbolVectorInstant;
+    int iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
     int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;

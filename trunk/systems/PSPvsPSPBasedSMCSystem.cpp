@@ -52,15 +52,15 @@ PSPvsPSPBasedSMCSystem::~PSPvsPSPBasedSMCSystem()
 
 void PSPvsPSPBasedSMCSystem::AddAlgorithms()
 {
-	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,lastSymbolVectorInstant+d,ARcoefficients[0],nSurvivors));
+	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
 
-	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,bestParticlesResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
+	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,bestParticlesResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
 
-	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (without replacement resampling)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,withoutReplacementResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
+	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (without replacement resampling)",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,withoutReplacementResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
 
-	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (residual resampling)",*alphabet,L,N,lastSymbolVectorInstant,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
+	algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (residual resampling)",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0]));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,lastSymbolVectorInstant,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }
 
 void PSPvsPSPBasedSMCSystem::BuildChannel()

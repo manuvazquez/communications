@@ -41,7 +41,7 @@ protected:
 	// it's never gonna be called
     int BestChannelOrderIndex(int iBestParticle) { return 0;}
 public:
-    ISIS(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+    ISIS(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
 	vector<tMatrix> GetEstimatedChannelMatrices();
 };

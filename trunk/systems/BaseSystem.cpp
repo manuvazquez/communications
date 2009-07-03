@@ -190,12 +190,12 @@ void BaseSystem::Simulate()
         symbols = Util::append(preamble,symbols);
 
         // all the above symbols must be processed except those generated due to the smoothing
-        lastSymbolVectorInstant = symbols.cols() - nSmoothingSymbolsVectors;
+        iLastSymbolVectorToBeDetected = symbols.cols() - nSmoothingSymbolsVectors;
 
         BuildChannel();
 
 #ifdef PRINT_PARAMETERS
-        cout << "lastSymbolVectorInstant = " << lastSymbolVectorInstant << endl;
+        cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
 #endif
 
         // noise is generated according to the channel
@@ -340,7 +340,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-//     Util::MatricesVectorToOctaveFileStream(channel->Range(preambleLength,lastSymbolVectorInstant),"channel",f);
+//     Util::MatricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
@@ -355,10 +355,10 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
 {
-    mse = algorithms[iAlgorithm]->MSE(channel->Range(preambleLength+MSEwindowStart,lastSymbolVectorInstant-1));
+    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->GetEstimatedChannelMatrices(),0,frameLength-1,channel->Range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->GetEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif

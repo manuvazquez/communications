@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, frameLength,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.memory()-2)
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected,  channel),_inputVector(channel.nInputs()),_stateVector(channel.nInputs()*(channel.memory()-1)),_d(smoothingLag),_trellis(alphabet,N,channel.memory()),_preamble(preamble),_detectedSymbolVectors(NULL),rAllSymbolRows(0,_channel.nInputs()-1),rmMinus1FirstColumns(0,channel.memory()-2)
 {
     if(preamble.cols() < (channel.memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
@@ -41,7 +41,7 @@ ViterbiAlgorithm::~ViterbiAlgorithm()
 void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
 //     Run(observations,noiseVariances,observations.cols());
-    Run(observations,noiseVariances,_K+_d);
+    Run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
 }
 
 void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
@@ -50,7 +50,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
-    _detectedSymbolVectors = new tMatrix(channel.nInputs(),_K+_d);
+    _detectedSymbolVectors = new tMatrix(channel.nInputs(),_iLastSymbolVectorToBeDetected+_d);
 
     // the symbols contained in the preamble are copied into a c++ vector...
     int preambleLength = _preamble.rows()*_preamble.cols();
@@ -64,7 +64,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet"
     int initialState = _alphabet.symbolsArray2int(preambleVector);
 
-    _exitStage[initialState] = ViterbiPath(_K,0.0,_preamble);
+    _exitStage[initialState] = ViterbiPath(_iLastSymbolVectorToBeDetected,0.0,_preamble);
 
     for(iProcessedObservation=_preamble.cols();iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
@@ -89,7 +89,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     // the first detected vector is copied into "_detectedSymbolVectors"
     _detectedSymbolVectors->col(_preamble.cols()).inject(_exitStage[iBestState].GetSymbolVector(_preamble.cols()));
 
-    for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_K+_d;iProcessedObservation++)
+    for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
@@ -112,7 +112,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     }
 
     // last detected symbol vectors are processed
-    for(iProcessedObservation=_K+_d-firstSymbolVectorDetectedAt+_preamble.cols()+1;iProcessedObservation<_K+_d;iProcessedObservation++)
+    for(iProcessedObservation=_iLastSymbolVectorToBeDetected+_d-firstSymbolVectorDetectedAt+_preamble.cols()+1;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
         _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState].GetSymbolVector(iProcessedObservation));
 }
 
@@ -165,7 +165,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
 
 tMatrix ViterbiAlgorithm::getDetectedSymbolVectors()
 {
-    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_preamble.cols(),_K-1));
+    return (*_detectedSymbolVectors)(rAllSymbolRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)

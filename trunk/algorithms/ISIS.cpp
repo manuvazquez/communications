@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
+ISIS::ISIS(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
 {
 }
 
@@ -39,7 +39,7 @@ void ISIS::InitializeParticles()
         }
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_nInputs,_K,thisParticleChannelMatrixEstimators));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators));
     }
 }
 
@@ -65,7 +65,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	tVector likelihoods(nSymbolVectors);
 
 	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
 #ifdef DEBUG2
         cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
@@ -221,7 +221,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		_particleFilter.NormalizeWeights();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
+		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
 		{
         	_resamplingAlgorithm->ResampleWhenNecessary(&_particleFilter);
 		}

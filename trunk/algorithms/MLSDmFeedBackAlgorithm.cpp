@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MLSDmFeedBackAlgorithm.h"
 
-MLSDmFeedBackAlgorithm::MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): MLSDmAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
+MLSDmFeedBackAlgorithm::MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance): MLSDmAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, ARcoefficient, samplingVariance, ARprocessVariance)
 {
 }
 
@@ -33,7 +33,7 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 
 	delete _particleFilter;
 
-	for(int iObservationToBeProcessed=_K+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
+	for(int iObservationToBeProcessed=_iLastSymbolVectorToBeDetected+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
 	{
 		for(int iChannelOrder=0;iChannelOrder<bestParticle->NchannelMatrixEstimators();iChannelOrder++)
 		{

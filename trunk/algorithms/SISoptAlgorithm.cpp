@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "SISoptAlgorithm.h"
 
-SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, frameLength, m, channelEstimator, preamble, 0, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, 0, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 {
 }
 
@@ -44,7 +44,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 	tRange mMinus1PrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
 
 	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
 		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 		{
@@ -95,10 +95,10 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 		_particleFilter->NormalizeWeights();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
+		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
 // 			Resampling();
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
-	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 

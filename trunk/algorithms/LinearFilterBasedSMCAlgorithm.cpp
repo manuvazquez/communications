@@ -21,12 +21,12 @@
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, frameLength,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 ,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int frameLength,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, frameLength,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected,int m,tMatrix preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
 ,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0),_e(SMCsmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
@@ -50,7 +50,7 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
-        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_K,channelMatrixEstimatorClone,_linearDetector->Clone()));
+        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
     }
@@ -86,7 +86,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
     if(_substractContributionFromKnownSymbols)
         rAlreadyDetectedSymbolVectors = tRange(_startDetectionTime-_c-_channelOrder+1,_startDetectionTime-1);
 
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
 		// the stacked observations vector
 		tVector stackedObservations = Util::toVector(observations(rAll,rSmoothingRange),columnwise);
@@ -179,7 +179,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			// ii) the just sampled
 			forWeightUpdateNeededSymbols(rAll,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
 
-			likelihoodsProd = Smoothedlikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+			likelihoodsProd = smoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
 			// the weight is updated
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
@@ -194,7 +194,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 		_particleFilter->NormalizeWeights();
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
+		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
 		rmMinus1AlreadyDetectedSymbolVectors = rmMinus1AlreadyDetectedSymbolVectors + 1;
@@ -203,7 +203,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
         if(_substractContributionFromKnownSymbols)
 		  rAlreadyDetectedSymbolVectors = rAlreadyDetectedSymbolVectors + 1;
 
-	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
+	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
 void LinearFilterBasedSMCAlgorithm::BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence)

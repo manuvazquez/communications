@@ -21,7 +21,7 @@
 
 // #define DEBUG12
 
-USIS::USIS(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_nOutputs-1)
+USIS::USIS(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_nOutputs-1)
 ,_processDoneExternally(false)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
@@ -78,7 +78,7 @@ void USIS::InitializeParticles()
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_nInputs,_K,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
     }
 }
 
@@ -107,11 +107,11 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	tVector predictedNoiselessObservation(_nOutputs);
 
 	int iObservationToBeProcessed = _startDetectionTime;
-	while((iObservationToBeProcessed<_K) && !_processDoneExternally)
+	while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
 	{
 #ifdef DEBUG
 		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
-		cout << "_K = " << _K << endl;
+		cout << "_iLastSymbolVectorToBeDetected = " << _iLastSymbolVectorToBeDetected << endl;
 
 		if(iObservationToBeProcessed>20)
 			exit(0);
@@ -324,11 +324,11 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		BeforeResamplingProcess(iObservationToBeProcessed,observations,noiseVariances);
 
 		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_K-1))
+		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->ResampleWhenNecessary(&_particleFilter);
 
     	iObservationToBeProcessed++;
-	} // while((iObservationToBeProcessed<_K) && !_processDoneExternally)
+	} // while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
 }
 
 

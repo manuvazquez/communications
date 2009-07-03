@@ -28,7 +28,7 @@
 class KnownSymbolsCMEapplyingAlgorithm : public CMEapplyingAlgorithm
 {
 public:
-    KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors);
+    KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors);
 
     ~KnownSymbolsCMEapplyingAlgorithm();
 

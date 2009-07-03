@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int frameLength, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, frameLength, channelEstimators, preamble, iFirstObservation)
+MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
 //variables initialization
 ,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_randomParticlesInitilization(false)
 {
@@ -119,13 +119,13 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()
 {
-    return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_K-1));
+    return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
-    channelMatrices.reserve(_K-_preamble.cols());
+    channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
     // best particle is chosen
     int iBestParticle = GetParticleFilterPointer()->iBestParticle();
@@ -133,7 +133,7 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
 
     int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 
-    for(int i=_preamble.cols();i<_K;i++)
+    for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
         channelMatrices.push_back(GetParticleFilterPointer()->GetParticle(iBestParticle)->GetChannelMatrix(iBestChannelOrder,i));
 
     return channelMatrices;

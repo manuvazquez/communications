@@ -21,7 +21,7 @@
 #define ALGORITHM_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <string>
@@ -36,13 +36,13 @@
 
 class Algorithm{
 protected:
-	string _name;
-	Alphabet _alphabet;
-    int _nOutputs,_nInputs,_K;
+    string _name;
+    Alphabet _alphabet;
+    int _nOutputs,_nInputs,_iLastSymbolVectorToBeDetected;
 public:
-    Algorithm(string name, Alphabet  alphabet,int L,int N, int frameLength);
-	virtual ~Algorithm() {};
-	virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
+    Algorithm(string name, Alphabet  alphabet,int L,int N, int iLastSymbolVectorToBeDetected);
+    virtual ~Algorithm() {};
+    virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
     string GetName() {return _name;}
@@ -64,17 +64,17 @@ public:
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-	tVector SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
+    tVector SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
 
-	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);
-	tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
-	{
-		return HsToStackedH(matrices,m,0,matrices.size()-1);
-	}
-	tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d)
-	{
-		return HsToStackedH(matrices,m,0,d);
-	}
+    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);
+    tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
+    {
+        return HsToStackedH(matrices,m,0,matrices.size()-1);
+    }
+    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d)
+    {
+        return HsToStackedH(matrices,m,0,d);
+    }
 };
 
 #endif

@@ -84,7 +84,7 @@ tVector ChannelDependentNoise::operator[](int n) const
     return res;
 }
 
-tMatrix ChannelDependentNoise::Range(int start,int end) const
+tMatrix ChannelDependentNoise::range(int start,int end) const
 {
     tMatrix res(_nOutputs,end-start+1);
     for(int i=start;i<=end;i++)
