@@ -32,7 +32,7 @@ class CDMAKalmanEstimator : public KalmanEstimator
 protected:
     tMatrix _spreadingCodes;
 public:
-    CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
+    CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
 
     ~CDMAKalmanEstimator();
 

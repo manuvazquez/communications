@@ -185,7 +185,7 @@ tVector Util::normalize(const tVector &v)
     return res;
 }
 
-double Util::Sum(const tVector &v)
+double Util::sum(const tVector &v)
 {
     double res = 0.0;
 
@@ -418,7 +418,7 @@ template<class T> void Util::min(const std::vector<T> &vector,int &iMin)
 }
 template void Util::min(const std::vector<double> &vector,int &iMin);
 
-template<class T> T Util::Sum(const std::vector<T> &vector)
+template<class T> T Util::sum(const std::vector<T> &vector)
 {
     T sum = vector[0];
 
@@ -426,7 +426,7 @@ template<class T> T Util::Sum(const std::vector<T> &vector)
         sum += vector[i];
     return sum;
 }
-template int Util::Sum(const std::vector<int> &vector);
+template int Util::sum(const std::vector<int> &vector);
 
 void Util::elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)
 {
@@ -658,7 +658,7 @@ tMatrix Util::cholesky(const tMatrix &matrix)
   return L_;
 }
 
-template<class T> void Util::NextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
+template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
 {
     if(vector.size()!=alphabets.size())
         throw RuntimeException("Util::NextVector: number of alphabets must be equal to the number of elements of the vector.");
@@ -671,7 +671,7 @@ template<class T> void Util::NextVector(vector<T> &vector,const vector<vector<T>
         while(vector[iPos]!=alphabets[iPos][iAlphabet] && iAlphabet<alphabets[iPos].size())
             iAlphabet++;
         if(iAlphabet==alphabets[iPos].size())
-            throw RuntimeException("Util::NextVector: symbol not belongin to the corresponding alphabet found.");
+            throw RuntimeException("Util::NextVector: symbol not belonging to the corresponding alphabet found.");
         if(iAlphabet<(alphabets[iPos].size()-1))
         {
             vector[iPos] = alphabets[iPos][iAlphabet+1];
@@ -681,7 +681,7 @@ template<class T> void Util::NextVector(vector<T> &vector,const vector<vector<T>
         iPos--;
     }
 }
-template void Util::NextVector(vector<double> &vector,const vector<vector<double> > &alphabets);
+template void Util::nextVector(vector<double> &vector,const vector<vector<double> > &alphabets);
 
 /**
  * It finds out how many times appear each element. @param firstOccurrence and @param times will be deleted
@@ -689,7 +689,7 @@ template void Util::NextVector(vector<double> &vector,const vector<vector<double
  * @param firstOccurrence
  * @param times
  */
-template<class T> void Util::HowManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times)
+template<class T> void Util::howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times)
 {
     firstOccurrence.clear();
     firstOccurrence.reserve(v.size());
@@ -714,7 +714,7 @@ template<class T> void Util::HowManyTimes(const vector<T> &v,vector<int> &firstO
         }
     }
 }
-template void Util::HowManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
+template void Util::howManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
 
 vector<int> Util::nMax(int n,const tVector &v)
 {

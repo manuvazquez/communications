@@ -33,7 +33,6 @@ protected:
     int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
     tMatrix _lastEstimatedChannelMatrix;
 
-//     ChannelMatrixEstimator(int N);
 public:
     // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
     ChannelMatrixEstimator(tMatrix initialEstimation,int N);

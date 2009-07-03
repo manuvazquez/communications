@@ -56,7 +56,7 @@ CDMASystem::CDMASystem(): BaseSystem(),ARcoefficients(2)
     newActiveUserProb = 0.2;
     userPriorProb = 0.5;
     
-//     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),_spreadingCodes,ARcoefficients,ARvariance);
+    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
 }
 
 
@@ -64,7 +64,7 @@ CDMASystem::~CDMASystem()
 {
     delete powerProfile;
     delete algoritmoRemuestreo;
-//     delete cdmaKalmanEstimator;
+    delete cdmaKalmanEstimator;
 }
 
 

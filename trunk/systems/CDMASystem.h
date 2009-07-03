@@ -25,7 +25,7 @@
 #include <ARMultiuserCDMAchannel.h>
 #include <ResamplingAlgorithm.h>
 #include <ResidualResamplingAlgorithm.h>
-// #include <CDMAKalmanEstimator.h>
+#include <CDMAKalmanEstimator.h>
 
 /**
     @author Manu <manu@rustneversleeps>
@@ -52,7 +52,7 @@ protected:
     double resamplingRatio;
     ResamplingAlgorithm *algoritmoRemuestreo;
     
-//     CDMAKalmanEstimator *cdmaKalmanEstimator;
+    CDMAKalmanEstimator *cdmaKalmanEstimator;
 
     virtual void AddAlgorithms();
     virtual void BeforeEndingAlgorithm(int iAlgorithm);

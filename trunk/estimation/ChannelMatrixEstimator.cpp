@@ -19,10 +19,6 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-// ChannelMatrixEstimator::ChannelMatrixEstimator(int N):_nOutputs(0),_nChannelMatrixRows(0),_nInputsXchannelOrder(0),_nInputs(N),_nChannelCoeffs(0)
-// {
-// }
-
 ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_lastEstimatedChannelMatrix(initialEstimation),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols())
 {
     if(_nInputsXchannelOrder < _nInputs)

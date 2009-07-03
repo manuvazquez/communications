@@ -130,7 +130,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			// channel matrix is estimated by means of the particle channel estimator
 			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
-			processedParticle->SetWeight(processedParticle->GetWeight()* Util::Sum(likelihoods));
+			processedParticle->SetWeight(processedParticle->GetWeight()* Util::sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 

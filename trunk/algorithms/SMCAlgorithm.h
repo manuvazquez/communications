@@ -33,10 +33,13 @@
 #include <ParticleWithChannelEstimation.h>
 #include <math.h>
 
+/**
+It implements some parts of a typical (default) SMC algorithm. It assumes that the particles have a channel estimator (derive from the class "ParticleWithChannelEstimation) and thus, methods "InitializeParticles" or "Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)" must be redefined in a subclass implementing an algorithm which requires another type of particle.
+
+    @author Manu <manu@rustneversleeps>
+*/
 class SMCAlgorithm : public KnownChannelOrderAlgorithm
 {
-// private:
-//     void InitializeParticlesChannelMatrixEstimations();
 protected:
     ParticleFilter *_particleFilter;
     bool _particleFilterNeedToBeDeleted;
@@ -45,7 +48,7 @@ protected:
     tRange _allSymbolsRows;
 
     // a particle contains a vector of channel estimators (and possibly linear detectors)
-    int _estimatorIndex;
+    int _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
 
     tMatrix _channelMatrixMean,_channelMatrixVariances;
 

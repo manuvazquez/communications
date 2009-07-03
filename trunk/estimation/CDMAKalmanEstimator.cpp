@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMAKalmanEstimator.h"
 
-CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, N, ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
+CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
 {
     if(spreadingCodes.cols()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::CDMAKalmanEstimator: the number of spreading codes doesn't match the number of users.");

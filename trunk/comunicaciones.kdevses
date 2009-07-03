@@ -3,34 +3,34 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="10" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="7" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.cpp" >
-   <View0 Encoding="" line="244" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/KalmanEstimator.h" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelMatrixEstimator.h" >
-   <View0 Encoding="" line="39" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.h" >
+   <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.cpp" >
-   <View0 Encoding="" line="55" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.h" >
+   <View0 Encoding="" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKalmanEstimator.h" >
-   <View0 Encoding="" line="34" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MultiuserCDMAchannel.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/ChannelMatrixEstimator.cpp" >
-   <View0 Encoding="" line="15" Type="Source" />
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+   <View0 Encoding="" line="381" Type="Source" />
   </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.h" >
-   <View0 Encoding="" line="52" Type="Source" />
+  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.h" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/detection/trellis/PSPPath.cpp" >
-   <View0 Encoding="" line="200" Type="Source" />
+  <Doc9 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc9>
  </DocsAndViews>
  <pluginList>
@@ -159,13 +159,13 @@
      <mark line="60" />
      <mark line="134" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="69" />
-     <mark line="61" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="188" />
      <mark line="38" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="69" />
+     <mark line="65" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="187" />
@@ -190,7 +190,7 @@
    <subversion base="" />
   </kdevsubversion>
   <kdevvalgrind>
-   <executable path="" params="" />
+   <executable path="/usr/local/.home/manu/c++/comunicaciones/debug/./com/com" params="" />
    <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="calltree" params="--tool=callgrind" />
    <kcachegrind path="kcachegrind" />

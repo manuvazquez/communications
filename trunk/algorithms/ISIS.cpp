@@ -214,7 +214,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
                 cout << endl;
             #endif
 
-			processedParticle->SetWeight(processedParticle->GetWeight()*Util::Sum(likelihoods));
+			processedParticle->SetWeight(processedParticle->GetWeight()*Util::sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 

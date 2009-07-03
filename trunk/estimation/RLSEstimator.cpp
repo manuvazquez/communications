@@ -19,10 +19,6 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-// RLSEstimator::RLSEstimator(int N,double forgettingFactor): ChannelMatrixEstimator(N),_invForgettingFactor(1.0/forgettingFactor)
-// {
-// }
-
 RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_nInputsXchannelOrder))
 {
 }

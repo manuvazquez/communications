@@ -42,7 +42,6 @@ protected:
 	double _invForgettingFactor;
 	tMatrix _invRtilde;
 
-//     RLSEstimator(int N,double forgettingFactor);
 public:
     RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor);
 

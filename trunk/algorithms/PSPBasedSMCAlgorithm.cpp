@@ -114,7 +114,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			weights(i) = particleCandidates[i].weight/normConst;
 
 #ifdef DEBUG
-		cout << "La suma es " << Util::Sum(weights) << endl;
+		cout << "La suma es " << Util::sum(weights) << endl;
 		cout << "Antes de llamar a _resamplingAlgorithm->ObtainIndexes" << endl;
 #endif
 
