@@ -82,7 +82,7 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 
 #ifdef DEBUG
     cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
-    Util::Print(mask);
+    Util::print(mask);
 #endif
 
     uint iBestPermutation = 0;
@@ -147,7 +147,7 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 #ifdef DEBUG
     cout << "dividing " << minErrors << " by " << nAccountedSymbols << endl;
     cout << "iBestPermutation = " << iBestPermutation << " and the signs" << endl;
-    Util::Print(bestPermutationSigns);
+    Util::print(bestPermutationSigns);
 #endif
     return (double)minErrors/(double)(nAccountedSymbols);
 }
@@ -159,9 +159,9 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
 
 #ifdef DEBUG
     cout << "source bits...to be revised from " << from1 << " to " << to1 << endl;
-    sourceBits.Print();
+    sourceBits.print();
     cout << "detected bits...to be revised from " << from2 << " to " << to2 << endl;
-    detectedBits.Print();    
+    detectedBits.print();    
 #endif
 
     BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
@@ -218,8 +218,8 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
 #ifdef DEBUG
     cout << "dividing " << minErrors << " by " << length*sourceBits.nStreams() << endl;
     cout << "iBestPermutation = " << iBestPermutation << " and the signs" << endl;
-    Util::Print(bestPermutationSigns);
-    Util::Print(permutations);    
+    Util::print(bestPermutationSigns);
+    Util::print(permutations);    
 #endif
     return (double)minErrors/(double)(length*sourceBits.nStreams());
 }

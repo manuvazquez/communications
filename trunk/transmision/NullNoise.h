@@ -33,7 +33,7 @@ public:
     virtual double StdDevAt(int n) const {return 0.0;}
     virtual tVector operator [ ](int n) const;
 	virtual void setSNR(int SNR,double alphabetVariance) {}
-	virtual void Print() const {std::cout << "Null Noise" << std::endl;}
+	virtual void print() const {std::cout << "Null Noise" << std::endl;}
 };
 
 #endif

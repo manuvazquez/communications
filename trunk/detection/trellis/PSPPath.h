@@ -61,7 +61,7 @@ public:
 		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
 	}
     void Clean();
-    void Print() const;
+    void print() const;
     /**
      * Updates the current path object from another path object, plus a new symbol vector, a new cost, a new vector of ChannelMatrixEstimators, and a vector of channel matrices
      * @param path

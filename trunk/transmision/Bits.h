@@ -43,7 +43,7 @@ public:
 	Bits(const Bits& bits);
 	~Bits();
 
-	void Print() const;
+	void print() const;
 	Bits DifferentialEncoding();
 	Bits DifferentialDecoding();
 	tBit operator()(int i,int j) const {return _matrix[i*_nBitsByStream+j];}

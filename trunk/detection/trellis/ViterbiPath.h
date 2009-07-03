@@ -41,9 +41,9 @@ public:
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector GetSymbolVector(int n) const { /*cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
+    tVector GetSymbolVector(int n) const { /*cout << "nï¿½ de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
 
-	virtual void Print() const;
+	virtual void print() const;
 	void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
 	virtual void Ref(const ViterbiPath &path);
 	virtual void operator=(const ViterbiPath &path);

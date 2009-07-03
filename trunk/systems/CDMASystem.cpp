@@ -133,9 +133,9 @@ void CDMASystem::BuildChannel()
         }
             
 #ifdef DEBUG
-    Util::Print(usersActive);
+    Util::print(usersActive);
     cout << "users activity at time 0" << endl;
-    Util::Print(_usersActivity);
+    Util::print(_usersActivity);
 #endif            
                 
 #ifdef DEBUG

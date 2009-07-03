@@ -143,7 +143,7 @@ void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const 
             symbolVectors(i,channel.memory()-1) = _inputVector[i];
 
         // computedObservations = channelMatrix * symbolVectors(:)
-        Blas_Mat_Vec_Mult(channelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
+        Blas_Mat_Vec_Mult(channelMatrix,Util::toVector(symbolVectors,columnwise),computedObservations);
 
         // error = observations - computedObservations
         Util::add(observations,computedObservations,error,1.0,-1.0);
@@ -182,7 +182,7 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
         if(stage[i].IsEmpty())
             cout << "Empty" << endl;
         else
-		stage[i].Print();
+		stage[i].print();
         cout << "------------------" << endl;
     }
 }

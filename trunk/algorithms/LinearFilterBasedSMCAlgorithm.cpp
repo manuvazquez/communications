@@ -41,15 +41,15 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     tRange rPreamble(0,_preamble.cols()-1);
 
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
-    tVector channelMean = Util::ToVector(_channelMatrixMean,rowwise);
-    tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::ToVector(_channelMatrixVariances,rowwise));
+    tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
+    tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
 
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->Clone();
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
         _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_K,channelMatrixEstimatorClone,_linearDetector->Clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
@@ -89,7 +89,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_K;iObservationToBeProcessed++)
 	{
 		// the stacked observations vector
-		tVector stackedObservations = Util::ToVector(observations(rAll,rSmoothingRange),columnwise);
+		tVector stackedObservations = Util::toVector(observations(rAll,rSmoothingRange),columnwise);
 
 		// stacked noise covariance needs to be constructed
 		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_nOutputs*(_c+_e+1),_nOutputs*(_c+_e+1));
@@ -177,7 +177,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			forWeightUpdateNeededSymbols(rAll,range0mMinus2).inject(processedParticle->GetSymbolVectors(rmMinus1AlreadyDetectedSymbolVectors));
 
 			// ii) the just sampled
-			forWeightUpdateNeededSymbols(rAll,rSampledSymbolVectors).inject(Util::ToMatrix(sampledSmoothingVector,columnwise,_nInputs));
+			forWeightUpdateNeededSymbols(rAll,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
 
 			likelihoodsProd = Smoothedlikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 

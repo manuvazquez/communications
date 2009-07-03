@@ -98,7 +98,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
 
             symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
-            symbolsVector = Util::ToVector(symbolVectorsMatrix,columnwise);
+            symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
             for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
             {

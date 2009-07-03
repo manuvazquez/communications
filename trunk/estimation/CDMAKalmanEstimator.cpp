@@ -49,8 +49,8 @@ tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVecto
 
     tMatrix CS(_nOutputs,_nInputs);
     
-    for(uint i=0;i<_nOutputs;i++)
-        for(uint j=0;j<_nInputs;j++)
+    for(int i=0;i<_nOutputs;i++)
+        for(int j=0;j<_nInputs;j++)
             CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);
             
     return CS;

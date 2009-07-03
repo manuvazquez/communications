@@ -41,7 +41,7 @@ LMSmuTestSystem::LMSmuTestSystem()
 
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
 
-    powerProfile->Print();
+    powerProfile->print();
 
     // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)

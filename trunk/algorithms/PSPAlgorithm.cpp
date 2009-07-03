@@ -236,7 +236,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 			estimatedChannelMatrix *= _ARcoefficient;
 
 			// computedObservations = estimatedChannelMatrix * symbolVectors(:)
-			Blas_Mat_Vec_Mult(estimatedChannelMatrix,Util::ToVector(symbolVectors,columnwise),computedObservations);
+			Blas_Mat_Vec_Mult(estimatedChannelMatrix,Util::toVector(symbolVectors,columnwise),computedObservations);
 
 			// error = observations - computedObservations
 			Util::add(observations,computedObservations,error,1.0,-1.0);
@@ -335,5 +335,5 @@ void PSPAlgorithm::PrintState(int iState)
     cout << "--------------- State " << iState << " ---------------" << endl;
     for(int iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
         if(!_exitStage[iState][iSurvivor].IsEmpty())
-            _exitStage[iState][iSurvivor].Print();
+            _exitStage[iState][iSurvivor].print();
 }

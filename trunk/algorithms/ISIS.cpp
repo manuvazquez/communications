@@ -35,7 +35,7 @@ void ISIS::InitializeParticles()
 		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
         {
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
-//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::ToMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_nOutputs));
+//             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_nOutputs));
         }
 
 		// ... and passed within a vector to each particle
@@ -150,7 +150,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			tVector probabilities(nSymbolVectors);
 			try {
 				// probabilities are computed by normalizing the likelihoods
-				probabilities = Util::Normalize(likelihoods);
+				probabilities = Util::normalize(likelihoods);
 			} catch (AllElementsNullException) {
 				// if all the likelihoods are null
 				probabilities = 1.0/(double)nSymbolVectors;

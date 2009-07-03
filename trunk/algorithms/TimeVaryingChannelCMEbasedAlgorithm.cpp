@@ -59,7 +59,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 
 			observationError = observations.col(iSymbolVector);
 			// observationError = observationError - _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix() * _symbolVectors(rAll,rSymbolVectors)
-			Blas_Mat_Vec_Mult(_channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix(),Util::ToVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
+			Blas_Mat_Vec_Mult(_channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix(),Util::toVector(_symbolVectors(rAll,rSymbolVectors),columnwise),observationError,-1.0,1.0);
 
 			accumulatedSquaredObservationsError += double(skipNumber>50)*Blas_Dot_Prod(observationError,observationError)/noiseVariances[iSymbolVector];
 

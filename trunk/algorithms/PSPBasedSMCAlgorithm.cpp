@@ -79,7 +79,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 
 			symbolVectorsMatrix(rAllSymbolRows,rmMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rmMinus1PrecedentColumns));
 
-			symbolsVector = Util::ToVector(symbolVectorsMatrix,columnwise);
+			symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
 			tMatrix estimatedChannelMatrix = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
 			estimatedChannelMatrix *= _ARcoefficient;

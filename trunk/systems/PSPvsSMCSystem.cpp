@@ -61,7 +61,7 @@ PSPvsSMCSystem::PSPvsSMCSystem()
 //     powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
     powerProfile = new FlatPowerProfile(L,N,m,1.0);
 
-    powerProfile->Print();
+    powerProfile->print();
 
     // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)

@@ -36,7 +36,7 @@ ARprocess::ARprocess(tMatrix seed,int order,double velocity,double carrierFreque
 
 #ifdef DEBUG4
     cout << "Los coeficientes son " << endl;
-    Util::Print(_coefficients);
+    Util::print(_coefficients);
     cout << "La varianza es " << _noiseVariance << endl;
 #endif
 
@@ -179,7 +179,7 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
 
 #ifdef DEBUG
     cout << "Todas las correlaciones" << endl;
-    Util::Print(autocorrelations);
+    Util::print(autocorrelations);
     cout << "jn(0,2.0): " << jn(0,2.0) << endl;
 #endif
 

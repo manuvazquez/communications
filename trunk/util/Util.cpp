@@ -75,7 +75,7 @@ void Util::transpose(const tMatrix &A,tMatrix &B)
             B(j,i) = A(i,j);
 }
 
-tVector Util::ToVector(const tMatrix &matrix,tOrder order)
+tVector Util::toVector(const tMatrix &matrix,tOrder order)
 {
     int i,nElements;
 
@@ -91,10 +91,10 @@ tVector Util::ToVector(const tMatrix &matrix,tOrder order)
     return vector;
 }
 
-tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
+tMatrix Util::toMatrix(const tVector &vector,tOrder order,int rows,int cols)
 {
     if(vector.size()> (rows*cols))
-        throw RuntimeException("Util::ToMatrix: The length of the vector is greater than rows by cols.");
+        throw RuntimeException("Util::toMatrix: The length of the vector is greater than rows by cols.");
 
     tMatrix matrix = LaGenMatDouble::zeros(rows,cols);
 
@@ -107,10 +107,10 @@ tMatrix Util::ToMatrix(const tVector &vector,tOrder order,int rows,int cols)
     return matrix;
 }
 
-tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols)
+tMatrix Util::toMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols)
 {
     if(vector.size()> (rows*cols))
-        throw RuntimeException("Util::ToMatrix: The length of the vector is greater than rows by cols.");
+        throw RuntimeException("Util::toMatrix: The length of the vector is greater than rows by cols.");
 
     tMatrix matrix = LaGenMatDouble::zeros(rows,cols);
 
@@ -123,13 +123,13 @@ tMatrix Util::ToMatrix(const vector<double> &vector,tOrder order,uint rows,uint 
     return matrix;
 }
 
-tMatrix Util::ToMatrix(const tVector &vector,tOrder order,uint rows)
+tMatrix Util::toMatrix(const tVector &vector,tOrder order,uint rows)
 {
     int remainder = vector.size() % rows;
     if(remainder!=0)
         throw RuntimeException("Resultant number of columns is not integer.");
     int cols = vector.size()/rows;
-    return ToMatrix(vector,order,rows,cols);
+    return toMatrix(vector,order,rows,cols);
 }
 
 tMatrix Util::append(const tMatrix &A,const tMatrix &B)
@@ -166,7 +166,7 @@ tMatrix Util::verticalAppend(const tMatrix &A,const tMatrix &B)
     return res;
 }
 
-tVector Util::Normalize(const tVector &v)
+tVector Util::normalize(const tVector &v)
 {
     int k;
 
@@ -177,7 +177,7 @@ tVector Util::Normalize(const tVector &v)
         sum += v(k);
 
     if(sum==0)
-        throw AllElementsNullException("Util::Normalize: A vector of zeros can't be normalized.");
+        throw AllElementsNullException("Util::normalize: A vector of zeros can't be normalized.");
 
     tVector res(nElements);
     for(k=0;k<nElements;k++)
@@ -258,7 +258,7 @@ double Util::squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
     return res;
 }
 
-void Util::Print(const tMatrix &A)
+void Util::print(const tMatrix &A)
 {
     int j;
     for(int i=0;i<A.rows();i++)
@@ -450,19 +450,19 @@ void Util::elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C)
       C(i,j) = A(i,j)*B(i,j);
 }
 
-template<class T> void Util::Print(const std::vector<T> &vector)
+template<class T> void Util::print(const std::vector<T> &vector)
 {
     cout << "[";
     for(uint i=0;i<vector.size()-1;i++)
         cout << vector[i] << ",";
     cout << vector[vector.size()-1] << "]" << endl;
 }
-template void Util::Print(const std::vector<int> &vector);
-template void Util::Print(const std::vector<uint> &vector);
-template void Util::Print(const std::vector<double> &vector);
-template void Util::Print(const std::vector<bool> &vector);
+template void Util::print(const std::vector<int> &vector);
+template void Util::print(const std::vector<uint> &vector);
+template void Util::print(const std::vector<double> &vector);
+template void Util::print(const std::vector<bool> &vector);
 
-template<class T> void Util::Print(const std::vector<std::vector<T> > &matrix)
+template<class T> void Util::print(const std::vector<std::vector<T> > &matrix)
 {
     cout << "[\n";
     for(uint i=0;i<matrix.size();i++)
@@ -474,17 +474,17 @@ template<class T> void Util::Print(const std::vector<std::vector<T> > &matrix)
    cout << "]\n";
 }
 
-template void Util::Print(const std::vector<std::vector<bool> > &matrix);
-template void Util::Print(const std::vector<std::vector<uint> > &matrix);
+template void Util::print(const std::vector<std::vector<bool> > &matrix);
+template void Util::print(const std::vector<std::vector<uint> > &matrix);
 
-template<class T> void Util::Print(const T* array,int nElements)
+template<class T> void Util::print(const T* array,int nElements)
 {
     cout << "[";
     for(int i=0;i<nElements-1;i++)
         cout << array[i] << ",";
     cout << array[nElements-1] << "]" << endl;
 }
-template void Util::Print(const int* array,int nElements);
+template void Util::print(const int* array,int nElements);
 
 void Util::shiftUp(tVector &v,int n)
 {
@@ -544,7 +544,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     {
         #ifdef DEBUG13
             cout << "probando permutaci�n" << endl;
-            Print(permutations[iPermut]);
+            print(permutations[iPermut]);
         #endif
 
         for(uint iCol=0;iCol<permutations[iPermut].size();iCol++)
@@ -582,7 +582,7 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     }
 
     #ifdef DEBUG2
-        Print(permutationError);
+        print(permutationError);
     #endif
 
     min(permutationError,iBestPermutation);

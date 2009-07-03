@@ -68,7 +68,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 			tVector probabilities(nSymbolVectors);
 			try {
 				// probabilities are computed by normalizing the likelihoods
-				probabilities = Util::Normalize(likelihoods);
+				probabilities = Util::normalize(likelihoods);
 			} catch (AllElementsNullException) {
 				// if all the likelihoods are null
 				probabilities = 1.0/(double)nSymbolVectors;

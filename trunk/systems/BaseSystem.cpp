@@ -123,7 +123,7 @@ BaseSystem::BaseSystem()
     
 #ifdef DEBUG
     cout << "isSymbolAccountedForDetection" << endl;
-    Util::Print(isSymbolAccountedForDetection);
+    Util::print(isSymbolAccountedForDetection);
 #endif    
     
     // ambiguity resolution
@@ -265,10 +265,10 @@ void BaseSystem::Simulate()
     overallMseMatrix *= 1.0/iFrame;
 
     cout << "Overall SER:" << endl;
-    Util::Print(overallPeMatrix);
+    Util::print(overallPeMatrix);
 
     cout << "Overall MSE:" << endl;
-    Util::Print(overallMseMatrix);
+    Util::print(overallMseMatrix);
 }
 
 void BaseSystem::OnlyOnce()

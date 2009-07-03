@@ -72,7 +72,7 @@ Bits::~Bits()
 	delete[] _matrix;
 }
 
-void Bits::Print() const
+void Bits::print() const
 {
 	uint i,j;
 

@@ -29,7 +29,7 @@ void LinearDetector::StateStepsFromObservationsSequence(const tMatrix &observati
     tRange rSmoothingRange(iFrom,iFrom+d);
     for(int i=iFrom;i<iTo;i++)
     {
-        tVector stackedObservationsVector = Util::ToVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
+        tVector stackedObservationsVector = Util::toVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
         StateStep(stackedObservationsVector);
         rSmoothingRange = rSmoothingRange + 1;
     }

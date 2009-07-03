@@ -107,10 +107,10 @@ void ViterbiPath::operator=(const ViterbiPath &path)
 	_nTimeInstants = path._nTimeInstants;
 }
 
-void ViterbiPath::Print() const
+void ViterbiPath::print() const
 {
 	if(this->IsEmpty())
-		throw RuntimeException("ViterbiPath::Print(): Path is empty.");
+		throw RuntimeException("ViterbiPath::print(): Path is empty.");
 
 	cout << "Sequence:" << endl << *(_detectedSequence);
 	cout << "Cost: " << _cost << endl;

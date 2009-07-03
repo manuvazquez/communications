@@ -62,7 +62,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
         tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_d);
 
         // the stacked observations vector
-        tVector stackedObservations = Util::ToVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
+        tVector stackedObservations = Util::toVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
 
         for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
         {

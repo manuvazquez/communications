@@ -116,7 +116,7 @@ void ParticleFilter::KeepParticles(vector<int> indexes)
 	#ifdef DEBUG
 		cout << "antes de replicar" << endl;
 		cout << "El vector de bools es " << endl;
-		Util::Print(particleNeeded);
+		Util::print(particleNeeded);
 	#endif
 
 	for(uint iParticle=0;iParticle<indexes.size();iParticle++)
@@ -188,7 +188,7 @@ int ParticleFilter::iBestParticle()
 	cout << "iBestParticle " << iBestParticle << " iBestParticle2 " << iBestParticle2 << endl;
 	cout << "Los pesos: " << endl << GetWeightsVector();
 	cout << "Los pesos acumulados" << endl;
-	Util::Print(accumulatedWeights);
+	Util::print(accumulatedWeights);
 	getchar();
 #endif
 	return iBestParticle;

@@ -30,7 +30,7 @@ LMSEstimator* LMSEstimator::Clone() const
 
 tMatrix LMSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
-	tVector symbolsVector = Util::ToVector(symbolsMatrix,columnwise);
+	tVector symbolsVector = Util::toVector(symbolsMatrix,columnwise);
 
     // _error = observations
     tVector error = observations;

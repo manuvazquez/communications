@@ -42,7 +42,7 @@ public:
     virtual ~DelayPowerProfile();
 
     virtual tMatrix generateChannelMatrix(Random &random);
-    virtual void Print() const;
+    virtual void print() const;
     tMatrix means() const { return _means;}
     tMatrix variances() const {return _variances;}
     int nInputs() { return _nInputs;}

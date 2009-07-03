@@ -57,7 +57,7 @@ tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& obser
     {
         normalizationCt = 0.0;
 
-        _symbolVector = Util::ToVector(sequenceToProcess(_rAllSymbolRows,tRange(i-_maxChannelOrder+1,i)),columnwise);
+        _symbolVector = Util::toVector(sequenceToProcess(_rAllSymbolRows,tRange(i-_maxChannelOrder+1,i)),columnwise);
 
         for(iChannelOrder=0;iChannelOrder<channelMatrices.size();iChannelOrder++)
         {

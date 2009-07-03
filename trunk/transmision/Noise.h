@@ -38,7 +38,7 @@ public:
 
 	int length() const { return _length;}
 	int nOutputs() const { return _nOutputs;}
-	virtual void Print() const = 0;
+	virtual void print() const = 0;
 	virtual double StdDevAt(int n) const = 0;
 	virtual tVector operator[](int n) const = 0;
 	virtual tMatrix Range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}

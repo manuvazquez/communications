@@ -99,7 +99,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 		tRange rSmoothingRange(iObservationToBeProcessed-_c,iObservationToBeProcessed+_d);
 
 		// the stacked observations vector
-		tVector stackedObservations = Util::ToVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
+		tVector stackedObservations = Util::toVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
 
 		// stacked noise covariance needs to be constructed
 		for(iSmoothing=-_c;iSmoothing<=_d;iSmoothing++)

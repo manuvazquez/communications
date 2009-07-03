@@ -72,7 +72,7 @@ public:
 		_symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b)).inject(symbolVectors);
 	}
 
-	void Print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
+	void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 
 	virtual Particle *Clone()
 	{

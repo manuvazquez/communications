@@ -38,7 +38,7 @@ int StatUtil::discrete_rnd(const tVector &probabilities,Random &randomGenerator)
     int i;
 	double uniform;
 
-//     tVector normalizedProbabilities = Util::Normalize(probabilities);
+//     tVector normalizedProbabilities = Util::normalize(probabilities);
     int nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
@@ -66,7 +66,7 @@ vector<int> StatUtil::discrete_rnd(int nSamples,const tVector &probabilities,Ran
     int i,j;
 	double uniform;
 
-    tVector normalizedProbabilities = Util::Normalize(probabilities);
+    tVector normalizedProbabilities = Util::normalize(probabilities);
     int nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
@@ -199,7 +199,7 @@ vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &pro
 		return res;
 	}
 
-    tVector normalizedProbabilities = Util::Normalize(probabilities);
+    tVector normalizedProbabilities = Util::normalize(probabilities);
 
 	bool **distributionFunctionActiveOperands;
 	distributionFunctionActiveOperands = new bool*[nProbabilities];
