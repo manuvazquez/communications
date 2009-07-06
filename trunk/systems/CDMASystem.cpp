@@ -36,9 +36,8 @@ CDMASystem::CDMASystem(): SMCSystem()
     
     // AR process parameters
     ARcoefficients = vector<double>(2);
-    ARcoefficients[0] = 0.99999;
-    ARcoefficients[1] = 0.95;
-//     ARcoefficients[2] = 0.93;    
+    ARcoefficients[0] = 0.59999;
+    ARcoefficients[1] = 0.39999;
     ARvariance=0.0001;    
     
     // a flat power profile is generated. Notice:
@@ -65,7 +64,7 @@ void CDMASystem::AddAlgorithms()
 #ifdef DEBUG
     cout << "observations are" << endl << observations;
 #endif
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 }
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)

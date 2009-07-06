@@ -34,6 +34,6 @@ void TesisOrdenCanalDesconocidoARSystem::BuildChannel()
 void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame(int iFrame)
 {
     TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
+    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }
 

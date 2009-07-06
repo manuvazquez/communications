@@ -36,8 +36,8 @@ void TesisOrdenCanalDesconocidoBesselSystem::BuildChannel()
 void TesisOrdenCanalDesconocidoBesselSystem::BeforeEndingFrame(int iFrame)
 {
     TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
-    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    Util::scalarToOctaveFileStream(velocity,"velocity",f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
 }
 

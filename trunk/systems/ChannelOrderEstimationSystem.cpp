@@ -55,7 +55,7 @@ void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
 	Util::scalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
 
 	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-	Util::MatricesVectoresVectoresVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+	Util::matricesVectorsVectorsVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
 }
 
 void ChannelOrderEstimationSystem::OnlyOnce()

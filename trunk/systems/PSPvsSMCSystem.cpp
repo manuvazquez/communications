@@ -105,9 +105,9 @@ void PSPvsSMCSystem::BuildChannel()
 void PSPvsSMCSystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
-    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    Util::scalarToOctaveFileStream(velocity,"velocity",f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
 
-    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
 }

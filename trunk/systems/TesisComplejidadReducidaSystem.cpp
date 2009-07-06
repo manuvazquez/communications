@@ -156,9 +156,9 @@ void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
 
-    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-    Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-    Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-    Util::ScalarToOctaveFileStream(muLMS,"muLMS",f);
-    Util::ScalarToOctaveFileStream(muNLMS,"muNLMS",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
+    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+    Util::scalarToOctaveFileStream(muLMS,"muLMS",f);
+    Util::scalarToOctaveFileStream(muNLMS,"muNLMS",f);
 }

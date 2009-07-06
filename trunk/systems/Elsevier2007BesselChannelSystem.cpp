@@ -85,7 +85,7 @@ void Elsevier2007BesselChannelSystem::BuildChannel()
 void Elsevier2007BesselChannelSystem::BeforeEndingFrame(int iFrame)
 {
     Elsevier2007System::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(velocity,"velocity",f);
-    Util::ScalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::ScalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    Util::scalarToOctaveFileStream(velocity,"velocity",f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
 }

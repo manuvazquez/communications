@@ -38,5 +38,5 @@ void TesisComplejidadReducidaARSystem::BuildChannel()
 void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
 {
     TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(channelVariance,"channelVariance",f);
+    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }

@@ -27,13 +27,13 @@ _particleFilter(new ParticleFilter(nParticles)),
 _particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_estimatorIndex(0),
 _channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_randomParticlesInitilization(false)
 {
-    if(channelMatrixMean.rows()!=L || channelMatrixMean.cols()!=(N*m))
+    if(channelMatrixMean.rows()!=Nr || channelMatrixMean.cols()!=(N*m))
     {
         cout << "channelMatrixMean.rows() = " << channelMatrixMean.rows() << " channelMatrixMean.cols() = " << channelMatrixMean.cols() << endl;
         throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix mean dimensions are wrong.");
     }
 
-    if(channelMatrixVariances.rows()!=L || channelMatrixVariances.cols()!=(N*m))
+    if(channelMatrixVariances.rows()!=Nr || channelMatrixVariances.cols()!=(N*m))
         throw RuntimeException("SMCAlgorithm::SMCAlgorithm: channel matrix variances dimensions are wrong.");
 
     // at first, we assume that all observations from the preamble need to be processed
@@ -80,7 +80,9 @@ void SMCAlgorithm::InitializeParticles()
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone));
 
-        _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+        // if there is preamble...
+        if(_preamble.cols()!=0)
+            _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     }
 }
 

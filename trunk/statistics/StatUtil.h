@@ -52,7 +52,11 @@ public:
      */
     static int discrete_rnd(const tVector &probabilities,Random &randomGenerator = _randomGenerator);
     static vector<int> discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
-    static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
+    
+    // same functions as above but receiving c++ vectors instead of Lapack++ vectors
+    static int discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
+    
+    static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);    
     static tVector RandMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator = _randomGenerator);
     static double NormalPdf(double x,double mean,double variance);
     static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);

@@ -118,9 +118,9 @@ void WSA08System::AddAlgorithms()
 void WSA08System::BeforeEndingFrame(int iFrame)
 {
     ChannelOrderEstimationSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-	Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-	Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-	Util::ScalarToOctaveFileStream(velocity,"velocity",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
+	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+	Util::scalarToOctaveFileStream(velocity,"velocity",f);
 }
 

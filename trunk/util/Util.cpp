@@ -185,6 +185,23 @@ tVector Util::normalize(const tVector &v)
     return res;
 }
 
+void Util::normalize(std::vector<double> &v)
+{
+    uint k;
+
+    uint nElements = v.size();
+    double sum = 0.0;
+
+    for(k=0;k<nElements;k++)
+        sum += v[k];
+
+    if(sum==0)
+        throw AllElementsNullException("Util::normalize: A vector of zeros can't be normalized.");
+
+    for(k=0;k<nElements;k++)
+        v[k] = v[k]/sum;
+}
+
 double Util::sum(const tVector &v)
 {
     double res = 0.0;
@@ -269,7 +286,7 @@ void Util::print(const tMatrix &A)
     }
 }
 
-void Util::MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f)
+void Util::matrixToOctaveFileStream(tMatrix A,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
 
@@ -281,7 +298,7 @@ void Util::MatrixToOctaveFileStream(tMatrix A,string name,ofstream &f)
     }
 }
 
-template<class T> void Util::MatricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f)
+template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
     {
@@ -297,10 +314,10 @@ template<class T> void Util::MatricesVectorToOctaveFileStream(vector<T> matrices
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
-template void Util::MatricesVectorToOctaveFileStream(vector<tMatrix> matrices,string name,ofstream &f);
-template void Util::MatricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
+template void Util::matricesVectorToOctaveFileStream(vector<tMatrix> matrices,string name,ofstream &f);
+template void Util::matricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
 
-void Util::MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
+void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
     {
@@ -319,7 +336,7 @@ void Util::MatricesVectoresVectorToOctaveFileStream(vector<vector<tMatrix> > mat
                     f << " " << matrices[l][k](i,j) << endl;
 }
 
-void Util::MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
+void Util::matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
     {
@@ -339,15 +356,15 @@ void Util::MatricesVectoresVectoresVectorToOctaveFileStream(vector<vector<vector
                         f << " " << matrices[m][l][k](i,j) << endl;
 }
 
-template<class T> void Util::ScalarToOctaveFileStream(T scalar,string name,ofstream &f)
+template<class T> void Util::scalarToOctaveFileStream(T scalar,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
 }
 
-template void Util::ScalarToOctaveFileStream(int scalar,string name,ofstream &f);
-template void Util::ScalarToOctaveFileStream(double scalar,string name,ofstream &f);
+template void Util::scalarToOctaveFileStream(int scalar,string name,ofstream &f);
+template void Util::scalarToOctaveFileStream(double scalar,string name,ofstream &f);
 
-void Util::StringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
+void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
 {
     if(strings.size()==0)
         return;

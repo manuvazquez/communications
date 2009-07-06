@@ -234,8 +234,12 @@ void BaseSystem::Simulate()
                 // the seed kept by the class StatUtil is saved
                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
 
-                algorithms[iAlgorithm]->Run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
-//                 algorithms[iAlgorithm]->Run(observations,noise->variances());
+                // if there is training sequence
+                if(trainSeqLength!=0)
+                    algorithms[iAlgorithm]->Run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                // if there is NOT training sequence
+                else
+                    algorithms[iAlgorithm]->Run(observations,noise->variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
                 
@@ -302,53 +306,53 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 {
     // pe
     peMatrices.push_back(presentFramePe);
-    Util::MatricesVectorToOctaveFileStream(peMatrices,"pe",f);
+    Util::matricesVectorToOctaveFileStream(peMatrices,"pe",f);
 
     // MSE
     MSEMatrices.push_back(presentFrameMSE);
-    Util::MatricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
+    Util::matricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-    Util::MatricesVectoresVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
+    Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
     // seeds just before the run of the algorithms
     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
-    Util::MatricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
+    Util::matricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 //         for(uint i=0;i<algorithmsNames.size();i++)
 //             for(int j=0;j<frameLength;j++)
 //                 overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
-//     Util::MatricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
+//     Util::matricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
-    Util::ScalarToOctaveFileStream(iFrame+1,"nFrames",f);
+    Util::scalarToOctaveFileStream(iFrame+1,"nFrames",f);
 
-    Util::StringsVectorToOctaveFileStream(algorithmsNames,"algorithmsNames",f);
-    Util::ScalarToOctaveFileStream(L,"L",f);
-    Util::ScalarToOctaveFileStream(N,"N",f);
-    Util::ScalarToOctaveFileStream(m,"m",f);
-    Util::ScalarToOctaveFileStream(frameLength,"frameLength",f);
-    Util::ScalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
-    Util::ScalarToOctaveFileStream(d,"d",f);
-    Util::ScalarToOctaveFileStream(symbolsDetectionWindowStart,"symbolsDetectionWindowStart",f);
-    Util::ScalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
+    Util::stringsVectorToOctaveFileStream(algorithmsNames,"algorithmsNames",f);
+    Util::scalarToOctaveFileStream(L,"L",f);
+    Util::scalarToOctaveFileStream(N,"N",f);
+    Util::scalarToOctaveFileStream(m,"m",f);
+    Util::scalarToOctaveFileStream(frameLength,"frameLength",f);
+    Util::scalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
+    Util::scalarToOctaveFileStream(d,"d",f);
+    Util::scalarToOctaveFileStream(symbolsDetectionWindowStart,"symbolsDetectionWindowStart",f);
+    Util::scalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
     Util::scalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
-    Util::MatrixToOctaveFileStream(preamble,"preamble",f);
-    Util::ScalarToOctaveFileStream(nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",f);    
-    Util::ScalarToOctaveFileStream(preambleLength,"preambleLength",f);
+    Util::matrixToOctaveFileStream(preamble,"preamble",f);
+    Util::scalarToOctaveFileStream(nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",f);    
+    Util::scalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-//     Util::MatricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
-    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
-    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
-    Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
+//     Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
 
     if(powerProfile!=NULL)
     {
         Util::scalarsVectorToOctaveFileStream(powerProfile->tapsAmplitudes(),"powerProfileVariances",f);
-        Util::StringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
+        Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
     }
     
 }

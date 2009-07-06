@@ -20,6 +20,8 @@
 #include "MIMOChannel.h"
 #include <lapackpp/blas2pp.h>
 
+// #define DEBUG
+
 using namespace la;
 
 MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
@@ -70,6 +72,11 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
             tRange rowsRange(j*_nInputs,(j+1)*_nInputs-1);
             Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-Memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
         }
+
+#ifdef DEBUG
+//         cout << "current channel matrix at " << iSymbolVector << endl << currentChannelMatrix;
+        cout << "observations at " << iSymbolVector << endl << currentObservationVector;
+#endif
 
         // the just computed observation is set in the observations matrix
         for(j=0;j<_nOutputs;j++)

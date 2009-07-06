@@ -72,6 +72,6 @@ void PSPvsPSPBasedSMCSystem::BuildChannel()
 void PSPvsPSPBasedSMCSystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
 }
 

@@ -19,20 +19,19 @@
  ***************************************************************************/
 #include "ARMultiuserCDMAchannel.h"
 
-#define DEBUG
+// #define DEBUG
 
 ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_length)
 {
     //initialization
     for(uint i=_memory-1;i<_length;i++)
-            _userCoeffs[i] = _ARprocess.nextMatrix();    
+    {
+            _userCoeffs[i] = _ARprocess.nextMatrix();            
+#ifdef DEBUG
+            cout << "CDMA channel coefficients at " << i << endl << _userCoeffs[i];
+#endif            
+    }
 }
-
-
-ARMultiuserCDMAchannel::~ARMultiuserCDMAchannel()
-{
-}
-
 
 tVector ARMultiuserCDMAchannel::getUsersCoefficientsAtTime(int n) const
 {

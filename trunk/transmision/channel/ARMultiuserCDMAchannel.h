@@ -33,8 +33,6 @@ class ARMultiuserCDMAchannel : public MultiuserCDMAchannel
 public:
     ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes,const ARprocess &arProcess);
 
-    ~ARMultiuserCDMAchannel();
-
 protected:
     ARprocess _ARprocess;
     vector<tMatrix> _userCoeffs;

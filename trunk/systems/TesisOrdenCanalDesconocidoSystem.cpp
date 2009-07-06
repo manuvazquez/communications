@@ -140,8 +140,8 @@ void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
 void TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(int iFrame)
 {
     ChannelOrderEstimationSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-    Util::ScalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-    Util::ScalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
+    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
 }
 

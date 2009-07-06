@@ -38,7 +38,10 @@ class Algorithm{
 protected:
     string _name;
     Alphabet _alphabet;
-    int _nOutputs,_Nr,_nInputs,_iLastSymbolVectorToBeDetected;
+    int _nOutputs; /// number of outputs (observations) of the system at each time instant
+    int _Nr; /// number of receiving antennas of the system
+    int _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
+    int _iLastSymbolVectorToBeDetected;
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};

@@ -1,31 +1,34 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="8" >
+ <DocsAndViews NumberOfDocuments="9" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="1" Type="Source" />
+   <View0 Encoding="" line="12" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.h" >
-   <View0 Encoding="" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
+   <View0 Encoding="" line="58" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-   <View0 Encoding="" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+   <View0 Encoding="" line="208" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="59" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="29" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+   <View0 Encoding="" line="82" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/Algorithm.h" >
-   <View0 Encoding="" line="39" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.h" >
+   <View0 Encoding="" line="72" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
-   <View0 Encoding="" line="17" Type="Source" />
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.cpp" >
+   <View0 Encoding="" line="201" Type="Source" />
   </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -41,6 +44,10 @@
     <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="160" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="394" />
+     <mark line="300" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
@@ -49,10 +56,6 @@
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
      <mark line="93" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="377" />
-     <mark line="283" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp" >
      <mark line="87" />
@@ -133,6 +136,9 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+     <mark line="58" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalSystem.cpp" >
      <mark line="60" />
      <mark line="134" />
@@ -164,14 +170,6 @@
      <mark line="188" />
      <mark line="38" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="124" />
-     <mark line="192" />
-     <mark line="29" />
-     <mark line="66" />
-     <mark line="135" />
-     <mark line="237" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
     </bookmark>
@@ -181,6 +179,14 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="187" />
      <mark line="102" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
+     <mark line="241" />
+     <mark line="124" />
+     <mark line="192" />
+     <mark line="29" />
+     <mark line="66" />
+     <mark line="135" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

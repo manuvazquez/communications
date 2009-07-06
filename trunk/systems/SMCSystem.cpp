@@ -56,10 +56,10 @@ void SMCSystem::BeforeEndingFrame(int iFrame)
 	cout << "en SMCSystem::BeforeEndingFrame" << endl;
 #endif
     BaseSystem::BeforeEndingFrame(iFrame);
-    Util::ScalarToOctaveFileStream(nParticles,"nParticles",f);
-    Util::ScalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
+    Util::scalarToOctaveFileStream(nParticles,"nParticles",f);
+    Util::scalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
     Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
-    Util::ScalarToOctaveFileStream(ARvariance,"ARvariance",f);
-    Util::ScalarToOctaveFileStream(c,"c",f);
-    Util::ScalarToOctaveFileStream(e,"e",f);
+    Util::scalarToOctaveFileStream(ARvariance,"ARvariance",f);
+    Util::scalarToOctaveFileStream(c,"c",f);
+    Util::scalarToOctaveFileStream(e,"e",f);
 }
