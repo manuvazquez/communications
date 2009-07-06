@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
+Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
 }
 
@@ -64,7 +64,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
     #ifdef DEBUG
-    	cout << "recibidas: " << windowSize << ", estimadas: " << nEstimatedChannelMatrices << endl;
+        cout << "recibidas: " << windowSize << ", estimadas: " << nEstimatedChannelMatrices << endl;
     #endif
 
     // if the algorithm didn't make channel estimation
@@ -77,16 +77,16 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     double mse = 0;
     int windowStart = nEstimatedChannelMatrices - windowSize;
 
-	// if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-	try {
-		for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
-		{
-			// the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-			mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
-		}
-	} catch (IncompatibleOperandsException) {
-		return 0.0;
-	}
+    // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
+    try {
+        for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+        {
+            // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
+            mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
+        }
+    } catch (IncompatibleOperandsException) {
+        return 0.0;
+    }
 
     return mse/(double)windowSize;
 }
@@ -94,27 +94,27 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 
 tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 {
-	if((matrices[0].cols() % m)!=0)
-		throw RuntimeException("Algorithm::HsToStackedH: Incorrect number of columns in the matrices.");
+    if((matrices[0].cols() % m)!=0)
+        throw RuntimeException("Algorithm::HsToStackedH: incorrect number of columns in the matrices.");
 
-	uint nMatricesToStack = d - start + 1;
+    uint nMatricesToStack = d - start + 1;
 
-	if(matrices.size()< nMatricesToStack)
-		throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
+    if(matrices.size()< nMatricesToStack)
+        throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
 
-	tMatrix res(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
+    tMatrix res(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
     res = 0.0;
 
-	int iStartingFromZero;
-	for(int i=start;i<=d;i++)
-	{
-		iStartingFromZero = i - start;
-		tRange rowsRange(iStartingFromZero*_nOutputs,(iStartingFromZero+1)*_nOutputs-1);
-		tRange colsRange(iStartingFromZero*_nInputs,iStartingFromZero*_nInputs+_nInputs*m-1);
-		res(rowsRange,colsRange).inject(matrices[i]);
-	}
+    int iStartingFromZero;
+    for(int i=start;i<=d;i++)
+    {
+        iStartingFromZero = i - start;
+        tRange rowsRange(iStartingFromZero*_nOutputs,(iStartingFromZero+1)*_nOutputs-1);
+        tRange colsRange(iStartingFromZero*_nInputs,iStartingFromZero*_nInputs+_nInputs*m-1);
+        res(rowsRange,colsRange).inject(matrices[i]);
+    }
 
-	return res;
+    return res;
 }
 
 tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
@@ -122,11 +122,11 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
     if(matrices.size()!=c+e+1)
       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
 
-	if(observations.size()!=(_nOutputs*(c+e+1)))
-	   throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
+    if(observations.size()!=(_nOutputs*(c+e+1)))
+       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
 
-	if(involvedSymbolVectors.cols()!=c+m-1)
-		 throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of symbol vectors.");
+    if(involvedSymbolVectors.cols()!=c+m-1)
+         throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     int i;
     tRange rAll;
@@ -155,10 +155,10 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
       rSourceCols.set(0,rSourceColsEnd);
     }
 
-	// substracting built channel matrix
-	tVector stackedObservationsMinus = observations;
-	// stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::toVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
-	Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::toVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);
+    // substracting built channel matrix
+    tVector stackedObservationsMinus = observations;
+    // stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::toVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
+    Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::toVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);
 
-	return stackedObservationsMinus;
+    return stackedObservationsMinus;
 }

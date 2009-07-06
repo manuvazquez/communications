@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelAlgorithm.h"
 
-KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int N, int iLastSymbolVectorToBeDetected, const MIMOChannel &channel): Algorithm(name, alphabet, L, N, iLastSymbolVectorToBeDetected),_channel(channel)
+KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const MIMOChannel &channel): Algorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected),_channel(channel)
 {
 }
 

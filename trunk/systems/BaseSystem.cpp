@@ -40,25 +40,25 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1;
-//     L=3,N=2,frameLength=50;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
     nFrames = 1;
-    L=10,N=5,frameLength=5;
-    m = 1;
+    L=3,N=2,frameLength=50;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
     nSmoothingSymbolsVectors = 10;
+    
+//     nFrames = 1;
+//     L=10,N=5,frameLength=5;
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 10;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
     SNRs.push_back(9);

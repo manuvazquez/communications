@@ -31,7 +31,7 @@
 class UnknownChannelAlgorithm : public Algorithm
 {
 public:
-    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int N, int iLastSymbolVectorToBeDetected);
+    UnknownChannelAlgorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
 };
 
 #endif

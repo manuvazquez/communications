@@ -40,30 +40,30 @@ void TesisComplejidadReducidaBesselNumeroParticulasSystem::AddAlgorithms()
 
         // ---------------------------------------------------------- con variables auxiliares ----------------------------------------------------
         sprintf(algorithmName,"Cholesky: %d particles)",particlesNumbers[iNparticles]);
-        algorithms.push_back(new TriangularizationBasedSMCAlgorithm(algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],ARvariance));
+        algorithms.push_back(new TriangularizationBasedSMCAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],ARvariance));
 
         // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
         sprintf(algorithmName,"MKF (MMSE): %d particles)",particlesNumbers[iNparticles]);
-        algorithms.push_back(new LinearFilterBasedMKFAlgorithm(algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,mmseDetectorSmall,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+        algorithms.push_back(new LinearFilterBasedMKFAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,mmseDetectorSmall,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
 
         // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
         sprintf(algorithmName,"MKF (Decorrelator): %d particles)",particlesNumbers[iNparticles]);
-        algorithms.push_back(new LinearFilterBasedMKFAlgorithm(algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+        algorithms.push_back(new LinearFilterBasedMKFAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
 
         // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
         sprintf(algorithmName,"RLS-D-SIS: %d particles)",particlesNumbers[iNparticles]);
-        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,rlsEstimator,rmmseDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,rlsEstimator,rmmseDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
         sprintf(algorithmName,"LMS-D-SIS: %d particles)",particlesNumbers[iNparticles]);
-        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,lmsEstimator,rmmseDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,lmsEstimator,rmmseDetector,preamble,c,d,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
         // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
-//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
 //         sprintf(algorithmName,"SIS opt: %d particles)",particlesNumbers[iNparticles]);
-//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
     }
 
-    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
+    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }

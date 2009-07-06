@@ -38,9 +38,9 @@ class Algorithm{
 protected:
     string _name;
     Alphabet _alphabet;
-    int _nOutputs,_nInputs,_iLastSymbolVectorToBeDetected;
+    int _nOutputs,_Nr,_nInputs,_iLastSymbolVectorToBeDetected;
 public:
-    Algorithm(string name, Alphabet  alphabet,int L,int N, int iLastSymbolVectorToBeDetected);
+    Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
     virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
