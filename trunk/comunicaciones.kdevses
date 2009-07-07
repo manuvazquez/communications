@@ -1,34 +1,28 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="9" >
+ <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="12" Type="Source" />
+   <View0 Encoding="" line="2" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
    <View0 Encoding="" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="58" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="208" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h" >
+   <View0 Encoding="" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/smc/WithActiveUsersParticleAddon.h" >
    <View0 Encoding="" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-   <View0 Encoding="" line="82" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/smc/WithActiveUsersParticleAddon.cpp" >
+   <View0 Encoding="" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.h" >
-   <View0 Encoding="" line="72" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
+   <View0 Encoding="" line="53" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/util/Util.cpp" >
-   <View0 Encoding="" line="201" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-   <View0 Encoding="" line="0" Type="Source" />
-  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -136,9 +130,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-     <mark line="58" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalSystem.cpp" >
      <mark line="60" />
      <mark line="134" />
@@ -162,6 +153,10 @@
      <mark line="88" />
      <mark line="21" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+     <mark line="184" />
+     <mark line="117" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="69" />
      <mark line="65" />
@@ -176,10 +171,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
-     <mark line="187" />
-     <mark line="102" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="241" />
      <mark line="124" />
@@ -187,6 +178,11 @@
      <mark line="29" />
      <mark line="66" />
      <mark line="135" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
+     <mark line="102" />
+     <mark line="192" />
+     <mark line="159" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

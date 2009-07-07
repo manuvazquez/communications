@@ -444,6 +444,7 @@ template<class T> T Util::sum(const std::vector<T> &vector)
     return sum;
 }
 template int Util::sum(const std::vector<int> &vector);
+template double Util::sum(const std::vector<double> &vector);
 
 void Util::elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)
 {
@@ -529,7 +530,7 @@ template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
 template vector<vector<int> > Util::Permutations(int *array, int nElements);
 template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
 
-vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
+vector<int> Util::solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
 {
     #ifdef DEBUG13
         cout << "H1" << endl << H1 << "H2" << endl << H2;
@@ -538,17 +539,17 @@ vector<int> Util::SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vecto
     if(H1.rows()!=H2.rows() || H1.cols()!=H2.cols())
     {
         cout << "H1" << endl << H1 << "H2" << endl << H2;
-        throw RuntimeException("Util::SolveAmbiguity: matrices do not have the same dimensions.");
+        throw RuntimeException("Util::solveAmbiguity: matrices do not have the same dimensions.");
     }
 
     uint nColumns = H1.cols();
 
     if(permutations[0].size()!=nColumns)
-        throw RuntimeException("Util::SolveAmbiguity: number of elements of the first permutations is not N.");
+        throw RuntimeException("Util::solveAmbiguity: number of elements of the first permutations is not N.");
 
     for(uint i=0;i<permutations[0].size();i++)
         if(permutations[0][i]!=i)
-            throw RuntimeException("Util::SolveAmbiguity: first permutation is not correct.");
+            throw RuntimeException("Util::solveAmbiguity: first permutation is not correct.");
 
     double errorWithoutChangingSign;
     double errorChangingSign;

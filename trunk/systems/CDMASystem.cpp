@@ -64,7 +64,7 @@ void CDMASystem::AddAlgorithms()
 #ifdef DEBUG
     cout << "observations are" << endl << observations;
 #endif
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
 }
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)

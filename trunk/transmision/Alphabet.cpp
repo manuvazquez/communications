@@ -35,6 +35,10 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
     _variance = mediaSimbolosCuadrado - (_mean*_mean);
 }
 
+Alphabet::Alphabet(vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(simbolos.size(),vector<tBit>(0)),_nBitsBySymbol(0),_length(simbolos.size())
+{
+}
+
 tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)
 {
     vector<vector<tBit> >::iterator iterador;
@@ -61,10 +65,6 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const
 {
 	int tamVector = res.size();
-
-	#ifdef DEBUG
-		cout << "tamVector: " << tamVector << endl;
-	#endif
 
 	if(numero>=pow((double)_length,(double)tamVector))
 		throw RuntimeException("Alphabet::int2symbolsArray: vector size is smaller than needed.");

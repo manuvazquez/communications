@@ -17,29 +17,20 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHLINEARDETECTIONPARTICLEADDON_H
-#define WITHLINEARDETECTIONPARTICLEADDON_H
+#include "ParticleWithChannelEstimationAndActiveUsers.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+ParticleWithChannelEstimationAndActiveUsers::ParticleWithChannelEstimationAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
+{
+}
 
-#include <vector>
-#include <LinearDetector.h>
 
-class WithLinearDetectionParticleAddon{
-protected:
-    std::vector<LinearDetector *> _linearDetectors;
-public:
-    WithLinearDetectionParticleAddon(LinearDetector *linearDetector);
+ParticleWithChannelEstimationAndActiveUsers::~ParticleWithChannelEstimationAndActiveUsers()
+{
+}
 
-    WithLinearDetectionParticleAddon(std::vector<LinearDetector *> linearDetectors);
 
-	WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon);
+ParticleWithChannelEstimationAndActiveUsers* ParticleWithChannelEstimationAndActiveUsers::Clone()
+{
+    return new ParticleWithChannelEstimationAndActiveUsers(*this);
+}
 
-    ~WithLinearDetectionParticleAddon();
-
-    LinearDetector *GetLinearDetector(int n) { return _linearDetectors[n];}
-};
-
-#endif

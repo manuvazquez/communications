@@ -28,11 +28,6 @@ CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const
 }
 
 
-CDMAKalmanEstimator::~CDMAKalmanEstimator()
-{
-}
-
-
 CDMAKalmanEstimator::CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator):KalmanEstimator(cdmaKalmanEstimator),_spreadingCodes(cdmaKalmanEstimator._spreadingCodes)
 {
 }
@@ -47,11 +42,13 @@ tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVecto
     if(symbolsVector.size()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::BuildFfromSymbolsMatrix: symbols vector length is wrong.");
 
-    tMatrix CS(_nOutputs,_nInputs);
+//     tMatrix CS(_nOutputs,_nInputs);
+    tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
     
     for(int i=0;i<_nOutputs;i++)
         for(int j=0;j<_nInputs;j++)
-            CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);
+            CS(i,_nExtStateVectorCoeffs-_nChannelCoeffs+j) = _spreadingCodes(i,j)*symbolsVector(j);
+//             CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);            
             
     return CS;
 }

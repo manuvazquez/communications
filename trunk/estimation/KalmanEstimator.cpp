@@ -156,6 +156,11 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     LaLUInverseIP(invPredictiveCovariance,piv);
 
     tMatrix F = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
+    
+#ifdef DEBUG
+    cout << "F is " << F.rows() << " x " << F.cols() << endl << F;
+    cout << "invPredictiveCovariance is " << invPredictiveCovariance.rows() << " x " << invPredictiveCovariance.cols() << endl << invPredictiveCovariance;
+#endif    
 
     tMatrix B = invPredictiveCovariance;
     // B = invPredictiveCovariance + (1.0/noiseVariance) F' * F

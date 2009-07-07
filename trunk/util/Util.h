@@ -78,7 +78,7 @@ public:
     template<class T> static void print(const T* array,int nElements);
     static void shiftUp(tVector &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
-    static vector<int> SolveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
+    static vector<int> solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix cholesky(const tMatrix &matrix);
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);

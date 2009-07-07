@@ -17,29 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHLINEARDETECTIONPARTICLEADDON_H
-#define WITHLINEARDETECTIONPARTICLEADDON_H
+#include "WithActiveUsersParticleAddon.h"
 
-/**
-	@author Manu <manu@rustneversleeps>
-*/
+WithActiveUsersParticleAddon::WithActiveUsersParticleAddon(int symbolVectorLength,int nTimeInstants):_activeUsers(nTimeInstants,std::vector<bool>(symbolVectorLength,false))
+{
+}
 
-#include <vector>
-#include <LinearDetector.h>
 
-class WithLinearDetectionParticleAddon{
-protected:
-    std::vector<LinearDetector *> _linearDetectors;
-public:
-    WithLinearDetectionParticleAddon(LinearDetector *linearDetector);
+WithActiveUsersParticleAddon::~WithActiveUsersParticleAddon()
+{
+}
 
-    WithLinearDetectionParticleAddon(std::vector<LinearDetector *> linearDetectors);
 
-	WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon);
-
-    ~WithLinearDetectionParticleAddon();
-
-    LinearDetector *GetLinearDetector(int n) { return _linearDetectors[n];}
-};
-
-#endif
