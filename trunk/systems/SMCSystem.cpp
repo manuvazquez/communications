@@ -25,7 +25,7 @@ SMCSystem::SMCSystem()
  : BaseSystem(),ARcoefficients(1)
 {
     nParticles = 192;
-//     nParticles = 30;
+//     nParticles = 1000;
     resamplingRatio = 0.9;
 
     // back and forward smoothing

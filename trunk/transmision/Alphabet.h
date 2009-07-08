@@ -27,6 +27,7 @@ class Alphabet
         void int2symbolsArray(int numero, std::vector<tSymbol> &res) const;
         int symbolsArray2int(std::vector<tSymbol> symbolsVector);
         tSymbol hardDecision(double softEstimation);
+        tSymbol opposite(const tSymbol symbol) const { return -1.0*symbol;}
 };
 #endif
 

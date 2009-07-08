@@ -69,12 +69,12 @@ void CDMASystem::AddAlgorithms()
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)
 {
-    BaseSystem::BeforeEndingAlgorithm(iAlgorithm);
+    SMCSystem::BeforeEndingAlgorithm(iAlgorithm);
 }
 
 void CDMASystem::BeforeEndingFrame(int iFrame)
 {
-    BaseSystem::BeforeEndingFrame(iFrame);
+    SMCSystem::BeforeEndingFrame(iFrame);
 }
 
 void CDMASystem::BuildChannel()
@@ -106,7 +106,7 @@ void CDMASystem::BuildChannel()
     {
         _usersActivity[iUser][trainSeqLength] = bool(usersActive[iUser]);
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
-        isSymbolAccountedForDetection[iUser][trainSeqLength] = false;
+        isSymbolAccountedForDetection[iUser][trainSeqLength] = _usersActivity[iUser][trainSeqLength];
     }
       
     // set of active users evolves according to the given probabilities

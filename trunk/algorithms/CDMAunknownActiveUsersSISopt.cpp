@@ -32,20 +32,9 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
 //     userActiveGivenItWasNotPdf[1] = newActiveUserProb;    
 }
 
-
-// tMatrix CDMAunknownActiveUsersSISopt::getDetectedSymbolVectors()
-// {
-//     return SMCAlgorithm::getDetectedSymbolVectors();
-// }
-
 vector< tMatrix > CDMAunknownActiveUsersSISopt::GetEstimatedChannelMatrices()
 {
     return SMCAlgorithm::GetEstimatedChannelMatrices();
-}
-
-void CDMAunknownActiveUsersSISopt::BeforeInitializingParticles(const tMatrix& observations, const tMatrix& trainingSequence)
-{
-    SMCAlgorithm::BeforeInitializingParticles(observations, trainingSequence);
 }
 
 void CDMAunknownActiveUsersSISopt::InitializeParticles()
@@ -119,10 +108,6 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
 
     double likelihoodsSum;
 
-#ifdef DEBUG
-    cout << "before the for loop..." << endl;
-#endif
-
     // for each time instant
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
@@ -141,7 +126,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
 
                 likelihoods[iTestedCombination] = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->likelihood(observations.col(iObservationToBeProcessed),symbolsVector,noiseVariances[iObservationToBeProcessed]);
                 
-#ifdef DEBUG
+#ifdef DEBUG2
                 cout << "tested combination is" << endl;
                 Util::print(testedCombination);
 #endif
@@ -164,7 +149,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
                 // if all the likelihoods are null
                 probabilities = vector<double>(nCombinations,1.0/(double)nCombinations);
 
-#ifdef DEBUG
+#ifdef DEBUG2
             cout << "computed probabilities" << endl;
             Util::print(probabilities);
 //             getchar();
@@ -196,7 +181,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
         if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
 
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)   
+    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
 // double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenActiveUsers(const tVector &v) const

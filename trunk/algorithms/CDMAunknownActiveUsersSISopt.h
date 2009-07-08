@@ -33,7 +33,6 @@ class CDMAunknownActiveUsersSISopt : public SMCAlgorithm
 public:
     CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb);
 
-//     tMatrix getDetectedSymbolVectors();
     vector< tMatrix > GetEstimatedChannelMatrices();
 
 protected:
@@ -41,7 +40,6 @@ protected:
     double _newActiveUserProb; /// probability of a new user becoming active at any time
     double _userPriorProb; /// a priori probability of any user
 
-    virtual void BeforeInitializingParticles(const tMatrix& observations, const tMatrix& trainingSequence);
     virtual void InitializeParticles();
     virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
 

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "TransmissionUtil.h"
 
-// #define DEBUG
+#define DEBUG
 
 using namespace std;
 
@@ -77,8 +77,8 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
     if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint> (detectedSymbols.cols())!= mask[0].size())
       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
         
-    if(permutations.size() != static_cast<uint> (sourceSymbols.rows()))
-      throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match.");        
+/*    if(permutations.size() != static_cast<uint> (sourceSymbols.rows()))
+      throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match."); */       
 
 #ifdef DEBUG
     cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
@@ -97,6 +97,11 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
+    
+#ifdef DEBUG
+                cout << "iPermut = " << iPermut << endl;
+#endif
+
         int permutationErrors = 0;
         
         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
@@ -108,20 +113,36 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
             for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
             {
                 // if this symbol is not accounted for
-                if(!mask[iInput][iTime])
+//                 if(!mask[iInput][iTime])
+                if(!mask[iStream][iTime])
                     continue;
-                    
+                                    
                 // symbols differ?
-                symbolsDiffer = sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+//                 symbolsDiffer = sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+                          
+#ifdef DEBUG3
+                cout << "symbolsDiffer = " << symbolsDiffer << "(sourceSymbols(iStream,iTime) = " << sourceSymbols(iStream,iTime) << " detectedSymbols(iInput,iTime) = " << detectedSymbols(iInput,iTime) <<endl;
+#endif                    
                 
                 // if they do, this entails an error
-                errorsWithoutInverting += symbolsDiffer;
+//                 errorsWithoutInverting += symbolsDiffer;
+
+                // if the symbols differ, an error happened...
+                errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
                 
-                // or no error if the symbol needs to be inverted due to the ambiguity
-                errorsInverting += !symbolsDiffer;
+                // but none if the symbol is inverted (ambiguity problem)
+//                 errorsInverting += !symbolsDiffer;
+
+                // unless there the symbol sign has been switched because of the ambiguity
+                errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
                 
                 nAccountedSymbols++;
             }
+            
+#ifdef DEBUG3
+//                 cout << "iPermut = " << iPermut << endl;
+                cout << "errorsWithoutInverting = " << errorsWithoutInverting << " errorsInverting = " << errorsInverting << endl;
+#endif                    
             
             if(errorsWithoutInverting<errorsInverting)
             {

@@ -17,23 +17,11 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
     }
 
     computeMeanAndVariance();
-
-//     //se calcula la media y la varianza
-//     double _mean = 0;
-//     double squaredSymbolsMean = 0;
-//     vector<tSymbol>::iterator iterator;
-//     for(iterator=simbolos.begin();iterator !=simbolos.end();iterator++)
-//     {
-//         _mean += (double) *iterator;
-//         squaredSymbolsMean += ((double) *iterator)*((double)*iterator);
-//     }
-//     _mean /= _length;
-//     squaredSymbolsMean /= _length;
-//     _variance = squaredSymbolsMean - (_mean*_mean);
 }
 
 Alphabet::Alphabet(vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(simbolos.size(),vector<tBit>(0)),_nBitsBySymbol(0),_length(simbolos.size())
 {
+    computeMeanAndVariance();
 }
 
 void Alphabet::computeMeanAndVariance()
