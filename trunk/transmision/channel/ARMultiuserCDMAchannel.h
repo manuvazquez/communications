@@ -37,7 +37,7 @@ protected:
     ARprocess _ARprocess;
     vector<tMatrix> _userCoeffs;
     
-    virtual tVector getUsersCoefficientsAtTime(int n) const;
+    virtual tMatrix operator[](int n) const { return _userCoeffs[n];}
 };
 
 #endif

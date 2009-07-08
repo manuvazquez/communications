@@ -23,23 +23,23 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 {
 }
 
-bool ResamplingCriterion::ResamplingNeeded(tVector weights,std::vector<int> indexes)
+bool ResamplingCriterion::resamplingNeeded(tVector weights,std::vector<int> indexes)
 {
-	double weights2Sum,nEffectiveParticles;
-	int nParticles = indexes.size();
+    double weights2Sum,nEffectiveParticles;
+    int nParticles = indexes.size();
 
-	weights2Sum = 0;
-	for(int i=0;i<nParticles;i++)
-		weights2Sum += weights(indexes[i])*weights(indexes[i]);
+    weights2Sum = 0;
+    for(int i=0;i<nParticles;i++)
+        weights2Sum += weights(indexes[i])*weights(indexes[i]);
 
-	if(weights2Sum==0)
-		throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");
+    if(weights2Sum==0)
+        throw NullWeightsException("ResamplingCriterion::ResamplingNeeded: All weights are zero.");
 
-	nEffectiveParticles = 1.0/weights2Sum;
+    nEffectiveParticles = 1.0/weights2Sum;
 
-	if(nEffectiveParticles<(_resamplingRatio*((double)nParticles)))
-		return true;
-	else
-		return false;
+    if(nEffectiveParticles<(_resamplingRatio*((double)nParticles)))
+        return true;
+    else
+        return false;
 }
 

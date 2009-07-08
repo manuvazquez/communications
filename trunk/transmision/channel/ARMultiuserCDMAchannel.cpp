@@ -32,9 +32,3 @@ ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spread
 #endif            
     }
 }
-
-tVector ARMultiuserCDMAchannel::getUsersCoefficientsAtTime(int n) const
-{
-    return _userCoeffs[n];
-}
-

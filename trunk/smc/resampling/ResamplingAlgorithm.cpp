@@ -26,7 +26,7 @@ bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
     tVector weigths = particleFilter->GetWeightsVector();
 
-    if(_resamplingCriterion.ResamplingNeeded(weigths))
+    if(_resamplingCriterion.resamplingNeeded(weigths))
     {
         vector<int> indexes = ObtainIndexes(particleFilter->Capacity(),weigths);
         particleFilter->keepParticles(indexes);

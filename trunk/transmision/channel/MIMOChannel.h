@@ -46,6 +46,7 @@ public:
     virtual int Memory(int n) const = 0;
     virtual int Effectivememory() const = 0;
     virtual tMatrix operator[](int n) const = 0;
+    virtual tMatrix getTransmissionMatrix(const int n) const { return operator[](n);}
     tMatrix transmit(tMatrix &symbols,Noise &noise);
     vector<tMatrix> range(int a,int b);
 };

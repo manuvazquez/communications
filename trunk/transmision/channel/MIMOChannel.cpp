@@ -59,7 +59,8 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
     for(int iSymbolVector=Effectivememory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
-        tMatrix currentChannelMatrix = (*this)[iSymbolVector];
+//         tMatrix currentChannelMatrix = (*this)[iSymbolVector];
+        tMatrix currentChannelMatrix = getTransmissionMatrix(iSymbolVector);        
 
         //currentObservationVector will accumulate the contributions of the
         // different symbol vectors that participate in the current observation

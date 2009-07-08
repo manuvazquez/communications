@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelChannelMatrixEstimator.h"
 
-KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel& channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator(channel[iFirstChannelMatrix-1], N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
+KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel& channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator(channel[iFirstChannelMatrix], N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
 {
 }
 

@@ -23,17 +23,12 @@ MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingC
 {
 }
 
-
-MultiuserCDMAchannel::~MultiuserCDMAchannel()
-{
-}
-
-tMatrix MultiuserCDMAchannel::operator[](int n) const
+tMatrix MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
 {
     tMatrix spreadingCodesXcoeffs(_nOutputs,_nInputs);
     
-    // spreadingCodesXcoeffs = _spreadingCodes * diag(getUsersCoefficientsAtTime(n))
-    Blas_Mat_Mat_Mult(_spreadingCodes,LaGenMatDouble::from_diag(getUsersCoefficientsAtTime(n)),spreadingCodesXcoeffs);
+    // spreadingCodesXcoeffs = _spreadingCodes * diag((*this)[n])
+    Blas_Mat_Mat_Mult(_spreadingCodes,LaGenMatDouble::from_diag((*this)[n]),spreadingCodesXcoeffs);
     
     return spreadingCodesXcoeffs;
 }

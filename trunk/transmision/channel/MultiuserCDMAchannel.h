@@ -25,20 +25,17 @@
 /**
 Meant to model a CDMA multiuser communication sytem (whose channel is flat) as a MIMO system
 
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 {
 protected:
     tMatrix _spreadingCodes;
     
-    virtual tVector getUsersCoefficientsAtTime(int n) const = 0;
 public:
     MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes);    
 
-    ~MultiuserCDMAchannel();
-
-    virtual tMatrix operator[](int n) const;
+    virtual tMatrix getTransmissionMatrix(const int n) const;    
 };
 
 #endif
