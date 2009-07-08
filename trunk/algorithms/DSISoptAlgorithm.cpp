@@ -67,7 +67,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 				_alphabet.int2symbolsArray(iTestedVector,testedVector);
 
 				// current tested vector is copied in the m-th position
-				for(k=0;k<_nInputs;k++)
+				for(k=0;k<static_cast<uint>(_nInputs);k++)
 					smoothingSymbolVectors(k,_channelOrder-1) = testedVector[k];
 
 				likelihoods(iTestedVector) = 0.0;

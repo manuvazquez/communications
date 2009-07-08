@@ -190,7 +190,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
         }
 
         // the chosen particles are kept without modification (yet)
-        _particleFilter->KeepParticles(indexesParticles);
+        _particleFilter->keepParticles(indexesParticles);
 
         // every surviving particle is modified according to what it says its corresponding candidate
         for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)

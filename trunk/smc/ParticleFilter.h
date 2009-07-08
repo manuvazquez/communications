@@ -39,15 +39,15 @@ public:
     ParticleFilter(int nParticles);
     virtual ~ParticleFilter();
 
-	void Clear();
+	void clear();
 
 	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
-	virtual void KeepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+	virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
 	/**
 	 *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
 	 * @param resamplingIndexes
 	 */
-	virtual void KeepParticles(std::vector<int> resamplingIndexes);
+	virtual void keepParticles(std::vector<int> resamplingIndexes);
 
 	virtual void AddParticle(ParticleWithChannelEstimation *particle)
 	{

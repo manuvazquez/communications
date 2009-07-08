@@ -102,7 +102,7 @@ void CDMASystem::BuildChannel()
     vector<int> usersActive = StatUtil::discrete_rnd(symbols.rows(),userActivePriorPdf);
     
     // at the first time instant the prior probability is used to decide which users are active
-    for(uint iUser=0;iUser<symbols.rows();iUser++)
+    for(uint iUser=0;iUser<static_cast<uint>(symbols.rows());iUser++)
     {
         _usersActivity[iUser][trainSeqLength] = bool(usersActive[iUser]);
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);

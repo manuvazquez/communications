@@ -364,7 +364,7 @@ void USIS::BeforeInitializingParticles(const tMatrix &observations,vector<double
 //
 //     }
 
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder]->StateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 //     {
 //         // the observations from i to i+d are stacked

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos)
+Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(secuenciasBits),_nBitsBySymbol(secuenciasBits[0].size()),_length(secuenciasBits.size())
 {
     // si no coincide el numero de simbolos con el numero de secuencias de bits
     if(secuenciasBits.size()!=simbolos.size())
@@ -16,50 +16,62 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
 
     }
 
-    this->_length = secuenciasBits.size();
-    this->_nBitsBySymbol = secuenciasBits[0].size();
-    this->_bitsSequences = secuenciasBits;
-    this->_symbols = simbolos;
+    computeMeanAndVariance();
 
-    //se calcula la media y la varianza
-    double _mean = 0;
-    double mediaSimbolosCuadrado = 0;
-    vector<tSymbol>::iterator iterador;
-    for(iterador=simbolos.begin();iterador !=simbolos.end();iterador++)
-    {
-        _mean += (double) *iterador;
-        mediaSimbolosCuadrado += ((double) *iterador)*((double)*iterador);
-    }
-    _mean /= _length;
-    mediaSimbolosCuadrado /= _length;
-    _variance = mediaSimbolosCuadrado - (_mean*_mean);
+//     //se calcula la media y la varianza
+//     double _mean = 0;
+//     double squaredSymbolsMean = 0;
+//     vector<tSymbol>::iterator iterator;
+//     for(iterator=simbolos.begin();iterator !=simbolos.end();iterator++)
+//     {
+//         _mean += (double) *iterator;
+//         squaredSymbolsMean += ((double) *iterator)*((double)*iterator);
+//     }
+//     _mean /= _length;
+//     squaredSymbolsMean /= _length;
+//     _variance = squaredSymbolsMean - (_mean*_mean);
 }
 
 Alphabet::Alphabet(vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(simbolos.size(),vector<tBit>(0)),_nBitsBySymbol(0),_length(simbolos.size())
 {
 }
 
+void Alphabet::computeMeanAndVariance()
+{
+    _mean = 0.0;
+    double squaredSymbolsMean = 0.0;
+    vector<tSymbol>::iterator iterator;
+    for(iterator=_symbols.begin();iterator !=_symbols.end();iterator++)
+    {
+        _mean += (double) *iterator;
+        squaredSymbolsMean += ((double) *iterator)*((double)*iterator);
+    }
+    _mean /= _length;
+    squaredSymbolsMean /= _length;
+    _variance = squaredSymbolsMean - (_mean*_mean);
+}
+
 tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)
 {
-    vector<vector<tBit> >::iterator iterador;
-    iterador = find(_bitsSequences.begin(),_bitsSequences.end(),secuenciaBitsBuscada);
-    if(iterador==_bitsSequences.end())
+    vector<vector<tBit> >::iterator iterator;
+    iterator = find(_bitsSequences.begin(),_bitsSequences.end(),secuenciaBitsBuscada);
+    if(iterator==_bitsSequences.end())
     {
 			throw RuntimeException("Alphabet::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
     }
-//     cout << "Esta en la posicion " << iterador - _bitsSequences.begin() << endl;
-	return _symbols[iterador - _bitsSequences.begin()];
+//     cout << "Esta en la posicion " << iterator - _bitsSequences.begin() << endl;
+	return _symbols[iterator - _bitsSequences.begin()];
 }
 
 vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
 {
-	vector<tSymbol>::iterator iterador;
-	iterador = find(_symbols.begin(),_symbols.end(),simbolo);
-	if(iterador==_symbols.end())
+	vector<tSymbol>::iterator iterator;
+	iterator = find(_symbols.begin(),_symbols.end(),simbolo);
+	if(iterator==_symbols.end())
 	{
 		throw RuntimeException("Alphabet::operator[]: Este simbolo no forma parte del alfabeto.");
 	}
-	return _bitsSequences[iterador - _symbols.begin()];
+	return _bitsSequences[iterator - _symbols.begin()];
 }
 
 void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const

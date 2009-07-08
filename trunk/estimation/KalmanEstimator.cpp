@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-#define DEBUG
+// #define DEBUG
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size()),_rChannelCoefficients(_nExtStateVectorCoeffs-_nChannelCoeffs,_nExtStateVectorCoeffs-1)
 {
@@ -230,7 +230,7 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)
 
     tVector extState(_nExtStateVectorCoeffs);
     
-    uint i=0;
+    int i=0;
     
     while(i<_nExtStateVectorCoeffs)
     {

@@ -29,7 +29,7 @@ bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
     if(_resamplingCriterion.ResamplingNeeded(weigths))
     {
         vector<int> indexes = ObtainIndexes(particleFilter->Capacity(),weigths);
-        particleFilter->KeepParticles(indexes);
+        particleFilter->keepParticles(indexes);
 
         #ifdef DEBUG2
         	cout << "Remuestreando..." << endl;

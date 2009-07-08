@@ -33,10 +33,10 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
 }
 
 
-tMatrix CDMAunknownActiveUsersSISopt::getDetectedSymbolVectors()
-{
-    return SMCAlgorithm::getDetectedSymbolVectors();
-}
+// tMatrix CDMAunknownActiveUsersSISopt::getDetectedSymbolVectors()
+// {
+//     return SMCAlgorithm::getDetectedSymbolVectors();
+// }
 
 vector< tMatrix > CDMAunknownActiveUsersSISopt::GetEstimatedChannelMatrices()
 {
@@ -214,13 +214,13 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVe
     if(symbolsVector.size()!=_nInputs)
         throw RuntimeException("CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers: symbols vector dimensions are wrong.");
     
-    if(symbolsVector.size()!=lastUsersActivity.size())
+    if(static_cast<uint> (symbolsVector.size())!=lastUsersActivity.size())
         throw RuntimeException("CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers: symbols vector size doesn't coincide with that of the vector containing information about the users activity in the previous time instant.");
         
     double probUsersActivity = 1.0;
     double probSymbolsVector = 1.0;
     
-    for(uint i=0;i<symbolsVector.size();i++)
+    for(int i=0;i<symbolsVector.size();i++)
     {
         if(isUserActive(symbolsVector(i)))
         {
@@ -242,7 +242,7 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVe
     double probUsersActivity = 1.0;
     double probSymbolsVector = 1.0;
     
-    for(uint i=0;i<symbolsVector.size();i++)
+    for(int i=0;i<symbolsVector.size();i++)
     {
         if(isUserActive(symbolsVector(i)))
         {

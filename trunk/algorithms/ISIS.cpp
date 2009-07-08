@@ -51,9 +51,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
 	double auxLikelihoodsProd,channelOrderAPPsNormConstant/*,newChannelOrderAPP*/;
 	KalmanEstimator *auxChannelEstimator;
-// 	double channelOrderAprioriProbability = 1.0/(double)_candidateOrders.size();
 
-//     tVector newChannelOrderAPPs(_candidateOrders.size());
     double *newChannelOrderAPPs = new double[_candidateOrders.size()];
 
 	// it selects all rows in the symbols Matrix
@@ -94,7 +92,6 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 					// channel order dependent variables
 					Nm = _nInputs*m;
-// 					d = m-1;
 					d = _maxOrder-1;
 					nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*d));
 					vector<tSymbol> testedSmoothingVector(_nInputs*d);
@@ -106,7 +103,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 						smoothingSymbolVectors(rAllSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1));
 
 					// current tested vector is copied in the m-th position
-					for(k=0;k<_nInputs;k++)
+					for(k=0;k<static_cast<uint>(_nInputs);k++)
 						smoothingSymbolVectors(k,m-1) = testedVector[k];
 
 					// every possible smoothing sequence is tested
@@ -192,8 +189,6 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
                 auxChannelEstimator->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
                 channelOrderAPPsNormConstant += newChannelOrderAPPs[iChannelOrder];
-
-// 				processedParticle->SetChannelOrderAPP(newChannelOrderAPP,iChannelOrder);
 
 				// channel matrix is estimated with each of the channel estimators within the particle
 				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,auxChannelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]));

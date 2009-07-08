@@ -40,7 +40,7 @@ APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::Clone()
 
 tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)
 {
-    int nProbabilitiesToCompute = sequenceToProcess.cols() - iFrom;
+    uint nProbabilitiesToCompute = sequenceToProcess.cols() - iFrom;
     double normalizationCt;
     tMatrix computedChannelOrderAPPs(_candidateOrders.size(),nProbabilitiesToCompute);
 

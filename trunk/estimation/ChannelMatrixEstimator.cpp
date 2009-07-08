@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_lastEstimatedChannelMatrix(initialEstimation),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols())
+ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix(initialEstimation)
 {
     if(_nInputsXchannelOrder < _nInputs)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");

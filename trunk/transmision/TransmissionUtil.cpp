@@ -68,16 +68,16 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
     if(detectedSymbols.rows() == 0)
         return 0.0;
 
-    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+    if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint> (detectedSymbols.rows())!= mask.size())
     {
         cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
         throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
     }
 
-    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+    if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint> (detectedSymbols.cols())!= mask[0].size())
       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
         
-    if(permutations.size() != sourceSymbols.rows())
+    if(permutations.size() != static_cast<uint> (sourceSymbols.rows()))
       throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match.");        
 
 #ifdef DEBUG
@@ -105,7 +105,7 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
           
             int errorsInverting=0,errorsWithoutInverting=0;
             
-            for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+            for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
             {
                 // if this symbol is not accounted for
                 if(!mask[iInput][iTime])

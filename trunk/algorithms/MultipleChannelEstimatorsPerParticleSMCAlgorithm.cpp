@@ -31,7 +31,7 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
     _channelUniqueMean = 0.0;
     _channelUniqueVariance = 1.0;
 
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
     {
         tMatrix channelMatrixMeansOrVariances(_nOutputs,_nInputs*_candidateOrders[iChannelOrder]);
 
@@ -42,7 +42,7 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
         _channelMatrixVariances.push_back(channelMatrixMeansOrVariances);
     }
 
-    for(int iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
     {
         _channelMeanVectors.push_back(Util::toVector(_channelMatrixMeans[iChannelOrder],rowwise));
         _channelCovariances.push_back(LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances[iChannelOrder],rowwise)));

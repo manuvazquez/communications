@@ -13,6 +13,8 @@ class Alphabet
         std::vector<std::vector<tBit> > _bitsSequences;
         int _nBitsBySymbol,_length;
         double _mean,_variance;
+        
+        void computeMeanAndVariance();
     public:
         Alphabet(int nBitsPorSimbolo,int longitudAlphabet,std::vector<std::vector<tBit> > secuenciasBits,std::vector<tSymbol> simbolos);
         Alphabet(std::vector<tSymbol> simbolos);        

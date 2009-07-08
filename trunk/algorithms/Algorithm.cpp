@@ -119,7 +119,7 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
 
 tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
 {
-    if(matrices.size()!=c+e+1)
+    if(matrices.size()!=static_cast<uint> (c+e+1))
       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
 
     if(observations.size()!=(_nOutputs*(c+e+1)))
