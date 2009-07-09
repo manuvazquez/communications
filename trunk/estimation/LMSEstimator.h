@@ -38,7 +38,7 @@ protected:
 public:
     LMSEstimator(const tMatrix &initialEstimation,int N,double mu);
 
-    virtual LMSEstimator* Clone() const;
+    virtual LMSEstimator* clone() const;
     virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 
 };

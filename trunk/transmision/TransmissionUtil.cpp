@@ -98,7 +98,7 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
     
-#ifdef DEBUG
+#ifdef DEBUG3
                 cout << "iPermut = " << iPermut << endl;
 #endif
 

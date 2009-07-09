@@ -37,7 +37,7 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
             _maxOrder = _candidateOrders[i];
 
         // each of the channel matrix estimators is copied into _channelEstimators
-        _channelEstimators[i] = channelEstimators[i]->Clone();
+        _channelEstimators[i] = channelEstimators[i]->clone();
     }
 
     if(_preamble.cols()<(_maxOrder-1))

@@ -28,7 +28,7 @@ WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper
 	#endif
 }
 
-WithThresholdResamplingAlgorithmWrapper* WithThresholdResamplingAlgorithmWrapper::Clone() const
+WithThresholdResamplingAlgorithmWrapper* WithThresholdResamplingAlgorithmWrapper::clone() const
 {
 	return new WithThresholdResamplingAlgorithmWrapper(*this);
 }
@@ -38,7 +38,7 @@ WithThresholdResamplingAlgorithmWrapper::~WithThresholdResamplingAlgorithmWrappe
 	delete _realResamplingAlgorithm;
 }
 
-WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper):ResamplingAlgorithm(withThresholdResamplingAlgorithmWrapper),_threshold(withThresholdResamplingAlgorithmWrapper._threshold),_realResamplingAlgorithm(withThresholdResamplingAlgorithmWrapper._realResamplingAlgorithm->Clone())
+WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper):ResamplingAlgorithm(withThresholdResamplingAlgorithmWrapper),_threshold(withThresholdResamplingAlgorithmWrapper._threshold),_realResamplingAlgorithm(withThresholdResamplingAlgorithmWrapper._realResamplingAlgorithm->clone())
 {
 }
 

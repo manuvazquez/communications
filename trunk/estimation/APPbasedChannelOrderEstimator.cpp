@@ -32,7 +32,7 @@ APPbasedChannelOrderEstimator::~APPbasedChannelOrderEstimator()
 {
 }
 
-APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::Clone()
+APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::clone()
 {
     return new APPbasedChannelOrderEstimator(*this);
 }

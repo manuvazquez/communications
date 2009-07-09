@@ -32,7 +32,7 @@ class MultinomialResamplingAlgorithm : public ResamplingAlgorithm{
 public:
     MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-	virtual MultinomialResamplingAlgorithm* Clone() const;
+	virtual MultinomialResamplingAlgorithm* clone() const;
 
 	std::vector<int> ObtainIndexes(int n,const tVector &weights) const
 	{

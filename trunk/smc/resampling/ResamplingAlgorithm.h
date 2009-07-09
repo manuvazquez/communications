@@ -34,7 +34,7 @@ public:
     ResamplingAlgorithm(ResamplingCriterion resamplingCriterion): _resamplingCriterion(resamplingCriterion) {}
 	virtual ~ResamplingAlgorithm() {}
 
-	virtual ResamplingAlgorithm* Clone() const = 0;
+	virtual ResamplingAlgorithm* clone() const = 0;
 
 	ResamplingCriterion GetResamplingCriterion() { return _resamplingCriterion;}
 

@@ -41,7 +41,7 @@ public:
     DecorrelatorDetector(int rows, int cols, double alphabetVariance);
 
     virtual double nthSymbolVariance(int n);
-    virtual LinearDetector* Clone();
+    virtual LinearDetector* clone();
 	virtual tMatrix ComputedFilter() { return _filter;}
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
 	virtual void StateStep(tVector observations) {}

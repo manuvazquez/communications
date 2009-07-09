@@ -32,7 +32,7 @@ CDMAKalmanEstimator::CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEs
 {
 }
 
-CDMAKalmanEstimator* CDMAKalmanEstimator::Clone() const
+CDMAKalmanEstimator* CDMAKalmanEstimator::clone() const
 {
     return new CDMAKalmanEstimator(*this);
 }

@@ -35,7 +35,7 @@ void MLSDmAlgorithm::InitializeParticles()
 {
     vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
     for(uint i=0;i<_candidateOrders.size();i++)
-        channelEstimatorsClone[i] = _channelEstimators[i]->Clone();
+        channelEstimatorsClone[i] = _channelEstimators[i]->clone();
 
     // we begin with only one particle
     ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,channelEstimatorsClone);
@@ -250,7 +250,7 @@ int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
 //     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
 //     {
 //         // the initial channel estimators are kept for computing the APP of the channel orders
-//         initialChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
+//         initialChannelEstimators[iOrder] = _channelEstimators[iOrder]->clone();
 //
 //         // at the beginning, all the channel orders have the same probability
 //         _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
@@ -299,7 +299,7 @@ void MLSDmAlgorithm::BeforeInitializingParticles(const tMatrix &observations,vec
     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
     {
         // the initial channel estimators are kept for computing the APP of the channel orders
-        clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->Clone();
+        clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->clone();
 
         // at the beginning, all the channel orders have the same probability
         _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());

@@ -45,7 +45,7 @@ protected:
 public:
     RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor);
 
-    virtual ChannelMatrixEstimator* Clone() const;
+    virtual ChannelMatrixEstimator* clone() const;
 
     virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
 	virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);

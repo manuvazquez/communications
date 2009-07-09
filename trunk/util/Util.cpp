@@ -473,7 +473,8 @@ template<class T> void Util::print(const std::vector<T> &vector)
     cout << "[";
     for(uint i=0;i<vector.size()-1;i++)
         cout << vector[i] << ",";
-    cout << vector[vector.size()-1] << "]" << endl;
+    cout << vector[vector.size()-1] << "]";
+//     cout << vector[vector.size()-1] << "]" << endl;
 }
 template void Util::print(const std::vector<int> &vector);
 template void Util::print(const std::vector<uint> &vector);

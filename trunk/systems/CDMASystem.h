@@ -25,6 +25,7 @@
 #include <ARMultiuserCDMAchannel.h>
 #include <CDMAKalmanEstimator.h>
 #include <CDMAunknownActiveUsersSISopt.h>
+#include <CDMAKnownChannelChannelMatrixEstimator.h>
 
 
 /**
@@ -41,6 +42,7 @@ protected:
     double userPersistenceProb,newActiveUserProb,userPriorProb;
     
     CDMAKalmanEstimator *cdmaKalmanEstimator;
+    CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
     
     virtual void AddAlgorithms();
     virtual void BeforeEndingAlgorithm(int iAlgorithm);

@@ -23,7 +23,7 @@ NLMSEstimator::NLMSEstimator(const tMatrix& initialEstimation, int N, double mu)
 {
 }
 
-LMSEstimator* NLMSEstimator::Clone() const
+LMSEstimator* NLMSEstimator::clone() const
 {
     return new NLMSEstimator(*this);
 }

@@ -44,7 +44,7 @@ public:
 
     ~APPbasedChannelOrderEstimator();
 
-    virtual APPbasedChannelOrderEstimator *Clone();
+    virtual APPbasedChannelOrderEstimator *clone();
 
     void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance);
 

@@ -23,7 +23,7 @@ WithoutReplacementResamplingAlgorithm::WithoutReplacementResamplingAlgorithm(Res
 {
 }
 
-WithoutReplacementResamplingAlgorithm* WithoutReplacementResamplingAlgorithm::Clone() const
+WithoutReplacementResamplingAlgorithm* WithoutReplacementResamplingAlgorithm::clone() const
 {
 	return new WithoutReplacementResamplingAlgorithm(*this);
 }

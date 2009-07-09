@@ -43,7 +43,7 @@ public:
 
     tVector GetChannelOrderAPPsVector();
 
-    virtual ChannelOrderEstimator *Clone() = 0;
+    virtual ChannelOrderEstimator *clone() = 0;
 
     virtual void Update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance) = 0;
 

@@ -34,7 +34,7 @@ void ISIS::InitializeParticles()
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
 		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_candidateOrders.size();iChannelMatrixEstimator++)
         {
-			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->Clone();
+			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->clone();
 //             thisParticleChannelMatrixEstimators[iChannelMatrixEstimator]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(_channelMeanVectors[iChannelMatrixEstimator],_channelCovariances[iChannelMatrixEstimator]),rowwise,_nOutputs));
         }
 
@@ -119,7 +119,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 						auxLikelihoodsProd = 1.0;
 
 						// a clone of the channel estimator is generated because this must not be modified
-						auxChannelEstimator = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator(iChannelOrder)->Clone());
+						auxChannelEstimator = dynamic_cast < KalmanEstimator * > (processedParticle->GetChannelMatrixEstimator(iChannelOrder)->clone());
 
 						for(iSmoothingLag=0;iSmoothingLag<=d;iSmoothingLag++)
 						{

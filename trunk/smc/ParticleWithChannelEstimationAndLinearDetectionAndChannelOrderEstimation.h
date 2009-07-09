@@ -33,7 +33,7 @@ public:
 
 	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particle);
 
-	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* Clone();
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* clone();
 
 };
 

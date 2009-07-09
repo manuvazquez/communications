@@ -28,7 +28,7 @@ double DecorrelatorDetector::nthSymbolVariance(int n)
 	return Blas_Dot_Prod(_filter.row(n),_filter.row(n));
 }
 
-LinearDetector* DecorrelatorDetector::Clone()
+LinearDetector* DecorrelatorDetector::clone()
 {
 	return new DecorrelatorDetector(*this);
 }

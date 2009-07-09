@@ -36,7 +36,7 @@ PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L
 void PSPBasedSMCAlgorithm::InitializeParticles()
 {
 	// we begin with only one particle
-	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->Clone()));
+	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
 	_particleFilter->GetParticle(0)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 

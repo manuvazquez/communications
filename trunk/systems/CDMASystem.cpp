@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-#define DEBUG
+// #define DEBUG
 
 CDMASystem::CDMASystem(): SMCSystem()
 {
@@ -50,6 +50,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     userPriorProb = 0.5;
     
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+    cdmaKnownChannelChannelMatrixEstimator = NULL;
 }
 
 
@@ -57,6 +58,7 @@ CDMASystem::~CDMASystem()
 {
     delete powerProfile;
     delete cdmaKalmanEstimator;
+    delete cdmaKnownChannelChannelMatrixEstimator;
 }
 
 void CDMASystem::AddAlgorithms()
@@ -65,6 +67,12 @@ void CDMASystem::AddAlgorithms()
     cout << "observations are" << endl << observations;
 #endif
     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
+       
+    // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
+    delete cdmaKnownChannelChannelMatrixEstimator;
+    cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
+ 
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));    
 }
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)

@@ -27,7 +27,7 @@ ParticleWithChannelEstimationAndChannelOrderAPP::ParticleWithChannelEstimationAn
 		_channelOrderAPP[iChannelOrder] = 1.0/(double)_channelMatrixEstimators.size();
 }
 
-ParticleWithChannelEstimationAndChannelOrderAPP *ParticleWithChannelEstimationAndChannelOrderAPP::Clone()
+ParticleWithChannelEstimationAndChannelOrderAPP *ParticleWithChannelEstimationAndChannelOrderAPP::clone()
 {
 	return new ParticleWithChannelEstimationAndChannelOrderAPP(*this);
 }

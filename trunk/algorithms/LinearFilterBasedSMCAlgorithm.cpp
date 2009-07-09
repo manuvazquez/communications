@@ -22,7 +22,7 @@
 #include <DecorrelatorDetector.h>
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,tMatrix preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
-,_linearDetector(linearDetector->Clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+,_linearDetector(linearDetector->clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -47,10 +47,10 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
-        channelMatrixEstimatorClone = _channelEstimator->Clone();
+        channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
-        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->Clone()));
+        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
         _particleFilter->GetParticle(iParticle)->SetSymbolVectors(rPreamble,_preamble);
     }

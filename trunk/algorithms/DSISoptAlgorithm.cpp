@@ -83,7 +83,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 						smoothingSymbolVectors((_nInputsXchannelOrder+k)%_nInputs,(_nInputsXchannelOrder+k)/_nInputs) = testedSmoothingVector[k];
 
 					// a clone of the channel estimator is generated because this must not be modified
-					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->Clone();
+					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->clone();
 
                     rmColumns.set(0,_channelOrder-1);
 					auxLikelihoodsProd = 1.0;

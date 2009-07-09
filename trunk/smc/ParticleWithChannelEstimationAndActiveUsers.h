@@ -33,7 +33,7 @@ public:
 
     ~ParticleWithChannelEstimationAndActiveUsers();
 
-    ParticleWithChannelEstimationAndActiveUsers* Clone();
+    ParticleWithChannelEstimationAndActiveUsers* clone();
 
 };
 

@@ -25,7 +25,7 @@ EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory
 {
 	int i;
 
-	ChannelMatrixEstimator *channelMatrixEstimatorClone = channelMatrixEstimator->Clone();
+	ChannelMatrixEstimator *channelMatrixEstimatorClone = channelMatrixEstimator->clone();
 
 
 	for(i=0;i<preambleLength;i++)

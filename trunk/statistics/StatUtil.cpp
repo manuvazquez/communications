@@ -176,10 +176,17 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &c
 
 double StatUtil::NormalPdf(const tVector &x,const tVector &mean,double variance)
 {
-	tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
+// 	tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
+// 
+// 	covariance *= variance;
+// 	return StatUtil::NormalPdf(x,mean,covariance);
+    
+    double res = 1.0;
+    
+    for(uint i=0;i<static_cast<uint> (x.rows());i++)
+        res *= 1.0/sqrt(2.0*M_PI*variance)*exp(-((x(i) - mean(i))*(x(i) - mean(i)))/(2.0*variance));
 
-	covariance *= variance;
-	return StatUtil::NormalPdf(x,mean,covariance);
+    return res;
 }
 
 double StatUtil::Variance(const tVector &v)

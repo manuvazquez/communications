@@ -37,7 +37,7 @@ public:
     CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
-    virtual CDMAKalmanEstimator* Clone() const;
+    virtual CDMAKalmanEstimator* clone() const;
 };
 
 #endif

@@ -49,7 +49,7 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithC
     #endif
     for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<particle._channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
-        _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+        _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
 		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
 			_estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[Trajectorylength()];

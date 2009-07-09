@@ -27,7 +27,7 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 {
     MLSDmAlgorithm::Process(observations, noiseVariances);
 
-	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle()->Clone());
+	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle()->clone());
 
 	int nParticles = _particleFilter->Capacity();
 

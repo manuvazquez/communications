@@ -69,7 +69,7 @@ public:
 
     int NchannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
 
-	ParticleWithChannelEstimation *Clone()
+	ParticleWithChannelEstimation *clone()
 	{
 		return new ParticleWithChannelEstimation(*this);
 	}

@@ -25,7 +25,7 @@ ResidualResamplingAlgorithm::ResidualResamplingAlgorithm(ResamplingCriterion res
 {
 }
 
-ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::Clone() const
+ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::clone() const
 {
 	return new ResidualResamplingAlgorithm(*this);
 }

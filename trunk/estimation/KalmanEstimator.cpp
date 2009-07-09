@@ -209,7 +209,7 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     return sqrt(fabs(detInvB))/(pow(2*M_PI*noiseVariance,_nOutputs/2)*sqrt(fabs(detPredictiveCovariance)))*exp(argExp);
 }
 
-KalmanEstimator *KalmanEstimator::Clone() const
+KalmanEstimator *KalmanEstimator::clone() const
 {
     // it relies on copy constructor
     return new KalmanEstimator(*this);

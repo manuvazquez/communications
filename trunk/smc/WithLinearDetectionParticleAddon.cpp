@@ -31,7 +31,7 @@ WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(std::vector<L
 WithLinearDetectionParticleAddon::WithLinearDetectionParticleAddon(const WithLinearDetectionParticleAddon& withLinearDetectionParticleAddon):_linearDetectors(withLinearDetectionParticleAddon._linearDetectors.size())
 {
     for(uint iLinearDetector=0;iLinearDetector<_linearDetectors.size();iLinearDetector++)
-        _linearDetectors[iLinearDetector] = withLinearDetectionParticleAddon._linearDetectors[iLinearDetector]->Clone();
+        _linearDetectors[iLinearDetector] = withLinearDetectionParticleAddon._linearDetectors[iLinearDetector]->clone();
 }
 
 WithLinearDetectionParticleAddon::~WithLinearDetectionParticleAddon()

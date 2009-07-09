@@ -36,7 +36,7 @@ ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAn
 // 	delete _linearDetector;
 // }
 
-ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::Clone()
+ParticleWithChannelEstimationAndLinearDetection *ParticleWithChannelEstimationAndLinearDetection::clone()
 {
 	return new ParticleWithChannelEstimationAndLinearDetection(*this);
 }

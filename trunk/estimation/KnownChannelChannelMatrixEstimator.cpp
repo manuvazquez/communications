@@ -19,18 +19,34 @@
  ***************************************************************************/
 #include "KnownChannelChannelMatrixEstimator.h"
 
-KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel& channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator(channel[iFirstChannelMatrix], N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
+// #define DEBUG
+
+KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator((*channel)[iFirstChannelMatrix], N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
 {
 }
 
-KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::Clone() const
+KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::clone() const
 {
-		return new KnownChannelChannelMatrixEstimator(*this);
+        return new KnownChannelChannelMatrixEstimator(*this);
 }
 
 tMatrix KnownChannelChannelMatrixEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
 {
-	_lastEstimatedChannelMatrix = _channel[_iNextMatrix++];
-	return _lastEstimatedChannelMatrix;
+#ifdef DEBUG
+    cout << "_iNextMatrix = " << _iNextMatrix << endl;
+    getchar();
+#endif
+    _lastEstimatedChannelMatrix = (*_channel)[++_iNextMatrix];
+    return _lastEstimatedChannelMatrix;
 }
 
+// tMatrix KnownChannelChannelMatrixEstimator::lastEstimatedChannelMatrix()
+// {
+//     if(_channel==NULL)
+//         throw RuntimeException("KnownChannelChannelMatrixEstimator::lastEstimatedChannelMatrix: channel has not been built yet.");
+// 
+//     if(_lastEstimatedChannelMatrix.rows()==0 && _lastEstimatedChannelMatrix.cols()==0)
+//         return (*_channel)[_iNextMatrix];
+//     else
+//         return _lastEstimatedChannelMatrix;
+// }

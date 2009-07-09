@@ -30,7 +30,7 @@ class ResidualResamplingAlgorithm : public ResamplingAlgorithm
 public:
     ResidualResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-	virtual ResidualResamplingAlgorithm* Clone() const;
+	virtual ResidualResamplingAlgorithm* clone() const;
 
 	std::vector<int> ObtainIndexes(int n,const tVector &weights) const;
 

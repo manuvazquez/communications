@@ -30,7 +30,7 @@ class BestParticlesResamplingAlgorithm : public ResamplingAlgorithm
 public:
     BestParticlesResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
 
-    virtual BestParticlesResamplingAlgorithm* Clone() const;
+    virtual BestParticlesResamplingAlgorithm* clone() const;
 
     virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
     {

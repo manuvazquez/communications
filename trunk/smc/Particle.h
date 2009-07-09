@@ -74,7 +74,7 @@ public:
 
 	void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 
-	virtual Particle *Clone()
+	virtual Particle *clone()
 	{
 		return new Particle(*this);
 	}

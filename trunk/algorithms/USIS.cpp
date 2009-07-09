@@ -21,14 +21,14 @@
 
 // #define DEBUG12
 
-USIS::USIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->Clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_nOutputs-1)
+USIS::USIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_nOutputs-1)
 ,_processDoneExternally(false)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
         throw RuntimeException("USIS::USIS: number of detectors and number of channel matrix estimators (and candidate orders) are different.");
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->Clone();
+        _linearDetectors[iChannelOrder] = linearDetectors[iChannelOrder]->clone();
 }
 
 
@@ -68,17 +68,17 @@ void USIS::InitializeParticles()
 
 		for(uint iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
 		{
-			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->Clone();
+			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->clone();
 
             if(_randomParticlesInitilization)
                 // the first matrix of the channel matrix estimator is initialized randomly
                 thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
 
-			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->Clone();
+			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->clone();
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->Clone()));
+		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->clone()));
     }
 }
 
@@ -187,7 +187,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
 					if(iLinearFilterNeeded==0)
-						linearDetectorBeingProccessed = linearDetectorBeingProccessed->Clone();
+						linearDetectorBeingProccessed = linearDetectorBeingProccessed->clone();
 
 					// operations needed to computed the sampling variance
 

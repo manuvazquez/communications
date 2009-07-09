@@ -23,21 +23,23 @@
 #include <ChannelMatrixEstimator.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <MIMOChannel.h>
+#include <assert.h>
 
 class KnownChannelChannelMatrixEstimator : public ChannelMatrixEstimator
 {
 protected:
-	const MIMOChannel &_channel;
-	int _iNextMatrix;
+    const MIMOChannel *_channel;
+    int _iNextMatrix;
 public:
-    KnownChannelChannelMatrixEstimator(const MIMOChannel& channel, int iFirstChannelMatrix, int N);
+    KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N);
 
-    virtual KnownChannelChannelMatrixEstimator* Clone() const;
+    virtual KnownChannelChannelMatrixEstimator* clone() const;
     virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+//     virtual tMatrix lastEstimatedChannelMatrix();
 };
 
 #endif

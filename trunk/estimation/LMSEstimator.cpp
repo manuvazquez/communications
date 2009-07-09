@@ -23,7 +23,7 @@ LMSEstimator::LMSEstimator(const tMatrix &initialEstimation,int N,double mu): Ch
 {
 }
 
-LMSEstimator* LMSEstimator::Clone() const
+LMSEstimator* LMSEstimator::clone() const
 {
 	return new LMSEstimator(*this);
 }

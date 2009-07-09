@@ -61,7 +61,7 @@ void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vecto
     // the particles given by indexes are resampled
     for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
     {
-        resParticles[indexes[iParticle]] = (_particles[resamplingIndexes[iParticle]])->Clone();
+        resParticles[indexes[iParticle]] = (_particles[resamplingIndexes[iParticle]])->clone();
         resParticles[indexes[iParticle]]->SetWeight(1.0/(double)nParticlesToBeResampled);
     }
 
@@ -95,10 +95,6 @@ void ParticleFilter::keepParticles(vector<int> indexes)
     if(indexes.size()>_capacity)
         throw RuntimeException("ParticleFilter::KeepParticles: the number of selected particles is bigger than the number of particles in the filter.");
 
-    #ifdef DEBUG
-        cout << "indexes.size() = " << indexes.size() << " _nParticles = " << _nParticles << " _capacity = " << _capacity << endl;
-    #endif
-
     ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_capacity];
 
     vector<bool> particleNeeded(_nParticles,false);
@@ -113,24 +109,11 @@ void ParticleFilter::keepParticles(vector<int> indexes)
             _particles[iParticle] = NULL;
         }
 
-    #ifdef DEBUG
-        cout << "antes de replicar" << endl;
-        cout << "El vector de bools es " << endl;
-        Util::print(particleNeeded);
-    #endif
-
     for(uint iParticle=0;iParticle<indexes.size();iParticle++)
     {
-            #ifdef DEBUG
-                cout << "iParticle = " << iParticle << ". Accediendo a la particula " <<  indexes[iParticle] << endl;
-            #endif
-            resParticles[iParticle] = (_particles[indexes[iParticle]])->Clone();
+            resParticles[iParticle] = (_particles[indexes[iParticle]])->clone();
             resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
     }
-
-    #ifdef DEBUG
-        cout << "despues de replicar" << endl;
-    #endif
 
     for(uint iParticle=0;iParticle<_nParticles;iParticle++)
             delete _particles[iParticle];
@@ -146,18 +129,11 @@ int ParticleFilter::iBestParticle()
 //  Util::max(GetWeightsVector(),iBestParticle);
 //  return iBestParticle;
 
-#ifdef DEBUG3
-    cout << "_nParticles = " << _nParticles << endl;
-#endif
-
     vector<bool> particleAlreadyCounted(_nParticles,false);
     vector<double> accumulatedWeights(_nParticles,0.0);
     uint iParticle,iTestedParticle;
     for(iParticle=0;iParticle<_nParticles;iParticle++)
     {
-#ifdef DEBUG3
-//      cout << "iParticle = " << iParticle << endl;
-#endif
         if(particleAlreadyCounted[iParticle])
             continue;
 
@@ -167,29 +143,15 @@ int ParticleFilter::iBestParticle()
         {
             if(particleAlreadyCounted[iTestedParticle])
                 continue;
-#ifdef DEBUG3
-            cout << GetParticle(iParticle)->GetAllSymbolVectors();
-            cout << "----------------" << endl;
-            cout << GetParticle(iTestedParticle)->GetAllSymbolVectors();
-//          cout << "Una tecla..."; getchar();
-#endif
+
             if(GetParticle(iParticle)->GetAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->GetAllSymbolVectors()))
             {
-#ifdef DEBUG2
-                cout << "La partícula " << iParticle << " y la " << iTestedParticle << " son iguales" << endl;
-#endif
                 accumulatedWeights[iParticle] += GetParticle(iTestedParticle)->GetWeight();
                 particleAlreadyCounted[iTestedParticle] = true;
             }
         }
     }
     int iBestParticle = Util::max(accumulatedWeights);
-#ifdef DEBUG2
-    cout << "iBestParticle " << iBestParticle << " iBestParticle2 " << iBestParticle2 << endl;
-    cout << "Los pesos: " << endl << GetWeightsVector();
-    cout << "Los pesos acumulados" << endl;
-    Util::print(accumulatedWeights);
-    getchar();
-#endif
+
     return iBestParticle;
 }

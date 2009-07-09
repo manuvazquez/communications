@@ -75,7 +75,7 @@ void SMCAlgorithm::InitializeParticles()
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
     {
-        channelMatrixEstimatorClone = _channelEstimator->Clone();
+        channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_Nr));
         _particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone));

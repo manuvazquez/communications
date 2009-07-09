@@ -46,7 +46,7 @@ public:
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected,int startingFrom);
 
-    virtual MMSEDetector * Clone();
+    virtual MMSEDetector * clone();
 	virtual tMatrix ComputedFilter();
     virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
     virtual void StateStep(tVector observations) {}

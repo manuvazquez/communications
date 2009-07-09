@@ -30,7 +30,6 @@
 #include <ConstantMeanDSPowerProfile.h>
 #include <BesselChannel.h>
 #include <KalmanEstimator.h>
-#include <KnownChannelChannelMatrixEstimator.h>
 #include <KnownSymbolsKalmanEstimator.h>
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownChannelOrderAlgorithm.h"
 
-KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,Nr,N,iLastSymbolVectorToBeDetected),_channelEstimator(channelEstimator->Clone()),_channelOrder(m),_nInputsXchannelOrder(channelEstimator->cols()),_preamble(preamble)
+KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble): UnknownChannelAlgorithm(name, alphabet,L,Nr,N,iLastSymbolVectorToBeDetected),_channelEstimator(channelEstimator->clone()),_channelOrder(m),_nInputsXchannelOrder(channelEstimator->cols()),_preamble(preamble)
 {
     if(_channelOrder!=(_nInputsXchannelOrder/_nInputs))
         throw RuntimeException("KnownChannelOrderAlgorithm::KnownChannelOrderAlgorithm: the channel order parameter is not coherent with the channel estimator.");

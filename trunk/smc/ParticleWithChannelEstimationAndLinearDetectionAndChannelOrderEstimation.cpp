@@ -27,7 +27,7 @@ ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::Partic
 {
 }
 
-ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::Clone()
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::clone()
 {
 	return new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(*this);
 }

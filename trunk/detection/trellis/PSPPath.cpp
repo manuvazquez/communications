@@ -43,7 +43,7 @@ PSPPath::PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::ve
 
     for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
-        _channelMatrixEstimators[iChannelMatrixEstimator] = channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+        _channelMatrixEstimators[iChannelMatrixEstimator] = channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
         #ifndef DO_NOT_STORE_CHANNEL_MATRICES
             _estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[_nTimeInstants];
@@ -60,7 +60,7 @@ PSPPath::PSPPath(const PSPPath &path):ViterbiPath(path),_channelMatrixEstimators
 {
     for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
-        _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+        _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
         #ifndef DO_NOT_STORE_CHANNEL_MATRICES
             _estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[_nTimeInstants];
@@ -172,7 +172,7 @@ void PSPPath::operator=(const PSPPath &path)
         _channelMatrixEstimators.resize(path._channelMatrixEstimators.size());
         for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<path._channelMatrixEstimators.size();iChannelMatrixEstimator++)
         {
-            _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+            _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
             #ifndef DO_NOT_STORE_CHANNEL_MATRICES
                 _estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[_nTimeInstants];
@@ -187,7 +187,7 @@ void PSPPath::operator=(const PSPPath &path)
         for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<path._channelMatrixEstimators.size();iChannelMatrixEstimator++)
         {
             delete _channelMatrixEstimators[iChannelMatrixEstimator];
-            _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->Clone();
+            _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
             #ifndef DO_NOT_STORE_CHANNEL_MATRICES
                 delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];

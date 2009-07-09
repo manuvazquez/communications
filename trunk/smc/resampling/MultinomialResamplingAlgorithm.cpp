@@ -27,7 +27,7 @@ MultinomialResamplingAlgorithm::MultinomialResamplingAlgorithm(ResamplingCriteri
 {
 }
 
-MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::Clone() const
+MultinomialResamplingAlgorithm* MultinomialResamplingAlgorithm::clone() const
 {
 	return new MultinomialResamplingAlgorithm(*this);
 }

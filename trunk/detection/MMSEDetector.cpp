@@ -31,7 +31,7 @@ MMSEDetector::MMSEDetector(int rows, int cols, double alphabetVariance,int nSymb
 		throw RuntimeException("MMSEDetector::MMSEDetector: nSymbolsToBeDetected, startingFrom or both parameters are wrong.");
 }
 
-MMSEDetector *MMSEDetector::Clone()
+MMSEDetector *MMSEDetector::clone()
 {
 	return new MMSEDetector(*this);
 }

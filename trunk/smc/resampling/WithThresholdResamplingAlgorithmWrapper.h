@@ -37,7 +37,7 @@ public:
 
     ~WithThresholdResamplingAlgorithmWrapper();
 
-	virtual WithThresholdResamplingAlgorithmWrapper* Clone() const;
+	virtual WithThresholdResamplingAlgorithmWrapper* clone() const;
 
     WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper);
 

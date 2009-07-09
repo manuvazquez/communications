@@ -31,7 +31,7 @@ tMatrix KnownSymbolsKalmanEstimator::nextMatrix(const tVector &observations, con
 	return KalmanEstimator::nextMatrix(observations, _symbols(tRange(0,_nInputs-1),tRange(_presentTime-_channelOrder,_presentTime-1)), noiseVariance);
 }
 
-KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::Clone() const
+KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::clone() const
 {
 	return new KnownSymbolsKalmanEstimator(*this);
 }

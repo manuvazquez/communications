@@ -29,7 +29,7 @@ ParticleWithChannelEstimationAndActiveUsers::~ParticleWithChannelEstimationAndAc
 }
 
 
-ParticleWithChannelEstimationAndActiveUsers* ParticleWithChannelEstimationAndActiveUsers::Clone()
+ParticleWithChannelEstimationAndActiveUsers* ParticleWithChannelEstimationAndActiveUsers::clone()
 {
     return new ParticleWithChannelEstimationAndActiveUsers(*this);
 }

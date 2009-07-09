@@ -23,7 +23,7 @@ WithChannelOrderEstimationParticleAddon::WithChannelOrderEstimationParticleAddon
 {
 }
 
-WithChannelOrderEstimationParticleAddon::WithChannelOrderEstimationParticleAddon(const WithChannelOrderEstimationParticleAddon& withChannelOrderEstimationParticleAddon):_channelOrderEstimator(withChannelOrderEstimationParticleAddon._channelOrderEstimator->Clone())
+WithChannelOrderEstimationParticleAddon::WithChannelOrderEstimationParticleAddon(const WithChannelOrderEstimationParticleAddon& withChannelOrderEstimationParticleAddon):_channelOrderEstimator(withChannelOrderEstimationParticleAddon._channelOrderEstimator->clone())
 {
 }
 

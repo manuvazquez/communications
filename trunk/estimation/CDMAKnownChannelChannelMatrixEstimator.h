@@ -17,27 +17,24 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef KNOWNSYMBOLSKALMANESTIMATOR_H
-#define KNOWNSYMBOLSKALMANESTIMATOR_H
+#ifndef CDMAKNOWNCHANNELCHANNELMATRIXESTIMATOR_H
+#define CDMAKNOWNCHANNELCHANNELMATRIXESTIMATOR_H
 
-#include <KalmanEstimator.h>
+#include <KnownChannelChannelMatrixEstimator.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class KnownSymbolsKalmanEstimator : public KalmanEstimator
+class CDMAKnownChannelChannelMatrixEstimator : public KnownChannelChannelMatrixEstimator
 {
 protected:
-	int _presentTime;
-	const tMatrix &_symbols;
+    tMatrix _spreadingCodes;
+    
+    virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 public:
-    KnownSymbolsKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, int N, vector<double> ARcoefficient, double ARvariance,const tMatrix &symbols,int startDetectionTime);
+    CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const tMatrix &spreadingCodes);
 
-	KnownSymbolsKalmanEstimator* clone() const;
-
-    virtual tMatrix nextMatrix(const tVector &observations, const tMatrix &symbolsMatrix, double noiseVariance);
-
-
+    virtual CDMAKnownChannelChannelMatrixEstimator *clone() const;
 };
 
 #endif

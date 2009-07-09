@@ -23,7 +23,7 @@ BestParticlesResamplingAlgorithm::BestParticlesResamplingAlgorithm(ResamplingCri
 {
 }
 
-BestParticlesResamplingAlgorithm* BestParticlesResamplingAlgorithm::Clone() const
+BestParticlesResamplingAlgorithm* BestParticlesResamplingAlgorithm::clone() const
 {
 	return new BestParticlesResamplingAlgorithm(*this);
 }

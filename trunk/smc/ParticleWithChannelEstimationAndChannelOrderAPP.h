@@ -39,7 +39,7 @@ public:
 // 	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
 // 	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
 
-	ParticleWithChannelEstimationAndChannelOrderAPP *Clone();
+	ParticleWithChannelEstimationAndChannelOrderAPP *clone();
 	ParticleWithChannelEstimationAndChannelOrderAPP(const ParticleWithChannelEstimationAndChannelOrderAPP& particle);
 };
 
