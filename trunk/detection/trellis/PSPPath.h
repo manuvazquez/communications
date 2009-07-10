@@ -47,8 +47,8 @@ public:
 
     ~PSPPath();
 
-	ChannelMatrixEstimator * GetChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
-	tMatrix GetChannelMatrix(int n)
+	ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
+	tMatrix getChannelMatrix(int n)
 	{
 		#ifdef DEBUG13
 			cout << "n� de vectores de s�mbolos detectados " << _detectedSequence->cols() << endl;

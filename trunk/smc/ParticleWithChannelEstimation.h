@@ -24,7 +24,7 @@
 
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <defines.h>
@@ -34,45 +34,45 @@
 class ParticleWithChannelEstimation : public Particle
 {
 protected:
-	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
+    std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
 
-	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-		tMatrix **_estimatedChannelMatrices;
-	#endif
+    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+        tMatrix **_estimatedChannelMatrices;
+    #endif
 public:
     ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
 
     ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,std::vector <ChannelMatrixEstimator *> channelMatrixEstimators);
 
-	ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
+    ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle);
 
     ~ParticleWithChannelEstimation();
 
-    tMatrix GetChannelMatrix(int iChannelOrder,int n) const
+    tMatrix getChannelMatrix(int iChannelOrder,int n) const
     {
-    	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-			return _estimatedChannelMatrices[iChannelOrder][n];
-		#endif
+        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+            return _estimatedChannelMatrices[iChannelOrder][n];
+        #endif
 
-		// return a matrix with the proper dimension (not initialized)
-		return LaGenMatDouble::zeros(_channelMatrixEstimators[iChannelOrder]->rows(),_channelMatrixEstimators[iChannelOrder]->cols());
+        // return a matrix with the proper dimension (not initialized)
+        return LaGenMatDouble::zeros(_channelMatrixEstimators[iChannelOrder]->rows(),_channelMatrixEstimators[iChannelOrder]->cols());
     }
 
-    void SetChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)
+    void setChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)
     {
-		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-     		_estimatedChannelMatrices[iChannelOrder][n] = matrix;
-     	#endif
+        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+            _estimatedChannelMatrices[iChannelOrder][n] = matrix;
+        #endif
     }
 
-    ChannelMatrixEstimator *GetChannelMatrixEstimator(int iChannelOrder) const { return _channelMatrixEstimators[iChannelOrder];}
+    ChannelMatrixEstimator *getChannelMatrixEstimator(int iChannelOrder) const { return _channelMatrixEstimators[iChannelOrder];}
 
-    int NchannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
+    int nChannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
 
-	ParticleWithChannelEstimation *clone()
-	{
-		return new ParticleWithChannelEstimation(*this);
-	}
+    ParticleWithChannelEstimation *clone()
+    {
+        return new ParticleWithChannelEstimation(*this);
+    }
 };
 
 #endif

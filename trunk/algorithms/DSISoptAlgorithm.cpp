@@ -83,7 +83,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 						smoothingSymbolVectors((_nInputsXchannelOrder+k)%_nInputs,(_nInputsXchannelOrder+k)/_nInputs) = testedSmoothingVector[k];
 
 					// a clone of the channel estimator is generated because this must not be modified
-					channelEstimatorClone = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->clone();
+					channelEstimatorClone = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->clone();
 
                     rmColumns.set(0,_channelOrder-1);
 					auxLikelihoodsProd = 1.0;
@@ -128,7 +128,7 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->SetWeight(processedParticle->GetWeight()* Util::sum(likelihoods));
 

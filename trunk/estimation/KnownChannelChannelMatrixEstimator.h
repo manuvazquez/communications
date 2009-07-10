@@ -39,7 +39,7 @@ public:
 
     virtual KnownChannelChannelMatrixEstimator* clone() const;
     virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
-//     virtual tMatrix lastEstimatedChannelMatrix();
+    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) {}    
 };
 
 #endif

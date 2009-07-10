@@ -39,7 +39,7 @@ public:
 
     virtual ~ChannelOrderEstimator() {}
 
-    double GetChannelOrderAPP(int n) {return _channelOrderAPPs[n];}
+    double getChannelOrderAPP(int n) {return _channelOrderAPPs[n];}
 
     tVector GetChannelOrderAPPsVector();
 

@@ -60,7 +60,7 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
     if(_particleFilter==NULL)
         throw RuntimeException("SMCAlgorithm::SetEstimatorIndex: the particle filter is not set.");
 
-    if(n>=_particleFilter->GetParticle(0)->NchannelMatrixEstimators())
+    if(n>=_particleFilter->GetParticle(0)->nChannelMatrixEstimators())
         throw RuntimeException("SMCAlgorithm::SetEstimatorIndex: index is out of range.");
 
     _estimatorIndex = n;
@@ -131,12 +131,12 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
     {
         ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-        vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
+        vector<tMatrix> trainingSequenceChannelMatrices = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatricesFromObservationsSequence(observations,noiseVariances,preamblePlusTrainingSequence,_preamble.cols(),preamblePlusTrainingSequenceLength);
 
         //the channel estimation given by the training sequence is copied into each particle...
         for(j=_preamble.cols();j<preamblePlusTrainingSequenceLength;j++)
         {
-            processedParticle->SetChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
+            processedParticle->setChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
         }
 
         //... the symbols are considered detected...
@@ -163,7 +163,7 @@ vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
     int iBestParticle = _particleFilter->iBestParticle();
 
     for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
-        channelMatrices.push_back((_particleFilter->GetParticle(iBestParticle))->GetChannelMatrix(_estimatorIndex,i));
+        channelMatrices.push_back((_particleFilter->GetParticle(iBestParticle))->getChannelMatrix(_estimatorIndex,i));
 
     return channelMatrices;
 }

@@ -103,7 +103,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 			// already estimated channel matrices are stored in a vector in order to stack them
 			for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)
-				matricesToStack[iSmoothing+_c] = processedParticle->GetChannelMatrix(_estimatorIndex,iObservationToBeProcessed+iSmoothing);
+				matricesToStack[iSmoothing+_c] = processedParticle->getChannelMatrix(_estimatorIndex,iObservationToBeProcessed+iSmoothing);
 
 			// first of the predicted ones is obtained via a virtual method
 			FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[_c]);
@@ -185,8 +185,8 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 			processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
 
 			// and the estimation of the channel matrix
-			processedParticle->SetChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
-			                                    processedParticle->GetChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
+			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
+			                                    processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
 				                                    forWeightUpdateNeededSymbols(rAll,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
 		} // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)

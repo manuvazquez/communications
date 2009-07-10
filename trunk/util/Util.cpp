@@ -238,7 +238,7 @@ void Util::min(const tVector &v,int &index)
 double Util::squareError(const tMatrix &A,const tMatrix &B)
 {
     if(A.cols()!=B.cols() || A.rows()!=B.rows())
-        throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
+        throw IncompatibleOperandsException("Util::squareError: matrix dimensions are different.");
 
     double res = 0.0;
     int j;
@@ -248,10 +248,26 @@ double Util::squareError(const tMatrix &A,const tMatrix &B)
     return res;
 }
 
+double Util::normalizedSquareError(const tMatrix &A,const tMatrix &B)
+{
+    if(A.cols()!=B.cols() || A.rows()!=B.rows())
+        throw IncompatibleOperandsException("Util::normalizedSquareError: matrix dimensions are different.");
+
+    double res = 0.0, normConst = 0.0;
+    int j;
+    for(int i=0;i<A.rows();i++)
+        for(j=0;j<A.cols();j++)
+        {
+            res += (A(i,j)-B(i,j))*(A(i,j)-B(i,j));
+            normConst = B(i,j)*B(i,j);
+        }
+    return res/normConst;
+}
+
 double Util::squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
 {
     if(A.rows()!=B.rows())
-        throw IncompatibleOperandsException("Util::SquareError: matrix dimensions are different.");
+        throw IncompatibleOperandsException("Util::SquareError: matrix have different number of rows.");
 
     double res = 0.0;
     int i,j1,j2;

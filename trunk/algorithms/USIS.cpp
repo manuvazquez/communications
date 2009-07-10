@@ -158,7 +158,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				// predicted channel matrices are sampled and stored in a vector in order to stack them
 
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,Nm)*_samplingVariance
-				Util::add(processedParticle->GetChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
+				Util::add(processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
 
 				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
 				{
@@ -238,10 +238,10 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 			//the probabilities of the different channel orders are weighted according to the a posteriori probability of the channel order in the previous time instant
 			overallSymbolProb = symbolProb[0];
-			overallSymbolProb *= processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(0);
+			overallSymbolProb *= processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(0);
 			for(iChannelOrder=1;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
-				Util::add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iChannelOrder));
+				Util::add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder));
 			}
 
 			proposal = 1.0;
@@ -278,7 +278,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				// ii) the just sampled
 				forWeightUpdateNeededSymbols(_allSymbolsRows,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
 
-				likelihoodsProd = processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iChannelOrder);
+				likelihoodsProd = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder);
 
 				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 				{
@@ -293,8 +293,8 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				} // for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 
 				// the estimation of the channel matrix is updated
-				processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,
-				(processedParticle->GetChannelMatrixEstimator(iChannelOrder))->nextMatrix(observations.col(iObservationToBeProcessed),
+				processedParticle->setChannelMatrix(iChannelOrder,iObservationToBeProcessed,
+				(processedParticle->getChannelMatrixEstimator(iChannelOrder))->nextMatrix(observations.col(iObservationToBeProcessed),
 					forWeightUpdateNeededSymbols(_allSymbolsRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
                 // the computed likelihood is accumulated
@@ -319,7 +319,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
         // its a posteriori channel order probabilities are stored
 		for(uint i=0;i<_candidateOrders.size();i++)
-			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
 
 		BeforeResamplingProcess(iObservationToBeProcessed,observations,noiseVariances);
 
@@ -337,12 +337,12 @@ int USIS::BestChannelOrderIndex(int iBestParticle)
 	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
 
 	int iMaxChannelOrderAPP = 0;
-	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(iMaxChannelOrderAPP);
+	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iMaxChannelOrderAPP);
 
 	for(uint i=1;i<_candidateOrders.size();i++)
-		if(bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i) > maxChannelOrderAPP)
+		if(bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i) > maxChannelOrderAPP)
 		{
-			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->GetChannelOrderAPP(i);
+			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
 			iMaxChannelOrderAPP = i;
 		}
 

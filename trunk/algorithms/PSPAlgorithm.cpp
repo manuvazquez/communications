@@ -77,7 +77,7 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 				continue;
 
 			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
-			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.GetChannelMatrixEstimator()->clone();
+			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.getChannelMatrixEstimator()->clone();
 
 			newChannelMatrixEstimator->nextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 
@@ -119,7 +119,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     _detectedSymbolVectors->col(_startDetectionTime).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(_startDetectionTime));
 
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
-    _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(_startDetectionTime));
+    _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(_startDetectionTime));
 
     for( iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
@@ -129,7 +129,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 
         _detectedSymbolVectors->col(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1));
 
-    	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
+    	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(iProcessedObservation));
     }
 
     // last detected symbol vectors are processed
@@ -137,7 +137,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     {
         _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation));
 
-		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].GetChannelMatrix(iProcessedObservation));
+		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(iProcessedObservation));
     }
 }
 
@@ -232,7 +232,7 @@ void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noi
 			if(_exitStage[iState][iSourceSurvivor].IsEmpty())
 				continue;
 
-			tMatrix estimatedChannelMatrix = _exitStage[iState][iSourceSurvivor].GetChannelMatrixEstimator()->lastEstimatedChannelMatrix();
+			tMatrix estimatedChannelMatrix = _exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix();
 			estimatedChannelMatrix *= _ARcoefficient;
 
 			// computedObservations = estimatedChannelMatrix * symbolVectors(:)

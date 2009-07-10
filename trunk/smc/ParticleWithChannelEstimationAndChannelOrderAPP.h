@@ -36,8 +36,8 @@ class ParticleWithChannelEstimationAndChannelOrderAPP : public ParticleWithChann
 public:
     ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
 
-// 	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-// 	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+// 	void setChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
+// 	double getChannelOrderAPP(int n) { return _channelOrderAPP[n];}
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *clone();
 	ParticleWithChannelEstimationAndChannelOrderAPP(const ParticleWithChannelEstimationAndChannelOrderAPP& particle);

@@ -20,7 +20,7 @@
 
 #include "ResamplingAlgorithm.h"
 
-// #define DEBUG2
+// #define PRINT_RESAMPLED_INFO
 
 bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
 {
@@ -31,9 +31,15 @@ bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
         vector<int> indexes = ObtainIndexes(particleFilter->Capacity(),weigths);
         particleFilter->keepParticles(indexes);
 
-        #ifdef DEBUG2
-        	cout << "Remuestreando..." << endl;
-        #endif
+#ifdef PRINT_RESAMPLED_INFO
+        cout << "particles that are going to be resampled..." << endl;
+        vector<int> occurrences;
+        vector<int> times;
+        Util::howManyTimes(indexes,occurrences,times);
+        cout << "occurrences (" << occurrences.size() << ")\t / times" << endl;
+        for(uint i=0;i<occurrences.size();i++)
+            cout << occurrences[i] << "\t" << times[i] << endl;
+#endif
         return true;
     }
     return false;

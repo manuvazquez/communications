@@ -60,6 +60,7 @@ public:
     static void min(const tVector &v,int &index);
     static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
     static double squareError(const tMatrix &A,const tMatrix &B);
+    static double normalizedSquareError(const tMatrix &A,const tMatrix &B);    
     static void print(const tMatrix &A);
     static void matrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
     template<class T> static void matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);

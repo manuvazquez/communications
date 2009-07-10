@@ -44,7 +44,7 @@ void MLSDmAlgorithm::InitializeParticles()
 
     // the available APP's just before the _startDetectionTime instant are copied into the particle
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        particle->SetChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+        particle->setChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
 
     _particleFilter->AddParticle(particle);
 }
@@ -122,7 +122,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                     // the AR coefficiente is accounted for
 //                  involvedSymbolVectors *= _ARcoefficient; <--------------------------------- (when Kalman estimator, it is already accounted for)
 
-                    particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->GetChannelOrderAPP(iChannelOrder)*processedParticle->GetChannelMatrixEstimator(iChannelOrder)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
+                    particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->getChannelOrderAPP(iChannelOrder)*processedParticle->getChannelMatrixEstimator(iChannelOrder)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
 
                     likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);
@@ -200,12 +200,12 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             // sampled symbols are copied into the corresponding particle
             processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
 
-            for(int iChannelOrder=0;iChannelOrder<processedParticle->NchannelMatrixEstimators();iChannelOrder++)
+            for(int iChannelOrder=0;iChannelOrder<processedParticle->nChannelMatrixEstimators();iChannelOrder++)
             {
                 // channel matrix is estimated by means of the particle channel estimator
-                processedParticle->SetChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->GetChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
+                processedParticle->setChannelMatrix(iChannelOrder,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix(rAll,tRange(_maxOrder-_candidateOrders[iChannelOrder],_maxOrder-1)),noiseVariances[iObservationToBeProcessed]));
 
-                processedParticle->SetChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
+                processedParticle->setChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
             }
 
             processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
@@ -217,7 +217,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
         processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle());
 
         for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-            _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = processedParticle->GetChannelOrderAPP(iChannelOrder);
+            _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = processedParticle->getChannelOrderAPP(iChannelOrder);
 
         if(_particlesBestChannelOrders[_particleFilter->iBestParticle()]==iBestChannelOrder)
             timesBestChannelOrder++;

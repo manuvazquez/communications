@@ -21,7 +21,7 @@
 #define WITHCHANNELORDERAPPPARTICLEADDON_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -29,17 +29,17 @@
 
 class WithChannelOrderAppParticleAddon{
 protected:
-	std::vector<double> _channelOrderAPP;
+    std::vector<double> _channelOrderAPP;
 public:
     WithChannelOrderAppParticleAddon(std::vector<double> channelOrderAPP);
     WithChannelOrderAppParticleAddon(int nChannelOrderAPP);
 
-	WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon);
+    WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon);
 
-	void SetChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-	double GetChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+    void setChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
+    double getChannelOrderAPP(int n) { return _channelOrderAPP[n];}
 
-	int iMaxChannelOrderAPP();
+    int iMaxChannelOrderAPP();
 };
 
 #endif

@@ -39,14 +39,3 @@ tMatrix KnownChannelChannelMatrixEstimator::nextMatrix(const tVector& observatio
     _lastEstimatedChannelMatrix = (*_channel)[++_iNextMatrix];
     return _lastEstimatedChannelMatrix;
 }
-
-// tMatrix KnownChannelChannelMatrixEstimator::lastEstimatedChannelMatrix()
-// {
-//     if(_channel==NULL)
-//         throw RuntimeException("KnownChannelChannelMatrixEstimator::lastEstimatedChannelMatrix: channel has not been built yet.");
-// 
-//     if(_lastEstimatedChannelMatrix.rows()==0 && _lastEstimatedChannelMatrix.cols()==0)
-//         return (*_channel)[_iNextMatrix];
-//     else
-//         return _lastEstimatedChannelMatrix;
-// }

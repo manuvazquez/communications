@@ -35,10 +35,10 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 
 	for(int iObservationToBeProcessed=_iLastSymbolVectorToBeDetected+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
 	{
-		for(int iChannelOrder=0;iChannelOrder<bestParticle->NchannelMatrixEstimators();iChannelOrder++)
+		for(int iChannelOrder=0;iChannelOrder<bestParticle->nChannelMatrixEstimators();iChannelOrder++)
 		{
 			tMatrix symbolVectors = bestParticle->GetSymbolVectors(tRange(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed));
-			bestParticle->GetChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
+			bestParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
 		}
 	}
 
@@ -46,7 +46,7 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 
 // 	// the available APP's just before the _startDetectionTime instant are copied into the particle
 // 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 		bestParticle->SetChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+// 		bestParticle->setChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
 
 	_particleFilter = new ParticleFilter(nParticles);
 
