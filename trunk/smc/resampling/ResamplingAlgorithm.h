@@ -40,7 +40,7 @@ public:
 
 	virtual std::vector<int> ObtainIndexes(int n,const tVector &weights) const = 0;
 
-    virtual bool ResampleWhenNecessary(ParticleFilter *particleFilter);
+    virtual bool resampleWhenNecessary(ParticleFilter *particleFilter);
 };
 
 #endif

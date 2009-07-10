@@ -53,7 +53,8 @@ void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
         tMatrix channelTranspChannel(_channel->nInputsMemory(j),_channel->nInputsMemory(j));
 
         //channelTranspChannel = varianceConstant*alphabetVariance/_nOutputs*_channel[j]'*_channel[j];
-        Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant);
+//         Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant);
+        Blas_Mat_Trans_Mat_Mult(_channel->getTransmissionMatrix(j),_channel->getTransmissionMatrix(j),channelTranspChannel,varianceConstant);        
 
         variance = channelTranspChannel.trace();
         stdDev = sqrt(variance);

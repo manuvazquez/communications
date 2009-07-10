@@ -22,7 +22,7 @@
 
 // #define PRINT_RESAMPLED_INFO
 
-bool ResamplingAlgorithm::ResampleWhenNecessary(ParticleFilter *particleFilter)
+bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
 {
     tVector weigths = particleFilter->GetWeightsVector();
 

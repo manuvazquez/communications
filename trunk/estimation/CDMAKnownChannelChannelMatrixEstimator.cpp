@@ -33,6 +33,10 @@ double CDMAKnownChannelChannelMatrixEstimator::likelihood(const tVector &observa
 {
     if(symbolsMatrix.cols()!=1)
         throw RuntimeException("CDMAKnownChannelChannelMatrixEstimator::likelihood: the symbols matrix received should be a column vector.");
+
+#ifdef DEBUG
+    cout << "noiseVariance = " << noiseVariance << endl;
+#endif
     
     tMatrix channelCoefficientsXsymbols(symbolsMatrix);
         
@@ -43,7 +47,7 @@ double CDMAKnownChannelChannelMatrixEstimator::likelihood(const tVector &observa
     
     Blas_Mat_Vec_Mult(_spreadingCodes,channelCoefficientsXsymbols,withoutNoiseObservations);
     
-#ifdef DEBUG
+#ifdef DEBUG2
 //     cout << "observations = " << endl << observations;
     cout << "_lastEstimatedChannelMatrix = " << endl << _lastEstimatedChannelMatrix;
     cout << "symbolsMatrix = " << endl << symbolsMatrix;

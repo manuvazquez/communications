@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "TransmissionUtil.h"
 
-// #define DEBUG
+// #define PRINT_INFO
 
 using namespace std;
 
@@ -80,7 +80,7 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 /*    if(permutations.size() != static_cast<uint> (sourceSymbols.rows()))
       throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match."); */       
 
-#ifdef DEBUG
+#ifdef PRINT_INFO
     cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
     Util::print(mask);
 #endif
@@ -97,11 +97,6 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
-    
-#ifdef DEBUG3
-                cout << "iPermut = " << iPermut << endl;
-#endif
-
         int permutationErrors = 0;
         
         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
@@ -116,33 +111,15 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
 //                 if(!mask[iInput][iTime])
                 if(!mask[iStream][iTime])
                     continue;
-                                    
-                // symbols differ?
-//                 symbolsDiffer = sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
-                          
-#ifdef DEBUG3
-                cout << "symbolsDiffer = " << symbolsDiffer << "(sourceSymbols(iStream,iTime) = " << sourceSymbols(iStream,iTime) << " detectedSymbols(iInput,iTime) = " << detectedSymbols(iInput,iTime) <<endl;
-#endif                    
-                
-                // if they do, this entails an error
-//                 errorsWithoutInverting += symbolsDiffer;
 
                 // if the symbols differ, an error happened...
                 errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
                 
-                // but none if the symbol is inverted (ambiguity problem)
-//                 errorsInverting += !symbolsDiffer;
-
-                // unless there the symbol sign has been switched because of the ambiguity
+                // ...unless there the symbol sign needs to be switched because of the ambiguity
                 errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
                 
                 nAccountedSymbols++;
-            }
-            
-#ifdef DEBUG3
-//                 cout << "iPermut = " << iPermut << endl;
-                cout << "errorsWithoutInverting = " << errorsWithoutInverting << " errorsInverting = " << errorsInverting << endl;
-#endif                    
+            }              
             
             if(errorsWithoutInverting<errorsInverting)
             {
@@ -177,13 +154,6 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
 {
     if(detectedBits.nBitsPerStream()==0 || detectedBits.nStreams()==0)
         return 0.0;
-
-#ifdef DEBUG
-    cout << "source bits...to be revised from " << from1 << " to " << to1 << endl;
-    sourceBits.print();
-    cout << "detected bits...to be revised from " << from2 << " to " << to2 << endl;
-    detectedBits.print();    
-#endif
 
     BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
 

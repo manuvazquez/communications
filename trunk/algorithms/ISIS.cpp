@@ -215,7 +215,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
 		{
-        	_resamplingAlgorithm->ResampleWhenNecessary(&_particleFilter);
+        	_resamplingAlgorithm->resampleWhenNecessary(&_particleFilter);
 		}
 
 	} // for each time instant

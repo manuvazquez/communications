@@ -195,7 +195,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
-            _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
+            _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
 		rmMinus1AlreadyDetectedSymbolVectors = rmMinus1AlreadyDetectedSymbolVectors + 1;
 		rSmoothingRange = rSmoothingRange + 1;

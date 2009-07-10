@@ -97,7 +97,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
 // 			Resampling();
-            _resamplingAlgorithm->ResampleWhenNecessary(_particleFilter);
+            _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
