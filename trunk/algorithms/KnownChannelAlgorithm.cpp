@@ -23,14 +23,9 @@ KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,int 
 {
 }
 
-
-KnownChannelAlgorithm::~KnownChannelAlgorithm()
-{
-}
-
 void KnownChannelAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-    this->Run(observations,noiseVariances);
+    Run(observations,noiseVariances);
 }
 
 vector<tMatrix> KnownChannelAlgorithm::GetEstimatedChannelMatrices()

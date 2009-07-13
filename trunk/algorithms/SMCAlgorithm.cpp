@@ -82,7 +82,7 @@ void SMCAlgorithm::InitializeParticles()
 
         // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+            _particleFilter->GetParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     }
 }
 
@@ -140,7 +140,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
         }
 
         //... the symbols are considered detected...
-        processedParticle->SetSymbolVectors(rTrainingSequence,trainingSequence);
+        processedParticle->setSymbolVectors(rTrainingSequence,trainingSequence);
     }
 
     // the Process method must start in
@@ -151,7 +151,7 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatr
 
 tMatrix SMCAlgorithm::getDetectedSymbolVectors()
 {
-    return (_particleFilter->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
+    return (_particleFilter->GetBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()

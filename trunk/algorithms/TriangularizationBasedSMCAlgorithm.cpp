@@ -69,7 +69,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (_particleFilter->GetParticle(iParticle));
 
             // the already detected symbol vectors are stored in "involvedSymbolVectors"
-            involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors).inject(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
+            involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
 
             // predicted channel matrices are stored in a vector in order to stack them
             // (first one is obtained via the Kalman Filter)
@@ -199,7 +199,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 
             } // for(int iSampledSymbol=_nInputs*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
 
-            processedParticle->SetSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_channelOrder-1));
+            processedParticle->setSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_channelOrder-1));
 
 #ifdef DEBUG
             cout << "involvedSymbolVectors" << endl << involvedSymbolVectors;
@@ -208,7 +208,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             likelihoodsProd = smoothedLikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
             // the weight is updated
-            processedParticle->SetWeight((likelihoodsProd/proposal)*processedParticle->GetWeight());
+            processedParticle->setWeight((likelihoodsProd/proposal)*processedParticle->getWeight());
 
             // and the estimation of the channel matrix
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,

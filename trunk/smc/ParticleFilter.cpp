@@ -62,7 +62,7 @@ void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vecto
     for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
     {
         resParticles[indexes[iParticle]] = (_particles[resamplingIndexes[iParticle]])->clone();
-        resParticles[indexes[iParticle]]->SetWeight(1.0/(double)nParticlesToBeResampled);
+        resParticles[indexes[iParticle]]->setWeight(1.0/(double)nParticlesToBeResampled);
     }
 
     // the particles out of index are left the same. Their memory will not be released later
@@ -112,7 +112,7 @@ void ParticleFilter::keepParticles(vector<int> indexes)
     for(uint iParticle=0;iParticle<indexes.size();iParticle++)
     {
             resParticles[iParticle] = (_particles[indexes[iParticle]])->clone();
-            resParticles[iParticle]->SetWeight(1.0/(double)_nParticles);
+            resParticles[iParticle]->setWeight(1.0/(double)_nParticles);
     }
 
     for(uint iParticle=0;iParticle<_nParticles;iParticle++)
@@ -137,16 +137,16 @@ int ParticleFilter::iBestParticle()
         if(particleAlreadyCounted[iParticle])
             continue;
 
-        accumulatedWeights[iParticle] = _particles[iParticle]->GetWeight();
+        accumulatedWeights[iParticle] = _particles[iParticle]->getWeight();
 
         for(iTestedParticle=iParticle+1;iTestedParticle<_nParticles;iTestedParticle++)
         {
             if(particleAlreadyCounted[iTestedParticle])
                 continue;
 
-            if(GetParticle(iParticle)->GetAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->GetAllSymbolVectors()))
+            if(GetParticle(iParticle)->getAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->getAllSymbolVectors()))
             {
-                accumulatedWeights[iParticle] += GetParticle(iTestedParticle)->GetWeight();
+                accumulatedWeights[iParticle] += GetParticle(iTestedParticle)->getWeight();
                 particleAlreadyCounted[iTestedParticle] = true;
             }
         }

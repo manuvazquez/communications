@@ -256,7 +256,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			}
 
 			// sampled symbol vector is stored for the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(_allSymbolsRows));
+			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(_allSymbolsRows));
 
 			sumLikelihoodsProd = 0.0;
 
@@ -273,7 +273,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 				// all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols":
 				// i) the already known:
-				forWeightUpdateNeededSymbols(_allSymbolsRows,r0mMinus2).inject(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors));
+				forWeightUpdateNeededSymbols(_allSymbolsRows,r0mMinus2).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
 
 				// ii) the just sampled
 				forWeightUpdateNeededSymbols(_allSymbolsRows,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
@@ -308,7 +308,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			processedParticle->GetChannelOrderEstimator()->Update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector(_allSymbolsRows),noiseVariances[iObservationToBeProcessed]);
 
 			// the weight is updated
-			processedParticle->SetWeight((sumLikelihoodsProd/proposal)*processedParticle->GetWeight());
+			processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());
 
 		} // for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 

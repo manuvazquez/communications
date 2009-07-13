@@ -29,7 +29,7 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int 
 
     #ifndef DO_NOT_STORE_CHANNEL_MATRICES
     	_estimatedChannelMatrices = new tMatrix*[1];
-    	_estimatedChannelMatrices[0] = new tMatrix[Trajectorylength()];
+    	_estimatedChannelMatrices[0] = new tMatrix[trajectorylength()];
    	#endif
 }
 
@@ -38,7 +38,7 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int 
 	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
 		_estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
 		for(uint i=0;i<_channelMatrixEstimators.size();i++)
-			_estimatedChannelMatrices[i] = new tMatrix[Trajectorylength()];
+			_estimatedChannelMatrices[i] = new tMatrix[trajectorylength()];
     #endif
 }
 
@@ -52,8 +52,8 @@ ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithC
         _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
 		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-			_estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[Trajectorylength()];
-			for(int i=0;i<Trajectorylength();i++)
+			_estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[trajectorylength()];
+			for(int i=0;i<trajectorylength();i++)
 				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = particle._estimatedChannelMatrices[iChannelMatrixEstimator][i];
         #endif
     }

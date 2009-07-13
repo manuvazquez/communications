@@ -40,7 +40,7 @@ void MLSDmAlgorithm::InitializeParticles()
     // we begin with only one particle
     ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,channelEstimatorsClone);
 
-    particle->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+    particle->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 
     // the available APP's just before the _startDetectionTime instant are copied into the particle
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -97,7 +97,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
         {
             processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
 
-            symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
+            symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
             for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -139,7 +139,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
                 particleCandidates[iCandidate].iBestChannelOrder = iBestUnnormalizedChannelOrderAPP;
                 particleCandidates[iCandidate].likelihood = likelihood;
-                particleCandidates[iCandidate].weight = processedParticle->GetWeight()*likelihood;
+                particleCandidates[iCandidate].weight = processedParticle->getWeight()*likelihood;
                 normConst += particleCandidates[iCandidate].weight;
 
                 iCandidate++;
@@ -157,7 +157,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             for(iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
             {
                 processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
-                symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
+                symbolVectorsMatrix(rAll,rMaxChannelOrderMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rMaxChannelOrderMinus1PrecedentColumns));
                 for(k=0;k<_nInputs;k++)
                     symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::discrete_rnd(uniformDistribution)];
                 particleCandidates[iParticle].fromParticle = iParticle;
@@ -165,7 +165,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
 
                 particleCandidates[iCandidate].iBestChannelOrder = processedParticle->iMaxChannelOrderAPP();
                 particleCandidates[iCandidate].likelihood = 1.0;
-                particleCandidates[iCandidate].weight = processedParticle->GetWeight();
+                particleCandidates[iCandidate].weight = processedParticle->getWeight();
                 normConst += particleCandidates[iCandidate].weight;
             }
             iCandidate = _particleFilter->Nparticles();
@@ -198,7 +198,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
             processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetParticle(iParticle));
 
             // sampled symbols are copied into the corresponding particle
-            processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
+            processedParticle->setSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_maxOrder-1));
 
             for(int iChannelOrder=0;iChannelOrder<processedParticle->nChannelMatrixEstimators();iChannelOrder++)
             {
@@ -208,7 +208,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                 processedParticle->setChannelOrderAPP(particleCandidates[indexesSelectedCandidates[iParticle]].unnormalizedChannelOrderAPPs(iChannelOrder)/particleCandidates[indexesSelectedCandidates[iParticle]].likelihood,iChannelOrder);
             }
 
-            processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
+            processedParticle->setWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
 
         } // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 

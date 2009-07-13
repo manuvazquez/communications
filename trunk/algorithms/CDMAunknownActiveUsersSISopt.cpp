@@ -27,8 +27,8 @@
     extern Noise *realNoise;
 #endif
 
-// #define DEBUG
-// #define DEBUG5
+#define DEBUG
+#define DEBUG5
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_userPersistenceProb(userPersistenceProb),_newActiveUserProb(newActiveUserProb),_userPriorProb(userPriorProb)
 {
@@ -66,7 +66,7 @@ void CDMAunknownActiveUsersSISopt::InitializeParticles()
 
         // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->GetParticle(iParticle)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+            _particleFilter->GetParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     }
 }
 
@@ -83,7 +83,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
     extendedAlphabetSymbols[0] = -1; extendedAlphabetSymbols[1] = 1; extendedAlphabetSymbols[2] = 0;
     Alphabet extendedAlphabet(extendedAlphabetSymbols);
         
-//     extendedAlphabet = Alphabet(_alphabet);
+    extendedAlphabet = Alphabet(_alphabet);
     
     uint nCombinations = (int) pow((double)(extendedAlphabet.length()),(double)_nInputs);
     
@@ -138,6 +138,10 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
 
                 likelihoods[iTestedCombination] = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->likelihood(observations.col(iObservationToBeProcessed),symbolsVector,noiseVariances[iObservationToBeProcessed]);
 
+#ifdef DEBUG5
+                cout << "probability of users active times symbol vector = " << probSymbolsVectorXprobActiveUsers(symbolsVector) << endl;
+#endif
+
                 // the probability of these users being active and this particular symbol vector being transmitted is computed...
                 // ...either taking into account the users previous state in case this exists
                 if(iObservationToBeProcessed!=_startDetectionTime)
@@ -158,7 +162,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
                 probabilities = vector<double>(nCombinations,1.0/(double)nCombinations);
 
 #ifdef DEBUG
-            if(iParticle>0)
+            if(iParticle>=0)
             {
                 cout << "computed probabilities" << endl;
                 cout << "observations" << endl << observations.col(iObservationToBeProcessed);
@@ -181,10 +185,10 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
             extendedAlphabet.int2symbolsArray(iSampledVector,sampledVector);
                    
             // sampled symbols are copied into the corresponding particle
-            processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
+            processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             // channel matrix is estimated by means of the particle channel estimator
-            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->GetSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
                         
 #ifdef DEBUG5
             cout << "sampled symbol vector by particle " << iParticle << " ";
@@ -202,7 +206,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
             
             processedParticle->setActivityAtTime(iObservationToBeProcessed,usersActivity);
             
-            processedParticle->SetWeight(processedParticle->GetWeight()* Util::sum(likelihoods));
+            processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
         } // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 
         _particleFilter->NormalizeWeights();

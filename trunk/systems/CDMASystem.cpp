@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-// #define DEBUG
+#define DEBUG
 
 CDMASystem::CDMASystem(): SMCSystem()
 {
@@ -53,9 +53,9 @@ CDMASystem::CDMASystem(): SMCSystem()
     newActiveUserProb = 0.2;
     userPriorProb = 1.0;
         
-/*    userPersistenceProb = 1.0;
+    userPersistenceProb = 1.0;
     newActiveUserProb = 0.2;
-    userPriorProb = 1.0;   */         
+    userPriorProb = 1.0;            
     
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;

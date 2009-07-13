@@ -116,7 +116,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     BestPairStateSurvivor(iBestState,iBestSurvivor);
 
     // the first detected vector is copied into "_detectedSymbolVectors"...
-    _detectedSymbolVectors->col(_startDetectionTime).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(_startDetectionTime));
+    _detectedSymbolVectors->col(_startDetectionTime).inject(_exitStage[iBestState][iBestSurvivor].getSymbolVector(_startDetectionTime));
 
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(_startDetectionTime));
@@ -127,7 +127,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
 
         BestPairStateSurvivor(iBestState,iBestSurvivor);
 
-        _detectedSymbolVectors->col(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1));
+        _detectedSymbolVectors->col(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState][iBestSurvivor].getSymbolVector(iProcessedObservation-_firstSymbolVectorDetectedAt+_preamble.cols()+1));
 
     	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(iProcessedObservation));
     }
@@ -135,7 +135,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     // last detected symbol vectors are processed
     for(iProcessedObservation=_iLastSymbolVectorToBeDetected+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
-        _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState][iBestSurvivor].GetSymbolVector(iProcessedObservation));
+        _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState][iBestSurvivor].getSymbolVector(iProcessedObservation));
 
 		_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(iProcessedObservation));
     }

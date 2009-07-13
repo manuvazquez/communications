@@ -58,7 +58,7 @@ public:
     {
         tVector weights(_nParticles);
         for(uint i=0;i<_nParticles;i++)
-            weights(i) = _particles[i]->GetWeight();
+            weights(i) = _particles[i]->getWeight();
         return weights;
     }
 
@@ -68,10 +68,10 @@ public:
         uint i;
 
         for(i=0;i<_nParticles;i++)
-            sum += _particles[i]->GetWeight();
+            sum += _particles[i]->getWeight();
 
         for(i=0;i<_nParticles;i++)
-            _particles[i]->SetWeight(_particles[i]->GetWeight()/sum);
+            _particles[i]->setWeight(_particles[i]->getWeight()/sum);
     }
 
     void NormalizeWeights(std::vector<int> indexes)
@@ -80,10 +80,10 @@ public:
         uint i,nParticles=indexes.size();
 
         for(i=0;i<nParticles;i++)
-            sum += _particles[indexes[i]]->GetWeight();
+            sum += _particles[indexes[i]]->getWeight();
 
         for(i=0;i<nParticles;i++)
-            _particles[indexes[i]]->SetWeight(_particles[indexes[i]]->GetWeight()/sum);
+            _particles[indexes[i]]->setWeight(_particles[indexes[i]]->getWeight()/sum);
     }
 
 	int Capacity() { return _capacity;}

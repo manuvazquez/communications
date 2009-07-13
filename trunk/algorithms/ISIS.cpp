@@ -97,7 +97,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 					// the m-1 already detected symbol vectors are copied into the matrix (just needed if m>1):
 					if(m>1)
-						smoothingSymbolVectors(rAllSymbolRows,tRange(0,m-2)).inject(processedParticle->GetSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1));
+						smoothingSymbolVectors(rAllSymbolRows,tRange(0,m-2)).inject(processedParticle->getSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1));
 
 					// current tested vector is copied in the m-th position
 					for(k=0;k<static_cast<uint>(_nInputs);k++)
@@ -162,7 +162,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			_alphabet.int2symbolsArray(iSampledVector,sampledVector);
 
 			// sampled symbols are copied into the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,sampledVector);
+			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             #ifdef DEBUG
                 for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -179,7 +179,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 				auxChannelEstimator = dynamic_cast < KalmanEstimator * > (processedParticle->getChannelMatrixEstimator(iChannelOrder));
 
                 // for efficiency's sake
-                tMatrix involvedSymbolVectors = processedParticle->GetSymbolVectors (iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
+                tMatrix involvedSymbolVectors = processedParticle->getSymbolVectors(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
 
                 // the a posteriori probability for each channel order must be updated with the previous app for this order and the likelihood at the present instant with the sampled symbol vector
                 newChannelOrderAPPs[iChannelOrder] = processedParticle->getChannelOrderAPP(iChannelOrder)*
@@ -206,7 +206,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
                 cout << endl;
             #endif
 
-			processedParticle->SetWeight(processedParticle->GetWeight()*Util::sum(likelihoods));
+			processedParticle->setWeight(processedParticle->getWeight()*Util::sum(likelihoods));
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 

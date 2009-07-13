@@ -1,34 +1,28 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="9" >
+ <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="60" Type="Source" />
+   <View0 Encoding="" line="65" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="5" Type="Source" />
+   <View0 Encoding="" line="4" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
    <View0 Encoding="" line="203" Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
-   <View0 Encoding="" line="76" Type="Source" />
+   <View0 Encoding="" line="36" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
-   <View0 Encoding="" line="28" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+   <View0 Encoding="" line="16" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/estimation/CDMAKnownChannelChannelMatrixEstimator.cpp" >
-   <View0 Encoding="" line="21" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-   <View0 Encoding="" line="28" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/TransmissionUtil.cpp" >
-   <View0 Encoding="" line="21" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/PowerProfileDependentNoise.cpp" >
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
    <View0 Encoding="" line="24" Type="Source" />
-  </Doc8>
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/ChannelDependentNoise.cpp" >
+   <View0 Encoding="" line="60" Type="Source" />
+  </Doc6>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -44,93 +38,93 @@
     <bookmark url="/home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="160" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
-     <mark line="87" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
-     <mark line="559" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="410" />
+     <mark line="317" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
      <mark line="93" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="410" />
-     <mark line="317" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/UCO_SIS.cpp" >
+     <mark line="559" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
+     <mark line="87" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
+     <mark line="44" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
+     <mark line="59" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
+     <mark line="480" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp" >
+     <mark line="87" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp" >
      <mark line="21" />
      <mark line="163" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp" >
-     <mark line="87" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/util/Util.cpp" >
-     <mark line="480" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp" >
-     <mark line="59" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/ISIS.cpp" >
-     <mark line="44" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="108" />
      <mark line="131" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
-     <mark line="141" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp" >
+     <mark line="109" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
      <mark line="80" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp" >
-     <mark line="109" />
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/Algorithm.cpp" >
+     <mark line="141" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPBasedSMCAlgorithm.cpp" >
      <mark line="124" />
-    </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
-     <mark line="38" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.cpp" >
      <mark line="377" />
      <mark line="112" />
      <mark line="318" />
     </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/algorithms/USIS2SIS/USIS2SISAlgorithm.cpp" >
+     <mark line="38" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/UTSAlgorithm.cpp" >
      <mark line="195" />
      <mark line="77" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.cpp" >
-     <mark line="56" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+     <mark line="78" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
+     <mark line="66" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/smc/ParticleFilter.cpp" >
      <mark line="40" />
      <mark line="148" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
-     <mark line="66" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-     <mark line="78" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.cpp" >
+     <mark line="56" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="65" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
-     <mark line="21" />
-     <mark line="109" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp" >
+     <mark line="59" />
+     <mark line="113" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="320" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/statistics/ARprocess.cpp" >
      <mark line="21" />
      <mark line="82" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="320" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp" >
-     <mark line="59" />
-     <mark line="113" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+     <mark line="21" />
+     <mark line="109" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
@@ -138,47 +132,36 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
      <mark line="0" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalSystem.cpp" >
-     <mark line="60" />
-     <mark line="134" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
+     <mark line="88" />
+     <mark line="21" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
+     <mark line="295" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp" >
+     <mark line="72" />
+     <mark line="47" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.h" >
+     <mark line="121" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/algorithms/TriangularizationBasedSMCAlgorithm.cpp" >
      <mark line="208" />
      <mark line="227" />
      <mark line="93" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.h" >
-     <mark line="121" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp" >
-     <mark line="72" />
-     <mark line="47" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UTrellisSearchAlgorithm.cpp" >
-     <mark line="295" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
-     <mark line="88" />
-     <mark line="21" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
-     <mark line="69" />
-     <mark line="65" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalSystem.cpp" >
+     <mark line="60" />
+     <mark line="134" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="188" />
      <mark line="38" />
     </bookmark>
-    <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
-     <mark line="43" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
-     <mark line="112" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
-     <mark line="102" />
-     <mark line="192" />
-     <mark line="159" />
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
+     <mark line="69" />
+     <mark line="65" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="136" />
@@ -187,6 +170,17 @@
      <mark line="246" />
      <mark line="29" />
      <mark line="67" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
+     <mark line="102" />
+     <mark line="192" />
+     <mark line="159" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
+     <mark line="112" />
+    </bookmark>
+    <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
+     <mark line="43" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

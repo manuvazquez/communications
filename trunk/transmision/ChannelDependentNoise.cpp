@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ChannelDependentNoise.h"
 
-// #define DEBUG
+// #define PRINT_INFO
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
  : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::RandnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel)
@@ -42,24 +42,25 @@ ChannelDependentNoise::~ChannelDependentNoise()
 
 void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
 {
-    int i,j,memory;
+    int i,j,k;
     double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nOutputs;
     double stdDev,variance;
 
     for(j=_channel->Effectivememory()-1;j<_length;j++)
     {
-        memory = _channel->Memory(j);
+        tMatrix channelMatrix;
+        channelMatrix = _channel->getTransmissionMatrix(j);
+        
+        variance = 0.0;
+        for(i=0;i<channelMatrix.rows();i++)
+            for(k=0;k<channelMatrix.cols();k++)
+                variance += channelMatrix(i,k)*channelMatrix(i,k);
 
-        tMatrix channelTranspChannel(_channel->nInputsMemory(j),_channel->nInputsMemory(j));
-
-        //channelTranspChannel = varianceConstant*alphabetVariance/_nOutputs*_channel[j]'*_channel[j];
-//         Blas_Mat_Trans_Mat_Mult((*_channel)[j],(*_channel)[j],channelTranspChannel,varianceConstant);
-        Blas_Mat_Trans_Mat_Mult(_channel->getTransmissionMatrix(j),_channel->getTransmissionMatrix(j),channelTranspChannel,varianceConstant);        
-
-        variance = channelTranspChannel.trace();
+        variance *= varianceConstant;
         stdDev = sqrt(variance);
 
-#ifdef DEBUG
+#ifdef PRINT_INFO
+        cout << "_nOutputs = " << _nOutputs << endl;
         cout << "stdDev en el instante " << j << " = " << stdDev << endl;
 #endif
 

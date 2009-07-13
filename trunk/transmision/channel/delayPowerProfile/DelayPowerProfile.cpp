@@ -53,6 +53,5 @@ void DelayPowerProfile::GenerateMatrices()
 	_variances = tMatrix(_nOutputs,_nInputs*_amplitudes.size());
 	tRange rAllRows(0,_nOutputs-1);
 	for(uint i=0;i<_amplitudes.size();i++)
-		//
 		_variances(rAllRows,tRange(i*_nInputs,(i+1)*_nInputs-1)) = _amplitudes[i];
 }

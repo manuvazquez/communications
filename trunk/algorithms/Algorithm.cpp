@@ -157,7 +157,7 @@ tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matr
 
     // substracting built channel matrix
     tVector stackedObservationsMinus = observations;
-    // stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::toVector(processedParticle->GetSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
+    // stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::toVector(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
     Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::toVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);
 
     return stackedObservationsMinus;

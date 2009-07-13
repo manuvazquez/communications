@@ -37,7 +37,7 @@ void PSPBasedSMCAlgorithm::InitializeParticles()
 {
 	// we begin with only one particle
 	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
-	_particleFilter->GetParticle(0)->SetSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+	_particleFilter->GetParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 
 void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
@@ -77,7 +77,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		{
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
-			symbolVectorsMatrix(rAllSymbolRows,rmMinus1FirstColumns).inject(processedParticle->GetSymbolVectors(rmMinus1PrecedentColumns));
+			symbolVectorsMatrix(rAllSymbolRows,rmMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rmMinus1PrecedentColumns));
 
 			symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
@@ -98,7 +98,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
-				particleCandidates[iCandidate].weight = processedParticle->GetWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
+				particleCandidates[iCandidate].weight = processedParticle->getWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
 				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;
@@ -139,12 +139,12 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
 
 			// sampled symbols are copied into the corresponding particle
-			processedParticle->SetSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_channelOrder-1));
+			processedParticle->setSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_channelOrder-1));
 
 			// channel matrix is estimated by means of the particle channel estimator
 			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));
 
-			processedParticle->SetWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
+			processedParticle->setWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
 		_particleFilter->NormalizeWeights();

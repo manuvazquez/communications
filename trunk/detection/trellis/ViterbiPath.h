@@ -21,7 +21,7 @@
 #define VITERBIPATH_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -29,10 +29,10 @@
 
 class ViterbiPath{
 protected:
-	int _nTimeInstants;
-	double _cost;
+    int _nTimeInstants;
+    double _cost;
 public:
-	tMatrix *_detectedSequence;
+    tMatrix *_detectedSequence;
     ViterbiPath();
     ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence);
     ViterbiPath(const ViterbiPath &path);
@@ -41,12 +41,12 @@ public:
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector GetSymbolVector(int n) const { /*cout << "n� de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
+    tVector getSymbolVector(int n) const { /*cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
 
-	virtual void print() const;
-	void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
-	virtual void Ref(const ViterbiPath &path);
-	virtual void operator=(const ViterbiPath &path);
+    virtual void print() const;
+    void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
+    virtual void Ref(const ViterbiPath &path);
+    virtual void operator=(const ViterbiPath &path);
 };
 
 #endif

@@ -108,7 +108,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
         UpdateParticleChannelOrderEstimators(processedParticle,observations,channelOrderTrainingSequenceChannelMatrices,noiseVariances,preambleTrainingSequence);
 
         //... the symbols are considered detected...
-        processedParticle->SetSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
+        processedParticle->setSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
     }
 
     // the Process method must start in
@@ -119,7 +119,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()
 {
-    return (GetParticleFilterPointer()->GetBestParticle()->GetAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
+    return (GetParticleFilterPointer()->GetBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()

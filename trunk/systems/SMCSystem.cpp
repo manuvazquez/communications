@@ -26,7 +26,7 @@ SMCSystem::SMCSystem()
 {
     nParticles = 192;
 //     nParticles = 1000;
-//     nParticles = 10;    
+//     nParticles = 1;    
     resamplingRatio = 0.9;
 
     // back and forward smoothing

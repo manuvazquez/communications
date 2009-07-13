@@ -37,12 +37,12 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 	{
 		for(int iChannelOrder=0;iChannelOrder<bestParticle->nChannelMatrixEstimators();iChannelOrder++)
 		{
-			tMatrix symbolVectors = bestParticle->GetSymbolVectors(tRange(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed));
+			tMatrix symbolVectors = bestParticle->getSymbolVectors(tRange(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed));
 			bestParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
 		}
 	}
 
-	bestParticle->SetWeight(1.0);
+	bestParticle->setWeight(1.0);
 
 // 	// the available APP's just before the _startDetectionTime instant are copied into the particle
 // 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)

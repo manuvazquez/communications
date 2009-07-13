@@ -21,7 +21,7 @@
 #define PARTICLE_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -35,8 +35,8 @@
 
 class Particle{
 protected:
-	double _weight;
-	tMatrix _symbolVectors;
+    double _weight;
+    tMatrix _symbolVectors;
 public:
     Particle(double weight,int symbolVectorLength,int nTimeInstants);
     virtual ~Particle();
@@ -45,41 +45,41 @@ public:
      *
      * @return the number of time instants
      */
-	int Trajectorylength() const { return _symbolVectors.cols();}
+    int trajectorylength() const { return _symbolVectors.cols();}
 
-	double GetWeight() const { return _weight;}
-	void SetWeight(double weight) { _weight = weight;}
+    double getWeight() const { return _weight;}
+    void setWeight(double weight) { _weight = weight;}
 
-	tMatrix GetAllSymbolVectors() const { return _symbolVectors;}
-	tVector GetSymbolVector(int n) const { return _symbolVectors.col(n);}
-	void SetSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
-	void SetSymbolVector(int n,const std::vector<tSymbol> &v)
-	{
-		for(int i=0;i<_symbolVectors.rows();i++)
-			_symbolVectors(i,n) = v[i];
-	}
+    tMatrix getAllSymbolVectors() const { return _symbolVectors;}
+    tVector getSymbolVector(int n) const { return _symbolVectors.col(n);}
+    void setSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
+    void setSymbolVector(int n,const std::vector<tSymbol> &v)
+    {
+        for(int i=0;i<_symbolVectors.rows();i++)
+            _symbolVectors(i,n) = v[i];
+    }
 
-	tMatrix GetSymbolVectors(const tRange &range) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),range);}
-	tMatrix GetSymbolVectors(int a,int b) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
+    tMatrix getSymbolVectors(const tRange &range) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),range);}
+    tMatrix getSymbolVectors(int a,int b) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
 
-	void SetSymbolVectors(const tRange &range,const tMatrix &symbolVectors)
-	{
-		_symbolVectors(tRange(0,_symbolVectors.rows()-1),range).inject(symbolVectors);
-	}
+    void setSymbolVectors(const tRange &range,const tMatrix &symbolVectors)
+    {
+        _symbolVectors(tRange(0,_symbolVectors.rows()-1),range).inject(symbolVectors);
+    }
 
-	void SetSymbolVectors(int a,int b,const tMatrix &symbolVectors)
-	{
-		_symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b)).inject(symbolVectors);
-	}
+    void setSymbolVectors(int a,int b,const tMatrix &symbolVectors)
+    {
+        _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b)).inject(symbolVectors);
+    }
 
-	void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
+    void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 
-	virtual Particle *clone()
-	{
-		return new Particle(*this);
-	}
+    virtual Particle *clone()
+    {
+        return new Particle(*this);
+    }
 
-	void operator=(const Particle &particle);
+    void operator=(const Particle &particle);
 };
 
 #endif

@@ -51,7 +51,7 @@ BaseSystem::BaseSystem()
     nSmoothingSymbolsVectors = 10;
     
 //     nFrames = 1;
-//     L=7,N=3,frameLength=5;
+//     L=7,N=3,frameLength=10;
 //     m = 1;
 //     d = m - 1;
 //     trainSeqLength = 0;
@@ -66,7 +66,7 @@ BaseSystem::BaseSystem()
 
     // BER and MSE computing
     symbolsDetectionWindowStart = trainSeqLength;
-    symbolsDetectionWindowStart = frameLength*3/10;    
+//     symbolsDetectionWindowStart = frameLength*3/10;    
     MSEwindowStart = 0;
     MSEwindowStart = frameLength*9/10;
 
@@ -201,8 +201,8 @@ void BaseSystem::Simulate()
 
         // noise is generated according to the channel
 //         noise = new NullNoise(L,channel->length());
-//         noise = new ChannelDependentNoise(channel);
-        noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
+        noise = new ChannelDependentNoise(channel);
+//         noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;

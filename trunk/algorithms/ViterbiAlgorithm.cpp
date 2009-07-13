@@ -87,7 +87,7 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
     iBestState = BestState();
 
     // the first detected vector is copied into "_detectedSymbolVectors"
-    _detectedSymbolVectors->col(_preamble.cols()).inject(_exitStage[iBestState].GetSymbolVector(_preamble.cols()));
+    _detectedSymbolVectors->col(_preamble.cols()).inject(_exitStage[iBestState].getSymbolVector(_preamble.cols()));
 
     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
@@ -108,12 +108,12 @@ void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,in
 
         iBestState = BestState();
 
-        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState].GetSymbolVector(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1));
+        _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1).inject(_exitStage[iBestState].getSymbolVector(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1));
     }
 
     // last detected symbol vectors are processed
     for(iProcessedObservation=_iLastSymbolVectorToBeDetected+_d-firstSymbolVectorDetectedAt+_preamble.cols()+1;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
-        _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState].GetSymbolVector(iProcessedObservation));
+        _detectedSymbolVectors->col(iProcessedObservation).inject(_exitStage[iBestState].getSymbolVector(iProcessedObservation));
 }
 
 void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)
