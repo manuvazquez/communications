@@ -17,42 +17,35 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef CDMASYSTEM_H
-#define CDMASYSTEM_H
+#ifndef KNOWNFLATCHANNELOPTIMALALGORITHM_H
+#define KNOWNFLATCHANNELOPTIMALALGORITHM_H
 
-#include <SMCSystem.h>
-#include <FlatPowerProfile.h>
-#include <ARMultiuserCDMAchannel.h>
-#include <CDMAKalmanEstimator.h>
-#include <CDMAunknownActiveUsersSISopt.h>
-#include <CDMAKnownChannelChannelMatrixEstimator.h>
-#include <KnownFlatChannelOptimalAlgorithm.h>
-
+#include <KnownChannelAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
-*/
-class CDMASystem : public SMCSystem
-{
-protected:
-    tMatrix _spreadingCodes;
-    
-    // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
-    vector<vector<bool> > _usersActivity;
-    
-    double userPersistenceProb,newActiveUserProb,userPriorProb;
-    
-    CDMAKalmanEstimator *cdmaKalmanEstimator;
-    CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
-    
-    virtual void AddAlgorithms();
-    virtual void BeforeEndingAlgorithm(int iAlgorithm);
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void BuildChannel();    
-public:
-    CDMASystem();
+It implements the optimal algorithm to detect in a flat channel by means of a tree search.
 
-    ~CDMASystem();
+    @author Manu <manu@rustneversleeps>
+*/
+class KnownFlatChannelOptimalAlgorithm : public KnownChannelAlgorithm
+{
+private:
+    typedef struct{
+        double cost;
+        std::vector<int> children;
+        uint height,id;
+        tVector symbolsVector;
+    } tTreeNode;
+    
+    int iBestLeaf(const std::vector<tTreeNode> &nodes);
+protected:
+    int _preambleLength;
+    tMatrix _detectedSymbols;
+public:
+    KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength);
+
+    void Run(tMatrix observations, vector< double > noiseVariances);
+    tMatrix getDetectedSymbolVectors();
 
 };
 

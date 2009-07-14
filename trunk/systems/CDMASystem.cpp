@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-#define DEBUG
+// #define DEBUG
 
 CDMASystem::CDMASystem(): SMCSystem()
 {
@@ -74,6 +74,9 @@ void CDMASystem::AddAlgorithms()
 #ifdef DEBUG
     cout << "observations are" << endl << observations;
 #endif
+
+    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
+
 //     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
        
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame

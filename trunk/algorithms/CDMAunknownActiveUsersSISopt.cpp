@@ -27,8 +27,8 @@
     extern Noise *realNoise;
 #endif
 
-#define DEBUG
-#define DEBUG5
+// #define DEBUG
+// #define DEBUG5
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_userPersistenceProb(userPersistenceProb),_newActiveUserProb(newActiveUserProb),_userPriorProb(userPriorProb)
 {

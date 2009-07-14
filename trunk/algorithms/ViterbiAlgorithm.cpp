@@ -40,7 +40,6 @@ ViterbiAlgorithm::~ViterbiAlgorithm()
 
 void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 {
-//     Run(observations,noiseVariances,observations.cols());
     Run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
 }
 

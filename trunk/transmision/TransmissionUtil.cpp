@@ -45,7 +45,7 @@ void TransmissionUtil::BERComputingChecks(const Bits &bits1,int from1,int to1,co
         throw RuntimeException("BERComputingChecks: bits objects have different number of streams.");
 }
 
-double TransmissionUtil::ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
+double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
 {
     if(bits2.nBitsPerStream()==0 || bits2.nStreams()==0)
         return 0.0;
@@ -75,7 +75,10 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
     }
 
     if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint> (detectedSymbols.cols())!= mask[0].size())
+    {
+        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
+    }
         
 /*    if(permutations.size() != static_cast<uint> (sourceSymbols.rows()))
       throw RuntimeException("TransmissionUtil::computeSER: number of permutations and number of inputs don't match."); */       
@@ -257,7 +260,7 @@ tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChan
     return res;
 }
 
-tMatrix TransmissionUtil::GenerateTrainingSequence(const Alphabet &alphabet,int nInputs,int length)
+tMatrix TransmissionUtil::generateTrainingSequence(const Alphabet &alphabet,int nInputs,int length)
 {
     tMatrix res(nInputs,length);
 

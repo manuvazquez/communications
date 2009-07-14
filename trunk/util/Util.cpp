@@ -67,7 +67,7 @@ void Util::mult(const tVector &a,const tVector &b,tMatrix &C,double alpha)
 void Util::transpose(const tMatrix &A,tMatrix &B)
 {
     if(A.cols()!=B.rows())
-        throw RuntimeException("Util::Transpose: Matrix dimensions are wrong.");
+        throw RuntimeException("Util::transpose: Matrix dimensions are wrong.");
 
     int j;
     for(int i=0;i<A.rows();i++)
