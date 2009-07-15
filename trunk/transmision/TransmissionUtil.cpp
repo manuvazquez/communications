@@ -94,7 +94,6 @@ double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &
     // max number of errors
     int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
     
-    bool symbolsDiffer;
     uint nAccountedSymbols = 0;
     uint iInput;
 

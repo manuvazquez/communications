@@ -28,6 +28,17 @@ KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, 
 
 void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double > noiseVariances)
 {
+    // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
+    vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
+    
+    for(int i=0;i<_alphabet.length();i++)
+        extendedAlphabetSymbols[i] = _alphabet[i];
+    extendedAlphabetSymbols[_alphabet.length()] = 0.0;
+    
+    Alphabet extendedAlphabet(extendedAlphabetSymbols);
+    
+//     extendedAlphabet = _alphabet; // <--------------------------------------------------------------------------------------
+    
 #ifdef DEBUG2
     cout << "en KnownFlatChannelOptimalAlgorithm::Run" << endl;
     cout << "observations are" << endl << observations;
@@ -92,13 +103,13 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
         
         while(nodes[iCurrentNode].height<_nInputs)
         {
-            for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+            for(iAlphabet=0;iAlphabet<extendedAlphabet.length();iAlphabet++)
             {
                 // the parent node is replicated
                 tTreeNode child = nodes[iCurrentNode];
                 
                 child.height++;
-                child.symbolsVector(_nInputs-child.height) = _alphabet[iAlphabet];
+                child.symbolsVector(_nInputs-child.height) = extendedAlphabet[iAlphabet];
                 
                 UxS = 0.0;
             

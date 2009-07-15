@@ -33,8 +33,8 @@ public:
     StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory,int length);
 
 	int memory() const {return _memory;};
-	int Memory(int n) const {return _memory;}
-	int Effectivememory() const {return _memory;}
+	int memory(int n) const {return _memory;}
+	int effectiveMemory() const {return _memory;}
 	int nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};
 	int nInputsmemory() const {return _nInputsMemory;};
 };

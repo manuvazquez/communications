@@ -22,10 +22,3 @@
 WithActiveUsersParticleAddon::WithActiveUsersParticleAddon(int symbolVectorLength,int nTimeInstants):_activeUsers(nTimeInstants,std::vector<bool>(symbolVectorLength,false))
 {
 }
-
-
-WithActiveUsersParticleAddon::~WithActiveUsersParticleAddon()
-{
-}
-
-

@@ -31,7 +31,6 @@
 class Noise{
 protected:
 	int _nOutputs,_length;
-// 	tMatrix _matrix;
 public:
     Noise(int nOutputs,int length);
 	virtual ~Noise() {};

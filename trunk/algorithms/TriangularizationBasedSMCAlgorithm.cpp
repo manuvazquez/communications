@@ -20,7 +20,6 @@
 #include "TriangularizationBasedSMCAlgorithm.h"
 
 // #define DEBUG4
-// #define DEBUG2
 
 TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
 {
@@ -32,8 +31,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
     int iParticle,iSmoothing,iAlphabet,iSampled;
     double proposal,observationWithouNoise,sumProb,likelihoodsProd;
     vector<tMatrix> matricesToStack(_d+1,tMatrix(_nOutputs,_nInputsXchannelOrder));
-    tRange rAllObservationsRows(0,_nOutputs-1),rAllSymbolRows(0,_nInputs-1);
-    tRange rAllStackedObservationsRows(0,_nOutputs*(_d+1)-1);
+    tRange rAll;
     tRange rFirstmMinus1symbolVectors(0,_channelOrder-2),rFirstmSymbolVectors(0,_channelOrder-1);
     tMatrix stackedChannelMatrixSubstract;
     tMatrix stackedChannelMatrixMinus(_nOutputs*(_d+1),_nInputs*(_d+1)),stackedChannelMatrixMinusFlipped;
@@ -52,9 +50,6 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
-#ifdef DEBUG
-        cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
-#endif
         // already detected symbol vectors involved in the current detection
         tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
@@ -62,14 +57,14 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
         tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_d);
 
         // the stacked observations vector
-        tVector stackedObservations = Util::toVector(observations(rAllObservationsRows,rSmoothingRange),columnwise);
+        tVector stackedObservations = Util::toVector(observations(rAll,rSmoothingRange),columnwise);
 
         for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
         {
             ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (_particleFilter->GetParticle(iParticle));
 
             // the already detected symbol vectors are stored in "involvedSymbolVectors"
-            involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
+            involvedSymbolVectors(rAll,rFirstmMinus1symbolVectors).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
 
             // predicted channel matrices are stored in a vector in order to stack them
             // (first one is obtained via the Kalman Filter)
@@ -77,52 +72,28 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
 
             for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
             {
-#ifdef DEBUG2
-                cout << "iSmoothing = " << iSmoothing << endl;
-#endif
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
                 Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
-
-                // "stackedChannelMatrixSubstract" will be used to substract the contribution of the already detected symbol vectors from the observations
-//                 stackedChannelMatrixSubstract(tRange((iSmoothing-1)*_nOutputs,iSmoothing*_nOutputs-1),tRange(_nInputs*(iSmoothing-1),(_channelOrder-1)*_nInputs-1)).inject(matricesToStack[iSmoothing](rAllObservationsRows,tRange(0,(_channelOrder-iSmoothing)*_nInputs-1)));
             }
 
             // matrices are stacked to give
             tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
 
-            stackedChannelMatrixMinus = stackedChannelMatrix(rAllStackedObservationsRows,tRange((_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1));
+            stackedChannelMatrixMinus = stackedChannelMatrix(rAll,tRange((_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1));
 
-            stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors));
-
-#ifdef DEBUG4
-            cout << stackedObservationsMinus << endl;
-            cout << rAllSymbolRows << endl << rFirstmMinus1symbolVectors << endl;
-            cout << "con la funcion" << endl << SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAllSymbolRows,rFirstmMinus1symbolVectors)) << endl;
-#endif
+            stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAll,rFirstmMinus1symbolVectors));
 
             // we want to start sampling the present symbol vector, not the future ones
             stackedChannelMatrixMinusFlipped = Util::flipLR(stackedChannelMatrixMinus);
 
-#ifdef DEBUG2
-            cout << "stackedChannelMatrixMinusFlipped" << endl << stackedChannelMatrixMinusFlipped;
-#endif
-
             // stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped = stackedChannelMatrixMinusFlipped'*stackedChannelMatrixMinusFlipped
             Blas_Mat_Trans_Mat_Mult(stackedChannelMatrixMinusFlipped,stackedChannelMatrixMinusFlipped,stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped);
-
-#ifdef DEBUG2
-            cout << "Se calcula cholesky de" << endl << stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped;
-#endif
 
             // Cholesky decomposition is computed
             L = Util::cholesky(stackedChannelMatrixMinusFlippedTransposeStackedChannelMatrixMinusFlipped);
 
             // we also obtain the upper triangular matrix in U
             Util::transpose(L,U);
-
-#ifdef DEBUG2
-            cout << "la matriz de cholesky" << endl << L;
-#endif
 
             // invL = inverse(L)
             tMatrix invL = L;
@@ -149,11 +120,6 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             // transformedStackedObservationsCovariance = invLstackedChannelMatrixMinusTransObservationsCovariance * invLstackedChannelMatrixMinusTrans'
             Blas_Mat_Mat_Trans_Mult(invLstackedChannelMatrixMinusTransObservationsCovariance,invLstackedChannelMatrixMinusTrans,transformedStackedObservationsCovariance);
 
-#ifdef DEBUG2
-            cout << "transformedStackedObservationsCovariance" << endl << transformedStackedObservationsCovariance;
-            cout << "Una tecla..."; getchar();
-#endif
-
             // the evaluated proposal function (necessary for computing the weights) is initialized
             proposal = 1.0;
 
@@ -169,10 +135,6 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-#ifdef DEBUG2
-                    cout << "jU = " << jU << " iSampledSymbol = " << iSampledSymbol << endl;
-                    cout << "ehhh: " << observationWithouNoise+U(iSampledSymbol,jU)*_alphabet[iAlphabet] << endl;
-#endif
                     symbolProbabilities(iAlphabet) = StatUtil::NormalPdf(transformedStackedObservationsMinus(iSampledSymbol),observationWithouNoise+U(iSampledSymbol,jU)*_alphabet[iAlphabet],transformedStackedObservationsCovariance(iSampledSymbol,iSampledSymbol));
 
                     // for normalization purposes
@@ -189,10 +151,6 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
                         symbolProbabilities(iAlphabet) = 1.0/double(_alphabet.length());
                 }
 
-#ifdef DEBUG
-                cout << "Las probabilidades calculadas" << endl << symbolProbabilities;
-#endif
-
                 iSampled = StatUtil::discrete_rnd(symbolProbabilities);
                 involvedSymbolVectors(iWithinMatrix % _nInputs,iWithinMatrix / _nInputs) = _alphabet[iSampled];
                 proposal *= symbolProbabilities(iSampled);
@@ -200,10 +158,6 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             } // for(int iSampledSymbol=_nInputs*(_d+1)-1,iWithinMatrix=NmMinus1;iSampledSymbol>=0;iSampledSymbol--,iWithinMatrix++)
 
             processedParticle->setSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_channelOrder-1));
-
-#ifdef DEBUG
-            cout << "involvedSymbolVectors" << endl << involvedSymbolVectors;
-#endif
 
             likelihoodsProd = smoothedLikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
 
@@ -213,7 +167,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             // and the estimation of the channel matrix
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
-                                                    involvedSymbolVectors(rAllSymbolRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
+                                                    involvedSymbolVectors(rAll,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
         } // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 

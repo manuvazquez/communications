@@ -46,7 +46,7 @@ void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
     double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nOutputs;
     double stdDev,variance;
 
-    for(j=_channel->Effectivememory()-1;j<_length;j++)
+    for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
         tMatrix channelMatrix;
         channelMatrix = _channel->getTransmissionMatrix(j);

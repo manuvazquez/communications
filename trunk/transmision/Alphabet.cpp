@@ -39,21 +39,20 @@ void Alphabet::computeMeanAndVariance()
     _variance = squaredSymbolsMean - (_mean*_mean);
 }
 
-tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)
+tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada) const
 {
-    vector<vector<tBit> >::iterator iterator;
+    vector<vector<tBit> >::const_iterator iterator;
     iterator = find(_bitsSequences.begin(),_bitsSequences.end(),secuenciaBitsBuscada);
     if(iterator==_bitsSequences.end())
     {
 			throw RuntimeException("Alphabet::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
     }
-//     cout << "Esta en la posicion " << iterator - _bitsSequences.begin() << endl;
 	return _symbols[iterator - _bitsSequences.begin()];
 }
 
-vector<tBit> Alphabet::operator [ ](tSymbol simbolo)
+vector<tBit> Alphabet::operator [ ](tSymbol simbolo) const
 {
-	vector<tSymbol>::iterator iterator;
+	vector<tSymbol>::const_iterator iterator;
 	iterator = find(_symbols.begin(),_symbols.end(),simbolo);
 	if(iterator==_symbols.end())
 	{
@@ -84,21 +83,14 @@ void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const
 		res[tamVector-i] = _symbols[0];
 }
 
-int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector)
+int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const
 {
 	int size = symbolsVector.size();
 
-	#ifdef DEBUG
-		cout << "symbolsVector.size(): " << symbolsVector.size() << endl;
-	#endif
-
 	int res = 0, base = 1;
-	vector<tSymbol>::iterator iterator;
+	vector<tSymbol>::const_iterator iterator;
 	for(int i=size-1;i>=0;i--)
 	{
-		#ifdef DEBUG
-			cout << "Antes del for" << endl;
-		#endif
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
 		{
@@ -110,7 +102,7 @@ int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector)
 	return res;
 }
 
-tSymbol Alphabet::hardDecision(double softEstimation)
+tSymbol Alphabet::hardDecision(double softEstimation) const
 {
 	double distance;
 

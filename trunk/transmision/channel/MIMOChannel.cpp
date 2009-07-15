@@ -44,7 +44,7 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
         throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
 
     // the number of resulting observations depends on the channel _memory
-    int nObservations = symbols.cols() - (Effectivememory() - 1);
+    int nObservations = symbols.cols() - (effectiveMemory() - 1);
 
     if(nObservations<1)
         throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
@@ -56,7 +56,7 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
 
     tRange allChannelMatrixRows(0,_nOutputs-1);
 
-    for(int iSymbolVector=Effectivememory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
+    for(int iSymbolVector=effectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
 //         tMatrix currentChannelMatrix = (*this)[iSymbolVector];
@@ -67,11 +67,11 @@ tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
         // (_memory >= 1). Besides, it will always accumulate the noise.
         currentObservationVector = noise[iSymbolVector];
 
-        for(j=0;j<Memory(iSymbolVector);j++)
+        for(j=0;j<memory(iSymbolVector);j++)
         {
             // currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*_nInputs,(j+1)*_nInputs-1)))*symbols.col(iSymbolVector-_memory+1+j)
             tRange rowsRange(j*_nInputs,(j+1)*_nInputs-1);
-            Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-Memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
+            Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
         }
 
 #ifdef DEBUG

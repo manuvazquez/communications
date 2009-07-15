@@ -51,7 +51,7 @@ BaseSystem::BaseSystem()
 //     nSmoothingSymbolsVectors = 10;
     
     nFrames = 100;
-    L=7,N=3,frameLength=10;
+    L=7,N=3,frameLength=300;
     m = 1;
     d = m - 1;
     trainSeqLength = 0;
@@ -60,9 +60,9 @@ BaseSystem::BaseSystem()
     // the algorithms with the higher smoothing lag require
     nSmoothingSymbolsVectors = 6;
 
-//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(15);
-    SNRs.push_back(9);    
+//     SNRs.push_back(9);    
 
     // BER and MSE computing
     symbolsDetectionWindowStart = trainSeqLength;
@@ -293,7 +293,7 @@ void BaseSystem::OnlyOnce()
 
     // we fill the vector with the names of the algorithms
     for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
-        algorithmsNames.push_back(algorithms[iAlgorithm]->GetName());
+        algorithmsNames.push_back(algorithms[iAlgorithm]->getName());
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
@@ -368,7 +368,7 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
 
-    cout << algorithms[iAlgorithm]->GetName() << ": Pe = " << pe << " , MSE = " << mse << endl;
+    cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
 
     // the error probability is accumulated
     overallPeMatrix(iSNR,iAlgorithm) += pe;

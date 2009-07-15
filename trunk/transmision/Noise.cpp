@@ -22,7 +22,6 @@
 using namespace std;
 
 Noise::Noise(int nOutputs,int length): _nOutputs(nOutputs),_length(length)
-// ,_matrix(StatUtil::RandnMatrix(_nOutputs,_length,0.0,1.0))
 {
 }
 

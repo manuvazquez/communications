@@ -41,10 +41,10 @@ public:
     int nOutputs() const { return _nOutputs;};
     int length() const {return _length;};
     int nInputsnOutputs() const {return _nInputsnOutputs;};
-    int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*Memory(n);};
-    int nInputsMemory(int n) const {return _nInputs*Memory(n);};
-    virtual int Memory(int n) const = 0;
-    virtual int Effectivememory() const = 0;
+    int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
+    int nInputsMemory(int n) const {return _nInputs*memory(n);};
+    virtual int memory(int n) const = 0;
+    virtual int effectiveMemory() const = 0;
     virtual tMatrix operator[](int n) const = 0;
     virtual tMatrix getTransmissionMatrix(const int n) const { return operator[](n);}
     tMatrix transmit(tMatrix &symbols,Noise &noise);

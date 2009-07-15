@@ -31,15 +31,7 @@
 // #define DEBUG5
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_userPersistenceProb(userPersistenceProb),_newActiveUserProb(newActiveUserProb),_userPriorProb(userPriorProb)
-{
-//     vector<double> userActiveGivenItWasPdf(2);
-//     userActiveGivenItWasPdf[0] = 1.0 - userPersistenceProb;
-//     userActiveGivenItWasPdf[1] = userPersistenceProb;    
-//     
-//     vector<double> userActiveGivenItWasNotPdf(2);
-//     userActiveGivenItWasNotPdf[0] = 1.0 - newActiveUserProb;
-//     userActiveGivenItWasNotPdf[1] = newActiveUserProb;
-    
+{    
     _randomParticlesInitilization = true;    
 }
 
@@ -72,25 +64,21 @@ void CDMAunknownActiveUsersSISopt::InitializeParticles()
 
 void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< double > noiseVariances)
 {    
-    vector<tSymbol> alphabetSymbolsPlusZero(_alphabet.length()+1);
-    int i;
-    for(i=0;i<_alphabet.length();i++)
-        alphabetSymbolsPlusZero[i] = _alphabet[i];
-    alphabetSymbolsPlusZero[i] = tSymbol(0.0);
+    // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
+    vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
     
-    // a new alphabet extended with 0 (that meaning, no symbols is transmitted)
-    vector<tSymbol> extendedAlphabetSymbols(3);
-    extendedAlphabetSymbols[0] = -1; extendedAlphabetSymbols[1] = 1; extendedAlphabetSymbols[2] = 0;
+    for(int i=0;i<_alphabet.length();i++)
+        extendedAlphabetSymbols[i] = _alphabet[i];
+    extendedAlphabetSymbols[_alphabet.length()] = 0.0;
+    
     Alphabet extendedAlphabet(extendedAlphabetSymbols);
         
-    extendedAlphabet = Alphabet(_alphabet);
+//     extendedAlphabet = Alphabet(_alphabet); // <-----------------------------------------------------------
     
     uint nCombinations = (int) pow((double)(extendedAlphabet.length()),(double)_nInputs);
     
     vector<tSymbol> combination(_nInputs,_alphabet[0]);
 
-    vector<vector<tSymbol> > alphabetsVector(_nInputs,alphabetSymbolsPlusZero);
-        
     int k,iParticle,iSampledVector;
     vector<tSymbol> sampledVector(_nInputs);
 
@@ -145,7 +133,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
                 // the probability of these users being active and this particular symbol vector being transmitted is computed...
                 // ...either taking into account the users previous state in case this exists
                 if(iObservationToBeProcessed!=_startDetectionTime)
-                    likelihoods[iTestedCombination] *=probSymbolsVectorXprobActiveUsers(symbolsVector,processedParticle->getActivityAtTime(iObservationToBeProcessed));
+                    likelihoods[iTestedCombination] *=probSymbolsVectorXprobActiveUsers(symbolsVector,processedParticle->getActivityAtTime(iObservationToBeProcessed-1));
                 // ...or not doing so when it's the first time instant
                 else
                     likelihoods[iTestedCombination] *=probSymbolsVectorXprobActiveUsers(symbolsVector);
@@ -180,6 +168,8 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
 
             // one sample from the discrete distribution is taken
             iSampledVector = StatUtil::discrete_rnd(probabilities);
+            
+//             iSampledVector = Util::max(probabilities); // <---------------------------------------------------------------------------------
 
             // the above index is turned into a vector
             extendedAlphabet.int2symbolsArray(iSampledVector,sampledVector);

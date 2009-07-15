@@ -46,7 +46,7 @@ public:
 
 	virtual vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));}
-    bool PerformsChannelOrderAPPEstimation() const { return true;}
+    bool performsChannelOrderAPPestimation() const { return true;}
 };
 
 #endif

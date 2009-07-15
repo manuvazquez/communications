@@ -36,19 +36,19 @@
 
 class Algorithm{
 protected:
-    string _name;
-    Alphabet _alphabet;
-    int _nOutputs; /// number of outputs (observations) of the system at each time instant
-    int _Nr; /// number of receiving antennas of the system
-    int _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
-    int _iLastSymbolVectorToBeDetected;
+    const string _name;
+    const Alphabet _alphabet;
+    const int _nOutputs; /// number of outputs (observations) of the system at each time instant
+    const int _Nr; /// number of receiving antennas of the system
+    const int _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
+    const int _iLastSymbolVectorToBeDetected;
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
     virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
     virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
-    string GetName() {return _name;}
+    string getName() const {return _name;}
 
     /**
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
@@ -62,7 +62,7 @@ public:
      */
     virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
 
-    virtual bool PerformsChannelOrderAPPEstimation() const { return false;}
+    virtual bool performsChannelOrderAPPestimation() const { return false;}
 
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
