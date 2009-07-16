@@ -191,7 +191,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
 		} // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
 
-		_particleFilter->NormalizeWeights();
+		_particleFilter->normalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))

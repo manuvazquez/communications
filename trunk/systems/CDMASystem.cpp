@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
-// #define DEBUG
+#define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
 {
@@ -30,7 +30,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     _spreadingCodes = StatUtil::RandnMatrix(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
     
-#ifdef DEBUG
+#ifdef PRINT_INFO
     cout << "generated spreadingCodes..." << endl << _spreadingCodes;
 #endif
     
@@ -39,6 +39,11 @@ CDMASystem::CDMASystem(): SMCSystem()
     ARcoefficients[0] = 0.59999;
     ARcoefficients[1] = 0.39999;
     ARvariance=0.0001;    
+    
+//     // AR process parameters
+//     ARcoefficients = vector<double>(1);
+//     ARcoefficients[0] = 0.99999;
+//     ARvariance=0.0001;
     
     // a flat power profile is generated. Notice:
     //      i) that m should be 1, otherwise an exception would have been thrown
@@ -53,9 +58,9 @@ CDMASystem::CDMASystem(): SMCSystem()
     newActiveUserProb = 0.2;
     userPriorProb = 1.0;
         
-/*    userPersistenceProb = 1.0;
+    userPersistenceProb = 1.0;
     newActiveUserProb = 0.2;
-    userPriorProb = 1.0;      */      
+    userPriorProb = 1.0;
     
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;
@@ -75,15 +80,15 @@ void CDMASystem::AddAlgorithms()
     cout << "observations are" << endl << observations;
 #endif
 
-    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
-
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
-       
-    // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
-    delete cdmaKnownChannelChannelMatrixEstimator;
-    cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
- 
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
+//     algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
+//        
+//     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
+//     delete cdmaKnownChannelChannelMatrixEstimator;
+//     cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
+//  
+//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
+    
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));    
 }
 
 void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)

@@ -92,7 +92,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 		mPrecedentColumns = mPrecedentColumns + 1;
 		mMinus1PrecedentColumns = mMinus1PrecedentColumns + 1;
 
-		_particleFilter->NormalizeWeights();
+		_particleFilter->normalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))

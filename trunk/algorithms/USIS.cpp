@@ -312,7 +312,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 		} // for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
 
-		_particleFilter.NormalizeWeights();
+		_particleFilter.normalizeWeights();
 
 		// we find out which is the "best" particle at this time instant
 		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetBestParticle());

@@ -1,28 +1,31 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="7" >
+ <DocsAndViews NumberOfDocuments="8" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="65" Type="Source" />
+   <View0 Encoding="" line="69" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="62" Type="Source" />
+   <View0 Encoding="" line="52" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
-   <View0 Encoding="" line="85" Type="Source" />
+   <View0 Encoding="" line="32" Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/SMCSystem.cpp" >
-   <View0 Encoding="" line="28" Type="Source" />
+   <View0 Encoding="" line="27" Type="Source" />
   </Doc3>
   <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-   <View0 Encoding="" line="128" Type="Source" />
+   <View0 Encoding="" line="45" Type="Source" />
   </Doc4>
   <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="11" Type="Source" />
+   <View0 Encoding="" line="7" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp" >
-   <View0 Encoding="" line="39" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/filters/KalmanFilter.cpp" >
+   <View0 Encoding="" line="31" Type="Source" />
   </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/filters/KalmanFilter.h" >
+   <View0 Encoding="" line="51" Type="Source" />
+  </Doc7>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -65,7 +68,6 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp" >
      <mark line="21" />
-     <mark line="163" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
      <mark line="108" />
@@ -132,11 +134,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-     <mark line="171" />
-     <mark line="75" />
-     <mark line="132" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
      <mark line="88" />
      <mark line="21" />
@@ -160,6 +157,9 @@
      <mark line="60" />
      <mark line="134" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+     <mark line="30" />
+    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="188" />
      <mark line="38" />
@@ -168,24 +168,24 @@
      <mark line="69" />
      <mark line="65" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="204" />
-     <mark line="136" />
-     <mark line="347" />
-     <mark line="246" />
-     <mark line="29" />
-     <mark line="67" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
-     <mark line="102" />
-     <mark line="192" />
-     <mark line="159" />
+     <mark line="110" />
+     <mark line="200" />
+     <mark line="167" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/filters/KalmanFilter.cpp" >
      <mark line="43" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
+     <mark line="69" />
+     <mark line="206" />
+     <mark line="138" />
+     <mark line="349" />
+     <mark line="248" />
+     <mark line="29" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

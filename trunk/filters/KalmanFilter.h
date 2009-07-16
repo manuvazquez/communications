@@ -21,7 +21,7 @@
 #define KALMANFILTER_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -35,20 +35,21 @@
 
 class KalmanFilter{
 private:
-	tMatrix _R,_stateEquationCovariance;
-	int _nElementsToEstimate;
-	tVector _predictiveMean,_filteredMean;
-	tMatrix _predictiveCovariance,_filteredCovariance;
+    tMatrix _R,_stateEquationCovariance;
+    int _nElementsToEstimate;
+    tVector _predictiveMean,_filteredMean;
+    tMatrix _predictiveCovariance,_filteredCovariance;
 
 public:
     KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance);
 
-	void Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
-	tVector PredictiveMean() { return _predictiveMean;}
-	tVector FilteredMean() {return _filteredMean;}
-	tMatrix PredictiveCovariance() {return _predictiveCovariance;}
-	tMatrix FilteredCovariance() {return _filteredCovariance;}
-	void SetFilteredMean(const tVector &filteredMean);
+    void step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
+    tVector predictiveMean() const { return _predictiveMean;}
+    tVector filteredMean() const {return _filteredMean;}
+    tMatrix predictiveCovariance() const {return _predictiveCovariance;}
+    tMatrix filteredCovariance() const {return _filteredCovariance;}
+    void setFilteredMean(const tVector &filteredMean);
+    void setFilteredCovariance(const tMatrix &filteredCovariance);
 };
 
 #endif

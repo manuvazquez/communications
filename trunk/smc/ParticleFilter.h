@@ -21,7 +21,7 @@
 #define PARTICLEFILTER_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 // #define DEBUG_PF
@@ -39,22 +39,22 @@ public:
     ParticleFilter(int nParticles);
     virtual ~ParticleFilter();
 
-	void clear();
+    void clear();
 
-	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
-	virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
-	/**
-	 *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
-	 * @param resamplingIndexes
-	 */
-	virtual void keepParticles(std::vector<int> resamplingIndexes);
+    ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}
+    virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+    /**
+     *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
+     * @param resamplingIndexes
+     */
+    virtual void keepParticles(std::vector<int> resamplingIndexes);
 
-	virtual void AddParticle(ParticleWithChannelEstimation *particle)
-	{
-		_particles[_nParticles++] = particle;
-	}
+    virtual void AddParticle(ParticleWithChannelEstimation *particle)
+    {
+        _particles[_nParticles++] = particle;
+    }
 
-    tVector GetWeightsVector()
+    tVector getWeightsVector() const
     {
         tVector weights(_nParticles);
         for(uint i=0;i<_nParticles;i++)
@@ -62,7 +62,7 @@ public:
         return weights;
     }
 
-    void NormalizeWeights()
+    void normalizeWeights()
     {
         double sum = 0.0;
         uint i;
@@ -74,7 +74,7 @@ public:
             _particles[i]->setWeight(_particles[i]->getWeight()/sum);
     }
 
-    void NormalizeWeights(std::vector<int> indexes)
+    void normalizeWeights(std::vector<int> indexes)
     {
         double sum = 0.0;
         uint i,nParticles=indexes.size();
@@ -86,10 +86,11 @@ public:
             _particles[indexes[i]]->setWeight(_particles[indexes[i]]->getWeight()/sum);
     }
 
-	int Capacity() { return _capacity;}
-	int Nparticles() { return _nParticles;}
-	ParticleWithChannelEstimation *GetBestParticle() { return _particles[iBestParticle()]; }
-	int iBestParticle();
+    int Capacity() { return _capacity;}
+    int Nparticles() { return _nParticles;}
+    ParticleWithChannelEstimation *GetBestParticle() { return _particles[iBestParticle()]; }
+    int iBestParticle();
+    void printWeights() const;
 };
 
 #endif

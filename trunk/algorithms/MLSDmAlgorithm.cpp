@@ -212,7 +212,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
 
         } // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
-        _particleFilter->NormalizeWeights();
+        _particleFilter->normalizeWeights();
 
         processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->GetBestParticle());
 

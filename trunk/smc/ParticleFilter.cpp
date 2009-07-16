@@ -126,7 +126,7 @@ void ParticleFilter::keepParticles(vector<int> indexes)
 int ParticleFilter::iBestParticle()
 {
 //  int iBestParticle;
-//  Util::max(GetWeightsVector(),iBestParticle);
+//  Util::max(getWeightsVector(),iBestParticle);
 //  return iBestParticle;
 
     vector<bool> particleAlreadyCounted(_nParticles,false);
@@ -154,4 +154,13 @@ int ParticleFilter::iBestParticle()
     int iBestParticle = Util::max(accumulatedWeights);
 
     return iBestParticle;
+}
+
+void ParticleFilter::printWeights() const
+{
+    tVector weights = getWeightsVector();
+    
+    for(uint i=0;i<_nParticles;i++)
+        cout << i << "\t" << weights(i) << endl;
+        
 }

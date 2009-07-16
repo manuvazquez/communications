@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KalmanEstimator.h"
 
-// #define DEBUG
+// #define PRINT_INFO
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size()),_rChannelCoefficients(_nExtStateVectorCoeffs-_nChannelCoeffs,_nExtStateVectorCoeffs-1)
 {
@@ -75,6 +75,14 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix 
 //     getchar();
 #endif
 
+#ifdef PRINT_INFO
+    cout << "KalmanEstimator::KalmanEstimator: constructed a Kalman Filter with parameters:" << endl;
+    cout << "state transition matrix:" << endl << stateTransitionMatrix;
+    cout << "state equation covariance:" << endl << stateEquationCovariance;
+    cout << "initial mean" << endl << initialMeanVector;
+    cout << "initial covariance" << endl << initialCovariance;
+#endif
+
 //     _kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
     _kalmanFilter = new KalmanFilter(stateTransitionMatrix,stateEquationCovariance,initialMeanVector,initialCovariance);    
 }
@@ -111,12 +119,12 @@ tMatrix KalmanEstimator::nextMatrix(const tVector &observations,const tMatrix &s
 //     getchar();
 #endif
     
-//     _kalmanFilter->Step(BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise)),observations,observationEquationCovariance);
-    _kalmanFilter->Step(extStateMeasurementMatrix,observations,observationEquationCovariance);
+//     _kalmanFilter->step(BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise)),observations,observationEquationCovariance);
+    _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
-    _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->FilteredMean()(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
-//     _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->FilteredMean(),rowwise,_nOutputs);    
+    _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->filteredMean()(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
+//     _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->filteredMean(),rowwise,_nOutputs);    
 
     return  _lastEstimatedChannelMatrix;
 }
@@ -144,15 +152,15 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     // pivots vector needed for factorizations
     tLongIntVector piv(_nExtStateVectorCoeffs);
 
-    tMatrix invPredictiveCovariance = _kalmanFilter->PredictiveCovariance();
+    tMatrix invPredictiveCovariance = _kalmanFilter->predictiveCovariance();
     LUFactorizeIP(invPredictiveCovariance,piv);
     
-    // detPredictiveCovariance = det(_kalmanFilter->PredictiveCovariance())
+    // detPredictiveCovariance = det(_kalmanFilter->predictiveCovariance())
     double detPredictiveCovariance = 1.0;
     for(int i=0;i<_nExtStateVectorCoeffs;i++)
         detPredictiveCovariance *= invPredictiveCovariance(i,i);
 
-    // invPredictiveCovariance = inv(_kalmanFilter->PredictiveCovariance())
+    // invPredictiveCovariance = inv(_kalmanFilter->predictiveCovariance())
     LaLUInverseIP(invPredictiveCovariance,piv);
 
     tMatrix F = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
@@ -173,8 +181,8 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
 
     tVector invPredictiveCovariancePredictiveMean(_nExtStateVectorCoeffs);
 
-    // invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->PredictiveMean()
-    Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->PredictiveMean(),invPredictiveCovariancePredictiveMean);
+    // invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->predictiveMean()
+    Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
 
     tVector auxAuxArgExp = invPredictiveCovariancePredictiveMean;
     // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) F' * observations
@@ -195,8 +203,8 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     // _observationsNoiseCovarianceObservations = observationsNoiseCovariance . observations
     double observationsNoiseCovarianceObservations = Blas_Dot_Prod(observationsNoiseCovariance,observations);
 
-    // predictiveMeanInvPredictiveCovariancePredictiveMean = _kalmanFilter->PredictiveMean() . invPredictiveCovariancePredictiveMean
-    double predictiveMeanInvPredictiveCovariancePredictiveMean = Blas_Dot_Prod(_kalmanFilter->PredictiveMean(),invPredictiveCovariancePredictiveMean);
+    // predictiveMeanInvPredictiveCovariancePredictiveMean = _kalmanFilter->predictiveMean() . invPredictiveCovariancePredictiveMean
+    double predictiveMeanInvPredictiveCovariancePredictiveMean = Blas_Dot_Prod(_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
 
     double argExp = -0.5*(observationsNoiseCovarianceObservations + predictiveMeanInvPredictiveCovariancePredictiveMean - auxArgExp);
 
@@ -217,8 +225,8 @@ KalmanEstimator *KalmanEstimator::clone() const
 
 tMatrix KalmanEstimator::sampleFromPredictive()
 {
-    tVector predictiveMean = _kalmanFilter->PredictiveMean();
-    tMatrix predictiveCovariance = _kalmanFilter->PredictiveCovariance();
+    tVector predictiveMean = _kalmanFilter->predictiveMean();
+    tMatrix predictiveCovariance = _kalmanFilter->predictiveCovariance();
 
 //     return Util::toMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_nChannelMatrixRows);
     return Util::toMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance)(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
@@ -244,6 +252,6 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)
     getchar();
 #endif        
 
-//     _kalmanFilter->SetFilteredMean(Util::toVector(matrix,columnwise));
-    _kalmanFilter->SetFilteredMean(extState);
+//     _kalmanFilter->setFilteredMean(Util::toVector(matrix,columnwise));
+    _kalmanFilter->setFilteredMean(extState);
 }

@@ -147,7 +147,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			processedParticle->setWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
 		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
 
-		_particleFilter->NormalizeWeights();
+		_particleFilter->normalizeWeights();
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 
 	delete[] particleCandidates;

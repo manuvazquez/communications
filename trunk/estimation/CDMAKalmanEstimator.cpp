@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "CDMAKalmanEstimator.h"
 
+#define PRINT_INFO
+
 CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
 {
     if(spreadingCodes.cols()!=_nInputs)
@@ -47,6 +49,10 @@ tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVecto
     for(int i=0;i<_nOutputs;i++)
         for(int j=0;j<_nInputs;j++)
             CS(i,_nExtStateVectorCoeffs-_nChannelCoeffs+j) = _spreadingCodes(i,j)*symbolsVector(j);
+            
+#ifdef PRINT_INFO
+    cout << "CDMAKalmanEstimator::BuildFfromSymbolsMatrix: measurement matrix passed to the Kalman Filter" << endl << CS;
+#endif            
             
     return CS;
 }

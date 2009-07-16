@@ -210,7 +210,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 		} // for(iParticle=0;iParticle<_nParticles;iParticle++)
 
-		_particleFilter.NormalizeWeights();
+		_particleFilter.normalizeWeights();
 
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))

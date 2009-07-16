@@ -24,7 +24,7 @@
 
 bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
 {
-    tVector weigths = particleFilter->GetWeightsVector();
+    tVector weigths = particleFilter->getWeightsVector();
 
     if(_resamplingCriterion.resamplingNeeded(weigths))
     {
@@ -39,6 +39,8 @@ bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
         cout << "occurrences (" << occurrences.size() << ")\t / times" << endl;
         for(uint i=0;i<occurrences.size();i++)
             cout << occurrences[i] << "\t" << times[i] << endl;
+        cout << "stroke to continue..." << endl;
+        getchar();
 #endif
         return true;
     }
