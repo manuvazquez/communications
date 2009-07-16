@@ -27,9 +27,9 @@
     extern Noise *realNoise;
 #endif
 
-#define DEBUG_MSE_THRESHOLD 0.5
-#define DEBUG
-#define DEBUG_CHANNEL_SAMPLES
+// #define DEBUG_MSE_THRESHOLD 0.5
+// #define DEBUG
+// #define DEBUG_CHANNEL_SAMPLES
 
 // #define DEBUG5
 
@@ -76,7 +76,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
     
     Alphabet extendedAlphabet(extendedAlphabetSymbols);
         
-    extendedAlphabet = _alphabet; // <-----------------------------------------------------------
+//     extendedAlphabet = _alphabet; // <-----------------------------------------------------------
     
     uint nCombinations = (int) pow((double)(extendedAlphabet.length()),(double)_nInputs);
     
@@ -118,7 +118,6 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
             cout << "last estimated channel matrix " << channelMatrixEstimation;
             double normalizedMSE = Util::normalizedSquareError(channelMatrixEstimation,(*realChannel)[iObservationToBeProcessed]);
             cout << "normalized MSE = " << normalizedMSE << endl;
-            cout << "updated channel matrix" << endl << processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
             if(normalizedMSE < DEBUG_MSE_THRESHOLD)
                 getchar();            
 #endif
@@ -192,8 +191,9 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
                         
 #ifdef DEBUG
             cout << "sampled symbol vector by particle " << iParticle << " ";
-            Util::print(sampledVector);
+            Util::print(sampledVector);            
             cout << endl;
+            cout << "updated channel matrix" << endl << processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
             if(normalizedMSE < DEBUG_MSE_THRESHOLD)
                 getchar();             
 #endif                             

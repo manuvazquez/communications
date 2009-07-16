@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMAKalmanEstimator.h"
 
-#define PRINT_INFO
+// #define PRINT_INFO
 
 CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
 {
@@ -44,14 +44,20 @@ tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVecto
     if(symbolsVector.size()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::BuildFfromSymbolsMatrix: symbols vector length is wrong.");
 
-    tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
+//     tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
+//     
+//     for(int i=0;i<_nOutputs;i++)
+//         for(int j=0;j<_nInputs;j++)
+//             CS(i,_nExtStateVectorCoeffs-_nChannelCoeffs+j) = _spreadingCodes(i,j)*symbolsVector(j);
+            
+    tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nInputs);
     
     for(int i=0;i<_nOutputs;i++)
         for(int j=0;j<_nInputs;j++)
-            CS(i,_nExtStateVectorCoeffs-_nChannelCoeffs+j) = _spreadingCodes(i,j)*symbolsVector(j);
+            CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);            
             
 #ifdef PRINT_INFO
-    cout << "CDMAKalmanEstimator::BuildFfromSymbolsMatrix: measurement matrix passed to the Kalman Filter" << endl << CS;
+    cout << "CDMAKalmanEstimator::BuildFfromSymbolsMatrix: measurement matrix built" << endl << CS;
 #endif            
             
     return CS;

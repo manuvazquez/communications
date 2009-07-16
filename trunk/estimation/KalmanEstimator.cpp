@@ -106,6 +106,10 @@ tMatrix KalmanEstimator::nextMatrix(const tVector &observations,const tMatrix &s
     
     tMatrix observationMatrix = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
     
+#ifdef PRINT_INFO
+    cout << "KalmanEstimator::nextMatrix: observationMatrix:" << endl << observationMatrix;
+#endif
+    
     // extStateMeasurementMatrix is a matrix of zeros whose right side is "observationMatrix". It is meant to take into account when there is more
     // than one AR coefficient
     tMatrix extStateMeasurementMatrix = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
@@ -165,14 +169,21 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
 
     tMatrix F = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
     
-#ifdef DEBUG
+    tMatrix extStateMeasurementMatrix = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=_nExtStateVectorCoeffs-_nChannelCoeffs;j<_nExtStateVectorCoeffs;j++)
+                extStateMeasurementMatrix(i,j) = F(i,j-(_nExtStateVectorCoeffs-_nChannelCoeffs));    
+    
+#ifdef PRINT_INFO2
     cout << "F is " << F.rows() << " x " << F.cols() << endl << F;
     cout << "invPredictiveCovariance is " << invPredictiveCovariance.rows() << " x " << invPredictiveCovariance.cols() << endl << invPredictiveCovariance;
 #endif    
 
     tMatrix B = invPredictiveCovariance;
-    // B = invPredictiveCovariance + (1.0/noiseVariance) F' * F
-    Blas_Mat_Trans_Mat_Mult(F,F,B,1.0/noiseVariance,1.0);
+//     // B = invPredictiveCovariance + (1.0/noiseVariance) F' * F
+//     Blas_Mat_Trans_Mat_Mult(F,F,B,1.0/noiseVariance,1.0);
+    // B = invPredictiveCovariance + (1.0/noiseVariance) extStateMeasurementMatrix' * extStateMeasurementMatrix
+    Blas_Mat_Trans_Mat_Mult(extStateMeasurementMatrix,extStateMeasurementMatrix,B,1.0/noiseVariance,1.0);    
 
 
     // B = inv(B) <------------------------------------------------------------------------
@@ -185,8 +196,10 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
 
     tVector auxAuxArgExp = invPredictiveCovariancePredictiveMean;
-    // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) F' * observations
-    Blas_Mat_Trans_Vec_Mult(F,observations,auxAuxArgExp,1.0/noiseVariance,1.0);
+//     // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) F' * observations
+//     Blas_Mat_Trans_Vec_Mult(F,observations,auxAuxArgExp,1.0/noiseVariance,1.0);
+    // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) extStateMeasurementMatrix' * observations
+    Blas_Mat_Trans_Vec_Mult(extStateMeasurementMatrix,observations,auxAuxArgExp,1.0/noiseVariance,1.0);    
 
     tVector auxAuxArgExpInvB(_nExtStateVectorCoeffs);
 
