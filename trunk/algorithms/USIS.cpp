@@ -181,9 +181,9 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols
-					tVector softEstimations = linearDetectorBeingProccessed->Detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations));
+					tVector softEstimations = linearDetectorBeingProccessed->detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations));
 
-					tMatrix filter = linearDetectorBeingProccessed->ComputedFilter();
+					tMatrix filter = linearDetectorBeingProccessed->computedFilter();
 
 					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
 					if(iLinearFilterNeeded==0)
@@ -359,19 +359,19 @@ void USIS::BeforeInitializingParticles(const tMatrix &observations,vector<double
 //             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
 //
 //             tVector stackedObservationsVector = Util::toVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-//             _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
+//             _linearDetectors[iChannelOrder]->stateStep(stackedObservationsVector);
 //         }
 //
 //     }
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _linearDetectors[iChannelOrder]->StateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
+        _linearDetectors[iChannelOrder]->stateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 //     {
 //         // the observations from i to i+d are stacked
 //         tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
 //
 //         tVector stackedObservationsVector = Util::toVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-//         _linearDetectors[iChannelOrder]->StateStep(stackedObservationsVector);
+//         _linearDetectors[iChannelOrder]->stateStep(stackedObservationsVector);
 //     }
 
     // the APP of the candidate channel orders are set accordingly

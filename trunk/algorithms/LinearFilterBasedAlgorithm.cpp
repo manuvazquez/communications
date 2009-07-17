@@ -57,7 +57,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
     vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
 
-    _linearDetector->StateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
+    _linearDetector->stateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
 
 	for(int j=_preamble.cols();j<startDetectionTime;j++)
 	{
@@ -67,7 +67,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
     if(_substractContributionFromKnownSymbols)
     {
-        if(_linearDetector->ChannelMatrixcols() != _nInputs*(_d+1))
+        if(_linearDetector->channelMatrixcols() != _nInputs*(_d+1))
             throw RuntimeException("LinearFilterBasedAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
     }
 
@@ -110,7 +110,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 
         if(_substractContributionFromKnownSymbols)
         {
-            softEstimations =  _linearDetector->Detect(
+            softEstimations =  _linearDetector->detect(
                 // the last range chooses all the already detected symbol vectors
                 SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,tRange(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1))),
                 // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
@@ -118,7 +118,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
                 stackedNoiseCovariance);
         } else
         {
-            softEstimations =  _linearDetector->Detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+            softEstimations =  _linearDetector->detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
         }
 
 		for(iRow=0;iRow<_nInputs;iRow++)

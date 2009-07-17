@@ -56,12 +56,12 @@ protected:
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
 
-    tVector Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);
+    tVector detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);
     RMMSEDetector *clone();
-    void StateStep(tVector observations);
+    void stateStep(tVector observations);
 
     double nthSymbolVariance(int n);
-    tMatrix ComputedFilter() { return _filter;}
+    tMatrix computedFilter() { return _filter;}
 
 };
 

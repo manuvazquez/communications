@@ -33,7 +33,7 @@ LinearDetector* DecorrelatorDetector::clone()
 	return new DecorrelatorDetector(*this);
 }
 
-tVector DecorrelatorDetector::Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)
+tVector DecorrelatorDetector::detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)
 {
 // 	std::cout << "hola" << std::endl;
 	tMatrix channelMatrixChannelMatrixTrans(_channelMatrixCols,_channelMatrixCols);

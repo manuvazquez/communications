@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "CDMAunknownActiveUsersSISopt.h"
 
-#define EXPORT_REAL_DATA
+// #define EXPORT_REAL_DATA
 
 #ifdef EXPORT_REAL_DATA
     extern MIMOChannel *realChannel;

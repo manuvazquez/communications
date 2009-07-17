@@ -36,14 +36,14 @@ MMSEDetector *MMSEDetector::clone()
 	return new MMSEDetector(*this);
 }
 
-tMatrix MMSEDetector::ComputedFilter()
+tMatrix MMSEDetector::computedFilter()
 {
 	tRange rNsimbolsDetected(_detectionStart,_detectionStart+_nSymbolsToBeDetected-1);
 	return _filter(tRange(),rNsimbolsDetected);
 // 	return _filter;
 }
 
-tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)
+tVector MMSEDetector::detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)
 {
 	tMatrix alphabetVarianceChannelMatrixChannelMatrixTrans(_channelMatrixRows,_channelMatrixRows);
 	// alphabetVarianceChannelMatrixChannelMatrixTrans = _alphabetVariance*channelMatrix*channelMatrix^T

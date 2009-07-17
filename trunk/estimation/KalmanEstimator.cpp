@@ -23,13 +23,6 @@
 
 KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size()),_rChannelCoefficients(_nExtStateVectorCoeffs-_nChannelCoeffs,_nExtStateVectorCoeffs-1)
 {
-//     tMatrix R = LaGenMatDouble::eye(_nExtStateVectorCoeffs);
-//     R *= ARcoefficients[0];
-//     tMatrix stateEquationCovariance = LaGenMatDouble::eye(_nExtStateVectorCoeffs);
-//     stateEquationCovariance *= ARvariance;
-//     tVector initialMeanVector = Util::toVector(initialEstimation,rowwise);
-//     tMatrix initialCovariance = LaGenMatDouble::from_diag(Util::toVector(variances,rowwise));
-
     // stateTransitionMatrix is a blockwise matrix that represents the state transition matrix
     tMatrix stateTransitionMatrix = LaGenMatDouble::zeros(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     
@@ -59,21 +52,6 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix 
             initialMeanVector(iBlockRow*_nChannelCoeffs+i) = initialEstimation(i/_nInputsXchannelOrder,i%_nInputsXchannelOrder);
             initialCovariance(iBlockRow*_nChannelCoeffs+i,iBlockRow*_nChannelCoeffs+i) = variances(i/_nInputsXchannelOrder,i%_nInputsXchannelOrder);
         }
-        
-
-#ifdef DEBUG
-//     cout << "number AR coeffs = " << ARcoefficients.size() << endl;
-//     cout << " R = " << endl << R;
-//     cout << "stateTransitionMatrix = " << endl << stateTransitionMatrix;
-//     cout << "stateEquationCovariance = " << endl << stateEquationCovariance;
-//     cout << "stateEquationCovariance2 = " << endl << stateEquationCovariance2;
-//     cout << "initialEstimation" << endl << initialEstimation;
-//     cout << "initialMeanVector = " << endl << initialMeanVector;    
-//     cout << "initialMeanVector2 = " << endl << initialMeanVector2;
-//     cout << "initialCovariance = " << endl << initialCovariance;        
-//     cout << "initialCovariance2 = " << endl << initialCovariance2;    
-//     getchar();
-#endif
 
 #ifdef PRINT_INFO
     cout << "KalmanEstimator::KalmanEstimator: constructed a Kalman Filter with parameters:" << endl;
@@ -83,7 +61,6 @@ KalmanEstimator::KalmanEstimator(const tMatrix &initialEstimation,const tMatrix 
     cout << "initial covariance" << endl << initialCovariance;
 #endif
 
-//     _kalmanFilter = new KalmanFilter(R,stateEquationCovariance,initialMeanVector,initialCovariance);
     _kalmanFilter = new KalmanFilter(stateTransitionMatrix,stateEquationCovariance,initialMeanVector,initialCovariance);    
 }
 
@@ -104,7 +81,7 @@ tMatrix KalmanEstimator::nextMatrix(const tVector &observations,const tMatrix &s
     tMatrix observationEquationCovariance = LaGenMatDouble::eye(_nOutputs);
     observationEquationCovariance *= noiseVariance;
     
-    tMatrix observationMatrix = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
+    tMatrix observationMatrix = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
     
 #ifdef PRINT_INFO
     cout << "KalmanEstimator::nextMatrix: observationMatrix:" << endl << observationMatrix;
@@ -117,23 +94,15 @@ tMatrix KalmanEstimator::nextMatrix(const tVector &observations,const tMatrix &s
         for(uint j=_nExtStateVectorCoeffs-_nChannelCoeffs;j<_nExtStateVectorCoeffs;j++)
                 extStateMeasurementMatrix(i,j) = observationMatrix(i,j-(_nExtStateVectorCoeffs-_nChannelCoeffs));
     
-#ifdef DEBUG
-//     cout << "observationMatrix= " << endl << observationMatrix;
-//     cout << "extStateMeasurementMatrix = " << endl << extStateMeasurementMatrix;
-//     getchar();
-#endif
-    
-//     _kalmanFilter->step(BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise)),observations,observationEquationCovariance);
     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
     _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->filteredMean()(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
-//     _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->filteredMean(),rowwise,_nOutputs);    
 
     return  _lastEstimatedChannelMatrix;
 }
 
-tMatrix KalmanEstimator::BuildFfromSymbolsMatrix(const tVector &symbolsVector)
+tMatrix KalmanEstimator::buildMeasurementMatrix(const tVector &symbolsVector)
 {
     int i,j;
     tMatrix res = LaGenMatDouble::zeros(_nOutputs,_nChannelCoeffs);
@@ -167,7 +136,7 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     // invPredictiveCovariance = inv(_kalmanFilter->predictiveCovariance())
     LaLUInverseIP(invPredictiveCovariance,piv);
 
-    tMatrix F = BuildFfromSymbolsMatrix(Util::toVector(symbolsMatrix,columnwise));
+    tMatrix F = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
     
     tMatrix extStateMeasurementMatrix = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
     for(uint i=0;i<_nOutputs;i++)
@@ -180,8 +149,6 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
 #endif    
 
     tMatrix B = invPredictiveCovariance;
-//     // B = invPredictiveCovariance + (1.0/noiseVariance) F' * F
-//     Blas_Mat_Trans_Mat_Mult(F,F,B,1.0/noiseVariance,1.0);
     // B = invPredictiveCovariance + (1.0/noiseVariance) extStateMeasurementMatrix' * extStateMeasurementMatrix
     Blas_Mat_Trans_Mat_Mult(extStateMeasurementMatrix,extStateMeasurementMatrix,B,1.0/noiseVariance,1.0);    
 
@@ -196,8 +163,6 @@ double KalmanEstimator::likelihood(const tVector &observations,const tMatrix sym
     Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
 
     tVector auxAuxArgExp = invPredictiveCovariancePredictiveMean;
-//     // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) F' * observations
-//     Blas_Mat_Trans_Vec_Mult(F,observations,auxAuxArgExp,1.0/noiseVariance,1.0);
     // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) extStateMeasurementMatrix' * observations
     Blas_Mat_Trans_Vec_Mult(extStateMeasurementMatrix,observations,auxAuxArgExp,1.0/noiseVariance,1.0);    
 
@@ -241,7 +206,6 @@ tMatrix KalmanEstimator::sampleFromPredictive()
     tVector predictiveMean = _kalmanFilter->predictiveMean();
     tMatrix predictiveCovariance = _kalmanFilter->predictiveCovariance();
 
-//     return Util::toMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance),rowwise,_nChannelMatrixRows);
     return Util::toMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance)(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
 }
 
@@ -258,13 +222,6 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)
         extState(i) = matrix((i%_nChannelCoeffs)/_nInputsXchannelOrder,(i%_nChannelCoeffs)%_nInputsXchannelOrder);
         i++;
     }
-        
-#ifdef DEBUG
-    cout << "matrix is " << endl << matrix;
-    cout << "extState = " << endl << extState;
-    getchar();
-#endif        
-
-//     _kalmanFilter->setFilteredMean(Util::toVector(matrix,columnwise));
+     
     _kalmanFilter->setFilteredMean(extState);
 }

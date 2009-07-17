@@ -38,11 +38,7 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
     Alphabet extendedAlphabet(extendedAlphabetSymbols);
     
 //     extendedAlphabet = _alphabet; // <--------------------------------------------------------------------------------------
-    
-#ifdef DEBUG2
-    cout << "en KnownFlatChannelOptimalAlgorithm::Run" << endl;
-    cout << "observations are" << endl << observations;
-#endif
+
     int iAlphabet,iCurrentNode,i;
     tMatrix HtH(_nInputs,_nInputs),invL_Ht(_nInputs,_nOutputs),U(_nInputs,_nInputs);
     tVector transformedObs(_nInputs);
@@ -53,10 +49,6 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
     
     for(int iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
     {
-    
-#ifdef DEBUG3
-        cout << "--------- iProcessedObservation = " << iProcessedObservation << " ------------" << endl;
-#endif    
         // root node is initialized
         tTreeNode rootNode;
         rootNode.cost = 0.0;
@@ -84,14 +76,7 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
         tMatrix invL = L;
         LUFactorizeIP(invL,piv);
         LaLUInverseIP(invL,piv);
-        
-#ifdef DEBUG
-    cout << "L is" << endl << L;
-    cout << "invL.rows() =" << invL.rows() << " invL.cols() = " << invL.cols() << endl;
-    cout << "H.rows() =" << H.rows() << " H.cols() = " << H.cols() << endl;
-    cout << "invL_Ht.rows() =" << invL_Ht.rows() << " invL_Ht.cols() = " << invL_Ht.cols() << endl;
-#endif        
-        
+
         // invL_Ht = invL*H'
         Blas_Mat_Mat_Trans_Mult(invL,H,invL_Ht);
         
@@ -138,10 +123,6 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
         
         for(i=0;i<_nInputs;i++)
             _detectedSymbols(i,iProcessedObservation-_preambleLength) = nodes[iCurrentNode].symbolsVector(i);
-            
-#ifdef DEBUG
-        cout << "symbols vector detected at " << iProcessedObservation << " = " << endl << nodes[iCurrentNode].symbolsVector;
-#endif        
         
         // for the next iteration
         nodes.clear();
@@ -153,21 +134,13 @@ int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
 {
     int iBest = -1;
     double bestCost = 0.0;
-    
-#ifdef DEBUG3
-    cout << "en iBestLeaf" << endl;
-#endif
-    
+
     for(uint i=0;i<nodes.size();i++)
     {
         // if it isn't a leaf node
         if(nodes[i].children.size()!=0)
             continue;
-        
-#ifdef DEBUG3
-        cout << "iBest = " << iBest << " bestCost = " << bestCost << " nodes[i].cost = " << nodes[i].cost << endl;
-#endif        
-        
+
         if(iBest==-1 || nodes[i].cost < bestCost)
         {
             iBest = i;

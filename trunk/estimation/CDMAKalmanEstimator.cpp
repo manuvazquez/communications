@@ -39,16 +39,10 @@ CDMAKalmanEstimator* CDMAKalmanEstimator::clone() const
     return new CDMAKalmanEstimator(*this);
 }
 
-tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVector)
+tMatrix CDMAKalmanEstimator::buildMeasurementMatrix(const tVector& symbolsVector)
 {
     if(symbolsVector.size()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::BuildFfromSymbolsMatrix: symbols vector length is wrong.");
-
-//     tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
-//     
-//     for(int i=0;i<_nOutputs;i++)
-//         for(int j=0;j<_nInputs;j++)
-//             CS(i,_nExtStateVectorCoeffs-_nChannelCoeffs+j) = _spreadingCodes(i,j)*symbolsVector(j);
             
     tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nInputs);
     

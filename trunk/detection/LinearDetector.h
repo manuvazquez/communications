@@ -33,9 +33,9 @@ protected:
     double _alphabetVariance;
 public:
     LinearDetector(int rows,int cols,double alphabetVariance);
-    virtual void StateStep(tVector observations) = 0;
-    virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
-    virtual tMatrix ComputedFilter() = 0;
+    virtual void stateStep(tVector observations) = 0;
+    virtual tVector detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
+    virtual tMatrix computedFilter() = 0;
     /**
      *    Computes the variance related to the soft estimation provided for the n-th symbol. It NEVER must be called before a call to Detect
      * @param n
@@ -44,9 +44,9 @@ public:
     virtual double nthSymbolVariance(int n) = 0;
     virtual double nthSymbolGain(int n) const { return 1.0;}
     virtual ~LinearDetector() {}
-    int ChannelMatrixcols() { return _channelMatrixCols;}
+    int channelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
-    void StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
+    void stateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
 };
 
 #endif

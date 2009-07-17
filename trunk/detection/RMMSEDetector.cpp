@@ -28,7 +28,7 @@ RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double f
 	_E(rowsRange,colsRange).inject(LaGenMatDouble::eye(_nSymbolsToBeDetected));
 }
 
-void RMMSEDetector::StateStep(tVector observations)
+void RMMSEDetector::stateStep(tVector observations)
 {
 	if(observations.size()!= _channelMatrixRows)
 	{
@@ -59,7 +59,7 @@ void RMMSEDetector::StateStep(tVector observations)
 	_alphaPowerSumNow = _alphaPowerSumPrevious + _alphaPower;
 }
 
-tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)
+tVector RMMSEDetector::detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)
 {
 	if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
 	{
@@ -69,7 +69,7 @@ tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const 
 	}
 
 	// the inverse of the observations correlation matrix is updated
-	this->StateStep(observations);
+	this->stateStep(observations);
 
 	// _varianceInvRtildeChannelMatrix = _alphabetVariance*_invRtilde*channelMatrix
 	Blas_Mat_Mat_Mult(_invRtilde,channelMatrix,_varianceInvRtildeChannelMatrix,_alphabetVariance);

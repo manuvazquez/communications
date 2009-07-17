@@ -45,7 +45,7 @@ protected:
     // the coefficients of the channel at the present time (the ones we are interested in)
     tRange _rChannelCoefficients;
     
-    virtual tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);
+    virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector);
 public:
     KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);

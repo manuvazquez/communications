@@ -42,9 +42,9 @@ public:
 
     virtual double nthSymbolVariance(int n);
     virtual LinearDetector* clone();
-	virtual tMatrix ComputedFilter() { return _filter;}
-    virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
-	virtual void StateStep(tVector observations) {}
+	virtual tMatrix computedFilter() { return _filter;}
+    virtual tVector detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
+	virtual void stateStep(tVector observations) {}
 
 };
 

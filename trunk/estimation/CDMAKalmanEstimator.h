@@ -32,7 +32,7 @@ class CDMAKalmanEstimator : public KalmanEstimator
 protected:
     tMatrix _spreadingCodes;
     
-    virtual tMatrix BuildFfromSymbolsMatrix(const tVector& symbolsVector);    
+    virtual tMatrix buildMeasurementMatrix(const tVector& symbolsVector);    
 public:
     CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
 
