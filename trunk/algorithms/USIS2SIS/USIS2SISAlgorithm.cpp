@@ -36,9 +36,9 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
     tVector _weightedChannelOrderAPPs(_candidateOrders.size());
     _weightedChannelOrderAPPs = 0.0;
 
-    for(int iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
-        ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iParticle));
+        ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
         tVector particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->GetChannelOrderAPPsVector();
         Util::add(_weightedChannelOrderAPPs,particleChannelOrderAPPs,_weightedChannelOrderAPPs,1.0,processedParticle->getWeight());

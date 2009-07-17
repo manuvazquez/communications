@@ -54,9 +54,9 @@ void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noi
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
-		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
 			smoothingSymbolVectors(rAll,rmMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rmMinus1PrecedentColumns));

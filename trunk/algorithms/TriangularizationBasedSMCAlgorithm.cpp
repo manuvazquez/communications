@@ -59,9 +59,9 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
         // the stacked observations vector
         tVector stackedObservations = Util::toVector(observations(rAll,rSmoothingRange),columnwise);
 
-        for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
-            ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (_particleFilter->GetParticle(iParticle));
+            ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (_particleFilter->getParticle(iParticle));
 
             // the already detected symbol vectors are stored in "involvedSymbolVectors"
             involvedSymbolVectors(rAll,rFirstmMinus1symbolVectors).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
@@ -169,7 +169,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
                                                     involvedSymbolVectors(rAll,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
-        } // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();
 

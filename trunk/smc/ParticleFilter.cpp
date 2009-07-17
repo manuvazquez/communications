@@ -123,7 +123,7 @@ void ParticleFilter::keepParticles(vector<int> indexes)
     _nParticles = indexes.size();
 }
 
-int ParticleFilter::iBestParticle()
+int ParticleFilter::iBestParticle() const
 {
 //  int iBestParticle;
 //  Util::max(getWeightsVector(),iBestParticle);
@@ -144,9 +144,9 @@ int ParticleFilter::iBestParticle()
             if(particleAlreadyCounted[iTestedParticle])
                 continue;
 
-            if(GetParticle(iParticle)->getAllSymbolVectors().equal_to(GetParticle(iTestedParticle)->getAllSymbolVectors()))
+            if(getParticle(iParticle)->getAllSymbolVectors().equal_to(getParticle(iTestedParticle)->getAllSymbolVectors()))
             {
-                accumulatedWeights[iParticle] += GetParticle(iTestedParticle)->getWeight();
+                accumulatedWeights[iParticle] += getParticle(iTestedParticle)->getWeight();
                 particleAlreadyCounted[iTestedParticle] = true;
             }
         }

@@ -45,14 +45,14 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
-        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
+        _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
-        _particleFilter->GetParticle(iParticle)->setSymbolVectors(rPreamble,_preamble);
+        _particleFilter->getParticle(iParticle)->setSymbolVectors(rPreamble,_preamble);
     }
 }
 
@@ -97,9 +97,9 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
             for(iRow=0;iRow<_nOutputs;iRow++)
                 stackedNoiseCovariance((iSmoothing+_c)*_nOutputs+iRow,(iSmoothing+_c)*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
-        for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
-            ParticleWithChannelEstimationAndLinearDetection *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (_particleFilter->GetParticle(iParticle));
+            ParticleWithChannelEstimationAndLinearDetection *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (_particleFilter->getParticle(iParticle));
 
             // already estimated channel matrices are stored in a vector in order to stack them
             for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)
@@ -189,7 +189,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),
                                                     forWeightUpdateNeededSymbols(rAll,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
-        } // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();
 

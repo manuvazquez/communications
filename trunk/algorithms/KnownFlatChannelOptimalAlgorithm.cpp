@@ -23,11 +23,6 @@
 
 KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
 {
-}
-
-
-void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double > noiseVariances)
-{
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
     
@@ -35,11 +30,28 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
         extendedAlphabetSymbols[i] = _alphabet[i];
     extendedAlphabetSymbols[_alphabet.length()] = 0.0;
     
-    Alphabet extendedAlphabet(extendedAlphabetSymbols);
+    _extendedAlphabet = new Alphabet(extendedAlphabetSymbols);
+}
+
+KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()
+{
+    delete _extendedAlphabet;
+}
+
+void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double > noiseVariances)
+{
+//     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
+//     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
+//     
+//     for(int i=0;i<_alphabet.length();i++)
+//         extendedAlphabetSymbols[i] = _alphabet[i];
+//     extendedAlphabetSymbols[_alphabet.length()] = 0.0;
+//     
+//     Alphabet extendedAlphabet(extendedAlphabetSymbols);
     
 //     extendedAlphabet = _alphabet; // <--------------------------------------------------------------------------------------
 
-    int iAlphabet,iCurrentNode,i;
+    int iAlphabet,iCurrentNode,i,childrenHeight;
     tMatrix HtH(_nInputs,_nInputs),invL_Ht(_nInputs,_nOutputs),U(_nInputs,_nInputs);
     tVector transformedObs(_nInputs);
     tLongIntVector piv(_nOutputs);
@@ -88,13 +100,16 @@ void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double 
         
         while(nodes[iCurrentNode].height<_nInputs)
         {
-            for(iAlphabet=0;iAlphabet<extendedAlphabet.length();iAlphabet++)
+            childrenHeight = nodes[iCurrentNode].height+1;
+//             for(iAlphabet=0;iAlphabet<extendedAlphabet.length();iAlphabet++)
+            for(iAlphabet=0;iAlphabet<getAlphabetAt(iProcessedObservation,childrenHeight)->length();iAlphabet++)
             {
                 // the parent node is replicated
                 tTreeNode child = nodes[iCurrentNode];
                 
-                child.height++;
-                child.symbolsVector(_nInputs-child.height) = extendedAlphabet[iAlphabet];
+                child.height = childrenHeight;
+//                 child.symbolsVector(_nInputs-child.height) = extendedAlphabet[iAlphabet];
+                child.symbolsVector(_nInputs-child.height) = (*getAlphabetAt(iProcessedObservation,childrenHeight))[iAlphabet];
                 
                 UxS = 0.0;
             

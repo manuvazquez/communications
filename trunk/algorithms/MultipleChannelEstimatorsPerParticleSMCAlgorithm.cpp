@@ -84,12 +84,12 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
     this->InitializeParticles();
 
-    for(iParticle=0;iParticle<GetParticleFilterPointer()->Nparticles();iParticle++)
+    for(iParticle=0;iParticle<GetParticleFilterPointer()->nParticles();iParticle++)
     {
 #ifdef DEBUG
         cout << "MultipleChannelEstimatorsPerParticleSMCAlgorithm:: Run: inicializando part " << iParticle << endl;
 #endif
-        ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (GetParticleFilterPointer()->GetParticle(iParticle));
+        ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (GetParticleFilterPointer()->getParticle(iParticle));
 
         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         {
@@ -119,7 +119,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()
 {
-    return (GetParticleFilterPointer()->GetBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
+    return (GetParticleFilterPointer()->getBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
 vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
@@ -134,7 +134,7 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedCh
     int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
 
     for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
-        channelMatrices.push_back(GetParticleFilterPointer()->GetParticle(iBestParticle)->getChannelMatrix(iBestChannelOrder,i));
+        channelMatrices.push_back(GetParticleFilterPointer()->getParticle(iBestParticle)->getChannelMatrix(iBestChannelOrder,i));
 
     return channelMatrices;
 }

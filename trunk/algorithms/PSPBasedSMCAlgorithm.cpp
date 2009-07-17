@@ -36,8 +36,8 @@ PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L
 void PSPBasedSMCAlgorithm::InitializeParticles()
 {
 	// we begin with only one particle
-	_particleFilter->AddParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
-	_particleFilter->GetParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+	_particleFilter->addParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
+	_particleFilter->getParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 
 void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
@@ -54,7 +54,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		double weight;
 	}tParticleCandidate;
 
-	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->Capacity()*nSymbolVectors] ;
+	tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->capacity()*nSymbolVectors] ;
 
     // "symbolVectorsMatrix" will contain all the symbols involved in the current observation
     tMatrix symbolVectorsMatrix(_nInputs,_channelOrder);
@@ -73,9 +73,9 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		normConst = 0.0;
 
 		// the candidates from all the particles are generated
-		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
 
 			symbolVectorsMatrix(rAllSymbolRows,rmMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rmMinus1PrecedentColumns));
 
@@ -104,7 +104,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 				iCandidate++;
 			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		} // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
 		// a vector of size the number of generated candidates is declared...
 		tVector weights(iCandidate);
@@ -119,7 +119,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 #endif
 
 		// the candidates that are going to give particles are selected
-		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->Capacity(),weights);
+		vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->capacity(),weights);
 
 #ifdef DEBUG
 		cout << "Despues de llamar a _resamplingAlgorithm->ObtainIndexes" << endl;
@@ -134,9 +134,9 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 		_particleFilter->keepParticles(indexesParticles);
 
 		// every surviving particle is modified according to what it says its corresponding candidate
-		for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->setSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_channelOrder-1));
@@ -145,7 +145,7 @@ void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double >
 			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->setWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
-		} // for(int iParticle=0;iParticle<_particleFilter->Nparticles();iParticle++)
+		} // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
 		_particleFilter->normalizeWeights();
 	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)

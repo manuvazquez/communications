@@ -17,28 +17,15 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDMKFALGORITHM_H
-#define LINEARFILTERBASEDMKFALGORITHM_H
+#include "KnownFlatChannelAndActiveUsersOptimalAlgorithm.h"
 
-#include <LinearFilterBasedSMCAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <KalmanEstimator.h>
-
-class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
+KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength, std::vector<std::vector<bool> > usersActivity): KnownFlatChannelOptimalAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel, preambleLength),_noTransmissionAlphabet(new Alphabet(vector<tSymbol>(1,0.0))),_usersActivity(usersActivity)
 {
-public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    if(_usersActivity.size()!=_nInputs || _usersActivity[0].size()!=(_iLastSymbolVectorToBeDetected-_preambleLength))
+        throw RuntimeException("KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm: users activity vector has wrong dimensions.");
+}
 
-protected:
-    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
-    {
-    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
-    }
-
-};
-
-#endif
+KnownFlatChannelAndActiveUsersOptimalAlgorithm::~KnownFlatChannelAndActiveUsersOptimalAlgorithm()
+{
+    delete _noTransmissionAlphabet;
+}

@@ -28,7 +28,7 @@ ISIS::ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolV
 void ISIS::InitializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
 		// a clone of each of the channel matrix estimators is constructed...
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -36,7 +36,7 @@ void ISIS::InitializeParticles()
 			thisParticleChannelMatrixEstimators[iChannelMatrixEstimator] = _channelEstimators[iChannelMatrixEstimator]->clone();
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators));
+		_particleFilter.addParticle(new ParticleWithChannelEstimationAndChannelOrderAPP(1.0/(double)_particleFilter.capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators));
     }
 }
 
@@ -66,14 +66,14 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
         cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
 #endif
 
-		for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
 		{
 
             #ifdef DEBUG2
             cout << " ---------------- Particula " << iParticle << " ------------------------" << endl;
             #endif
 
-			ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> ( _particleFilter.GetParticle(iParticle));
+			ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> ( _particleFilter.getParticle(iParticle));
 
 			for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{

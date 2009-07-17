@@ -17,26 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LINEARFILTERBASEDMKFALGORITHM_H
-#define LINEARFILTERBASEDMKFALGORITHM_H
+#ifndef KNOWNFLATCHANNELANDACTIVEUSERSOPTIMALALGORITHM_H
+#define KNOWNFLATCHANNELANDACTIVEUSERSOPTIMALALGORITHM_H
 
-#include <LinearFilterBasedSMCAlgorithm.h>
+#include <KnownFlatChannelOptimalAlgorithm.h>
 
 /**
+It implements the optimal detection algorithm for a flat channel when at each time instant it is perfectly known which users are transmitting (that entails they don't need to at every moment)
+
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <KalmanEstimator.h>
-
-class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
+class KnownFlatChannelAndActiveUsersOptimalAlgorithm : public KnownFlatChannelOptimalAlgorithm
 {
 public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, tMatrix preamble, int backwardsSmoothingLag, int smoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength, std::vector<std::vector<bool> > usersActivity);
+
+    ~KnownFlatChannelAndActiveUsersOptimalAlgorithm();
 
 protected:
-    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
+    Alphabet *_noTransmissionAlphabet;
+    std::vector<std::vector<bool> > _usersActivity;    
+    
+    const Alphabet* getAlphabetAt(int time, int leafHeight) const
     {
-    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
+        if(_usersActivity[_nInputs-leafHeight][time])
+            return &_alphabet;
+        else
+            return _noTransmissionAlphabet;
     }
 
 };

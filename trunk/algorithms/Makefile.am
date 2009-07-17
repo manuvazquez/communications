@@ -6,14 +6,16 @@ METASOURCES = AUTO
 lib_LIBRARIES = libalgorithms.a
 noinst_HEADERS = Algorithm.h CDMAunknownActiveUsersSISopt.h CMEBasedAlgorithm.h \
 	CMEapplyingAlgorithm.h DSISoptAlgorithm.h ISIS.h KnownChannelAlgorithm.h \
-	KnownChannelOrderAlgorithm.h KnownFlatChannelOptimalAlgorithm.h KnownSymbolsCMEapplyingAlgorithm.h \
+	KnownChannelOrderAlgorithm.h KnownFlatChannelAndActiveUsersOptimalAlgorithm.h \
+	KnownFlatChannelOptimalAlgorithm.h KnownSymbolsCMEapplyingAlgorithm.h \
 	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h LinearFilterBasedAlgorithm.h LinearFilterBasedCMEapplyingAlgorithm.h \
 	LinearFilterBasedMKFAlgorithm.h MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h \
 	PSPBasedSMCAlgorithm.h SISoptAlgorithm.h SMCAlgorithm.h TimeVaryingChannelCMEbasedAlgorithm.h \
 	TriangularizationBasedSMCAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp CDMAunknownActiveUsersSISopt.cpp \
 	CMEBasedAlgorithm.cpp CMEapplyingAlgorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
-	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp KnownFlatChannelOptimalAlgorithm.cpp \
+	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
+	KnownFlatChannelAndActiveUsersOptimalAlgorithm.cpp KnownFlatChannelOptimalAlgorithm.cpp \
 	KnownSymbolsCMEapplyingAlgorithm.cpp KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp \
 	LinearFilterBasedAlgorithm.cpp LinearFilterBasedCMEapplyingAlgorithm.cpp \
 	LinearFilterBasedMKFAlgorithm.cpp LinearFilterBasedSMCAlgorithm.cpp MLSDmAlgorithm.cpp \

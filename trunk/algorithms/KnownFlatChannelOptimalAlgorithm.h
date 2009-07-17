@@ -39,10 +39,15 @@ private:
     
     int iBestLeaf(const std::vector<tTreeNode> &nodes);
 protected:
-    int _preambleLength;
+    const int _preambleLength;
     tMatrix _detectedSymbols;
+    Alphabet *_extendedAlphabet;
+    
+    virtual const Alphabet *getAlphabetAt(int time, int leafHeight) const { return _extendedAlphabet;}
 public:
     KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength);
+
+    ~KnownFlatChannelOptimalAlgorithm();
 
     void Run(tMatrix observations, vector< double > noiseVariances);
     tMatrix getDetectedSymbolVectors();

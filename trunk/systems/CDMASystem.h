@@ -27,6 +27,7 @@
 #include <CDMAunknownActiveUsersSISopt.h>
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
 #include <KnownFlatChannelOptimalAlgorithm.h>
+#include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
 
 
 /**

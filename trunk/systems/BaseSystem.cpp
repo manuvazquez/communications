@@ -60,9 +60,9 @@ BaseSystem::BaseSystem()
     // the algorithms with the higher smoothing lag require
     nSmoothingSymbolsVectors = 6;
 
-//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(12);SNRs.push_back(15);
-    SNRs.push_back(9);    
+//     SNRs.push_back(9);    
 
     // BER and MSE computing
     symbolsDetectionWindowStart = trainSeqLength;

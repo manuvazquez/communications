@@ -58,7 +58,7 @@ USIS::~USIS()
 void USIS::InitializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
 		// a clone of each of the channel matrix estimators...
 		vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -78,7 +78,7 @@ void USIS::InitializeParticles()
 		}
 
 		// ... and passed within a vector to each particle
-		_particleFilter.AddParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->clone()));
+		_particleFilter.addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->clone()));
     }
 }
 
@@ -138,12 +138,12 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
 		}
 
-		for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
 		{
 #ifdef DEBUG12
             cout << "iParticle = " << iParticle << endl;
 #endif
-			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iParticle));
+			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 			{
@@ -310,12 +310,12 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 			// the weight is updated
 			processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());
 
-		} // for(iParticle=0;iParticle<_particleFilter.Capacity();iParticle++)
+		} // for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
 
 		_particleFilter.normalizeWeights();
 
 		// we find out which is the "best" particle at this time instant
-		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetBestParticle());
+		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getBestParticle());
 
         // its a posteriori channel order probabilities are stored
 		for(uint i=0;i<_candidateOrders.size();i++)
@@ -334,7 +334,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 
 int USIS::BestChannelOrderIndex(int iBestParticle)
 {
-	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.GetParticle(iBestParticle));
+	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iBestParticle));
 
 	int iMaxChannelOrderAPP = 0;
 	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iMaxChannelOrderAPP);

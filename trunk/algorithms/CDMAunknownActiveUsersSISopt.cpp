@@ -50,18 +50,18 @@ void CDMAunknownActiveUsersSISopt::InitializeParticles()
     tMatrix channelCovariance = LaGenMatDouble::from_diag(_channelMatrixVariances);
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         
         if(_randomParticlesInitilization)
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_Nr));
         
-        _particleFilter->AddParticle(new ParticleWithChannelEstimationAndActiveUsers(1.0/(double)_particleFilter->Capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone));
+        _particleFilter->addParticle(new ParticleWithChannelEstimationAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone));
 
         // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->GetParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+            _particleFilter->getParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     }
 }
 
@@ -105,12 +105,12 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
 #ifdef DEBUG
         cout << "******************************************** iObservationToBeProcessed = " << iObservationToBeProcessed << " **************************" << endl;
 #endif    
-        for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
 #ifdef DEBUG
             cout << "------------- iObservationToBeProcessed = " << iObservationToBeProcessed << " (iParticle = " << iParticle << ") -------------" << endl;
 #endif        
-            ParticleWithChannelEstimationAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndActiveUsers *> (_particleFilter->GetParticle(iParticle));
+            ParticleWithChannelEstimationAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndActiveUsers *> (_particleFilter->getParticle(iParticle));
 
 #ifdef DEBUG_CHANNEL_SAMPLES
             tMatrix channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
@@ -205,7 +205,7 @@ void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< 
             processedParticle->setActivityAtTime(iObservationToBeProcessed,usersActivity);
             
             processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
-        } // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+        } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();
 

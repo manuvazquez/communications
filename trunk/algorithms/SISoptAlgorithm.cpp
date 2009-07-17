@@ -46,9 +46,9 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
-		for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+		for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->GetParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
 			involvedSymbolVectors(rAllSymbolRows,mMinus1FirstColumns).inject(processedParticle->getSymbolVectors(mMinus1PrecedentColumns));
@@ -87,7 +87,7 @@ void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > nois
 			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
-		} // for(iParticle=0;iParticle<_particleFilter->Capacity();iParticle++)
+		} // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
 		mPrecedentColumns = mPrecedentColumns + 1;
 		mMinus1PrecedentColumns = mMinus1PrecedentColumns + 1;
