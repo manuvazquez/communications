@@ -31,7 +31,7 @@ TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string 
 {
 }
 
-void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void TimeVaryingChannelCMEbasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
 	int m,iTxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
@@ -107,9 +107,9 @@ void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double
 		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
-void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void TimeVaryingChannelCMEbasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-	Run(observations,noiseVariances);
+	run(observations,noiseVariances);
 }
 
 tMatrix TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
@@ -117,7 +117,7 @@ tMatrix TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
 	return tMatrix(0,0);
 }
 
-vector<tMatrix> TimeVaryingChannelCMEbasedAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices()
 {
 	return vector<tMatrix>(0);
 }

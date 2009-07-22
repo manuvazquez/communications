@@ -34,12 +34,12 @@ LinearFilterBasedAlgorithm::~LinearFilterBasedAlgorithm()
 	delete[] _estimatedChannelMatrices;
 }
 
-void LinearFilterBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
 	Process(observations,noiseVariances,tMatrix());
 }
 
-void LinearFilterBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
 	Process(observations,noiseVariances,trainingSequence);
 }
@@ -93,7 +93,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
 			ARcoefficientPower *= _ARcoefficient;
 		}
 
-		tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
+		tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
 
 		// observation matrix columns that are involved in the smoothing
 		tRange rSmoothingRange(iObservationToBeProcessed-_c,iObservationToBeProcessed+_d);
@@ -112,7 +112,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
         {
             softEstimations =  _linearDetector->detect(
                 // the last range chooses all the already detected symbol vectors
-                SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,tRange(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1))),
+                substractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_d,stackedObservations,_detectedSymbolVectors(rAllSymbolRows,tRange(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1))),
                 // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
                 stackedChannelMatrix(tRange(0,_nOutputs*(_c+_d+1)-1),tRange((_c+_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1)),
                 stackedNoiseCovariance);
@@ -134,7 +134,7 @@ tMatrix LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 	return _detectedSymbolVectors(tRange(0,_nInputs-1),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
-vector<tMatrix> LinearFilterBasedAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

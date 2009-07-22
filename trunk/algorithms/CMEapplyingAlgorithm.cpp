@@ -31,12 +31,12 @@ CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, int L
 {
 }
 
-void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
     throw RuntimeException("CMEapplyingAlgorithm::Run (without training sequence) not implemented.");
 }
 
-void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     int m,iTxAntenna,iRxAntenna,iDelay;
     tRange rAll;
@@ -120,7 +120,7 @@ tMatrix CMEapplyingAlgorithm::getDetectedSymbolVectors()
     return tMatrix(0,0);
 }
 
-vector<tMatrix> CMEapplyingAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> CMEapplyingAlgorithm::getEstimatedChannelMatrices()
 {
     return vector<tMatrix>(0);
 }

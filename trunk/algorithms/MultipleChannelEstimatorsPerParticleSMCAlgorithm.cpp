@@ -49,7 +49,7 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
     }
 }
 
-void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
     int nObservations = observations.cols();
 
@@ -61,7 +61,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,
     this->Process(observations,noiseVariances);
 }
 
-void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
@@ -122,7 +122,7 @@ tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVecto
     return (GetParticleFilterPointer()->getBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
-vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

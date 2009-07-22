@@ -55,10 +55,10 @@ protected:
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
-    void Run(tMatrix observations,vector<double> noiseVariances);
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void run(tMatrix observations,vector<double> noiseVariances);
+    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
     tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    vector<tMatrix> getEstimatedChannelMatrices();
 
 };
 

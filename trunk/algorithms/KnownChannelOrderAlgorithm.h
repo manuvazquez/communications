@@ -42,8 +42,8 @@ public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,tMatrix preamble);
 	~KnownChannelOrderAlgorithm();
 
-	using Algorithm::HsToStackedH;
-	tMatrix HsToStackedH(vector<tMatrix> matrices) { return HsToStackedH(matrices,_channelOrder);}
+	using Algorithm::channelMatrices2stackedChannelMatrix;
+	tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
 };
 
 #endif

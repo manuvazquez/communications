@@ -38,7 +38,7 @@ KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()
     delete _extendedAlphabet;
 }
 
-void KnownFlatChannelOptimalAlgorithm::Run(tMatrix observations, vector< double > noiseVariances)
+void KnownFlatChannelOptimalAlgorithm::run(tMatrix observations, vector< double > noiseVariances)
 {
 //     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
 //     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);

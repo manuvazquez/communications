@@ -113,7 +113,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
                 Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
             // matrices are stacked to give
-            tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
+            tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
 
 
             tVector softEstimations;
@@ -123,7 +123,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
             {
                 softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->detect(
                         // transformed observations
-                        SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_e,stackedObservations,processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors)),
+                        substractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_e,stackedObservations,processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors)),
                         // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
                         stackedChannelMatrix(rAll,tRange((_c+_channelOrder-1)*_nInputs,(_c+_channelOrder+_e)*_nInputs-1)),
                         stackedNoiseCovariance);
@@ -145,7 +145,6 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-//                  symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
                     symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
                     // the computed pdf is accumulated for normalizing purposes

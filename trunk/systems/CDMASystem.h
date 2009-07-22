@@ -47,7 +47,6 @@ protected:
     CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
     
     virtual void AddAlgorithms();
-    virtual void BeforeEndingAlgorithm(int iAlgorithm);
     virtual void BeforeEndingFrame(int iFrame);
     virtual void BuildChannel();    
 public:

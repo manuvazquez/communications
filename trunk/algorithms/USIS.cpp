@@ -177,7 +177,7 @@ void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 					tRange rInvolvedObservations(iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1+iLinearFilterNeeded)-1);
 
 					// matrices are stacked to give
-					tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
+					tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
 					// the estimated stacked channel matrix is used to obtain soft estimations
 					// of the transmitted symbols

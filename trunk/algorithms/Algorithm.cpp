@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Algorithm.h"
 
-// #define DEBUG3
+// #define DEBUG
 
 Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
@@ -60,7 +60,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 {
     int windowSize = channelMatrices.size();
 
-    vector<tMatrix> estimatedChannelMatrices = GetEstimatedChannelMatrices();
+    vector<tMatrix> estimatedChannelMatrices = getEstimatedChannelMatrices();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
     #ifdef DEBUG
@@ -72,7 +72,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
         return 0.0;
 
     if(windowSize>nEstimatedChannelMatrices)
-        throw RuntimeException("Algorithm::MMSE: more channel matrices passed than detected.");
+        throw RuntimeException("Algorithm::MSE: more channel matrices passed than detected.");
 
     double mse = 0;
     int windowStart = nEstimatedChannelMatrices - windowSize;
@@ -81,6 +81,10 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     try {
         for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
         {
+#ifdef DEBUG
+            cout << "channelMatrices.at(i-windowStart) = " << endl << channelMatrices.at(i-windowStart);
+            cout << "estimatedChannelMatrices.at(i) = " << endl << estimatedChannelMatrices.at(i);
+#endif
             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
             mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
         }
@@ -92,15 +96,15 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 }
 
 
-tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
+tMatrix Algorithm::channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d)
 {
     if((matrices[0].cols() % m)!=0)
-        throw RuntimeException("Algorithm::HsToStackedH: incorrect number of columns in the matrices.");
+        throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: incorrect number of columns in the matrices.");
 
     uint nMatricesToStack = d - start + 1;
 
     if(matrices.size()< nMatricesToStack)
-        throw RuntimeException("Algorithm::HsToStackedH: insufficient number of matrices.");
+        throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: insufficient number of matrices.");
 
     tMatrix res(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
     res = 0.0;
@@ -117,16 +121,16 @@ tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)
     return res;
 }
 
-tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
+tVector Algorithm::substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
 {
     if(matrices.size()!=static_cast<uint> (c+e+1))
-      throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of matrices.");
+      throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
 
     if(observations.size()!=(_nOutputs*(c+e+1)))
-       throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: size of observations vector is wrong.");
+       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: size of observations vector is wrong.");
 
     if(involvedSymbolVectors.cols()!=c+m-1)
-         throw RuntimeException("Algorithm::SubstractKnownSymbolsContribution: wrong number of symbol vectors.");
+         throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     int i;
     tRange rAll;

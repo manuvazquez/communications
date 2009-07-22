@@ -86,7 +86,7 @@ void SMCAlgorithm::InitializeParticles()
     }
 }
 
-void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
     int nObservations = observations.cols();
 
@@ -98,18 +98,18 @@ void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
     Process(observations,noiseVariances);
 }
 
-void SMCAlgorithm::RunFrom(int n,tMatrix observations,vector<double> noiseVariances)
+void SMCAlgorithm::runFrom(int n,tMatrix observations,vector<double> noiseVariances)
 {
     int nObservations = observations.cols();
     _startDetectionTime = n;
 
     if(nObservations<(_startDetectionTime+1+_d))
-        throw RuntimeException("SMCAlgorithm::RunFrom: Not enough observations.");
+        throw RuntimeException("SMCAlgorithm::runFrom: Not enough observations.");
 
     Process(observations,noiseVariances);
 }
 
-void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
@@ -154,7 +154,7 @@ tMatrix SMCAlgorithm::getDetectedSymbolVectors()
     return (_particleFilter->getBestParticle()->getAllSymbolVectors())(_allSymbolsRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
-vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> SMCAlgorithm::getEstimatedChannelMatrices()
 {
     vector<tMatrix> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

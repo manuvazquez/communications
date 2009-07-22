@@ -27,7 +27,7 @@ KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::~KnownSymbolsKalmanBasedChanne
 {
 }
 
-void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
     _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
@@ -39,9 +39,9 @@ void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,
     }
 }
 
-void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
+void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
-    Run(observations,noiseVariances);
+    run(observations,noiseVariances);
 }
 
 tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors()
@@ -49,7 +49,7 @@ tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVecto
     return tMatrix(0,0);
 }
 
-vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices()
 {
     return _estimatedChannelMatrices;
 }

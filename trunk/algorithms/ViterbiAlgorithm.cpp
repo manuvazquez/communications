@@ -38,12 +38,12 @@ ViterbiAlgorithm::~ViterbiAlgorithm()
     delete _detectedSymbolVectors;
 }
 
-void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
-    Run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
+    run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
 }
 
-void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
 	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
     int iState,iProcessedObservation,iBestState;

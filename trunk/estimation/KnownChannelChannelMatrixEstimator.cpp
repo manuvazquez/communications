@@ -36,6 +36,7 @@ tMatrix KnownChannelChannelMatrixEstimator::nextMatrix(const tVector& observatio
     cout << "_iNextMatrix = " << _iNextMatrix << endl;
     getchar();
 #endif
-    _lastEstimatedChannelMatrix = (*_channel)[++_iNextMatrix];
+//     _lastEstimatedChannelMatrix = (*_channel)[++_iNextMatrix];
+    _lastEstimatedChannelMatrix = (*_channel)[_iNextMatrix++];
     return _lastEstimatedChannelMatrix;
 }

@@ -50,7 +50,7 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
     
-    nFrames = 10;
+    nFrames = 2;
     L=3,N=2,frameLength=300;
     m = 1;
     d = m - 1;
@@ -60,9 +60,10 @@ BaseSystem::BaseSystem()
     // the algorithms with the higher smoothing lag require
     nSmoothingSymbolsVectors = 6;
 
-    SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(9);    
+//     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(2);
+    SNRs.push_back(9);
+//     SNRs.push_back(15);
 
     // BER and MSE computing
     symbolsDetectionWindowStart = trainSeqLength;
@@ -108,11 +109,7 @@ BaseSystem::BaseSystem()
     
     // which symbols are to be taken into account when detecting
     isSymbolAccountedForDetection = vector<vector<bool> >(N,vector<bool>(frameLength));
-    
-#ifdef DEBUG
-    cout << isSymbolAccountedForDetection[0].size() << endl;    
-#endif
-    
+
     // the preamble symbols before symbolsDetectionWindowStart are ignored for detection
     for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
         for(int iInput=0;iInput<N;iInput++)
@@ -135,7 +132,6 @@ BaseSystem::BaseSystem()
 
     // useful ranges are initialized
     rFrameDuration = tRange(preambleLength,preambleLength+frameLength-1);
-//     rTrainingSeqDuration = tRange(preambleLength,preambleLength+trainSeqLength-1);
 
     peMatrices.reserve(nFrames);
     MSEMatrices.reserve(nFrames);
@@ -237,10 +233,10 @@ void BaseSystem::Simulate()
 
                 // if there is training sequence
                 if(trainSeqLength!=0)
-                    algorithms[iAlgorithm]->Run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                    algorithms[iAlgorithm]->run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
                 // if there is NOT training sequence
                 else
-                    algorithms[iAlgorithm]->Run(observations,noise->variances());
+                    algorithms[iAlgorithm]->run(observations,noise->variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
                 
@@ -363,7 +359,7 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->GetEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif

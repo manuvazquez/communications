@@ -34,10 +34,10 @@ protected:
 public:
     KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const MIMOChannel &channel);
     
-    using Algorithm::Run;
+    using Algorithm::run;
 
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    vector<tMatrix> getEstimatedChannelMatrices();
 };
 
 #endif

@@ -77,11 +77,11 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
             }
 
             // matrices are stacked to give
-            tMatrix stackedChannelMatrix = HsToStackedH(matricesToStack);
+            tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
 
             stackedChannelMatrixMinus = stackedChannelMatrix(rAll,tRange((_channelOrder-1)*_nInputs,stackedChannelMatrix.cols()-1));
 
-            stackedObservationsMinus = SubstractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAll,rFirstmMinus1symbolVectors));
+            stackedObservationsMinus = substractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors(rAll,rFirstmMinus1symbolVectors));
 
             // we want to start sampling the present symbol vector, not the future ones
             stackedChannelMatrixMinusFlipped = Util::flipLR(stackedChannelMatrixMinus);

@@ -45,8 +45,8 @@ protected:
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
-    virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;
-    virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
+    virtual void run(tMatrix observations,vector<double> noiseVariances) = 0;
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
     string getName() const {return _name;}
 
@@ -60,23 +60,23 @@ public:
      *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */
-    virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;
+    virtual vector<tMatrix> getEstimatedChannelMatrices() = 0;
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}
 
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-    tVector SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
+    tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
 
-    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);
-    tMatrix HsToStackedH(vector<tMatrix> matrices,int m)
+    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d);
+    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m)
     {
-        return HsToStackedH(matrices,m,0,matrices.size()-1);
+        return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
     }
-    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d)
+    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int d)
     {
-        return HsToStackedH(matrices,m,0,d);
+        return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
     }
 };
 

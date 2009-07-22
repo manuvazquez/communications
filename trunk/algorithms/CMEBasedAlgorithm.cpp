@@ -31,7 +31,7 @@ CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int 
 {
 }
 
-void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
 	int m,iTxAntenna,iRxAntenna,iDelay;
 	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
@@ -111,9 +111,9 @@ void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
-void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-	Run(observations,noiseVariances);
+	run(observations,noiseVariances);
 }
 
 tMatrix CMEBasedAlgorithm::getDetectedSymbolVectors()
@@ -121,7 +121,7 @@ tMatrix CMEBasedAlgorithm::getDetectedSymbolVectors()
 	return tMatrix(0,0);
 }
 
-vector<tMatrix> CMEBasedAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> CMEBasedAlgorithm::getEstimatedChannelMatrices()
 {
 	return vector<tMatrix>(0);
 }

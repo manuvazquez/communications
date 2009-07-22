@@ -49,7 +49,7 @@ public:
 
     ~KnownFlatChannelOptimalAlgorithm();
 
-    void Run(tMatrix observations, vector< double > noiseVariances);
+    void run(tMatrix observations, vector< double > noiseVariances);
     tMatrix getDetectedSymbolVectors();
 
 };

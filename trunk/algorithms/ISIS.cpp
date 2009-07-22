@@ -223,7 +223,7 @@ void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
 	delete[] newChannelOrderAPPs;
 }
 
-vector<tMatrix> ISIS::GetEstimatedChannelMatrices()
+vector<tMatrix> ISIS::getEstimatedChannelMatrices()
 {
 	return vector<tMatrix>(0);
 }

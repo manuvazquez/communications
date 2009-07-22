@@ -61,11 +61,11 @@ public:
 
     ~PSPAlgorithm();
 
-	void Run(tMatrix observations,vector<double> noiseVariances);
-	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+	void run(tMatrix observations,vector<double> noiseVariances);
+	void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
 	tMatrix getDetectedSymbolVectors();
-	std::vector<tMatrix> GetEstimatedChannelMatrices();
+	std::vector<tMatrix> getEstimatedChannelMatrices();
     void PrintState(int iState);
 
 };

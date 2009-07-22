@@ -47,11 +47,11 @@ public:
 
     ~LinearFilterBasedAlgorithm();
 
-    void Run(tMatrix observations,vector<double> noiseVariances);
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void run(tMatrix observations,vector<double> noiseVariances);
+    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
     tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    vector<tMatrix> getEstimatedChannelMatrices();
 
 };
 

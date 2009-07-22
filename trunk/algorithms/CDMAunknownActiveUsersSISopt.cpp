@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "CDMAunknownActiveUsersSISopt.h"
 
-// #define EXPORT_REAL_DATA
+// #define IMPORT_REAL_DATA
 
-#ifdef EXPORT_REAL_DATA
+#ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
     extern tMatrix *realSymbols;
     extern Noise *realNoise;
@@ -38,10 +38,10 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
     _randomParticlesInitilization = true;    
 }
 
-vector< tMatrix > CDMAunknownActiveUsersSISopt::GetEstimatedChannelMatrices()
-{
-    return SMCAlgorithm::GetEstimatedChannelMatrices();
-}
+// vector< tMatrix > CDMAunknownActiveUsersSISopt::getEstimatedChannelMatrices()
+// {
+//     return SMCAlgorithm::getEstimatedChannelMatrices();
+// }
 
 void CDMAunknownActiveUsersSISopt::InitializeParticles()
 {

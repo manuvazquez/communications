@@ -141,7 +141,7 @@ void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVaria
     }
 }
 
-void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
+void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
     if(observations.cols()<(_startDetectionTime+1+_d))
         throw RuntimeException("PSPAlgorithm::Run: Not enough observations.");
@@ -164,7 +164,7 @@ void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)
 	Process(observations,noiseVariances);
 }
 
-void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("PSPAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
@@ -268,7 +268,7 @@ tMatrix PSPAlgorithm::getDetectedSymbolVectors()
     return (*_detectedSymbolVectors)(_rAllSymbolRows,tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
 }
 
-vector<tMatrix> PSPAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> PSPAlgorithm::getEstimatedChannelMatrices()
 {
 	vector<tMatrix> res = _estimatedChannelMatrices;
 

@@ -34,7 +34,7 @@
 #include <math.h>
 
 /**
-It implements some parts of a typical (default) SMC algorithm. It assumes that the particles have a channel estimator (derive from the class "ParticleWithChannelEstimation) and thus, methods "InitializeParticles" or "Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)" must be redefined in a subclass implementing an algorithm which requires another type of particle.
+It implements some parts of a typical (default) SMC algorithm. It assumes that the particles have a channel estimator (derive from the class "ParticleWithChannelEstimation) and thus, methods "InitializeParticles" or "run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)" must be redefined in a subclass implementing an algorithm which requires another type of particle.
 
     @author Manu <manu@rustneversleeps>
 */
@@ -97,13 +97,13 @@ public:
 
     void SetEstimatorIndex(int n);
 
-    void Run(tMatrix observations,vector<double> noiseVariances);
-    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void run(tMatrix observations,vector<double> noiseVariances);
+    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-    void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);
+    void runFrom(int n,tMatrix observations,vector<double> noiseVariances);
 
     tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> GetEstimatedChannelMatrices();
+    vector<tMatrix> getEstimatedChannelMatrices();
 };
 
 #endif

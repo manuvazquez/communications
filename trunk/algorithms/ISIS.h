@@ -43,7 +43,7 @@ protected:
 public:
     ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
-	vector<tMatrix> GetEstimatedChannelMatrices();
+	vector<tMatrix> getEstimatedChannelMatrices();
 };
 
 #endif

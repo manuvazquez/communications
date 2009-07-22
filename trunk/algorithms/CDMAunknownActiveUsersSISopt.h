@@ -33,7 +33,7 @@ class CDMAunknownActiveUsersSISopt : public SMCAlgorithm
 public:
     CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb);
 
-    vector< tMatrix > GetEstimatedChannelMatrices();
+//     vector< tMatrix > getEstimatedChannelMatrices();
 
 protected:
     double _userPersistenceProb; /// probability of an user surviving from one time instant to the next

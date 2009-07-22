@@ -71,10 +71,10 @@ public:
             }
         return bestState;
     }
-    void Run(tMatrix observations,vector<double> noiseVariances);
+    void run(tMatrix observations,vector<double> noiseVariances);
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
-    void Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    void run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     tMatrix getDetectedSymbolVectors();
     void PrintStage(tStage exitOrArrival);
 };

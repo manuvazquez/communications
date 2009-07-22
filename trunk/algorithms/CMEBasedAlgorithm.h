@@ -36,11 +36,11 @@ protected:
 public:
     CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
 
-	virtual void Run(tMatrix observations,vector<double> noiseVariances);
-	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+	virtual void run(tMatrix observations,vector<double> noiseVariances);
+	virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
     virtual tMatrix getDetectedSymbolVectors();
-    virtual vector<tMatrix> GetEstimatedChannelMatrices();
+    virtual vector<tMatrix> getEstimatedChannelMatrices();
 };
 
 #endif

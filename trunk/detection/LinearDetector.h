@@ -37,7 +37,7 @@ public:
     virtual tVector detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
     virtual tMatrix computedFilter() = 0;
     /**
-     *    Computes the variance related to the soft estimation provided for the n-th symbol. It NEVER must be called before a call to Detect
+     *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to Detect
      * @param n
      * @return
      */

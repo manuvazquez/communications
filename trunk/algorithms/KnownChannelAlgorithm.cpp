@@ -23,12 +23,12 @@ KnownChannelAlgorithm::KnownChannelAlgorithm(string name, Alphabet alphabet,int 
 {
 }
 
-void KnownChannelAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void KnownChannelAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-    Run(observations,noiseVariances);
+    run(observations,noiseVariances);
 }
 
-vector<tMatrix> KnownChannelAlgorithm::GetEstimatedChannelMatrices()
+vector<tMatrix> KnownChannelAlgorithm::getEstimatedChannelMatrices()
 {
     vector<tMatrix> res;
 

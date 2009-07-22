@@ -56,7 +56,6 @@ AddAlgorithms	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDe
 AddAlgorithms	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDesconocidoSystem.h	/^    virtual void AddAlgorithms();$/;"	p	class:TesisOrdenCanalDesconocidoSystem
 AddAlgorithms	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.cpp	/^void WSA08System::AddAlgorithms()$/;"	f	class:WSA08System
 AddAlgorithms	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^    virtual void AddAlgorithms();$/;"	p	class:WSA08System
-AddParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	virtual void AddParticle(ParticleWithChannelEstimation *particle)$/;"	f	class:ParticleFilter
 Algorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.cpp	/^Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)$/;"	f	class:Algorithm
 Algorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);$/;"	p	class:Algorithm
 Algorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^class Algorithm{$/;"	c
@@ -78,8 +77,6 @@ BaseSystem	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    B
 BaseSystem	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^class BaseSystem{$/;"	c
 BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)$/;"	f	class:BaseSystem
 BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    virtual void BeforeEndingAlgorithm(int iAlgorithm);$/;"	p	class:BaseSystem
-BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp	/^void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)$/;"	f	class:CDMASystem
-BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    virtual void BeforeEndingAlgorithm(int iAlgorithm);$/;"	p	class:CDMASystem
 BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp	/^void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)$/;"	f	class:ChannelOrderEstimationSystem
 BeforeEndingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^    virtual void BeforeEndingAlgorithm(int iAlgorithm);$/;"	p	class:ChannelOrderEstimationSystem
 BeforeEndingFrame	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^void BaseSystem::BeforeEndingFrame(int iFrame)$/;"	f	class:BaseSystem
@@ -178,10 +175,6 @@ BuildChannel	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDes
 BuildChannel	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDesconocidoBesselSystem.h	/^    virtual void BuildChannel();$/;"	p	class:TesisOrdenCanalDesconocidoBesselSystem
 BuildChannel	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.cpp	/^void WSA08System::BuildChannel()$/;"	f	class:WSA08System
 BuildChannel	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^    virtual void BuildChannel();$/;"	p	class:WSA08System
-BuildFfromSymbolsMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.cpp	/^tMatrix CDMAKalmanEstimator::BuildFfromSymbolsMatrix(const tVector& symbolsVector)$/;"	f	class:CDMAKalmanEstimator
-BuildFfromSymbolsMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.h	/^    virtual tMatrix BuildFfromSymbolsMatrix(const tVector& symbolsVector);    $/;"	p	class:CDMAKalmanEstimator
-BuildFfromSymbolsMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp	/^tMatrix KalmanEstimator::BuildFfromSymbolsMatrix(const tVector &symbolsVector)$/;"	f	class:KalmanEstimator
-BuildFfromSymbolsMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    virtual tMatrix BuildFfromSymbolsMatrix(const tVector &symbolsVector);$/;"	p	class:KalmanEstimator
 CDMAKALMANESTIMATOR_H	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.h	/^#define CDMAKALMANESTIMATOR_H$/;"	d
 CDMAKNOWNCHANNELCHANNELMATRIXESTIMATOR_H	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKnownChannelChannelMatrixEstimator.h	/^#define CDMAKNOWNCHANNELCHANNELMATRIXESTIMATOR_H$/;"	d
 CDMAKalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.cpp	/^CDMAKalmanEstimator::CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator):KalmanEstimator(cdmaKalmanEstimator),_spreadingCodes(cdmaKalmanEstimator._spreadingCodes)$/;"	f	class:CDMAKalmanEstimator
@@ -214,7 +207,6 @@ CMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEappl
 CMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^class CMEapplyingAlgorithm : public UnknownChannelOrderAlgorithm$/;"	c
 CONSTANTMEANDSPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ConstantMeanDSPowerProfile.h	/^#define CONSTANTMEANDSPOWERPROFILE_H$/;"	d
 CONTINUOUSPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ContinuousPowerProfile.h	/^#define CONTINUOUSPOWERPROFILE_H$/;"	d
-Capacity	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	int Capacity() { return _capacity;}$/;"	f	class:ParticleFilter
 ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)$/;"	f	class:ChannelDependentNoise
 ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.cpp	/^ChannelDependentNoise::ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise):Noise(channelDependentNoise),_channel(channelDependentNoise._channel),_stdDevs(new double[_length])$/;"	f	class:ChannelDependentNoise
 ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.h	/^    ChannelDependentNoise(MIMOChannel *channel);$/;"	p	class:ChannelDependentNoise
@@ -223,7 +215,6 @@ ChannelDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/Chann
 ChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.cpp	/^ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix(initialEstimation)$/;"	f	class:ChannelMatrixEstimator
 ChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    ChannelMatrixEstimator(tMatrix initialEstimation,int N);$/;"	p	class:ChannelMatrixEstimator
 ChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^class ChannelMatrixEstimator{$/;"	c
-ChannelMatrixcols	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    int ChannelMatrixcols() { return _channelMatrixCols;}$/;"	f	class:LinearDetector
 ChannelOrderEstimationSystem	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp	/^ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()$/;"	f	class:ChannelOrderEstimationSystem
 ChannelOrderEstimationSystem	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^    ChannelOrderEstimationSystem();$/;"	p	class:ChannelOrderEstimationSystem
 ChannelOrderEstimationSystem	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^class ChannelOrderEstimationSystem : public SMCSystem$/;"	c
@@ -238,18 +229,11 @@ Clean	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h
 Clean	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^    void Clean() { delete _detectedSequence; _detectedSequence = NULL;}$/;"	f	class:ViterbiPath
 CommonConstructorsCode	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.cpp	/^void ARprocess::CommonConstructorsCode(const tMatrix &seed)$/;"	f	class:ARprocess
 CommonConstructorsCode	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	void CommonConstructorsCode(const tMatrix &seed);$/;"	p	class:ARprocess
-ComputeBER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^double TransmissionUtil::ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)$/;"	f	class:TransmissionUtil
-ComputeBER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static double ComputeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);$/;"	p	class:TransmissionUtil
 ComputeFromActiveOperands	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.cpp	/^inline double StatUtil::ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands)$/;"	f	class:StatUtil
 ComputeFromActiveOperands	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);$/;"	p	class:StatUtil
 ComputeProbabilities	/usr/local/.home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.cpp	/^tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)$/;"	f	class:APPbasedChannelOrderEstimator
 ComputeProbabilities	/usr/local/.home/manu/c++/comunicaciones/estimation/APPbasedChannelOrderEstimator.h	/^    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom);$/;"	p	class:APPbasedChannelOrderEstimator
 ComputeProbabilities	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelOrderEstimator.h	/^    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom) = 0;$/;"	p	class:ChannelOrderEstimator
-ComputedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^	virtual tMatrix ComputedFilter() { return _filter;}$/;"	f	class:DecorrelatorDetector
-ComputedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual tMatrix ComputedFilter() = 0;$/;"	p	class:LinearDetector
-ComputedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.cpp	/^tMatrix MMSEDetector::ComputedFilter()$/;"	f	class:MMSEDetector
-ComputedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	virtual tMatrix ComputedFilter();$/;"	p	class:MMSEDetector
-ComputedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tMatrix ComputedFilter() { return _filter;}$/;"	f	class:RMMSEDetector
 ConstantMeanDSPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ConstantMeanDSPowerProfile.cpp	/^ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nOutputs, int nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T): ContinuousPowerProfile(nOutputs, nInputs, differentialDelays, powers)$/;"	f	class:ConstantMeanDSPowerProfile
 ConstantMeanDSPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ConstantMeanDSPowerProfile.h	/^    ConstantMeanDSPowerProfile(int nOutputs, int nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T);$/;"	p	class:ConstantMeanDSPowerProfile
 ConstantMeanDSPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ConstantMeanDSPowerProfile.h	/^class ConstantMeanDSPowerProfile : public ContinuousPowerProfile$/;"	c
@@ -257,11 +241,8 @@ ContinuousPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/chan
 ContinuousPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ContinuousPowerProfile.h	/^	ContinuousPowerProfile(int nOutputs, int nInputs, std::vector<double> differentialDelays, std::vector<double> powers);$/;"	p	class:ContinuousPowerProfile
 ContinuousPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ContinuousPowerProfile.h	/^class ContinuousPowerProfile : public DelayPowerProfile$/;"	c
 DATE_LENGTH	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^#define DATE_LENGTH /;"	d	file:
-DEBUG	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^#define DEBUG$/;"	d	file:
 DEBUG	/usr/local/.home/manu/c++/comunicaciones/smc/resampling/MultinomialResamplingAlgorithm.cpp	/^#define DEBUG$/;"	d	file:
-DEBUG	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp	/^#define DEBUG$/;"	d	file:
 DEBUG4	/usr/local/.home/manu/c++/comunicaciones/algorithms/MLSDmAlgorithm.cpp	/^#define DEBUG4$/;"	d	file:
-DEBUG5	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^#define DEBUG5$/;"	d	file:
 DECORRELATORDETECTOR_H	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^#define DECORRELATORDETECTOR_H$/;"	d
 DELAYPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^#define DELAYPOWERPROFILE_H$/;"	d
 DEMODULATOR_H	/usr/local/.home/manu/c++/comunicaciones/transmision/Demodulator.h	/^#define DEMODULATOR_H$/;"	d
@@ -281,13 +262,6 @@ DeployState	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp
 DeployState	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	void DeployState(int iState,const tVector &observations, double noiseVariance);$/;"	p	class:PSPAlgorithm
 DeployState	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix)$/;"	f	class:ViterbiAlgorithm
 DeployState	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);$/;"	p	class:ViterbiAlgorithm
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.cpp	/^tVector DecorrelatorDetector::Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)$/;"	f	class:DecorrelatorDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^    virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);$/;"	p	class:DecorrelatorDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual tVector Detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;$/;"	p	class:LinearDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.cpp	/^tVector MMSEDetector::Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)$/;"	f	class:MMSEDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^    virtual tVector Detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);$/;"	p	class:MMSEDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.cpp	/^tVector RMMSEDetector::Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)$/;"	f	class:RMMSEDetector
-Detect	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tVector Detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);$/;"	p	class:RMMSEDetector
 DifferentialDecoding	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^Bits Bits::DifferentialDecoding()$/;"	f	class:Bits
 DifferentialDecoding	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	Bits DifferentialDecoding();$/;"	p	class:Bits
 DifferentialEncoding	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^Bits Bits::DifferentialEncoding()$/;"	f	class:Bits
@@ -302,10 +276,6 @@ ESTIMATEDMIMOCHANNEL_H	/usr/local/.home/manu/c++/comunicaciones/transmision/chan
 EXCEPCIONESTRANSMISION_H	/usr/local/.home/manu/c++/comunicaciones/src/exceptions.h	/^#define EXCEPCIONESTRANSMISION_H$/;"	d
 EXCEPCIONESTRANSMISION_H	/usr/local/.home/manu/c++/comunicaciones/transmision/exceptions.h	/^#define EXCEPCIONESTRANSMISION_H$/;"	d
 EXPONENTIALPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ExponentialPowerProfile.h	/^#define EXPONENTIALPOWERPROFILE_H$/;"	d
-EXPORT_REAL_DATA	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^#define EXPORT_REAL_DATA$/;"	d	file:
-EXPORT_REAL_DATA	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^#define EXPORT_REAL_DATA$/;"	d	file:
-Effectivememory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    virtual int Effectivememory() const = 0;$/;"	p	class:MIMOChannel
-Effectivememory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int Effectivememory() const {return _memory;}$/;"	f	class:StillMemoryMIMOChannel
 Elsevier2007ARChannelSystem	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007ARChannelSystem.cpp	/^Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()$/;"	f	class:Elsevier2007ARChannelSystem
 Elsevier2007ARChannelSystem	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007ARChannelSystem.h	/^    Elsevier2007ARChannelSystem();$/;"	p	class:Elsevier2007ARChannelSystem
 Elsevier2007ARChannelSystem	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007ARChannelSystem.h	/^class Elsevier2007ARChannelSystem : public Elsevier2007System$/;"	c
@@ -328,8 +298,6 @@ ExponentialPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/cha
 FLATPOWERPROFILE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/FlatPowerProfile.h	/^#define FLATPOWERPROFILE_H$/;"	d
 FillFirstEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedMKFAlgorithm.h	/^    virtual void FillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const$/;"	f	class:LinearFilterBasedMKFAlgorithm
 FillFirstEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h	/^	virtual void FillFirstEstimatedChannelMatrix(int iParticle,tMatrix &firstEstimatedChannelMatrix) const$/;"	f	class:LinearFilterBasedSMCAlgorithm
-FilteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix FilteredCovariance() {return _filteredCovariance;}$/;"	f	class:KalmanFilter
-FilteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tVector FilteredMean() {return _filteredMean;}$/;"	f	class:KalmanFilter
 FlatPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/FlatPowerProfile.cpp	/^FlatPowerProfile::FlatPowerProfile(int nOutputs, int nInputs, int m, double variance): DelayPowerProfile(nOutputs, nInputs)$/;"	f	class:FlatPowerProfile
 FlatPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/FlatPowerProfile.h	/^    FlatPowerProfile(int nOutputs, int nInputs, int m, double variance);$/;"	p	class:FlatPowerProfile
 FlatPowerProfile	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/FlatPowerProfile.h	/^class FlatPowerProfile : public DelayPowerProfile$/;"	c
@@ -337,41 +305,13 @@ FlattenWeights	/usr/local/.home/manu/c++/comunicaciones/smc/resampling/WithThres
 FlattenWeights	/usr/local/.home/manu/c++/comunicaciones/smc/resampling/WithThresholdResamplingAlgorithmWrapper.h	/^	tVector FlattenWeights(const tVector &weights, double threshold) const;$/;"	p	class:WithThresholdResamplingAlgorithmWrapper
 GenerateMatrices	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.cpp	/^void DelayPowerProfile::GenerateMatrices()$/;"	f	class:DelayPowerProfile
 GenerateMatrices	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    void GenerateMatrices();$/;"	p	class:DelayPowerProfile
-GenerateTrainingSequence	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^tMatrix TransmissionUtil::GenerateTrainingSequence(const Alphabet &alphabet,int nInputs,int length)$/;"	f	class:TransmissionUtil
-GenerateTrainingSequence	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static tMatrix GenerateTrainingSequence(const Alphabet &alphabet,int nInputs,int length);$/;"	p	class:TransmissionUtil
-GetBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	ParticleWithChannelEstimation *GetBestParticle() { return _particles[iBestParticle()]; }$/;"	f	class:ParticleFilter
 GetChannelOrderAPPsAlongTime	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));}$/;"	f	class:UnknownChannelOrderAlgorithm
 GetChannelOrderAPPsVector	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelOrderEstimator.cpp	/^tVector ChannelOrderEstimator::GetChannelOrderAPPsVector()$/;"	f	class:ChannelOrderEstimator
 GetChannelOrderAPPsVector	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelOrderEstimator.h	/^    tVector GetChannelOrderAPPsVector();$/;"	p	class:ChannelOrderEstimator
 GetChannelOrderEstimator	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderEstimationParticleAddon.h	/^    ChannelOrderEstimator *GetChannelOrderEstimator() {return _channelOrderEstimator;}$/;"	f	class:WithChannelOrderEstimationParticleAddon
 GetCost	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^    double GetCost() { return _cost;}$/;"	f	class:PathCandidate
 GetCost	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^    double GetCost() const { return _cost;}$/;"	f	class:ViterbiPath
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual vector<tMatrix> GetEstimatedChannelMatrices() = 0;$/;"	p	class:Algorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^vector< tMatrix > CDMAunknownActiveUsersSISopt::GetEstimatedChannelMatrices()$/;"	f	class:CDMAunknownActiveUsersSISopt
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h	/^    vector< tMatrix > GetEstimatedChannelMatrices();$/;"	p	class:CDMAunknownActiveUsersSISopt
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^vector<tMatrix> CMEBasedAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:CMEBasedAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^    virtual vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:CMEBasedAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^vector<tMatrix> CMEapplyingAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:CMEapplyingAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:CMEapplyingAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.cpp	/^vector<tMatrix> ISIS::GetEstimatedChannelMatrices()$/;"	f	class:ISIS
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^	vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:ISIS
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.cpp	/^vector<tMatrix> KnownChannelAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:KnownChannelAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:KnownChannelAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^vector<tMatrix> LinearFilterBasedAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:LinearFilterBasedAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:LinearFilterBasedAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^vector<tMatrix> PSPAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:PSPAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	std::vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:PSPAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^vector<tMatrix> SMCAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:SMCAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:SMCAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^vector<tMatrix> TimeVaryingChannelCMEbasedAlgorithm::GetEstimatedChannelMatrices()$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
-GetEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^    virtual vector<tMatrix> GetEstimatedChannelMatrices();$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
 GetLinearDetector	/usr/local/.home/manu/c++/comunicaciones/smc/WithLinearDetectionParticleAddon.h	/^    LinearDetector *GetLinearDetector(int n) { return _linearDetectors[n];}$/;"	f	class:WithLinearDetectionParticleAddon
-GetName	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    string GetName() {return _name;}$/;"	f	class:Algorithm
-GetParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	ParticleWithChannelEstimation *GetParticle(int n) { return _particles[n];}$/;"	f	class:ParticleFilter
 GetParticleFilterPointer	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}$/;"	f	class:ISIS
 GetParticleFilterPointer	/usr/local/.home/manu/c++/comunicaciones/algorithms/MLSDmAlgorithm.h	/^    virtual ParticleFilter* GetParticleFilterPointer() {return _particleFilter;}$/;"	f	class:MLSDmAlgorithm
 GetParticleFilterPointer	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    virtual ParticleFilter* GetParticleFilterPointer() = 0;$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
@@ -380,23 +320,27 @@ GetRandomGenerator	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.
 GetResamplingCriterion	/usr/local/.home/manu/c++/comunicaciones/smc/resampling/ResamplingAlgorithm.h	/^	ResamplingCriterion GetResamplingCriterion() { return _resamplingCriterion;}$/;"	f	class:ResamplingAlgorithm
 GetStream	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^vector<tBit> Bits::GetStream(int index) const$/;"	f	class:Bits
 GetStream	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	std::vector<tBit> GetStream(int index) const;$/;"	p	class:Bits
-GetWeightsVector	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    tVector GetWeightsVector()$/;"	f	class:ParticleFilter
 HAVE_DLFCN_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_DLFCN_H /;"	d
+HAVE_DLFCN_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_DLFCN_H /;"	d
 HAVE_INTTYPES_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_INTTYPES_H /;"	d
+HAVE_INTTYPES_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_INTTYPES_H /;"	d
 HAVE_MEMORY_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_MEMORY_H /;"	d
+HAVE_MEMORY_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_MEMORY_H /;"	d
 HAVE_STDINT_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_STDINT_H /;"	d
+HAVE_STDINT_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_STDINT_H /;"	d
 HAVE_STDLIB_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_STDLIB_H /;"	d
+HAVE_STDLIB_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_STDLIB_H /;"	d
 HAVE_STRINGS_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_STRINGS_H /;"	d
+HAVE_STRINGS_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_STRINGS_H /;"	d
 HAVE_STRING_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_STRING_H /;"	d
+HAVE_STRING_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_STRING_H /;"	d
 HAVE_SYS_STAT_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_SYS_STAT_H /;"	d
+HAVE_SYS_STAT_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_SYS_STAT_H /;"	d
 HAVE_SYS_TYPES_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_SYS_TYPES_H /;"	d
+HAVE_SYS_TYPES_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_SYS_TYPES_H /;"	d
 HAVE_UNISTD_H	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define HAVE_UNISTD_H /;"	d
+HAVE_UNISTD_H	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define HAVE_UNISTD_H /;"	d
 HOSTNAME_LENGTH	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^#define HOSTNAME_LENGTH /;"	d
-HsToStackedH	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.cpp	/^tMatrix Algorithm::HsToStackedH(vector<tMatrix> matrices,int m,int start,int d)$/;"	f	class:Algorithm
-HsToStackedH	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix HsToStackedH(vector<tMatrix> matrices,int m)$/;"	f	class:Algorithm
-HsToStackedH	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int d)$/;"	f	class:Algorithm
-HsToStackedH	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix HsToStackedH(vector<tMatrix> matrices,int m,int start,int d);$/;"	p	class:Algorithm
-HsToStackedH	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^	tMatrix HsToStackedH(vector<tMatrix> matrices) { return HsToStackedH(matrices,_channelOrder);}$/;"	f	class:KnownChannelOrderAlgorithm
 ISIS	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.cpp	/^ISIS::ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)$/;"	f	class:ISIS
 ISIS	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^    ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);$/;"	p	class:ISIS
 ISIS	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm$/;"	c
@@ -428,6 +372,8 @@ KALMANFILTER_H	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/
 KNOWNCHANNELALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^#define KNOWNCHANNELALGORITHM_H$/;"	d
 KNOWNCHANNELCHANNELMATRIXESTIMATOR_H	/usr/local/.home/manu/c++/comunicaciones/estimation/KnownChannelChannelMatrixEstimator.h	/^#define KNOWNCHANNELCHANNELMATRIXESTIMATOR_H$/;"	d
 KNOWNCHANNELORDERALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^#define KNOWNCHANNELORDERALGORITHM_H$/;"	d
+KNOWNFLATCHANNELANDACTIVEUSERSOPTIMALALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^#define KNOWNFLATCHANNELANDACTIVEUSERSOPTIMALALGORITHM_H$/;"	d
+KNOWNFLATCHANNELOPTIMALALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^#define KNOWNFLATCHANNELOPTIMALALGORITHM_H$/;"	d
 KNOWNSYMBOLSCMEAPPLYINGALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.h	/^#define KNOWNSYMBOLSCMEAPPLYINGALGORITHM_H$/;"	d
 KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATORALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^#define KNOWNSYMBOLSKALMANBASEDCHANNELESTIMATORALGORITHM_H$/;"	d
 KNOWNSYMBOLSKALMANESTIMATOR_H	/usr/local/.home/manu/c++/comunicaciones/estimation/KnownSymbolsKalmanEstimator.h	/^#define KNOWNSYMBOLSKALMANESTIMATOR_H$/;"	d
@@ -450,6 +396,12 @@ KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/K
 KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);$/;"	p	class:KnownChannelOrderAlgorithm
 KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,tMatrix preamble);$/;"	p	class:KnownChannelOrderAlgorithm
 KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm$/;"	c
+KnownFlatChannelAndActiveUsersOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.cpp	/^KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength, std::vector<std::vector<bool> > usersActivity): KnownFlatChannelOptimalAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel, preambleLength),_noTransmissionAlphabet(new Alphabet(vector<tSymbol>(1,0.0))),_usersActivity(usersActivity)$/;"	f	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
+KnownFlatChannelAndActiveUsersOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^    KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength, std::vector<std::vector<bool> > usersActivity);$/;"	p	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
+KnownFlatChannelAndActiveUsersOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^class KnownFlatChannelAndActiveUsersOptimalAlgorithm : public KnownFlatChannelOptimalAlgorithm$/;"	c
+KnownFlatChannelOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp	/^KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+KnownFlatChannelOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength);$/;"	p	class:KnownFlatChannelOptimalAlgorithm
+KnownFlatChannelOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^class KnownFlatChannelOptimalAlgorithm : public KnownChannelAlgorithm$/;"	c
 KnownSymbolsCMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.cpp	/^KnownSymbolsCMEapplyingAlgorithm::KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_symbolVectors(symbolVectors)$/;"	f	class:KnownSymbolsCMEapplyingAlgorithm
 KnownSymbolsCMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.h	/^    KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors);$/;"	p	class:KnownSymbolsCMEapplyingAlgorithm
 KnownSymbolsCMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.h	/^class KnownSymbolsCMEapplyingAlgorithm : public CMEapplyingAlgorithm$/;"	c
@@ -531,8 +483,6 @@ MaximumProbabilityCriterion	/usr/local/.home/manu/c++/comunicaciones/algorithms/
 MaximumProbabilityCriterion	/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS2SIS/MaximumProbabilityCriterion.h	/^class MaximumProbabilityCriterion : public TransitionCriterion$/;"	c
 Mean	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.cpp	/^double StatUtil::Mean(const tMatrix &A)$/;"	f	class:StatUtil
 Mean	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static double Mean(const tMatrix &A);$/;"	p	class:StatUtil
-Memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    virtual int Memory(int n) const = 0;$/;"	p	class:MIMOChannel
-Memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int Memory(int n) const {return _memory;}$/;"	f	class:StillMemoryMIMOChannel
 Modulate	/usr/local/.home/manu/c++/comunicaciones/transmision/Modulator.cpp	/^tMatrix Modulator::Modulate(const Bits &bits, Alphabet alphabet)$/;"	f	class:Modulator
 Modulate	/usr/local/.home/manu/c++/comunicaciones/transmision/Modulator.h	/^	static tMatrix Modulate(const Bits &bits,Alphabet alfabeto);$/;"	p	class:Modulator
 Modulator	/usr/local/.home/manu/c++/comunicaciones/transmision/Modulator.cpp	/^Modulator::Modulator()$/;"	f	class:Modulator
@@ -565,9 +515,6 @@ NormalPdf	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.cpp	/^dou
 NormalPdf	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);$/;"	p	class:StatUtil
 NormalPdf	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static double NormalPdf(const tVector &x,const tVector &mean,double variance);$/;"	p	class:StatUtil
 NormalPdf	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static double NormalPdf(double x,double mean,double variance);$/;"	p	class:StatUtil
-NormalizeWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void NormalizeWeights()$/;"	f	class:ParticleFilter
-NormalizeWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void NormalizeWeights(std::vector<int> indexes)$/;"	f	class:ParticleFilter
-Nparticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	int Nparticles() { return _nParticles;}$/;"	f	class:ParticleFilter
 NpossibleInputs	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/Trellis.h	/^    int NpossibleInputs() const {return _nPossibleInputs;}$/;"	f	class:Trellis
 Nstates	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/Trellis.h	/^    int Nstates() const { return _nStates;}$/;"	f	class:Trellis
 NullNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/NullNoise.cpp	/^NullNoise::NullNoise(int nOutputs, int length): Noise(nOutputs, length)$/;"	f	class:NullNoise
@@ -587,11 +534,17 @@ OnlyOnce	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    vir
 OnlyOnce	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.cpp	/^void ChannelOrderEstimationSystem::OnlyOnce()$/;"	f	class:ChannelOrderEstimationSystem
 OnlyOnce	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	virtual void OnlyOnce();$/;"	p	class:ChannelOrderEstimationSystem
 PACKAGE	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE /;"	d
+PACKAGE	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE /;"	d
 PACKAGE_BUGREPORT	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE_BUGREPORT /;"	d
+PACKAGE_BUGREPORT	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE_BUGREPORT /;"	d
 PACKAGE_NAME	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE_NAME /;"	d
+PACKAGE_NAME	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE_NAME /;"	d
 PACKAGE_STRING	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE_STRING /;"	d
+PACKAGE_STRING	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE_STRING /;"	d
 PACKAGE_TARNAME	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE_TARNAME /;"	d
+PACKAGE_TARNAME	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE_TARNAME /;"	d
 PACKAGE_VERSION	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define PACKAGE_VERSION /;"	d
+PACKAGE_VERSION	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define PACKAGE_VERSION /;"	d
 PARTICLEFILTER_H	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^#define PARTICLEFILTER_H$/;"	d
 PARTICLEWITHCHANNELESTIMATIONANDACTIVEUSERS_H	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWithChannelEstimationAndActiveUsers.h	/^#define PARTICLEWITHCHANNELESTIMATIONANDACTIVEUSERS_H$/;"	d
 PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDERAPP_H	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWithChannelEstimationAndChannelOrderAPP.h	/^#define PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDERAPP_H$/;"	d
@@ -601,6 +554,7 @@ PARTICLEWITHCHANNELESTIMATION_H	/usr/local/.home/manu/c++/comunicaciones/smc/Par
 PARTICLE_H	/usr/local/.home/manu/c++/comunicaciones/smc/Particle.h	/^#define PARTICLE_H$/;"	d
 PATHCANDIDATE_H	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^#define PATHCANDIDATE_H$/;"	d
 POWERPROFILEDEPENDENTNOISE_H	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^#define POWERPROFILEDEPENDENTNOISE_H$/;"	d
+PRINT_INFO	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp	/^#define PRINT_INFO$/;"	d	file:
 PRINT_PARAMETERS	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^#define PRINT_PARAMETERS$/;"	d	file:
 PSPALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^#define PSPALGORITHM_H$/;"	d
 PSPAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_rAllSymbolRows(0,_nInputs-1),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_trellis(alphabet,N,m),_detectedSymbolVectors(new tMatrix(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)$/;"	f	class:PSPAlgorithm
@@ -663,8 +617,6 @@ ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation	/usr/lo
 ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h	/^class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation : public ParticleWithChannelEstimationAndLinearDetection, public WithChannelOrderEstimationParticleAddon$/;"	c
 PathCandidate	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^    PathCandidate():_cost(-1.0) {}$/;"	f	class:PathCandidate
 PathCandidate	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^class PathCandidate{$/;"	c
-PerformsChannelOrderAPPEstimation	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual bool PerformsChannelOrderAPPEstimation() const { return false;}$/;"	f	class:Algorithm
-PerformsChannelOrderAPPEstimation	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^    bool PerformsChannelOrderAPPEstimation() const { return true;}$/;"	f	class:UnknownChannelOrderAlgorithm
 Permutations	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template vector<vector<int> > Util::Permutations(int *array, int nElements);$/;"	p	class:Util	file:
 Permutations	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template vector<vector<uint> > Util::Permutations(uint *array, int nElements);$/;"	p	class:Util	file:
 Permutations	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)$/;"	f	class:Util
@@ -673,8 +625,6 @@ PowerProfileDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/
 PowerProfileDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^    PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);$/;"	p	class:PowerProfileDependentNoise
 PowerProfileDependentNoise	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^class PowerProfileDependentNoise : public Noise$/;"	c
 Powers	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/ContinuousPowerProfile.h	/^	vector<double> Powers() const { return _continuousPowers;}$/;"	f	class:ContinuousPowerProfile
-PredictiveCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix PredictiveCovariance() {return _predictiveCovariance;}$/;"	f	class:KalmanFilter
-PredictiveMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tVector PredictiveMean() { return _predictiveMean;}$/;"	f	class:KalmanFilter
 PrintStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)$/;"	f	class:ViterbiAlgorithm
 PrintStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void PrintStage(tStage exitOrArrival);$/;"	p	class:ViterbiAlgorithm
 PrintState	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^void PSPAlgorithm::PrintState(int iState)$/;"	f	class:PSPAlgorithm
@@ -744,46 +694,6 @@ ResidualResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/smc/resampl
 Rev2TVT2007System	/usr/local/.home/manu/c++/comunicaciones/systems/Rev2TVT2007System.cpp	/^Rev2TVT2007System::Rev2TVT2007System(): TVT2007System()$/;"	f	class:Rev2TVT2007System
 Rev2TVT2007System	/usr/local/.home/manu/c++/comunicaciones/systems/Rev2TVT2007System.h	/^    Rev2TVT2007System();$/;"	p	class:Rev2TVT2007System
 Rev2TVT2007System	/usr/local/.home/manu/c++/comunicaciones/systems/Rev2TVT2007System.h	/^class Rev2TVT2007System : public TVT2007System$/;"	c
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual void Run(tMatrix observations,vector<double> noiseVariances) = 0;$/;"	p	class:Algorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;$/;"	p	class:Algorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:CMEBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^void CMEBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:CMEBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^	virtual void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:CMEBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:CMEBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:CMEapplyingAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^void CMEapplyingAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:CMEapplyingAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:CMEapplyingAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:CMEapplyingAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.cpp	/^void KnownChannelAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:KnownChannelAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:KnownChannelAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^void LinearFilterBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:LinearFilterBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^void LinearFilterBasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:LinearFilterBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:LinearFilterBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:LinearFilterBasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^void MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:PSPAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^void PSPAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:PSPAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:PSPAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:PSPAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:SMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:SMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:SMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:SMCAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^void TimeVaryingChannelCMEbasedAlgorithm::Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^	virtual void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^	virtual void Run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:ViterbiAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)$/;"	f	class:ViterbiAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:ViterbiAlgorithm
-Run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void Run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);$/;"	p	class:ViterbiAlgorithm
 RunFrom	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::RunFrom(int n,tMatrix observations,vector<double> noiseVariances)$/;"	f	class:SMCAlgorithm
 RunFrom	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void RunFrom(int n,tMatrix observations,vector<double> noiseVariances);$/;"	p	class:SMCAlgorithm
 RuntimeException	/usr/local/.home/manu/c++/comunicaciones/src/exceptions.h	/^		RuntimeException(string s) : runtime_error(s) { }$/;"	f	class:RuntimeException
@@ -810,33 +720,21 @@ SMCSystem	/usr/local/.home/manu/c++/comunicaciones/systems/SMCSystem.h	/^class S
 SNRs	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    std::vector<int> SNRs;$/;"	m	class:BaseSystem
 STATUTIL_H	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^#define STATUTIL_H$/;"	d
 STDC_HEADERS	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define STDC_HEADERS /;"	d
+STDC_HEADERS	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define STDC_HEADERS /;"	d
 STILLMEMORYMIMOCHANNEL_H	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^#define STILLMEMORYMIMOCHANNEL_H$/;"	d
 SetEstimatorIndex	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::SetEstimatorIndex(int n)$/;"	f	class:SMCAlgorithm
 SetEstimatorIndex	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void SetEstimatorIndex(int n);$/;"	p	class:SMCAlgorithm
-SetFilteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.cpp	/^void KalmanFilter::SetFilteredMean(const tVector &filteredMean)$/;"	f	class:KalmanFilter
-SetFilteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	void SetFilteredMean(const tVector &filteredMean);$/;"	p	class:KalmanFilter
 Simulate	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp	/^void BaseSystem::Simulate()$/;"	f	class:BaseSystem
 Simulate	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    void Simulate();$/;"	p	class:BaseSystem
 StatUtil	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^class StatUtil{$/;"	c
-StateStep	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^	virtual void StateStep(tVector observations) {}$/;"	f	class:DecorrelatorDetector
-StateStep	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual void StateStep(tVector observations) = 0;$/;"	p	class:LinearDetector
-StateStep	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^    virtual void StateStep(tVector observations) {}$/;"	f	class:MMSEDetector
-StateStep	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.cpp	/^void RMMSEDetector::StateStep(tVector observations)$/;"	f	class:RMMSEDetector
-StateStep	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    void StateStep(tVector observations);$/;"	p	class:RMMSEDetector
-StateStepsFromObservationsSequence	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.cpp	/^void LinearDetector::StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo)$/;"	f	class:LinearDetector
-StateStepsFromObservationsSequence	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    void StateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);$/;"	p	class:LinearDetector
 StdDevAt	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.cpp	/^double ChannelDependentNoise::StdDevAt(int n) const$/;"	f	class:ChannelDependentNoise
 StdDevAt	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.h	/^	double StdDevAt(int n) const;$/;"	p	class:ChannelDependentNoise
 StdDevAt	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.h	/^	virtual double StdDevAt(int n) const = 0;$/;"	p	class:Noise
 StdDevAt	/usr/local/.home/manu/c++/comunicaciones/transmision/NullNoise.h	/^    virtual double StdDevAt(int n) const {return 0.0;}$/;"	f	class:NullNoise
 StdDevAt	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^	virtual double StdDevAt(int n) const {return _stdDev;}$/;"	f	class:PowerProfileDependentNoise
-Step	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.cpp	/^void KalmanFilter::Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)$/;"	f	class:KalmanFilter
-Step	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	void Step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);$/;"	p	class:KalmanFilter
 StillMemoryMIMOChannel	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.cpp	/^StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory, int length): MIMOChannel(nInputs, nOutputs, length),_memory(memory),_nInputsnOutputsMemory(_nInputs*_nOutputs*_memory),_nInputsMemory(_nInputs*_memory)$/;"	f	class:StillMemoryMIMOChannel
 StillMemoryMIMOChannel	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^    StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory,int length);$/;"	p	class:StillMemoryMIMOChannel
 StillMemoryMIMOChannel	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^class StillMemoryMIMOChannel : public MIMOChannel$/;"	c
-SubstractKnownSymbolsContribution	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.cpp	/^tVector Algorithm::SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)$/;"	f	class:Algorithm
-SubstractKnownSymbolsContribution	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tVector SubstractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);$/;"	p	class:Algorithm
 T	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007BesselChannelSystem.h	/^    double T; \/\/ (s)$/;"	m	class:Elsevier2007BesselChannelSystem
 T	/usr/local/.home/manu/c++/comunicaciones/systems/LMSmuTestSystem.h	/^    double T; \/\/ (s)$/;"	m	class:LMSmuTestSystem
 T	/usr/local/.home/manu/c++/comunicaciones/systems/PSPvsSMCSystem.h	/^    double T; \/\/ (s)$/;"	m	class:PSPvsSMCSystem
@@ -931,6 +829,7 @@ UpdateParticleChannelOrderEstimators	/usr/local/.home/manu/c++/comunicaciones/al
 UpdateParticleChannelOrderEstimators	/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.h	/^    virtual void UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess);$/;"	p	class:USIS
 Util	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^class Util{$/;"	c
 VERSION	/usr/local/.home/manu/c++/comunicaciones/debug/config.h	/^#define VERSION /;"	d
+VERSION	/usr/local/.home/manu/c++/comunicaciones/optimized/config.h	/^#define VERSION /;"	d
 VITERBIALGORITHM_H	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^#define VITERBIALGORITHM_H$/;"	d
 VITERBIPATH_H	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^#define VITERBIPATH_H$/;"	d
 Variance	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.cpp	/^double StatUtil::Variance(const tVector &v)$/;"	f	class:StatUtil
@@ -1002,8 +901,8 @@ _ARprocessVariance	/usr/local/.home/manu/c++/comunicaciones/algorithms/MLSDmAlgo
 _ARprocessVariance	/usr/local/.home/manu/c++/comunicaciones/algorithms/TriangularizationBasedSMCAlgorithm.h	/^	double _ARcoefficient,_samplingVariance,_ARprocessVariance;$/;"	m	class:TriangularizationBasedSMCAlgorithm
 _ARprocessVariance	/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.h	/^	double _ARcoefficient,_samplingVariance,_ARprocessVariance;$/;"	m	class:USIS
 _E	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tMatrix _E,_varianceInvRtildeChannelMatrix;$/;"	m	class:RMMSEDetector
-_Nr	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    int _Nr; \/\/\/ number of receiving antennas of the system$/;"	m	class:Algorithm
-_R	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix _R,_stateEquationCovariance;$/;"	m	class:KalmanFilter
+_Nr	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const int _Nr; \/\/\/ number of receiving antennas of the system$/;"	m	class:Algorithm
+_R	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix _R,_stateEquationCovariance;$/;"	m	class:KalmanFilter
 _Rx	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	tMatrix _Rx;$/;"	m	class:MMSEDetector
 __done	/usr/local/.home/manu/c++/comunicaciones/com/com.cpp	/^bool __done = false;$/;"	v
 __done	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^extern bool __done;$/;"	x
@@ -1015,7 +914,7 @@ _alphaPower	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/
 _alphaPowerSumFactor	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    double _alphaPower,_alphaPowerSumFactor;$/;"	m	class:RMMSEDetector
 _alphaPowerSumNow	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    double _alphaPowerSumNow,_alphaPowerSumPrevious;$/;"	m	class:RMMSEDetector
 _alphaPowerSumPrevious	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    double _alphaPowerSumNow,_alphaPowerSumPrevious;$/;"	m	class:RMMSEDetector
-_alphabet	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    Alphabet _alphabet;$/;"	m	class:Algorithm
+_alphabet	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const Alphabet _alphabet;$/;"	m	class:Algorithm
 _alphabetVariance	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    double _alphabetVariance;$/;"	m	class:LinearDetector
 _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tMatrix _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;$/;"	m	class:RMMSEDetector
 _amplitudes	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    std::vector<double> _amplitudes;$/;"	m	class:DelayPowerProfile
@@ -1029,7 +928,7 @@ _c	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorith
 _c	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h	/^	int _c,_e;$/;"	m	class:LinearFilterBasedSMCAlgorithm
 _candidateOrders	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^    vector<int> _candidateOrders;$/;"	m	class:UnknownChannelOrderAlgorithm
 _candidateOrders	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelOrderEstimator.h	/^    std::vector<int> _candidateOrders;$/;"	m	class:ChannelOrderEstimator
-_capacity	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    uint _capacity,_nParticles;$/;"	m	class:ParticleFilter
+_capacity	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    const uint _capacity;$/;"	m	class:ParticleFilter
 _channel	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^	const MIMOChannel &_channel;$/;"	m	class:KnownChannelAlgorithm
 _channel	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    const MIMOChannel *_channel;$/;"	m	class:SMCAlgorithm
 _channel	/usr/local/.home/manu/c++/comunicaciones/estimation/KnownChannelChannelMatrixEstimator.h	/^    const MIMOChannel *_channel;$/;"	m	class:KnownChannelChannelMatrixEstimator
@@ -1079,6 +978,7 @@ _detectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/Linea
 _detectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^    tMatrix *_detectedSymbolVectors;$/;"	m	class:PSPAlgorithm
 _detectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    tMatrix _preamble,*_detectedSymbolVectors;$/;"	m	class:ViterbiAlgorithm
 _detectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PSPPathCandidate.h	/^	tMatrix _detectedSymbolVectors;$/;"	m	class:PSPPathCandidate
+_detectedSymbols	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    tMatrix _detectedSymbols;$/;"	m	class:KnownFlatChannelOptimalAlgorithm
 _detectionStart	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	int _nSymbolsToBeDetected,_detectionStart;$/;"	m	class:MMSEDetector
 _e	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.h	/^	int _c,_e;$/;"	m	class:LinearFilterBasedSMCAlgorithm
 _estimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    vector<tMatrix> _estimatedChannelMatrices;$/;"	m	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
@@ -1089,11 +989,12 @@ _estimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleW
 _estimatorIndex	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    int _estimatorIndex; \/\/! it indicates which of the all the estimator that each particle contain is interesting at every moment$/;"	m	class:SMCAlgorithm
 _exitStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^    PSPPath **_exitStage, **_arrivalStage;$/;"	m	class:PSPAlgorithm
 _exitStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    ViterbiPath *_exitStage, *_arrivalStage;$/;"	m	class:ViterbiAlgorithm
+_extendedAlphabet	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    Alphabet *_extendedAlphabet;$/;"	m	class:KnownFlatChannelOptimalAlgorithm
 _filter	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^	tMatrix _filter;$/;"	m	class:DecorrelatorDetector
 _filter	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	tMatrix _filter;$/;"	m	class:MMSEDetector
 _filter	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tMatrix _filter;$/;"	m	class:RMMSEDetector
-_filteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix _predictiveCovariance,_filteredCovariance;$/;"	m	class:KalmanFilter
-_filteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tVector _predictiveMean,_filteredMean;$/;"	m	class:KalmanFilter
+_filteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix _predictiveCovariance,_filteredCovariance;$/;"	m	class:KalmanFilter
+_filteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tVector _predictiveMean,_filteredMean;$/;"	m	class:KalmanFilter
 _firstSymbolVectorDetectedAt	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	int _firstSymbolVectorDetectedAt;$/;"	m	class:PSPAlgorithm
 _forgettingFactor	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    double _forgettingFactor,_invForgettingFactor;$/;"	m	class:RMMSEDetector
 _fromState	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^	int _fromState;$/;"	m	class:PathCandidate
@@ -1102,7 +1003,7 @@ _g	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tVec
 _generatedCoefficientsMean	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    double _generatedCoefficientsMean;$/;"	m	class:DelayPowerProfile
 _havesmpl	/usr/local/.home/manu/c++/comunicaciones/randomutil/Random.h	/^		bool _havesmpl;$/;"	m	class:Random
 _iFirstObservation	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^	int _maxOrder,_iFirstObservation,_nInputsXchannelOrderaxOrder;$/;"	m	class:UnknownChannelOrderAlgorithm
-_iLastSymbolVectorToBeDetected	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    int _iLastSymbolVectorToBeDetected;$/;"	m	class:Algorithm
+_iLastSymbolVectorToBeDetected	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const int _iLastSymbolVectorToBeDetected;$/;"	m	class:Algorithm
 _iNextMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KnownChannelChannelMatrixEstimator.h	/^    int _iNextMatrix;$/;"	m	class:KnownChannelChannelMatrixEstimator
 _iNextMatrix	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
 _input	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^	int _input;$/;"	m	class:PathCandidate
@@ -1137,9 +1038,9 @@ _nBitsBySymbol	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/
 _nChannelCoeffs	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;$/;"	m	class:ChannelMatrixEstimator
 _nChannelMatrixRows	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;$/;"	m	class:ChannelMatrixEstimator
 _nCoefficients	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	int _nCoefficients, _rows, _columns, _iNextMatrix;$/;"	m	class:ARprocess
-_nElementsToEstimate	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	int _nElementsToEstimate;$/;"	m	class:KalmanFilter
+_nElementsToEstimate	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    int _nElementsToEstimate;$/;"	m	class:KalmanFilter
 _nExtStateVectorCoeffs	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    int _nExtStateVectorCoeffs;$/;"	m	class:KalmanEstimator
-_nInputs	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    int _nInputs; \/\/\/ number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas\/users)$/;"	m	class:Algorithm
+_nInputs	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const int _nInputs; \/\/\/ number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas\/users)$/;"	m	class:Algorithm
 _nInputs	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;$/;"	m	class:ChannelMatrixEstimator
 _nInputs	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelOrderEstimator.h	/^    int _nInputs;$/;"	m	class:ChannelOrderEstimator
 _nInputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int _nInputs, _nOutputs,_length,_nInputsnOutputs;$/;"	m	class:MIMOChannel
@@ -1151,12 +1052,12 @@ _nInputsXchannelOrderaxChannelOrder	/usr/local/.home/manu/c++/comunicaciones/est
 _nInputsXchannelOrderaxOrder	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^	int _maxOrder,_iFirstObservation,_nInputsXchannelOrderaxOrder;$/;"	m	class:UnknownChannelOrderAlgorithm
 _nInputsnOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int _nInputs, _nOutputs,_length,_nInputsnOutputs;$/;"	m	class:MIMOChannel
 _nInputsnOutputsMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int _memory,_nInputsnOutputsMemory,_nInputsMemory;$/;"	m	class:StillMemoryMIMOChannel
-_nOutputs	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    int _nOutputs; \/\/\/ number of outputs (observations) of the system at each time instant$/;"	m	class:Algorithm
+_nOutputs	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const int _nOutputs; \/\/\/ number of outputs (observations) of the system at each time instant$/;"	m	class:Algorithm
 _nOutputs	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;$/;"	m	class:ChannelMatrixEstimator
 _nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.h	/^	int _nOutputs,_length;$/;"	m	class:Noise
 _nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int _nInputs, _nOutputs,_length,_nInputsnOutputs;$/;"	m	class:MIMOChannel
 _nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    int _nOutputs,_nInputs;$/;"	m	class:DelayPowerProfile
-_nParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    uint _capacity,_nParticles;$/;"	m	class:ParticleFilter
+_nParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    uint _nParticles;$/;"	m	class:ParticleFilter
 _nPossibleInputs	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/Trellis.h	/^    int _nStates,_nPossibleInputs;$/;"	m	class:Trellis
 _nStates	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/Trellis.h	/^    int _nStates,_nPossibleInputs;$/;"	m	class:Trellis
 _nStreams	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	uint _nStreams, _nBitsByStream,_nBits;$/;"	m	class:Bits
@@ -1164,9 +1065,10 @@ _nSurvivors	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/
 _nSymbolsToBeDetected	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	int _nSymbolsToBeDetected,_detectionStart;$/;"	m	class:MMSEDetector
 _nSymbolsToBeDetected	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    int _nSymbolsToBeDetected;$/;"	m	class:RMMSEDetector
 _nTimeInstants	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^    int _nTimeInstants;$/;"	m	class:ViterbiPath
-_name	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    string _name;$/;"	m	class:Algorithm
+_name	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    const string _name;$/;"	m	class:Algorithm
 _newActiveUserProb	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h	/^    double _newActiveUserProb; \/\/\/ probability of a new user becoming active at any time$/;"	m	class:CDMAunknownActiveUsersSISopt
 _newSymbolVector	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PathCandidate.h	/^	tVector _newSymbolVector;$/;"	m	class:PathCandidate
+_noTransmissionAlphabet	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^    Alphabet *_noTransmissionAlphabet;$/;"	m	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
 _noiseMean	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	double _noiseMean;$/;"	m	class:ARprocess
 _noiseVariance	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	double _noiseVariance;$/;"	m	class:ARprocess
 _particleFilter	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^	ParticleFilter _particleFilter;$/;"	m	class:ISIS
@@ -1181,8 +1083,9 @@ _particlesInitializerRandomGenerator	/usr/local/.home/manu/c++/comunicaciones/st
 _preamble	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^	tMatrix _preamble;$/;"	m	class:KnownChannelOrderAlgorithm
 _preamble	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^	tMatrix _preamble;$/;"	m	class:UnknownChannelOrderAlgorithm
 _preamble	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    tMatrix _preamble,*_detectedSymbolVectors;$/;"	m	class:ViterbiAlgorithm
-_predictiveCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix _predictiveCovariance,_filteredCovariance;$/;"	m	class:KalmanFilter
-_predictiveMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tVector _predictiveMean,_filteredMean;$/;"	m	class:KalmanFilter
+_preambleLength	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    const int _preambleLength;$/;"	m	class:KnownFlatChannelOptimalAlgorithm
+_predictiveCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix _predictiveCovariance,_filteredCovariance;$/;"	m	class:KalmanFilter
+_predictiveMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tVector _predictiveMean,_filteredMean;$/;"	m	class:KalmanFilter
 _presentTime	/usr/local/.home/manu/c++/comunicaciones/estimation/KnownSymbolsKalmanEstimator.h	/^	int _presentTime;$/;"	m	class:KnownSymbolsKalmanEstimator
 _processDoneExternally	/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.h	/^	bool _processDoneExternally;$/;"	m	class:USIS
 _rAllObservationRows	/usr/local/.home/manu/c++/comunicaciones/algorithms/USIS.h	/^    tRange _rAllObservationRows;$/;"	m	class:USIS
@@ -1212,7 +1115,7 @@ _spreadingCodes	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/Mul
 _startDetectionTime	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    int _startDetectionTime;$/;"	m	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
 _startDetectionTime	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^    int _nSurvivors,_d,_startDetectionTime;$/;"	m	class:PSPAlgorithm
 _startDetectionTime	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    int _d,_startDetectionTime;$/;"	m	class:SMCAlgorithm
-_stateEquationCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^	tMatrix _R,_stateEquationCovariance;$/;"	m	class:KalmanFilter
+_stateEquationCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix _R,_stateEquationCovariance;$/;"	m	class:KalmanFilter
 _stateTransitionMatrix	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/Trellis.h	/^    int **_stateTransitionMatrix;$/;"	m	class:Trellis
 _stateVector	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	vector<tSymbol> _stateVector;$/;"	m	class:PSPAlgorithm
 _stateVector	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^	vector<tSymbol> _stateVector;$/;"	m	class:ViterbiAlgorithm
@@ -1238,6 +1141,7 @@ _unnormalizedChannelOrderAPPs	/usr/local/.home/manu/c++/comunicaciones/estimatio
 _userCoeffs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/ARMultiuserCDMAchannel.h	/^    vector<tMatrix> _userCoeffs;$/;"	m	class:ARMultiuserCDMAchannel
 _userPersistenceProb	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h	/^    double _userPersistenceProb; \/\/\/ probability of an user surviving from one time instant to the next$/;"	m	class:CDMAunknownActiveUsersSISopt
 _userPriorProb	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h	/^    double _userPriorProb; \/\/\/ a priori probability of any user$/;"	m	class:CDMAunknownActiveUsersSISopt
+_usersActivity	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^    std::vector<std::vector<bool> > _usersActivity;    $/;"	m	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
 _usersActivity	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    vector<vector<bool> > _usersActivity;$/;"	m	class:CDMASystem
 _variance	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        double _mean,_variance;$/;"	m	class:Alphabet
 _varianceConstant	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^	double _varianceConstant,_stdDev;$/;"	m	class:PowerProfileDependentNoise
@@ -1248,6 +1152,7 @@ add	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::add(cons
 add	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::add(const tVector &a,const tVector &b,tVector &c,double alpha,double beta)$/;"	f	class:Util
 add	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);$/;"	p	class:Util
 add	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);$/;"	p	class:Util
+addParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    virtual void addParticle(ParticleWithChannelEstimation *particle)$/;"	f	class:ParticleFilter
 adjustParticlesNumberFromSurvivors	/usr/local/.home/manu/c++/comunicaciones/systems/LMSmuTestSystem.h	/^    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;$/;"	m	class:LMSmuTestSystem
 adjustParticlesNumberFromSurvivors	/usr/local/.home/manu/c++/comunicaciones/systems/PSPvsPSPBasedSMCSystem.h	/^    bool adjustParticlesNumberFromSurvivors;$/;"	m	class:PSPvsPSPBasedSMCSystem
 adjustParticlesNumberFromSurvivors	/usr/local/.home/manu/c++/comunicaciones/systems/PSPvsSMCSystem.h	/^    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;$/;"	m	class:PSPvsSMCSystem
@@ -1280,8 +1185,13 @@ bestParticlesResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/system
 bestParticlesResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/TVT2007System.h	/^    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;$/;"	m	class:TVT2007System
 bestParticlesResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDesconocidoSystem.h	/^    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm,*multinomialResamplingAlgorithm;$/;"	m	class:TesisOrdenCanalDesconocidoSystem
 bestParticlesResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^    ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;$/;"	m	class:WSA08System
+buildMeasurementMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.cpp	/^tMatrix CDMAKalmanEstimator::buildMeasurementMatrix(const tVector& symbolsVector)$/;"	f	class:CDMAKalmanEstimator
+buildMeasurementMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/CDMAKalmanEstimator.h	/^    virtual tMatrix buildMeasurementMatrix(const tVector& symbolsVector);    $/;"	p	class:CDMAKalmanEstimator
+buildMeasurementMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp	/^tMatrix KalmanEstimator::buildMeasurementMatrix(const tVector &symbolsVector)$/;"	f	class:KalmanEstimator
+buildMeasurementMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector);$/;"	p	class:KalmanEstimator
 c	/usr/local/.home/manu/c++/comunicaciones/systems/SMCSystem.h	/^    int c,e;$/;"	m	class:SMCSystem
 candidateChannelOrders	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	vector<int> candidateChannelOrders;$/;"	m	class:ChannelOrderEstimationSystem
+capacity	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    int capacity() const { return _capacity;}$/;"	f	class:ParticleFilter
 carrierFrequency	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007BesselChannelSystem.h	/^    double carrierFrequency; \/\/ (Hz)$/;"	m	class:Elsevier2007BesselChannelSystem
 carrierFrequency	/usr/local/.home/manu/c++/comunicaciones/systems/LMSmuTestSystem.h	/^    double carrierFrequency; \/\/ (Hz)$/;"	m	class:LMSmuTestSystem
 carrierFrequency	/usr/local/.home/manu/c++/comunicaciones/systems/PSPvsSMCSystem.h	/^    double carrierFrequency; \/\/ (Hz)$/;"	m	class:PSPvsSMCSystem
@@ -1290,6 +1200,12 @@ carrierFrequency	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCana
 cdmaKalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    CDMAKalmanEstimator *cdmaKalmanEstimator;$/;"	m	class:CDMASystem
 cdmaKnownChannelChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;$/;"	m	class:CDMASystem
 channel	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    MIMOChannel *channel;$/;"	m	class:BaseSystem
+channelMatrices2stackedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.cpp	/^tMatrix Algorithm::channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d)$/;"	f	class:Algorithm
+channelMatrices2stackedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m)$/;"	f	class:Algorithm
+channelMatrices2stackedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int d)$/;"	f	class:Algorithm
+channelMatrices2stackedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d);$/;"	p	class:Algorithm
+channelMatrices2stackedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^	tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}$/;"	f	class:KnownChannelOrderAlgorithm
+channelMatrixcols	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    int channelMatrixcols() { return _channelMatrixCols;}$/;"	f	class:LinearDetector
 channelOrderAPPsAlongTime	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^    vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;$/;"	m	class:ChannelOrderEstimationSystem
 channelOrderCoefficientsMeans	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	vector<tMatrix> channelOrderCoefficientsMeans;$/;"	m	class:ChannelOrderEstimationSystem
 channelOrderCoefficientsVariances	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	vector<tMatrix> channelOrderCoefficientsVariances;$/;"	m	class:ChannelOrderEstimationSystem
@@ -1297,10 +1213,11 @@ channelOrderEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrde
 channelVariance	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007ARChannelSystem.h	/^    double channelVariance;$/;"	m	class:Elsevier2007ARChannelSystem
 channelVariance	/usr/local/.home/manu/c++/comunicaciones/systems/TesisComplejidadReducidaARSystem.h	/^    double channelVariance;$/;"	m	class:TesisComplejidadReducidaARSystem
 channelVariance	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDesconocidoARSystem.h	/^    double channelVariance;$/;"	m	class:TesisOrdenCanalDesconocidoARSystem
+children	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^        std::vector<int> children;$/;"	m	struct:KnownFlatChannelOptimalAlgorithm::__anon1
 cholesky	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^tMatrix Util::cholesky(const tMatrix &matrix)$/;"	f	class:Util
 cholesky	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static tMatrix cholesky(const tMatrix &matrix);$/;"	p	class:Util
 clear	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^void ParticleFilter::clear()$/;"	f	class:ParticleFilter
-clear	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	void clear();$/;"	p	class:ParticleFilter
+clear	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void clear();$/;"	p	class:ParticleFilter
 clone	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.cpp	/^LinearDetector* DecorrelatorDetector::clone()$/;"	f	class:DecorrelatorDetector
 clone	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^    virtual LinearDetector* clone();$/;"	p	class:DecorrelatorDetector
 clone	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual LinearDetector *clone() = 0;$/;"	p	class:LinearDetector
@@ -1354,17 +1271,32 @@ cols	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	int cols
 columnwise	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^enum tOrder {rowwise,columnwise};$/;"	e	enum:tOrder
 complexRandn	/usr/local/.home/manu/c++/comunicaciones/randomutil/Random.cpp	/^complex<double> Random::complexRandn()$/;"	f	class:Random
 complexRandn	/usr/local/.home/manu/c++/comunicaciones/randomutil/Random.h	/^		std::complex<double> complexRandn();$/;"	p	class:Random
+computeBER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)$/;"	f	class:TransmissionUtil
+computeBER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static double computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);$/;"	p	class:TransmissionUtil
 computeBERsolvingAmbiguity	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)$/;"	f	class:TransmissionUtil
 computeBERsolvingAmbiguity	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static double computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);$/;"	p	class:TransmissionUtil
 computeMeanAndVariance	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^void Alphabet::computeMeanAndVariance()$/;"	f	class:Alphabet
 computeMeanAndVariance	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        void computeMeanAndVariance();$/;"	p	class:Alphabet
 computeSER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^double TransmissionUtil::computeSER(const tMatrix &sourceSymbols,const tMatrix &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)$/;"	f	class:TransmissionUtil
 computeSER	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static double computeSER(const tMatrix &sourceSymbols,const tMatrix &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet);    $/;"	p	class:TransmissionUtil
+computedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^	virtual tMatrix computedFilter() { return _filter;}$/;"	f	class:DecorrelatorDetector
+computedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual tMatrix computedFilter() = 0;$/;"	p	class:LinearDetector
+computedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.cpp	/^tMatrix MMSEDetector::computedFilter()$/;"	f	class:MMSEDetector
+computedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^	virtual tMatrix computedFilter();$/;"	p	class:MMSEDetector
+computedFilter	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tMatrix computedFilter() { return _filter;}$/;"	f	class:RMMSEDetector
+cost	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^        double cost;$/;"	m	struct:KnownFlatChannelOptimalAlgorithm::__anon1
 d	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;$/;"	m	class:BaseSystem
 decorrelatorDetector	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.h	/^    DecorrelatorDetector *decorrelatorDetector;$/;"	m	class:Elsevier2007System
 decorrelatorDetector	/usr/local/.home/manu/c++/comunicaciones/systems/TesisComplejidadReducidaSystem.h	/^    DecorrelatorDetector *decorrelatorDetector;$/;"	m	class:TesisComplejidadReducidaSystem
 demodulate	/usr/local/.home/manu/c++/comunicaciones/transmision/Demodulator.cpp	/^Bits Demodulator::demodulate(const tMatrix &symbols,Alphabet alphabet)$/;"	f	class:Demodulator
 demodulate	/usr/local/.home/manu/c++/comunicaciones/transmision/Demodulator.h	/^	static Bits demodulate(const tMatrix &simbolos,Alphabet alfabeto);$/;"	p	class:Demodulator
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.cpp	/^tVector DecorrelatorDetector::detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)$/;"	f	class:DecorrelatorDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^    virtual tVector detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);$/;"	p	class:DecorrelatorDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual tVector detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;$/;"	p	class:LinearDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.cpp	/^tVector MMSEDetector::detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)$/;"	f	class:MMSEDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^    virtual tVector detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);$/;"	p	class:MMSEDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.cpp	/^tVector RMMSEDetector::detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)$/;"	f	class:RMMSEDetector
+detect	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    tVector detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);$/;"	p	class:RMMSEDetector
 detectedSymbols	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    tMatrix detectedSymbols;$/;"	m	class:BaseSystem
 detectedSymbolsForChannelOrder	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence) = 0;$/;"	p	class:CMEapplyingAlgorithm
 detectedSymbolsForChannelOrder	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.cpp	/^tMatrix KnownSymbolsCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence)$/;"	f	class:KnownSymbolsCMEapplyingAlgorithm
@@ -1378,6 +1310,8 @@ discrete_rnd	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^  
 discrete_rnd	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static int discrete_rnd(const tVector &probabilities,Random &randomGenerator = _randomGenerator);$/;"	p	class:StatUtil
 discrete_rnd	/usr/local/.home/manu/c++/comunicaciones/statistics/StatUtil.h	/^    static vector<int> discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);$/;"	p	class:StatUtil
 e	/usr/local/.home/manu/c++/comunicaciones/systems/SMCSystem.h	/^    int c,e;$/;"	m	class:SMCSystem
+effectiveMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    virtual int effectiveMemory() const = 0;$/;"	p	class:MIMOChannel
+effectiveMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int effectiveMemory() const {return _memory;}$/;"	f	class:StillMemoryMIMOChannel
 elementWiseDiv	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C)$/;"	f	class:Util
 elementWiseDiv	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);$/;"	p	class:Util
 elementWiseMult	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C)$/;"	f	class:Util
@@ -1389,6 +1323,8 @@ estimatedChannelMatricesForChannelOrder	/usr/local/.home/manu/c++/comunicaciones
 estimatedChannelMatricesForChannelOrder	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedCMEapplyingAlgorithm.h	/^    virtual std::vector< tMatrix > estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);$/;"	p	class:LinearFilterBasedCMEapplyingAlgorithm
 exitStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^enum tStage {exitStage,arrivalStage};$/;"	e	enum:tStage
 f	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    ofstream f;$/;"	m	class:BaseSystem
+filteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix filteredCovariance() const {return _filteredCovariance;}$/;"	f	class:KalmanFilter
+filteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tVector filteredMean() const {return _filteredMean;}$/;"	f	class:KalmanFilter
 firstSampledChannelMatrixVariance	/usr/local/.home/manu/c++/comunicaciones/systems/SMCSystem.h	/^    double firstSampledChannelMatrixVariance;$/;"	m	class:SMCSystem
 flipLR	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^tMatrix Util::flipLR(const tMatrix &A)$/;"	f	class:Util
 flipLR	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static tMatrix flipLR(const tMatrix &A);$/;"	p	class:Util
@@ -1404,18 +1340,28 @@ forgettingFactorDetector	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08S
 frameLength	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;$/;"	m	class:BaseSystem
 func_extract_an_archive	/usr/local/.home/manu/c++/comunicaciones/debug/libtool	/^func_extract_an_archive ()$/;"	f
 func_extract_an_archive	/usr/local/.home/manu/c++/comunicaciones/ltmain.sh	/^func_extract_an_archive ()$/;"	f
+func_extract_an_archive	/usr/local/.home/manu/c++/comunicaciones/optimized/libtool	/^func_extract_an_archive ()$/;"	f
 func_extract_archives	/usr/local/.home/manu/c++/comunicaciones/debug/libtool	/^func_extract_archives ()$/;"	f
 func_extract_archives	/usr/local/.home/manu/c++/comunicaciones/ltmain.sh	/^func_extract_archives ()$/;"	f
+func_extract_archives	/usr/local/.home/manu/c++/comunicaciones/optimized/libtool	/^func_extract_archives ()$/;"	f
 func_infer_tag	/usr/local/.home/manu/c++/comunicaciones/debug/libtool	/^func_infer_tag ()$/;"	f
 func_infer_tag	/usr/local/.home/manu/c++/comunicaciones/ltmain.sh	/^func_infer_tag ()$/;"	f
+func_infer_tag	/usr/local/.home/manu/c++/comunicaciones/optimized/libtool	/^func_infer_tag ()$/;"	f
 func_mktempdir	/usr/local/.home/manu/c++/comunicaciones/debug/libtool	/^func_mktempdir ()$/;"	f
 func_mktempdir	/usr/local/.home/manu/c++/comunicaciones/ltmain.sh	/^func_mktempdir ()$/;"	f
+func_mktempdir	/usr/local/.home/manu/c++/comunicaciones/optimized/libtool	/^func_mktempdir ()$/;"	f
 func_win32_libid	/usr/local/.home/manu/c++/comunicaciones/debug/libtool	/^func_win32_libid ()$/;"	f
 func_win32_libid	/usr/local/.home/manu/c++/comunicaciones/ltmain.sh	/^func_win32_libid ()$/;"	f
+func_win32_libid	/usr/local/.home/manu/c++/comunicaciones/optimized/libtool	/^func_win32_libid ()$/;"	f
 generateChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.cpp	/^tMatrix DelayPowerProfile::generateChannelMatrix(Random &random)$/;"	f	class:DelayPowerProfile
 generateChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    virtual tMatrix generateChannelMatrix(Random &random);$/;"	p	class:DelayPowerProfile
+generateTrainingSequence	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp	/^tMatrix TransmissionUtil::generateTrainingSequence(const Alphabet &alphabet,int nInputs,int length)$/;"	f	class:TransmissionUtil
+generateTrainingSequence	/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.h	/^    static tMatrix generateTrainingSequence(const Alphabet &alphabet,int nInputs,int length);$/;"	p	class:TransmissionUtil
 getActivityAtTime	/usr/local/.home/manu/c++/comunicaciones/smc/WithActiveUsersParticleAddon.h	/^    std::vector<bool> getActivityAtTime(uint time) const { return _activeUsers[time];}$/;"	f	class:WithActiveUsersParticleAddon
 getAllSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/smc/Particle.h	/^    tMatrix getAllSymbolVectors() const { return _symbolVectors;}$/;"	f	class:Particle
+getAlphabetAt	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^    const Alphabet* getAlphabetAt(int time, int leafHeight) const$/;"	f	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
+getAlphabetAt	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    virtual const Alphabet *getAlphabetAt(int time, int leafHeight) const { return _extendedAlphabet;}$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+getBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    ParticleWithChannelEstimation *getBestParticle() const { return _particles[iBestParticle()]; }$/;"	f	class:ParticleFilter
 getChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PSPPath.h	/^	tMatrix getChannelMatrix(int n)$/;"	f	class:PSPPath
 getChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWithChannelEstimation.h	/^    tMatrix getChannelMatrix(int iChannelOrder,int n) const$/;"	f	class:ParticleWithChannelEstimation
 getChannelMatrixEstimator	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/PSPPath.h	/^	ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}$/;"	f	class:PSPPath
@@ -1427,6 +1373,8 @@ getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/CME
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^    virtual tMatrix getDetectedSymbolVectors();$/;"	p	class:CMEBasedAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^tMatrix CMEapplyingAlgorithm::getDetectedSymbolVectors()$/;"	f	class:CMEapplyingAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual tMatrix getDetectedSymbolVectors();$/;"	p	class:CMEapplyingAlgorithm
+getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp	/^tMatrix KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    tMatrix getDetectedSymbolVectors();$/;"	p	class:KnownFlatChannelOptimalAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors()$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    tMatrix getDetectedSymbolVectors();$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^tMatrix LinearFilterBasedAlgorithm::getDetectedSymbolVectors()$/;"	f	class:LinearFilterBasedAlgorithm
@@ -1441,6 +1389,29 @@ getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/Tim
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^    virtual tMatrix getDetectedSymbolVectors();$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^tMatrix ViterbiAlgorithm::getDetectedSymbolVectors()$/;"	f	class:ViterbiAlgorithm
 getDetectedSymbolVectors	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    tMatrix getDetectedSymbolVectors();$/;"	p	class:ViterbiAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual vector<tMatrix> getEstimatedChannelMatrices() = 0;$/;"	p	class:Algorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^vector<tMatrix> CMEBasedAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:CMEBasedAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^    virtual vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:CMEBasedAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^vector<tMatrix> CMEapplyingAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:CMEapplyingAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:CMEapplyingAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.cpp	/^vector<tMatrix> ISIS::getEstimatedChannelMatrices()$/;"	f	class:ISIS
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/ISIS.h	/^	vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:ISIS
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.cpp	/^vector<tMatrix> KnownChannelAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:KnownChannelAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^    vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:KnownChannelAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^vector<tMatrix> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:LinearFilterBasedAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:LinearFilterBasedAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^vector<tMatrix> PSPAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:PSPAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	std::vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:PSPAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^vector<tMatrix> SMCAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:SMCAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:SMCAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^vector<tMatrix> TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices()$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
+getEstimatedChannelMatrices	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^    virtual vector<tMatrix> getEstimatedChannelMatrices();$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
+getName	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    string getName() const {return _name;}$/;"	f	class:Algorithm
+getParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    ParticleWithChannelEstimation *getParticle(int n) const { return _particles[n];}$/;"	f	class:ParticleFilter
 getSeed	/usr/local/.home/manu/c++/comunicaciones/randomutil/Random.h	/^		uint32_t getSeed() { return _seed; }$/;"	f	class:Random
 getSymbolVector	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^    tVector getSymbolVector(int n) const { \/*cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*\/ return _detectedSequence->col(n);}$/;"	f	class:ViterbiPath
 getSymbolVector	/usr/local/.home/manu/c++/comunicaciones/smc/Particle.h	/^    tVector getSymbolVector(int n) const { return _symbolVectors.col(n);}$/;"	f	class:Particle
@@ -1451,20 +1422,25 @@ getTransmissionMatrix	/usr/local/.home/manu/c++/comunicaciones/transmision/chann
 getTransmissionMatrix	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MultiuserCDMAchannel.h	/^    virtual tMatrix getTransmissionMatrix(const int n) const;    $/;"	p	class:MultiuserCDMAchannel
 getUserActivity	/usr/local/.home/manu/c++/comunicaciones/smc/WithActiveUsersParticleAddon.h	/^    bool getUserActivity(uint iUser,uint time) const { return _activeUsers[time][iUser];}$/;"	f	class:WithActiveUsersParticleAddon
 getWeight	/usr/local/.home/manu/c++/comunicaciones/smc/Particle.h	/^    double getWeight() const { return _weight;}$/;"	f	class:Particle
-hardDecision	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^tSymbol Alphabet::hardDecision(double softEstimation)$/;"	f	class:Alphabet
-hardDecision	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol hardDecision(double softEstimation);$/;"	p	class:Alphabet
+getWeightsVector	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    tVector getWeightsVector() const$/;"	f	class:ParticleFilter
+hardDecision	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^tSymbol Alphabet::hardDecision(double softEstimation) const$/;"	f	class:Alphabet
+hardDecision	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol hardDecision(double softEstimation) const;$/;"	p	class:Alphabet
+height	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^        uint height,id;$/;"	m	struct:KnownFlatChannelOptimalAlgorithm::__anon1
 howManyTimes	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template void Util::howManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);$/;"	p	class:Util	file:
 howManyTimes	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template<class T> void Util::howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times)$/;"	f	class:Util
 howManyTimes	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);$/;"	p	class:Util
 iAlgorithmPerformingChannelOrderAPPestimation	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	int iAlgorithmPerformingChannelOrderAPPestimation;$/;"	m	class:ChannelOrderEstimationSystem
 iAlgorithmsPerformingChannelOrderAPPestimation	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^    vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;$/;"	m	class:ChannelOrderEstimationSystem
-iBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^int ParticleFilter::iBestParticle()$/;"	f	class:ParticleFilter
-iBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	int iBestParticle();$/;"	p	class:ParticleFilter
+iBestLeaf	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp	/^int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+iBestLeaf	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    int iBestLeaf(const std::vector<tTreeNode> &nodes);$/;"	p	class:KnownFlatChannelOptimalAlgorithm
+iBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^int ParticleFilter::iBestParticle() const$/;"	f	class:ParticleFilter
+iBestParticle	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    int iBestParticle() const;$/;"	p	class:ParticleFilter
 iLastSymbolVectorToBeDetected	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int iLastSymbolVectorToBeDetected;$/;"	m	class:BaseSystem
 iMaxChannelOrderAPP	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderAppParticleAddon.cpp	/^int WithChannelOrderAppParticleAddon::iMaxChannelOrderAPP()$/;"	f	class:WithChannelOrderAppParticleAddon
 iMaxChannelOrderAPP	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderAppParticleAddon.h	/^    int iMaxChannelOrderAPP();$/;"	p	class:WithChannelOrderAppParticleAddon
 iSNR	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    uint iSNR;$/;"	m	class:BaseSystem
 iTrueChannelOrder	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^	int iTrueChannelOrder;$/;"	m	class:ChannelOrderEstimationSystem
+id	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^        uint height,id;$/;"	m	struct:KnownFlatChannelOptimalAlgorithm::__anon1
 int2symbolsArray	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const$/;"	f	class:Alphabet
 int2symbolsArray	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        void int2symbolsArray(int numero, std::vector<tSymbol> &res) const;$/;"	p	class:Alphabet
 isSymbolAccountedForDetection	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    vector<vector<bool> > isSymbolAccountedForDetection;$/;"	m	class:BaseSystem
@@ -1483,8 +1459,8 @@ kalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanal
 kalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^    KalmanEstimator *kalmanEstimator;$/;"	m	class:WSA08System
 keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)$/;"	f	class:ParticleFilter
 keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^void ParticleFilter::keepParticles(vector<int> indexes)$/;"	f	class:ParticleFilter
-keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	virtual void keepParticles(std::vector<int> resamplingIndexes);$/;"	p	class:ParticleFilter
-keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^	virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);$/;"	p	class:ParticleFilter
+keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    virtual void keepParticles(std::vector<int> resamplingIndexes);$/;"	p	class:ParticleFilter
+keepParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);$/;"	p	class:ParticleFilter
 knownSymbolsKalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.h	/^    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;$/;"	m	class:Elsevier2007System
 knownSymbolsKalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/TesisComplejidadReducidaSystem.h	/^    KnownSymbolsKalmanEstimator *knownSymbolsKalmanEstimator;$/;"	m	class:TesisComplejidadReducidaSystem
 lastEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    virtual tMatrix lastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}$/;"	f	class:ChannelMatrixEstimator
@@ -1524,7 +1500,9 @@ max	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    template<class T>
 means	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    tMatrix means() const { return _means;}$/;"	f	class:DelayPowerProfile
 memory	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.cpp	/^int ChannelMatrixEstimator::memory()$/;"	f	class:ChannelMatrixEstimator
 memory	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int memory();$/;"	p	class:ChannelMatrixEstimator
+memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    virtual int memory(int n) const = 0;$/;"	p	class:MIMOChannel
 memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int memory() const {return _memory;};$/;"	f	class:StillMemoryMIMOChannel
+memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int memory(int n) const {return _memory;}$/;"	f	class:StillMemoryMIMOChannel
 memory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    int memory() const { return _amplitudes.size();}$/;"	f	class:DelayPowerProfile
 min	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template void Util::min(const std::vector<double> &vector,int &iMin);$/;"	p	class:Util	file:
 min	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template<class T> void Util::min(const std::vector<T> &vector,int &iMin)$/;"	f	class:Util
@@ -1549,16 +1527,17 @@ nChannelMatrixEstimators	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWi
 nFrames	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;$/;"	m	class:BaseSystem
 nInputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputs() const { return _nInputs;};$/;"	f	class:MIMOChannel
 nInputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    int nInputs() { return _nInputs;}$/;"	f	class:DelayPowerProfile
-nInputsMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputsMemory(int n) const {return _nInputs*Memory(n);};$/;"	f	class:MIMOChannel
+nInputsMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputsMemory(int n) const {return _nInputs*memory(n);};$/;"	f	class:MIMOChannel
 nInputsmemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int nInputsmemory() const {return _nInputsMemory;};$/;"	f	class:StillMemoryMIMOChannel
 nInputsnOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputsnOutputs() const {return _nInputsnOutputs;};$/;"	f	class:MIMOChannel
-nInputsnOutputsMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*Memory(n);};$/;"	f	class:MIMOChannel
+nInputsnOutputsMemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};$/;"	f	class:MIMOChannel
 nInputsnOutputsmemory	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/StillMemoryMIMOChannel.h	/^	int nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};$/;"	f	class:StillMemoryMIMOChannel
 nMax	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^vector<int> Util::nMax(int n,const tVector &v)$/;"	f	class:Util
 nMax	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static std::vector<int> nMax(int n,const tVector &v);$/;"	p	class:Util
 nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.h	/^	int nOutputs() const { return _nOutputs;}$/;"	f	class:Noise
 nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/MIMOChannel.h	/^    int nOutputs() const { return _nOutputs;};$/;"	f	class:MIMOChannel
 nOutputs	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    int nOutputs() { return _nOutputs;}$/;"	f	class:DelayPowerProfile
+nParticles	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    int nParticles() const { return _nParticles;}$/;"	f	class:ParticleFilter
 nParticles	/usr/local/.home/manu/c++/comunicaciones/systems/SMCSystem.h	/^    int nParticles;$/;"	m	class:SMCSystem
 nSmoothingSymbolsVectors	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int nSmoothingSymbolsVectors;$/;"	m	class:BaseSystem
 nStreams	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	int nStreams() const { return _nStreams;}$/;"	f	class:Bits
@@ -1599,6 +1578,8 @@ normalize	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^tVector Util:
 normalize	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::normalize(std::vector<double> &v)$/;"	f	class:Util
 normalize	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static tVector normalize(const tVector &v);$/;"	p	class:Util
 normalize	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void normalize(std::vector<double> &v);    $/;"	p	class:Util
+normalizeWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void normalizeWeights()$/;"	f	class:ParticleFilter
+normalizeWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void normalizeWeights(std::vector<int> indexes)$/;"	f	class:ParticleFilter
 normalizedSquareError	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^double Util::normalizedSquareError(const tMatrix &A,const tMatrix &B)$/;"	f	class:Util
 normalizedSquareError	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static double normalizedSquareError(const tMatrix &A,const tMatrix &B);    $/;"	p	class:Util
 nthSymbolGain	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual double nthSymbolGain(int n) const { return 1.0;}$/;"	f	class:LinearDetector
@@ -1624,15 +1605,15 @@ operator =	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^Bits&
 operator =	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	Bits& operator=(const Bits& bits);$/;"	p	class:Bits
 operator ==	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.cpp	/^bool Bits::operator==(const Bits &bits) const$/;"	f	class:Bits
 operator ==	/usr/local/.home/manu/c++/comunicaciones/transmision/Bits.h	/^	bool operator==(const Bits &bits) const;$/;"	p	class:Bits
-operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada)$/;"	f	class:Alphabet
-operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^vector<tBit> Alphabet::operator [ ](tSymbol simbolo)$/;"	f	class:Alphabet
+operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada) const$/;"	f	class:Alphabet
+operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^vector<tBit> Alphabet::operator [ ](tSymbol simbolo) const$/;"	f	class:Alphabet
 operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/NullNoise.cpp	/^tVector NullNoise::operator [ ](int n) const$/;"	f	class:NullNoise
 operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/NullNoise.h	/^    virtual tVector operator [ ](int n) const;$/;"	p	class:NullNoise
 operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.cpp	/^tVector PowerProfileDependentNoise::operator [ ](int n) const$/;"	f	class:PowerProfileDependentNoise
 operator [	/usr/local/.home/manu/c++/comunicaciones/transmision/PowerProfileDependentNoise.h	/^    virtual tVector operator [ ](int n) const;$/;"	p	class:PowerProfileDependentNoise
-operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        std::vector<tBit> operator [](tSymbol simbolo);$/;"	p	class:Alphabet
-operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol operator [](int index) { return _symbols[index];}$/;"	f	class:Alphabet
-operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol operator [](std::vector<tBit> secuenciaBitsBuscada);$/;"	p	class:Alphabet
+operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        std::vector<tBit> operator [](tSymbol simbolo) const;$/;"	p	class:Alphabet
+operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol operator [](int index) const { return _symbols[index];}$/;"	f	class:Alphabet
+operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        tSymbol operator [](std::vector<tBit> secuenciaBitsBuscada) const;$/;"	p	class:Alphabet
 operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.cpp	/^tVector ChannelDependentNoise::operator[](int n) const$/;"	f	class:ChannelDependentNoise
 operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/ChannelDependentNoise.h	/^	tVector operator[](int n) const;$/;"	p	class:ChannelDependentNoise
 operator []	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.h	/^	virtual tVector operator[](int n) const = 0;$/;"	p	class:Noise
@@ -1653,10 +1634,14 @@ parametersFromYuleWalker	/usr/local/.home/manu/c++/comunicaciones/statistics/ARp
 particlesNumbers	/usr/local/.home/manu/c++/comunicaciones/systems/TesisComplejidadReducidaBesselNumeroParticulasSystem.h	/^    vector<int> particlesNumbers;$/;"	m	class:TesisComplejidadReducidaBesselNumeroParticulasSystem
 pe	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    double pe,mse;$/;"	m	class:BaseSystem
 peMatrices	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    vector<tMatrix> peMatrices, MSEMatrices;$/;"	m	class:BaseSystem
+performsChannelOrderAPPestimation	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual bool performsChannelOrderAPPestimation() const { return false;}$/;"	f	class:Algorithm
+performsChannelOrderAPPestimation	/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownChannelOrderAlgorithm.h	/^    bool performsChannelOrderAPPestimation() const { return true;}$/;"	f	class:UnknownChannelOrderAlgorithm
 permutations	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    std::vector<std::vector<uint> > permutations;$/;"	m	class:BaseSystem
 powerProfile	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    DelayPowerProfile *powerProfile;$/;"	m	class:BaseSystem
 preamble	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    tMatrix preamble;$/;"	m	class:BaseSystem
 preambleLength	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;$/;"	m	class:BaseSystem
+predictiveCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tMatrix predictiveCovariance() const {return _predictiveCovariance;}$/;"	f	class:KalmanFilter
+predictiveMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    tVector predictiveMean() const { return _predictiveMean;}$/;"	f	class:KalmanFilter
 presentFrameChannelOrderAPPsAlongTime	/usr/local/.home/manu/c++/comunicaciones/systems/ChannelOrderEstimationSystem.h	/^    vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;$/;"	m	class:ChannelOrderEstimationSystem
 presentFrameMSE	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    tMatrix presentFramePe,presentFrameMSE;$/;"	m	class:BaseSystem
 presentFrameMSEtimeEvolution	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    vector<tMatrix> presentFrameMSEtimeEvolution;$/;"	m	class:BaseSystem
@@ -1690,6 +1675,8 @@ print	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void pri
 print	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    template<class T> static void print(const T* array,int nElements);$/;"	p	class:Util
 print	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    template<class T> static void print(const std::vector<T> &vector);$/;"	p	class:Util
 print	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    template<class T> static void print(const std::vector<std::vector<T> > &matrix);$/;"	p	class:Util
+printWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.cpp	/^void ParticleFilter::printWeights() const$/;"	f	class:ParticleFilter
+printWeights	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleFilter.h	/^    void printWeights() const;$/;"	p	class:ParticleFilter
 probSymbolsVectorXprobActiveUsers	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const$/;"	f	class:CDMAunknownActiveUsersSISopt
 probSymbolsVectorXprobActiveUsers	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp	/^double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const$/;"	f	class:CDMAunknownActiveUsersSISopt
 probSymbolsVectorXprobActiveUsers	/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h	/^    double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const;    $/;"	p	class:CDMAunknownActiveUsersSISopt
@@ -1745,6 +1732,48 @@ rmmseDetector	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^	
 rows	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    int rows() { return _nOutputs;}$/;"	f	class:ChannelMatrixEstimator
 rows	/usr/local/.home/manu/c++/comunicaciones/statistics/ARprocess.h	/^	int rows() {return _rows;}$/;"	f	class:ARprocess
 rowwise	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^enum tOrder {rowwise,columnwise};$/;"	e	enum:tOrder
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual void run(tMatrix observations,vector<double> noiseVariances) = 0;$/;"	p	class:Algorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;$/;"	p	class:Algorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:CMEBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.cpp	/^void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:CMEBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^	virtual void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:CMEBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEBasedAlgorithm.h	/^	virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:CMEBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:CMEapplyingAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.cpp	/^void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:CMEapplyingAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:CMEapplyingAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/CMEapplyingAlgorithm.h	/^    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:CMEapplyingAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.cpp	/^void KnownChannelAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:KnownChannelAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:KnownChannelAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp	/^void KnownFlatChannelOptimalAlgorithm::run(tMatrix observations, vector< double > noiseVariances)$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    void run(tMatrix observations, vector< double > noiseVariances);$/;"	p	class:KnownFlatChannelOptimalAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:LinearFilterBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp	/^void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:LinearFilterBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:LinearFilterBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:LinearFilterBasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp	/^void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/MultipleChannelEstimatorsPerParticleSMCAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:MultipleChannelEstimatorsPerParticleSMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:PSPAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp	/^void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:PSPAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:PSPAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.h	/^	void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:PSPAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:SMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp	/^void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:SMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:SMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:SMCAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^void TimeVaryingChannelCMEbasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.cpp	/^void TimeVaryingChannelCMEbasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)$/;"	f	class:TimeVaryingChannelCMEbasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^	virtual void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/TimeVaryingChannelCMEbasedAlgorithm.h	/^	virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);$/;"	p	class:TimeVaryingChannelCMEbasedAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances)$/;"	f	class:ViterbiAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp	/^void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)$/;"	f	class:ViterbiAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances);$/;"	p	class:ViterbiAlgorithm
+run	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^    void run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);$/;"	p	class:ViterbiAlgorithm
 sampleFromPredictive	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp	/^tMatrix KalmanEstimator::sampleFromPredictive()$/;"	f	class:KalmanEstimator
 sampleFromPredictive	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    tMatrix sampleFromPredictive();$/;"	p	class:KalmanEstimator
 scalarToOctaveFileStream	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template void Util::scalarToOctaveFileStream(double scalar,string name,ofstream &f);$/;"	p	class:Util	file:
@@ -1760,6 +1789,10 @@ setActivityAtTime	/usr/local/.home/manu/c++/comunicaciones/smc/WithActiveUsersPa
 setChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/smc/ParticleWithChannelEstimation.h	/^    void setChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)$/;"	f	class:ParticleWithChannelEstimation
 setChannelOrderAPP	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderAppParticleAddon.h	/^    void setChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}$/;"	f	class:WithChannelOrderAppParticleAddon
 setDoneTrue	/usr/local/.home/manu/c++/comunicaciones/com/com.cpp	/^void setDoneTrue(int signal)$/;"	f
+setFilteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.cpp	/^void KalmanFilter::setFilteredCovariance(const tMatrix &filteredCovariance)$/;"	f	class:KalmanFilter
+setFilteredCovariance	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    void setFilteredCovariance(const tMatrix &filteredCovariance);$/;"	p	class:KalmanFilter
+setFilteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.cpp	/^void KalmanFilter::setFilteredMean(const tVector &filteredMean)$/;"	f	class:KalmanFilter
+setFilteredMean	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    void setFilteredMean(const tVector &filteredMean);$/;"	p	class:KalmanFilter
 setFirstEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/ChannelMatrixEstimator.h	/^    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix;}$/;"	f	class:ChannelMatrixEstimator
 setFirstEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp	/^void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)$/;"	f	class:KalmanEstimator
 setFirstEstimatedChannelMatrix	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix);$/;"	p	class:KalmanEstimator
@@ -1790,8 +1823,19 @@ squareError	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static do
 squareErrorPaddingWithZeros	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^double Util::squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)$/;"	f	class:Util
 squareErrorPaddingWithZeros	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);$/;"	p	class:Util
 statUtilSeeds	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    std::vector<uint32_t> mainSeeds,statUtilSeeds;$/;"	m	class:BaseSystem
+stateStep	/usr/local/.home/manu/c++/comunicaciones/detection/DecorrelatorDetector.h	/^	virtual void stateStep(tVector observations) {}$/;"	f	class:DecorrelatorDetector
+stateStep	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    virtual void stateStep(tVector observations) = 0;$/;"	p	class:LinearDetector
+stateStep	/usr/local/.home/manu/c++/comunicaciones/detection/MMSEDetector.h	/^    virtual void stateStep(tVector observations) {}$/;"	f	class:MMSEDetector
+stateStep	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.cpp	/^void RMMSEDetector::stateStep(tVector observations)$/;"	f	class:RMMSEDetector
+stateStep	/usr/local/.home/manu/c++/comunicaciones/detection/RMMSEDetector.h	/^    void stateStep(tVector observations);$/;"	p	class:RMMSEDetector
+stateStepsFromObservationsSequence	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.cpp	/^void LinearDetector::stateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo)$/;"	f	class:LinearDetector
+stateStepsFromObservationsSequence	/usr/local/.home/manu/c++/comunicaciones/detection/LinearDetector.h	/^    void stateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);$/;"	p	class:LinearDetector
+step	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.cpp	/^void KalmanFilter::step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)$/;"	f	class:KalmanFilter
+step	/usr/local/.home/manu/c++/comunicaciones/filters/KalmanFilter.h	/^    void step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);$/;"	p	class:KalmanFilter
 stringsVectorToOctaveFileStream	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)$/;"	f	class:Util
 stringsVectorToOctaveFileStream	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^    static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);$/;"	p	class:Util
+substractKnownSymbolsContribution	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.cpp	/^tVector Algorithm::substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)$/;"	f	class:Algorithm
+substractKnownSymbolsContribution	/usr/local/.home/manu/c++/comunicaciones/algorithms/Algorithm.h	/^    tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);$/;"	p	class:Algorithm
 sum	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^double Util::sum(const tVector &v)$/;"	f	class:Util
 sum	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template double Util::sum(const std::vector<double> &vector);$/;"	p	class:Util	file:
 sum	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^template int Util::sum(const std::vector<int> &vector);$/;"	p	class:Util	file:
@@ -1804,9 +1848,10 @@ symbolRate	/usr/local/.home/manu/c++/comunicaciones/systems/PSPvsSMCSystem.h	/^ 
 symbolRate	/usr/local/.home/manu/c++/comunicaciones/systems/TesisComplejidadReducidaBesselSystem.h	/^    double symbolRate; \/\/ (Hz)$/;"	m	class:TesisComplejidadReducidaBesselSystem
 symbolRate	/usr/local/.home/manu/c++/comunicaciones/systems/TesisOrdenCanalDesconocidoBesselSystem.h	/^    double symbolRate; \/\/ (Hz)$/;"	m	class:TesisOrdenCanalDesconocidoBesselSystem
 symbols	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    tMatrix symbols;$/;"	m	class:BaseSystem
-symbolsArray2int	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector)$/;"	f	class:Alphabet
-symbolsArray2int	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        int symbolsArray2int(std::vector<tSymbol> symbolsVector);$/;"	p	class:Alphabet
+symbolsArray2int	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.cpp	/^int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const$/;"	f	class:Alphabet
+symbolsArray2int	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        int symbolsArray2int(std::vector<tSymbol> symbolsVector) const;$/;"	p	class:Alphabet
 symbolsDetectionWindowStart	/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.h	/^    int MSEwindowStart,symbolsDetectionWindowStart;$/;"	m	class:BaseSystem
+symbolsVector	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^        tVector symbolsVector;$/;"	m	struct:KnownFlatChannelOptimalAlgorithm::__anon1
 tBit	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef unsigned short int tBit;$/;"	t
 tLongIntVector	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef LaVectorLongInt tLongIntVector;$/;"	t
 tMatrix	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef LaGenMatDouble tMatrix;$/;"	t
@@ -1814,6 +1859,7 @@ tOrder	/usr/local/.home/manu/c++/comunicaciones/util/Util.h	/^enum tOrder {rowwi
 tRange	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef LaIndex tRange;$/;"	t
 tStage	/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.h	/^enum tStage {exitStage,arrivalStage};$/;"	g
 tSymbol	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef double tSymbol;$/;"	t
+tTreeNode	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    } tTreeNode;$/;"	t	class:KnownFlatChannelOptimalAlgorithm	typeref:struct:KnownFlatChannelOptimalAlgorithm::__anon1
 tVector	/usr/local/.home/manu/c++/comunicaciones/src/types.h	/^typedef LaVectorDouble tVector;$/;"	t
 tapsAmplitudes	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    std::vector<double> tapsAmplitudes() const { return _amplitudes;}$/;"	f	class:DelayPowerProfile
 toMatrix	/usr/local/.home/manu/c++/comunicaciones/util/Util.cpp	/^tMatrix Util::toMatrix(const tVector &vector,tOrder order,int rows,int cols)$/;"	f	class:Util
@@ -1835,7 +1881,7 @@ uniqueRLSchannelEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/Rev2T
 uniquekalmanChannelEstimator	/usr/local/.home/manu/c++/comunicaciones/systems/Rev2TVT2007System.h	/^	vector<ChannelMatrixEstimator *> uniquekalmanChannelEstimator;$/;"	m	class:Rev2TVT2007System
 userPersistenceProb	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    double userPersistenceProb,newActiveUserProb,userPriorProb;$/;"	m	class:CDMASystem
 userPriorProb	/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.h	/^    double userPersistenceProb,newActiveUserProb,userPriorProb;$/;"	m	class:CDMASystem
-variance	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        double variance() { return _variance;}$/;"	f	class:Alphabet
+variance	/usr/local/.home/manu/c++/comunicaciones/transmision/Alphabet.h	/^        double variance() const { return _variance;}$/;"	f	class:Alphabet
 variances	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.cpp	/^vector<double> Noise::variances() const$/;"	f	class:Noise
 variances	/usr/local/.home/manu/c++/comunicaciones/transmision/Noise.h	/^	vector<double> variances() const;$/;"	p	class:Noise
 variances	/usr/local/.home/manu/c++/comunicaciones/transmision/channel/delayPowerProfile/DelayPowerProfile.h	/^    tMatrix variances() const {return _variances;}$/;"	f	class:DelayPowerProfile
@@ -1885,6 +1931,10 @@ withoutReplacementResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/s
 ~KalmanEstimator	/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.h	/^    ~KalmanEstimator();$/;"	p	class:KalmanEstimator
 ~KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.cpp	/^KnownChannelOrderAlgorithm::~ KnownChannelOrderAlgorithm()$/;"	f	class:KnownChannelOrderAlgorithm
 ~KnownChannelOrderAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownChannelOrderAlgorithm.h	/^	~KnownChannelOrderAlgorithm();$/;"	p	class:KnownChannelOrderAlgorithm
+~KnownFlatChannelAndActiveUsersOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.cpp	/^KnownFlatChannelAndActiveUsersOptimalAlgorithm::~KnownFlatChannelAndActiveUsersOptimalAlgorithm()$/;"	f	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
+~KnownFlatChannelAndActiveUsersOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelAndActiveUsersOptimalAlgorithm.h	/^    ~KnownFlatChannelAndActiveUsersOptimalAlgorithm();$/;"	p	class:KnownFlatChannelAndActiveUsersOptimalAlgorithm
+~KnownFlatChannelOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.cpp	/^KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()$/;"	f	class:KnownFlatChannelOptimalAlgorithm
+~KnownFlatChannelOptimalAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownFlatChannelOptimalAlgorithm.h	/^    ~KnownFlatChannelOptimalAlgorithm();$/;"	p	class:KnownFlatChannelOptimalAlgorithm
 ~KnownSymbolsCMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.cpp	/^KnownSymbolsCMEapplyingAlgorithm::~KnownSymbolsCMEapplyingAlgorithm()$/;"	f	class:KnownSymbolsCMEapplyingAlgorithm
 ~KnownSymbolsCMEapplyingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsCMEapplyingAlgorithm.h	/^    ~KnownSymbolsCMEapplyingAlgorithm();$/;"	p	class:KnownSymbolsCMEapplyingAlgorithm
 ~KnownSymbolsKalmanBasedChannelEstimatorAlgorithm	/usr/local/.home/manu/c++/comunicaciones/algorithms/KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.cpp	/^KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::~KnownSymbolsKalmanBasedChannelEstimatorAlgorithm()$/;"	f	class:KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
@@ -1948,8 +1998,6 @@ withoutReplacementResamplingAlgorithm	/usr/local/.home/manu/c++/comunicaciones/s
 ~ViterbiPath	/usr/local/.home/manu/c++/comunicaciones/detection/trellis/ViterbiPath.h	/^    virtual ~ViterbiPath();$/;"	p	class:ViterbiPath
 ~WSA08System	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.cpp	/^WSA08System::~WSA08System()$/;"	f	class:WSA08System
 ~WSA08System	/usr/local/.home/manu/c++/comunicaciones/systems/WSA08System.h	/^    ~WSA08System();$/;"	p	class:WSA08System
-~WithActiveUsersParticleAddon	/usr/local/.home/manu/c++/comunicaciones/smc/WithActiveUsersParticleAddon.cpp	/^WithActiveUsersParticleAddon::~WithActiveUsersParticleAddon()$/;"	f	class:WithActiveUsersParticleAddon
-~WithActiveUsersParticleAddon	/usr/local/.home/manu/c++/comunicaciones/smc/WithActiveUsersParticleAddon.h	/^    ~WithActiveUsersParticleAddon();$/;"	p	class:WithActiveUsersParticleAddon
 ~WithChannelOrderEstimationParticleAddon	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderEstimationParticleAddon.cpp	/^WithChannelOrderEstimationParticleAddon::~WithChannelOrderEstimationParticleAddon()$/;"	f	class:WithChannelOrderEstimationParticleAddon
 ~WithChannelOrderEstimationParticleAddon	/usr/local/.home/manu/c++/comunicaciones/smc/WithChannelOrderEstimationParticleAddon.h	/^    ~WithChannelOrderEstimationParticleAddon();$/;"	p	class:WithChannelOrderEstimationParticleAddon
 ~WithLinearDetectionParticleAddon	/usr/local/.home/manu/c++/comunicaciones/smc/WithLinearDetectionParticleAddon.cpp	/^WithLinearDetectionParticleAddon::~WithLinearDetectionParticleAddon()$/;"	f	class:WithLinearDetectionParticleAddon
