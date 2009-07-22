@@ -23,7 +23,7 @@
 #include <SMCAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <LinearDetector.h>
@@ -61,22 +61,22 @@ public:
     ~LinearFilterBasedSMCAlgorithm();
 
 protected:
-	LinearDetector *_linearDetector;
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-	int _c,_e;
+    LinearDetector *_linearDetector;
+    double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    int _c,_e;
 
-	void InitializeParticles();
-    void Process(const tMatrix &observations, vector< double > noiseVariances);
+    void initializeParticles();
+    void process(const tMatrix &observations, vector< double > noiseVariances);
 
     bool _substractContributionFromKnownSymbols;
 
-	virtual void FillFirstEstimatedChannelMatrix(int iParticle,tMatrix &firstEstimatedChannelMatrix) const
-	{
-		// firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
-		Util::add(_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
-	}
+    virtual void fillFirstEstimatedChannelMatrix(int iParticle,tMatrix &firstEstimatedChannelMatrix) const
+    {
+        // firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
+        Util::add(_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
+    }
 
-    virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence);
+    virtual void beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence);
 };
 
 #endif

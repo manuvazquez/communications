@@ -32,8 +32,8 @@ protected:
 public:
     PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,double ARcoefficient);
 
-    virtual void InitializeParticles();
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void initializeParticles();
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 
 };
 

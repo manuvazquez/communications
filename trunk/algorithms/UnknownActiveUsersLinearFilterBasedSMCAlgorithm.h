@@ -17,33 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISIS_H
-#define ISIS_H
+#ifndef UNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
+#define UNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
 
-#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+#include <SMCAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+An SMC algorithm based on linear filters that for a system whose users are not permanently active (at the moment only for flat channels)
+
+    @author Manu <manu@rustneversleeps>
 */
 
-#include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
+#include <ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers.h>
 #include <KalmanEstimator.h>
 
-class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class UnknownActiveUsersLinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
-protected:
-	ParticleFilter _particleFilter;
+public:
+    UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances);
 
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
+    ~UnknownActiveUsersLinearFilterBasedSMCAlgorithm();
+
+protected:
+    LinearDetector *_linearDetector;
+
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 
-	// it's never gonna be called
-    int BestChannelOrderIndex(int iBestParticle) { return 0;}
-public:
-    ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
-
-	vector<tMatrix> getEstimatedChannelMatrices();
 };
 
 #endif

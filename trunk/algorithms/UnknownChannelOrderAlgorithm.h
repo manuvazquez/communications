@@ -44,7 +44,7 @@ public:
 
     ~UnknownChannelOrderAlgorithm();
 
-	virtual vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+	virtual vector<vector<tMatrix> > estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
 	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));}
     bool performsChannelOrderAPPestimation() const { return true;}
 };

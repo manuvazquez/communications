@@ -30,7 +30,7 @@ class MLSDmFeedBackAlgorithm : public MLSDmAlgorithm
 public:
     MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, double ARcoefficient, double samplingVariance, double ARprocessVariance);
 
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 
 };
 

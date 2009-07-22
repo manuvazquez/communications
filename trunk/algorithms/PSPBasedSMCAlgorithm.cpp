@@ -33,14 +33,14 @@ PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L
 {
 }
 
-void PSPBasedSMCAlgorithm::InitializeParticles()
+void PSPBasedSMCAlgorithm::initializeParticles()
 {
 	// we begin with only one particle
 	_particleFilter->addParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
 	_particleFilter->getParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
 }
 
-void PSPBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void PSPBasedSMCAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
 	tRange rmMinus1FirstColumns(0,_channelOrder-2),rAllSymbolRows(0,_nInputs-1);

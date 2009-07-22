@@ -26,7 +26,7 @@ DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int Nr,i
 //     _randomParticlesInitilization = true;
 }
 
-void DSISoptAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
+void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noiseVariances)
 {
 	uint k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;

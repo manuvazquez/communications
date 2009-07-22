@@ -35,7 +35,7 @@ public:
 
 protected:
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 };
 
 #endif

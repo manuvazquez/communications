@@ -54,7 +54,7 @@ protected:
 	PSPPathCandidate **_bestArrivingPaths;
 
 	void ProcessOneObservation(const tVector &observations,double noiseVariance);
-	void Process(const tMatrix &observations,vector<double> noiseVariances);
+	void process(const tMatrix &observations,vector<double> noiseVariances);
 	void DeployState(int iState,const tVector &observations, double noiseVariance);
 public:
     PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);

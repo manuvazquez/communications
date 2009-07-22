@@ -23,9 +23,9 @@ MLSDmFeedBackAlgorithm::MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, i
 {
 }
 
-void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void MLSDmFeedBackAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
 {
-    MLSDmAlgorithm::Process(observations, noiseVariances);
+    MLSDmAlgorithm::process(observations, noiseVariances);
 
 	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getBestParticle()->clone());
 
@@ -52,6 +52,6 @@ void MLSDmFeedBackAlgorithm::Process(const tMatrix& observations, vector< double
 
 	_particleFilter->addParticle(bestParticle);
 
-    MLSDmAlgorithm::Process(observations, noiseVariances);
+    MLSDmAlgorithm::process(observations, noiseVariances);
 }
 

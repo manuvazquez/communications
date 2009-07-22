@@ -36,24 +36,24 @@ LinearFilterBasedAlgorithm::~LinearFilterBasedAlgorithm()
 
 void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 {
-	Process(observations,noiseVariances,tMatrix());
+	process(observations,noiseVariances,tMatrix());
 }
 
 void LinearFilterBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
-	Process(observations,noiseVariances,trainingSequence);
+	process(observations,noiseVariances,trainingSequence);
 }
 
-void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void LinearFilterBasedAlgorithm::process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence)
 {
 	if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
-		throw RuntimeException("LinearFilterBasedAlgorithm::Process: Observations matrix or training sequence dimensions are wrong.");
+		throw RuntimeException("LinearFilterBasedAlgorithm::process: Observations matrix or training sequence dimensions are wrong.");
 
 	int startDetectionTime = _preamble.cols() + trainingSequence.cols();
 	int nObservations = observations.cols();
 
     if(nObservations<(startDetectionTime+1+_d))
-        throw RuntimeException("LinearFilterBasedAlgorithm::Process: Not enough observations.");
+        throw RuntimeException("LinearFilterBasedAlgorithm::process: Not enough observations.");
 
     vector<tMatrix> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols(),startDetectionTime);
 
@@ -68,7 +68,7 @@ void LinearFilterBasedAlgorithm::Process(const tMatrix &observations,vector<doub
     if(_substractContributionFromKnownSymbols)
     {
         if(_linearDetector->channelMatrixcols() != _nInputs*(_d+1))
-            throw RuntimeException("LinearFilterBasedAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
+            throw RuntimeException("LinearFilterBasedAlgorithm::process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
     }
 
 	vector<tMatrix> matricesToStack(_c+_d+1);

@@ -3,25 +3,25 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" Type="Source" />
+   <View0 Encoding="" line="69" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="66" Type="Source" />
+   <View0 Encoding="" line="52" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="8" Type="Source" />
+   <View0 Encoding="" line="11" Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
-   <View0 Encoding="" line="94" Type="Source" />
+   <View0 Encoding="" line="143" Type="Source" />
   </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-   <View0 Encoding="" line="100" Type="Source" />
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UnknownActiveUsersLinearFilterBasedSMCAlgorithm.cpp" >
+   <View0 Encoding="" line="23" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/LinearFilterBasedSMCAlgorithm.cpp" >
-   <View0 Encoding="" line="88" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+   <View0 Encoding="" line="35" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/SMCAlgorithm.h" >
-   <View0 Encoding="" line="109" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h" >
+   <View0 Encoding="" line="33" Type="Source" />
   </Doc6>
  </DocsAndViews>
  <pluginList>
@@ -97,9 +97,6 @@
      <mark line="195" />
      <mark line="77" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
-     <mark line="78" />
-    </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/transmision/Alphabet.cpp" >
      <mark line="66" />
     </bookmark>
@@ -109,6 +106,9 @@
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/Elsevier2007System.cpp" >
      <mark line="56" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/SMCAlgorithm.cpp" >
+     <mark line="78" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/transmision/TransmissionUtil.cpp" >
      <mark line="65" />
@@ -167,6 +167,10 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="69" />
      <mark line="65" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownActiveUsersLinearFilterBasedSMCAlgorithm.cpp" >
+     <mark line="126" />
+     <mark line="66" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="0" />

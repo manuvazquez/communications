@@ -38,6 +38,7 @@ public:
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;
+    virtual tMatrix sampleFromPredictive() const;
 };
 
 #endif

@@ -17,33 +17,13 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISIS_H
-#define ISIS_H
+#include "ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers.h"
 
-#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
-#include <KalmanEstimator.h>
-
-class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers::ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator), WithLinearDetectionParticleAddon(linearDetector), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
 {
-protected:
-	ParticleFilter _particleFilter;
+}
 
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
-    virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
-
-	// it's never gonna be called
-    int BestChannelOrderIndex(int iBestParticle) { return 0;}
-public:
-    ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
-
-	vector<tMatrix> getEstimatedChannelMatrices();
-};
-
-#endif
+ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers::clone()
+{
+    return new ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(*this);
+}

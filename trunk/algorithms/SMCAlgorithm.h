@@ -34,7 +34,7 @@
 #include <math.h>
 
 /**
-It implements some parts of a typical (default) SMC algorithm. It assumes that the particles have a channel estimator (derive from the class "ParticleWithChannelEstimation) and thus, methods "InitializeParticles" or "run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)" must be redefined in a subclass implementing an algorithm which requires another type of particle.
+It implements some parts of a typical (default) SMC algorithm. It assumes that the particles have a channel estimator (derive from the class "ParticleWithChannelEstimation) and thus, methods "initializeParticles" or "run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)" must be redefined in a subclass implementing an algorithm which requires another type of particle.
 
     @author Manu <manu@rustneversleeps>
 */
@@ -52,8 +52,8 @@ protected:
 
     tMatrix _channelMatrixMean,_channelMatrixVariances;
 
-    virtual void InitializeParticles();
-    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    virtual void initializeParticles();
+    virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
     
     /**
      *    Computes the smoothed likelihood, i.e., the product of the likelihoods of the observations involved in the smoothing from @param iObservationToBeProcessed to @param iObservationToBeProcessed + d (the smoothing lag)
@@ -72,7 +72,7 @@ protected:
 
     bool _randomParticlesInitilization;
 
-    virtual void BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence) {}
+    virtual void beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence) {}
 
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);

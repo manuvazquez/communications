@@ -32,7 +32,7 @@
 class LinearFilterBasedAlgorithm : public KnownChannelOrderAlgorithm
 {
 private:
-	void Process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+	void process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
 protected:
 	int _c,_d;
 	LinearDetector *_linearDetector;

@@ -31,7 +31,7 @@ MLSDmAlgorithm::~MLSDmAlgorithm()
     delete _particleFilter;
 }
 
-void MLSDmAlgorithm::InitializeParticles()
+void MLSDmAlgorithm::initializeParticles()
 {
     vector<ChannelMatrixEstimator *> channelEstimatorsClone(_channelEstimators.size());
     for(uint i=0;i<_candidateOrders.size();i++)
@@ -49,7 +49,7 @@ void MLSDmAlgorithm::InitializeParticles()
     _particleFilter->addParticle(particle);
 }
 
-void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void MLSDmAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
 {
     uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
     tRange rMaxChannelOrderMinus1FirstColumns(0,_maxOrder-2),rAll;
@@ -131,7 +131,7 @@ void MLSDmAlgorithm::Process(const tMatrix& observations, vector< double > noise
                 // if the channelOrderNormConst is zero, we don't generate a candidate for this particle and this symbol vector
                 if(likelihood==0.0)
                     continue;
-//                  throw RuntimeException("UTSAlgorithm::Process: likelihood is zero.");
+//                  throw RuntimeException("UTSAlgorithm::process: likelihood is zero.");
 
                 Util::max(particleCandidates[iCandidate].unnormalizedChannelOrderAPPs,iBestUnnormalizedChannelOrderAPP);
 
@@ -239,12 +239,12 @@ int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
     return _particlesBestChannelOrders[iBestParticle];
 }
 
-// vector<vector<tMatrix> > MLSDmAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+// vector<vector<tMatrix> > MLSDmAlgorithm::estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 // {
 //     tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 //
 //     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-//         throw RuntimeException("MLSDmAlgorithm::EstimateChannelFromTrainingSequence: Insufficient number of observations.");
+//         throw RuntimeException("MLSDmAlgorithm::estimateChannelFromTrainingSequence: Insufficient number of observations.");
 //
 //     vector<ChannelMatrixEstimator *> initialChannelEstimators(_candidateOrders.size());
 //     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
@@ -283,17 +283,17 @@ int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
 //     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
 //         delete initialChannelEstimators[iOrder];
 //
-//     return UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+//     return UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 // }
 
-void MLSDmAlgorithm::BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+void MLSDmAlgorithm::beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
 {
-    // in this case BeforeInitializingParticles computes the APP probabilities that are obtained after the training sequence
+    // in this case beforeInitializingParticles computes the APP probabilities that are obtained after the training sequence
 
     tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-        throw RuntimeException("BeforeInitializingParticles::BeforeInitializingParticles: Insufficient number of observations.");
+        throw RuntimeException("beforeInitializingParticles::beforeInitializingParticles: Insufficient number of observations.");
 
     vector<ChannelMatrixEstimator *> clonedChannelEstimators(_candidateOrders.size());
     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)

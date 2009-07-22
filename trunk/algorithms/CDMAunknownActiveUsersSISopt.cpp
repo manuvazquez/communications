@@ -38,12 +38,8 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
     _randomParticlesInitilization = true;    
 }
 
-// vector< tMatrix > CDMAunknownActiveUsersSISopt::getEstimatedChannelMatrices()
-// {
-//     return SMCAlgorithm::getEstimatedChannelMatrices();
-// }
 
-void CDMAunknownActiveUsersSISopt::InitializeParticles()
+void CDMAunknownActiveUsersSISopt::initializeParticles()
 {
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
@@ -65,7 +61,7 @@ void CDMAunknownActiveUsersSISopt::InitializeParticles()
     }
 }
 
-void CDMAunknownActiveUsersSISopt::Process(const tMatrix& observations, vector< double > noiseVariances)
+void CDMAunknownActiveUsersSISopt::process(const tMatrix& observations, vector< double > noiseVariances)
 {    
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);

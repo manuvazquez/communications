@@ -46,7 +46,7 @@ public:
     virtual ~LinearDetector() {}
     int channelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
-    void stateStepsFromObservationsSequence(const tMatrix &observations,int d,int iFrom,int iTo);
+    void stateStepsFromObservationsSequence(const tMatrix &observations,int smoothingLag,int iFrom,int iTo);
 };
 
 #endif

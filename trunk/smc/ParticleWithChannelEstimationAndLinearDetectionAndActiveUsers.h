@@ -17,33 +17,22 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISIS_H
-#define ISIS_H
+#ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDACTIVEUSERS_H
+#define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTIONANDACTIVEUSERS_H
 
-#include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
+#include <ParticleWithChannelEstimation.h>
+#include <WithLinearDetectionParticleAddon.h>
+#include <WithActiveUsersParticleAddon.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <ParticleWithChannelEstimationAndChannelOrderAPP.h>
-#include <KalmanEstimator.h>
-
-class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
+class ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon, public WithActiveUsersParticleAddon
 {
-protected:
-	ParticleFilter _particleFilter;
-
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
-    virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
-
-	// it's never gonna be called
-    int BestChannelOrderIndex(int iBestParticle) { return 0;}
 public:
-    ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+    ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
 
-	vector<tMatrix> getEstimatedChannelMatrices();
+    ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *clone();
 };
 
 #endif

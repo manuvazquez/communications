@@ -101,7 +101,7 @@ void PSPAlgorithm::ProcessOneObservation(const tVector &observations,double nois
 	}
 }
 
-void PSPAlgorithm::Process(const tMatrix &observations,vector<double> noiseVariances)
+void PSPAlgorithm::process(const tMatrix &observations,vector<double> noiseVariances)
 {
 	int iProcessedObservation,iBestState,iBestSurvivor;
 
@@ -161,7 +161,7 @@ void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,_preamble,vector<vector<tMatrix> > (1,vector<tMatrix>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
-	Process(observations,noiseVariances);
+	process(observations,noiseVariances);
 }
 
 void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
@@ -198,7 +198,7 @@ void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatr
 	// the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,preambleTrainingSequence,vector<vector<tMatrix> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
-	Process(observations,noiseVariances);
+	process(observations,noiseVariances);
 }
 
 void PSPAlgorithm::DeployState(int iState,const tVector &observations,double noiseVariance)

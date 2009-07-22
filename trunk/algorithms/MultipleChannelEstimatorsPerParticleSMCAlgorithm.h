@@ -46,11 +46,11 @@ protected:
     bool _randomParticlesInitilization;
 
     virtual ParticleFilter* GetParticleFilterPointer() = 0;
-    virtual void InitializeParticles() = 0;
-    virtual void Process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    virtual void initializeParticles() = 0;
+    virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
     virtual int BestChannelOrderIndex(int iBestParticle) = 0;
 
-    virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence) {}
+    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence) {}
     virtual void UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess) {}
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);

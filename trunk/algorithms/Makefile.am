@@ -11,7 +11,8 @@ noinst_HEADERS = Algorithm.h CDMAunknownActiveUsersSISopt.h CMEBasedAlgorithm.h 
 	KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h LinearFilterBasedAlgorithm.h LinearFilterBasedCMEapplyingAlgorithm.h \
 	LinearFilterBasedMKFAlgorithm.h MultipleChannelEstimatorsPerParticleSMCAlgorithm.h PSPAlgorithm.h \
 	PSPBasedSMCAlgorithm.h SISoptAlgorithm.h SMCAlgorithm.h TimeVaryingChannelCMEbasedAlgorithm.h \
-	TriangularizationBasedSMCAlgorithm.h USIS.h UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
+	TriangularizationBasedSMCAlgorithm.h USIS.h UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h \
+	UnknownChannelOrderAlgorithm.h ViterbiAlgorithm.h
 libalgorithms_a_SOURCES = Algorithm.cpp CDMAunknownActiveUsersSISopt.cpp \
 	CMEBasedAlgorithm.cpp CMEapplyingAlgorithm.cpp DSISoptAlgorithm.cpp ISIS.cpp \
 	KnownChannelAlgorithm.cpp KnownChannelOrderAlgorithm.cpp \
@@ -22,5 +23,6 @@ libalgorithms_a_SOURCES = Algorithm.cpp CDMAunknownActiveUsersSISopt.cpp \
 	MLSDmFeedBackAlgorithm.cpp MultipleChannelEstimatorsPerParticleSMCAlgorithm.cpp PSPAlgorithm.cpp \
 	PSPBasedSMCAlgorithm.cpp SISoptAlgorithm.cpp SMCAlgorithm.cpp \
 	TimeVaryingChannelCMEbasedAlgorithm.cpp TriangularizationBasedSMCAlgorithm.cpp USIS.cpp \
-	UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp ViterbiAlgorithm.cpp
+	UnknownActiveUsersLinearFilterBasedSMCAlgorithm.cpp UnknownChannelAlgorithm.cpp UnknownChannelOrderAlgorithm.cpp \
+	ViterbiAlgorithm.cpp
 SUBDIRS = USIS2SIS

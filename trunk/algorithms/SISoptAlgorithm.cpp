@@ -23,7 +23,7 @@ SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int Nr,i
 {
 }
 
-void SISoptAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void SISoptAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int k,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);

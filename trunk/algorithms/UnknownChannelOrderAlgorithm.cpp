@@ -50,8 +50,8 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
     _nInputsXchannelOrderaxOrder = _nInputs*_maxOrder;
 
-	_channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
-	_channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
+    _channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
+    _channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
 
 #ifdef DEBUG
     cout << "UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: _candidateOrders.size " << _candidateOrders.size() << endl;
@@ -67,16 +67,16 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
     delete[] _channelOrder2index;
 }
 
-vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 {
     tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-        throw RuntimeException("UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence: Insufficient number of observations.");
+        throw RuntimeException("UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence: Insufficient number of observations.");
 
     vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
 
- 	// selects all the rows from a symbols matrix
+    // selects all the rows from a symbols matrix
     tRange rAllSymbolRows(0,_nInputs-1);
 
     uint iOrder;

@@ -66,7 +66,7 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
     _estimatorIndex = n;
 }
 
-void SMCAlgorithm::InitializeParticles()
+void SMCAlgorithm::initializeParticles()
 {
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
@@ -93,9 +93,9 @@ void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
     if(nObservations<(_startDetectionTime+1+_d))
         throw RuntimeException("SMCAlgorithm::Run: not enough observations.");
 
-    InitializeParticles();
+    initializeParticles();
 
-    Process(observations,noiseVariances);
+    process(observations,noiseVariances);
 }
 
 void SMCAlgorithm::runFrom(int n,tMatrix observations,vector<double> noiseVariances)
@@ -106,7 +106,7 @@ void SMCAlgorithm::runFrom(int n,tMatrix observations,vector<double> noiseVarian
     if(nObservations<(_startDetectionTime+1+_d))
         throw RuntimeException("SMCAlgorithm::runFrom: Not enough observations.");
 
-    Process(observations,noiseVariances);
+    process(observations,noiseVariances);
 }
 
 void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
@@ -120,9 +120,9 @@ void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatr
 
     tRange rTrainingSequence(_preamble.cols(),preamblePlusTrainingSequenceLength-1);
 
-    BeforeInitializingParticles(observations,trainingSequence);
+    beforeInitializingParticles(observations,trainingSequence);
 
-    InitializeParticles();
+    initializeParticles();
 
 //     if(_randomParticlesInitilization)
 //         cout << _name << ": particles are initialized randomly..." << endl;
@@ -143,10 +143,10 @@ void SMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatr
         processedParticle->setSymbolVectors(rTrainingSequence,trainingSequence);
     }
 
-    // the Process method must start in
+    // the process method must start in
     _startDetectionTime = preamblePlusTrainingSequenceLength;
 
-    Process(observations,noiseVariances);
+    process(observations,noiseVariances);
 }
 
 tMatrix SMCAlgorithm::getDetectedSymbolVectors()

@@ -201,7 +201,7 @@ KalmanEstimator *KalmanEstimator::clone() const
     return new KalmanEstimator(*this);
 }
 
-tMatrix KalmanEstimator::sampleFromPredictive()
+tMatrix KalmanEstimator::sampleFromPredictive() const
 {
     tVector predictiveMean = _kalmanFilter->predictiveMean();
     tMatrix predictiveCovariance = _kalmanFilter->predictiveCovariance();

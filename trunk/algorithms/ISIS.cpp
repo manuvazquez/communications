@@ -25,7 +25,7 @@ ISIS::ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolV
 {
 }
 
-void ISIS::InitializeParticles()
+void ISIS::initializeParticles()
 {
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
@@ -40,7 +40,7 @@ void ISIS::InitializeParticles()
     }
 }
 
-void ISIS::Process(const tMatrix& observations, vector< double > noiseVariances)
+void ISIS::process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int m,d,iSmoothingVector,nSmoothingVectors,Nm;
 	int iSmoothingLag,iParticle,iSampledVector;

@@ -40,10 +40,10 @@ USIS::~USIS()
 	delete _channelOrderEstimator;
 }
 
-// vector<vector<tMatrix> > USIS::EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
+// vector<vector<tMatrix> > USIS::estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
 // {
 // 	// channel estimation for the training sequence is needed in order to compute the channel order APP
-// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 //
 // 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
 //     // during the training sequence
@@ -55,7 +55,7 @@ USIS::~USIS()
 //     return estimatedMatrices;
 // }
 
-void USIS::InitializeParticles()
+void USIS::initializeParticles()
 {
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
@@ -82,7 +82,7 @@ void USIS::InitializeParticles()
     }
 }
 
-void USIS::Process(const tMatrix& observations, vector< double > noiseVariances)
+void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 {
 	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
 	uint iChannelOrder;
@@ -349,7 +349,7 @@ int USIS::BestChannelOrderIndex(int iBestParticle)
 	return iMaxChannelOrderAPP;
 }
 
-void USIS::BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+void USIS::beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
 {
 //     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
 //     {

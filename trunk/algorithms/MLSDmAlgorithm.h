@@ -35,17 +35,17 @@ protected:
     double _ARcoefficient,_samplingVariance,_ARprocessVariance;
     vector<int> _particlesBestChannelOrders;
 
-//     vector<vector<tMatrix> > EstimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
+//     vector<vector<tMatrix> > estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     int BestChannelOrderIndex(int iBestParticle);
-    virtual void BeforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
+    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
 public:
     MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 
     ~MLSDmAlgorithm();
 
     virtual ParticleFilter* GetParticleFilterPointer() {return _particleFilter;}
-    virtual void InitializeParticles();
-    virtual void Process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void initializeParticles();
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 
 };
 

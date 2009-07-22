@@ -56,9 +56,9 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,
     if(nObservations<_startDetectionTime+_maxOrder)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::Run: Not enough observations.");
 
-    this->InitializeParticles();
+    this->initializeParticles();
 
-    this->Process(observations,noiseVariances);
+    this->process(observations,noiseVariances);
 }
 
 void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
@@ -78,11 +78,11 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,
 
     tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
 
-//     vector<vector<tMatrix> > trainingSequenceChannelMatrices = EstimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
+//     vector<vector<tMatrix> > trainingSequenceChannelMatrices = estimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
 
-    BeforeInitializingParticles(observations,noiseVariances,trainingSequence);
+    beforeInitializingParticles(observations,noiseVariances,trainingSequence);
 
-    this->InitializeParticles();
+    this->initializeParticles();
 
     for(iParticle=0;iParticle<GetParticleFilterPointer()->nParticles();iParticle++)
     {
@@ -111,10 +111,10 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,
         processedParticle->setSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
     }
 
-    // the Process method must start in
+    // the process method must start in
     _startDetectionTime += trainingSequence.cols();
 
-    this->Process(observations,noiseVariances);
+    this->process(observations,noiseVariances);
 }
 
 tMatrix MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()

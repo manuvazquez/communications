@@ -26,7 +26,7 @@ TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string na
 //     _randomParticlesInitilization = true;
 }
 
-void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, vector< double > noiseVariances)
+void TriangularizationBasedSMCAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
 {
     int iParticle,iSmoothing,iAlphabet,iSampled;
     double proposal,observationWithouNoise,sumProb,likelihoodsProd;
@@ -145,7 +145,7 @@ void TriangularizationBasedSMCAlgorithm::Process(const tMatrix& observations, ve
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProbabilities(iAlphabet) /= sumProb;
                 }catch(exception e){
-                    cout << "TriangularizationBasedSMCAlgorithm::Process: the sum of the probabilities is null." << endl;
+                    cout << "TriangularizationBasedSMCAlgorithm::process: the sum of the probabilities is null." << endl;
                     cout <<  __FILE__  << "(line " << __LINE__ << ") :" << endl;
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProbabilities(iAlphabet) = 1.0/double(_alphabet.length());

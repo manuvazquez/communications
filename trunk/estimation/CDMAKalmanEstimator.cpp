@@ -57,3 +57,17 @@ tMatrix CDMAKalmanEstimator::buildMeasurementMatrix(const tVector& symbolsVector
     return CS;
 }
 
+tMatrix CDMAKalmanEstimator::sampleFromPredictive() const
+{
+    tMatrix sampledChannelMatrix = KalmanEstimator::sampleFromPredictive();
+    
+    if(sampledChannelMatrix.rows()!=1)
+        throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive: sampled channel matrix is not a row vector.");
+    
+    tMatrix spreadingCodesXsampledChannelMatrix = _spreadingCodes;
+    for(int i=0;i<_nOutputs;i++)
+        for(int j=0;j<_nInputs;j++)
+            spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
+            
+    return spreadingCodesXsampledChannelMatrix;
+}

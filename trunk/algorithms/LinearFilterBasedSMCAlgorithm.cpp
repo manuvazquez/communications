@@ -36,7 +36,7 @@ LinearFilterBasedSMCAlgorithm::~LinearFilterBasedSMCAlgorithm()
     delete _linearDetector;
 }
 
-void LinearFilterBasedSMCAlgorithm::InitializeParticles()
+void LinearFilterBasedSMCAlgorithm::initializeParticles()
 {
     tRange rPreamble(0,_preamble.cols()-1);
 
@@ -56,7 +56,7 @@ void LinearFilterBasedSMCAlgorithm::InitializeParticles()
     }
 }
 
-void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector< double > noiseVariances)
+void LinearFilterBasedSMCAlgorithm::process(const tMatrix &observations, vector< double > noiseVariances)
 {
     int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
     vector<tMatrix> matricesToStack(_c+_e+1,tMatrix(_nOutputs,_nInputsXchannelOrder));
@@ -75,7 +75,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
 
     if(_substractContributionFromKnownSymbols)
        if(_linearDetector->channelMatrixcols() != _nInputs*(_e+1))
-          throw RuntimeException("LinearFilterBasedSMCAlgorithm::Process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
+          throw RuntimeException("LinearFilterBasedSMCAlgorithm::process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
 
     // already detected symbol vectors involved in the current detection
     tRange rmMinus1AlreadyDetectedSymbolVectors(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
@@ -106,7 +106,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
                 matricesToStack[iSmoothing+_c] = processedParticle->getChannelMatrix(_estimatorIndex,iObservationToBeProcessed+iSmoothing);
 
             // first of the predicted ones is obtained via a virtual method
-            FillFirstEstimatedChannelMatrix(iParticle,matricesToStack[_c]);
+            fillFirstEstimatedChannelMatrix(iParticle,matricesToStack[_c]);
 
             for(iSmoothing=_c+1;iSmoothing<=_c+_e;iSmoothing++)
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
@@ -205,7 +205,7 @@ void LinearFilterBasedSMCAlgorithm::Process(const tMatrix &observations, vector<
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
-void LinearFilterBasedSMCAlgorithm::BeforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence)
+void LinearFilterBasedSMCAlgorithm::beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence)
 {
     _linearDetector->stateStepsFromObservationsSequence(observations,_d,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 }
