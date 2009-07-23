@@ -34,7 +34,7 @@ double RLSEstimator::likelihood(const tVector &observations,const tMatrix symbol
 	tVector computedObservations(observations.size());
 	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,Util::toVector(symbolsMatrix,columnwise),computedObservations);
 
-	return StatUtil::NormalPdf(observations,computedObservations,noiseVariance);
+	return StatUtil::normalPdf(observations,computedObservations,noiseVariance);
 }
 
 tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)

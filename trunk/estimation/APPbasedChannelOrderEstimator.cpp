@@ -66,7 +66,7 @@ tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& obser
             // noiselessObservation = LastEstimatedChannelMatrix * stackedSymbolVector
             Blas_Mat_Vec_Mult(channelMatrices[iChannelOrder][i-iFrom],_symbolVector(rInvolvedSymbols),noiselessObservation);
 
-            _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations.col(i),noiselessObservation,noiseVariances[i]);
+            _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations.col(i),noiselessObservation,noiseVariances[i]);
 
             normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
         }
@@ -110,7 +110,7 @@ void APPbasedChannelOrderEstimator::Update(const tVector &observations,const vec
 
         Blas_Mat_Vec_Mult(channelMatrices[iChannelOrder],_symbolVector(rInvolvedSymbols),noiselessObservation);
 
-        _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::NormalPdf(observations,noiselessObservation,noiseVariance);
+        _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations,noiselessObservation,noiseVariance);
 
         normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
     }

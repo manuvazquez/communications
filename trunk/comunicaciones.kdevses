@@ -3,25 +3,25 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="7" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="69" Type="Source" />
+   <View0 Encoding="" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="52" Type="Source" />
+   <View0 Encoding="" line="55" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="11" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
+   <View0 Encoding="" line="78" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.cpp" >
-   <View0 Encoding="" line="143" Type="Source" />
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
+   <View0 Encoding="" line="7" Type="Source" />
   </Doc3>
   <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UnknownActiveUsersLinearFilterBasedSMCAlgorithm.cpp" >
-   <View0 Encoding="" line="23" Type="Source" />
+   <View0 Encoding="" line="148" Type="Source" />
   </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-   <View0 Encoding="" line="35" Type="Source" />
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h" >
+   <View0 Encoding="" line="43" Type="Source" />
   </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.h" >
-   <View0 Encoding="" line="33" Type="Source" />
+  <Doc6 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/CDMASystem.h" >
+   <View0 Encoding="" line="54" Type="Source" />
   </Doc6>
  </DocsAndViews>
  <pluginList>
@@ -131,9 +131,6 @@
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="87" />
     </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
-     <mark line="30" />
-    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/RLSEstimator.cpp" >
      <mark line="88" />
      <mark line="21" />
@@ -157,8 +154,11 @@
      <mark line="60" />
      <mark line="134" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/CDMAunknownActiveUsersSISopt.cpp" >
+     <mark line="30" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp" >
-     <mark line="98" />
+     <mark line="106" />
     </bookmark>
     <bookmark url="/home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
      <mark line="188" />
@@ -169,11 +169,7 @@
      <mark line="65" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/UnknownActiveUsersLinearFilterBasedSMCAlgorithm.cpp" >
-     <mark line="126" />
-     <mark line="66" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="0" />
+     <mark line="74" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
@@ -187,6 +183,9 @@
      <mark line="178" />
      <mark line="166" />
      <mark line="152" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
+     <mark line="0" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>

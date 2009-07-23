@@ -115,7 +115,7 @@ vector<int> StatUtil::discrete_rnd(int nSamples,const tVector &probabilities,Ran
 	return res;
 }
 
-tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
+tMatrix StatUtil::randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
 {
 	tMatrix res(rows,cols);
 	double stdDv = sqrt(variance);
@@ -128,26 +128,26 @@ tMatrix StatUtil::RandnMatrix(int rows,int cols,double mean,double variance,Rand
 	return res;
 }
 
-tVector StatUtil::RandMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator)
+tVector StatUtil::randMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator)
 {
 	if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
-		throw RuntimeException("StatUtil::RandnMatrix: dimensions of the mean or the covariance are wrong.");
+		throw RuntimeException("StatUtil::randnMatrix: dimensions of the mean or the covariance are wrong.");
 
 	tVector res = mean;
-	// res = mean + L*RandnMatrix(mean.size(),1,0.0,1.0)
-	Blas_Mat_Vec_Mult(Util::cholesky(covariance),RandnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
+	// res = mean + L*randnMatrix(mean.size(),1,0.0,1.0)
+	Blas_Mat_Vec_Mult(Util::cholesky(covariance),randnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
 
 	return res;
 }
 
-double StatUtil::NormalPdf(double x,double mean,double variance)
+double StatUtil::normalPdf(double x,double mean,double variance)
 {
 	double distance = fabs(x - mean);
 
 	return 1.0/sqrt(2.0*M_PI*variance)*exp(-(distance*distance)/(2.0*variance));
 }
 
-double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance)
+double StatUtil::normalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance)
 {
 
 	int N = x.size();
@@ -174,12 +174,12 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,const tMatrix &c
 	return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
 }
 
-double StatUtil::NormalPdf(const tVector &x,const tVector &mean,double variance)
+double StatUtil::normalPdf(const tVector &x,const tVector &mean,double variance)
 {
 // 	tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
 // 
 // 	covariance *= variance;
-// 	return StatUtil::NormalPdf(x,mean,covariance);
+// 	return StatUtil::normalPdf(x,mean,covariance);
     
     double res = 1.0;
     
@@ -189,7 +189,7 @@ double StatUtil::NormalPdf(const tVector &x,const tVector &mean,double variance)
     return res;
 }
 
-double StatUtil::Variance(const tVector &v)
+double StatUtil::variance(const tVector &v)
 {
 	double squareMean=0.0,mean=0.0;
 
@@ -204,7 +204,7 @@ double StatUtil::Variance(const tVector &v)
 	return squareMean - mean*mean;
 }
 
-double StatUtil::Mean(const tMatrix &A)
+double StatUtil::mean(const tMatrix &A)
 {
 	double sum = 0.0;
 
@@ -215,7 +215,7 @@ double StatUtil::Mean(const tMatrix &A)
 	return sum/(double)(A.rows()*A.cols());
 }
 
-vector<int> StatUtil::WithoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator)
+vector<int> StatUtil::withoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator)
 {
 //     int i,j;
 	double uniform;

@@ -72,7 +72,7 @@ void USIS::initializeParticles()
 
             if(_randomParticlesInitilization)
                 // the first matrix of the channel matrix estimator is initialized randomly
-                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
+                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
 
 			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->clone();
 		}
@@ -158,12 +158,12 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 				// predicted channel matrices are sampled and stored in a vector in order to stack them
 
 				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,Nm)*_samplingVariance
-				Util::add(processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::RandnMatrix(_nOutputs,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
+				Util::add(processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::randnMatrix(_nOutputs,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
 
 				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
 				{
 					// matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient * matricesToStack[iChannelOrder][iSmoothing-1] + rand(_nOutputs,Nm)*_ARprocessVariance
-					Util::add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
+					Util::add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::randnMatrix(_nOutputs,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
 				}
 
 				// for sampling s_{t:t+d} we need to build
@@ -214,7 +214,7 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 						// the probability for each posible symbol alphabet is computed
 						for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 						{
-							symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
+							symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
 
 							// the computed pdf is accumulated for normalizing purposes
 							sumProb += symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet);
@@ -288,7 +288,7 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 					// predictedNoiselessObservation = matricesToStack[iChannelOrder][iSmoothing] * stackedSymbolVector
 					Blas_Mat_Vec_Mult(matricesToStack[iChannelOrder][iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
 
-					likelihoodsProd *= StatUtil::NormalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseCovariances[iSmoothing]);
+					likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseCovariances[iSmoothing]);
 
 				} // for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
 

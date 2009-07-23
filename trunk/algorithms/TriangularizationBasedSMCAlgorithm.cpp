@@ -73,7 +73,7 @@ void TriangularizationBasedSMCAlgorithm::process(const tMatrix& observations, ve
             for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
             {
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
-                Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
+                Util::add(matricesToStack[iSmoothing-1],StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
             }
 
             // matrices are stacked to give
@@ -135,7 +135,7 @@ void TriangularizationBasedSMCAlgorithm::process(const tMatrix& observations, ve
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-                    symbolProbabilities(iAlphabet) = StatUtil::NormalPdf(transformedStackedObservationsMinus(iSampledSymbol),observationWithouNoise+U(iSampledSymbol,jU)*_alphabet[iAlphabet],transformedStackedObservationsCovariance(iSampledSymbol,iSampledSymbol));
+                    symbolProbabilities(iAlphabet) = StatUtil::normalPdf(transformedStackedObservationsMinus(iSampledSymbol),observationWithouNoise+U(iSampledSymbol,jU)*_alphabet[iAlphabet],transformedStackedObservationsCovariance(iSampledSymbol,iSampledSymbol));
 
                     // for normalization purposes
                     sumProb += symbolProbabilities(iAlphabet);

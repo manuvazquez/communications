@@ -49,7 +49,7 @@ void LinearFilterBasedSMCAlgorithm::initializeParticles()
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(channelMean,channelCovariance),rowwise,_nOutputs));
         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
         _particleFilter->getParticle(iParticle)->setSymbolVectors(rPreamble,_preamble);
@@ -110,7 +110,7 @@ void LinearFilterBasedSMCAlgorithm::process(const tMatrix &observations, vector<
 
             for(iSmoothing=_c+1;iSmoothing<=_c+_e;iSmoothing++)
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
-                Util::add(matricesToStack[iSmoothing-1],StatUtil::RandnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
+                Util::add(matricesToStack[iSmoothing-1],StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance),matricesToStack[iSmoothing],_ARcoefficient,1.0);
 
             // matrices are stacked to give
             tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
@@ -145,7 +145,7 @@ void LinearFilterBasedSMCAlgorithm::process(const tMatrix &observations, vector<
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-                    symbolProb(iSampledSymbol,iAlphabet) = StatUtil::NormalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
+                    symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
                     // the computed pdf is accumulated for normalizing purposes
                     sumProb += symbolProb(iSampledSymbol,iAlphabet);

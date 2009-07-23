@@ -206,7 +206,7 @@ tMatrix KalmanEstimator::sampleFromPredictive() const
     tVector predictiveMean = _kalmanFilter->predictiveMean();
     tMatrix predictiveCovariance = _kalmanFilter->predictiveCovariance();
 
-    return Util::toMatrix(StatUtil::RandMatrix(predictiveMean,predictiveCovariance)(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
+    return Util::toMatrix(StatUtil::randMatrix(predictiveMean,predictiveCovariance)(_rChannelCoefficients),rowwise,_nChannelMatrixRows);
 }
 
 void KalmanEstimator::setFirstEstimatedChannelMatrix(const tMatrix &matrix)

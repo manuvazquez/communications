@@ -54,11 +54,11 @@ double CDMAKnownChannelChannelMatrixEstimator::likelihood(const tVector &observa
 //     cout << "channelCoefficientsXsymbols = " << endl << channelCoefficientsXsymbols;
 //     cout << "_spreadingCodes = " << endl << _spreadingCodes;
     cout << "withoutNoiseObservations = " << endl << withoutNoiseObservations << endl;
-    cout << "likelihood = " << StatUtil::NormalPdf(observations,withoutNoiseObservations,noiseVariance) << endl;
+    cout << "likelihood = " << StatUtil::normalPdf(observations,withoutNoiseObservations,noiseVariance) << endl;
 //     getchar();
 #endif        
     
-    return StatUtil::NormalPdf(observations,withoutNoiseObservations,noiseVariance);
+    return StatUtil::normalPdf(observations,withoutNoiseObservations,noiseVariance);
 }
 
 CDMAKnownChannelChannelMatrixEstimator *CDMAKnownChannelChannelMatrixEstimator::clone() const

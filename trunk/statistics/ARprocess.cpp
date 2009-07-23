@@ -69,12 +69,12 @@ void ARprocess::CommonConstructorsCode(const tMatrix &seed)
 //          // _buffer[i] = _buffer[i] + _buffer[j]*_coefficients[j];
 //          Util::add(*(_buffer[i]),*(_buffer[j]),*(_buffer[i]),1.0,_coefficients[j]);
 //
-//      tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
+//      tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 //
 //      //_buffer[i] = _buffer[i] + noise;
 //      Util::add(*(_buffer[i]),noise,*(_buffer[i]));
 
-        tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
+        tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
         //_buffer[i] = _buffer[i] + noise;
         Util::add(*(_buffer[i-1]),noise,*(_buffer[i]));
@@ -94,7 +94,7 @@ void ARprocess::CommonConstructorsCode(const tMatrix &seed)
             // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
             Util::add(aux,*(_buffer[(i+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
 
-        tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
+        tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
         // _buffer[i % _nCoefficients] = aux + noise;
         Util::add(aux,noise,*(_buffer[i % _nCoefficients]));
@@ -143,7 +143,7 @@ tMatrix ARprocess::nextMatrix()
         // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
         Util::add(aux,*(_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
 
-    tMatrix noise = StatUtil::RandnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
+    tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
     // _buffer[i % _nCoefficients] = aux + noise;
     Util::add(aux,noise,*(_buffer[_iNextMatrix % _nCoefficients]));

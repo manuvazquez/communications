@@ -56,15 +56,15 @@ public:
     // same functions as above but receiving c++ vectors instead of Lapack++ vectors
     static int discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
-    static tMatrix RandnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);    
-    static tVector RandMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator = _randomGenerator);
-    static double NormalPdf(double x,double mean,double variance);
-    static double NormalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
-    static double NormalPdf(const tVector &x,const tVector &mean,double variance);
-    static double Variance(const tVector &v);
-    static double Mean(const tMatrix &A);
-    static vector<int> WithoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
-    static Random& GetRandomGenerator() { return _randomGenerator;}
+    static tMatrix randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);    
+    static tVector randMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator = _randomGenerator);
+    static double normalPdf(double x,double mean,double variance);
+    static double normalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
+    static double normalPdf(const tVector &x,const tVector &mean,double variance);
+    static double variance(const tVector &v);
+    static double mean(const tMatrix &A);
+    static vector<int> withoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
+    static Random& getRandomGenerator() { return _randomGenerator;}
 };
 
 #endif

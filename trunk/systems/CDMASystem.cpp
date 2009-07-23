@@ -22,12 +22,14 @@
 #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
+,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
+,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
     
     // spreading spreadingCodes for the users are generated randomly
-    _spreadingCodes = StatUtil::RandnMatrix(L,N,0.0,1.0);
+    _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
     
 #ifdef PRINT_INFO
@@ -64,6 +66,8 @@ CDMASystem::CDMASystem(): SMCSystem()
     
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;
+    
+    mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);    
 }
 
 
@@ -72,6 +76,7 @@ CDMASystem::~CDMASystem()
     delete powerProfile;
     delete cdmaKalmanEstimator;
     delete cdmaKnownChannelChannelMatrixEstimator;
+    delete mmseDetector;
 }
 
 void CDMASystem::AddAlgorithms()
@@ -80,17 +85,19 @@ void CDMASystem::AddAlgorithms()
     cout << "observations are" << endl << observations;
 #endif
 
-    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
+    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
     
-    algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known active users)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength,_usersActivity));    
+    algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel & active users)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength,_usersActivity));    
        
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
     delete cdmaKnownChannelChannelMatrixEstimator;
     cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
  
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
     
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),userPersistenceProb,newActiveUserProb,userPriorProb));    
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
+        
+    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));            
 }
 
 void CDMASystem::BeforeEndingFrame(int iFrame)
@@ -109,24 +116,10 @@ void CDMASystem::BuildChannel()
     // when users are not transmitting, their symbols are zero
     _usersActivity = vector<vector<bool> >(symbols.rows(),vector<bool>(frameLength));
     
-    tVector userActivePriorPdf(2);
-    userActivePriorPdf(0) = 1.0 - userPriorProb;
-    userActivePriorPdf(1) = userPriorProb;
-    
-    tVector userActiveGivenItWasPdf(2);
-    userActiveGivenItWasPdf(0) = 1.0 - userPersistenceProb;
-    userActiveGivenItWasPdf(1) = userPersistenceProb;    
-    
-    tVector userActiveGivenItWasNotPdf(2);
-    userActiveGivenItWasNotPdf(0) = 1.0 - newActiveUserProb;
-    userActiveGivenItWasNotPdf(1) = newActiveUserProb;        
-    
-    vector<int> usersActive = StatUtil::discrete_rnd(symbols.rows(),userActivePriorPdf);
-    
     // at the first time instant the prior probability is used to decide which users are active
     for(uint iUser=0;iUser<static_cast<uint>(symbols.rows());iUser++)
     {
-        _usersActivity[iUser][trainSeqLength] = bool(usersActive[iUser]);
+        _usersActivity[iUser][trainSeqLength] = usersActivityPdf.sampleFromPrior();        
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
         isSymbolAccountedForDetection[iUser][trainSeqLength] = _usersActivity[iUser][trainSeqLength];
     }
@@ -135,13 +128,7 @@ void CDMASystem::BuildChannel()
     for(uint iTime=trainSeqLength+1;iTime<frameLength;iTime++)    
         for(uint iUser=0;iUser<symbols.rows();iUser++)
         {   
-            // the user was active in the last time instant
-            if(_usersActivity[iUser][iTime-1]) 
-                _usersActivity[iUser][iTime]= bool(StatUtil::discrete_rnd(userActiveGivenItWasPdf));
-            // the user was NOT active in the last time instant
-            else
-                _usersActivity[iUser][iTime]= bool(StatUtil::discrete_rnd(userActiveGivenItWasNotPdf));
-            
+            _usersActivity[iUser][iTime] = usersActivityPdf.sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
             symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
             isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
         }

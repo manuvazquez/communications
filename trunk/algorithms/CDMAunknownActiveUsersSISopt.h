@@ -22,6 +22,7 @@
 
 #include <SMCAlgorithm.h>
 #include <ParticleWithChannelEstimationAndActiveUsers.h>
+#include <UsersActivityDistribution.h>
 
 /**
 It implements an (optimal) algorithm that aims to detect the active users in a SISO CDMA system along with the transmitted data
@@ -31,12 +32,10 @@ It implements an (optimal) algorithm that aims to detect the active users in a S
 class CDMAunknownActiveUsersSISopt : public SMCAlgorithm
 {
 public:
-    CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb);
+    CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const UsersActivityDistribution &usersActivityPdf);
 
 protected:
-    double _userPersistenceProb; /// probability of an user surviving from one time instant to the next
-    double _newActiveUserProb; /// probability of a new user becoming active at any time
-    double _userPriorProb; /// a priori probability of any user
+    const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity
 
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);

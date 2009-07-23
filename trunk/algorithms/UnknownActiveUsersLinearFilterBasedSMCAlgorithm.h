@@ -30,16 +30,18 @@ An SMC algorithm based on linear filters that for a system whose users are not p
 
 #include <ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers.h>
 #include <KalmanEstimator.h>
+#include <UsersActivityDistribution.h>
 
 class UnknownActiveUsersLinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances);
+    UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, const UsersActivityDistribution &usersActivityPdf);
 
     ~UnknownActiveUsersLinearFilterBasedSMCAlgorithm();
 
 protected:
     LinearDetector *_linearDetector;
+    const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity    
 
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);

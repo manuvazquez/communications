@@ -127,7 +127,7 @@ tMatrix Util::toMatrix(const tVector &vector,tOrder order,uint rows)
 {
     int remainder = vector.size() % rows;
     if(remainder!=0)
-        throw RuntimeException("Resultant number of columns is not integer.");
+        throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
     int cols = vector.size()/rows;
     return toMatrix(vector,order,rows,cols);
 }

@@ -33,7 +33,7 @@
 
 // #define DEBUG5
 
-CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const double userPersistenceProb,const double newActiveUserProb,const double userPriorProb): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_userPersistenceProb(userPersistenceProb),_newActiveUserProb(newActiveUserProb),_userPriorProb(userPriorProb)
+CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances,const UsersActivityDistribution &usersActivityPdf): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdf(usersActivityPdf)
 {    
     _randomParticlesInitilization = true;    
 }
@@ -51,7 +51,7 @@ void CDMAunknownActiveUsersSISopt::initializeParticles()
         channelMatrixEstimatorClone = _channelEstimator->clone();
         
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::RandMatrix(channelMean,channelCovariance),rowwise,_Nr));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(channelMean,channelCovariance),rowwise,_Nr));
         
         _particleFilter->addParticle(new ParticleWithChannelEstimationAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone));
 
@@ -242,13 +242,10 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVe
     
     for(int i=0;i<symbolsVector.size();i++)
     {
+        probUsersActivity *= _usersActivityPdf.probXgivenY(isUserActive(symbolsVector(i)),lastUsersActivity[i]);
+        
         if(isUserActive(symbolsVector(i)))
-        {
-            probUsersActivity *= lastUsersActivity[i]?_userPersistenceProb:_newActiveUserProb;
             probSymbolsVector /= double(_alphabet.length());
-        }
-        else
-            probUsersActivity *= lastUsersActivity[i]?(1.0-_userPersistenceProb):(1.0-_newActiveUserProb);
     }
 
     return probSymbolsVector*probUsersActivity;
@@ -264,13 +261,9 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVe
     
     for(int i=0;i<symbolsVector.size();i++)
     {
+        probUsersActivity *= _usersActivityPdf.probApriori(isUserActive(symbolsVector(i)));
         if(isUserActive(symbolsVector(i)))
-        {
-            probUsersActivity *= _userPriorProb;
             probSymbolsVector /= double(_alphabet.length());
-        }
-        else
-            probUsersActivity *= 1 - _userPriorProb;
     }
 
     return probSymbolsVector*probUsersActivity;

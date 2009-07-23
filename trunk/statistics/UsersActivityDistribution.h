@@ -17,26 +17,29 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef WITHOUTREPLACEMENTRESAMPLINGALGORITHM_H
-#define WITHOUTREPLACEMENTRESAMPLINGALGORITHM_H
-
-#include <ResamplingAlgorithm.h>
+#ifndef USERSACTIVITYDISTRIBUTION_H
+#define USERSACTIVITYDISTRIBUTION_H
 
 /**
+It implements...
+
 	@author Manu <manu@rustneversleeps>
 */
-class WithoutReplacementResamplingAlgorithm : public ResamplingAlgorithm
-{
+
+#include <vector>
+#include <StatUtil.h>
+
+class UsersActivityDistribution{
+protected:
+    std::vector<double> _prior;
+    std::vector<double> _userActiveGivenItWasPdf;
+    std::vector<double> _userActiveGivenItWasNotPdf;
 public:
-    WithoutReplacementResamplingAlgorithm(ResamplingCriterion resamplingCriterion);
-
-    virtual WithoutReplacementResamplingAlgorithm* clone() const;
-
-    virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
-    {
-    	return StatUtil::withoutReplacementSampling(n,weights);
-    }
-
+    UsersActivityDistribution(const double userPersistenceProb, const double newActiveUserProb, const double userPriorProb);
+    bool sampleFromPrior() const;
+    bool sampleGivenItWas(bool previous) const;
+    double probXgivenY(bool X, bool Y) const;
+    double probApriori(bool X) const;
 };
 
 #endif

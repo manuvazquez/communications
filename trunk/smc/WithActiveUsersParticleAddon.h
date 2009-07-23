@@ -31,6 +31,7 @@ It implements the code of a particle accounting for the users active at any time
 
 class WithActiveUsersParticleAddon{
 protected:
+    uint _symbolVectorLength;
     std::vector<std::vector<bool> > _activeUsers;
 public:
     WithActiveUsersParticleAddon(int symbolVectorLength,int nTimeInstants);

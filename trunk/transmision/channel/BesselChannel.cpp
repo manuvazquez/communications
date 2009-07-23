@@ -65,8 +65,8 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 		{
 			tVector sample = LaGenMatDouble::zeros(length,1);
 
-			// res = mean + L*RandnMatrix(mean.size(),1,0.0,1.0)
-			Blas_Mat_Vec_Mult(Ls[iCol/nInputs],StatUtil::RandnMatrix(length,1,0.0,1.0),sample,1.0,1.0);
+			// res = mean + L*randnMatrix(mean.size(),1,0.0,1.0)
+			Blas_Mat_Vec_Mult(Ls[iCol/nInputs],StatUtil::randnMatrix(length,1,0.0,1.0),sample,1.0,1.0);
 
 			for(iTime=0;iTime<length;iTime++)
 				_channelMatrices[iTime](iRow,iCol) = sample(iTime);

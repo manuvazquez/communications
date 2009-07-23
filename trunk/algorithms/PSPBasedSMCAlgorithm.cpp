@@ -98,7 +98,7 @@ void PSPBasedSMCAlgorithm::process(const tMatrix& observations, vector< double >
 
 				particleCandidates[iCandidate].fromParticle = iParticle;
 				particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
-				particleCandidates[iCandidate].weight = processedParticle->getWeight()*StatUtil::NormalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
+				particleCandidates[iCandidate].weight = processedParticle->getWeight()*StatUtil::normalPdf(observations.col(iObservationToBeProcessed),computedObservations,noiseVariances[iObservationToBeProcessed]);
 				normConst += particleCandidates[iCandidate].weight;
 
 				iCandidate++;

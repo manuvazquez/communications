@@ -28,7 +28,8 @@
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
 #include <KnownFlatChannelOptimalAlgorithm.h>
 #include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
-
+#include <UsersActivityDistribution.h>
+#include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -45,6 +46,10 @@ protected:
     
     CDMAKalmanEstimator *cdmaKalmanEstimator;
     CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
+    
+    MMSEDetector *mmseDetector;
+    
+    UsersActivityDistribution usersActivityPdf;    
     
     virtual void AddAlgorithms();
     virtual void BeforeEndingFrame(int iFrame);

@@ -61,8 +61,9 @@ BaseSystem::BaseSystem()
     nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+    SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(2);
-    SNRs.push_back(9);
+//     SNRs.push_back(9);
 //     SNRs.push_back(15);
 
     // BER and MSE computing
@@ -167,7 +168,7 @@ void BaseSystem::Simulate()
 
 //     // for repeating simulations
 //     randomGenerator.setSeed();
-//     StatUtil::GetRandomGenerator().setSeed();
+//     StatUtil::getRandomGenerator().setSeed();
 
     int iFrame = 0;
     while((iFrame<nFrames) && (!__done))
@@ -175,7 +176,7 @@ void BaseSystem::Simulate()
 
         // the seeds are kept for saving later
         mainSeeds.push_back(randomGenerator.getSeed());
-        statUtilSeeds.push_back(StatUtil::GetRandomGenerator().getSeed());
+        statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
 
         // bits are generated ...
         Bits bits(N,nBitsGenerated,randomGenerator);        
@@ -226,10 +227,10 @@ void BaseSystem::Simulate()
             for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
 //                 // in order to repeat a concrete simulation...
-//                 StatUtil::GetRandomGenerator().setSeed();
+//                 StatUtil::getRandomGenerator().setSeed();
 
                 // the seed kept by the class StatUtil is saved
-                presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::GetRandomGenerator().getSeed();
+                presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::getRandomGenerator().getSeed();
 
                 // if there is training sequence
                 if(trainSeqLength!=0)
