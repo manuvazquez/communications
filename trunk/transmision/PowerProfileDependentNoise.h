@@ -37,7 +37,7 @@ protected:
 public:
     PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
 
-	virtual double StdDevAt(int n) const {return _stdDev;}
+	virtual double stdDevAt(int n) const {return _stdDev;}
     virtual tVector operator [ ](int n) const;
     virtual void setSNR(int SNR, double alphabetVariance);
 	virtual void print() const { cout << _matrix;}

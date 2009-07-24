@@ -73,7 +73,7 @@ void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
     }
 }
 
-double ChannelDependentNoise::StdDevAt(int n) const
+double ChannelDependentNoise::stdDevAt(int n) const
 {
     return _stdDevs[n];
 }

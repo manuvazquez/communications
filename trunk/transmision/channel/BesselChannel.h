@@ -37,7 +37,6 @@ protected:
 	tMatrix *_channelMatrices;
 public:
     BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
-//     BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const ContinuousPowerProfile &powerProfile);
 
     ~BesselChannel();
 

@@ -63,11 +63,11 @@ int main(int argc,char* argv[])
 //     TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
-//     TesisComplejidadReducidaARSystem system;
+    TesisComplejidadReducidaARSystem system;
 
 //     TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
-    CDMASystem system;
+//     CDMASystem system;
 
     system.Simulate();
 }

@@ -23,7 +23,7 @@
 #include <DelayPowerProfile.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <exceptions.h>
@@ -33,13 +33,13 @@
 class ContinuousPowerProfile : public DelayPowerProfile
 {
 protected:
-	std::vector<double> _continuousDelays;
-	std::vector<double> _continuousPowers;
+    std::vector<double> _continuousDelays;
+    std::vector<double> _continuousPowers;
 public:
-	vector<double> Powers() const { return _continuousPowers;}
-	vector <double> Delays() const { return _continuousDelays;}
-	int Ndelays() const {return _continuousDelays.size();}
-	ContinuousPowerProfile(int nOutputs, int nInputs, std::vector<double> differentialDelays, std::vector<double> powers);
+    ContinuousPowerProfile(int nOutputs, int nInputs, std::vector<double> differentialDelays, std::vector<double> powers);
+    vector<double> powers() const { return _continuousPowers;}
+    vector <double> delays() const { return _continuousDelays;}
+    int nDelays() const {return _continuousDelays.size();}
 
 };
 

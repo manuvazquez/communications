@@ -26,7 +26,7 @@ Modulator::Modulator()
 {
 }
 
-tMatrix Modulator::Modulate(const Bits &bits, Alphabet alphabet)
+tMatrix Modulator::modulate(const Bits &bits, Alphabet alphabet)
 {
 	if((bits.nBitsPerStream()% alphabet.nBitsPerSymbol())!=0)
 		cout << "Too many bits." << endl;

@@ -21,7 +21,7 @@
 #define MODULATOR_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -33,7 +33,7 @@ class Modulator{
 public:
     Modulator();
 
-	static tMatrix Modulate(const Bits &bits,Alphabet alfabeto);
+    static tMatrix modulate(const Bits &bits,Alphabet alfabeto);
 };
 
 #endif

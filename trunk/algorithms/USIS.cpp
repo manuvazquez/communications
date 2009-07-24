@@ -170,7 +170,7 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 				nLinearFiltersNeeded = _maxOrder - m + 1; // linear filters
 
 				// during the first iteration, we are going to use the real linear detector of this particle for this channel order
-				LinearDetector *linearDetectorBeingProccessed = processedParticle->GetLinearDetector(iChannelOrder);
+				LinearDetector *linearDetectorBeingProccessed = processedParticle->getLinearDetector(iChannelOrder);
 
 				for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 				{

@@ -21,7 +21,7 @@
 #define BITS_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include "types.h"
@@ -32,30 +32,30 @@
 class Bits{
 
 private:
-	uint _nStreams, _nBitsByStream,_nBits;
-	tBit *_matrix;
+    uint _nStreams, _nBitsByStream,_nBits;
+    tBit *_matrix;
 
 public:
-	Bits();
-	Bits(int nStreams, int nBitsByStream,Random &randomGenerator);
-	Bits(tBit *matrix,int nStreams,int nBitsByStream);
-	Bits& operator=(const Bits& bits);
-	Bits(const Bits& bits);
-	~Bits();
+    Bits();
+    Bits(int nStreams, int nBitsByStream,Random &randomGenerator);
+    Bits(tBit *matrix,int nStreams,int nBitsByStream);
+    Bits& operator=(const Bits& bits);
+    Bits(const Bits& bits);
+    ~Bits();
 
-	void print() const;
-	Bits DifferentialEncoding();
-	Bits DifferentialDecoding();
-	tBit operator()(int i,int j) const {return _matrix[i*_nBitsByStream+j];}
-	int nStreams() const { return _nStreams;}
-	int nBitsPerStream() const {return _nBitsByStream;}
-	bool operator==(const Bits &bits) const;
-	std::vector<tBit> GetStream(int index) const;
-	void Inject(int index,const std::vector<tBit> &stream);
-	void InvertStream(int index);
+    void print() const;
+    Bits differentialEncoding();
+    Bits differentialDecoding();
+    tBit operator()(int i,int j) const {return _matrix[i*_nBitsByStream+j];}
+    int nStreams() const { return _nStreams;}
+    int nBitsPerStream() const {return _nBitsByStream;}
+    bool operator==(const Bits &bits) const;
+    std::vector<tBit> GetStream(int index) const;
+    void inject(int index,const std::vector<tBit> &stream);
+    void invertStream(int index);
 
-	// returns the number of non coincident bits
-	int operator-(const Bits &bits) const;
+    // returns the number of non coincident bits
+    int operator-(const Bits &bits) const;
 };
 
 #endif

@@ -20,6 +20,16 @@
 #include "UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
 
 // #define DEBUG
+// #define DEBUG_CHANNEL_SAMPLES
+// #define DEBUG_MSE_THRESHOLD 1.5
+
+#define IMPORT_REAL_DATA
+
+#ifdef IMPORT_REAL_DATA
+    extern MIMOChannel *realChannel;
+    extern tMatrix *realSymbols;
+    extern Noise *realNoise;
+#endif
 
 UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, tMatrix preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const tMatrix& channelMatrixMean, const tMatrix& channelMatrixVariances, const UsersActivityDistribution &usersActivityPdf): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdf(usersActivityPdf)
 {
@@ -39,11 +49,6 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
 
-#ifdef DEBUG
-    cout << "channelMean = " << endl << channelMean;
-    cout << "channelCovariance = " << endl << channelCovariance;
-#endif
-
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
@@ -62,7 +67,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
 {
     int iParticle,iSampledSymbol,iAlphabet,iSampled;
     tRange rAll;
-    double proposal,s2q,sumProb,likelihoodsProd;
+    double proposal,s2q,sumProb,likelihood;
     tMatrix forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
     
     int iOutput,iInput;
@@ -81,9 +86,23 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
+#ifdef DEBUG
+            cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
+#endif
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
             channelMatrixSample = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();            
+
+#ifdef DEBUG_CHANNEL_SAMPLES
+            tMatrix channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
+            cout << "channel matrix " << (*realChannel)[iObservationToBeProcessed];
+            cout << "last estimated channel matrix " << channelMatrixEstimation;
+            cout << "channelMatrixSample = " << endl << channelMatrixSample;
+            double normalizedMSE = Util::normalizedSquareError(channelMatrixEstimation,(*realChannel)[iObservationToBeProcessed]);
+            cout << "normalized MSE = " << normalizedMSE << endl;
+            if(normalizedMSE < DEBUG_MSE_THRESHOLD)
+                getchar();                    
+#endif
 
             // sampling of the users activity using:            
             // i) a priori (first time instant)
@@ -95,11 +114,22 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                 for(iInput=0;iInput<_nInputs;iInput++)
                     processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdf.sampleGivenItWas(processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1)));                
 
+#ifdef DEBUG
+            if(iObservationToBeProcessed>_startDetectionTime)
+            {
+                cout << "previous users activity" << endl;
+                Util::print(processedParticle->getActivityAtTime(iObservationToBeProcessed-1));
+                cout << endl;
+            }
+            cout << "sampled users activity" << endl;
+            Util::print(processedParticle->getActivityAtTime(iObservationToBeProcessed));
+            cout << endl;
+#endif
 
             tVector softEstimations;
 
             // the sampled channel matrix is used to obtain soft estimations of the transmitted symbols
-            softEstimations =  processedParticle->GetLinearDetector(_estimatorIndex)->detect(observations.col(iObservationToBeProcessed),channelMatrixSample,noiseCovariance);
+            softEstimations =  processedParticle->getLinearDetector(_estimatorIndex)->detect(observations.col(iObservationToBeProcessed),channelMatrixSample,noiseCovariance);
 
             // the evaluated proposal function (necessary for computing the weights) is initialized
             proposal = 1.0;
@@ -118,23 +148,37 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                     continue;
                 }
                 
-                s2q = processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol);
+                s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol);
+
+#ifdef DEBUG
+                cout << "s2q = " << s2q << endl;
+#endif
 
                 sumProb = 0.0;
 
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-                    symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->GetLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
+                    symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
                     // the computed pdf is accumulated for normalizing purposes
                     sumProb += symbolProb(iSampledSymbol,iAlphabet);
                 }
 
-                try {
+#ifdef DEBUG
+//                 if(iObservationToBeProcessed==5 && iParticle==3)
+//                     cout << "sumProb = " << sumProb << endl;
+//                 if (sumProb==0)
+//                     cout << "is zero!!!" << endl;
+#endif
+
+//                 try {
+                if(sumProb!=0)
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
-                }catch(exception e){
+                else
+                {
+//                 }catch(exception e){
                     cout << "The sum of the probabilities is null." << endl;
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.length());
@@ -147,20 +191,33 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                 probSymbolsVectorApriori /= double(_alphabet.length());
             }
 
+#ifdef DEBUG
+            cout << "soft estimations" << endl << softEstimations;
+            cout << "true transmitted symbol vector" << endl << realSymbols->col(iObservationToBeProcessed);
+            cout << "sampled vector" << endl << sampledVector;
+            cout << "from" << endl << symbolProb;
+            if(normalizedMSE < DEBUG_MSE_THRESHOLD)
+                getchar();            
+#endif
+
             // sampled symbol vector is stored for the corresponding particle
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             // predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
             Blas_Mat_Vec_Mult(channelMatrixSample,sampledVector,predictedNoiselessObservation);
 
-            likelihoodsProd = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed]);
+            likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed]);
 
             // the weight is updated
-            processedParticle->setWeight((likelihoodsProd*probSymbolsVectorApriori/proposal)*processedParticle->getWeight());
+            processedParticle->setWeight((likelihood*probSymbolsVectorApriori/proposal)*processedParticle->getWeight());
 
             // and the estimation of the channel matrix
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]));
+
+#ifdef DEBUG
+//             getchar();
+#endif
 
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 

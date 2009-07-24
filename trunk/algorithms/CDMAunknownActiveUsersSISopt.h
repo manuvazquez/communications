@@ -40,7 +40,6 @@ protected:
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 
-//     double probSymbolsVectorGivenActiveUsers(const tVector &v) const;
     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const;    
     bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}

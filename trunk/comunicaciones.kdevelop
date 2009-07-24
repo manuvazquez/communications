@@ -24,7 +24,7 @@
   <kdevautoproject>
     <general>
       <activetarget>com/com</activetarget>
-      <useconfiguration>debug</useconfiguration>
+      <useconfiguration>optimized</useconfiguration>
     </general>
     <run>
       <mainprogram>/usr/local/.home/manu/c++/comunicaciones/debug</mainprogram>

@@ -24,10 +24,9 @@
 #include <string.h>
 #define DATE_LENGTH 100
 
-// #define EXPORT_REAL_DATA
+#define EXPORT_REAL_DATA
 #define PRINT_PARAMETERS
-
-// #define DEBUG2
+// #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
 
 using namespace std;
 
@@ -40,31 +39,32 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1;
-//     L=3,N=2,frameLength=50;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
-    nFrames = 2;
-    L=3,N=2,frameLength=300;
-    m = 1;
+    nFrames = 1;
+    L=3,N=2,frameLength=50;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 6;
+    nSmoothingSymbolsVectors = 10;
+    
+//     nFrames = 1;
+//     L=7,N=3,frameLength=10;
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-    SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(2);
-//     SNRs.push_back(9);
+//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
+    SNRs.push_back(9);
 //     SNRs.push_back(15);
+//     SNRs.push_back(50);    
 
     // BER and MSE computing
     symbolsDetectionWindowStart = trainSeqLength;
@@ -120,7 +120,7 @@ BaseSystem::BaseSystem()
         for(int iInput=0;iInput<N;iInput++)
             isSymbolAccountedForDetection[iInput][iTime] = true;   
     
-#ifdef DEBUG2
+#ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
     cout << "isSymbolAccountedForDetection" << endl;
     Util::print(isSymbolAccountedForDetection);
 #endif    
@@ -182,7 +182,7 @@ void BaseSystem::Simulate()
         Bits bits(N,nBitsGenerated,randomGenerator);        
 
         // ... and then modulated by means of the alphabet
-        symbols = Modulator::Modulate(bits,*alphabet);
+        symbols = Modulator::modulate(bits,*alphabet);
 
         // the preamble is set before the symbols to be transmitted
         symbols = Util::append(preamble,symbols);

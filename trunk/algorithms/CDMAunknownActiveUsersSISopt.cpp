@@ -219,15 +219,6 @@ void CDMAunknownActiveUsersSISopt::process(const tMatrix& observations, vector< 
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
-// double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenActiveUsers(const tVector &v) const
-// {
-//     uint nActiveUsers = 0;
-//     
-//     for(uint i=0;i<v.size();i++)
-//         nActiveUsers = nActiveUsers + (v(i)==0.0);
-// 
-//     return 1.0/pow((double)_alphabet.length(),(double)nActiveUsers);
-// }
 
 double CDMAunknownActiveUsersSISopt::probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const
 {

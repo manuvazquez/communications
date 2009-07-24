@@ -30,7 +30,7 @@ class NullNoise : public Noise
 public:
     NullNoise(int nOutputs, int length);
 
-    virtual double StdDevAt(int n) const {return 0.0;}
+    virtual double stdDevAt(int n) const {return 0.0;}
     virtual tVector operator [ ](int n) const;
 	virtual void setSNR(int SNR,double alphabetVariance) {}
 	virtual void print() const {std::cout << "Null Noise" << std::endl;}

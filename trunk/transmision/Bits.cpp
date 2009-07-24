@@ -84,7 +84,7 @@ void Bits::print() const
 	}
 }
 
-Bits Bits::DifferentialEncoding()
+Bits Bits::differentialEncoding()
 {
 	Bits res;
 	res._nStreams = _nStreams;
@@ -103,7 +103,7 @@ Bits Bits::DifferentialEncoding()
 	return res;
 }
 
-Bits Bits::DifferentialDecoding()
+Bits Bits::differentialDecoding()
 {
 	if(_nBitsByStream<2)
 		throw RuntimeException("2 bits by stream needed at least for differential decoding.");
@@ -150,16 +150,16 @@ vector<tBit> Bits::GetStream(int index) const
 	return res;
 }
 
-void Bits::Inject(int index,const std::vector<tBit> &stream)
+void Bits::inject(int index,const std::vector<tBit> &stream)
 {
 	if(stream.size()!=_nBitsByStream)
-		throw RuntimeException("Bits::Inject: the stream has not the correct number of bits.");
+		throw RuntimeException("Bits::inject: the stream has not the correct number of bits.");
 
 	for(uint i=index*_nBitsByStream,j=0;j<_nBitsByStream;i++,j++)
 		_matrix[i] = stream[j];
 }
 
-void Bits::InvertStream(int index)
+void Bits::invertStream(int index)
 {
 	for(uint i=index*_nBitsByStream,j=0;j<_nBitsByStream;i++,j++)
 		_matrix[i] = _matrix[i]^1;

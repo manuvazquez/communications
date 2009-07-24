@@ -31,24 +31,24 @@
 #include <lapackpp/blas3pp.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 class ChannelDependentNoise : public Noise
 {
 protected:
-	tMatrix _matrix;
-	MIMOChannel *_channel;
-	double *_stdDevs;
+    tMatrix _matrix;
+    MIMOChannel *_channel;
+    double *_stdDevs;
 public:
     ChannelDependentNoise(MIMOChannel *channel);
     ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise);
-	~ChannelDependentNoise();
+    ~ChannelDependentNoise();
 
-	virtual void setSNR(int SNR,double alphabetVariance);
-	virtual void print() const { cout << _matrix;}
-	double StdDevAt(int n) const;
-	tVector operator[](int n) const;
-	virtual tMatrix range(int start,int end) const;
+    virtual void setSNR(int SNR,double alphabetVariance);
+    virtual void print() const { cout << _matrix;}
+    double stdDevAt(int n) const;
+    tVector operator[](int n) const;
+    virtual tMatrix range(int start,int end) const;
 };
 
 #endif
