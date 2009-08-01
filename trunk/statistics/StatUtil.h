@@ -39,7 +39,7 @@
 
 class StatUtil{
 private:
-    static double ComputeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
+    static double computeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
     static Random _randomGenerator;
 public:
     static Random _particlesInitializerRandomGenerator;

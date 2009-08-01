@@ -141,10 +141,13 @@ void TriangularizationBasedSMCAlgorithm::process(const tMatrix& observations, ve
                     sumProb += symbolProbabilities(iAlphabet);
                 }
 
-                try {
+//                 try {
+                if(sumProb!=0)
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProbabilities(iAlphabet) /= sumProb;
-                }catch(exception e){
+                else
+                {                        
+//                 }catch(exception e){
                     cout << "TriangularizationBasedSMCAlgorithm::process: the sum of the probabilities is null." << endl;
                     cout <<  __FILE__  << "(line " << __LINE__ << ") :" << endl;
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)

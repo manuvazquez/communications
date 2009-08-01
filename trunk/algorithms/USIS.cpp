@@ -220,10 +220,13 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 							sumProb += symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet);
 						}
 
-						try {
+// 						try {
+                        if(sumProb!=0)                  
 							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) /= sumProb;
-						}catch(exception e){
+                        else
+                        {                                
+// 						}catch(exception e){
 							cout << "The sum of the probabilities is null." << endl;
 							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;

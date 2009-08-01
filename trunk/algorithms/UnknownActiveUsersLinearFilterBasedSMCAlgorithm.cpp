@@ -23,7 +23,7 @@
 // #define DEBUG_CHANNEL_SAMPLES
 // #define DEBUG_MSE_THRESHOLD 1.5
 
-#define IMPORT_REAL_DATA
+// #define IMPORT_REAL_DATA
 
 #ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
@@ -179,7 +179,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                 else
                 {
 //                 }catch(exception e){
-                    cout << "The sum of the probabilities is null." << endl;
+//                     cout << "The sum of the probabilities is null." << endl;
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.length());
                 }
