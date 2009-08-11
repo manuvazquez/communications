@@ -28,9 +28,9 @@
 class CDMAKnownChannelChannelMatrixEstimator : public KnownChannelChannelMatrixEstimator
 {
 protected:
-    tMatrix _spreadingCodes;
+    MatrixXd _spreadingCodes;
     
-    virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+    virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen
 public:
     CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const tMatrix &spreadingCodes);
 

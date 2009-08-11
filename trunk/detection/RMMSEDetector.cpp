@@ -19,84 +19,50 @@
  ***************************************************************************/
 #include "RMMSEDetector.h"
 
-RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_g(rows),_invRtilde(LaGenMatDouble::eye(rows)),_filter(rows,nSymbolsToBeDetected)
-,_auxInvRtilde(rows,rows),_E(LaGenMatDouble::zeros(cols,nSymbolsToBeDetected)),_varianceInvRtildeChannelMatrix(rows,cols),_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance(rows,rows)
+RMMSEDetector::RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected): LinearDetector(rows, cols,alphabetVariance),_forgettingFactor(forgettingFactor),_invForgettingFactor(1.0/forgettingFactor),_nSymbolsToBeDetected(nSymbolsToBeDetected),_alphaPowerSumNow(1.0),_alphaPowerSumPrevious(1.0),_alphaPower(1.0),_invRtilde_eigen(MatrixXd::Identity(rows,rows)),_E_eigen(MatrixXd::Zero(cols,nSymbolsToBeDetected))
 {
-	tRange rowsRange(_channelMatrixCols-_nSymbolsToBeDetected,_channelMatrixCols-1);
-	tRange colsRange(0,_nSymbolsToBeDetected-1);
-
-	_E(rowsRange,colsRange).inject(LaGenMatDouble::eye(_nSymbolsToBeDetected));
+    _E_eigen.block(_channelMatrixCols-_nSymbolsToBeDetected,0,_nSymbolsToBeDetected,_nSymbolsToBeDetected) = MatrixXd::Identity(_nSymbolsToBeDetected,_nSymbolsToBeDetected);
 }
 
-void RMMSEDetector::stateStep(tVector observations)
+void RMMSEDetector::stateStep(VectorXd observations)
 {
-	if(observations.size()!= _channelMatrixRows)
-	{
-		cout << "observations.size() = " << observations.size() << " _channelMatrixRows = " << _channelMatrixRows << endl;
-		throw RuntimeException("RMMSEDetector::StateStep: observations vector dimensions are wrong.");
-	}
+    if(observations.size()!= _channelMatrixRows)
+    {
+        cout << "observations.size() = " << observations.size() << " _channelMatrixRows = " << _channelMatrixRows << endl;
+        throw RuntimeException("RMMSEDetector::StateStep: observations vector dimensions are wrong.");
+    }
 
-	// _g = _invRtilde*observations
-	Blas_Mat_Vec_Mult(_invRtilde,observations,_g);
+    _alphaPowerSumFactor = _alphaPowerSumNow/(_alphaPowerSumPrevious*_forgettingFactor);
 
-	_alphaPowerSumFactor = _alphaPowerSumNow/(_alphaPowerSumPrevious*_forgettingFactor);
+    _g_eigen = _invRtilde_eigen*observations/(_alphaPowerSumNow + observations.dot(_invRtilde_eigen*observations)*_alphaPowerSumFactor);
+    
+    _invRtilde_eigen = _alphaPowerSumFactor*(MatrixXd::Identity(_channelMatrixRows,_channelMatrixRows) - _alphaPowerSumFactor*_g_eigen*observations.transpose())*_invRtilde_eigen;    
 
-	// _g = _g / (_alphaPowerSumNow + observations'*_invRtilde*observations*_alphaPowerSumFactor
-	_g *= 1.0/(_alphaPowerSumNow + Blas_Dot_Prod(observations,_g)*_alphaPowerSumFactor);
-
-    tMatrix _identityMinusgObservations = LaGenMatDouble::eye(_channelMatrixRows);
-
-    // _identityMinusgObservations = _identityMinusgObservations -_alphaPowerSumFactor*_g*observations
-    Blas_R1_Update(_identityMinusgObservations,_g,observations,-_alphaPowerSumFactor);
-
-	// _auxInvRtilde = _alphaPowerSumFactor*_identityMinusgObservations*_invRtilde
-	Blas_Mat_Mat_Mult(_identityMinusgObservations,_invRtilde,_auxInvRtilde,_alphaPowerSumFactor);
-
-	_invRtilde = _auxInvRtilde;
-
-	_alphaPowerSumPrevious = _alphaPowerSumNow;
-	_alphaPower *= _forgettingFactor;
-	_alphaPowerSumNow = _alphaPowerSumPrevious + _alphaPower;
+    _alphaPowerSumPrevious = _alphaPowerSumNow;
+    _alphaPower *= _forgettingFactor;
+    _alphaPowerSumNow = _alphaPowerSumPrevious + _alphaPower;
 }
 
-tVector RMMSEDetector::detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance)
+// eigen
+VectorXd RMMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix,const MatrixXd &noiseCovariance)
 {
-	if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
-	{
-		cout << "channel matrix:" << endl << channelMatrix << endl;
-		cout << "channelMatrix.rows(): " << channelMatrix.rows() << " channelMatrix.cols(): " << channelMatrix.cols() << endl;
-		throw RuntimeException("RMMSEDetector::Detect: observations vector or channel matrix dimensions are wrong.");
-	}
+    if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
+    {
+        cout << "channel matrix:" << endl << channelMatrix << endl;
+        cout << "channelMatrix.rows(): " << channelMatrix.rows() << " channelMatrix.cols(): " << channelMatrix.cols() << endl;
+        throw RuntimeException("RMMSEDetector::Detect: observations vector or channel matrix dimensions are wrong.");
+    }
 
-	// the inverse of the observations correlation matrix is updated
-	this->stateStep(observations);
+    // the inverse of the observations correlation matrix is updated
+    stateStep(observations);
 
-	// _varianceInvRtildeChannelMatrix = _alphabetVariance*_invRtilde*channelMatrix
-	Blas_Mat_Mat_Mult(_invRtilde,channelMatrix,_varianceInvRtildeChannelMatrix,_alphabetVariance);
+    _filter_eigen = _alphabetVariance*_invRtilde_eigen*channelMatrix*_E_eigen;
 
-	// _filter = _varianceInvRtildeChannelMatrix*_E
-	Blas_Mat_Mat_Mult(_varianceInvRtildeChannelMatrix,_E,_filter);
+    // required for nthSymbolVariance computing
+    _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen = _alphabetVariance*channelMatrix*channelMatrix.transpose()+noiseCovariance;
+    _channelMatrix_eigen = channelMatrix;
 
-    tVector res(_nSymbolsToBeDetected);
-
-	// _softEstimations = _filter'*observations
-	Blas_Mat_Trans_Vec_Mult(_filter,observations,res);
-
-
-	// -------------------- required for nthSymbolVariance computing -----------------------
-	tMatrix alphabetVarianceChannelMatrixChannelMatrixTrans(_channelMatrixRows,_channelMatrixRows);
-
-	// _alphabetVarianceChannelMatrixChannelMatrixTrans = _alphabetVariance*channelMatrix*channelMatrix^T
-	Blas_Mat_Mat_Trans_Mult(channelMatrix,channelMatrix,alphabetVarianceChannelMatrixChannelMatrixTrans,_alphabetVariance);
-
-	// _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance = _alphabetVarianceChannelMatrixChannelMatrixTrans + noiseCovariance
-	Util::add(alphabetVarianceChannelMatrixChannelMatrixTrans,noiseCovariance,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance);
-
-	_channelMatrix = channelMatrix;
-
-	// -------------------------------------------------------------------------------------
-
-    return res;
+    return _filter_eigen.transpose()*observations;
 }
 
 RMMSEDetector *RMMSEDetector::clone()
@@ -104,12 +70,8 @@ RMMSEDetector *RMMSEDetector::clone()
 	return new RMMSEDetector(*this);
 }
 
+// eigen
 double RMMSEDetector::nthSymbolVariance(int n)
 {
-	tVector _auxVector(_channelMatrixRows);
-
-	// _auxVector = _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance*_filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n)
-	Blas_Mat_Vec_Mult(_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance,_filter.col(n),_auxVector);
-
-	return _alphabetVariance*(1.0 - 2.0*Blas_Dot_Prod(_filter.col(n),_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) + Blas_Dot_Prod(_filter.col(n),_auxVector);
+    return _alphabetVariance*(1.0 - 2.0*_filter_eigen.col(n).dot(_channelMatrix_eigen.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) + _filter_eigen.col(n).dot(_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen*_filter_eigen.col(n));
 }

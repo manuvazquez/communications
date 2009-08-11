@@ -28,21 +28,12 @@ LMSEstimator* LMSEstimator::clone() const
 	return new LMSEstimator(*this);
 }
 
-tMatrix LMSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+MatrixXd LMSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-	tVector symbolsVector = Util::toVector(symbolsMatrix,columnwise);
-
-    // _error = observations
-    tVector error = observations;
-
-    // error = _lastEstimatedChannelMatrix*symbolsVector - error
-    // (note that error is initialized to observations, so that:
-    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
-    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
-
-    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
-    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu);
-
-	return _lastEstimatedChannelMatrix;
+    VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
+    
+    _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen - _mu*(_lastEstimatedChannelMatrix_eigen*symbolsVector-observations)*symbolsVector.transpose();
+    
+    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
+    return _lastEstimatedChannelMatrix_eigen;
 }
-

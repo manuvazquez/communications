@@ -39,7 +39,7 @@
       <autocompile>true</autocompile>
       <envvars/>
       <globaldebugarguments/>
-      <globalcwd/>
+      <globalcwd>/usr/local/.home/manu/c++/comunicaciones/debug</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
@@ -88,6 +88,23 @@
       <default>
         <envvars/>
       </default>
+      <no_assertions>
+        <envvars/>
+        <configargs/>
+        <builddir>no_assertions</builddir>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevg77options</f77compiler>
+        <ccompilerbinary/>
+        <cxxcompilerbinary/>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags>-O2 -Wall -g0  -DNDEBUG</cxxflags>
+        <f77flags/>
+      </no_assertions>
     </configurations>
     <make>
       <envvars>

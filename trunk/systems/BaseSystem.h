@@ -131,7 +131,7 @@ protected:
     tMatrix symbols;
     tMatrix detectedSymbols;
 
-    ofstream f;
+    ofstream f,xmlFile;
 
     DelayPowerProfile *powerProfile;
 

@@ -33,23 +33,24 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
+#include <Eigen/LU>
+
 class MMSEDetector : public LinearDetector
 {
 protected:
 	int _nSymbolsToBeDetected,_detectionStart;
-	tMatrix _filter;
+    MatrixXd _filter_eigen;   
 
 	// required for nthSymbolVariance computing
-	tMatrix _channelMatrix;
-	tMatrix _Rx;
+    MatrixXd _channelMatrix_eigen,_Rx_eigen;   
 public:
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
     MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected,int startingFrom);
 
     virtual MMSEDetector * clone();
-	virtual tMatrix computedFilter();
-    virtual tVector detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
-    virtual void stateStep(tVector observations) {}
+    virtual MatrixXd computedFilter_eigen(); // eigen
+    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance); // eigen
+    virtual void stateStep(VectorXd observations) {} // eigen
 	virtual double nthSymbolVariance(int n);
 // 	virtual double nthSymbolGain(int n) const;
 

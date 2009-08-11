@@ -37,6 +37,8 @@
 #include <lapackpp/lavli.h>
 #include <lapackpp/sybmd.h>
 
+#include <Eigen/Cholesky>
+
 class StatUtil{
 private:
     static double computeFromActiveOperands(const tVector &probabilities,bool *activeOperands);
@@ -56,11 +58,15 @@ public:
     // same functions as above but receiving c++ vectors instead of Lapack++ vectors
     static int discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
-    static tMatrix randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);    
+    static tMatrix randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
+    static MatrixXd randnMatrix_eigen(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
     static tVector randMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator = _randomGenerator);
+    static VectorXd randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator = _randomGenerator); // eigen
     static double normalPdf(double x,double mean,double variance);
     static double normalPdf(const tVector &x,const tVector &mean,const tMatrix &covariance);
     static double normalPdf(const tVector &x,const tVector &mean,double variance);
+    static double normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance); // eigen
+    static double normalPdf(const VectorXd &x,const VectorXd &mean,double variance); //eigen
     static double variance(const tVector &v);
     static double mean(const tMatrix &A);
     static vector<int> withoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);

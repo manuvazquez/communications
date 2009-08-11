@@ -38,7 +38,7 @@ public:
     KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N);
 
     virtual KnownChannelChannelMatrixEstimator* clone() const;
-    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance);
     virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) {}    
 };
 

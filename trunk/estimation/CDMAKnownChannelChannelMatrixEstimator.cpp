@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const tMatrix &spreadingCodes): KnownChannelChannelMatrixEstimator(channel, iFirstChannelMatrix, N),_spreadingCodes(spreadingCodes)
+CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const tMatrix &spreadingCodes): KnownChannelChannelMatrixEstimator(channel, iFirstChannelMatrix, N),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
 {
     if((*_channel)[iFirstChannelMatrix].rows()!=1)
         throw RuntimeException("CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator: channel matrices don't have a single row.");
@@ -29,36 +29,18 @@ CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(c
     _nOutputs = _spreadingCodes.rows();
 }
 
-double CDMAKnownChannelChannelMatrixEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+// eigen
+double CDMAKnownChannelChannelMatrixEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
     if(symbolsMatrix.cols()!=1)
         throw RuntimeException("CDMAKnownChannelChannelMatrixEstimator::likelihood: the symbols matrix received should be a column vector.");
-
-#ifdef DEBUG
-    cout << "noiseVariance = " << noiseVariance << endl;
-#endif
     
-    tMatrix channelCoefficientsXsymbols(symbolsMatrix);
+    MatrixXd channelCoefficientsXsymbols = symbolsMatrix;
         
     for(int i=0;i<_nInputs;i++)
-        channelCoefficientsXsymbols(i,0) *= _lastEstimatedChannelMatrix(0,i);
-
-    tVector withoutNoiseObservations(_nOutputs);    
-    
-    Blas_Mat_Vec_Mult(_spreadingCodes,channelCoefficientsXsymbols,withoutNoiseObservations);
-    
-#ifdef DEBUG2
-//     cout << "observations = " << endl << observations;
-    cout << "_lastEstimatedChannelMatrix = " << endl << _lastEstimatedChannelMatrix;
-    cout << "symbolsMatrix = " << endl << symbolsMatrix;
-//     cout << "channelCoefficientsXsymbols = " << endl << channelCoefficientsXsymbols;
-//     cout << "_spreadingCodes = " << endl << _spreadingCodes;
-    cout << "withoutNoiseObservations = " << endl << withoutNoiseObservations << endl;
-    cout << "likelihood = " << StatUtil::normalPdf(observations,withoutNoiseObservations,noiseVariance) << endl;
-//     getchar();
-#endif        
-    
-    return StatUtil::normalPdf(observations,withoutNoiseObservations,noiseVariance);
+        channelCoefficientsXsymbols(i,0) *= _lastEstimatedChannelMatrix_eigen(0,i);
+         
+    return StatUtil::normalPdf(observations,_spreadingCodes*channelCoefficientsXsymbols,noiseVariance);
 }
 
 CDMAKnownChannelChannelMatrixEstimator *CDMAKnownChannelChannelMatrixEstimator::clone() const

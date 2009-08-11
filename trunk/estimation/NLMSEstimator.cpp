@@ -23,26 +23,19 @@ NLMSEstimator::NLMSEstimator(const tMatrix& initialEstimation, int N, double mu)
 {
 }
 
-LMSEstimator* NLMSEstimator::clone() const
+NLMSEstimator* NLMSEstimator::clone() const
 {
     return new NLMSEstimator(*this);
 }
 
-tMatrix NLMSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+MatrixXd NLMSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-    tVector symbolsVector = Util::toVector(symbolsMatrix,columnwise);
-
-    // _error = observations
-    tVector error = observations;
-
-    // error = _lastEstimatedChannelMatrix*symbolsVector - error
-    // (note that error is initialized to observations, so that:
-    // error = _lastEstimatedChannelMatrix*symbolsVector - observations)
-    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,error,1.0,-1.0);
-
-    // _lastEstimatedChannelMatrix = - _mu * _error * symbolsVector' + _lastEstimatedChannelMatrix
-    Blas_R1_Update(_lastEstimatedChannelMatrix,error,symbolsVector,-_mu/Blas_Dot_Prod(error,error));
-
-    return _lastEstimatedChannelMatrix;
+    VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
+    
+    VectorXd error = _lastEstimatedChannelMatrix_eigen*symbolsVector-observations;
+    
+    _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen - _mu/error.dot(error)*error*symbolsVector.transpose();
+    
+    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
+    return _lastEstimatedChannelMatrix_eigen;
 }
-

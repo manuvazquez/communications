@@ -19,13 +19,14 @@
  ***************************************************************************/
 #include "DecorrelatorDetector.h"
 
-DecorrelatorDetector::DecorrelatorDetector(int rows, int cols, double alphabetVariance): LinearDetector(rows, cols, alphabetVariance),_filter(_channelMatrixCols,_channelMatrixRows)
+DecorrelatorDetector::DecorrelatorDetector(int rows, int cols, double alphabetVariance): LinearDetector(rows, cols, alphabetVariance)
 {
 }
 
+// eigen
 double DecorrelatorDetector::nthSymbolVariance(int n)
 {
-	return Blas_Dot_Prod(_filter.row(n),_filter.row(n));
+    return _filter_eigen.row(n).dot(_filter_eigen.row(n));
 }
 
 LinearDetector* DecorrelatorDetector::clone()
@@ -33,27 +34,10 @@ LinearDetector* DecorrelatorDetector::clone()
 	return new DecorrelatorDetector(*this);
 }
 
-tVector DecorrelatorDetector::detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance)
+// eigen
+VectorXd DecorrelatorDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
 {
-	tMatrix channelMatrixChannelMatrixTrans(_channelMatrixCols,_channelMatrixCols);
+    _filter_eigen = (channelMatrix.transpose()*channelMatrix).inverse()*channelMatrix.transpose();
 
-	// channelMatrixChannelMatrixTrans = _alphabetVariance*channelMatrix*channelMatrix^T
-	Blas_Mat_Trans_Mat_Mult(channelMatrix,channelMatrix,channelMatrixChannelMatrixTrans);
-
-	tLongIntVector piv(_channelMatrixRows);
-
-	// channelMatrixChannelMatrixTrans = inverse(channelMatrixChannelMatrixTrans)
-	LUFactorizeIP(channelMatrixChannelMatrixTrans,piv);
-	LaLUInverseIP(channelMatrixChannelMatrixTrans,piv);
-
-	// _filter = channelMatrixChannelMatrixTrans*channelMatrix*channelMatrix^T
-	Blas_Mat_Mat_Trans_Mult(channelMatrixChannelMatrixTrans,channelMatrix,_filter);
-
-	tVector softEstimations(_channelMatrixCols);
-
-	// softEstimations = _filter*observations
-	Blas_Mat_Vec_Mult(_filter,observations,softEstimations);
-
-	return softEstimations;
+    return _filter_eigen*observations;
 }
-

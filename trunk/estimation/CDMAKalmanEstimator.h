@@ -30,15 +30,20 @@ It implements a channel matrix estimator for a Multiuser CDMA autoregressive cha
 class CDMAKalmanEstimator : public KalmanEstimator
 {
 protected:
-    tMatrix _spreadingCodes;
+    MatrixXd _spreadingCodes;
     
-    virtual tMatrix buildMeasurementMatrix(const tVector& symbolsVector);    
+    virtual tMatrix buildMeasurementMatrix(const tVector& symbolsVector)
+    {
+        return Util::eigen2lapack(buildMeasurementMatrix(Util::lapack2eigen(symbolsVector)));
+    }
+    virtual MatrixXd buildMeasurementMatrix(const VectorXd& symbolsVector); // eigen
 public:
     CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;
-    virtual tMatrix sampleFromPredictive() const;
+    virtual tMatrix sampleFromPredictive() const { return Util::eigen2lapack(sampleFromPredictive_eigen()); }
+    virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
 };
 
 #endif

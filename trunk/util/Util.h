@@ -24,6 +24,8 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#define EIGEN
+
 #include <iomanip>
 #include <math.h>
 #include <algorithm>
@@ -48,9 +50,12 @@ public:
     static void mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
     static void transpose(const tMatrix &A,tMatrix &B);
     static tVector toVector(const tMatrix &matrix,tOrder order);
+    static VectorXd toVector(const MatrixXd &matrix,tOrder order); // eigen
     static tMatrix toMatrix(const tVector &vector,tOrder order,int rows,int cols);
-    static tMatrix toMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
     static tMatrix toMatrix(const tVector &vector,tOrder order,uint rows);
+    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols); // eigen
+    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows); // eigen
+    static tMatrix toMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
     static tMatrix append(const tMatrix &A,const tMatrix &B);
     static tMatrix verticalAppend(const tMatrix &A,const tMatrix &B);
     static tVector normalize(const tVector &v);
@@ -82,11 +87,16 @@ public:
     static vector<int> solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix cholesky(const tMatrix &matrix);
+    static MatrixXd cholesky(const MatrixXd &matrix); // eigen
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> nMax(int n,const tVector &v);
     static tMatrix flipLR(const tMatrix &A);
-    static tMatrix sign(const tMatrix &A);   
+    static tMatrix sign(const tMatrix &A);
+    static MatrixXd lapack2eigen(const tMatrix &A);
+    static VectorXd lapack2eigen(const tVector &v);
+    static tMatrix eigen2lapack(const MatrixXd &A);
+    static tVector eigen2lapack(const VectorXd &v);
 };
 
 #endif

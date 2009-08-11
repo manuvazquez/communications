@@ -30,13 +30,9 @@ KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::clone() 
         return new KnownChannelChannelMatrixEstimator(*this);
 }
 
-tMatrix KnownChannelChannelMatrixEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+MatrixXd KnownChannelChannelMatrixEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-#ifdef DEBUG
-    cout << "_iNextMatrix = " << _iNextMatrix << endl;
-    getchar();
-#endif
-//     _lastEstimatedChannelMatrix = (*_channel)[++_iNextMatrix];
     _lastEstimatedChannelMatrix = (*_channel)[_iNextMatrix++];
-    return _lastEstimatedChannelMatrix;
+    _lastEstimatedChannelMatrix_eigen = Util::lapack2eigen(_lastEstimatedChannelMatrix);
+    return _lastEstimatedChannelMatrix_eigen;
 }

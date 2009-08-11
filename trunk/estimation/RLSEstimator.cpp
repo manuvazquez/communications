@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(LaGenMatDouble::eye(_nInputsXchannelOrder))
+RLSEstimator::RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde_eigen(MatrixXd::Identity(_nInputsXchannelOrder,_nInputsXchannelOrder))
 {
 }
 
@@ -29,49 +29,28 @@ ChannelMatrixEstimator* RLSEstimator::clone() const
 	return new RLSEstimator(*this);
 }
 
-double RLSEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+// eigen
+double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
-	tVector computedObservations(observations.size());
-	Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,Util::toVector(symbolsMatrix,columnwise),computedObservations);
-
-	return StatUtil::normalPdf(observations,computedObservations,noiseVariance);
+    return StatUtil::normalPdf(observations,_lastEstimatedChannelMatrix_eigen*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
 }
 
-tMatrix RLSEstimator::nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance)
+// eigen
+MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-    if(observations.size()!=_nOutputs || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_nInputsXchannelOrder)
+    if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
         throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
 
-    tVector symbolsVector = Util::toVector(symbolsMatrix,columnwise);
+    VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
 
-    tVector invForgettingFactorSymbolsVectorInvRtilde(_nInputsXchannelOrder);
-    // invForgettingFactorSymbolsVectorInvRtilde = symbolsVector'*_invRtilde = _invRtilde'*symbolsVector
-    Blas_Mat_Trans_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorSymbolsVectorInvRtilde,_invForgettingFactor);
+    VectorXd invForgettingFactorSymbolsVectorInvRtilde = _invForgettingFactor*_invRtilde_eigen.transpose()*symbolsVector;
 
-    double auxDenominator = 1.0 + Blas_Dot_Prod(invForgettingFactorSymbolsVectorInvRtilde,symbolsVector);
+    VectorXd g = invForgettingFactorSymbolsVectorInvRtilde / (1.0 + symbolsVector.dot(invForgettingFactorSymbolsVectorInvRtilde));
 
-    tVector g = invForgettingFactorSymbolsVectorInvRtilde;
-    g *= (1.0/auxDenominator);
+    _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen + (observations-_lastEstimatedChannelMatrix_eigen*symbolsVector)*g.transpose();
 
+    _invRtilde_eigen = _invForgettingFactor*_invRtilde_eigen - (_invForgettingFactor*_invRtilde_eigen*symbolsVector)*g.transpose();
 
-    tVector observationsMinusPredictedObservations = observations;
-    // observationsMinusPredictedObservations = observationsMinusPredictedObservations - _lastEstimatedChannelMatrix * symbolsVector
-    Blas_Mat_Vec_Mult(_lastEstimatedChannelMatrix,symbolsVector,observationsMinusPredictedObservations,-1.0,1.0);
-
-    // _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix + observationsMinusPredictedObservations*g
-    Blas_R1_Update(_lastEstimatedChannelMatrix,observationsMinusPredictedObservations,g);
-
-    tVector invForgettingFactorInvRtildeSymbolsVector(_nInputsXchannelOrder);
-
-    // invForgettingFactorInvRtildeSymbolsVector = _invForgettingFactor*_invRtilde*symbolsVector
-    Blas_Mat_Vec_Mult(_invRtilde,symbolsVector,invForgettingFactorInvRtildeSymbolsVector,_invForgettingFactor);
-
-    // _invRtilde = _invForgettingFactor*_invRtilde
-    _invRtilde *= _invForgettingFactor;
-
-    // _invRtilde = _invRtilde - invForgettingFactorInvRtildeSymbolsVector*g
-    Blas_R1_Update(_invRtilde,invForgettingFactorInvRtildeSymbolsVector,g,-1.0);
-
-    return _lastEstimatedChannelMatrix;
+    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
+    return _lastEstimatedChannelMatrix_eigen;
 }
-

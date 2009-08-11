@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir)/randomutil -I$(top_srcdir)/src \
 	-I$(top_srcdir)/statistics -I$(top_srcdir)/transmision -I$(top_srcdir)/transmision/channel \
-	-I$(top_srcdir)/transmision/channel/delayPowerProfile -I$(top_srcdir)/util
+	-I$(top_srcdir)/transmision/channel/delayPowerProfile -I$(top_srcdir)/util -I/usr/include/eigen2/
 METASOURCES = AUTO
 lib_LIBRARIES = libtransmision.a
 libtransmision_a_SOURCES = Alphabet.cpp Bits.cpp ChannelDependentNoise.cpp \

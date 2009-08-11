@@ -21,7 +21,7 @@
 
 // #define PRINT_INFO
 
-CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(spreadingCodes)
+CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
 {
     if(spreadingCodes.cols()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::CDMAKalmanEstimator: the number of spreading codes doesn't match the number of users.");
@@ -39,12 +39,13 @@ CDMAKalmanEstimator* CDMAKalmanEstimator::clone() const
     return new CDMAKalmanEstimator(*this);
 }
 
-tMatrix CDMAKalmanEstimator::buildMeasurementMatrix(const tVector& symbolsVector)
+// eigen
+MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVector)
 {
     if(symbolsVector.size()!=_nInputs)
-        throw RuntimeException("CDMAKalmanEstimator::BuildFfromSymbolsMatrix: symbols vector length is wrong.");
+        throw RuntimeException("CDMAKalmanEstimator::buildMeasurementMatrix: symbols vector length is wrong.");
             
-    tMatrix CS = LaGenMatDouble::zeros(_nOutputs,_nInputs);
+    MatrixXd CS = MatrixXd::Zero(_nOutputs,_nInputs);
     
     for(int i=0;i<_nOutputs;i++)
         for(int j=0;j<_nInputs;j++)
@@ -57,14 +58,15 @@ tMatrix CDMAKalmanEstimator::buildMeasurementMatrix(const tVector& symbolsVector
     return CS;
 }
 
-tMatrix CDMAKalmanEstimator::sampleFromPredictive() const
+// eigen
+MatrixXd CDMAKalmanEstimator::sampleFromPredictive_eigen() const
 {
-    tMatrix sampledChannelMatrix = KalmanEstimator::sampleFromPredictive();
+    MatrixXd sampledChannelMatrix = KalmanEstimator::sampleFromPredictive_eigen();
     
     if(sampledChannelMatrix.rows()!=1)
-        throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive: sampled channel matrix is not a row vector.");
+        throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive_eigen: sampled channel matrix is not a row vector.");
     
-    tMatrix spreadingCodesXsampledChannelMatrix = _spreadingCodes;
+    MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
     for(int i=0;i<_nOutputs;i++)
         for(int j=0;j<_nInputs;j++)
             spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);

@@ -43,25 +43,23 @@ protected:
     double _alphaPowerSumNow,_alphaPowerSumPrevious;
     double _alphaPower,_alphaPowerSumFactor;
 
-    tVector _g;
-    tMatrix _invRtilde;
-    tMatrix _filter;
+    VectorXd _g_eigen;
+    MatrixXd _invRtilde_eigen,_filter_eigen;
 
-    tMatrix _auxInvRtilde;
-    tMatrix _E,_varianceInvRtildeChannelMatrix;
+    MatrixXd _E_eigen;
 
     // required for nthSymbolVariance computing
-    tMatrix _channelMatrix;
-    tMatrix _alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;
+    MatrixXd _channelMatrix_eigen,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen;
 public:
     RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
 
-    tVector detect(tVector observations, tMatrix channelMatrix,const tMatrix &noiseCovariance);
+    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+
     RMMSEDetector *clone();
-    void stateStep(tVector observations);
+    void stateStep(VectorXd observations); // eigen
 
     double nthSymbolVariance(int n);
-    tMatrix computedFilter() { return _filter;}
+    MatrixXd computedFilter_eigen() { return _filter_eigen;}
 
 };
 

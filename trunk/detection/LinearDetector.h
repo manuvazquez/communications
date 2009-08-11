@@ -33,9 +33,21 @@ protected:
     double _alphabetVariance;
 public:
     LinearDetector(int rows,int cols,double alphabetVariance);
-    virtual void stateStep(tVector observations) = 0;
-    virtual tVector detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance) = 0;
-    virtual tMatrix computedFilter() = 0;
+    virtual void stateStep(VectorXd observations) = 0;
+    void stateStep(tVector observations)
+    {
+        stateStep(Util::lapack2eigen(observations));
+    }    
+    virtual tVector detect(tVector observations,tMatrix channelMatrix,const tMatrix &noiseCovariance)
+    {
+        return Util::eigen2lapack(detect(Util::lapack2eigen(observations),Util::lapack2eigen(channelMatrix),Util::lapack2eigen(noiseCovariance)));
+    }
+    virtual VectorXd detect(VectorXd observations,MatrixXd channelMatrix,const MatrixXd &noiseCovariance) = 0;
+    virtual MatrixXd computedFilter_eigen() = 0;
+    virtual tMatrix computedFilter()
+    {
+        return Util::eigen2lapack(computedFilter_eigen());
+    }
     /**
      *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to Detect
      * @param n

@@ -34,12 +34,12 @@ class LMSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _mu;
-// 	tVector _predictedObservations;
 public:
     LMSEstimator(const tMatrix &initialEstimation,int N,double mu);
 
     virtual LMSEstimator* clone() const;
-    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+
+    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance); // eigen
 
 };
 

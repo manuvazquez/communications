@@ -1,6 +1,6 @@
 INCLUDES = -I$(top_srcdir)/detection -I$(top_srcdir)/estimation \
 	-I$(top_srcdir)/randomutil -I$(top_srcdir)/smc -I$(top_srcdir)/src -I$(top_srcdir)/statistics \
-	-I$(top_srcdir)/util
+	-I$(top_srcdir)/util -I/usr/include/eigen2/
 METASOURCES = AUTO
 lib_LIBRARIES = libresampling.a
 noinst_HEADERS = BestParticlesResamplingAlgorithm.h \

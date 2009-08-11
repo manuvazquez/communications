@@ -27,6 +27,7 @@
 */
 
 #include <math.h>
+#include <Util.h>
 #include <KalmanFilter.h>
 #include <StatUtil.h>
 #include <lapackpp/gmd.h>
@@ -36,26 +37,40 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
+#include <Eigen/Cholesky>
+
 class KalmanEstimator : public ChannelMatrixEstimator
 {
 protected:
     KalmanFilter *_kalmanFilter;
     int _nExtStateVectorCoeffs;
     
-    // the coefficients of the channel at the present time (the ones we are interested in)
-    tRange _rChannelCoefficients;
-    
-    virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector);
+    virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector) { return Util::eigen2lapack(buildMeasurementMatrix(Util::lapack2eigen(symbolsVector))); }
+    virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector); // eigen
 public:
     KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
-
-    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance);
+    
+    virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
+    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
+    {
+        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance));
+    }
     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+//     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
+//     {
+//         return likelihood(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance);
+//     }
+    double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen
     virtual KalmanEstimator *clone() const;
-    virtual tMatrix sampleFromPredictive() const;
-    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix);
+    virtual tMatrix sampleFromPredictive() const { return Util::eigen2lapack(sampleFromPredictive_eigen());}
+    virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
+    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix)
+    {
+        setFirstEstimatedChannelMatrix(Util::lapack2eigen(matrix));
+    }
+    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix); // eigen
 };
 
 #endif

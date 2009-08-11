@@ -41,7 +41,7 @@ public:
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector getSymbolVector(int n) const { /*cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
+    tVector getSymbolVector(int n) const { /*cout << "getSymbolVector" << endl; cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
 
     virtual void print() const;
     void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);

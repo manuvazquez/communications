@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix(initialEstimation)
+ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix(initialEstimation),_lastEstimatedChannelMatrix_eigen(Util::lapack2eigen(initialEstimation))
 {
     if(_nInputsXchannelOrder < _nInputs)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
@@ -47,9 +47,6 @@ int ChannelMatrixEstimator::memory()
 
 vector<tMatrix> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo)
 {
-//     tMatrix toProcessSequence = Util::append(_preamble,trainingSequence);
-//     int lengthToProcessSequence = toProcessSequence.cols();
-
     if(observations.cols()<iTo)
         throw RuntimeException("ChannelMatrixEstimator::NextMatricesFromObservationsSequence: insufficient number of observations.");
 

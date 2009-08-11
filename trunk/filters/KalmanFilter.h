@@ -33,23 +33,47 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
+#include <Eigen/Core>
+#include <Eigen/LU>
+// USING_PART_OF_NAMESPACE_EIGEN
+
 class KalmanFilter{
 private:
-    tMatrix _R,_stateEquationCovariance;
     int _nElementsToEstimate;
-    tVector _predictiveMean,_filteredMean;
-    tMatrix _predictiveCovariance,_filteredCovariance;
+    MatrixXd _R_eigen,_stateEquationCovariance_eigen,_predictiveCovariance_eigen,_filteredCovariance_eigen;
+    VectorXd _predictiveMean_eigen,_filteredMean_eigen;
 
 public:
-    KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance);
+//     KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance);
+//     KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance)
+//     {
+//         KalmanFilter(Util::lapack2eigen(R),Util::lapack2eigen(stateEquationCovariance),Util::lapack2eigen(initialMean),Util::lapack2eigen(initialCovariance));
+//     }
+    KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance); // eigen
 
-    void step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
-    tVector predictiveMean() const { return _predictiveMean;}
-    tVector filteredMean() const {return _filteredMean;}
-    tMatrix predictiveCovariance() const {return _predictiveCovariance;}
-    tMatrix filteredCovariance() const {return _filteredCovariance;}
-    void setFilteredMean(const tVector &filteredMean);
-    void setFilteredCovariance(const tMatrix &filteredCovariance);
+//     void step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance);
+    void step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)
+    {
+        step(Util::lapack2eigen(F),Util::lapack2eigen(observation),Util::lapack2eigen(observationEquationCovariance));
+    }
+    void step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen); // eigen
+
+    tVector predictiveMean() const { return Util::eigen2lapack(_predictiveMean_eigen);}
+    tVector filteredMean() const { return Util::eigen2lapack(_filteredMean_eigen);}
+    tMatrix predictiveCovariance() const { return Util::eigen2lapack(_predictiveCovariance_eigen);}
+    tMatrix filteredCovariance() const { return Util::eigen2lapack(_filteredCovariance_eigen);}
+    
+    VectorXd predictiveMean_eigen() const { return _predictiveMean_eigen;} // eigen
+    VectorXd filteredMean_eigen() const { return _filteredMean_eigen;} // eigen
+    MatrixXd predictiveCovariance_eigen() const { return _predictiveCovariance_eigen;} // eigen
+    MatrixXd filteredCovariance_eigen() const { return _filteredCovariance_eigen;} //eigen
+    
+    void setFilteredMean(const tVector &filteredMean) { setFilteredMean(Util::lapack2eigen(filteredMean));}
+    void setFilteredCovariance(const tMatrix &filteredCovariance) { setFilteredCovariance(Util::lapack2eigen(filteredCovariance));}
+    
+    void setFilteredMean(const VectorXd &filteredMean);
+    void setFilteredCovariance(const MatrixXd &filteredCovariance);    
+
 };
 
 #endif

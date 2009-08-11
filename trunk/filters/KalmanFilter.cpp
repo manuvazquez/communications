@@ -20,113 +20,102 @@
 #include "KalmanFilter.h"
 
 // #define PRINT_INFO
+// #define DEBUG
+ 
+// KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance):
+// _nElementsToEstimate(initialMean.size()),_R_eigen(Util::lapack2eigen(R)),_stateEquationCovariance_eigen(Util::lapack2eigen(stateEquationCovariance)),_predictiveCovariance_eigen(R.rows(),R.rows()),_predictiveMean_eigen(R.rows())
+// {
+//     if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
+//         throw RuntimeException("KalmanFilter::KalmanFilter: matrices R and F dimensions are not coherent with those of the vector to be estimated.");
+// 
+//     if(initialMean.size()!=initialCovariance.rows() || initialMean.size()!=initialCovariance.cols())
+//         throw RuntimeException("KalmanFilter::KalmanFilter: the number of rows and columns of the covariance must be the number of rows of the mean.");
+// 
+//     setFilteredMean(Util::lapack2eigen(initialMean));
+//     setFilteredCovariance(Util::lapack2eigen(initialCovariance));
+// }
 
-KalmanFilter::KalmanFilter(const tMatrix &R,const tMatrix &stateEquationCovariance,const tVector &initialMean,const tMatrix &initialCovariance):
-_R(R),_stateEquationCovariance(stateEquationCovariance),_nElementsToEstimate(initialMean.size()),_predictiveMean(R.rows()),_predictiveCovariance(R.rows(),R.rows()){
+// eigen
+KalmanFilter::KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance):
+_nElementsToEstimate(initialMean.size()),_R_eigen(R),_stateEquationCovariance_eigen(stateEquationCovariance),_predictiveCovariance_eigen(R.rows(),R.rows()),_predictiveMean_eigen(R.rows())
+{
     if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
         throw RuntimeException("KalmanFilter::KalmanFilter: matrices R and F dimensions are not coherent with those of the vector to be estimated.");
 
     if(initialMean.size()!=initialCovariance.rows() || initialMean.size()!=initialCovariance.cols())
         throw RuntimeException("KalmanFilter::KalmanFilter: the number of rows and columns of the covariance must be the number of rows of the mean.");
-    
+
     setFilteredMean(initialMean);
     setFilteredCovariance(initialCovariance);
 }
 
-void KalmanFilter::step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)
+// void KalmanFilter::step(const tMatrix &F,const tVector &observation,const tMatrix &observationEquationCovariance)
+// {
+//     MatrixXd F_eigen = Util::lapack2eigen(F);
+//     MatrixXd observationEquationCovariance_eigen = Util::lapack2eigen(observationEquationCovariance);
+//     VectorXd observation_eigen = Util::lapack2eigen(observation);
+// 
+//     if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size())
+//         throw RuntimeException("The matrix F or observation vector dimensions are wrong.");
+//     
+//     MatrixXd predictiveCovariance_Ft_eigen = _predictiveCovariance_eigen*F_eigen.transpose();
+//     
+//     MatrixXd residualCovariance_eigen = observationEquationCovariance_eigen + F_eigen*predictiveCovariance_Ft_eigen;
+// 
+//     MatrixXd KalmanGain_eigen = predictiveCovariance_Ft_eigen*residualCovariance_eigen.inverse();
+//     
+//     VectorXd measurementResidual_eigen = observation_eigen - F_eigen*_predictiveMean_eigen;
+// 
+//     _filteredMean_eigen = _predictiveMean_eigen + KalmanGain_eigen*measurementResidual_eigen;
+// 
+//     _filteredCovariance_eigen = _predictiveCovariance_eigen - KalmanGain_eigen*F_eigen*_predictiveCovariance_eigen;
+// 
+//     // **************** PREDICTIVES **********************
+//     
+//     _predictiveMean_eigen = _R_eigen*_filteredMean_eigen;
+//     _predictiveCovariance_eigen = _stateEquationCovariance_eigen + _R_eigen*_filteredCovariance_eigen*_R_eigen.transpose();
+// }
+
+// eigen
+void KalmanFilter::step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen)
 {
-    if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size())
+    if(F_eigen.cols()!=_nElementsToEstimate || F_eigen.rows()!=observation_eigen.size())
         throw RuntimeException("The matrix F or observation vector dimensions are wrong.");
-
-    tMatrix predictiveCovarianceFtrans(_nElementsToEstimate,observation.size());
-    // predictiveCovarianceFtrans = _predictiveCovariance * F'
-    Blas_Mat_Mat_Trans_Mult(_predictiveCovariance,F,predictiveCovarianceFtrans);
-
-    tMatrix residualCovariance = observationEquationCovariance;
-    // residualCovariance = residualCovariance + F * predictiveCovarianceFtrans
-    Blas_Mat_Mat_Mult(F,predictiveCovarianceFtrans,residualCovariance,1.0,1.0);
-
-    tLongIntVector piv(observation.size());
-    // residualCovariance = inverse(residualCovariance)
-    LUFactorizeIP(residualCovariance,piv);
-    LaLUInverseIP(residualCovariance,piv);
-
-    tMatrix KalmanGain(_nElementsToEstimate,observation.size());
-    // KalmanGain = predictiveCovarianceFtrans * residualCovariance
-    Blas_Mat_Mat_Mult(predictiveCovarianceFtrans,residualCovariance,KalmanGain);
-
-    tVector measurementResidual = observation;
-    // measurementResidual = measurementResidual - F * _predictiveMean
-    Blas_Mat_Vec_Mult(F,_predictiveMean,measurementResidual,-1.0,1.0);
     
-#ifdef PRINT_INFO
-    cout << "KalmanFilter::step: F is:" << endl << F;
-    cout << "KalmanFilter::step: predictiveCovarianceFtrans is:" << endl << predictiveCovarianceFtrans;
-    cout << "KalmanFilter::step: predictive covariance is:" << endl << _predictiveCovariance;
-    cout << "KalmanFilter::step: residual covariance is:" << endl << residualCovariance;
-    cout << "KalmanFilter::step: Kalman gain is:" << endl << KalmanGain;
-    cout << "KalmanFilter::step: innovation is:" << endl << measurementResidual;
-    cout << "KalmanFilter::step: filtered mean before update:" << endl << _filteredMean;
-#endif    
+    MatrixXd predictiveCovariance_Ft_eigen = _predictiveCovariance_eigen*F_eigen.transpose();
+    
+    MatrixXd residualCovariance_eigen = observationEquationCovariance_eigen + F_eigen*predictiveCovariance_Ft_eigen;
 
-    _filteredMean = _predictiveMean;
-    // _filteredMean = _filteredMean + KalmanGain * measurementResidual
-    Blas_Mat_Vec_Mult(KalmanGain,measurementResidual,_filteredMean,1.0,1.0);
+    MatrixXd KalmanGain_eigen = predictiveCovariance_Ft_eigen*residualCovariance_eigen.inverse();
+    
+    VectorXd measurementResidual_eigen = observation_eigen - F_eigen*_predictiveMean_eigen;
 
-#ifdef PRINT_INFO
-    cout << "KalmanFilter::step: filtered mean after update:" << endl << _filteredMean;
-#endif    
+    _filteredMean_eigen = _predictiveMean_eigen + KalmanGain_eigen*measurementResidual_eigen;
 
-    tMatrix FpredictiveCovariance(observation.size(),_nElementsToEstimate);
-    // FpredictiveCovariance = F * _predictiveCovariance
-    Blas_Mat_Mat_Mult(F,_predictiveCovariance,FpredictiveCovariance);
-
-    _filteredCovariance = _predictiveCovariance;
-    // _filteredCovariance = _filteredCovariance - KalmanGain * FpredictiveCovariance
-    Blas_Mat_Mat_Mult(KalmanGain,FpredictiveCovariance,_filteredCovariance,-1.0,1.0);
+    _filteredCovariance_eigen = _predictiveCovariance_eigen - KalmanGain_eigen*F_eigen*_predictiveCovariance_eigen;
 
     // **************** PREDICTIVES **********************
-
-    // _predictiveMean = _R * _filteredMean
-    Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);
-
-    tMatrix RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate);
-    // RfilteredCovariance = _R*_filteredCovariance
-    Blas_Mat_Mat_Mult(_R,_filteredCovariance,RfilteredCovariance);
-
-    _predictiveCovariance = _stateEquationCovariance;
-
-    // _predictiveCovariance = _predictiveCovariance + RfilteredCovariance*_R'
-    // (note that _predictiveCovariance is initalized above to _stateEquationCovariance)
-    Blas_Mat_Mat_Trans_Mult(RfilteredCovariance,_R,_predictiveCovariance,1.0,1.0);
+    
+    _predictiveMean_eigen = _R_eigen*_filteredMean_eigen;
+    _predictiveCovariance_eigen = _stateEquationCovariance_eigen + _R_eigen*_filteredCovariance_eigen*_R_eigen.transpose();
 }
 
-void KalmanFilter::setFilteredMean(const tVector &filteredMean)
+void KalmanFilter::setFilteredMean(const VectorXd &filteredMean)
 {
     if(filteredMean.size()!=_nElementsToEstimate)    
         throw RuntimeException("KalmanFilter::setFilteredMean: the size of the received vector is wrong.");
 
-    _filteredMean = filteredMean;
+    _filteredMean_eigen = filteredMean;
 
-    // _predictiveMean = _R*_filteredMean
-    Blas_Mat_Vec_Mult(_R,_filteredMean,_predictiveMean);
+    _predictiveMean_eigen = _R_eigen*_filteredMean_eigen;
 }
 
-void KalmanFilter::setFilteredCovariance(const tMatrix &filteredCovariance)
+void KalmanFilter::setFilteredCovariance(const MatrixXd &filteredCovariance)
 {
     if(filteredCovariance.rows()!=_nElementsToEstimate || filteredCovariance.cols()!=_nElementsToEstimate)    
         throw RuntimeException("KalmanFilter::setFilteredCovariance: the dimensions of the received matrix are wrong.");
         
-    _filteredCovariance = filteredCovariance;
-
-    tMatrix RfilteredCovariance(_nElementsToEstimate,_nElementsToEstimate);
+    _filteredCovariance_eigen = filteredCovariance;
     
-    // RfilteredCovariance = _R*_filteredCovariance
-    Blas_Mat_Mat_Mult(_R,_filteredCovariance,RfilteredCovariance);
-
-    _predictiveCovariance = _stateEquationCovariance;
-
-    // _predictiveCovariance = _predictiveCovariance + RfilteredCovariance*_R'
-    // (note that _predictiveCovariance is initalized above to _stateEquationCovariance)
-    Blas_Mat_Mat_Trans_Mult(RfilteredCovariance,_R,_predictiveCovariance,1.0,1.0); 
+    _predictiveCovariance_eigen = _stateEquationCovariance_eigen + _R_eigen*_filteredCovariance_eigen*_R_eigen.transpose();
 }

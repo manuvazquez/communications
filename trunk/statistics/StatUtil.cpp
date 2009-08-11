@@ -129,6 +129,20 @@ tMatrix StatUtil::randnMatrix(int rows,int cols,double mean,double variance,Rand
     return res;
 }
 
+// eigen
+MatrixXd StatUtil::randnMatrix_eigen(int rows,int cols,double mean,double variance,Random &randomGenerator)
+{
+    MatrixXd res(rows,cols);
+    double stdDv = sqrt(variance);
+
+    int j;
+    for(int i=0;i<rows;i++)
+        for(j=0;j<cols;j++)
+            res(i,j) =  randomGenerator.randn()*stdDv + mean;
+
+    return res;
+}
+
 tVector StatUtil::randMatrix(const tVector &mean,const tMatrix &covariance,Random &randomGenerator)
 {
     if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
@@ -139,6 +153,15 @@ tVector StatUtil::randMatrix(const tVector &mean,const tMatrix &covariance,Rando
     Blas_Mat_Vec_Mult(Util::cholesky(covariance),randnMatrix(mean.size(),1,0.0,1.0,randomGenerator),res,1.0,1.0);
 
     return res;
+}
+
+// eigen
+VectorXd StatUtil::randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator)
+{
+    if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
+        throw RuntimeException("StatUtil::randnMatrix: dimensions of the mean or the covariance are wrong.");
+
+    return mean + Util::cholesky(covariance)*randnMatrix_eigen(mean.size(),1,0.0,1.0,randomGenerator);
 }
 
 double StatUtil::normalPdf(double x,double mean,double variance)
@@ -175,6 +198,44 @@ double StatUtil::normalPdf(const tVector &x,const tVector &mean,const tMatrix &c
     return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
 }
 
+// eigen
+double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance)
+{
+
+    int N = x.size();
+    
+//     // the received covariance matrix can't be modified
+//     tMatrix invCovariance = covariance;
+
+//     tLongIntVector piv(N);
+//     LUFactorizeIP(invCovariance,piv);
+//     double detCovariance = 1.0;
+//     for(int i=0;i<N;i++)
+//         detCovariance *= invCovariance(i,i);
+// 
+//     // invCovariance = inv(covariance)
+//     LaLUInverseIP(invCovariance,piv);
+
+    Eigen::LDLT<MatrixXd> ldltOfCovariance(covariance);
+
+    MatrixXd invCovariance = MatrixXd::Identity(N,N);
+    ldltOfCovariance.solveInPlace(invCovariance);
+        
+    double invCovarianceDeterminant = 1.0;    
+    for(int i=0;i<ldltOfCovariance.vectorD().rows();i++)
+        invCovarianceDeterminant *= ldltOfCovariance.vectorD().coeff(i); 
+
+//     tVector xMinusMean(N);
+//     // xMinusMean = x - mean
+//     Util::add(x,mean,xMinusMean,1.0,-1.0);
+//     
+//     tVector invCovarianceXminusMean(N);
+//     // invCovarianceXminusMean = -0.5 * invCovariance * xMinusMean
+//     Blas_Mat_Vec_Mult(invCovariance,xMinusMean,invCovarianceXminusMean,-0.5);
+
+    return 1.0/(sqrt(fabs(invCovarianceDeterminant))*pow(2.0*M_PI,((double)N)/2.0))*exp((x-mean).dot(0.5*invCovariance*(x-mean)));
+}
+
 double StatUtil::normalPdf(const tVector &x,const tVector &mean,double variance)
 {
 //  tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
@@ -185,6 +246,17 @@ double StatUtil::normalPdf(const tVector &x,const tVector &mean,double variance)
     double res = 1.0;
     
     for(uint i=0;i<static_cast<uint> (x.rows());i++)
+        res *= 1.0/sqrt(2.0*M_PI*variance)*exp(-((x(i) - mean(i))*(x(i) - mean(i)))/(2.0*variance));
+
+    return res;
+}
+
+// eigen
+double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,double variance)
+{
+    double res = 1.0;
+    
+    for(int i=0;i<x.rows();i++)
         res *= 1.0/sqrt(2.0*M_PI*variance)*exp(-((x(i) - mean(i))*(x(i) - mean(i)))/(2.0*variance));
 
     return res;

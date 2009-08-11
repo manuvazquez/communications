@@ -30,8 +30,9 @@ class NLMSEstimator : public LMSEstimator
 public:
     NLMSEstimator(const tMatrix& initialEstimation, int N, double mu);
 
-    virtual LMSEstimator* clone() const;
-    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
+    virtual NLMSEstimator* clone() const;
+
+    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance); // eigen    
 
 };
 

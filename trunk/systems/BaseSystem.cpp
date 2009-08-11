@@ -39,30 +39,30 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1;
-//     L=3,N=2,frameLength=50;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
-    nFrames = 2000;
-    L=7,N=3,frameLength=300;
-    m = 1;
+    nFrames = 1;
+    L=3,N=2,frameLength=50;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 6;
+    nSmoothingSymbolsVectors = 10;
+    
+//     nFrames = 2;
+//     L=3,N=2,frameLength=300;
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-    SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
-//     SNRs.push_back(9);
+//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
+    SNRs.push_back(9);
 //     SNRs.push_back(15);
 //     SNRs.push_back(50);    
 
@@ -156,6 +156,31 @@ BaseSystem::BaseSystem()
 
     channel = NULL;
     powerProfile = NULL;
+    
+#define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
+    
+    // data saving
+    xmlFile.open("data.xml",ofstream::trunc);
+    xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+    xmlFile << "<com>" << endl;
+//     xmlFile << "  <parameters";
+//     xmlFile << " nInputs=\"" << N << "\"";
+//     xmlFile << " nOutputs=\"" << L << "\"";
+//     xmlFile << " frameLength=\"" << frameLength << "\"";
+//     xmlFile << " channelOrder=\"" << m << "\"";
+//     xmlFile << " smoothingLag=\"" << d << "\"";
+//     xmlFile << " trainingSeqLength=\"" << trainSeqLength << "\"";
+//     xmlFile << " preambleLength=\"" << preambleLength << "\"";
+//     xmlFile << ">" << endl;
+    xmlFile << "  <parameters>" << endl;
+    xmlFile << "    <nInputs type=\"scalar\">" << N << "</nInputs>" << endl;
+    xmlFile << "    <nOutputs type=\"scalar\">" << L << "</nOutputs>" << endl;
+    xmlFile << "    <frameLength type=\"scalar\">" << frameLength << "</frameLength>" << endl;
+    xmlFile << "    <channelOrder type=\"scalar\">" << m << "</channelOrder>" << endl;
+    xmlFile << "    <smoothingLag type=\"scalar\">" << d << "</smoothingLag>" << endl;
+    xmlFile << "    <trainingSeqLength type=\"scalar\">" << trainSeqLength << "</trainingSeqLength>" << endl;
+    xmlFile << "    <preambleLength type=\"scalar\">" << preambleLength << "</preambleLength>" << endl;
+    xmlFile << "  </parameters>" << endl;
 }
 
 BaseSystem::~BaseSystem()
@@ -271,6 +296,10 @@ void BaseSystem::Simulate()
 
     cout << "Overall MSE:" << endl;
     Util::print(overallMseMatrix);
+    
+    // data saving
+    xmlFile << "</com>" << endl;
+    xmlFile.close();
 }
 
 void BaseSystem::OnlyOnce()
@@ -298,6 +327,38 @@ void BaseSystem::OnlyOnce()
 #endif
 
     presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
+}
+
+void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
+{
+    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
+
+#ifdef MSE_TIME_EVOLUTION_COMPUTING
+    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    for(int ik=0;ik<frameLength;ik++)
+        presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
+#endif
+
+    cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
+
+    // the error probability is accumulated
+    overallPeMatrix(iSNR,iAlgorithm) += pe;
+    presentFramePe(iSNR,iAlgorithm) = pe;
+
+    // and the MSE
+    overallMseMatrix(iSNR,iAlgorithm) += mse;
+    presentFrameMSE(iSNR,iAlgorithm) = mse;
+
+    // Pe evolution
+    tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
+
+    if(detectedSymbols.rows()!=0)
+    {
+        for(int k=0;k<frameLength;k++)
+            for(int iUser=0;iUser<N;iUser++)
+                if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
+                    overallErrorsNumberTimeEvolution[iSNR](iAlgorithm,k)++;
+    }
 }
 
 void BaseSystem::BeforeEndingFrame(int iFrame)
@@ -353,36 +414,4 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
         Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
     }
     
-}
-
-void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
-{
-    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
-
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
-    for(int ik=0;ik<frameLength;ik++)
-        presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
-#endif
-
-    cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
-
-    // the error probability is accumulated
-    overallPeMatrix(iSNR,iAlgorithm) += pe;
-    presentFramePe(iSNR,iAlgorithm) = pe;
-
-    // and the MSE
-    overallMseMatrix(iSNR,iAlgorithm) += mse;
-    presentFrameMSE(iSNR,iAlgorithm) = mse;
-
-    // Pe evolution
-    tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
-
-    if(detectedSymbols.rows()!=0)
-    {
-        for(int k=0;k<frameLength;k++)
-            for(int iUser=0;iUser<N;iUser++)
-                if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
-                    overallErrorsNumberTimeEvolution[iSNR](iAlgorithm,k)++;
-    }
 }

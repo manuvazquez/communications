@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "Util.h"
 
-// #define DEBUG13
-
 using namespace std;
 
 void Util::add(const tMatrix& A,const tMatrix& B,tMatrix& C,double alpha,double beta)
@@ -91,6 +89,23 @@ tVector Util::toVector(const tMatrix &matrix,tOrder order)
     return vector;
 }
 
+// eigen
+VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
+{
+    int i,nElements;
+
+    nElements = matrix.rows()*matrix.cols();
+    VectorXd vector(nElements);
+
+    if(order==rowwise)
+        for(i=0;i<nElements;i++)
+            vector(i) = matrix(i/matrix.cols(),i%matrix.cols());
+    else
+        for(i=0;i<nElements;i++)
+            vector(i) = matrix(i%matrix.rows(),i/matrix.rows());
+    return vector;
+}
+
 tMatrix Util::toMatrix(const tVector &vector,tOrder order,int rows,int cols)
 {
     if(vector.size()> (rows*cols))
@@ -107,6 +122,41 @@ tMatrix Util::toMatrix(const tVector &vector,tOrder order,int rows,int cols)
     return matrix;
 }
 
+// eigen
+MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,int rows,int cols)
+{
+    if(vector.size()> (rows*cols))
+        throw RuntimeException("Util::toMatrix: The length of the vector is greater than rows by cols.");
+
+    MatrixXd matrix = MatrixXd::Zero(rows,cols);
+
+    if(order==rowwise)
+        for(uint iVector=vector.size();iVector--;)
+            matrix(iVector/cols,iVector%cols) = vector(iVector);
+    else
+        for(uint iVector=vector.size();iVector--;)
+            matrix(iVector%rows,iVector/rows) = vector(iVector);
+    return matrix;
+}
+
+tMatrix Util::toMatrix(const tVector &vector,tOrder order,uint rows)
+{
+    int remainder = vector.size() % rows;
+    if(remainder!=0)
+        throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
+    int cols = vector.size()/rows;
+    return toMatrix(vector,order,rows,cols);
+}
+
+MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,uint rows)
+{
+    int remainder = vector.size() % rows;
+    if(remainder!=0)
+        throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
+    int cols = vector.size()/rows;
+    return toMatrix(vector,order,rows,cols);
+}
+
 tMatrix Util::toMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols)
 {
     if(vector.size()> (rows*cols))
@@ -121,15 +171,6 @@ tMatrix Util::toMatrix(const vector<double> &vector,tOrder order,uint rows,uint 
         for(uint iVector=vector.size();iVector--;)
             matrix(iVector%rows,iVector/rows) = vector[iVector];
     return matrix;
-}
-
-tMatrix Util::toMatrix(const tVector &vector,tOrder order,uint rows)
-{
-    int remainder = vector.size() % rows;
-    if(remainder!=0)
-        throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
-    int cols = vector.size()/rows;
-    return toMatrix(vector,order,rows,cols);
 }
 
 tMatrix Util::append(const tMatrix &A,const tMatrix &B)
@@ -693,6 +734,32 @@ tMatrix Util::cholesky(const tMatrix &matrix)
   return L_;
 }
 
+// eigen
+MatrixXd Util::cholesky(const MatrixXd &matrix)
+{
+  if (matrix.rows() != matrix.cols())
+    throw RuntimeException("Util::Cholesky: Matrix not square");
+
+  MatrixXd L_ = MatrixXd::Zero(matrix.rows(), matrix.rows());
+  for (int j = 0; j < matrix.rows(); j++)
+    {
+      double d = 0.0;
+      for (int k = 0; k < j; k++)
+        {
+          double s = 0.0;
+          for (int i = 0; i < k; i++)
+            {
+              s += L_ (k, i) * L_ (j, i);
+            }
+          L_ (j, k) = s = (matrix(j, k) - s) / L_ (k, k);
+          d = d + s * s;
+        }
+      d = matrix(j, j) - d;
+      L_ (j, j) = sqrt (d);
+    }
+  return L_;
+}
+
 template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
 {
     if(vector.size()!=alphabets.size())
@@ -794,5 +861,48 @@ tMatrix Util::sign(const tMatrix &A)
         for(int j=0;j<A.cols();j++)
             res(i,j) = (A(i,j) > 0.0)*2.0 - 1.0;
             
+    return res;
+}
+
+MatrixXd Util::lapack2eigen(const tMatrix &A)
+{
+    int i,j;
+    MatrixXd res(A.rows(),A.cols());
+    
+    for(i=0;i<A.rows();i++)
+        for(j=0;j<A.cols();j++)
+            res(i,j) = A(i,j);
+            
+    return res;
+}
+VectorXd Util::lapack2eigen(const tVector &v)
+{
+    int i;
+    VectorXd res(v.size());
+    
+    for(i=0;i<v.size();i++)
+        res(i) = v(i);
+    
+    return res;
+}
+tMatrix Util::eigen2lapack(const MatrixXd &A)
+{
+    int i,j;
+    tMatrix res(A.rows(),A.cols());
+    
+    for(i=0;i<A.rows();i++)
+        for(j=0;j<A.cols();j++)
+            res(i,j) = A(i,j);
+            
+    return res;
+}
+tVector Util::eigen2lapack(const VectorXd &v)
+{
+    int i;
+    tVector res(v.size());
+    
+    for(i=0;i<v.size();i++)
+        res(i) = v(i);
+    
     return res;
 }

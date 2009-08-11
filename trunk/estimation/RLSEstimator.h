@@ -40,15 +40,16 @@ class RLSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _invForgettingFactor;
-	tMatrix _invRtilde;
+    MatrixXd _invRtilde_eigen;   
 
 public:
     RLSEstimator(const tMatrix &initialEstimation,int N,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* clone() const;
 
-    virtual tMatrix nextMatrix(const tVector& observations, const tMatrix& symbolsMatrix, double noiseVariance);
-	virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
+    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance); // eigen
+
+    virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen   
 };
 
 #endif

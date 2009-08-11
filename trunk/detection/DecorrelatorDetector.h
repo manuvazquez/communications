@@ -33,18 +33,20 @@
 #include <lapackpp/laslv.h>
 #include <lapackpp/lavli.h>
 
+#include <Eigen/LU>
+
 class DecorrelatorDetector : public LinearDetector
 {
 protected:
-	tMatrix _filter;
+    MatrixXd _filter_eigen;   
 public:
     DecorrelatorDetector(int rows, int cols, double alphabetVariance);
 
     virtual double nthSymbolVariance(int n);
     virtual LinearDetector* clone();
-	virtual tMatrix computedFilter() { return _filter;}
-    virtual tVector detect(tVector observations, tMatrix channelMatrix, const tMatrix& noiseCovariance);
-	virtual void stateStep(tVector observations) {}
+    virtual MatrixXd computedFilter_eigen() { return _filter_eigen;} // eigen
+    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+	virtual void stateStep(VectorXd observations) {}
 
 };
 
