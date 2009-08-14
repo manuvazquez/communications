@@ -63,6 +63,7 @@ BaseSystem::BaseSystem()
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
     SNRs.push_back(9);
+//     SNRs.push_back(2);    
 //     SNRs.push_back(15);
 //     SNRs.push_back(50);    
 

@@ -33,8 +33,6 @@
 class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
 private:
-	tRange _rAllSymbolRows;
-
 	// decimal inputs will be converted to a symbol vector and stored in here
 	vector<tSymbol> _inputVector;
 
@@ -47,15 +45,15 @@ protected:
     int _nSurvivors,_d,_startDetectionTime;
 	Trellis _trellis;
     PSPPath **_exitStage, **_arrivalStage;
-    tMatrix *_detectedSymbolVectors;
-    std::vector<tMatrix> _estimatedChannelMatrices;
+    MatrixXd *_detectedSymbolVectors;
+    std::vector<MatrixXd> _estimatedChannelMatrices;
 	int _firstSymbolVectorDetectedAt;
 	double _ARcoefficient;
 	PSPPathCandidate **_bestArrivingPaths;
 
-	void ProcessOneObservation(const tVector &observations,double noiseVariance);
-	void process(const tMatrix &observations,vector<double> noiseVariances);
-	void DeployState(int iState,const tVector &observations, double noiseVariance);
+    void ProcessOneObservation(const VectorXd &observations,double noiseVariance);
+    void process(const MatrixXd &observations,vector<double> noiseVariances);
+    void DeployState(int iState,const VectorXd &observations, double noiseVariance);
 public:
     PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, tMatrix preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);
 
@@ -64,8 +62,16 @@ public:
 	void run(tMatrix observations,vector<double> noiseVariances);
 	void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
 
-	tMatrix getDetectedSymbolVectors();
-	std::vector<tMatrix> getEstimatedChannelMatrices();
+    tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    MatrixXd getDetectedSymbolVectors_eigen();
+    std::vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    std::vector<MatrixXd> getEstimatedChannelMatrices_eigen();
     void PrintState(int iState);
 
 };

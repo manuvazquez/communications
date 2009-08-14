@@ -36,30 +36,35 @@ protected:
 	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
 
 	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-		tMatrix **_estimatedChannelMatrices;
+// 		tMatrix **_estimatedChannelMatrices;
+        MatrixXd **_estimatedChannelMatrices;      
 	#endif
 public:
     PSPPath();
 
-    PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators);
+//     PSPPath(int nTimeInstants,double cost, tMatrix initialSequence, std::vector<std::vector<tMatrix> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators);
+    PSPPath(int nTimeInstants,double cost, MatrixXd initialSequence, std::vector<std::vector<MatrixXd> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators); // eigen
 
     PSPPath(const PSPPath &path);
 
     ~PSPPath();
 
 	ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
-	tMatrix getChannelMatrix(int n)
-	{
-		#ifdef DEBUG13
-			cout << "n� de vectores de s�mbolos detectados " << _detectedSequence->cols() << endl;
-			cout << "DEvolviendo" << endl << _estimatedChannelMatrices[0][n] << endl;
-		#endif
-
-		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-			return _estimatedChannelMatrices[0][n];
-		#endif
-		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
-	}
+// 	tMatrix getChannelMatrix(int n)
+// 	{
+// 		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+// 			return _estimatedChannelMatrices[0][n];
+// 		#endif
+// 		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
+// 	}
+    // eigen   
+    MatrixXd getChannelMatrix(int n)
+    {
+        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+            return _estimatedChannelMatrices[0][n];
+        #endif
+        return MatrixXd::Zero(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
+    }    
     void Clean();
     void print() const;
     /**
@@ -70,7 +75,8 @@ public:
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
      * @param newChannelMatrices
      */
-    void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
+//     void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
+    void Update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators); // eigen
 	void operator=(const PSPPath &path);
 
 };

@@ -885,6 +885,17 @@ VectorXd Util::lapack2eigen(const tVector &v)
     
     return res;
 }
+
+vector<MatrixXd> Util::lapack2eigen(const vector<tMatrix> &v)
+{
+    vector<MatrixXd> res(v.size());
+    
+    for(uint i=0;i<v.size();i++)
+        res[i] = Util::lapack2eigen(v[i]);
+        
+    return res;
+}
+
 tMatrix Util::eigen2lapack(const MatrixXd &A)
 {
     int i,j;
@@ -904,5 +915,15 @@ tVector Util::eigen2lapack(const VectorXd &v)
     for(i=0;i<v.size();i++)
         res(i) = v(i);
     
+    return res;
+}
+
+vector<tMatrix> Util::eigen2lapack(const vector<MatrixXd> &v)
+{
+    vector<tMatrix> res(v.size());
+    
+    for(uint i=0;i<v.size();i++)
+        res[i] = Util::eigen2lapack(v[i]);
+        
     return res;
 }

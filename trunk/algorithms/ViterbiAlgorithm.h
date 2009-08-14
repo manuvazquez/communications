@@ -49,10 +49,9 @@ protected:
     int _d;
 	Trellis _trellis;
     ViterbiPath *_exitStage, *_arrivalStage;
-    tMatrix _preamble,*_detectedSymbolVectors;
-    tRange rAllSymbolRows,rmMinus1FirstColumns;
+    MatrixXd _preamble,*_detectedSymbolVectors;
 
-    void DeployState(int iState,const tVector &observations,const tMatrix &channelMatrix);
+    void DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix);
 public:
     ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
 
@@ -75,7 +74,11 @@ public:
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
     void run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
-    tMatrix getDetectedSymbolVectors();
+    tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    MatrixXd getDetectedSymbolVectors_eigen();
     void PrintStage(tStage exitOrArrival);
 };
 

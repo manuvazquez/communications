@@ -25,14 +25,14 @@ ViterbiPath::ViterbiPath():_nTimeInstants(0),_cost(0.0),_detectedSequence(NULL)
 {
 }
 
-ViterbiPath::ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(new tMatrix(initialSequence))
+ViterbiPath::ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(new MatrixXd(initialSequence))
 {
 }
 
 ViterbiPath::ViterbiPath(const ViterbiPath &path):_nTimeInstants(path._nTimeInstants),_cost(path._cost)
 {
 	if(path._detectedSequence!=NULL)
-		_detectedSequence = new tMatrix(*(path._detectedSequence));
+		_detectedSequence = new MatrixXd(*(path._detectedSequence));
 	else
 		_detectedSequence = NULL;
 }
@@ -42,36 +42,22 @@ ViterbiPath::~ViterbiPath()
 	delete _detectedSequence;
 }
 
-void ViterbiPath::Update(const ViterbiPath &path, tVector newSymbolVector, double newCost)
+void ViterbiPath::Update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost)
 {
 	if(path._detectedSequence == _detectedSequence)
 		throw RuntimeException("ViterbiPath::Update=: both pointers are the same. This was not meant to happen.");
 
 	// the below code is safe, though
-
-	#ifdef DEBUG
-		cout << "Antes de ehhhhhhh" << endl;
-		cout << "path._detectedSequence->rows() es " << path._detectedSequence->rows() << endl;
-	#endif
-
-	tMatrix *aux = _detectedSequence;
-	_detectedSequence = new tMatrix(path._detectedSequence->rows(),path._detectedSequence->cols()+1);
-
-	#ifdef DEBUG
-		cout << "ehhhhhhh" << endl;
-	#endif
+    MatrixXd *aux = _detectedSequence;
+    _detectedSequence = new MatrixXd(path._detectedSequence->rows(),path._detectedSequence->cols()+1);
 
 	// if the accumulated sequence is not empty
 	if(path._detectedSequence->cols()>0)
 		// already detected symbols are copied into the new reserved matrix
-		(*_detectedSequence)(tRange(0,path._detectedSequence->rows()-1),tRange(0,path._detectedSequence->cols()-1)).inject(*(path._detectedSequence));
-
-	#ifdef DEBUG
-		cout << "pasado el if>0" << endl;
-	#endif
+        _detectedSequence->block(0,0,path._detectedSequence->rows(),path._detectedSequence->cols()) = *(path._detectedSequence);
 
 	// and so the new one
-	_detectedSequence->col(path._detectedSequence->cols()).inject(newSymbolVector);
+    _detectedSequence->col(path._detectedSequence->cols()) = newSymbolVector;
 
 	// the cost is updated
 	_cost = newCost;
@@ -99,8 +85,8 @@ void ViterbiPath::operator=(const ViterbiPath &path)
 		throw RuntimeException("ViterbiPath::operator=: both pointers are the same. This was not meant to happen.");
 
 	// this code is safe, though
-	tMatrix *aux = _detectedSequence;
-	_detectedSequence = new tMatrix(*path._detectedSequence);
+    MatrixXd *aux = _detectedSequence;
+    _detectedSequence = new MatrixXd(*path._detectedSequence);
 	delete aux;
 
 	_cost = path._cost;

@@ -32,19 +32,19 @@ protected:
     int _nTimeInstants;
     double _cost;
 public:
-    tMatrix *_detectedSequence;
+    MatrixXd *_detectedSequence;
     ViterbiPath();
-    ViterbiPath(int nTimeInstants,double cost,tMatrix initialSequence);
+    ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence); // eigen
     ViterbiPath(const ViterbiPath &path);
     virtual ~ViterbiPath();
 
     double GetCost() const { return _cost;}
     void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    tVector getSymbolVector(int n) const { /*cout << "getSymbolVector" << endl; cout << "nº de columnas de la matriz " << _detectedSequence->cols() << endl;*/ return _detectedSequence->col(n);}
+    VectorXd getSymbolVector(int n) const { return _detectedSequence->col(n);} // eigen
 
     virtual void print() const;
-    void Update(const ViterbiPath &path, tVector newSymbolVector, double newCost);
+    void Update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost); // eigen
     virtual void Ref(const ViterbiPath &path);
     virtual void operator=(const ViterbiPath &path);
 };

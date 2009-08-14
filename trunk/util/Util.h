@@ -95,8 +95,10 @@ public:
     static tMatrix sign(const tMatrix &A);
     static MatrixXd lapack2eigen(const tMatrix &A);
     static VectorXd lapack2eigen(const tVector &v);
+    static vector<MatrixXd> lapack2eigen(const vector<tMatrix> &v);
     static tMatrix eigen2lapack(const MatrixXd &A);
     static tVector eigen2lapack(const VectorXd &v);
+    static vector<tMatrix> eigen2lapack(const vector<MatrixXd> &v);
 };
 
 #endif

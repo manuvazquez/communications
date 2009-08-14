@@ -28,7 +28,8 @@ public:
 	int _fromState;
 	int _input;
 	double _cost;
-	tVector _newSymbolVector;
+// 	tVector _newSymbolVector;
+    VectorXd _newSymbolVector;
 
     PathCandidate():_cost(-1.0) {}
 

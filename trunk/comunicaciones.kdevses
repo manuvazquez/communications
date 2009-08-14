@@ -3,13 +3,13 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="3" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" Type="Source" />
+   <View0 Encoding="" line="0" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" Type="Source" />
+   <View0 Encoding="" line="59" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="10" Type="Source" />
+   <View0 Encoding="" line="2" Type="Source" />
   </Doc2>
  </DocsAndViews>
  <pluginList>
@@ -102,8 +102,8 @@
      <mark line="65" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/PSPAlgorithm.cpp" >
+     <mark line="156" />
      <mark line="21" />
-     <mark line="109" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/LinearFilterBasedAlgorithm.cpp" >
      <mark line="59" />
@@ -115,6 +115,9 @@
     <bookmark url="/home/manu/c++/comunicaciones/statistics/ARprocess.cpp" >
      <mark line="21" />
      <mark line="82" />
+    </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/ViterbiAlgorithm.cpp" >
+     <mark line="45" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/algorithms/DSISoptAlgorithm.cpp" >
      <mark line="6" />
@@ -154,9 +157,9 @@
      <mark line="92" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="397" />
-     <mark line="278" />
-     <mark line="162" />
+     <mark line="398" />
+     <mark line="279" />
+     <mark line="163" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/estimation/KalmanEstimator.cpp" >
      <mark line="154" />
