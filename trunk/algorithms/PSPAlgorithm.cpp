@@ -72,7 +72,7 @@ void PSPAlgorithm::ProcessOneObservation(const VectorXd &observations,double noi
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
 			PSPPathCandidate &bestPathCandidate = _bestArrivingPaths[iState][iSurvivor];
-			if(bestPathCandidate.NoPathArrived())
+			if(bestPathCandidate.noPathArrived())
 				continue;
 
 			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
@@ -80,7 +80,7 @@ void PSPAlgorithm::ProcessOneObservation(const VectorXd &observations,double noi
 
 			newChannelMatrixEstimator->nextMatrix(Util::eigen2lapack(observations),Util::eigen2lapack(bestPathCandidate._detectedSymbolVectors),noiseVariance);
 
-			_arrivalStage[iState][iSurvivor].Update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
+			_arrivalStage[iState][iSurvivor].update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
 		}
 	}
 
@@ -94,8 +94,8 @@ void PSPAlgorithm::ProcessOneObservation(const VectorXd &observations,double noi
 	{
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
-			_arrivalStage[iState][iSurvivor].Clean();
-			_bestArrivingPaths[iState][iSurvivor].Clean();
+			_arrivalStage[iState][iSurvivor].clean();
+			_bestArrivingPaths[iState][iSurvivor].clean();
 		}
 	}
 }
@@ -229,14 +229,14 @@ void PSPAlgorithm::DeployState(int iState,const VectorXd &observations,double no
 
             VectorXd error = observations - _ARcoefficient*_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen()*Util::toVector(symbolVectors,columnwise);
                         
-            newCost = _exitStage[iState][iSourceSurvivor].GetCost() + error.dot(error);
+            newCost = _exitStage[iState][iSourceSurvivor].getCost() + error.dot(error);
 
             iDisposableSurvivor = DisposableSurvivor(arrivalState);
 
 			// if the given disposal survivor is empty
-			if((_bestArrivingPaths[arrivalState][iDisposableSurvivor].NoPathArrived()) ||
+			if((_bestArrivingPaths[arrivalState][iDisposableSurvivor].noPathArrived()) ||
 				// or its cost is greater than the computed new cost
-				(_bestArrivingPaths[arrivalState][iDisposableSurvivor].GetCost() > newCost))
+				(_bestArrivingPaths[arrivalState][iDisposableSurvivor].getCost() > newCost))
 					// the ViterbiPath object at the arrival state is updated with that from the exit stage, the
 					// new symbol vector, and the new cost
 				{
@@ -278,16 +278,16 @@ void PSPAlgorithm::BestPairStateSurvivor(int &bestState,int &bestSurvivor)
 	int iSurvivor;
 	bestState = 0;
 	bestSurvivor = 0;
-	double bestCost = _exitStage[bestState][bestSurvivor].GetCost();
+	double bestCost = _exitStage[bestState][bestSurvivor].getCost();
 
 	for(int iState=1;iState<_trellis.Nstates();iState++)
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
-			if(_exitStage[iState][iSurvivor].GetCost() < bestCost)
+			if(_exitStage[iState][iSurvivor].getCost() < bestCost)
 			{
 				bestState = iState;
 				bestSurvivor = iSurvivor;
-				bestCost = _exitStage[iState][iSurvivor].GetCost();
+				bestCost = _exitStage[iState][iSurvivor].getCost();
 			}
 		}
 }
@@ -297,7 +297,7 @@ int PSPAlgorithm::DisposableSurvivor(int iState)
     int iWorstCost;
     double worstCost;
 
-    if(_bestArrivingPaths[iState][0].NoPathArrived())
+    if(_bestArrivingPaths[iState][0].noPathArrived())
         return 0;
 
     iWorstCost = 0;
@@ -305,7 +305,7 @@ int PSPAlgorithm::DisposableSurvivor(int iState)
 
     for(int iSurvivor=1;iSurvivor<_nSurvivors;iSurvivor++)
     {
-        if(_bestArrivingPaths[iState][iSurvivor].NoPathArrived())
+        if(_bestArrivingPaths[iState][iSurvivor].noPathArrived())
             return iSurvivor;
 
         if(_bestArrivingPaths[iState][iSurvivor]._cost > worstCost)

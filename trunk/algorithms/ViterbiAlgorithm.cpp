@@ -79,7 +79,7 @@ void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,in
 
         // the _arrivalStage (old _exitStage) gets cleaned
         for(iState=0;iState<_trellis.Nstates();iState++)
-			_arrivalStage[iState].Clean();
+			_arrivalStage[iState].clean();
     }
 
     iBestState = BestState();
@@ -102,7 +102,7 @@ void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,in
 
         // the _arrivalStage (old _exitStage) gets cleaned
         for(iState=0;iState<_trellis.Nstates();iState++)
-            _arrivalStage[iState].Clean();
+            _arrivalStage[iState].clean();
 
         iBestState = BestState();
 
@@ -142,16 +142,16 @@ void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const
 
         VectorXd error = observations - channelMatrix*Util::toVector(symbolVectors,columnwise);
 
-        newCost = _exitStage[iState].GetCost() + error.dot(error);
+        newCost = _exitStage[iState].getCost() + error.dot(error);
 
         arrivalState = _trellis(iState,iInput);
 
         // if there is nothing in the arrival state
         if((_arrivalStage[arrivalState].IsEmpty()) ||
             // or there is a path whose cost is greater
-            (_arrivalStage[arrivalState].GetCost() > newCost))
+            (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
-                _arrivalStage[arrivalState].Update(_exitStage[iState],symbolVectors.col(channel.memory()-1),newCost);
+                _arrivalStage[arrivalState].update(_exitStage[iState],symbolVectors.col(channel.memory()-1),newCost);
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 
 }

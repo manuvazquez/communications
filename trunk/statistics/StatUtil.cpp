@@ -62,6 +62,31 @@ int StatUtil::discrete_rnd(const tVector &probabilities,Random &randomGenerator)
     return res;
 }
 
+// eigen
+int StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)
+{
+    int i;
+    double uniform;
+
+    int nProbabilities = probabilities.size();
+
+    double *distributionFunction = new double[nProbabilities];
+    distributionFunction[0] = probabilities(0);
+    for(i=1;i<nProbabilities;i++)
+           distributionFunction[i] = distributionFunction[i-1]+probabilities(i);
+
+    uniform = randomGenerator.rand();
+    
+    int res = 0;
+    while(uniform>distributionFunction[res])
+        res++;
+
+    // memory release
+    delete[] distributionFunction;
+
+    return res;
+}
+
 int StatUtil::discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator)
 {
     int i;

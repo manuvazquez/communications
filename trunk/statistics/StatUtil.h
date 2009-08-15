@@ -53,6 +53,7 @@ public:
      * @return
      */
     static int discrete_rnd(const tVector &probabilities,Random &randomGenerator = _randomGenerator);
+    static int discrete_rnd(const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
     static vector<int> discrete_rnd(int nSamples,const tVector &probabilities,Random &randomGenerator = _randomGenerator);
     
     // same functions as above but receiving c++ vectors instead of Lapack++ vectors

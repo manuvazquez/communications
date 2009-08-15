@@ -36,7 +36,11 @@ public:
     DSISoptAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);
 
 protected:
-    void process(const tMatrix &observations, vector< double > noiseVariances);
+    void process(const tMatrix &observations, vector< double > noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }
+    void process(const MatrixXd &observations, vector< double > noiseVariances);
 };
 
 #endif

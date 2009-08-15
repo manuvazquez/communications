@@ -88,9 +88,9 @@ PSPPath::~PSPPath()
 }
 
 
-void PSPPath::Clean()
+void PSPPath::clean()
 {
-    ViterbiPath::Clean();
+    ViterbiPath::clean();
     for(uint i=0;i<_channelMatrixEstimators.size();i++)
     {
         delete _channelMatrixEstimators[i];
@@ -117,12 +117,12 @@ void PSPPath::print() const
     #endif
 }
 
-void PSPPath::Update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators)
+void PSPPath::update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators)
 {
     if(newChannelMatrixEstimators.size()!=path._channelMatrixEstimators.size())
         throw RuntimeException("PSPPath::Update: the number of ChannelMatrixEstimator's fo the source path object and the number of the received ones differ.");
 
-    ViterbiPath::Update(path, newSymbolVector, newCost);
+    ViterbiPath::update(path, newSymbolVector, newCost);
 
     // if this object does not have the proper number of ChannelMatrixEstimator's
     if(_channelMatrixEstimators.size()!=path._channelMatrixEstimators.size())

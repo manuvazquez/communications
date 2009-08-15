@@ -38,13 +38,13 @@ public:
     ViterbiPath(const ViterbiPath &path);
     virtual ~ViterbiPath();
 
-    double GetCost() const { return _cost;}
-    void Clean() { delete _detectedSequence; _detectedSequence = NULL;}
+    double getCost() const { return _cost;}
+    void clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
     VectorXd getSymbolVector(int n) const { return _detectedSequence->col(n);} // eigen
 
     virtual void print() const;
-    void Update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost); // eigen
+    void update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost); // eigen
     virtual void Ref(const ViterbiPath &path);
     virtual void operator=(const ViterbiPath &path);
 };

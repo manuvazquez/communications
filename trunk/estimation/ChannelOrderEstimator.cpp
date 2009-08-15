@@ -29,7 +29,7 @@ ChannelOrderEstimator::ChannelOrderEstimator(std::vector<int> candidateOrders, v
 {
 }
 
-tVector ChannelOrderEstimator::GetChannelOrderAPPsVector()
+tVector ChannelOrderEstimator::getChannelOrderAPPsVector()
 {
 	tVector res(_channelOrderAPPs.size());
 	for(uint i=0;i<_channelOrderAPPs.size();i++)

@@ -42,18 +42,13 @@ public:
 
     virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix; _lastEstimatedChannelMatrix_eigen = Util::lapack2eigen(matrix);}
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelMatrix_eigen = matrix; _lastEstimatedChannelMatrix = Util::eigen2lapack(matrix);} // eigen
-//     virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance) = 0;
+    
     virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
     {
         return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance));
     }
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance) = 0;
     virtual ChannelMatrixEstimator *clone() const = 0;
-
-//     virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
-//     {
-//         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
-//     }
     
     virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
     {

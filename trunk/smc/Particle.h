@@ -25,6 +25,7 @@
 */
 
 #include <vector>
+#include <Util.h>
 #include <types.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/blas1pp.h>
@@ -52,6 +53,7 @@ public:
 
     tMatrix getAllSymbolVectors() const { return _symbolVectors;}
     tVector getSymbolVector(int n) const { return _symbolVectors.col(n);}
+    VectorXd getSymbolVector_eigen(int n) const { return Util::lapack2eigen(_symbolVectors).col(n);}
     void setSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
     void setSymbolVector(int n,const std::vector<tSymbol> &v)
     {
@@ -61,6 +63,7 @@ public:
 
     tMatrix getSymbolVectors(const tRange &range) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),range);}
     tMatrix getSymbolVectors(int a,int b) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
+    MatrixXd getSymbolVectors() { return Util::lapack2eigen(_symbolVectors);}
 
     void setSymbolVectors(const tRange &range,const tMatrix &symbolVectors)
     {
@@ -70,6 +73,12 @@ public:
     void setSymbolVectors(int a,int b,const tMatrix &symbolVectors)
     {
         _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b)).inject(symbolVectors);
+    }
+
+    void setSymbolVectors(int a,int b,const MatrixXd &symbolVectors)
+    {
+//         _symbolVectors.block(0,a,_symbolVectors.rows(),b-a) = Util::eigen2lapack(symbolVectors);
+        _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b-1)).inject(Util::eigen2lapack(symbolVectors));
     }
 
     void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}

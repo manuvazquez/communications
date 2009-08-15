@@ -29,7 +29,6 @@ class PSPPathCandidate : public PathCandidate
 {
 public:
 	int _fromSurvivor;
-// 	tMatrix _detectedSymbolVectors;
     MatrixXd _detectedSymbolVectors;
 };
 

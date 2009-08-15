@@ -47,7 +47,7 @@ USIS::~USIS()
 //
 // 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
 //     // during the training sequence
-// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->ComputeProbabilities(observations,estimatedMatrices,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols());
+// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->computeProbabilities(observations,estimatedMatrices,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols());
 //
 //     // the APP of the candidate channel orders are set accordingly
 // 	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
@@ -308,7 +308,7 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 			} // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
 			// the channel order estimator is updated
-			processedParticle->GetChannelOrderEstimator()->Update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector(_allSymbolsRows),noiseVariances[iObservationToBeProcessed]);
+			processedParticle->GetChannelOrderEstimator()->update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector(_allSymbolsRows),noiseVariances[iObservationToBeProcessed]);
 
 			// the weight is updated
 			processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());
@@ -385,5 +385,5 @@ void USIS::UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix
 {
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* convertedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *> (particle);
 
-    convertedParticle->GetChannelOrderEstimator()->ComputeProbabilities(observations,channelMatrices,noiseVariances,sequenceToProcess,_preamble.cols());
+    convertedParticle->GetChannelOrderEstimator()->computeProbabilities(observations,channelMatrices,noiseVariances,sequenceToProcess,_preamble.cols());
 }

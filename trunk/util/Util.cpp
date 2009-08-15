@@ -226,6 +226,25 @@ tVector Util::normalize(const tVector &v)
     return res;
 }
 
+VectorXd Util::normalize(const VectorXd &v)
+{
+    int k;
+
+    int nElements = v.size();
+    double sum = 0.0;
+
+    for(k=0;k<nElements;k++)
+        sum += v(k);
+
+    if(sum==0)
+        throw AllElementsNullException("Util::normalize: A vector of zeros can't be normalized.");
+
+    VectorXd res(nElements);
+    for(k=0;k<nElements;k++)
+        res(k) = v(k)/sum;
+    return res;
+}
+
 void Util::normalize(std::vector<double> &v)
 {
     uint k;
@@ -244,6 +263,16 @@ void Util::normalize(std::vector<double> &v)
 }
 
 double Util::sum(const tVector &v)
+{
+    double res = 0.0;
+
+    for(uint i=v.size();i--;)
+        res += v(i);
+    return res;
+}
+
+// eigen
+double Util::sum(const VectorXd &v)
 {
     double res = 0.0;
 

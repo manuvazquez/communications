@@ -59,8 +59,10 @@ public:
     static tMatrix append(const tMatrix &A,const tMatrix &B);
     static tMatrix verticalAppend(const tMatrix &A,const tMatrix &B);
     static tVector normalize(const tVector &v);
+    static VectorXd normalize(const VectorXd &v); // eigen
     static void normalize(std::vector<double> &v);    
     static double sum(const tVector &v);
+    static double sum(const VectorXd &v); // eigen
     static void max(const tVector &v,int &index);
     static void min(const tVector &v,int &index);
     static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);

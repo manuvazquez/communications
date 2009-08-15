@@ -46,9 +46,9 @@ public:
 
     virtual APPbasedChannelOrderEstimator *clone();
 
-    void Update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance);
+    void update(const tVector &observations,const vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance);
 
-    virtual tMatrix ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom);
+    virtual tMatrix computeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom);
 
 };
 

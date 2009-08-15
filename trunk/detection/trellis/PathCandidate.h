@@ -21,21 +21,21 @@
 #define PATHCANDIDATE_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 class PathCandidate{
 public:
-	int _fromState;
-	int _input;
-	double _cost;
-// 	tVector _newSymbolVector;
+    int _fromState;
+    int _input;
+    double _cost;
+//  tVector _newSymbolVector;
     VectorXd _newSymbolVector;
 
     PathCandidate():_cost(-1.0) {}
 
-    void Clean() { _cost = -1.0;}
-    double GetCost() { return _cost;}
-    bool NoPathArrived() { return (_cost < 0);}
+    void clean() { _cost = -1.0;}
+    double getCost() { return _cost;}
+    bool noPathArrived() { return (_cost < 0);}
 };
 
 #endif

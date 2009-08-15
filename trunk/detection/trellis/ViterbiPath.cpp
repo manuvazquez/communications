@@ -42,7 +42,7 @@ ViterbiPath::~ViterbiPath()
 	delete _detectedSequence;
 }
 
-void ViterbiPath::Update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost)
+void ViterbiPath::update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost)
 {
 	if(path._detectedSequence == _detectedSequence)
 		throw RuntimeException("ViterbiPath::Update=: both pointers are the same. This was not meant to happen.");

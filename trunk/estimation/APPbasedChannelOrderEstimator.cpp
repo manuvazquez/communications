@@ -38,7 +38,7 @@ APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::clone()
 }
 
 
-tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)
+tMatrix APPbasedChannelOrderEstimator::computeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)
 {
     uint nProbabilitiesToCompute = sequenceToProcess.cols() - iFrom;
     double normalizationCt;
@@ -82,7 +82,7 @@ tMatrix APPbasedChannelOrderEstimator::ComputeProbabilities(const tMatrix& obser
     return computedChannelOrderAPPs;
 }
 
-void APPbasedChannelOrderEstimator::Update(const tVector &observations,const vector<tMatrix> &channelMatrices,const tVector &symbolVector,double noiseVariance)
+void APPbasedChannelOrderEstimator::update(const tVector &observations,const vector<tMatrix> &channelMatrices,const tVector &symbolVector,double noiseVariance)
 {
     if(channelMatrices.size()!=_candidateOrders.size())
         throw RuntimeException("APPbasedChannelOrderEstimator::Update: insufficient number of channel matrices.");

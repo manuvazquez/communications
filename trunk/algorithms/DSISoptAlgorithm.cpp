@@ -27,30 +27,26 @@ DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int Nr,i
 //     _randomParticlesInitilization = true;
 }
 
-void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noiseVariances)
+// void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noiseVariances)
+void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > noiseVariances)
 {
 	uint k,iSmoothingVector;
 	int iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_nInputs),testedSmoothingVector(_nInputs*_d),sampledVector(_nInputs);
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
-	tRange rmMinus1FirstColumns(0,_channelOrder-2);
 
 	// it selects all rows in the symbols Matrix
 	tRange rAll;
 
 	// it includes all symbol vectors involved in the smoothing
-	tMatrix smoothingSymbolVectors(_nInputs,_channelOrder+_d);
+    MatrixXd smoothingSymbolVectors(_nInputs,_channelOrder+_d);
 
 	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
 	uint nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*_d));
 
 	// a likelihood is computed for every possible symbol vector
-	tVector likelihoods(nSymbolVectors);
-
-    tRange rmPrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime);
-    tRange rmMinus1PrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
-    tRange rmColumns;
+    VectorXd likelihoods(nSymbolVectors);
 
 	// for each time instant
 	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
@@ -63,7 +59,7 @@ void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noi
 			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
-			smoothingSymbolVectors(rAll,rmMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rmMinus1PrecedentColumns));
+            smoothingSymbolVectors.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors().block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder-1);
 
 			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 			{
@@ -89,19 +85,19 @@ void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noi
 					// a clone of the channel estimator is generated because this must not be modified
 					channelEstimatorClone = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->clone();
 
-                    rmColumns.set(0,_channelOrder-1);
 					auxLikelihoodsProd = 1.0;
 
 					for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 					{
 
 						// the likelihood is computed and accumulated
-						auxLikelihoodsProd *= channelEstimatorClone->likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+//                         VectorXd currentObs = observations.col(iObservationToBeProcessed+iSmoothingLag);
+//                         MatrixXd symbVecs = smoothingSymbolVectors.block(0,iSmoothingLag,_nInputs,_channelOrder);
+                        auxLikelihoodsProd *= channelEstimatorClone->likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors.block(0,iSmoothingLag,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 						// a step in the Kalman Filter
-						channelEstimatorClone->nextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors(rAll,rmColumns),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
+                        channelEstimatorClone->nextMatrix(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors.block(0,iSmoothingLag,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
-                        rmColumns = rmColumns + 1;
 					} // for(iSmoothingLag=0;iSmoothingLag<=_d;iSmoothingLag++)
 
 					// memory of the clone is freed
@@ -113,13 +109,13 @@ void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noi
 
 			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-			tVector probabilities(nSymbolVectors);
+			VectorXd probabilities(nSymbolVectors);
 			try {
 				// probabilities are computed by normalizing the likelihoods
 				probabilities = Util::normalize(likelihoods);
 			} catch (AllElementsNullException) {
 				// if all the likelihoods are null
-				probabilities = 1.0/(double)nSymbolVectors;
+                probabilities.setConstant(1.0/(double)nSymbolVectors);
 			}
 
 			// one sample from the discrete distribution is taken
@@ -132,7 +128,9 @@ void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noi
 			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors(rmPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+            VectorXd currentObservation = observations.col(iObservationToBeProcessed);
+            MatrixXd currentSymbolVectors = processedParticle->getSymbolVectors().block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder);
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(Util::eigen2lapack(currentObservation),Util::eigen2lapack(currentSymbolVectors),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
 
@@ -143,10 +141,6 @@ void DSISoptAlgorithm::process(const tMatrix &observations, vector< double > noi
 		// if it's not the last time instant
 		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
-
-        rmPrecedentColumns = rmPrecedentColumns + 1;
-        rmMinus1PrecedentColumns = rmMinus1PrecedentColumns + 1;
-
 	} // for each time instant
 }
 

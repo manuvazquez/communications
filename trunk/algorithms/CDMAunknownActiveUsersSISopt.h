@@ -38,10 +38,17 @@ protected:
     const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity
 
     virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+//     virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+    void process(const MatrixXd &observations, vector< double > noiseVariances);
+    void process(const tMatrix &observations, vector< double > noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }    
 
-    double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
-    double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const;    
+//     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
+//     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const;
+    double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
+    double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector) const;
     bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}
 };
 

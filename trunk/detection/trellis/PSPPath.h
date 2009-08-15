@@ -23,7 +23,7 @@
 #include <ViterbiPath.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <defines.h>
@@ -33,12 +33,12 @@
 class PSPPath : public ViterbiPath
 {
 protected:
-	std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
+    std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
 
-	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-// 		tMatrix **_estimatedChannelMatrices;
+    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+//      tMatrix **_estimatedChannelMatrices;
         MatrixXd **_estimatedChannelMatrices;      
-	#endif
+    #endif
 public:
     PSPPath();
 
@@ -49,14 +49,14 @@ public:
 
     ~PSPPath();
 
-	ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
-// 	tMatrix getChannelMatrix(int n)
-// 	{
-// 		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-// 			return _estimatedChannelMatrices[0][n];
-// 		#endif
-// 		return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
-// 	}
+    ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
+//  tMatrix getChannelMatrix(int n)
+//  {
+//      #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+//          return _estimatedChannelMatrices[0][n];
+//      #endif
+//      return LaGenMatDouble::zeros(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
+//  }
     // eigen   
     MatrixXd getChannelMatrix(int n)
     {
@@ -65,7 +65,7 @@ public:
         #endif
         return MatrixXd::Zero(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());
     }    
-    void Clean();
+    void clean();
     void print() const;
     /**
      * Updates the current path object from another path object, plus a new symbol vector, a new cost, a new vector of ChannelMatrixEstimators, and a vector of channel matrices
@@ -75,9 +75,9 @@ public:
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
      * @param newChannelMatrices
      */
-//     void Update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
-    void Update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators); // eigen
-	void operator=(const PSPPath &path);
+//     void update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
+    void update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators); // eigen
+    void operator=(const PSPPath &path);
 
 };
 
