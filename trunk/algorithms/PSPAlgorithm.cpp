@@ -136,7 +136,8 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
     }
 }
 
-void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
+// eigen
+void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
     if(observations.cols()<(_startDetectionTime+1+_d))
         throw RuntimeException("PSPAlgorithm::Run: Not enough observations.");
@@ -153,31 +154,32 @@ void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
-	// the initial state is initalized
+    // the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,Util::lapack2eigen(_preamble),vector<vector<MatrixXd> > (1,vector<MatrixXd>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
-	process(Util::lapack2eigen(observations),noiseVariances);
+    process(observations,noiseVariances);
 }
 
-void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+// eigen
+void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("PSPAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     MatrixXd preambleTrainingSequence(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
-    preambleTrainingSequence << Util::lapack2eigen(_preamble),Util::lapack2eigen(trainingSequence);
+    preambleTrainingSequence << Util::lapack2eigen(_preamble),trainingSequence;
 
-	_startDetectionTime = preambleTrainingSequence.cols();
+    _startDetectionTime = preambleTrainingSequence.cols();
 
-    vector<MatrixXd> trainingSequenceChannelMatrices = Util::lapack2eigen(_channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,Util::eigen2lapack(preambleTrainingSequence),_preamble.cols(),_startDetectionTime));
+    vector<MatrixXd> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),_startDetectionTime);
 
-	// known symbol vectors are copied into the the vector with the final detected ones
-    _detectedSymbolVectors->block(0,_preamble.cols(),_nInputs,_startDetectionTime-_preamble.cols()) = Util::lapack2eigen(trainingSequence);
+    // known symbol vectors are copied into the the vector with the final detected ones
+    _detectedSymbolVectors->block(0,_preamble.cols(),_nInputs,_startDetectionTime-_preamble.cols()) = trainingSequence;
 
-	// and so the channel matrices
-	for(uint i=0;i<trainingSequenceChannelMatrices.size();i++)
-		_estimatedChannelMatrices.push_back(trainingSequenceChannelMatrices[i]);
+    // and so the channel matrices
+    for(uint i=0;i<trainingSequenceChannelMatrices.size();i++)
+        _estimatedChannelMatrices.push_back(trainingSequenceChannelMatrices[i]);
 
     // the last N*(m-1) symbols of the training sequence are copied into a c++ vector...
     int preambleTrainingSequenceLength = preambleTrainingSequence.size();
@@ -191,10 +193,10 @@ void PSPAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatr
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
-	// the initial state is initalized
+    // the initial state is initalized
     _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,preambleTrainingSequence,vector<vector<MatrixXd> > (1,trainingSequenceChannelMatrices),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
-	process(Util::lapack2eigen(observations),noiseVariances);
+    process(observations,noiseVariances);
 }
 
 void PSPAlgorithm::DeployState(int iState,const VectorXd &observations,double noiseVariance)

@@ -36,9 +36,9 @@ class ParticleWithChannelEstimation : public Particle
 protected:
     std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
 
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
         tMatrix **_estimatedChannelMatrices;
-    #endif
+#endif
 public:
     ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,ChannelMatrixEstimator *channelMatrixEstimator);
 
@@ -50,9 +50,9 @@ public:
 
     tMatrix getChannelMatrix(int iChannelOrder,int n) const
     {
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
             return _estimatedChannelMatrices[iChannelOrder][n];
-        #endif
+#endif
 
         // return a matrix with the proper dimension (not initialized)
         return LaGenMatDouble::zeros(_channelMatrixEstimators[iChannelOrder]->rows(),_channelMatrixEstimators[iChannelOrder]->cols());
@@ -60,10 +60,17 @@ public:
 
     void setChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)
     {
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
             _estimatedChannelMatrices[iChannelOrder][n] = matrix;
-        #endif
+#endif
     }
+    void setChannelMatrix(int iChannelOrder,int n,const MatrixXd &matrix)
+    {
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+            _estimatedChannelMatrices[iChannelOrder][n] = Util::eigen2lapack(matrix);
+#endif
+    }
+
 
     ChannelMatrixEstimator *getChannelMatrixEstimator(int iChannelOrder) const { return _channelMatrixEstimators[iChannelOrder];}
 

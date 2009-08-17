@@ -38,23 +38,9 @@ KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()
     delete _extendedAlphabet;
 }
 
-void KnownFlatChannelOptimalAlgorithm::run(tMatrix observations, vector< double > noiseVariances)
+void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double > noiseVariances)
 {
-//     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
-//     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
-//     
-//     for(int i=0;i<_alphabet.length();i++)
-//         extendedAlphabetSymbols[i] = _alphabet[i];
-//     extendedAlphabetSymbols[_alphabet.length()] = 0.0;
-//     
-//     Alphabet extendedAlphabet(extendedAlphabetSymbols);
-    
-//     extendedAlphabet = _alphabet; // <--------------------------------------------------------------------------------------
-
     int iAlphabet,iCurrentNode,i,childrenHeight;
-    tMatrix HtH(_nInputs,_nInputs),invL_Ht(_nInputs,_nOutputs),U(_nInputs,_nInputs);
-    tVector transformedObs(_nInputs);
-    tLongIntVector piv(_nOutputs);
     double UxS;
         
     vector<tTreeNode> nodes;
@@ -67,33 +53,20 @@ void KnownFlatChannelOptimalAlgorithm::run(tMatrix observations, vector< double 
         
         rootNode.height = 0;
         rootNode.id = 0;
-        rootNode.symbolsVector = tVector(_nInputs);
+        rootNode.symbolsVector = VectorXd(_nInputs);
         
         // root node is added to the list of nodes
         nodes.push_back(rootNode);
         
         // the corresponding channel matrix is kept in a variable (for the sake of clarity)
-        tMatrix H;
-        H = _channel.getTransmissionMatrix(iProcessedObservation);
-        
-        // HtH = H'*H
-        Blas_Mat_Trans_Mat_Mult(H,H,HtH);
+        MatrixXd H = _channel.getTransmissionMatrix_eigen(iProcessedObservation);
         
         // the Cholesky decomposition of HtH
-        tMatrix L = Util::cholesky(HtH);
+        Eigen::LLT<MatrixXd> lltOfHTH(H.transpose()*H);
         
-        Util::transpose(L,U);
+        VectorXd transformedObs = lltOfHTH.matrixL().inverse()*H.transpose()*observations.col(iProcessedObservation);
         
-        // invL = inverse(L)
-        tMatrix invL = L;
-        LUFactorizeIP(invL,piv);
-        LaLUInverseIP(invL,piv);
-
-        // invL_Ht = invL*H'
-        Blas_Mat_Mat_Trans_Mult(invL,H,invL_Ht);
-        
-        // transformedObs = invL_Ht*observations
-        Blas_Mat_Vec_Mult(invL_Ht,observations.col(iProcessedObservation),transformedObs);
+        MatrixXd U = lltOfHTH.matrixL().transpose();
         
         // we start by the root node
         iCurrentNode = 0;    
@@ -101,14 +74,12 @@ void KnownFlatChannelOptimalAlgorithm::run(tMatrix observations, vector< double 
         while(nodes[iCurrentNode].height<_nInputs)
         {
             childrenHeight = nodes[iCurrentNode].height+1;
-//             for(iAlphabet=0;iAlphabet<extendedAlphabet.length();iAlphabet++)
             for(iAlphabet=0;iAlphabet<getAlphabetAt(iProcessedObservation,childrenHeight)->length();iAlphabet++)
             {
                 // the parent node is replicated
                 tTreeNode child = nodes[iCurrentNode];
                 
                 child.height = childrenHeight;
-//                 child.symbolsVector(_nInputs-child.height) = extendedAlphabet[iAlphabet];
                 child.symbolsVector(_nInputs-child.height) = (*getAlphabetAt(iProcessedObservation,childrenHeight))[iAlphabet];
                 
                 UxS = 0.0;
@@ -166,8 +137,7 @@ int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
     return iBest;
 }
 
-
-tMatrix KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()
+MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors_eigen()
 {
     return _detectedSymbols;
 }

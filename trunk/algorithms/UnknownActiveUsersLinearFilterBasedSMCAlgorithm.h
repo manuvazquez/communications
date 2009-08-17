@@ -44,7 +44,11 @@ protected:
     const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity    
 
     virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void process(const MatrixXd& observations, vector< double > noiseVariances);
 
 };
 

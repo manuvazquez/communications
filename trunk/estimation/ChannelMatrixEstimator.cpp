@@ -45,22 +45,17 @@ int ChannelMatrixEstimator::memory()
         throw RuntimeException("ChannelMatrixEstimator::Memory: this may not be a real channel matrix estimator: its number of columns is not a multiple of the number of transmitting antennas.");
 }
 
-vector<tMatrix> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo)
+// eigen
+vector<MatrixXd> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo)
 {
     if(observations.cols()<iTo)
-        throw RuntimeException("ChannelMatrixEstimator::NextMatricesFromObservationsSequence: insufficient number of observations.");
+        throw RuntimeException("ChannelMatrixEstimator::nextMatricesFromObservationsSequence: insufficient number of observations.");
 
-    vector<tMatrix> estimatedMatrices(iTo-iFrom);
-
-    // selects all the rows from a symbols matrix
-    tRange allSymbolRows;
-
-    tRange mColumns(iFrom-_channelOrder+1,iFrom);
+    vector<MatrixXd> estimatedMatrices(iTo-iFrom);
 
     for(int i=iFrom;i<iTo;i++)
-    {
-        estimatedMatrices[i-iFrom] = nextMatrix(observations.col(i),symbolVectors(allSymbolRows,mColumns),noiseVariances[i]);
-        mColumns = mColumns + 1;
-    }
+        estimatedMatrices[i-iFrom] = nextMatrix(observations.col(i),symbolVectors.block(0,i-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[i]);
+    
     return estimatedMatrices;
 }
+

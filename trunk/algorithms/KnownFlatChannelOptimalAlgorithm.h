@@ -27,6 +27,10 @@ It implements the optimal algorithm to detect in a flat channel by means of a tr
 
     @author Manu <manu@rustneversleeps>
 */
+
+#include <Eigen/LU> 
+#include <Eigen/Cholesky>
+
 class KnownFlatChannelOptimalAlgorithm : public KnownChannelAlgorithm
 {
 private:
@@ -34,13 +38,13 @@ private:
         double cost;
         std::vector<int> children;
         uint height,id;
-        tVector symbolsVector;
+        VectorXd symbolsVector;
     } tTreeNode;
     
     int iBestLeaf(const std::vector<tTreeNode> &nodes);
 protected:
     const int _preambleLength;
-    tMatrix _detectedSymbols;
+    MatrixXd _detectedSymbols;
     Alphabet *_extendedAlphabet;
     
     virtual const Alphabet *getAlphabetAt(int time, int leafHeight) const { return _extendedAlphabet;}
@@ -49,8 +53,16 @@ public:
 
     ~KnownFlatChannelOptimalAlgorithm();
 
-    void run(tMatrix observations, vector< double > noiseVariances);
-    tMatrix getDetectedSymbolVectors();
+    void run(tMatrix observations, vector< double > noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    void run(MatrixXd observations, vector< double > noiseVariances);
+    tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    MatrixXd getDetectedSymbolVectors_eigen();
 
 };
 

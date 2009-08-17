@@ -52,9 +52,12 @@ public:
     void setWeight(double weight) { _weight = weight;}
 
     tMatrix getAllSymbolVectors() const { return _symbolVectors;}
+    
     tVector getSymbolVector(int n) const { return _symbolVectors.col(n);}
     VectorXd getSymbolVector_eigen(int n) const { return Util::lapack2eigen(_symbolVectors).col(n);}
+    
     void setSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
+    void setSymbolVector(int n,const VectorXd &v) { _symbolVectors.col(n).inject(Util::eigen2lapack(v));}
     void setSymbolVector(int n,const std::vector<tSymbol> &v)
     {
         for(int i=0;i<_symbolVectors.rows();i++)

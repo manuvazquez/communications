@@ -19,16 +19,18 @@
  ***************************************************************************/
 #include "MultiuserCDMAchannel.h"
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(spreadingCodes)
+MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
 {
 }
 
-tMatrix MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
+MatrixXd MultiuserCDMAchannel::getTransmissionMatrix_eigen(const int n) const
 {
-    tMatrix spreadingCodesXcoeffs(_nOutputs,_nInputs);
+//     tMatrix spreadingCodesXcoeffs(_nOutputs,_nInputs);
+//     
+//     // spreadingCodesXcoeffs = _spreadingCodes * diag((*this)[n])
+//     Blas_Mat_Mat_Mult(_spreadingCodes,LaGenMatDouble::from_diag((*this)[n]),spreadingCodesXcoeffs);
+//     
+//     return Util::lapack2eigen(spreadingCodesXcoeffs);
     
-    // spreadingCodesXcoeffs = _spreadingCodes * diag((*this)[n])
-    Blas_Mat_Mat_Mult(_spreadingCodes,LaGenMatDouble::from_diag((*this)[n]),spreadingCodesXcoeffs);
-    
-    return spreadingCodesXcoeffs;
+    return _spreadingCodes*Util::toVector((Util::lapack2eigen((*this)[n])),rowwise).asDiagonal();
 }

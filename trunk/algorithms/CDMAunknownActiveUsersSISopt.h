@@ -45,8 +45,6 @@ protected:
         process(Util::lapack2eigen(observations),noiseVariances);
     }    
 
-//     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
-//     double probSymbolsVectorXprobActiveUsers(const tVector &symbolsVector) const;
     double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
     double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector) const;
     bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}

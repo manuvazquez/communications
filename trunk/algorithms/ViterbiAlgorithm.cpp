@@ -38,14 +38,15 @@ ViterbiAlgorithm::~ViterbiAlgorithm()
     delete _detectedSymbolVectors;
 }
 
-void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
+void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
     run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
 }
 
-void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+// eigen
+void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
-	const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
+    const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
     int iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
@@ -69,7 +70,7 @@ void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,in
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,Util::lapack2eigen(observations.col(iProcessedObservation)),Util::lapack2eigen(channel[iProcessedObservation]));
+                DeployState(iState,observations.col(iProcessedObservation),Util::lapack2eigen(channel[iProcessedObservation]));
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
@@ -79,7 +80,7 @@ void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,in
 
         // the _arrivalStage (old _exitStage) gets cleaned
         for(iState=0;iState<_trellis.Nstates();iState++)
-			_arrivalStage[iState].clean();
+            _arrivalStage[iState].clean();
     }
 
     iBestState = BestState();
@@ -92,7 +93,7 @@ void ViterbiAlgorithm::run(tMatrix observations,vector<double> noiseVariances,in
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,Util::lapack2eigen(observations.col(iProcessedObservation)),Util::lapack2eigen(channel[iProcessedObservation]));
+                DeployState(iState,observations.col(iProcessedObservation),Util::lapack2eigen(channel[iProcessedObservation]));
         }
 
         // _arrivalStage becomes _exitStage for the next iteration

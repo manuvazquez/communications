@@ -59,8 +59,17 @@ public:
 
     ~PSPAlgorithm();
 
-	void run(tMatrix observations,vector<double> noiseVariances);
-	void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void run(tMatrix observations, vector< double > noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    void run(MatrixXd observations, vector< double > noiseVariances);
+     
+    void run(tMatrix observations, vector< double > noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);   
 
     tMatrix getDetectedSymbolVectors()
     {

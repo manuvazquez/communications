@@ -30,12 +30,13 @@ Meant to model a CDMA multiuser communication sytem (whose channel is flat) as a
 class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 {
 protected:
-    tMatrix _spreadingCodes;
+//     tMatrix _spreadingCodes;
+    MatrixXd _spreadingCodes;
     
 public:
     MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes);    
 
-    virtual tMatrix getTransmissionMatrix(const int n) const;    
+    virtual MatrixXd getTransmissionMatrix_eigen(const int n) const;    
 };
 
 #endif

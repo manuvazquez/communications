@@ -45,53 +45,70 @@ UnknownActiveUsersLinearFilterBasedSMCAlgorithm::~UnknownActiveUsersLinearFilter
 
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 {
+//     ChannelMatrixEstimator *channelMatrixEstimatorClone;
+//     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
+//     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
+// 
+//     // memory is reserved
+//     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+//     {
+//         channelMatrixEstimatorClone = _channelEstimator->clone();
+//         if(_randomParticlesInitilization)
+//             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(channelMean,channelCovariance),rowwise,_Nr));
+//         
+//         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
+// 
+//         if(_preamble.cols()!=0)
+//             _particleFilter->getParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
+//     }    
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
-    tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
-    tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
+    VectorXd channelMean = Util::toVector(Util::lapack2eigen(_channelMatrixMean),rowwise);
+    MatrixXd channelCovariance = Util::toVector(Util::lapack2eigen(_channelMatrixVariances),rowwise).asDiagonal();
 
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
+        
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(channelMean,channelCovariance),rowwise,_Nr));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(channelMean,channelCovariance),rowwise,_Nr));
         
         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
+        // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->getParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
-    }
+            _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+    }    
 }
 
-void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
+// eigen
+void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
     int iParticle,iSampledSymbol,iAlphabet,iSampled;
-    tRange rAll;
     double proposal,s2q,sumProb,likelihood;
-    tMatrix forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
+    MatrixXd forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
     
     int iOutput,iInput;
-    tMatrix channelMatrixSample;
-    tVector sampledVector(_nInputs);
-    tMatrix symbolProb(_nInputs,_alphabet.length());
-    tVector predictedNoiselessObservation(_nOutputs);
     double probSymbolsVectorApriori;
+    
+    MatrixXd channelMatrixSample,symbolProb(_nInputs,_alphabet.length());
+    VectorXd sampledVector(_nInputs);    
+    MatrixXd noiseCovariance = MatrixXd::Zero(_nOutputs,_nOutputs);
 
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
+#ifdef DEBUG
+            cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
+#endif    
         // noise covariance needs to be constructed
-        tMatrix noiseCovariance = LaGenMatDouble::zeros(_nOutputs,_nOutputs);
         for(iOutput=0;iOutput<_nOutputs;iOutput++)
             noiseCovariance(iOutput,iOutput) = noiseVariances[iObservationToBeProcessed];
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
-#ifdef DEBUG
-            cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
-#endif
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
-            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();            
+            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
 
 #ifdef DEBUG_CHANNEL_SAMPLES
             tMatrix channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
@@ -126,7 +143,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
             cout << endl;
 #endif
 
-            tVector softEstimations;
+            VectorXd softEstimations;
 
             // the sampled channel matrix is used to obtain soft estimations of the transmitted symbols
             softEstimations =  processedParticle->getLinearDetector(_estimatorIndex)->detect(observations.col(iObservationToBeProcessed),channelMatrixSample,noiseCovariance);
@@ -149,11 +166,11 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                 }
                 
                 s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol);
-
+                
 #ifdef DEBUG
                 cout << "s2q = " << s2q << endl;
-#endif
-
+#endif                
+                
                 sumProb = 0.0;
 
                 // the probability for each posible symbol alphabet is computed
@@ -165,21 +182,11 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
                     sumProb += symbolProb(iSampledSymbol,iAlphabet);
                 }
 
-#ifdef DEBUG
-//                 if(iObservationToBeProcessed==5 && iParticle==3)
-//                     cout << "sumProb = " << sumProb << endl;
-//                 if (sumProb==0)
-//                     cout << "is zero!!!" << endl;
-#endif
-
-//                 try {
                 if(sumProb!=0)
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
                 else
                 {
-//                 }catch(exception e){
-//                     cout << "The sum of the probabilities is null." << endl;
                     for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                         symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.length());
                 }
@@ -203,10 +210,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
             // sampled symbol vector is stored for the corresponding particle
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
-            // predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
-            Blas_Mat_Vec_Mult(channelMatrixSample,sampledVector,predictedNoiselessObservation);
-
-            likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed]);
+            likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),channelMatrixSample*sampledVector,noiseVariances[iObservationToBeProcessed]);
 
             // the weight is updated
             processedParticle->setWeight((likelihood*probSymbolsVectorApriori/proposal)*processedParticle->getWeight());
@@ -214,10 +218,6 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
             // and the estimation of the channel matrix
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]));
-
-#ifdef DEBUG
-//             getchar();
-#endif
 
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
@@ -229,4 +229,3 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const tMatrix& obs
 
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
-
