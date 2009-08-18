@@ -14,6 +14,6 @@ libsmc_a_SOURCES = Particle.cpp ParticleFilter.cpp \
 	ParticleWithChannelEstimationAndChannelOrderAPP.cpp ParticleWithChannelEstimationAndLinearDetection.cpp \
 	ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers.cpp \
 	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.cpp ResamplingCriterion.cpp WithActiveUsersParticleAddon.cpp \
-	WithChannelOrderAppParticleAddon.cpp WithChannelOrderEstimationParticleAddon.cpp \
-	WithLinearDetectionParticleAddon.cpp
+	WithChannelEstimationParticleAddon.cpp WithChannelOrderAppParticleAddon.cpp \
+	WithChannelOrderEstimationParticleAddon.cpp WithLinearDetectionParticleAddon.cpp
 SUBDIRS = resampling

@@ -168,7 +168,7 @@ vector<tMatrix> SMCAlgorithm::getEstimatedChannelMatrices()
     return channelMatrices;
 }
 
-double SMCAlgorithm::smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+double SMCAlgorithm::smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
 {
     double likelihoodsProd = 1.0;
 

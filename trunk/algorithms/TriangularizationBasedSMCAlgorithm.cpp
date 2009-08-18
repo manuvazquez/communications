@@ -162,7 +162,7 @@ void TriangularizationBasedSMCAlgorithm::process(const tMatrix& observations, ve
 
             processedParticle->setSymbolVector(iObservationToBeProcessed,involvedSymbolVectors.col(_channelOrder-1));
 
-            likelihoodsProd = smoothedLikelihood(matricesToStack,involvedSymbolVectors,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+            likelihoodsProd = smoothedLikelihood(matricesToStack,involvedSymbolVectors,iObservationToBeProcessed,observations,noiseVariances);
 
             // the weight is updated
             processedParticle->setWeight((likelihoodsProd/proposal)*processedParticle->getWeight());

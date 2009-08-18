@@ -65,7 +65,7 @@ protected:
      * @param noiseVariances
      * @return
      */
-    double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,ParticleWithChannelEstimation *particle,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
+    double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
 
     const MIMOChannel *_channel;
     const tMatrix *_symbols;

@@ -181,7 +181,7 @@ void LinearFilterBasedSMCAlgorithm::process(const tMatrix &observations, vector<
             // ii) the just sampled
             forWeightUpdateNeededSymbols(rAll,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
 
-            likelihoodsProd = smoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,processedParticle,iObservationToBeProcessed,observations,noiseVariances);
+            likelihoodsProd = smoothedLikelihood(matricesToStack,forWeightUpdateNeededSymbols,iObservationToBeProcessed,observations,noiseVariances);
 
             // the weight is updated
             processedParticle->setWeight((likelihoodsProd/proposal)*processedParticle->getWeight());

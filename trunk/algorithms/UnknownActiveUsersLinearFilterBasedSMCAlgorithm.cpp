@@ -45,23 +45,7 @@ UnknownActiveUsersLinearFilterBasedSMCAlgorithm::~UnknownActiveUsersLinearFilter
 
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 {
-//     ChannelMatrixEstimator *channelMatrixEstimatorClone;
-//     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
-//     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
-// 
-//     // memory is reserved
-//     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
-//     {
-//         channelMatrixEstimatorClone = _channelEstimator->clone();
-//         if(_randomParticlesInitilization)
-//             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(channelMean,channelCovariance),rowwise,_Nr));
-//         
-//         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
-// 
-//         if(_preamble.cols()!=0)
-//             _particleFilter->getParticle(iParticle)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
-//     }    
-    ChannelMatrixEstimator *channelMatrixEstimatorClone;
+      ChannelMatrixEstimator *channelMatrixEstimatorClone;
     VectorXd channelMean = Util::toVector(Util::lapack2eigen(_channelMatrixMean),rowwise);
     MatrixXd channelCovariance = Util::toVector(Util::lapack2eigen(_channelMatrixVariances),rowwise).asDiagonal();
 
@@ -108,7 +92,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
         {
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
-            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
+            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
 
 #ifdef DEBUG_CHANNEL_SAMPLES
             tMatrix channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();

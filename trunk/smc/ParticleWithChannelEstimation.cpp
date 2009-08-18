@@ -19,58 +19,16 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimation.h"
 
-using namespace std;
-
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants
-,ChannelMatrixEstimator *channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants)
-,_channelMatrixEstimators(1)
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants)
 {
-    _channelMatrixEstimators[0] = channelMatrixEstimator;
-
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-    	_estimatedChannelMatrices = new tMatrix*[1];
-    	_estimatedChannelMatrices[0] = new tMatrix[trajectorylength()];
-   	#endif
 }
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants,vector <ChannelMatrixEstimator *> channelMatrixEstimators):Particle(weight, symbolVectorLength, nTimeInstants),_channelMatrixEstimators(channelMatrixEstimators)
+
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants)
 {
-	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-		_estimatedChannelMatrices = new tMatrix*[_channelMatrixEstimators.size()];
-		for(uint i=0;i<_channelMatrixEstimators.size();i++)
-			_estimatedChannelMatrices[i] = new tMatrix[trajectorylength()];
-    #endif
 }
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(const ParticleWithChannelEstimation &particle):Particle(particle),_channelMatrixEstimators(particle._channelMatrixEstimators.size())
+ParticleWithChannelEstimation *ParticleWithChannelEstimation::clone()
 {
-	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-    	_estimatedChannelMatrices = new tMatrix*[particle._channelMatrixEstimators.size()];
-    #endif
-    for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<particle._channelMatrixEstimators.size();iChannelMatrixEstimator++)
-    {
-        _channelMatrixEstimators[iChannelMatrixEstimator] = particle._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
-
-		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-			_estimatedChannelMatrices[iChannelMatrixEstimator] = new tMatrix[trajectorylength()];
-			for(int i=0;i<trajectorylength();i++)
-				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = particle._estimatedChannelMatrices[iChannelMatrixEstimator][i];
-        #endif
-    }
-}
-
-ParticleWithChannelEstimation::~ParticleWithChannelEstimation()
-{
-    for(uint i=0;i<_channelMatrixEstimators.size();i++)
-    {
-        delete _channelMatrixEstimators[i];
-
-		#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-        	delete[] _estimatedChannelMatrices[i];
-        #endif
-    }
-
-	#ifndef DO_NOT_STORE_CHANNEL_MATRICES
-    	delete[] _estimatedChannelMatrices;
-    #endif
+    return new ParticleWithChannelEstimation(*this);
 }

@@ -17,24 +17,25 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef PARTICLEWITHCHANNELESTIMATION_H
-#define PARTICLEWITHCHANNELESTIMATION_H
+#include "WithChannelEstimationParticleAddon.h"
 
-#include <Particle.h>
-#include <WithChannelEstimationParticleAddon.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-class ParticleWithChannelEstimation : public Particle, public WithChannelEstimationParticleAddon
+WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(ChannelMatrixEstimator *channelMatrixEstimator,uint trajectorylength):_channelMatrixEstimators(1),_estimatedChannelMatrices(1,vector<MatrixXd>(trajectorylength))
 {
-public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
-    
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
-    
-    ParticleWithChannelEstimation *clone();
+    _channelMatrixEstimators[0] = channelMatrixEstimator;
+}
 
-};
+WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,uint trajectorylength):_channelMatrixEstimators(channelMatrixEstimators),_estimatedChannelMatrices(channelMatrixEstimators.size(),vector<MatrixXd>(trajectorylength))
+{
+}
 
-#endif
+WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon):_estimatedChannelMatrices(withChannelEstimationParticleAddon._estimatedChannelMatrices),_channelMatrixEstimators(withChannelEstimationParticleAddon._channelMatrixEstimators.size())
+{
+    for(uint i=0;i<_channelMatrixEstimators.size();i++)
+        _channelMatrixEstimators[i] = withChannelEstimationParticleAddon._channelMatrixEstimators[i]->clone();
+}
+
+WithChannelEstimationParticleAddon::~WithChannelEstimationParticleAddon()
+{
+    for(uint i=0;i<_channelMatrixEstimators.size();i++)
+        delete _channelMatrixEstimators[i];   
+}
