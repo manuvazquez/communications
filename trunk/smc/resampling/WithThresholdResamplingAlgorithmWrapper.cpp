@@ -23,9 +23,6 @@
 
 WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper(ResamplingAlgorithm *resamplingAlgorithm,double threshold): ResamplingAlgorithm(resamplingAlgorithm->GetResamplingCriterion()),_threshold(threshold),_realResamplingAlgorithm(resamplingAlgorithm)
 {
-	#ifdef DEBUG
-		cout << "Constructor" << endl;
-	#endif
 }
 
 WithThresholdResamplingAlgorithmWrapper* WithThresholdResamplingAlgorithmWrapper::clone() const
@@ -42,29 +39,30 @@ WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper
 {
 }
 
-tVector WithThresholdResamplingAlgorithmWrapper::FlattenWeights(const tVector &weights, double threshold) const
+// eigen
+VectorXd WithThresholdResamplingAlgorithmWrapper::FlattenWeights(const VectorXd &weights, double threshold) const
 {
-	double remainingWeight = 0.0;
-	int nParticlesOverThreshold = 0;
+    double remainingWeight = 0.0;
+    int nParticlesOverThreshold = 0;
 
-	tVector newWeights = weights;
+    VectorXd newWeights = weights;
 
-	for(int iWeight=0;iWeight<weights.size();iWeight++)
-		if(newWeights(iWeight)>=threshold)
-		{
-			nParticlesOverThreshold++;
-			remainingWeight += (newWeights(iWeight) - threshold);
-			newWeights(iWeight) = threshold;
-		}
+    for(int iWeight=0;iWeight<weights.size();iWeight++)
+        if(newWeights(iWeight)>=threshold)
+        {
+            nParticlesOverThreshold++;
+            remainingWeight += (newWeights(iWeight) - threshold);
+            newWeights(iWeight) = threshold;
+        }
 
-	if(nParticlesOverThreshold > 0)
-	{
-		double weightToAddToEachParticle = remainingWeight/double(weights.size() - nParticlesOverThreshold);
+    if(nParticlesOverThreshold > 0)
+    {
+        double weightToAddToEachParticle = remainingWeight/double(weights.size() - nParticlesOverThreshold);
 
-		for(int iWeight=0;iWeight<weights.size();iWeight++)
-			if(newWeights(iWeight) < threshold)
-				newWeights(iWeight) += weightToAddToEachParticle;
-	}
+        for(int iWeight=0;iWeight<weights.size();iWeight++)
+            if(newWeights(iWeight) < threshold)
+                newWeights(iWeight) += weightToAddToEachParticle;
+    }
 
-	return newWeights;
+    return newWeights;
 }

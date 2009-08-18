@@ -37,7 +37,7 @@
 class Particle{
 protected:
     double _weight;
-    tMatrix _symbolVectors;
+    MatrixXd _symbolVectors;
 public:
     Particle(double weight,int symbolVectorLength,int nTimeInstants);
     virtual ~Particle();
@@ -51,37 +51,40 @@ public:
     double getWeight() const { return _weight;}
     void setWeight(double weight) { _weight = weight;}
 
-    tMatrix getAllSymbolVectors() const { return _symbolVectors;}
+    tMatrix getAllSymbolVectors() const { return Util::eigen2lapack(_symbolVectors);}
     
-    tVector getSymbolVector(int n) const { return _symbolVectors.col(n);}
-    VectorXd getSymbolVector_eigen(int n) const { return Util::lapack2eigen(_symbolVectors).col(n);}
+    tVector getSymbolVector(int n) const
+    { 
+        VectorXd aux = _symbolVectors.col(n);
+        return Util::eigen2lapack(aux);
+    }
+    VectorXd getSymbolVector_eigen(int n) const { return _symbolVectors.col(n);}
     
-    void setSymbolVector(int n,const tVector &v) { _symbolVectors.col(n).inject(v);}
-    void setSymbolVector(int n,const VectorXd &v) { _symbolVectors.col(n).inject(Util::eigen2lapack(v));}
+    void setSymbolVector(int n,const tVector &v) { _symbolVectors.col(n) = Util::lapack2eigen(v);}
+    void setSymbolVector(int n,const VectorXd &v) { _symbolVectors.col(n) = v;}
     void setSymbolVector(int n,const std::vector<tSymbol> &v)
     {
         for(int i=0;i<_symbolVectors.rows();i++)
             _symbolVectors(i,n) = v[i];
     }
 
-    tMatrix getSymbolVectors(const tRange &range) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),range);}
-    tMatrix getSymbolVectors(int a,int b) const { return _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
-    MatrixXd getSymbolVectors() { return Util::lapack2eigen(_symbolVectors);}
+    tMatrix getSymbolVectors(const tRange &range) const { return Util::eigen2lapack(_symbolVectors)(tRange(0,_symbolVectors.rows()-1),range);}
+    tMatrix getSymbolVectors(int a,int b) const { return Util::eigen2lapack(_symbolVectors)(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
+    MatrixXd getSymbolVectors() { return _symbolVectors;}
 
     void setSymbolVectors(const tRange &range,const tMatrix &symbolVectors)
     {
-        _symbolVectors(tRange(0,_symbolVectors.rows()-1),range).inject(symbolVectors);
+        setSymbolVectors(range.start(),range.end()+1,Util::lapack2eigen(symbolVectors));
     }
 
     void setSymbolVectors(int a,int b,const tMatrix &symbolVectors)
     {
-        _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b)).inject(symbolVectors);
+        setSymbolVectors(a,b+1,Util::lapack2eigen(symbolVectors));
     }
 
     void setSymbolVectors(int a,int b,const MatrixXd &symbolVectors)
     {
-//         _symbolVectors.block(0,a,_symbolVectors.rows(),b-a) = Util::eigen2lapack(symbolVectors);
-        _symbolVectors(tRange(0,_symbolVectors.rows()-1),tRange(a,b-1)).inject(Util::eigen2lapack(symbolVectors));
+        _symbolVectors.block(0,a,_symbolVectors.rows(),b-a) = symbolVectors;
     }
 
     void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}

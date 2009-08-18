@@ -93,6 +93,7 @@ public:
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> nMax(int n,const tVector &v);
+    static std::vector<int> nMax(int n,const VectorXd &v); // eigen
     static tMatrix flipLR(const tMatrix &A);
     static tMatrix sign(const tMatrix &A);
     static MatrixXd lapack2eigen(const tMatrix &A);

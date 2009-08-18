@@ -107,7 +107,7 @@ void PSPBasedSMCAlgorithm::process(const tMatrix& observations, vector< double >
 		} // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
 		// a vector of size the number of generated candidates is declared...
-		tVector weights(iCandidate);
+		VectorXd weights(iCandidate);
 
 		// ...to store their weights
 		for(int i=0;i<iCandidate;i++)

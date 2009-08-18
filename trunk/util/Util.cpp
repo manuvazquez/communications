@@ -872,6 +872,33 @@ vector<int> Util::nMax(int n,const tVector &v)
 
     return res;
 }
+
+vector<int> Util::nMax(int n,const VectorXd &v)
+{
+    // a vector of length the minimum between the size of the vector and n is created
+    vector<int> res(n>v.size()?v.size():n);
+
+    vector<bool> alreadySelected(v.size(),false);
+
+    for(uint iRes=0;iRes<res.size();iRes++)
+    {
+        int index = 0;
+        while(alreadySelected[index])
+            index++;
+        double max = v(index);
+        for(int i=index+1;i<v.size();i++)
+            if(!alreadySelected[i] && v(i)>max)
+            {
+                max = v(i);
+                index = i;
+            }
+        res[iRes] = index;
+        alreadySelected[index] = true;
+    }
+
+    return res;
+}
+
 tMatrix Util::flipLR(const tMatrix &A)
 {
     tMatrix res(A.rows(),A.cols());

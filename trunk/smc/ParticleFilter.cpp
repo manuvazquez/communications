@@ -158,7 +158,7 @@ int ParticleFilter::iBestParticle() const
 
 void ParticleFilter::printWeights() const
 {
-    tVector weights = getWeightsVector();
+    VectorXd weights = getWeightsVector();
     
     for(uint i=0;i<_nParticles;i++)
         cout << i << "\t" << weights(i) << endl;

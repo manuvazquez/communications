@@ -24,7 +24,7 @@
 
 bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
 {
-    tVector weigths = particleFilter->getWeightsVector();
+    VectorXd weigths = particleFilter->getWeightsVector();
 
     if(_resamplingCriterion.resamplingNeeded(weigths))
     {

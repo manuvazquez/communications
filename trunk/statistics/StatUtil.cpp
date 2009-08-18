@@ -141,6 +141,37 @@ vector<int> StatUtil::discrete_rnd(int nSamples,const tVector &probabilities,Ran
     return res;
 }
 
+// eigen
+vector<int> StatUtil::discrete_rnd(int nSamples,const VectorXd &probabilities,Random &randomGenerator)
+{
+    int i,j;
+    double uniform;
+
+    VectorXd normalizedProbabilities = Util::normalize(probabilities);
+    int nProbabilities = probabilities.size();
+
+    double *distributionFunction = new double[nProbabilities];
+    distributionFunction[0] = normalizedProbabilities(0);
+    for(i=1;i<nProbabilities;i++)
+           distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
+
+    vector<int> res(nSamples);
+
+    for(i=0;i<nSamples;i++)
+    {
+        uniform = randomGenerator.rand();
+        j=0;
+        while(uniform>distributionFunction[j])
+            j++;
+        res[i] = j;
+    }
+
+    // memory release
+    delete[] distributionFunction;
+
+    return res;
+}
+
 tMatrix StatUtil::randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
 {
     tMatrix res(rows,cols);
@@ -313,7 +344,8 @@ double StatUtil::mean(const tMatrix &A)
     return sum/(double)(A.rows()*A.cols());
 }
 
-vector<int> StatUtil::withoutReplacementSampling(int nSamples,const tVector &probabilities,Random &randomGenerator)
+// eigen
+vector<int> StatUtil::withoutReplacementSampling(int nSamples,const VectorXd &probabilities,Random &randomGenerator)
 {
 //     int i,j;
     double uniform;
@@ -328,7 +360,7 @@ vector<int> StatUtil::withoutReplacementSampling(int nSamples,const tVector &pro
         return res;
     }
 
-    tVector normalizedProbabilities = Util::normalize(probabilities);
+    VectorXd normalizedProbabilities = Util::normalize(probabilities);
 
     bool **distributionFunctionActiveOperands;
     distributionFunctionActiveOperands = new bool*[nProbabilities];
@@ -374,7 +406,8 @@ vector<int> StatUtil::withoutReplacementSampling(int nSamples,const tVector &pro
     return res;
 }
 
-inline double StatUtil::computeFromActiveOperands(const tVector &probabilities,bool *activeOperands)
+// eigen
+inline double StatUtil::computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands)
 {
     double res = 0.0;
     for(int i=0;i<probabilities.size();i++)

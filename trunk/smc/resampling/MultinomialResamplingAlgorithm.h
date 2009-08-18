@@ -34,7 +34,7 @@ public:
 
 	virtual MultinomialResamplingAlgorithm* clone() const;
 
-	std::vector<int> ObtainIndexes(int n,const tVector &weights) const
+	std::vector<int> ObtainIndexes(int n,const VectorXd &weights) const
 	{
 		return StatUtil::discrete_rnd(n,weights);
 	}

@@ -32,7 +32,7 @@ public:
 
     virtual BestParticlesResamplingAlgorithm* clone() const;
 
-    virtual std::vector< int > ObtainIndexes(int n, const tVector& weights) const
+    virtual std::vector< int > ObtainIndexes(int n, const VectorXd& weights) const
     {
     	return Util::nMax(n,weights);
     }

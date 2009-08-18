@@ -28,7 +28,7 @@
 class WithThresholdResamplingAlgorithmWrapper : public ResamplingAlgorithm
 {
 private:
-	tVector FlattenWeights(const tVector &weights, double threshold) const;
+    VectorXd FlattenWeights(const VectorXd &weights, double threshold) const; // eigen
 protected:
 	double _threshold;
 	ResamplingAlgorithm *_realResamplingAlgorithm;
@@ -41,7 +41,7 @@ public:
 
     WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper);
 
-	std::vector<int> ObtainIndexes(int n,const tVector &weights) const
+	std::vector<int> ObtainIndexes(int n,const VectorXd &weights) const
 	{
 		return _realResamplingAlgorithm->ObtainIndexes(n,FlattenWeights(weights,_threshold));
 	}

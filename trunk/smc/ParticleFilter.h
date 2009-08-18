@@ -55,9 +55,9 @@ public:
         _particles[_nParticles++] = particle;
     }
 
-    tVector getWeightsVector() const
+    VectorXd getWeightsVector() const
     {
-        tVector weights(_nParticles);
+        VectorXd weights(_nParticles);
         for(uint i=0;i<_nParticles;i++)
             weights(i) = _particles[i]->getWeight();
         return weights;

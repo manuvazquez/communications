@@ -35,9 +35,9 @@ private:
 public:
     ResamplingCriterion(double resamplingRatio);
 
-	bool resamplingNeeded(tVector weights,std::vector<int> indexes);
+	bool resamplingNeeded(VectorXd weights,std::vector<int> indexes);
 
-	bool resamplingNeeded(tVector weights)
+	bool resamplingNeeded(VectorXd weights)
 	{
 		int nParticles = weights.size();
 		std::vector<int> indexes(nParticles);

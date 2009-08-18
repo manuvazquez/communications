@@ -172,7 +172,7 @@ void MLSDmAlgorithm::process(const tMatrix& observations, vector< double > noise
         }
 
         // a vector of size the number of generated candidates is declared...
-        tVector weights(iCandidate);
+        VectorXd weights(iCandidate);
 
         // ...to store their weights
         for(int i=0;i<iCandidate;i++)
