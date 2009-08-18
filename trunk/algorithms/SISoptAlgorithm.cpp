@@ -48,7 +48,7 @@ void SISoptAlgorithm::process(const tMatrix& observations, vector< double > nois
 	{
 		for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
 			involvedSymbolVectors(rAllSymbolRows,mMinus1FirstColumns).inject(processedParticle->getSymbolVectors(mMinus1PrecedentColumns));

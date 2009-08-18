@@ -56,7 +56,7 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 #ifdef PRINT_INFO
             cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << endl;
 #endif      
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
 			// the m-1 already detected symbol vectors are copied into the matrix:
             smoothingSymbolVectors.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors().block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder-1);
@@ -91,8 +91,6 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 					{
 
 						// the likelihood is computed and accumulated
-//                         VectorXd currentObs = observations.col(iObservationToBeProcessed+iSmoothingLag);
-//                         MatrixXd symbVecs = smoothingSymbolVectors.block(0,iSmoothingLag,_nInputs,_channelOrder);
                         auxLikelihoodsProd *= channelEstimatorClone->likelihood(observations.col(iObservationToBeProcessed+iSmoothingLag),smoothingSymbolVectors.block(0,iSmoothingLag,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed+iSmoothingLag]);
 
 						// a step in the Kalman Filter

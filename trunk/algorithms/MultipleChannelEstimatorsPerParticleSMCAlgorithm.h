@@ -45,7 +45,7 @@ protected:
 
     bool _randomParticlesInitilization;
 
-    virtual ParticleFilter* GetParticleFilterPointer() = 0;
+    virtual ParticleFilter* getParticleFilterPointer() = 0;
     virtual void initializeParticles() = 0;
     virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
     virtual int BestChannelOrderIndex(int iBestParticle) = 0;

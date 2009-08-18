@@ -36,7 +36,7 @@ public:
 protected:
     virtual void fillFirstEstimatedChannelMatrix(int iParticle, tMatrix& firstEstimatedChannelMatrix) const
     {
-    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (_particleFilter->getParticle(iParticle)->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
+    	firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (dynamic_cast<ParticleWithChannelEstimationAndLinearDetection *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
     }
 
 };

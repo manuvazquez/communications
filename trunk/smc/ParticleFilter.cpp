@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new ParticleWithChannelEstimation*[nParticles])
+ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new Particle*[nParticles])
 {
     for(uint i=0;i<_capacity;i++)
     {
@@ -56,7 +56,7 @@ void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vecto
 
     int nParticlesToBeResampled = indexes.size();
 
-    ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_capacity];
+    Particle **resParticles = new Particle*[_capacity];
 
     // the particles given by indexes are resampled
     for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
@@ -95,7 +95,7 @@ void ParticleFilter::keepParticles(vector<int> indexes)
     if(indexes.size()>_capacity)
         throw RuntimeException("ParticleFilter::KeepParticles: the number of selected particles is bigger than the number of particles in the filter.");
 
-    ParticleWithChannelEstimation **resParticles = new ParticleWithChannelEstimation*[_capacity];
+    Particle **resParticles = new Particle*[_capacity];
 
     vector<bool> particleNeeded(_nParticles,false);
     for(uint iParticle=0;iParticle<indexes.size();iParticle++)

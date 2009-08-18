@@ -20,20 +20,24 @@
 #ifndef PARTICLEWITHCHANNELESTIMATIONANDACTIVEUSERS_H
 #define PARTICLEWITHCHANNELESTIMATIONANDACTIVEUSERS_H
 
-#include <ParticleWithChannelEstimation.h>
+#include <Particle.h>
+#include <WithChannelEstimationParticleAddon.h>
 #include <WithActiveUsersParticleAddon.h>
 
 /**
+It
+
 	@author Manu <manu@rustneversleeps>
 */
-class ParticleWithChannelEstimationAndActiveUsers : public ParticleWithChannelEstimation, public WithActiveUsersParticleAddon
+class ParticleWithChannelEstimationAndActiveUsers : public Particle, public WithChannelEstimationParticleAddon, public WithActiveUsersParticleAddon
 {
 public:
     ParticleWithChannelEstimationAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
 
-    ~ParticleWithChannelEstimationAndActiveUsers();
-
-    ParticleWithChannelEstimationAndActiveUsers* clone();
+    ParticleWithChannelEstimationAndActiveUsers *clone()
+    {
+        return new ParticleWithChannelEstimationAndActiveUsers(*this);
+    }
 
 };
 

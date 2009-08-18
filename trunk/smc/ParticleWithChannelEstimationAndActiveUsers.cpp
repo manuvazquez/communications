@@ -19,18 +19,6 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndActiveUsers.h"
 
-ParticleWithChannelEstimationAndActiveUsers::ParticleWithChannelEstimationAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): ParticleWithChannelEstimation(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimator), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
+ParticleWithChannelEstimationAndActiveUsers::ParticleWithChannelEstimationAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
 {
 }
-
-
-ParticleWithChannelEstimationAndActiveUsers::~ParticleWithChannelEstimationAndActiveUsers()
-{
-}
-
-
-ParticleWithChannelEstimationAndActiveUsers* ParticleWithChannelEstimationAndActiveUsers::clone()
-{
-    return new ParticleWithChannelEstimationAndActiveUsers(*this);
-}
-

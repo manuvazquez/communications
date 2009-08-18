@@ -75,7 +75,7 @@ void PSPBasedSMCAlgorithm::process(const tMatrix& observations, vector< double >
 		// the candidates from all the particles are generated
 		for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
 			symbolVectorsMatrix(rAllSymbolRows,rmMinus1FirstColumns).inject(processedParticle->getSymbolVectors(rmMinus1PrecedentColumns));
 
@@ -136,7 +136,7 @@ void PSPBasedSMCAlgorithm::process(const tMatrix& observations, vector< double >
 		// every surviving particle is modified according to what it says its corresponding candidate
 		for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 		{
-			ParticleWithChannelEstimation *processedParticle = _particleFilter->getParticle(iParticle);
+			ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
 			// sampled symbols are copied into the corresponding particle
 			processedParticle->setSymbolVector(iObservationToBeProcessed,particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix.col(_channelOrder-1));

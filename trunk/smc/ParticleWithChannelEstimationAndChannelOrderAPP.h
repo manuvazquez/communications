@@ -20,27 +20,24 @@
 #ifndef PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDERAPP_H
 #define PARTICLEWITHCHANNELESTIMATIONANDCHANNELORDERAPP_H
 
-#include <ParticleWithChannelEstimation.h>
-
-/**
-	@author Manu <manu@rustneversleeps>
-*/
-
-#include <vector>
+#include <Particle.h>
+#include <WithChannelEstimationParticleAddon.h>
 #include <WithChannelOrderAppParticleAddon.h>
 
-class ParticleWithChannelEstimationAndChannelOrderAPP : public ParticleWithChannelEstimation, public WithChannelOrderAppParticleAddon
+/**
+It
+
+	@author Manu <manu@rustneversleeps>
+*/
+class ParticleWithChannelEstimationAndChannelOrderAPP : public Particle, public WithChannelEstimationParticleAddon, public WithChannelOrderAppParticleAddon
 {
-// private:
-// 	std::vector<double> _channelOrderAPP;
 public:
     ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
 
-// 	void setChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-// 	double getChannelOrderAPP(int n) { return _channelOrderAPP[n];}
-
-	ParticleWithChannelEstimationAndChannelOrderAPP *clone();
-	ParticleWithChannelEstimationAndChannelOrderAPP(const ParticleWithChannelEstimationAndChannelOrderAPP& particle);
+    ParticleWithChannelEstimationAndChannelOrderAPP* clone()
+    {
+        return new ParticleWithChannelEstimationAndChannelOrderAPP(*this);
+    }
 };
 
 #endif

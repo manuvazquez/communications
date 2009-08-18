@@ -23,7 +23,7 @@
   </general>
   <kdevautoproject>
     <general>
-      <activetarget>com/com</activetarget>
+      <activetarget>smc/libsmc.a</activetarget>
       <useconfiguration>optimized</useconfiguration>
     </general>
     <run>

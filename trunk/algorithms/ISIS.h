@@ -34,7 +34,7 @@ class ISIS : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 protected:
 	ParticleFilter _particleFilter;
 
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
+    virtual ParticleFilter* getParticleFilterPointer() {return &_particleFilter;}
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);
 

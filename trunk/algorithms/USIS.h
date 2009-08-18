@@ -51,7 +51,7 @@ protected:
     tRange _rAllObservationRows;
 	bool _processDoneExternally;
 
-    virtual ParticleFilter* GetParticleFilterPointer() {return &_particleFilter;}
+    virtual ParticleFilter* getParticleFilterPointer() {return &_particleFilter;}
 //     vector<vector<tMatrix> > estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
     virtual void initializeParticles();
     virtual void process(const tMatrix& observations, vector< double > noiseVariances);

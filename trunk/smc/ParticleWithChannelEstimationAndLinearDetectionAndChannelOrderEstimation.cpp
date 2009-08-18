@@ -19,15 +19,6 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation.h"
 
-ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator): ParticleWithChannelEstimationAndLinearDetection(weight, symbolVectorLength, nTimeInstants, channelMatrixEstimators, linearDetectors), WithChannelOrderEstimationParticleAddon(channelOrderEstimator)
+ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants), WithLinearDetectionParticleAddon(linearDetectors), WithChannelOrderEstimationParticleAddon(channelOrderEstimator)
 {
-}
-
-ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(const ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation& particle):ParticleWithChannelEstimationAndLinearDetection(particle),WithChannelOrderEstimationParticleAddon(particle)
-{
-}
-
-ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation::clone()
-{
-	return new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(*this);
 }

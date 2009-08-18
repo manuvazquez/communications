@@ -20,29 +20,21 @@
 #ifndef PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
 #define PARTICLEWITHCHANNELESTIMATIONANDLINEARDETECTION_H
 
-#include <ParticleWithChannelEstimation.h>
+#include <Particle.h>
+#include <WithChannelEstimationParticleAddon.h>
+#include <WithLinearDetectionParticleAddon.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-
-#include <LinearDetector.h>
-#include <WithLinearDetectionParticleAddon.h>
-
-class ParticleWithChannelEstimationAndLinearDetection : public ParticleWithChannelEstimation, public WithLinearDetectionParticleAddon
+class ParticleWithChannelEstimationAndLinearDetection : public Particle, public WithChannelEstimationParticleAddon, public WithLinearDetectionParticleAddon
 {
-protected:
-// 	LinearDetector *_linearDetector;
 public:
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector *linearDetector);
-
+    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
+    
     ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
-
-	ParticleWithChannelEstimationAndLinearDetection(const ParticleWithChannelEstimationAndLinearDetection &particle);
-
-
-	ParticleWithChannelEstimationAndLinearDetection *clone();
-
+    
+    ParticleWithChannelEstimationAndLinearDetection *clone();
 };
 
 #endif

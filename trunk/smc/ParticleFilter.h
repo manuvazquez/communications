@@ -34,7 +34,7 @@ class ParticleFilter{
 protected:
     const uint _capacity;
     uint _nParticles;
-    ParticleWithChannelEstimation **_particles;
+    Particle **_particles;
 public:
 
     ParticleFilter(int nParticles);
@@ -42,7 +42,7 @@ public:
 
     void clear();
 
-    ParticleWithChannelEstimation *getParticle(int n) const { return _particles[n];}
+    Particle *getParticle(int n) const { return _particles[n];}
     virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
     /**
      *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
@@ -50,7 +50,7 @@ public:
      */
     virtual void keepParticles(std::vector<int> resamplingIndexes);
 
-    virtual void addParticle(ParticleWithChannelEstimation *particle)
+    virtual void addParticle(Particle *particle)
     {
         _particles[_nParticles++] = particle;
     }
@@ -89,7 +89,7 @@ public:
 
     int capacity() const { return _capacity;}
     int nParticles() const { return _nParticles;}
-    ParticleWithChannelEstimation *getBestParticle() const { return _particles[iBestParticle()]; }
+    Particle *getBestParticle() const { return _particles[iBestParticle()]; }
     int iBestParticle() const;
     void printWeights() const;
 };
