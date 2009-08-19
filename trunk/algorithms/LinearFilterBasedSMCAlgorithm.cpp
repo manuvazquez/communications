@@ -99,7 +99,7 @@ void LinearFilterBasedSMCAlgorithm::process(const tMatrix &observations, vector<
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
-            ParticleWithChannelEstimationAndLinearDetection *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (_particleFilter->getParticle(iParticle));
+//             ParticleWithChannelEstimationAndLinearDetection *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetection *> (_particleFilter->getParticle(iParticle));
 
             // already estimated channel matrices are stored in a vector in order to stack them
             for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)

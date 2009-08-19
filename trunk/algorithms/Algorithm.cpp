@@ -95,8 +95,7 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     return mse/(double)windowSize;
 }
 
-
-tMatrix Algorithm::channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d)
+MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d)
 {
     if((matrices[0].cols() % m)!=0)
         throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: incorrect number of columns in the matrices.");
@@ -106,22 +105,19 @@ tMatrix Algorithm::channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices
     if(matrices.size()< nMatricesToStack)
         throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: insufficient number of matrices.");
 
-    tMatrix res(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
-    res = 0.0;
+    MatrixXd res = MatrixXd::Zero(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
 
     int iStartingFromZero;
     for(int i=start;i<=d;i++)
     {
         iStartingFromZero = i - start;
-        tRange rowsRange(iStartingFromZero*_nOutputs,(iStartingFromZero+1)*_nOutputs-1);
-        tRange colsRange(iStartingFromZero*_nInputs,iStartingFromZero*_nInputs+_nInputs*m-1);
-        res(rowsRange,colsRange).inject(matrices[i]);
+        res.block(iStartingFromZero*_nOutputs,iStartingFromZero*_nInputs,_nOutputs,_nInputs*m) = matrices[i];
     }
 
     return res;
 }
 
-tVector Algorithm::substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int e,const tVector &observations,const tMatrix &involvedSymbolVectors)
+VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
 {
     if(matrices.size()!=static_cast<uint> (c+e+1))
       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
@@ -133,36 +129,13 @@ tVector Algorithm::substractKnownSymbolsContribution(const vector<tMatrix> &matr
          throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     int i;
-    tRange rAll;
-    tMatrix substractingChannelMatrix = LaGenMatDouble::zeros(_nOutputs*(c+e+1),_nInputs*(m-1+c));
-
-    tRange rRows(0,_nOutputs-1);
-    tRange rCols(0,_nInputs*m-1);
+    MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(c+e+1),_nInputs*(m-1+c));
 
     for(i=0;i<c;i++)
-    {
-        substractingChannelMatrix(rRows,rCols).inject(matrices[i]);
+        substractingChannelMatrix.block(i*_nOutputs,i*_nInputs,_nOutputs,_nInputs*m) = matrices[i];
 
-        rRows = rRows + _nOutputs;
-        rCols = rCols + _nInputs;
-    }
-
-    tRange rSourceCols(0,(m-1)*_nInputs-1);
-    int rSourceColsEnd = (m-1)*_nInputs-1;
     for(i=c;i<c+m-1;i++)
-    {
-      rCols.set(_nInputs*i,(c+m-1)*_nInputs-1);
-      substractingChannelMatrix(rRows,rCols).inject(matrices[i](rAll,rSourceCols));
+        substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(c+m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-(i-c))*_nInputs);
 
-      rRows = rRows + _nOutputs;
-      rSourceColsEnd -= _nInputs;
-      rSourceCols.set(0,rSourceColsEnd);
-    }
-
-    // substracting built channel matrix
-    tVector stackedObservationsMinus = observations;
-    // stackedObservationsMinus = stackedObservationsMinus (stackedObservations) - stackedChannelMatrixSubstract * Util::toVector(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors),columnwise)
-    Blas_Mat_Vec_Mult(substractingChannelMatrix,Util::toVector(involvedSymbolVectors,columnwise),stackedObservationsMinus,-1.0,1.0);
-
-    return stackedObservationsMinus;
+    return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
 }

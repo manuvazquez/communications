@@ -58,7 +58,12 @@ public:
     virtual ~LinearDetector() {}
     int channelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
-    void stateStepsFromObservationsSequence(const tMatrix &observations,int smoothingLag,int iFrom,int iTo);
+    
+    void stateStepsFromObservationsSequence(const tMatrix &observations,int smoothingLag,int iFrom,int iTo)
+    {
+        stateStepsFromObservationsSequence(Util::lapack2eigen(observations),smoothingLag,iFrom,iTo);
+    }
+    void stateStepsFromObservationsSequence(const MatrixXd &observations,int smoothingLag,int iFrom,int iTo);
 };
 
 #endif

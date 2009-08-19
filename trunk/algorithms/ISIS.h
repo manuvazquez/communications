@@ -36,14 +36,23 @@ protected:
 
     virtual ParticleFilter* getParticleFilterPointer() {return &_particleFilter;}
     virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+    
+    virtual void process(const tMatrix& observations, vector<double> noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void process(const MatrixXd& observations, vector<double> noiseVariances);
 
 	// it's never gonna be called
     int BestChannelOrderIndex(int iBestParticle) { return 0;}
 public:
     ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
-	vector<tMatrix> getEstimatedChannelMatrices();
+    vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    vector<MatrixXd> getEstimatedChannelMatrices_eigen();
 };
 
 #endif

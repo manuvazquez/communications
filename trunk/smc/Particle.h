@@ -70,6 +70,7 @@ public:
 
     tMatrix getSymbolVectors(const tRange &range) const { return Util::eigen2lapack(_symbolVectors)(tRange(0,_symbolVectors.rows()-1),range);}
     tMatrix getSymbolVectors(int a,int b) const { return Util::eigen2lapack(_symbolVectors)(tRange(0,_symbolVectors.rows()-1),tRange(a,b));}
+    MatrixXd getSymbolVectors_eigen(int a,int b) const { return _symbolVectors.block(0,a,_symbolVectors.rows(),b-a+1);}
     MatrixXd getSymbolVectors() { return _symbolVectors;}
 
     void setSymbolVectors(const tRange &range,const tMatrix &symbolVectors)

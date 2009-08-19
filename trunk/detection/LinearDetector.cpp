@@ -23,15 +23,8 @@ LinearDetector::LinearDetector(int rows,int cols,double alphabetVariance):_chann
 {
 }
 
-void LinearDetector::stateStepsFromObservationsSequence(const tMatrix &observations,int smoothingLag,int iFrom,int iTo)
+void LinearDetector::stateStepsFromObservationsSequence(const MatrixXd &observations,int smoothingLag,int iFrom,int iTo)
 {
-    tRange rAllObservationRows;
-    tRange rSmoothingRange(iFrom,iFrom+smoothingLag);
     for(int i=iFrom;i<iTo;i++)
-    {
-        tVector stackedObservationsVector = Util::toVector(observations(rAllObservationRows,rSmoothingRange),columnwise);
-        stateStep(stackedObservationsVector);
-        rSmoothingRange = rSmoothingRange + 1;
-    }
+        stateStep(Util::toVector(observations.block(0,i,observations.rows(),smoothingLag+1),columnwise));
 }
-

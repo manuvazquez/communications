@@ -67,17 +67,34 @@ public:
     double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
-    tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors);
+    tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors)
+    {
+        return Util::eigen2lapack(substractKnownSymbolsContribution(Util::lapack2eigen(matrices),m,c,d,Util::lapack2eigen(observations),Util::lapack2eigen(symbolVectors)));
+    }
+    VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int d,const VectorXd &observations,const MatrixXd &symbolVectors);
 
-    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d);
+    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d)
+    {
+        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,start,d));
+    }
     tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m)
     {
-        return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
+        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,0,matrices.size()-1));
     }
     tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int d)
     {
-        return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
+        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,0,d));
     }
+    
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d);
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m)
+    {
+        return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
+    }
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int d)
+    {
+        return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
+    }    
 };
 
 #endif

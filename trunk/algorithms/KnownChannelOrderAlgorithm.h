@@ -44,6 +44,7 @@ public:
 
 	using Algorithm::channelMatrices2stackedChannelMatrix;
 	tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}   
 };
 
 #endif

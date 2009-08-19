@@ -19,37 +19,31 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h"
 
-KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,ChannelMatrixEstimator* channelEstimator, tMatrix preamble,const tMatrix &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(Util::lapack2eigen(symbolVectors))
 {
 }
 
-KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::~KnownSymbolsKalmanBasedChannelEstimatorAlgorithm()
-{
-}
-
-void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
+void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
     _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
-    tRange rAllSymbolRows(0,_nInputs-1);
-
     for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
-    {
-        _estimatedChannelMatrices.push_back( _channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAllSymbolRows,tRange(iSymbolVector-_channelOrder+1,iSymbolVector)),noiseVariances[iSymbolVector]));
-    }
+        _estimatedChannelMatrices.push_back( _channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iSymbolVector]));
 }
 
-void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(tMatrix observations,vector<double> noiseVariances,tMatrix trainingSequence)
+void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,MatrixXd trainingSequence)
 {
     run(observations,noiseVariances);
 }
 
-tMatrix KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors()
+MatrixXd KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors_eigen()
 {
-    return tMatrix(0,0);
+    MatrixXd aux(1,1);
+    aux.resize(0,0);
+    return aux;
 }
 
-vector<tMatrix> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices()
+vector<MatrixXd> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices_eigen()
 {
     return _estimatedChannelMatrices;
 }

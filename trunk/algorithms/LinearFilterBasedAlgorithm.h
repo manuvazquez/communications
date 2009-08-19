@@ -32,12 +32,12 @@
 class LinearFilterBasedAlgorithm : public KnownChannelOrderAlgorithm
 {
 private:
-	void process(const tMatrix &observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 protected:
 	int _c,_d;
 	LinearDetector *_linearDetector;
-	tMatrix _detectedSymbolVectors;
-	tMatrix *_estimatedChannelMatrices;
+    MatrixXd _detectedSymbolVectors;
+    std::vector<MatrixXd> _estimatedChannelMatrices;
 	double _ARcoefficient;
 
     bool _substractContributionFromKnownSymbols;
@@ -47,11 +47,29 @@ public:
 
     ~LinearFilterBasedAlgorithm();
 
-    void run(tMatrix observations,vector<double> noiseVariances);
-    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+    virtual void run(tMatrix observations,vector<double> noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances);
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
-    tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> getEstimatedChannelMatrices();
+    virtual tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    virtual MatrixXd getDetectedSymbolVectors_eigen();
+    
+    virtual vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();     
 
 };
 
