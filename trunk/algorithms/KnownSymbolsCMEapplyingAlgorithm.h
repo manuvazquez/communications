@@ -30,13 +30,12 @@ class KnownSymbolsCMEapplyingAlgorithm : public CMEapplyingAlgorithm
 public:
     KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors);
 
-    ~KnownSymbolsCMEapplyingAlgorithm();
-
 protected:
-    tMatrix _symbolVectors;
+    MatrixXd _symbolVectors;
 
-    virtual std::vector< tMatrix > estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence);
-    virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence);
+
+    virtual std::vector<MatrixXd> estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const MatrixXd &observations,const vector<double> &noiseVariances,const MatrixXd& trainingSequence);
+    virtual MatrixXd detectedSymbolsForChannelOrder(uint iChannelOrder,const MatrixXd &observations,const vector<double> &noiseVariances,const MatrixXd& trainingSequence);
 
 };
 

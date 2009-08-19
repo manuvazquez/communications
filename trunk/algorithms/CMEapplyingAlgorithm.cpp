@@ -36,10 +36,9 @@ void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariance
     throw RuntimeException("CMEapplyingAlgorithm::Run (without training sequence) not implemented.");
 }
 
-void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
     int m,iTxAntenna,iRxAntenna,iDelay;
-    tRange rAll;
     tVector CMEs(_candidateOrders.size());
 
 #ifdef EXPORT_REAL_DATA
@@ -48,21 +47,23 @@ void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariance
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
     {
-        vector<tMatrix> estimatedChannelMatrices = estimatedChannelMatricesForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
-        tMatrix detectedSymbolVectors = detectedSymbolsForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
+        vector<MatrixXd> estimatedChannelMatrices = estimatedChannelMatricesForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
+        MatrixXd detectedSymbolVectors = detectedSymbolsForChannelOrder(iChannelOrder,observations,noiseVariances,trainingSequence);
 
-        tMatrix preambleDetectedSymbolVectors = Util::append(_preamble,detectedSymbolVectors);
+        MatrixXd preambleDetectedSymbolVectors(_preamble.rows(),_preamble.cols()+detectedSymbolVectors.cols());
+        
+        preambleDetectedSymbolVectors << Util::lapack2eigen(_preamble),detectedSymbolVectors;
 
         int nSymbolVectors = detectedSymbolVectors.cols();
         double variance = noiseVariances[detectedSymbolVectors.cols()-1];
 
         m = _candidateOrders[iChannelOrder];
 
-        tMatrix estimatedChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1];
+        MatrixXd estimatedChannelMatrix = estimatedChannelMatrices[estimatedChannelMatrices.size()-1];
 
-        vector<tVector> hs(_nOutputs,LaGenMatDouble::zeros(_nInputs*m,1));
+        vector<VectorXd> hs(_nOutputs,VectorXd::Zero(_nInputs*m,1));
 
-        tMatrix C(nSymbolVectors,_nInputs*m);
+        MatrixXd C(nSymbolVectors,_nInputs*m);
         for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
             for(iDelay=0;iDelay<m;iDelay++)
             {
@@ -77,35 +78,17 @@ void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariance
 
         // CME
         double CME = 0.0;
-        tRange rAllObservationsCols(_preamble.cols(),preambleDetectedSymbolVectors.cols()-1);
 
         for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
         {
-            // error = R
-            tVector error = observations(tRange(iRxAntenna),rAllObservationsCols);
-
-            // error = error - C * hs[iRxAntenna]
-            Blas_Mat_Vec_Mult(C,hs[iRxAntenna],error,-1.0,1.0);
+            VectorXd error = observations.block(iRxAntenna,_preamble.cols(),1,preambleDetectedSymbolVectors.cols()-_preamble.cols()) - C*hs[iRxAntenna];
 
             // CME += error'*error
-            CME += Blas_Dot_Prod(error,error);
+            CME += error.dot(error);
         }
         CME /= variance;
 
-        tMatrix CTransC(_nInputs*m,_nInputs*m);
-
-        //  CTransC = C'*C
-        Blas_Mat_Trans_Mat_Mult(C,C,CTransC);
-
-        // LU decomposition is applied: in CTransC wil now be U
-        tLongIntVector piv(_nInputs*m);
-        LUFactorizeIP(CTransC,piv);
-
-        double detCTransC = 1.0;
-        for(int iDiag=0;iDiag<CTransC.cols();iDiag++)
-            detCTransC *= CTransC(iDiag,iDiag);
-
-        CME += _nOutputs*log(fabs(detCTransC));
+        CME += _nOutputs*log(fabs((C.transpose()*C).determinant()));
         CME /= 2.0;
 
         CMEs(iChannelOrder) = CME;
@@ -115,13 +98,13 @@ void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariance
         _channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
 }
 
-tMatrix CMEapplyingAlgorithm::getDetectedSymbolVectors()
+MatrixXd CMEapplyingAlgorithm::getDetectedSymbolVectors_eigen()
 {
-    return tMatrix(0,0);
+    return MatrixXd(0,0);
 }
 
-vector<tMatrix> CMEapplyingAlgorithm::getEstimatedChannelMatrices()
+vector<MatrixXd> CMEapplyingAlgorithm::getEstimatedChannelMatrices_eigen()
 {
-    return vector<tMatrix>(0);
+    return vector<MatrixXd>(0);
 }
 

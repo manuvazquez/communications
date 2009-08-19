@@ -19,35 +19,22 @@
  ***************************************************************************/
 #include "KnownSymbolsCMEapplyingAlgorithm.h"
 
-KnownSymbolsCMEapplyingAlgorithm::KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsCMEapplyingAlgorithm::KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, const tMatrix &symbolVectors): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_symbolVectors(Util::lapack2eigen(symbolVectors))
 {
 }
 
-
-KnownSymbolsCMEapplyingAlgorithm::~KnownSymbolsCMEapplyingAlgorithm()
+std::vector<MatrixXd> KnownSymbolsCMEapplyingAlgorithm::estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const MatrixXd &observations,const vector<double> &noiseVariances,const MatrixXd& trainingSequence)
 {
-}
-
-
-std::vector< tMatrix > KnownSymbolsCMEapplyingAlgorithm::estimatedChannelMatricesForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence)
-{
-    tRange rAll;
-    vector<tMatrix> estimatedChannelMatrices;
+    vector<MatrixXd> estimatedChannelMatrices;
 
     // channel estimation
-    tRange rSymbolVectors(_preamble.cols()-_candidateOrders[iChannelOrder]+1,_preamble.cols());
     for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
-    {
-        estimatedChannelMatrices.push_back(_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]));
-        rSymbolVectors = rSymbolVectors + 1;
-    }
-
-    cout << "CME nuevo: la última detectada es" << endl << estimatedChannelMatrices[estimatedChannelMatrices.size()-1];
+        estimatedChannelMatrices.push_back(_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_candidateOrders[iChannelOrder]+1,_nInputs,_candidateOrders[iChannelOrder]),noiseVariances[iSymbolVector]));
 
     return estimatedChannelMatrices;
 }
 
-tMatrix KnownSymbolsCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder,const tMatrix &observations,const vector<double> &noiseVariances,const tMatrix& trainingSequence)
+MatrixXd KnownSymbolsCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder,const MatrixXd &observations,const vector<double> &noiseVariances,const MatrixXd& trainingSequence)
 {
-    return _symbolVectors(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));
+    return _symbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }

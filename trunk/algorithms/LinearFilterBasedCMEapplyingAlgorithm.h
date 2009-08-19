@@ -33,8 +33,8 @@ public:
     ~LinearFilterBasedCMEapplyingAlgorithm();
 
 protected:
-    virtual std::vector< tMatrix > estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);
-    virtual tMatrix detectedSymbolsForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence);
+    virtual std::vector<MatrixXd> estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector< double >& noiseVariances,const MatrixXd& trainingSequence);
+    virtual MatrixXd detectedSymbolsForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector< double >& noiseVariances,const MatrixXd& trainingSequence);
 
 private:
     vector<bool> _algorithmAlreadyExecuted;

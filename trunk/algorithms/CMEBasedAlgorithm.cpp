@@ -19,110 +19,89 @@
  ***************************************************************************/
 #include "CMEBasedAlgorithm.h"
 
-// #define EXPORT_REAL_DATA
+// #define IMPORT_REAL_DATA
 
-#ifdef EXPORT_REAL_DATA
+#ifdef IMPORT_REAL_DATA
 	extern MIMOChannel *realChannel;
 	extern tMatrix *realSymbols;
 	extern Noise *realNoise;
 #endif
 
-CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
+CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(Util::lapack2eigen(symbolVectors))
 {
 }
 
-void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
+void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-	int m,iTxAntenna,iRxAntenna,iDelay;
-	int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
-	tRange rAll;
-	tVector CMEs(_candidateOrders.size());
+    int m,iTxAntenna,iRxAntenna,iDelay;
+    int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
+    std::vector<double> CMEs(_candidateOrders.size());
 
-#ifdef EXPORT_REAL_DATA
-	tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
+#ifdef IMPORT_REAL_DATA
+    tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
 #endif
-	double variance = noiseVariances[_symbolVectors.cols()-1];
+    double variance = noiseVariances[_symbolVectors.cols()-1];
 
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-	{
-		m = _candidateOrders[iChannelOrder];
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+    {
+        m = _candidateOrders[iChannelOrder];
 
-		// channel estimation
-		tRange rSymbolVectors(_preamble.cols()-m+1,_preamble.cols());
-		for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
-		{
-			_channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors(rAll,rSymbolVectors),noiseVariances[iSymbolVector]);
-			rSymbolVectors = rSymbolVectors + 1;
-		}
+        // channel estimation
+        for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
+            _channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),noiseVariances[iSymbolVector]);
 
-		tMatrix estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
+        MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix_eigen();
 
-		vector<tVector> hs(_nOutputs,LaGenMatDouble::zeros(_nInputs*m,1));
+        vector<VectorXd> hs(_nOutputs,VectorXd::Zero(_nInputs*m,1));
 
-		tMatrix C(nSymbolVectors,_nInputs*m);
-		for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
-			for(iDelay=0;iDelay<m;iDelay++)
-			{
-				// symbols are transformed
-				for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
-					C(CmatrixRow,iTxAntenna*m+iDelay) = _symbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
+        MatrixXd C(nSymbolVectors,_nInputs*m);
+        for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
+            for(iDelay=0;iDelay<m;iDelay++)
+            {
+                // symbols are transformed
+                for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
+                    C(CmatrixRow,iTxAntenna*m+iDelay) = _symbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
 
-				// channel is transformed
-				for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
-					hs[iRxAntenna](iTxAntenna*m+iDelay) = estimatedChannelMatrix(iRxAntenna,iTxAntenna+(m-1-iDelay)*_nInputs);
-			}
+                // channel is transformed
+                for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
+                    hs[iRxAntenna](iTxAntenna*m+iDelay) = estimatedChannelMatrix(iRxAntenna,iTxAntenna+(m-1-iDelay)*_nInputs);
+            }
 
-		// CME
-		double CME = 0.0;
-		tRange rAllObservationsCols(_preamble.cols(),_symbolVectors.cols()-1);
-		for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
-		{
-			// error = R
-			tVector error = observations(tRange(iRxAntenna),rAllObservationsCols);
+        // CME
+        double CME = 0.0;
+        for(iRxAntenna=0;iRxAntenna<_nOutputs;iRxAntenna++)
+        {
+            VectorXd aux = observations.row(iRxAntenna).segment(_preamble.cols(),nSymbolVectors);
+            VectorXd error = aux - C*hs[iRxAntenna];
+            
+            // CME += error'*error
+            CME += error.dot(error);
+        }
+        CME /= variance;        
+        CME += _nOutputs*log(fabs((C.transpose()*C).determinant()));
+        CME /= 2.0;
 
-			// error = error - C * hs[iRxAntenna]
-			Blas_Mat_Vec_Mult(C,hs[iRxAntenna],error,-1.0,1.0);
+        CMEs[iChannelOrder] = CME;
+    } // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
-			// CME += error'*error
-			CME += Blas_Dot_Prod(error,error);
-		}
-		CME /= variance;
-
-		tMatrix CTransC(_nInputs*m,_nInputs*m);
-
-		//  CTransC = C'*C
-		Blas_Mat_Trans_Mat_Mult(C,C,CTransC);
-
-		// LU decomposition is applied: in CTransC wil now be U
-		tLongIntVector piv(_nInputs*m);
-		LUFactorizeIP(CTransC,piv);
-
-		double detCTransC = 1.0;
-		for(int iDiag=0;iDiag<CTransC.cols();iDiag++)
-			detCTransC *= CTransC(iDiag,iDiag);
-
-		CME += _nOutputs*log(fabs(detCTransC));
-		CME /= 2.0;
-
-		CMEs(iChannelOrder) = CME;
-	} // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		_channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
+    for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+        _channelOrderAPPs.row(iChannelOrder) = CMEs[iChannelOrder];
 }
 
-void CMEBasedAlgorithm::run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
-	run(observations,noiseVariances);
+    run(observations,noiseVariances);
 }
 
-tMatrix CMEBasedAlgorithm::getDetectedSymbolVectors()
+MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors_eigen()
 {
-	return tMatrix(0,0);
+    MatrixXd aux(1,1);
+    aux.resize(0,0);
+    return aux;
 }
 
-vector<tMatrix> CMEBasedAlgorithm::getEstimatedChannelMatrices()
+vector<MatrixXd> CMEBasedAlgorithm::getEstimatedChannelMatrices_eigen()
 {
-	return vector<tMatrix>(0);
+	return vector<MatrixXd>(0);
 }
 

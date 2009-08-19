@@ -32,26 +32,24 @@ LinearFilterBasedCMEapplyingAlgorithm::~LinearFilterBasedCMEapplyingAlgorithm()
         delete algorithms[iChannelOrder];
 }
 
-
-std::vector< tMatrix > LinearFilterBasedCMEapplyingAlgorithm::estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence)
+std::vector<MatrixXd> LinearFilterBasedCMEapplyingAlgorithm::estimatedChannelMatricesForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector< double >& noiseVariances,const MatrixXd& trainingSequence)
 {
     if(!_algorithmAlreadyExecuted[iChannelOrder])
     {
-        algorithms[iChannelOrder]->run(observations,noiseVariances,trainingSequence);
+        algorithms[iChannelOrder]->run(Util::eigen2lapack(observations),noiseVariances,Util::eigen2lapack(trainingSequence));
         _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[iChannelOrder]->getEstimatedChannelMatrices();
+    return Util::lapack2eigen(algorithms[iChannelOrder]->getEstimatedChannelMatrices());
 }
 
-tMatrix LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder, const tMatrix& observations, const vector< double >& noiseVariances,const tMatrix& trainingSequence)
+MatrixXd LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector< double >& noiseVariances,const MatrixXd& trainingSequence)
 {
     if(!_algorithmAlreadyExecuted[iChannelOrder])
     {
-        algorithms[iChannelOrder]->run(observations,noiseVariances,trainingSequence);
+        algorithms[iChannelOrder]->run(Util::eigen2lapack(observations),noiseVariances,Util::eigen2lapack(trainingSequence));
         _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[iChannelOrder]->getDetectedSymbolVectors();
+    return Util::lapack2eigen(algorithms[iChannelOrder]->getDetectedSymbolVectors());
 }
-
