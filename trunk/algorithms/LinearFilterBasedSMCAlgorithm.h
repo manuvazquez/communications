@@ -66,7 +66,12 @@ protected:
     int _c,_e;
 
     void initializeParticles();
-    void process(const tMatrix &observations, vector< double > noiseVariances);
+//     void process(const tMatrix &observations, vector< double > noiseVariances);
+    void process(const tMatrix &observations, vector<double> noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }
+    void process(const MatrixXd &observations, vector<double> noiseVariances);
 
     bool _substractContributionFromKnownSymbols;
 
@@ -76,7 +81,18 @@ protected:
         Util::add(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix(),StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance),firstEstimatedChannelMatrix,_ARcoefficient,1.0);
     }
 
-    virtual void beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence);
+    virtual void fillFirstEstimatedChannelMatrix(int iParticle,MatrixXd &firstEstimatedChannelMatrix) const
+    {
+        // firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
+        firstEstimatedChannelMatrix = _ARcoefficient*dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix_eigen() + StatUtil::randnMatrix_eigen(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance);
+        
+    }
+
+    virtual void beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence)
+    {
+        beforeInitializingParticles(Util::lapack2eigen(observations),Util::lapack2eigen(trainingSequence));
+    }
+    virtual void beforeInitializingParticles(const MatrixXd &observations, const MatrixXd &trainingSequence);
 };
 
 #endif

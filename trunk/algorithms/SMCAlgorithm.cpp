@@ -25,7 +25,7 @@ SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, in
 // _variables initialization
 _particleFilter(new ParticleFilter(nParticles)),
 _particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_allSymbolsRows(0,_nInputs-1),_estimatorIndex(0),
-_channelMatrixMean(channelMatrixMean),_channelMatrixVariances(channelMatrixVariances),_randomParticlesInitilization(false)
+_channelMean(Util::toVector(Util::lapack2eigen(channelMatrixMean),rowwise)),_channelCovariance(Util::toVector(Util::lapack2eigen(channelMatrixVariances),rowwise).asDiagonal()),_randomParticlesInitilization(false)
 {
     if(channelMatrixMean.rows()!=Nr || channelMatrixMean.cols()!=(N*m))
     {
@@ -69,8 +69,10 @@ void SMCAlgorithm::SetEstimatorIndex(int n)
 void SMCAlgorithm::initializeParticles()
 {
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
-    tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
-    tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
+//     tVector channelMean = Util::toVector(_channelMatrixMean,rowwise);
+//     tMatrix channelCovariance = LaGenMatDouble::from_diag(Util::toVector(_channelMatrixVariances,rowwise));
+    tVector channelMean = Util::eigen2lapack(_channelMean);
+    tMatrix channelCovariance = Util::eigen2lapack(_channelCovariance);
 
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
@@ -168,22 +170,35 @@ vector<tMatrix> SMCAlgorithm::getEstimatedChannelMatrices()
     return channelMatrices;
 }
 
-double SMCAlgorithm::smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+// double SMCAlgorithm::smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+// {
+//     double likelihoodsProd = 1.0;
+// 
+//     tVector predictedNoiselessObservation(_nOutputs);
+//     tRange rAllSymbolRows(0,_nInputs-1);
+// 
+//     for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
+//     {
+//         tRange rSymbolVectors(iSmoothing,iSmoothing+_channelOrder-1);
+//         tVector stackedSymbolVector = Util::toVector(involvedSymbolVectors(rAllSymbolRows,rSymbolVectors),columnwise);
+// 
+//         // predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
+//         Blas_Mat_Vec_Mult(channelMatrices[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
+// 
+//         likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
+//     }
+//     return likelihoodsProd;
+// }
+
+double SMCAlgorithm::smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,int iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances)
 {
     double likelihoodsProd = 1.0;
 
-    tVector predictedNoiselessObservation(_nOutputs);
-    tRange rAllSymbolRows(0,_nInputs-1);
-
     for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
     {
-        tRange rSymbolVectors(iSmoothing,iSmoothing+_channelOrder-1);
-        tVector stackedSymbolVector = Util::toVector(involvedSymbolVectors(rAllSymbolRows,rSymbolVectors),columnwise);
+        VectorXd stackedSymbolVector = Util::toVector(involvedSymbolVectors.block(0,iSmoothing,_nInputs,_channelOrder),columnwise);
 
-        // predictedNoiselessObservation = matricesToStack[iSmoothing] * stackedSymbolVector
-        Blas_Mat_Vec_Mult(channelMatrices[iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
-
-        likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseVariances[iObservationToBeProcessed+iSmoothing]);
+        likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),channelMatrices[iSmoothing]*stackedSymbolVector,noiseVariances[iObservationToBeProcessed+iSmoothing]);
     }
     return likelihoodsProd;
 }

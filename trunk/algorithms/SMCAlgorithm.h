@@ -50,7 +50,8 @@ protected:
     // a particle contains a vector of channel estimators (and possibly linear detectors)
     int _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
 
-    tMatrix _channelMatrixMean,_channelMatrixVariances;
+    VectorXd _channelMean;
+    MatrixXd _channelCovariance;
 
     virtual void initializeParticles();
     virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
@@ -65,7 +66,12 @@ protected:
      * @param noiseVariances
      * @return
      */
-    double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
+//     double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
+    double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
+    {
+        return smoothedLikelihood(Util::lapack2eigen(channelMatrices),Util::lapack2eigen(involvedSymbolVectors),iObservationToBeProcessed,Util::lapack2eigen(observations),noiseVariances);
+    }
+    double smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,int iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances);
 
     const MIMOChannel *_channel;
     const tMatrix *_symbols;

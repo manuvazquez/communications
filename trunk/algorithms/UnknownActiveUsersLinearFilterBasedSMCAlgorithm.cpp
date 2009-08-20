@@ -46,8 +46,6 @@ UnknownActiveUsersLinearFilterBasedSMCAlgorithm::~UnknownActiveUsersLinearFilter
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 {
       ChannelMatrixEstimator *channelMatrixEstimatorClone;
-    VectorXd channelMean = Util::toVector(Util::lapack2eigen(_channelMatrixMean),rowwise);
-    MatrixXd channelCovariance = Util::toVector(Util::lapack2eigen(_channelMatrixVariances),rowwise).asDiagonal();
 
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
@@ -55,7 +53,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
         channelMatrixEstimatorClone = _channelEstimator->clone();
         
         if(_randomParticlesInitilization)
-            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(channelMean,channelCovariance),rowwise,_Nr));
+            channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(_channelMean,_channelCovariance),rowwise,_Nr));
         
         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
