@@ -39,10 +39,6 @@ protected:
 
     virtual void initializeParticles();
     void process(const MatrixXd &observations, vector< double > noiseVariances);
-    void process(const tMatrix &observations, vector< double > noiseVariances)
-    {
-        process(Util::lapack2eigen(observations),noiseVariances);
-    }    
 
     double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
     double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector) const;

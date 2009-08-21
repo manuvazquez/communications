@@ -23,82 +23,71 @@ SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int Nr,i
 {
 }
 
-void SISoptAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
+// eigen
+void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-	int k,iParticle,iSampledVector;
-	vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
-	tRange mMinus1FirstColumns(0,_channelOrder-2);
+    int k,iParticle,iSampledVector;
+    vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
 
-	// it selects all rows in the symbols Matrix
-	tRange rAllSymbolRows(0,_nInputs-1);
+    // it includes all symbol vectors involved in the smoothing
+    MatrixXd involvedSymbolVectors(_nInputs,_channelOrder);
 
-	// it includes all symbol vectors involved in the smoothing
-	tMatrix involvedSymbolVectors(_nInputs,_channelOrder);
+    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
 
-	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+    // a likelihood is computed for every possible symbol vector
+    VectorXd likelihoods(nSymbolVectors);
 
-	// a likelihood is computed for every possible symbol vector
-	tVector likelihoods(nSymbolVectors);
+    // for each time instant
+    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    {
+        for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+        {
+            ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
-	tRange mPrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime);
-	tRange mMinus1PrecedentColumns(_startDetectionTime-_channelOrder+1,_startDetectionTime-1);
+            // the m-1 already detected symbol vectors are copied into the matrix:
+            involvedSymbolVectors.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
-	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
-	{
-		for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
-		{
-			ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
+            for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+            {
+                // the corresponding testing vector is generated from the index
+                _alphabet.int2symbolsArray(iTestedVector,testedVector);
 
-			// the m-1 already detected symbol vectors are copied into the matrix:
-			involvedSymbolVectors(rAllSymbolRows,mMinus1FirstColumns).inject(processedParticle->getSymbolVectors(mMinus1PrecedentColumns));
+                // current tested vector is copied in the m-th position
+                for(k=0;k<_nInputs;k++)
+                    involvedSymbolVectors(k,_channelOrder-1) = testedVector[k];
 
-			for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
-			{
-				// the corresponding testing vector is generated from the index
-				_alphabet.int2symbolsArray(iTestedVector,testedVector);
+                likelihoods(iTestedVector) = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
+            } // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
-				// current tested vector is copied in the m-th position
-				for(k=0;k<_nInputs;k++)
-					involvedSymbolVectors(k,_channelOrder-1) = testedVector[k];
+            VectorXd probabilities(nSymbolVectors);
+            try {
+                // probabilities are computed by normalizing the likelihoods
+                probabilities = Util::normalize(likelihoods);
+            } catch (AllElementsNullException) {
+                // if all the likelihoods are null
+                probabilities /= (double)nSymbolVectors;
+            }
 
-				likelihoods(iTestedVector) = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
-			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+            // one sample from the discrete distribution is taken
+            iSampledVector = StatUtil::discrete_rnd(probabilities);
 
-			tVector probabilities(nSymbolVectors);
-			try {
-				// probabilities are computed by normalizing the likelihoods
-				probabilities = Util::normalize(likelihoods);
-			} catch (AllElementsNullException) {
-				// if all the likelihoods are null
-				probabilities = 1.0/(double)nSymbolVectors;
-			}
+            // the above index is turned into a vector
+            _alphabet.int2symbolsArray(iSampledVector,sampledVector);
 
-			// one sample from the discrete distribution is taken
-			iSampledVector = StatUtil::discrete_rnd(probabilities);
+            // sampled symbols are copied into the corresponding particle
+            processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
-			// the above index is turned into a vector
-			_alphabet.int2symbolsArray(iSampledVector,sampledVector);
+            // channel matrix is estimated by means of the particle channel estimator
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
-			// sampled symbols are copied into the corresponding particle
-			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
+            processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
+        } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
-			// channel matrix is estimated by means of the particle channel estimator
-			processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors(mPrecedentColumns),noiseVariances[iObservationToBeProcessed]));
+        _particleFilter->normalizeWeights();
 
-			processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
-		} // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
-
-		mPrecedentColumns = mPrecedentColumns + 1;
-		mMinus1PrecedentColumns = mMinus1PrecedentColumns + 1;
-
-		_particleFilter->normalizeWeights();
-
-		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
-// 			Resampling();
+        // if it's not the last time instant
+        if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
-	} // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
-

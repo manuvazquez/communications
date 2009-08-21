@@ -27,6 +27,8 @@
 */
 
 #include <KalmanEstimator.h>
+#include <Eigen/LU> 
+#include <Eigen/Cholesky>
 
 class TriangularizationBasedSMCAlgorithm : public SMCAlgorithm
 {
@@ -35,7 +37,7 @@ public:
 
 protected:
 	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+    virtual void process(const MatrixXd& observations, vector<double> noiseVariances);
 };
 
 #endif

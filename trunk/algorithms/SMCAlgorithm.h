@@ -45,7 +45,6 @@ protected:
     bool _particleFilterNeedToBeDeleted;
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _d,_startDetectionTime;
-    tRange _allSymbolsRows;
 
     // a particle contains a vector of channel estimators (and possibly linear detectors)
     int _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
@@ -54,7 +53,7 @@ protected:
     MatrixXd _channelCovariance;
 
     virtual void initializeParticles();
-    virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0;
     
     /**
      *    Computes the smoothed likelihood, i.e., the product of the likelihoods of the observations involved in the smoothing from @param iObservationToBeProcessed to @param iObservationToBeProcessed + d (the smoothing lag)
@@ -66,19 +65,11 @@ protected:
      * @param noiseVariances
      * @return
      */
-//     double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances);
-    double smoothedLikelihood(const vector<tMatrix> &channelMatrices,const tMatrix &involvedSymbolVectors,int iObservationToBeProcessed,const tMatrix &observations,const vector<double> &noiseVariances)
-    {
-        return smoothedLikelihood(Util::lapack2eigen(channelMatrices),Util::lapack2eigen(involvedSymbolVectors),iObservationToBeProcessed,Util::lapack2eigen(observations),noiseVariances);
-    }
     double smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,int iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances);
-
-    const MIMOChannel *_channel;
-    const tMatrix *_symbols;
 
     bool _randomParticlesInitilization;
 
-    virtual void beforeInitializingParticles(const tMatrix &observations, const tMatrix &trainingSequence) {}
+    virtual void beforeInitializingParticles(const MatrixXd &observations, const MatrixXd &trainingSequence) {}
 
 public:
     SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, tMatrix preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);
@@ -102,14 +93,36 @@ public:
     ~SMCAlgorithm();
 
     void SetEstimatorIndex(int n);
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances);
+    
+    virtual void runFrom(int n,tMatrix observations,vector<double> noiseVariances)
+    {
+        runFrom(n,Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void runFrom(int n,MatrixXd observations,vector<double> noiseVariances);    
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
-    void run(tMatrix observations,vector<double> noiseVariances);
-    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-
-    void runFrom(int n,tMatrix observations,vector<double> noiseVariances);
-
-    tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> getEstimatedChannelMatrices();
+    virtual tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    virtual MatrixXd getDetectedSymbolVectors_eigen();
+    
+    virtual vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();    
 };
 
 #endif

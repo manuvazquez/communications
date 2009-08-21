@@ -909,6 +909,17 @@ tMatrix Util::flipLR(const tMatrix &A)
     return res;
 }
 
+// eigen
+MatrixXd Util::flipLR(const MatrixXd &A)
+{
+    MatrixXd res(A.rows(),A.cols());
+
+    for(int j=0;j<A.cols();j++)
+        for(int i=0;i<A.rows();i++)
+            res(i,j) = A(i,A.cols()-1-j);
+    return res;
+}
+
 tMatrix Util::sign(const tMatrix &A)
 {
     tMatrix res(A.rows(),A.cols());

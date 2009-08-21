@@ -37,10 +37,6 @@ protected:
     virtual ParticleFilter* getParticleFilterPointer() {return &_particleFilter;}
     virtual void initializeParticles();
     
-    virtual void process(const tMatrix& observations, vector<double> noiseVariances)
-    {
-        process(Util::lapack2eigen(observations),noiseVariances);
-    }
     virtual void process(const MatrixXd& observations, vector<double> noiseVariances);
 
 	// it's never gonna be called

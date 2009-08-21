@@ -95,6 +95,7 @@ public:
     static std::vector<int> nMax(int n,const tVector &v);
     static std::vector<int> nMax(int n,const VectorXd &v); // eigen
     static tMatrix flipLR(const tMatrix &A);
+    static MatrixXd flipLR(const MatrixXd &A); // eigen
     static tMatrix sign(const tMatrix &A);
     static MatrixXd lapack2eigen(const tMatrix &A);
     static VectorXd lapack2eigen(const tVector &v);
