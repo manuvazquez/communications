@@ -92,7 +92,7 @@ public:
 
     ~SMCAlgorithm();
 
-    void SetEstimatorIndex(int n);
+    void setEstimatorIndex(int n);
     
     virtual void run(tMatrix observations,vector<double> noiseVariances)
     {

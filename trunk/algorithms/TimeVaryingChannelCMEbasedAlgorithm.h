@@ -32,15 +32,40 @@
 class TimeVaryingChannelCMEbasedAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
-    tMatrix _symbolVectors;
+//     tMatrix _symbolVectors;
+    MatrixXd _symbolVectors;    
 public:
     TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, const tMatrix &symbolVectors);
 
-	virtual void run(tMatrix observations,vector<double> noiseVariances);
-	virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+// 	virtual void run(tMatrix observations,vector<double> noiseVariances);
+// 	virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
+// 
+//     virtual tMatrix getDetectedSymbolVectors();
+//     virtual vector<tMatrix> getEstimatedChannelMatrices();
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances);
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
-    virtual tMatrix getDetectedSymbolVectors();
-    virtual vector<tMatrix> getEstimatedChannelMatrices();
+    virtual tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    virtual MatrixXd getDetectedSymbolVectors_eigen();
+    
+    virtual vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();     
 };
 
 #endif

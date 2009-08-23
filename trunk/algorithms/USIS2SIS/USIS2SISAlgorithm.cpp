@@ -67,7 +67,7 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
 
         LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
-        knownChannelOrderAlgorithm.SetEstimatorIndex(iMax);
+        knownChannelOrderAlgorithm.setEstimatorIndex(iMax);
         knownChannelOrderAlgorithm.runFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
 

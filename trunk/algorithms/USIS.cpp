@@ -40,21 +40,6 @@ USIS::~USIS()
 	delete _channelOrderEstimator;
 }
 
-// vector<vector<tMatrix> > USIS::estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-// {
-// 	// channel estimation for the training sequence is needed in order to compute the channel order APP
-// 	vector<vector<tMatrix> > estimatedMatrices = UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence(observations,noiseVariances,trainingSequence);
-//
-// 	// the estimated matrices are used to update the global channel order estimator and compute the channel order APP
-//     // during the training sequence
-// 	tMatrix estimatedChannelOrderAPPs = _channelOrderEstimator->computeProbabilities(observations,estimatedMatrices,noiseVariances,Util::append(_preamble,trainingSequence),_preamble.cols());
-//
-//     // the APP of the candidate channel orders are set accordingly
-// 	_channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)).inject(estimatedChannelOrderAPPs);
-//
-//     return estimatedMatrices;
-// }
-
 void USIS::initializeParticles()
 {
     // memory is reserved
@@ -109,14 +94,6 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 	int iObservationToBeProcessed = _startDetectionTime;
 	while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
 	{
-#ifdef DEBUG
-		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
-		cout << "_iLastSymbolVectorToBeDetected = " << _iLastSymbolVectorToBeDetected << endl;
-
-		if(iObservationToBeProcessed>20)
-			exit(0);
-#endif
-
 		// observation matrix columns that are involved in the smoothing
 		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
 
@@ -140,9 +117,6 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 
 		for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
 		{
-#ifdef DEBUG12
-            cout << "iParticle = " << iParticle << endl;
-#endif
 			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
 			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -220,13 +194,11 @@ void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
 							sumProb += symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet);
 						}
 
-// 						try {
                         if(sumProb!=0)                  
 							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) /= sumProb;
                         else
                         {                                
-// 						}catch(exception e){
 							cout << "The sum of the probabilities is null." << endl;
 							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
 								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;
@@ -354,28 +326,8 @@ int USIS::BestChannelOrderIndex(int iBestParticle)
 
 void USIS::beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
 {
-//     for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
-//     {
-//         for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-//         {
-//             // the observations from i to i+d are stacked
-//             tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
-//
-//             tVector stackedObservationsVector = Util::toVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-//             _linearDetectors[iChannelOrder]->stateStep(stackedObservationsVector);
-//         }
-//
-//     }
-
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder]->stateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
-//     {
-//         // the observations from i to i+d are stacked
-//         tRange rSmoothingRange(i,i+_candidateOrders[iChannelOrder]-1);
-//
-//         tVector stackedObservationsVector = Util::toVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
-//         _linearDetectors[iChannelOrder]->stateStep(stackedObservationsVector);
-//     }
 
     // the APP of the candidate channel orders are set accordingly
     _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());

@@ -55,7 +55,7 @@ SMCAlgorithm::~SMCAlgorithm()
         delete _particleFilter;
 }
 
-void SMCAlgorithm::SetEstimatorIndex(int n)
+void SMCAlgorithm::setEstimatorIndex(int n)
 {
     if(_particleFilter==NULL)
         throw RuntimeException("SMCAlgorithm::SetEstimatorIndex: the particle filter is not set.");
