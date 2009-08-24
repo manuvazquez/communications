@@ -26,6 +26,7 @@
 
 #include <types.h>
 #include <vector>
+#include <Util.h>
 
 class ChannelOrderEstimator{
 protected:
@@ -41,13 +42,25 @@ public:
 
     double getChannelOrderAPP(int n) {return _channelOrderAPPs[n];}
 
-    tVector getChannelOrderAPPsVector();
+    tVector getChannelOrderAPPsVector()
+    {
+        return Util::eigen2lapack(getChannelOrderAPPsVector_eigen());
+    }
+    VectorXd getChannelOrderAPPsVector_eigen();
 
     virtual ChannelOrderEstimator *clone() = 0;
 
-    virtual void update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance) = 0;
+    virtual void update(const tVector &observations,const std::vector<tMatrix> &channelMatrix,const tVector &symbolVector,double noiseVariance)
+    {
+        update(Util::lapack2eigen(observations),Util::lapack2eigen(channelMatrix),Util::lapack2eigen(symbolVector),noiseVariance);
+    }
+    virtual void update(const VectorXd &observations,const std::vector<MatrixXd> &channelMatrix,const VectorXd &symbolVector,double noiseVariance) = 0;
 
-    virtual tMatrix computeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom) = 0;
+    virtual tMatrix computeProbabilities(const tMatrix& observations,const std::vector<std::vector<tMatrix> > &channelMatrices,const std::vector< double > &noiseVariances,const tMatrix &sequenceToProcess, int iFrom)
+    {
+        return Util::eigen2lapack(computeProbabilities(Util::lapack2eigen(observations),Util::lapack2eigen(channelMatrices),noiseVariances,Util::lapack2eigen(sequenceToProcess),iFrom));
+    }
+    virtual MatrixXd computeProbabilities(const MatrixXd& observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,const std::vector< double > &noiseVariances,const MatrixXd &sequenceToProcess, int iFrom) = 0;
 
 };
 

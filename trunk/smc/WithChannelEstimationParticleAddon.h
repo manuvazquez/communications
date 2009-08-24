@@ -32,8 +32,8 @@ It implements the channel related part for a particle
 
 class WithChannelEstimationParticleAddon{
 protected:
-    std::vector<std::vector<MatrixXd> > _estimatedChannelMatrices;
     std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
+    std::vector<std::vector<MatrixXd> > _estimatedChannelMatrices;
 public:
     WithChannelEstimationParticleAddon(ChannelMatrixEstimator * channelMatrixEstimator, uint trajectorylength);
     WithChannelEstimationParticleAddon(std::vector <ChannelMatrixEstimator *> channelMatrixEstimators, uint trajectorylength);

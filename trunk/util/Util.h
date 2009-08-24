@@ -85,6 +85,7 @@ public:
     template<class T> static void print(const std::vector<std::vector<T> > &matrix);
     template<class T> static void print(const T* array,int nElements);
     static void shiftUp(tVector &v,int n);
+    static void shiftUp(VectorXd &v,int n); // eigen
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static vector<int> solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
@@ -100,6 +101,7 @@ public:
     static MatrixXd lapack2eigen(const tMatrix &A);
     static VectorXd lapack2eigen(const tVector &v);
     static vector<MatrixXd> lapack2eigen(const vector<tMatrix> &v);
+    static vector<vector<MatrixXd> > lapack2eigen(const vector<vector<tMatrix> > &v); // ---
     static tMatrix eigen2lapack(const MatrixXd &A);
     static tVector eigen2lapack(const VectorXd &v);
     static vector<tMatrix> eigen2lapack(const vector<MatrixXd> &v);

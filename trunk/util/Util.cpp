@@ -600,6 +600,15 @@ void Util::shiftUp(tVector &v,int n)
         v(i) = v(i+n);
 }
 
+void Util::shiftUp(VectorXd &v,int n)
+{
+    if(n>=v.size())
+        throw RuntimeException("Util::shiftUp: vector is too short for this shift.");
+
+    for(int i=0;i<v.size()-n;i++)
+        v(i) = v(i+n);
+}
+
 template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
 {
     vector<vector<T> > res;
@@ -959,6 +968,17 @@ vector<MatrixXd> Util::lapack2eigen(const vector<tMatrix> &v)
     
     for(uint i=0;i<v.size();i++)
         res[i] = Util::lapack2eigen(v[i]);
+        
+    return res;
+}
+
+vector<vector<MatrixXd> > Util::lapack2eigen(const vector<vector<tMatrix> > &v)
+{
+    vector<vector<MatrixXd> > res(v.size());
+    
+    for(uint i=0;i<v.size();i++)
+        for(uint j=0;j<v[i].size();j++)
+            res[i].push_back(Util::lapack2eigen(v[i][j]));
         
     return res;
 }

@@ -70,7 +70,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,
     uint j;
     uint iChannelOrder;
 
-    // needed for UpdateParticleChannelOrderEstimators in the USIS algorithm
+    // needed for updateParticleChannelOrderEstimators in the USIS algorithm
     vector<vector<tMatrix> > channelOrderTrainingSequenceChannelMatrices(_candidateOrders.size());
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
@@ -105,7 +105,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(tMatrix observations,
             }
         }
 
-        UpdateParticleChannelOrderEstimators(getParticleFilterPointer()->getParticle(iParticle),observations,channelOrderTrainingSequenceChannelMatrices,noiseVariances,preambleTrainingSequence);
+        updateParticleChannelOrderEstimators(getParticleFilterPointer()->getParticle(iParticle),observations,channelOrderTrainingSequenceChannelMatrices,noiseVariances,preambleTrainingSequence);
 
         //... the symbols are considered detected...
         getParticleFilterPointer()->getParticle(iParticle)->setSymbolVectors(rSymbolVectorsTrainingSequece,preambleTrainingSequence);
@@ -131,10 +131,10 @@ vector<tMatrix> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedCh
     int iBestParticle = getParticleFilterPointer()->iBestParticle();
 //     Util::max(getParticleFilterPointer()->getWeightsVector(),iBestParticle);
 
-    int iBestChannelOrder = BestChannelOrderIndex(iBestParticle);
+    int indexBestChannelOrder = iBestChannelOrder(iBestParticle);
 
     for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
-        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(getParticleFilterPointer()->getParticle(iBestParticle))->getChannelMatrix(iBestChannelOrder,i));
+        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(getParticleFilterPointer()->getParticle(iBestParticle))->getChannelMatrix(indexBestChannelOrder,i));
 
     return channelMatrices;
 }

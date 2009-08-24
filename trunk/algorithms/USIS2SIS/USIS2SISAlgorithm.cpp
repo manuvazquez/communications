@@ -19,52 +19,31 @@
  ***************************************************************************/
 #include "USIS2SISAlgorithm.h"
 
-// #define DEBUG2
+// #define DEBUG
 
 USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, vector< LinearDetector * > linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, ChannelOrderEstimator* channelOrderEstimator, double ARcoefficient, double samplingVariance, double ARprocessVariance, TransitionCriterion *transitionCriterion): USIS(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, linearDetectors, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm, channelOrderEstimator, ARcoefficient, samplingVariance, ARprocessVariance),_transitionCriterion(transitionCriterion)
 {
 }
 
-
-USIS2SISAlgorithm::~USIS2SISAlgorithm()
+void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances)
 {
-}
-
-
-void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances)
-{
-    tVector _weightedChannelOrderAPPs(_candidateOrders.size());
-    _weightedChannelOrderAPPs = 0.0;
+    VectorXd _weightedChannelOrderAPPs = VectorXd::Zero(_candidateOrders.size());
 
     for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
         ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
-        tVector particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPPsVector();
-        Util::add(_weightedChannelOrderAPPs,particleChannelOrderAPPs,_weightedChannelOrderAPPs,1.0,processedParticle->getWeight());
+        VectorXd particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPPsVector_eigen();
+        _weightedChannelOrderAPPs += processedParticle->getWeight()*particleChannelOrderAPPs;
     }
-
-    #ifdef DEBUG
-        cout << "Probabilidades globales para los órdenes de canal:" << endl << _weightedChannelOrderAPPs << endl;
-    #endif
 
     // the maximum probability is obtained
     int iMax;
-    Util::max(_weightedChannelOrderAPPs,iMax);
-
-    #ifdef DEBUG
-        cout << "La probabilidad más alta es la " << iMax << endl;
-        cout << "Pasa del umbral: " << (_weightedChannelOrderAPPs(iMax)>_threshold) << endl;
-    #endif
+    _weightedChannelOrderAPPs.maxCoeff(&iMax);
 
     // if the transition criterion is satisfied
     if(_transitionCriterion->MakeTransition(_weightedChannelOrderAPPs))
     {
-        #ifdef DEBUG
-            cout << "Pasa del umbral: " << endl;
-            cout << "La probabilidad más alta es la " << iMax << endl;
-        #endif
-
         LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
         knownChannelOrderAlgorithm.setEstimatorIndex(iMax);
@@ -77,4 +56,3 @@ void USIS2SISAlgorithm::BeforeResamplingProcess(int iProcessedObservation, const
         return;
     }
 }
-

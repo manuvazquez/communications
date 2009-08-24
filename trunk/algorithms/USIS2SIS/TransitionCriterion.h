@@ -30,7 +30,7 @@
 class TransitionCriterion{
 public:
 
-    virtual bool MakeTransition(tVector channelOrderAPPs) = 0;
+    virtual bool MakeTransition(VectorXd channelOrderAPPs) = 0;
 
     virtual ~TransitionCriterion() {}
 };

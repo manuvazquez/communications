@@ -19,10 +19,10 @@
  ***************************************************************************/
 #include "USIS.h"
 
-// #define DEBUG12
+// #define DEBUG
+// #define VIEJA
 
-USIS::USIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_rAllObservationRows(0,_nOutputs-1)
-,_processDoneExternally(false)
+USIS::USIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_processDoneExternally(false)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
         throw RuntimeException("USIS::USIS: number of detectors and number of channel matrix estimators (and candidate orders) are different.");
@@ -37,7 +37,7 @@ USIS::~USIS()
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         delete _linearDetectors[iChannelOrder];
 
-	delete _channelOrderEstimator;
+    delete _channelOrderEstimator;
 }
 
 void USIS::initializeParticles()
@@ -45,295 +45,259 @@ void USIS::initializeParticles()
     // memory is reserved
     for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
-		// a clone of each of the channel matrix estimators...
-		vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
+        // a clone of each of the channel matrix estimators...
+        vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
 
-		//...and linear detectors is constructed
-		vector<LinearDetector *> thisParticleLinearDetectors(_candidateOrders.size());
+        //...and linear detectors is constructed
+        vector<LinearDetector *> thisParticleLinearDetectors(_candidateOrders.size());
 
-		for(uint iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
-		{
-			thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->clone();
+        for(uint iCandidateOrder=0;iCandidateOrder<_candidateOrders.size();iCandidateOrder++)
+        {
+            thisParticleChannelMatrixEstimators[iCandidateOrder] = _channelEstimators[iCandidateOrder]->clone();
 
             if(_randomParticlesInitilization)
                 // the first matrix of the channel matrix estimator is initialized randomly
-                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
+                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(Util::lapack2eigen(_channelMeanVectors[iCandidateOrder]),Util::lapack2eigen(_channelCovariances[iCandidateOrder]),StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
+            
+            thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->clone();
+        }
 
-			thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->clone();
-		}
-
-		// ... and passed within a vector to each particle
-		_particleFilter.addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->clone()));
+        // ... and passed within a vector to each particle
+        _particleFilter.addParticle(new ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(1.0/(double)_particleFilter.capacity(),_nInputs,_iLastSymbolVectorToBeDetected,thisParticleChannelMatrixEstimators,thisParticleLinearDetectors,_channelOrderEstimator->clone()));
     }
 }
 
-void USIS::process(const tMatrix& observations, vector< double > noiseVariances)
+void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-	int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
-	uint iChannelOrder;
-	int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
-	vector<vector<tMatrix> > matricesToStack(_candidateOrders.size());
-	tVector sampledVector(_nInputs),sampledSmoothingVector(_nInputs*_maxOrder);
-	double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd;
-	vector<tMatrix> channelOrderEstimatorNeededSampledMatrices(_candidateOrders.size());
+    int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
+    uint iChannelOrder;
+    int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
+    vector<vector<MatrixXd> > matricesToStack(_candidateOrders.size());
+    uint _nInputs_maxOrder = _nInputs*_maxOrder;
+    VectorXd sampledVector(_nInputs),sampledSmoothingVector(_nInputs_maxOrder);
+    double proposal,s2q,sumProb,likelihoodsProd,sumLikelihoodsProd;
+    vector<MatrixXd> channelOrderEstimatorNeededSampledMatrices(_candidateOrders.size());
 
-	// each matrix in "symbolProb" contains the probabilities connected to a channelOrder: symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
-	vector<tMatrix> symbolProb(_candidateOrders.size(),LaGenMatDouble::zeros(_nInputs*_maxOrder,_alphabet.length()));
+    // each matrix in "symbolProb" contains the probabilities connected to a channelOrder: 
+    // symbolProb(i,j) is the p(i-th symbol=alphabet[j]). They are initialized with zeros
+    vector<MatrixXd> symbolProb(_candidateOrders.size(),MatrixXd::Zero(_nInputs_maxOrder,_alphabet.length()));
 
-	// "overallSymbolProb" will combine the previous probabilities accordin to the APP of the channel order
-	tMatrix overallSymbolProb(_nInputs*_maxOrder,_alphabet.length());
+    // "overallSymbolProb" will combine the previous probabilities accordin to the APP of the channel order
+    MatrixXd overallSymbolProb(_nInputs_maxOrder,_alphabet.length());
 
-	// 2*_maxOrder-1 = m_{max} + d_{max}
-	tMatrix forWeightUpdateNeededSymbols(_nInputs,2*_maxOrder-1);
+    // 2*_maxOrder-1 = m_{max} + d_{max}
+    MatrixXd forWeightUpdateNeededSymbols(_nInputs,2*_maxOrder-1);
 
-	// _maxOrder = d_{max} + 1
-	tMatrix noiseCovariances[_maxOrder];
+    // _maxOrder = d_{max} + 1
+    MatrixXd noiseCovariances[_maxOrder];
 
-	tVector predictedNoiselessObservation(_nOutputs);
+    int iObservationToBeProcessed = _startDetectionTime;
+    while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
+    {
+        // the stacked observations vector
+        VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed,_nOutputs,_maxOrder),columnwise);
 
-	int iObservationToBeProcessed = _startDetectionTime;
-	while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
-	{
-		// observation matrix columns that are involved in the smoothing
-		tRange rSmoothingRange(iObservationToBeProcessed,iObservationToBeProcessed+_maxOrder-1);
+        // stacked noise covariance needs to be constructed
+        MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*_maxOrder,_nOutputs*_maxOrder);
 
-		// the stacked observations vector
-		tVector stackedObservations = Util::toVector(observations(_rAllObservationRows,rSmoothingRange),columnwise);
+        // the loop accomplishes 2 things:
+        for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+        {
+            // i) construction of the stacked noise covariance
+            for(iRow=0;iRow<_nOutputs;iRow++)
+                stackedNoiseCovariance(iSmoothing*_nOutputs+iRow,iSmoothing*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
-		// stacked noise covariance needs to be constructed
-		tMatrix stackedNoiseCovariance = LaGenMatDouble::zeros(_nOutputs*_maxOrder,_nOutputs*_maxOrder);
+            // ii) obtaining the noise covariances for each time instant from the variances
+            noiseCovariances[iSmoothing] = noiseVariances[iObservationToBeProcessed+iSmoothing]*MatrixXd::Identity(_nOutputs,_nOutputs);
+        }
 
-		// the loop accomplishes 2 things:
-		for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
-		{
-			// i) construction of the stacked noise covariance
-			for(iRow=0;iRow<_nOutputs;iRow++)
-				stackedNoiseCovariance(iSmoothing*_nOutputs+iRow,iSmoothing*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
+        for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
+        {
+            ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
-			// ii) obtaining the noise covariances for each time instant from the variances
-			noiseCovariances[iSmoothing] = LaGenMatDouble::eye(_nOutputs);
-			noiseCovariances[iSmoothing] *= noiseVariances[iObservationToBeProcessed+iSmoothing];
-		}
+            for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+            {
+                m = _candidateOrders[iChannelOrder];
+                d = m-1;
+                Nm = _nInputs*m;
+                matricesToStack[iChannelOrder] = vector<MatrixXd>(_maxOrder,MatrixXd(_nOutputs,Nm));
 
-		for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
-		{
-			ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
+                // predicted channel matrices are sampled and stored in a vector in order to stack them
+                matricesToStack[iChannelOrder][0] = _ARcoefficient*processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix_eigen() + StatUtil::randnMatrix_eigen(_nOutputs,Nm,0.0,_samplingVariance);
 
-			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-			{
-				m = _candidateOrders[iChannelOrder];
-				d = m-1;
-				Nm = _nInputs*m;
-				matricesToStack[iChannelOrder] = vector<tMatrix>(_maxOrder,tMatrix(_nOutputs,Nm));
+                for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
+                    matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient*matricesToStack[iChannelOrder][iSmoothing-1] + StatUtil::randnMatrix_eigen(_nOutputs,Nm,0.0,_ARprocessVariance);
 
-				tMatrix s2qAux(_nOutputs*(d+1),_nOutputs*(d+1));
-				tVector s2qAuxFilter(_nOutputs*(d+1));
+                // for sampling s_{t:t+d} we need to build
+                nLinearFiltersNeeded = _maxOrder - m + 1; // linear filters
 
-				// predicted channel matrices are sampled and stored in a vector in order to stack them
+                // during the first iteration, we are going to use the real linear detector of this particle for this channel order
+                LinearDetector *linearDetectorBeingProccessed = processedParticle->getLinearDetector(iChannelOrder);
 
-				// matricesToStack[iChannelOrder][0] = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,Nm)*_samplingVariance
-				Util::add(processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix(),StatUtil::randnMatrix(_nOutputs,Nm,0.0,_samplingVariance),matricesToStack[iChannelOrder][0],_ARcoefficient,1.0);
+                for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
+                {
+                    // matrices are stacked to give
+                    MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
-				for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
-				{
-					// matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient * matricesToStack[iChannelOrder][iSmoothing-1] + rand(_nOutputs,Nm)*_ARprocessVariance
-					Util::add(matricesToStack[iChannelOrder][iSmoothing-1],StatUtil::randnMatrix(_nOutputs,Nm,0.0,_ARprocessVariance),matricesToStack[iChannelOrder][iSmoothing],_ARcoefficient,1.0);
-				}
+                    // the estimated stacked channel matrix is used to obtain soft estimations
+                    // of the transmitted symbols
+                    VectorXd softEstimations = linearDetectorBeingProccessed->detect(stackedObservations.segment(iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1)),stackedChannelMatrix,stackedNoiseCovariance.block(iLinearFilterNeeded*_nOutputs,iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1),_nOutputs*(d+1)));
 
-				// for sampling s_{t:t+d} we need to build
-				nLinearFiltersNeeded = _maxOrder - m + 1; // linear filters
+                    MatrixXd filter = linearDetectorBeingProccessed->computedFilter_eigen();
 
-				// during the first iteration, we are going to use the real linear detector of this particle for this channel order
-				LinearDetector *linearDetectorBeingProccessed = processedParticle->getLinearDetector(iChannelOrder);
+                    // during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
+                    if(iLinearFilterNeeded==0)
+                        linearDetectorBeingProccessed = linearDetectorBeingProccessed->clone();
 
-				for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
-				{
-					tRange rInvolvedObservations(iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1+iLinearFilterNeeded)-1);
+                    // the sampling variance is computed
+                    MatrixXd s2qAux = _alphabet.variance()*stackedChannelMatrix*stackedChannelMatrix.transpose() + stackedNoiseCovariance.block(iLinearFilterNeeded*_nOutputs,iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1),_nOutputs*(d+1));
 
-					// matrices are stacked to give
-					tMatrix stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
+                    // the real symbol we are sampling (it depends on "iLinearFilterNeeded")
+                    int iSampledSymbolPos = iLinearFilterNeeded*_nInputs - 1;
 
-					// the estimated stacked channel matrix is used to obtain soft estimations
-					// of the transmitted symbols
-					tVector softEstimations = linearDetectorBeingProccessed->detect(stackedObservations(rInvolvedObservations),stackedChannelMatrix,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations));
+                    // sampling
+                    for(iSampledSymbol=0;iSampledSymbol<(_nInputs*(d+1));iSampledSymbol++)
+                    {
+                        iSampledSymbolPos++;
+                        
+                        s2q = _alphabet.variance()*(1.0 - 2.0*filter.col(iSampledSymbol).dot(stackedChannelMatrix.col(_nInputs*(m-1)+iSampledSymbol))) + filter.col(iSampledSymbol).dot(s2qAux*filter.col(iSampledSymbol));
+                        
+                        sumProb = 0.0;
+                        // the probability for each posible symbol alphabet is computed
+                        for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+                        {
+                            symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
 
-					tMatrix filter = linearDetectorBeingProccessed->computedFilter();
-
-					// during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
-					if(iLinearFilterNeeded==0)
-						linearDetectorBeingProccessed = linearDetectorBeingProccessed->clone();
-
-					// operations needed to computed the sampling variance
-
-					//s2qAux = _alphabet.variance() * stackedChannelMatrix * stackedChannelMatrix^H
-            		Blas_Mat_Mat_Trans_Mult(stackedChannelMatrix,stackedChannelMatrix,s2qAux,_alphabet.variance());
-
-					// s2qAux = s2qAux + stackedNoiseCovariance
-					Util::add(s2qAux,stackedNoiseCovariance(rInvolvedObservations,rInvolvedObservations),s2qAux);
-
-					// the real symbol we are sampling (it depends on "iLinearFilterNeeded")
-					int iSampledSymbolPos = iLinearFilterNeeded*_nInputs - 1;
-
-					// sampling
-					for(iSampledSymbol=0;iSampledSymbol<(_nInputs*(d+1));iSampledSymbol++)
-					{
-						iSampledSymbolPos++;
-
-						// s2qAuxFilter = s2qAux * filter.col(iSampledSymbol)
-						Blas_Mat_Vec_Mult(s2qAux,filter.col(iSampledSymbol),s2qAuxFilter);
-
-                		s2q = _alphabet.variance()*(1.0 - 2.0*Blas_Dot_Prod(filter.col(iSampledSymbol),stackedChannelMatrix.col(_nInputs*(m-1)+iSampledSymbol))) + Blas_Dot_Prod(filter.col(iSampledSymbol),s2qAuxFilter);
-
-						sumProb = 0.0;
-						// the probability for each posible symbol alphabet is computed
-						for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
-						{
-							symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),_alphabet[iAlphabet],s2q);
-
-							// the computed pdf is accumulated for normalizing purposes
-							sumProb += symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet);
-						}
+                            // the computed pdf is accumulated for normalizing purposes
+                            sumProb += symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet);
+                        }
 
                         if(sumProb!=0)                  
-							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
-								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) /= sumProb;
+                            for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+                                symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) /= sumProb;
                         else
                         {                                
-							cout << "The sum of the probabilities is null." << endl;
-							for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
-								symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;
-						}
-					}
-				} // for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
+                            cout << "The sum of the probabilities is null." << endl;
+                            for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+                                symbolProb[iChannelOrder](iSampledSymbolPos,iAlphabet) = 0.5;
+                        }
+                    }
+                } // for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
 
-				// the clone is dismissed
-				delete linearDetectorBeingProccessed;
+                // the clone is dismissed
+                delete linearDetectorBeingProccessed;
 
-			} //for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+            } //for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
-			//the probabilities of the different channel orders are weighted according to the a posteriori probability of the channel order in the previous time instant
-			overallSymbolProb = symbolProb[0];
-			overallSymbolProb *= processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(0);
-			for(iChannelOrder=1;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-			{
-				Util::add(overallSymbolProb,symbolProb[iChannelOrder],overallSymbolProb,1.0,processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder));
-			}
+            //the probabilities of the different channel orders are weighted according to the a posteriori probability of the channel order in the previous time instant
+            overallSymbolProb = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(0)*symbolProb[0];
+            for(iChannelOrder=1;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+                overallSymbolProb = overallSymbolProb + processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder)*symbolProb[iChannelOrder];
 
-			proposal = 1.0;
-			// the symbols are sampled from the above combined probabilities
-			for(iSampledSymbol=0;iSampledSymbol<_nInputs*_maxOrder;iSampledSymbol++)
-			{
-				iSampled = StatUtil::discrete_rnd(overallSymbolProb.row(iSampledSymbol));
+            proposal = 1.0;
+            // the symbols are sampled from the above combined probabilities
+            for(iSampledSymbol=0;iSampledSymbol<_nInputs*_maxOrder;iSampledSymbol++)
+            {
+                iSampled = StatUtil::discrete_rnd(overallSymbolProb.row(iSampledSymbol));
 
-				sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
+                sampledSmoothingVector(iSampledSymbol) = _alphabet[iSampled];
 
-				proposal *= overallSymbolProb(iSampledSymbol,iSampled);
-			}
+                proposal *= overallSymbolProb(iSampledSymbol,iSampled);
+            }
 
-			// sampled symbol vector is stored for the corresponding particle
-			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector(_allSymbolsRows));
+            // sampled symbol vector is stored for the corresponding particle
+            processedParticle->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector.start(_nInputs));
 
-			sumLikelihoodsProd = 0.0;
+            sumLikelihoodsProd = 0.0;
 
-			for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-			{
-				m = _candidateOrders[iChannelOrder];
-				d = m-1;
+            for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+            {
+                m = _candidateOrders[iChannelOrder];
+                d = m-1;
 
-				// range for the already detected symbol vectors involved in the current detection
-				tRange rAlreadyDetectedSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
+                // all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols":
+                // i) the already known:
+                forWeightUpdateNeededSymbols.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
 
-				tRange r0mMinus2(0,m-2),rSampledSymbolVectors(m-1,m+_maxOrder-2);
-				tRange rFirstmSymbolVectors(0,m-1);
+                // ii) the just sampled
+                forWeightUpdateNeededSymbols.block(0,m-1,_nInputs,_maxOrder) = Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs);
 
-				// all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols":
-				// i) the already known:
-				forWeightUpdateNeededSymbols(_allSymbolsRows,r0mMinus2).inject(processedParticle->getSymbolVectors(rAlreadyDetectedSymbolVectors));
+                likelihoodsProd = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder);
 
-				// ii) the just sampled
-				forWeightUpdateNeededSymbols(_allSymbolsRows,rSampledSymbolVectors).inject(Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs));
-
-				likelihoodsProd = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iChannelOrder);
-
-				for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
-				{
-					tRange rSymbolVectors(iSmoothing,iSmoothing+m-1);
-					tVector stackedSymbolVector = Util::toVector(forWeightUpdateNeededSymbols(_allSymbolsRows,rSymbolVectors),columnwise);
-
-					// predictedNoiselessObservation = matricesToStack[iChannelOrder][iSmoothing] * stackedSymbolVector
-					Blas_Mat_Vec_Mult(matricesToStack[iChannelOrder][iSmoothing],stackedSymbolVector,predictedNoiselessObservation);
-
-					likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),predictedNoiselessObservation,noiseCovariances[iSmoothing]);
-
-				} // for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
-
-				// the estimation of the channel matrix is updated
-				processedParticle->setChannelMatrix(iChannelOrder,iObservationToBeProcessed,
-				(processedParticle->getChannelMatrixEstimator(iChannelOrder))->nextMatrix(observations.col(iObservationToBeProcessed),
-					forWeightUpdateNeededSymbols(_allSymbolsRows,rFirstmSymbolVectors),noiseVariances[iObservationToBeProcessed]));
-
+                for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+                {
+                    VectorXd stackedSymbolVector = Util::toVector(forWeightUpdateNeededSymbols.block(0,iSmoothing,_nInputs,m),columnwise);
+                    
+                    likelihoodsProd *= StatUtil::normalPdf(observations.col(iObservationToBeProcessed+iSmoothing),matricesToStack[iChannelOrder][iSmoothing]*stackedSymbolVector,noiseCovariances[iSmoothing]);
+                } // for(iSmoothing=0;iSmoothing<_maxOrder;iSmoothing++)
+                
+                // the estimation of the channel matrix is updated
+                processedParticle->setChannelMatrix(iChannelOrder,iObservationToBeProcessed,
+                (processedParticle->getChannelMatrixEstimator(iChannelOrder))->nextMatrix(observations.col(iObservationToBeProcessed),
+                    forWeightUpdateNeededSymbols.block(0,0,_nInputs,m),noiseVariances[iObservationToBeProcessed]));
+                
                 // the computed likelihood is accumulated
                 sumLikelihoodsProd += likelihoodsProd;
 
-				// a vector of channel matrices is built to update the channel order estimator
+                // a vector of channel matrices is built to update the channel order estimator
                 channelOrderEstimatorNeededSampledMatrices[iChannelOrder] = matricesToStack[iChannelOrder][0];
-			} // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+            } // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
-			// the channel order estimator is updated
-			processedParticle->GetChannelOrderEstimator()->update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector(_allSymbolsRows),noiseVariances[iObservationToBeProcessed]);
+            // the channel order estimator is updated
+            processedParticle->GetChannelOrderEstimator()->update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector.start(_nInputs),noiseVariances[iObservationToBeProcessed]);
 
-			// the weight is updated
-			processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());
+            // the weight is updated
+            processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());
 
-		} // for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
+        } // for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
 
-		_particleFilter.normalizeWeights();
+        _particleFilter.normalizeWeights();
 
-		// we find out which is the "best" particle at this time instant
-		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getBestParticle());
+        // we find out which is the "best" particle at this time instant
+        ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getBestParticle());
 
         // its a posteriori channel order probabilities are stored
-		for(uint i=0;i<_candidateOrders.size();i++)
-			_channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
+        for(uint i=0;i<_candidateOrders.size();i++)
+            _channelOrderAPPs(i,iObservationToBeProcessed) = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
 
-		BeforeResamplingProcess(iObservationToBeProcessed,observations,noiseVariances);
+        beforeResamplingProcess(iObservationToBeProcessed,observations,noiseVariances);
 
-		// if it's not the last time instant
-		if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
+        // if it's not the last time instant
+        if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(&_particleFilter);
 
-    	iObservationToBeProcessed++;
-	} // while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
+        iObservationToBeProcessed++;
+    } // while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
 }
 
-
-int USIS::BestChannelOrderIndex(int iBestParticle)
+int USIS::iBestChannelOrder(int iBestParticle)
 {
-	ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iBestParticle));
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iBestParticle));
 
-	int iMaxChannelOrderAPP = 0;
-	double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iMaxChannelOrderAPP);
+    int iMaxChannelOrderAPP = 0;
+    double maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(iMaxChannelOrderAPP);
 
-	for(uint i=1;i<_candidateOrders.size();i++)
-		if(bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i) > maxChannelOrderAPP)
-		{
-			maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
-			iMaxChannelOrderAPP = i;
-		}
+    for(uint i=1;i<_candidateOrders.size();i++)
+        if(bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i) > maxChannelOrderAPP)
+        {
+            maxChannelOrderAPP = bestParticle->GetChannelOrderEstimator()->getChannelOrderAPP(i);
+            iMaxChannelOrderAPP = i;
+        }
 
-	return iMaxChannelOrderAPP;
+    return iMaxChannelOrderAPP;
 }
 
-void USIS::beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+void USIS::beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence)
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _linearDetectors[iChannelOrder]->stateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 
     // the APP of the candidate channel orders are set accordingly
+//     _channelOrderAPPs.block(0,_preamble.cols(),_channelOrderAPPs.rows(),trainingSequence.cols()) = 1.0/double(_candidateOrders.size());
     _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());
 }
 
-void USIS::UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess)
+void USIS::updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess)
 {
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* convertedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *> (particle);
 

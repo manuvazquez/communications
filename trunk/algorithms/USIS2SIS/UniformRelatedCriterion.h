@@ -32,7 +32,7 @@ protected:
 public:
     UniformRelatedCriterion(double ratio);
 
-    virtual bool MakeTransition(tVector channelOrderAPPs);
+    virtual bool MakeTransition(VectorXd channelOrderAPPs);
 
 };
 

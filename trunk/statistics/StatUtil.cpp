@@ -251,27 +251,16 @@ double StatUtil::normalPdf(const tVector &x,const tVector &mean,const tMatrix &c
     // invCovarianceXminusMean = -0.5 * invCovariance * xMinusMean
     Blas_Mat_Vec_Mult(invCovariance,xMinusMean,invCovarianceXminusMean,-0.5);
 
+//     cout << "normalPdf viejo" << endl << "detCovariance = " << detCovariance << endl << "invCovariance = " << endl << invCovariance << "---------" << endl;
+
     return 1.0/(sqrt(fabs(detCovariance))*pow(2.0*M_PI,((double)N)/2.0))*exp(Blas_Dot_Prod(xMinusMean,invCovarianceXminusMean));
 }
 
 // eigen
 double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance)
 {
-
     int N = x.size();
     
-//     // the received covariance matrix can't be modified
-//     tMatrix invCovariance = covariance;
-
-//     tLongIntVector piv(N);
-//     LUFactorizeIP(invCovariance,piv);
-//     double detCovariance = 1.0;
-//     for(int i=0;i<N;i++)
-//         detCovariance *= invCovariance(i,i);
-// 
-//     // invCovariance = inv(covariance)
-//     LaLUInverseIP(invCovariance,piv);
-
     Eigen::LDLT<MatrixXd> ldltOfCovariance(covariance);
 
     MatrixXd invCovariance = MatrixXd::Identity(N,N);
@@ -281,24 +270,11 @@ double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd
     for(int i=0;i<ldltOfCovariance.vectorD().rows();i++)
         invCovarianceDeterminant *= ldltOfCovariance.vectorD().coeff(i); 
 
-//     tVector xMinusMean(N);
-//     // xMinusMean = x - mean
-//     Util::add(x,mean,xMinusMean,1.0,-1.0);
-//     
-//     tVector invCovarianceXminusMean(N);
-//     // invCovarianceXminusMean = -0.5 * invCovariance * xMinusMean
-//     Blas_Mat_Vec_Mult(invCovariance,xMinusMean,invCovarianceXminusMean,-0.5);
-
-    return 1.0/(sqrt(fabs(invCovarianceDeterminant))*pow(2.0*M_PI,((double)N)/2.0))*exp((x-mean).dot(0.5*invCovariance*(x-mean)));
+    return 1.0/(sqrt(fabs(invCovarianceDeterminant))*pow(2.0*M_PI,((double)N)/2.0))*exp((x-mean).dot(-0.5*invCovariance*(x-mean)));
 }
 
 double StatUtil::normalPdf(const tVector &x,const tVector &mean,double variance)
 {
-//  tMatrix covariance = LaGenMatDouble::eye(x.size(),x.size());
-// 
-//  covariance *= variance;
-//  return StatUtil::normalPdf(x,mean,covariance);
-    
     double res = 1.0;
     
     for(uint i=0;i<static_cast<uint> (x.rows());i++)

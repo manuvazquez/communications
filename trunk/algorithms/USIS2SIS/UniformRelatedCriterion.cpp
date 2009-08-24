@@ -23,13 +23,12 @@ UniformRelatedCriterion::UniformRelatedCriterion(double ratio):_ratio(ratio)
 {
 }
 
-bool UniformRelatedCriterion::MakeTransition(tVector channelOrderAPPs)
+bool UniformRelatedCriterion::MakeTransition(VectorXd channelOrderAPPs)
 {
-	double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
+    double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
 
-	int iMax;
-    Util::max(channelOrderAPPs,iMax);
+    int iMax;
+    channelOrderAPPs.maxCoeff(&iMax);
 
     return (channelOrderAPPs(iMax)>(_ratio*uniformProbability));
 }
-

@@ -23,7 +23,7 @@
 #include <MultipleChannelEstimatorsPerParticleSMCAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -46,21 +46,35 @@ public:
 protected:
     vector<LinearDetector *> _linearDetectors;
     ChannelOrderEstimator *_channelOrderEstimator;
-	ParticleFilter _particleFilter;
-	double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    tRange _rAllObservationRows;
-	bool _processDoneExternally;
+    ParticleFilter _particleFilter;
+    double _ARcoefficient,_samplingVariance,_ARprocessVariance;
+    bool _processDoneExternally;
 
     virtual ParticleFilter* getParticleFilterPointer() {return &_particleFilter;}
     virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector< double > noiseVariances);
+    
+    virtual void process(const tMatrix& observations, vector< double > noiseVariances)
+    {
+        process(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void process(const MatrixXd& observations, vector< double > noiseVariances);
 
-	virtual void BeforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector< double > &noiseVariances) {}
+    virtual void beforeResamplingProcess(int iProcessedObservation, const tMatrix& observations, const vector<double> &noiseVariances) {}
+    virtual void beforeResamplingProcess(int iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances) {}
 
-    int BestChannelOrderIndex(int iBestParticle);
+    int iBestChannelOrder(int iBestParticle);
 
-    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence);
-    virtual void UpdateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess);
+    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+    {
+        beforeInitializingParticles(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void beforeInitializingParticles(const MatrixXd &observations, vector<double> &noiseVariances, const MatrixXd &trainingSequence);
+    
+    virtual void updateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess)
+    {
+        updateParticleChannelOrderEstimators(particle,Util::lapack2eigen(observations),Util::lapack2eigen(channelMatrices),noiseVariances,Util::lapack2eigen(sequenceToProcess));
+    }
+    virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess);
 };
 
 #endif

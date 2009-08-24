@@ -234,7 +234,7 @@ void MLSDmAlgorithm::process(const tMatrix& observations, vector< double > noise
     delete[] particleCandidates;
 }
 
-int MLSDmAlgorithm::BestChannelOrderIndex(int iBestParticle)
+int MLSDmAlgorithm::iBestChannelOrder(int iBestParticle)
 {
     return _particlesBestChannelOrders[iBestParticle];
 }

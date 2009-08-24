@@ -23,11 +23,10 @@ MaximumProbabilityCriterion::MaximumProbabilityCriterion(double threshold): Tran
 {
 }
 
-bool MaximumProbabilityCriterion::MakeTransition(tVector channelOrderAPPs)
+bool MaximumProbabilityCriterion::MakeTransition(VectorXd channelOrderAPPs)
 {
     int iMax;
-    Util::max(channelOrderAPPs,iMax);
+    channelOrderAPPs.maxCoeff(&iMax);
 
     return (channelOrderAPPs(iMax)>_threshold);
 }
-
