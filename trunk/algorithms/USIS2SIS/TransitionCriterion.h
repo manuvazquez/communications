@@ -21,7 +21,7 @@
 #define TRANSITIONCRITERION_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <types.h>
@@ -30,7 +30,7 @@
 class TransitionCriterion{
 public:
 
-    virtual bool MakeTransition(VectorXd channelOrderAPPs) = 0;
+    virtual bool makeTransition(VectorXd channelOrderAPPs) = 0;
 
     virtual ~TransitionCriterion() {}
 };

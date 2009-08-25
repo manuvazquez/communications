@@ -23,7 +23,7 @@ UniformRelatedCriterion::UniformRelatedCriterion(double ratio):_ratio(ratio)
 {
 }
 
-bool UniformRelatedCriterion::MakeTransition(VectorXd channelOrderAPPs)
+bool UniformRelatedCriterion::makeTransition(VectorXd channelOrderAPPs)
 {
     double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
 

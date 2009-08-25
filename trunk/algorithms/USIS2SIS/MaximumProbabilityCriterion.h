@@ -32,7 +32,7 @@ protected:
 public:
     MaximumProbabilityCriterion(double threshold);
 
-    virtual bool MakeTransition(VectorXd channelOrderAPPs);
+    virtual bool makeTransition(VectorXd channelOrderAPPs);
 
 };
 

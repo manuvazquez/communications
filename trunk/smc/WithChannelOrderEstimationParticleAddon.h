@@ -21,7 +21,7 @@
 #define WITHCHANNELORDERESTIMATIONPARTICLEADDON_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 
@@ -29,7 +29,7 @@
 
 class WithChannelOrderEstimationParticleAddon{
 protected:
-	ChannelOrderEstimator *_channelOrderEstimator;
+    ChannelOrderEstimator *_channelOrderEstimator;
 public:
     WithChannelOrderEstimationParticleAddon(ChannelOrderEstimator * channelOrderEstimator);
 
@@ -37,9 +37,7 @@ public:
 
     ~WithChannelOrderEstimationParticleAddon();
 
-//     double getChannelOrderAPP(int n) {return _channelOrderEstimator->GetAPP(n);}
-
-    ChannelOrderEstimator *GetChannelOrderEstimator() {return _channelOrderEstimator;}
+    ChannelOrderEstimator *getChannelOrderEstimator() {return _channelOrderEstimator;}
 
 };
 

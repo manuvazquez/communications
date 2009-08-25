@@ -33,7 +33,7 @@ void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const
     {
         ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
-        VectorXd particleChannelOrderAPPs = processedParticle->GetChannelOrderEstimator()->getChannelOrderAPPsVector_eigen();
+        VectorXd particleChannelOrderAPPs = processedParticle->getChannelOrderEstimator()->getChannelOrderAPPsVector_eigen();
         _weightedChannelOrderAPPs += processedParticle->getWeight()*particleChannelOrderAPPs;
     }
 
@@ -42,7 +42,7 @@ void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const
     _weightedChannelOrderAPPs.maxCoeff(&iMax);
 
     // if the transition criterion is satisfied
-    if(_transitionCriterion->MakeTransition(_weightedChannelOrderAPPs))
+    if(_transitionCriterion->makeTransition(_weightedChannelOrderAPPs))
     {
         LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
