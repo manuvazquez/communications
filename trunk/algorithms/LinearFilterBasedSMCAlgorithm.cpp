@@ -48,7 +48,7 @@ void LinearFilterBasedSMCAlgorithm::initializeParticles()
             channelMatrixEstimatorClone->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(_channelMean,_channelCovariance),rowwise,_nOutputs));
         _particleFilter->addParticle(new ParticleWithChannelEstimationAndLinearDetection(1.0/(double)_particleFilter->capacity(),_nInputs,_iLastSymbolVectorToBeDetected,channelMatrixEstimatorClone,_linearDetector->clone()));
 
-        _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+        _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),_preamble);
     }
 }
 

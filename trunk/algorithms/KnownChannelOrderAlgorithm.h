@@ -35,7 +35,7 @@ class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 protected:
 	ChannelMatrixEstimator *_channelEstimator;
 	int _channelOrder,_nInputsXchannelOrder;
-	tMatrix _preamble;
+    MatrixXd _preamble;   
 
 public:
     KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,tMatrix preamble);
@@ -43,7 +43,6 @@ public:
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::channelMatrices2stackedChannelMatrix;
-	tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}   
 };
 

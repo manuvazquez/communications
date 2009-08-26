@@ -49,7 +49,7 @@ void CDMAunknownActiveUsersSISopt::initializeParticles()
 
         // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+            _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),_preamble);
     }
 }
 

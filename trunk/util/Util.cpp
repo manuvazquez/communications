@@ -942,6 +942,13 @@ tMatrix Util::sign(const tMatrix &A)
 
 MatrixXd Util::lapack2eigen(const tMatrix &A)
 {
+    if(A.rows()==0 || A.cols()==0)
+    {
+        MatrixXd res(1,1);
+        res.resize(A.rows(),A.cols());
+        return res;
+    }
+    
     int i,j;
     MatrixXd res(A.rows(),A.cols());
     

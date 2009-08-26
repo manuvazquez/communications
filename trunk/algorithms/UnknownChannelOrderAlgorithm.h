@@ -23,7 +23,7 @@
 #include <UnknownChannelAlgorithm.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -32,10 +32,10 @@
 class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
-	vector<ChannelMatrixEstimator *> _channelEstimators;
+    vector<ChannelMatrixEstimator *> _channelEstimators;
     vector<int> _candidateOrders;
-	int _maxOrder,_iFirstObservation,_nInputsXchannelOrderaxOrder;
-	int *_channelOrder2index;
+    int _maxOrder,_iFirstObservation,_nInputsXchannelOrderaxOrder;
+    int *_channelOrder2index;
     MatrixXd _preamble;   
 
     MatrixXd _channelOrderAPPs;   
@@ -44,11 +44,11 @@ public:
 
     ~UnknownChannelOrderAlgorithm();
 
-    tMatrix GetChannelOrderAPPsAlongTime()
+    tMatrix getChannelOrderAPPsAlongTime()
     {
-        return Util::eigen2lapack(GetChannelOrderAPPsAlongTime_eigen());
+        return Util::eigen2lapack(getChannelOrderAPPsAlongTime_eigen());
     }  
-    MatrixXd GetChannelOrderAPPsAlongTime_eigen() { return _channelOrderAPPs.block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
+    MatrixXd getChannelOrderAPPsAlongTime_eigen() { return _channelOrderAPPs.block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
     bool performsChannelOrderAPPestimation() const { return true;}
 };
 

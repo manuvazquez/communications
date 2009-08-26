@@ -80,7 +80,7 @@ void SMCAlgorithm::initializeParticles()
 
         // if there is preamble...
         if(_preamble.cols()!=0)
-            _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+            _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),_preamble);
     }
 }
 
@@ -115,7 +115,7 @@ void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
     int iParticle,j;
     
     MatrixXd preambleTrainingSequence(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
-    preambleTrainingSequence << Util::lapack2eigen(_preamble),trainingSequence;    
+    preambleTrainingSequence << _preamble,trainingSequence;    
     
     beforeInitializingParticles(observations,trainingSequence);
 

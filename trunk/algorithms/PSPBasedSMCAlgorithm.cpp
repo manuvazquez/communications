@@ -39,7 +39,7 @@ void PSPBasedSMCAlgorithm::initializeParticles()
 	_particleFilter->addParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
 
 // 	_particleFilter->getParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
-    _particleFilter->getParticle(0)->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+    _particleFilter->getParticle(0)->setSymbolVectors(0,_preamble.cols(),_preamble);
 }
 
 // eigen

@@ -155,7 +155,7 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     int initialState = _alphabet.symbolsArray2int(initialStateVector);
 
     // the initial state is initalized
-    _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,Util::lapack2eigen(_preamble),vector<vector<MatrixXd> > (1,vector<MatrixXd>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
+    _exitStage[initialState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,_preamble,vector<vector<MatrixXd> > (1,vector<MatrixXd>(0)),vector<ChannelMatrixEstimator *>(1,_channelEstimator));
 
     process(observations,noiseVariances);
 }
@@ -168,7 +168,7 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
 
     // to process the training sequence, we need both the preamble and the symbol vectors related to it
     MatrixXd preambleTrainingSequence(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
-    preambleTrainingSequence << Util::lapack2eigen(_preamble),trainingSequence;
+    preambleTrainingSequence << _preamble,trainingSequence;
 
     _startDetectionTime = preambleTrainingSequence.cols();
 

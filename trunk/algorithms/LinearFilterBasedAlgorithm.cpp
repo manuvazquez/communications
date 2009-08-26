@@ -54,7 +54,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         throw RuntimeException("LinearFilterBasedAlgorithm::process: Not enough observations.");
 
     MatrixXd preambleTrainingSequence(_preamble.rows(),_preamble.cols()+trainingSequence.cols());
-    preambleTrainingSequence << Util::lapack2eigen(_preamble),trainingSequence;
+    preambleTrainingSequence << _preamble,trainingSequence;
 
     vector<MatrixXd> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),startDetectionTime);
 
