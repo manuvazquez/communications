@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(Util::lapack2eigen(preamble))
 {
     for(uint i=0;i<channelEstimators.size();i++)
     {
@@ -50,12 +50,8 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
     _nInputsXchannelOrderaxOrder = _nInputs*_maxOrder;
 
-    _channelOrderAPPs = LaGenMatDouble::zeros(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
-    _channelOrderAPPs(tRange(),tRange(0,_preamble.cols()-1)) = 1.0/double(_candidateOrders.size());
-
-#ifdef DEBUG
-    cout << "UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: _candidateOrders.size " << _candidateOrders.size() << endl;
-#endif
+    _channelOrderAPPs = MatrixXd::Zero(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
+    _channelOrderAPPs.block(0,0,_candidateOrders.size(),_preamble.cols()).setConstant(1.0/double(_candidateOrders.size()));
 }
 
 
@@ -66,30 +62,3 @@ UnknownChannelOrderAlgorithm::~UnknownChannelOrderAlgorithm()
 
     delete[] _channelOrder2index;
 }
-
-vector<vector<tMatrix> > UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence)
-{
-    tMatrix sequenceToProcess = Util::append(_preamble,trainingSequence);
-
-    if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
-        throw RuntimeException("UnknownChannelOrderAlgorithm::estimateChannelFromTrainingSequence: Insufficient number of observations.");
-
-    vector<vector<tMatrix> > estimatedMatrices(_candidateOrders.size());
-
-    // selects all the rows from a symbols matrix
-    tRange rAllSymbolRows(0,_nInputs-1);
-
-    uint iOrder;
-    for(int i=_iFirstObservation;i<_iFirstObservation+trainingSequence.cols();i++)
-    {
-        for(iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-        {
-            tRange mColumns(_preamble.cols()+i-_iFirstObservation-_candidateOrders[iOrder]+1,_preamble.cols()+i-_iFirstObservation);
-
-            estimatedMatrices[iOrder].push_back(_channelEstimators[iOrder]->nextMatrix(observations.col(i),sequenceToProcess(rAllSymbolRows,mColumns),noiseVariances[i]));
-        }
-    }
-
-    return estimatedMatrices;
-}
-

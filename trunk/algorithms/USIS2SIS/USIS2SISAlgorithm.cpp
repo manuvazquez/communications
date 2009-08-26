@@ -44,14 +44,15 @@ void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const
     // if the transition criterion is satisfied
     if(_transitionCriterion->makeTransition(_weightedChannelOrderAPPs))
     {
-        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],_preamble,_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
+        LinearFilterBasedSMCAlgorithm knownChannelOrderAlgorithm(_name,_alphabet,_nOutputs,_nOutputs,_nInputs,_iLastSymbolVectorToBeDetected,_candidateOrders[iMax],Util::eigen2lapack(_preamble),_candidateOrders[iMax]-1,&_particleFilter,_resamplingAlgorithm,_ARcoefficient,_samplingVariance,_ARprocessVariance);
 
         knownChannelOrderAlgorithm.setEstimatorIndex(iMax);
         knownChannelOrderAlgorithm.runFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
 
         // the APP of the selected channel order is set to 1.0
-        _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_iLastSymbolVectorToBeDetected-1)) = 1.0;
+//         _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_iLastSymbolVectorToBeDetected-1)) = 1.0;
+        _channelOrderAPPs.row(iMax).segment(iProcessedObservation,_iLastSymbolVectorToBeDetected-iProcessedObservation).setConstant(1.0);
 
         return;
     }

@@ -57,7 +57,8 @@ void USIS::initializeParticles()
 
             if(_randomParticlesInitilization)
                 // the first matrix of the channel matrix estimator is initialized randomly
-                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(Util::lapack2eigen(_channelMeanVectors[iCandidateOrder]),Util::lapack2eigen(_channelCovariances[iCandidateOrder]),StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
+                thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(_channelMeanVectors[iCandidateOrder],_channelCovariances[iCandidateOrder],StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
+//                 thisParticleChannelMatrixEstimators[iCandidateOrder]->setFirstEstimatedChannelMatrix(Util::toMatrix(StatUtil::randnMatrix(Util::lapack2eigen(_channelMeanVectors[iCandidateOrder]),Util::lapack2eigen(_channelCovariances[iCandidateOrder]),StatUtil::_particlesInitializerRandomGenerator),rowwise,_nOutputs));
             
             thisParticleLinearDetectors[iCandidateOrder] = _linearDetectors[iCandidateOrder]->clone();
         }
@@ -293,8 +294,8 @@ void USIS::beforeInitializingParticles(const MatrixXd &observations,vector<doubl
         _linearDetectors[iChannelOrder]->stateStepsFromObservationsSequence(observations,_candidateOrders[iChannelOrder]-1,_preamble.cols(),_preamble.cols()+trainingSequence.cols());
 
     // the APP of the candidate channel orders are set accordingly
-//     _channelOrderAPPs.block(0,_preamble.cols(),_channelOrderAPPs.rows(),trainingSequence.cols()) = 1.0/double(_candidateOrders.size());
-    _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());
+    _channelOrderAPPs.block(0,_preamble.cols(),_channelOrderAPPs.rows(),trainingSequence.cols()).setConstant(1.0/double(_candidateOrders.size()));
+//     _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_preamble.cols()+trainingSequence.cols()-1)) = 1.0/double(_candidateOrders.size());
 }
 
 void USIS::updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess)

@@ -36,16 +36,19 @@ protected:
     vector<int> _candidateOrders;
 	int _maxOrder,_iFirstObservation,_nInputsXchannelOrderaxOrder;
 	int *_channelOrder2index;
-	tMatrix _preamble;
+    MatrixXd _preamble;   
 
-	tMatrix _channelOrderAPPs;
+    MatrixXd _channelOrderAPPs;   
 public:
     UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,tMatrix preamble,int iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 
-	virtual vector<vector<tMatrix> > estimateChannelFromTrainingSequence(const tMatrix &observations,vector<double> noiseVariances,tMatrix trainingSequence);
-	tMatrix GetChannelOrderAPPsAlongTime() { return _channelOrderAPPs(tRange(),tRange(_preamble.cols(),_iLastSymbolVectorToBeDetected-1));}
+    tMatrix GetChannelOrderAPPsAlongTime()
+    {
+        return Util::eigen2lapack(GetChannelOrderAPPsAlongTime_eigen());
+    }  
+    MatrixXd GetChannelOrderAPPsAlongTime_eigen() { return _channelOrderAPPs.block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
     bool performsChannelOrderAPPestimation() const { return true;}
 };
 

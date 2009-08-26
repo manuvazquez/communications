@@ -40,7 +40,8 @@ void MLSDmAlgorithm::initializeParticles()
     // we begin with only one particle
     ParticleWithChannelEstimationAndChannelOrderAPP *particle = new ParticleWithChannelEstimationAndChannelOrderAPP(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,channelEstimatorsClone);
 
-    particle->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+//     particle->setSymbolVectors(0,_preamble.cols(),Util::lapack2eigen(_preamble));
+    particle->setSymbolVectors(0,_preamble.cols(),_preamble);
 
     // the available APP's just before the _startDetectionTime instant are copied into the particle
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -239,7 +240,7 @@ void MLSDmAlgorithm::beforeInitializingParticles(const MatrixXd &observations,ve
     // in this case beforeInitializingParticles computes the APP probabilities that are obtained after the training sequence
 
     MatrixXd sequenceToProcess(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
-    sequenceToProcess << Util::lapack2eigen(_preamble),trainingSequence;     
+    sequenceToProcess << _preamble,trainingSequence;
 
     if(observations.cols() < (_iFirstObservation+trainingSequence.cols()))
         throw RuntimeException("beforeInitializingParticles::beforeInitializingParticles: Insufficient number of observations.");

@@ -23,35 +23,30 @@ MLSDmFeedBackAlgorithm::MLSDmFeedBackAlgorithm(string name, Alphabet alphabet, i
 {
 }
 
-void MLSDmFeedBackAlgorithm::process(const tMatrix& observations, vector< double > noiseVariances)
+void MLSDmFeedBackAlgorithm::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
     MLSDmAlgorithm::process(observations, noiseVariances);
 
-	ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getBestParticle()->clone());
+    ParticleWithChannelEstimationAndChannelOrderAPP *bestParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getBestParticle()->clone());
 
-	int nParticles = _particleFilter->capacity();
+    int nParticles = _particleFilter->capacity();
 
-	delete _particleFilter;
+    delete _particleFilter;
 
-	for(int iObservationToBeProcessed=_iLastSymbolVectorToBeDetected+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
-	{
-		for(int iChannelOrder=0;iChannelOrder<bestParticle->nChannelMatrixEstimators();iChannelOrder++)
-		{
-			tMatrix symbolVectors = bestParticle->getSymbolVectors(tRange(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed));
-			bestParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
-		}
-	}
+    for(int iObservationToBeProcessed=_iLastSymbolVectorToBeDetected+_d-2;iObservationToBeProcessed>=_startDetectionTime;iObservationToBeProcessed--)
+    {
+        for(int iChannelOrder=0;iChannelOrder<bestParticle->nChannelMatrixEstimators();iChannelOrder++)
+        {
+            MatrixXd symbolVectors = bestParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
+            bestParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
+        }
+    }
 
-	bestParticle->setWeight(1.0);
+    bestParticle->setWeight(1.0);
 
-// 	// the available APP's just before the _startDetectionTime instant are copied into the particle
-// 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-// 		bestParticle->setChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+    _particleFilter = new ParticleFilter(nParticles);
 
-	_particleFilter = new ParticleFilter(nParticles);
-
-	_particleFilter->addParticle(bestParticle);
+    _particleFilter->addParticle(bestParticle);
 
     MLSDmAlgorithm::process(observations, noiseVariances);
 }
-

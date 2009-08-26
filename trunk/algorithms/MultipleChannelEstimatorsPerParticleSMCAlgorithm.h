@@ -34,31 +34,47 @@ protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _d;
     int _startDetectionTime;
-    tRange _allSymbolsRows;
 
     double _channelUniqueMean, _channelUniqueVariance;
-    vector<tMatrix> _channelMatrixMeans;
-    vector<tMatrix> _channelMatrixVariances;
 
-    vector<tMatrix> _channelMeanVectors;
-    vector<tMatrix> _channelCovariances;
+    vector<MatrixXd> _channelMeanVectors;
+    vector<MatrixXd> _channelCovariances;
     
     bool _randomParticlesInitilization;
 
     virtual ParticleFilter* getParticleFilterPointer() = 0;
     virtual void initializeParticles() = 0;
-    virtual void process(const tMatrix &observations,vector<double> noiseVariances) = 0;
+    virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0; // eigen
     virtual int iBestChannelOrder(int iBestParticle) = 0;
 
-    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence) {}
-    virtual void updateParticleChannelOrderEstimators(Particle *particle,const tMatrix &observations,const std::vector<std::vector<tMatrix> > &channelMatrices,vector<double> &noiseVariances,const tMatrix &sequenceToProcess) {}
+    virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {} //eigen
+    virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {} // eigen
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
-    void run(tMatrix observations,vector<double> noiseVariances);
-    void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence);
-    tMatrix getDetectedSymbolVectors();
-    vector<tMatrix> getEstimatedChannelMatrices();
+    virtual void run(tMatrix observations,vector<double> noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances);
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
+
+    virtual tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
+    virtual MatrixXd getDetectedSymbolVectors_eigen();
+    
+    virtual vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
+    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();  
 
 };
 

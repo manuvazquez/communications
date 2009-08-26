@@ -52,7 +52,8 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
 
         MatrixXd preambleDetectedSymbolVectors(_preamble.rows(),_preamble.cols()+detectedSymbolVectors.cols());
         
-        preambleDetectedSymbolVectors << Util::lapack2eigen(_preamble),detectedSymbolVectors;
+//         preambleDetectedSymbolVectors << Util::lapack2eigen(_preamble),detectedSymbolVectors;
+        preambleDetectedSymbolVectors << _preamble,detectedSymbolVectors;
 
         int nSymbolVectors = detectedSymbolVectors.cols();
         double variance = noiseVariances[detectedSymbolVectors.cols()-1];
@@ -95,7 +96,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
     } // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _channelOrderAPPs.row(iChannelOrder) = CMEs(iChannelOrder);
+        _channelOrderAPPs.row(iChannelOrder).setConstant(CMEs(iChannelOrder));
 }
 
 MatrixXd CMEapplyingAlgorithm::getDetectedSymbolVectors_eigen()

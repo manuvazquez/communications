@@ -85,7 +85,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     } // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _channelOrderAPPs.row(iChannelOrder) = CMEs[iChannelOrder];
+        _channelOrderAPPs.row(iChannelOrder).setConstant(CMEs[iChannelOrder]);
 }
 
 void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
