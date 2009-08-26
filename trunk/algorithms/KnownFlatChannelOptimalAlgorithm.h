@@ -53,15 +53,7 @@ public:
 
     ~KnownFlatChannelOptimalAlgorithm();
 
-    void run(tMatrix observations, vector< double > noiseVariances)
-    {
-        run(Util::lapack2eigen(observations),noiseVariances);
-    }
     void run(MatrixXd observations, vector< double > noiseVariances);
-    tMatrix getDetectedSymbolVectors()
-    {
-        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
-    }
     MatrixXd getDetectedSymbolVectors_eigen();
 
 };

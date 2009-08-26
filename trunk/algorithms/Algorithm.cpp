@@ -25,37 +25,6 @@ Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLas
 {
 }
 
-double Algorithm::SER(const tMatrix &symbols)
-{
-    int windowSize = symbols.cols();
-
-    tMatrix detectedSymbolVectors = getDetectedSymbolVectors();
-    int nDetectedVectors = detectedSymbolVectors.cols();
-
-    // if the algorithm did know the symbols
-    if(detectedSymbolVectors.cols()==0)
-        return 0.0;
-
-    if(windowSize>nDetectedVectors)
-        throw RuntimeException("Algorithm::SER: more symbol vectors passed than detected.");
-
-    int nErrors = 0;
-    int windowStart = nDetectedVectors - windowSize;
-    int j;
-
-    for(int i=windowStart;i<nDetectedVectors;i++)
-    {
-        j=0;
-        while(j<symbols.rows())
-        {
-            if(detectedSymbolVectors(j,i)!=symbols(j,i-windowStart))
-                nErrors++;
-            j++;
-        }
-    }
-    return ((double)nErrors)/(double)(windowSize*symbols.rows());
-}
-
 double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
 {
     int windowSize = channelMatrices.size();

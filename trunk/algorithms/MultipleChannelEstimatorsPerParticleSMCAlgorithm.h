@@ -52,28 +52,11 @@ protected:
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
-    virtual void run(tMatrix observations,vector<double> noiseVariances)
-    {
-        run(Util::lapack2eigen(observations),noiseVariances);
-    }
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
-    
-    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
-    {
-        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
-    }
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
-    virtual tMatrix getDetectedSymbolVectors()
-    {
-        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
-    }
     virtual MatrixXd getDetectedSymbolVectors_eigen();
     
-    virtual vector<tMatrix> getEstimatedChannelMatrices()
-    {
-        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
-    }
     virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();  
 
 };

@@ -44,10 +44,6 @@ protected:
 public:
     ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
-    vector<tMatrix> getEstimatedChannelMatrices()
-    {
-        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
-    }
     vector<MatrixXd> getEstimatedChannelMatrices_eigen();
 };
 

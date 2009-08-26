@@ -31,9 +31,9 @@ CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, int L
 {
 }
 
-void CMEapplyingAlgorithm::run(tMatrix observations,vector<double> noiseVariances)
+void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    throw RuntimeException("CMEapplyingAlgorithm::Run (without training sequence) not implemented.");
+    throw RuntimeException("CMEapplyingAlgorithm::run (without training sequence) not implemented.");
 }
 
 void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)

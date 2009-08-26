@@ -45,26 +45,44 @@ protected:
 public:
     Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
-    virtual void run(tMatrix observations,vector<double> noiseVariances) = 0;
-    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence) = 0;
 
     string getName() const {return _name;}
 
+    virtual void run(tMatrix observations,vector<double> noiseVariances)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances);
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances) = 0;
+    
+    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
+    {
+        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+    }
+    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence) = 0;
+
+    virtual tMatrix getDetectedSymbolVectors()
+    {
+        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
+    }
     /**
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
     * @return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
-    */
-    virtual tMatrix getDetectedSymbolVectors() = 0;
-
+    */    
+    virtual MatrixXd getDetectedSymbolVectors_eigen() = 0;
+    
+    virtual vector<tMatrix> getEstimatedChannelMatrices()
+    {
+        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
+    }
     /**
      *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
-     */
-    virtual vector<tMatrix> getEstimatedChannelMatrices() = 0;
+     */    
+    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen() = 0;
+
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}
 
-    double SER(const tMatrix &symbols);
     double MSE(const vector<tMatrix> &channelMatrices);
 
     tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors)
