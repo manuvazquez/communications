@@ -25,16 +25,12 @@ Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLas
 {
 }
 
-double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
+double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 {
     int windowSize = channelMatrices.size();
 
-    vector<tMatrix> estimatedChannelMatrices = getEstimatedChannelMatrices();
+    vector<MatrixXd> estimatedChannelMatrices = getEstimatedChannelMatrices_eigen();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
-
-    #ifdef DEBUG
-        cout << "recibidas: " << windowSize << ", estimadas: " << nEstimatedChannelMatrices << endl;
-    #endif
 
     // if the algorithm didn't make channel estimation
     if(nEstimatedChannelMatrices==0)
@@ -49,14 +45,9 @@ double Algorithm::MSE(const vector<tMatrix> &channelMatrices)
     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
     try {
         for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
-        {
-#ifdef DEBUG
-            cout << "channelMatrices.at(i-windowStart) = " << endl << channelMatrices.at(i-windowStart);
-            cout << "estimatedChannelMatrices.at(i) = " << endl << estimatedChannelMatrices.at(i);
-#endif
-            // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-            mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(Blas_NormF(channelMatrices.at(i-windowStart)),2.0);
-        }
+            // the square error committed by the estimated matrix is normalized by the squared Frobenius norm
+            // (i.e. the sum of all the elements squared) of the real channel matrix
+            mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0);
     } catch (IncompatibleOperandsException) {
         return 0.0;
     }

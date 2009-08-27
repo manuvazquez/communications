@@ -334,6 +334,33 @@ double Util::normalizedSquareError(const tMatrix &A,const tMatrix &B)
     return res/normConst;
 }
 
+double Util::squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B)
+{
+    if(A.rows()!=B.rows())
+        throw IncompatibleOperandsException("Util::squareError: matrix have different number of rows.");
+
+    double res = 0.0;
+    int i,j1,j2;
+    for(i=0;i<A.rows();i++)
+        for(j1=A.cols()-1,j2=B.cols()-1;(j1>=0 && j2>=0);j1--,j2--)
+            res += (A(i,j1)-B(i,j2))*(A(i,j1)-B(i,j2));
+
+    if(j1>=0)
+    {
+        for(;j1>=0;j1--)
+            for(i=0;i<A.rows();i++)
+                res += A(i,j1)*A(i,j1);
+    }
+    else if(j2>=0)
+    {
+        for(;j2>=0;j2--)
+            for(i=0;i<B.rows();i++)
+                res += B(i,j2)*B(i,j2);
+    }
+
+    return res;
+}
+
 double Util::squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B)
 {
     if(A.rows()!=B.rows())
@@ -625,83 +652,6 @@ template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
 }
 template vector<vector<int> > Util::Permutations(int *array, int nElements);
 template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
-
-vector<int> Util::solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation)
-{
-    #ifdef DEBUG13
-        cout << "H1" << endl << H1 << "H2" << endl << H2;
-    #endif
-
-    if(H1.rows()!=H2.rows() || H1.cols()!=H2.cols())
-    {
-        cout << "H1" << endl << H1 << "H2" << endl << H2;
-        throw RuntimeException("Util::solveAmbiguity: matrices do not have the same dimensions.");
-    }
-
-    uint nColumns = H1.cols();
-
-    if(permutations[0].size()!=nColumns)
-        throw RuntimeException("Util::solveAmbiguity: number of elements of the first permutations is not N.");
-
-    for(uint i=0;i<permutations[0].size();i++)
-        if(permutations[0][i]!=i)
-            throw RuntimeException("Util::solveAmbiguity: first permutation is not correct.");
-
-    double errorWithoutChangingSign;
-    double errorChangingSign;
-    tVector errorVector(H1.rows());
-
-    vector<vector<int> > signs(permutations.size(),vector<int>(nColumns));
-    vector<double> permutationError(permutations.size(),0.0);
-
-    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
-    {
-        #ifdef DEBUG13
-            cout << "probando permutaci�n" << endl;
-            print(permutations[iPermut]);
-        #endif
-
-        for(uint iCol=0;iCol<permutations[iPermut].size();iCol++)
-        {
-            tVector col1 = H1.col(iCol);
-
-            #ifdef DEBUG13
-                cout << "columna de la 1� matriz" << endl << col1;
-            #endif
-
-            // error without changing the sign
-            tVector col2 = H2.col(permutations[iPermut][iCol]);
-
-            #ifdef DEBUG13
-                cout << "columna de la 2� matriz" << endl << col2;
-            #endif
-
-            add(col1,col2,errorVector,1.0,-1.0);
-            errorWithoutChangingSign = Blas_Dot_Prod(errorVector,errorVector);
-
-            // error changing the sign
-            add(col1,col2,errorVector,1.0,1.0);
-            errorChangingSign = Blas_Dot_Prod(errorVector,errorVector);
-
-            if(errorChangingSign<errorWithoutChangingSign)
-            {
-                signs[iPermut][iCol] = -1;
-                permutationError[iPermut] += errorChangingSign;
-            }else
-            {
-                signs[iPermut][iCol] = 1;
-                permutationError[iPermut] += errorWithoutChangingSign;
-            }
-        }
-    }
-
-    #ifdef DEBUG2
-        print(permutationError);
-    #endif
-
-    min(permutationError,iBestPermutation);
-    return signs[iBestPermutation];
-}
 
 tMatrix Util::applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {

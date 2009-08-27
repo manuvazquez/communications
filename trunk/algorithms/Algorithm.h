@@ -83,7 +83,11 @@ public:
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}
 
-    double MSE(const vector<tMatrix> &channelMatrices);
+    double MSE(const vector<tMatrix> &channelMatrices)
+    {
+        return MSE(Util::lapack2eigen(channelMatrices));
+    }
+    double MSE(const vector<MatrixXd> &channelMatrices);
 
     tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors)
     {

@@ -66,6 +66,7 @@ public:
     static void max(const tVector &v,int &index);
     static void min(const tVector &v,int &index);
     static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
+    static double squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B);
     static double squareError(const tMatrix &A,const tMatrix &B);
     static double normalizedSquareError(const tMatrix &A,const tMatrix &B);    
     static void print(const tMatrix &A);
@@ -87,7 +88,6 @@ public:
     static void shiftUp(tVector &v,int n);
     static void shiftUp(VectorXd &v,int n); // eigen
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
-    static vector<int> solveAmbiguity(const tMatrix &H1,const tMatrix &H2,const vector<vector<uint> > &permutations,int &iBestPermutation);
     static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix cholesky(const tMatrix &matrix);
     static MatrixXd cholesky(const MatrixXd &matrix); // eigen
