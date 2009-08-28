@@ -31,7 +31,7 @@ public:
     NullNoise(int nOutputs, int length);
 
     virtual double stdDevAt(int n) const {return 0.0;}
-    virtual tVector operator [ ](int n) const;
+    virtual VectorXd at(uint n) const;
 	virtual void setSNR(int SNR,double alphabetVariance) {}
 	virtual void print() const {std::cout << "Null Noise" << std::endl;}
 };

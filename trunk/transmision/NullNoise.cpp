@@ -23,11 +23,8 @@ NullNoise::NullNoise(int nOutputs, int length): Noise(nOutputs, length)
 {
 }
 
-tVector NullNoise::operator [ ](int n) const
+VectorXd NullNoise::at(uint n) const
 {
-// 	tVector res(_nOutputs);
-// 	res = 0.0;
-// 	return res;
-	return LaGenMatDouble::zeros(_nOutputs,1);
+	return VectorXd::Zero(_nOutputs);
 }
 

@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "PowerProfileDependentNoise.h"
 
-PowerProfileDependentNoise::PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0)
+PowerProfileDependentNoise::PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix_eigen(_nOutputs,_length,0.0,1.0)),_stdDev(1.0)
 {
-	tMatrix variancesMatrix = powerProfile.variances();
+	MatrixXd variancesMatrix = Util::lapack2eigen(powerProfile.variances());
 	int i,j;
 	double variancesSum = 0.0;
 	for(i=0;i<variancesMatrix.rows();i++)
@@ -31,12 +31,9 @@ PowerProfileDependentNoise::PowerProfileDependentNoise(int nOutputs, int length,
 	_varianceConstant = variancesSum/double(_nOutputs);
 }
 
-tVector PowerProfileDependentNoise::operator [ ](int n) const
+VectorXd PowerProfileDependentNoise::at(uint n) const
 {
-	tVector res(_nOutputs);
-	for(int i=0;i<_nOutputs;i++)
-		res(i) = _matrix(i,n);
-	return res;
+    return _matrix.col(n);
 }
 
 void PowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)

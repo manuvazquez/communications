@@ -59,11 +59,11 @@ int main(int argc,char* argv[])
 //     LMSmuTestSystem system;
 //     PSPvsSMCSystem system;
 
-    TesisOrdenCanalDesconocidoARSystem system;
+//     TesisOrdenCanalDesconocidoARSystem system;
 //     TesisOrdenCanalDesconocidoBesselSystem system;
 
 //     TesisComplejidadReducidaBesselSystem system;
-//     TesisComplejidadReducidaARSystem system;
+    TesisComplejidadReducidaARSystem system;
 
 //     TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 

@@ -39,8 +39,20 @@ public:
 	int nOutputs() const { return _nOutputs;}
 	virtual void print() const = 0;
 	virtual double stdDevAt(int n) const = 0;
-	virtual tVector operator[](int n) const = 0;
-	virtual tMatrix range(int start,int end) const {throw RuntimeException("Noise::Range: not implemented.");}
+    
+    tVector operator[](int n) const
+    {
+        return Util::eigen2lapack(at(n));
+    }
+    virtual VectorXd at(uint n) const = 0;
+    
+    tMatrix range(int start,int end) const
+    {
+        return Util::eigen2lapack(range_eigen(start,end));
+    }
+    virtual MatrixXd range_eigen(int start,int end) const {throw RuntimeException("Noise::range: not implemented.");}   
+    
+    
 	double VarianceAt(int n) const { double stdDev = stdDevAt(n); return stdDev*stdDev;};
 	vector<double> variances() const;
 	virtual void setSNR(int SNR,double alphabetVariance) = 0;

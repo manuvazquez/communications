@@ -22,22 +22,10 @@
 // #define PRINT_INFO
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
- : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel)
+ : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix_eigen(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length)
 {
-    _stdDevs = new double[_length];
     for(int i=0;i<_length;i++)
         _stdDevs[i] = 1.0;
-}
-
-ChannelDependentNoise::ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise):Noise(channelDependentNoise),_channel(channelDependentNoise._channel),_stdDevs(new double[_length])
-{
-    for(int i=0;i<_length;i++)
-        _stdDevs[i] = channelDependentNoise._stdDevs[i];
-}
-
-ChannelDependentNoise::~ChannelDependentNoise()
-{
-    delete[] _stdDevs;
 }
 
 void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
@@ -48,8 +36,7 @@ void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
 
     for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
-        tMatrix channelMatrix;
-        channelMatrix = _channel->getTransmissionMatrix(j);
+        MatrixXd channelMatrix = _channel->getTransmissionMatrix_eigen(j);
         
         variance = 0.0;
         for(i=0;i<channelMatrix.rows();i++)
@@ -78,19 +65,12 @@ double ChannelDependentNoise::stdDevAt(int n) const
     return _stdDevs[n];
 }
 
-tVector ChannelDependentNoise::operator[](int n) const
+VectorXd ChannelDependentNoise::at(uint n) const
 {
-    tVector res(_nOutputs);
-    for(int i=0;i<_nOutputs;i++)
-        res(i) = _matrix(i,n);
-    return res;
+    return _matrix.col(n);
 }
 
-tMatrix ChannelDependentNoise::range(int start,int end) const
+MatrixXd ChannelDependentNoise::range_eigen(int start,int end) const
 {
-    tMatrix res(_nOutputs,end-start+1);
-    for(int i=start;i<=end;i++)
-        for(int j=0;j<_nOutputs;j++)
-            res(j,i-start) = _matrix(j,i);
-    return res;
+    return _matrix.block(0,start,_nOutputs,end-start+1);
 }

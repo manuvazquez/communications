@@ -32,13 +32,13 @@
 class PowerProfileDependentNoise : public Noise
 {
 protected:
-	tMatrix _matrix;
+	MatrixXd _matrix;
 	double _varianceConstant,_stdDev;
 public:
     PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
 
 	virtual double stdDevAt(int n) const {return _stdDev;}
-    virtual tVector operator [ ](int n) const;
+    virtual VectorXd at(uint n) const;
     virtual void setSNR(int SNR, double alphabetVariance);
 	virtual void print() const { cout << _matrix;}
 

@@ -36,19 +36,17 @@
 class ChannelDependentNoise : public Noise
 {
 protected:
-    tMatrix _matrix;
+    MatrixXd _matrix;
     MIMOChannel *_channel;
-    double *_stdDevs;
+    std::vector<double> _stdDevs;
 public:
     ChannelDependentNoise(MIMOChannel *channel);
-    ChannelDependentNoise(const ChannelDependentNoise &channelDependentNoise);
-    ~ChannelDependentNoise();
 
     virtual void setSNR(int SNR,double alphabetVariance);
     virtual void print() const { cout << _matrix;}
     double stdDevAt(int n) const;
-    tVector operator[](int n) const;
-    virtual tMatrix range(int start,int end) const;
+    VectorXd at(uint n) const;
+    virtual MatrixXd range_eigen(int start,int end) const;
 };
 
 #endif
