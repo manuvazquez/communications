@@ -33,8 +33,10 @@ Trellis::Trellis(const Alphabet &alphabet, int N, int m)
     {
         _stateTransitionMatrix[iState] = new int[_nPossibleInputs];
         for(iInput=0;iInput<_nPossibleInputs;iInput++)
+        {
             // computes de next state give the current one and the input (both in decimal)
             _stateTransitionMatrix[iState][iInput] = (iState % alphabetLengthToTheNmMinus2)*_nPossibleInputs + iInput;
+        }
     }
 }
 

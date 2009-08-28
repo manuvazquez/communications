@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "TimeInvariantChannel.h"
 
-TimeInvariantChannel::TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, tMatrix channelMatrix): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrix(channelMatrix)
+TimeInvariantChannel::TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, MatrixXd channelMatrix): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrix(channelMatrix)
 {
 	if(_channelMatrix.rows()!=nOutputs || _channelMatrix.cols()!=(nInputs*memory))
 		throw RuntimeException("TimeInvariantChannel::TimeInvariantChannel: passed channel matrix is not coherent with the channel characteristics.)");

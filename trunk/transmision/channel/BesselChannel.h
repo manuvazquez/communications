@@ -30,17 +30,16 @@
 #include <StatUtil.h>
 #include <DelayPowerProfile.h>
 #include <ContinuousPowerProfile.h>
+#include <Eigen/Cholesky>
 
 class BesselChannel : public StillMemoryMIMOChannel
 {
 protected:
-	tMatrix *_channelMatrices;
+    std::vector<MatrixXd> _channelMatrices;   
 public:
     BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
 
-    ~BesselChannel();
-
-	tMatrix operator[](int n) const { return _channelMatrices[n];};
+    MatrixXd at(int n) const { return _channelMatrices[n];};
 };
 
 #endif

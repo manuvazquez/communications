@@ -31,14 +31,12 @@
 class ARchannel : public StillMemoryMIMOChannel
 {
 protected:
-	tMatrix* _channelMatrices;
+    std::vector<MatrixXd> _channelMatrices;   
 	ARprocess _ARproc;
 public:
 	ARchannel(int nInputs, int nOutputs, int memory, int length,ARprocess ARproc);
-	ARchannel(const ARchannel &archannel);
-	~ARchannel();
 
-	tMatrix operator[](int n) const { return _channelMatrices[n];};
+	MatrixXd at(int n) const { return _channelMatrices[n];};
 };
 
 #endif

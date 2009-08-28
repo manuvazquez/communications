@@ -1,16 +1,25 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="3" >
+ <DocsAndViews NumberOfDocuments="6" >
   <Doc0 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/com/com.cpp" >
-   <View0 Encoding="" line="65" Type="Source" />
+   <View0 Encoding="" line="62" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/changelog" >
-   <View0 Encoding="" line="5" Type="Source" />
+   <View0 Encoding="" line="1" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/systems/BaseSystem.cpp" >
-   <View0 Encoding="" line="49" Type="Source" />
+   <View0 Encoding="" line="56" Type="Source" />
   </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.cpp" >
+   <View0 Encoding="" line="61" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/transmision/channel/MIMOChannel.h" >
+   <View0 Encoding="" line="40" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///usr/local/.home/manu/c%2B%2B/comunicaciones/statistics/ARprocess.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc5>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -137,13 +146,13 @@
      <mark line="188" />
      <mark line="38" />
     </bookmark>
+    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp" >
+     <mark line="92" />
+    </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/com/com.cpp" >
      <mark line="69" />
      <mark line="61" />
      <mark line="65" />
-    </bookmark>
-    <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/CDMASystem.cpp" >
-     <mark line="92" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/WSA08.cpp" >
      <mark line="112" />
@@ -161,8 +170,8 @@
      <mark line="21" />
     </bookmark>
     <bookmark url="/usr/local/.home/manu/c++/comunicaciones/systems/BaseSystem.cpp" >
-     <mark line="279" />
      <mark line="398" />
+     <mark line="279" />
      <mark line="163" />
     </bookmark>
    </bookmarks>

@@ -29,11 +29,11 @@
 class TimeInvariantChannel : public StillMemoryMIMOChannel
 {
 protected:
-	tMatrix _channelMatrix;
+    MatrixXd _channelMatrix;   
 public:
-    TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, tMatrix channelMatrix);
+    TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, MatrixXd channelMatrix);
 
-	tMatrix operator[](int n) const { return _channelMatrix;};
+    MatrixXd at(int n) const { return _channelMatrix;};
 };
 
 #endif

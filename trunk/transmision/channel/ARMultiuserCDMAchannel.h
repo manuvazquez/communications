@@ -35,9 +35,9 @@ public:
 
 protected:
     ARprocess _ARprocess;
-    vector<tMatrix> _userCoeffs;
+    vector<MatrixXd> _userCoeffs;
     
-    virtual tMatrix operator[](int n) const { return _userCoeffs[n];}
+    virtual MatrixXd at(int n) const { return _userCoeffs[n];}
 };
 
 #endif

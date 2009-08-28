@@ -24,11 +24,6 @@
 ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_length)
 {
     //initialization
-    for(uint i=_memory-1;i<_length;i++)
-    {
-            _userCoeffs[i] = _ARprocess.nextMatrix();            
-#ifdef DEBUG
-            cout << "CDMA channel coefficients at " << i << endl << _userCoeffs[i];
-#endif            
-    }
+    for(int i=_memory-1;i<_length;i++)
+            _userCoeffs[i] = Util::lapack2eigen(_ARprocess.nextMatrix());
 }

@@ -30,7 +30,6 @@ Meant to model a CDMA multiuser communication sytem (whose channel is flat) as a
 class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 {
 protected:
-//     tMatrix _spreadingCodes;
     MatrixXd _spreadingCodes;
     
 public:

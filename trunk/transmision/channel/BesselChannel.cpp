@@ -22,7 +22,7 @@
 
 // #define DEBUG
 
-BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length)
+BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
 {
 	if(powerProfile.memory()!=memory)
 		throw RuntimeException("BesselChannel::BesselChannel: memory is wrong.");
@@ -34,14 +34,13 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 	double normDopplerFrequency = T*dopplerFrequency;
 
 	vector<double> autocorrelations(length);
-	_channelMatrices = new tMatrix[length];
 
 	for(iTime=0;iTime<length;iTime++)
-		_channelMatrices[iTime] = tMatrix(nOutputs,nInputs*memory);
+        _channelMatrices[iTime] = MatrixXd(nOutputs,nInputs*memory);   
 
 	vector<double> tapsVariances = powerProfile.tapsAmplitudes();
-	vector<tMatrix> Ls(memory);
-	tMatrix covarianceMatrix(length,length);
+    vector<MatrixXd> Ls(memory);   
+    MatrixXd covarianceMatrix(length,length);   
 
 	for(uint iTap=0;iTap<tapsVariances.size();iTap++)
 	{
@@ -57,27 +56,15 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 			covarianceMatrix(iRow,iRow) = tapsVariances[iTap] + EPSILON;
 
 		// cholesky decomposition
-		Ls[iTap] = Util::cholesky(covarianceMatrix);
+        Ls[iTap] = Eigen::LLT<MatrixXd>(covarianceMatrix).matrixL();
 	}
 
 	for(iRow=0;iRow<nOutputs;iRow++)
 		for(iCol=0;iCol<nInputs*memory;iCol++)
 		{
-			tVector sample = LaGenMatDouble::zeros(length,1);
-
-			// res = mean + L*randnMatrix(mean.size(),1,0.0,1.0)
-			Blas_Mat_Vec_Mult(Ls[iCol/nInputs],StatUtil::randnMatrix(length,1,0.0,1.0),sample,1.0,1.0);
+            VectorXd sample = Ls[iCol/nInputs]*StatUtil::randnMatrix_eigen(length,1,0.0,1.0);
 
 			for(iTime=0;iTime<length;iTime++)
 				_channelMatrices[iTime](iRow,iCol) = sample(iTime);
 		}
 }
-
-
-
-BesselChannel::~BesselChannel()
-{
-	delete[] _channelMatrices;
-}
-
-
