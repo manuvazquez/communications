@@ -28,7 +28,7 @@ WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(std::vect
 {
 }
 
-WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon):_estimatedChannelMatrices(withChannelEstimationParticleAddon._estimatedChannelMatrices),_channelMatrixEstimators(withChannelEstimationParticleAddon._channelMatrixEstimators.size())
+WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon):_channelMatrixEstimators(withChannelEstimationParticleAddon._channelMatrixEstimators.size()),_estimatedChannelMatrices(withChannelEstimationParticleAddon._estimatedChannelMatrices)
 {
     for(uint i=0;i<_channelMatrixEstimators.size();i++)
         _channelMatrixEstimators[i] = withChannelEstimationParticleAddon._channelMatrixEstimators[i]->clone();

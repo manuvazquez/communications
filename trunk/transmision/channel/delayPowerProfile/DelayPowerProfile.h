@@ -27,13 +27,15 @@
 #include <types.h>
 #include <vector>
 #include <Random.h>
+#include <Util.h>
 
 class DelayPowerProfile{
 protected:
     int _nOutputs,_nInputs;
     std::vector<double> _amplitudes;
     double _generatedCoefficientsMean;
-    tMatrix _means,_variances;
+//     tMatrix _means,_variances;
+    MatrixXd _means,_variances;
 
     void GenerateMatrices();
 public:
@@ -41,10 +43,29 @@ public:
 
     virtual ~DelayPowerProfile();
 
-    virtual tMatrix generateChannelMatrix(Random &random);
+//     virtual tMatrix generateChannelMatrix(Random &random);
+    tMatrix generateChannelMatrix(Random &random)
+    {
+        return Util::eigen2lapack(generateChannelMatrix_eigen(random));
+    }
+    virtual MatrixXd generateChannelMatrix_eigen(Random &random);
+    
     virtual void print() const;
-    tMatrix means() const { return _means;}
-    tMatrix variances() const {return _variances;}
+
+//     tMatrix means() const { return _means;}
+    tMatrix means() const
+    {
+        return Util::eigen2lapack(means_eigen());
+    }
+    MatrixXd means_eigen() const { return _means;}
+    
+//     tMatrix variances() const {return _variances;}
+    tMatrix variances() const
+    {
+        return Util::eigen2lapack(variances_eigen());
+    }    
+    MatrixXd variances_eigen() const {return _variances;}
+    
     int nInputs() { return _nInputs;}
     int nOutputs() { return _nOutputs;}
     int memory() const { return _amplitudes.size();}

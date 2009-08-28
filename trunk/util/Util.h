@@ -90,7 +90,7 @@ public:
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix cholesky(const tMatrix &matrix);
-    static MatrixXd cholesky(const MatrixXd &matrix); // eigen
+//     static MatrixXd cholesky(const MatrixXd &matrix); // eigen
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> nMax(int n,const tVector &v);

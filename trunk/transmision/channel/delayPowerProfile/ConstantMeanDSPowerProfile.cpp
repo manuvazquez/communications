@@ -28,12 +28,6 @@ ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nOutputs, int nInputs
 	int nDelays = int(ceil(_continuousDelays[_continuousDelays.size()-1]/T))+1;
 	_amplitudes.resize(nDelays,0.0);
 
-#ifdef DEBUG
-	cout << "T = " << T << endl;
-	cout << "_continuousDelays.size() es " << _continuousDelays.size() << "floor(_continuousDelays[_continuousDelays.size()-1]/T) es " << floor(_continuousDelays[_continuousDelays.size()-1]/T) << endl;
-	cout << "nDelays es " << nDelays << endl;
-#endif
-
 	for(uint i=0;i<_continuousDelays.size();i++)
 	{
 		quotient = _continuousDelays[i] / T;

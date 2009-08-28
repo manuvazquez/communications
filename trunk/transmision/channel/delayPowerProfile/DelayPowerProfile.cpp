@@ -27,9 +27,9 @@ DelayPowerProfile::~DelayPowerProfile()
 {
 }
 
-tMatrix DelayPowerProfile::generateChannelMatrix(Random &random)
+MatrixXd DelayPowerProfile::generateChannelMatrix_eigen(Random &random)
 {
-	tMatrix res(_nOutputs,_nInputs*_amplitudes.size());
+	MatrixXd res = MatrixXd::Zero(_nOutputs,_nInputs*_amplitudes.size());
 
 	for(int i=0;i<res.rows();i++)
 		for(int j=0;j<res.cols();j++)
@@ -47,11 +47,14 @@ void DelayPowerProfile::print() const
 void DelayPowerProfile::GenerateMatrices()
 {
 	// the memory of the channel is "_amplitudes.size()"
-	_means = tMatrix(_nOutputs,_nInputs*_amplitudes.size());
-	_means = _generatedCoefficientsMean;
+// 	_means = tMatrix(_nOutputs,_nInputs*_amplitudes.size());
+// 	_means = _generatedCoefficientsMean;
+    _means = MatrixXd::Constant(_nOutputs,_nInputs*_amplitudes.size(),_generatedCoefficientsMean);
 
-	_variances = tMatrix(_nOutputs,_nInputs*_amplitudes.size());
-	tRange rAllRows(0,_nOutputs-1);
+// 	_variances = tMatrix(_nOutputs,_nInputs*_amplitudes.size());
+ _variances = MatrixXd::Zero(_nOutputs,_nInputs*_amplitudes.size());   
+// 	tRange rAllRows(0,_nOutputs-1);
 	for(uint i=0;i<_amplitudes.size();i++)
-		_variances(rAllRows,tRange(i*_nInputs,(i+1)*_nInputs-1)) = _amplitudes[i];
+		_variances.block(0,i*_nInputs,_nOutputs,_nInputs).setConstant(_amplitudes[i]);
+//         _variances(rAllRows,tRange(i*_nInputs,(i+1)*_nInputs-1)) = _amplitudes[i];    
 }

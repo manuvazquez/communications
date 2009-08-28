@@ -722,31 +722,31 @@ tMatrix Util::cholesky(const tMatrix &matrix)
   return L_;
 }
 
-// eigen
-MatrixXd Util::cholesky(const MatrixXd &matrix)
-{
-  if (matrix.rows() != matrix.cols())
-    throw RuntimeException("Util::Cholesky: Matrix not square");
-
-  MatrixXd L_ = MatrixXd::Zero(matrix.rows(), matrix.rows());
-  for (int j = 0; j < matrix.rows(); j++)
-    {
-      double d = 0.0;
-      for (int k = 0; k < j; k++)
-        {
-          double s = 0.0;
-          for (int i = 0; i < k; i++)
-            {
-              s += L_ (k, i) * L_ (j, i);
-            }
-          L_ (j, k) = s = (matrix(j, k) - s) / L_ (k, k);
-          d = d + s * s;
-        }
-      d = matrix(j, j) - d;
-      L_ (j, j) = sqrt (d);
-    }
-  return L_;
-}
+// // eigen
+// MatrixXd Util::cholesky(const MatrixXd &matrix)
+// {
+//   if (matrix.rows() != matrix.cols())
+//     throw RuntimeException("Util::Cholesky: Matrix not square");
+// 
+//   MatrixXd L_ = MatrixXd::Zero(matrix.rows(), matrix.rows());
+//   for (int j = 0; j < matrix.rows(); j++)
+//     {
+//       double d = 0.0;
+//       for (int k = 0; k < j; k++)
+//         {
+//           double s = 0.0;
+//           for (int i = 0; i < k; i++)
+//             {
+//               s += L_ (k, i) * L_ (j, i);
+//             }
+//           L_ (j, k) = s = (matrix(j, k) - s) / L_ (k, k);
+//           d = d + s * s;
+//         }
+//       d = matrix(j, j) - d;
+//       L_ (j, j) = sqrt (d);
+//     }
+//   return L_;
+// }
 
 template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
 {
