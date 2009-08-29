@@ -58,8 +58,19 @@ public:
     }
     virtual MatrixXd getTransmissionMatrix_eigen(const int n) const { return Util::lapack2eigen(operator[](n));}
     
-    tMatrix transmit(tMatrix &symbols,Noise &noise);
-    vector<tMatrix> range(int a,int b);
+    tMatrix transmit(tMatrix &symbols,Noise &noise)
+    {
+        MatrixXd symbols_eigen = Util::lapack2eigen(symbols);
+        tMatrix res = Util::eigen2lapack(transmit(symbols_eigen,noise));
+        return res;
+    }
+    MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
+    
+    vector<tMatrix> range(int a,int b)
+    {
+        return Util::eigen2lapack(range_eigen(a,b));
+    }
+    vector<MatrixXd> range_eigen(int a,int b);
 };
 
 #endif

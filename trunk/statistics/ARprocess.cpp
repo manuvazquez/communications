@@ -20,140 +20,65 @@
 #include "ARprocess.h"
 
 // #define DEBUG5
-// #define DEBUG3
-// #define DEBUGDOPPLER
 
 using namespace std;
 
 ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
-    CommonConstructorsCode(seed);
+    CommonConstructorsCode(Util::lapack2eigen(seed));
 }
 
 ARprocess::ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
 {
     _coefficients = parametersFromYuleWalker(order,velocity,carrierFrequency,T,_noiseVariance);
 
-#ifdef DEBUG4
-    cout << "Los coeficientes son " << endl;
-    Util::print(_coefficients);
-    cout << "La varianza es " << _noiseVariance << endl;
-#endif
-
     _nCoefficients = _coefficients.size();
 
-#ifdef DEBUG2
-    cout << "seed es " << endl << seed;
-#endif
-
-    CommonConstructorsCode(seed);
+    CommonConstructorsCode(Util::lapack2eigen(seed));
 }
 
-void ARprocess::CommonConstructorsCode(const tMatrix &seed)
+// void ARprocess::CommonConstructorsCode(const tMatrix &seed)
+void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
 {
     int i,j;
 
     _iterationsForConvergence = 200;
     _noiseMean = 0.0;
 
-    _buffer = new tMatrix*[_nCoefficients];
-    _buffer[0] = new tMatrix(seed);
+    _buffer.resize(_nCoefficients);
+    _buffer[0] = seed;
 
     //the buffer is filled
     for(i=1;i<_nCoefficients;i++)
-    {
-        _buffer[i] = new tMatrix(_rows,_columns);
-        *(_buffer[i]) = 0.0;
-
-//      for(j=0;j<i;j++)
-//          // _buffer[i] = _buffer[i] + _buffer[j]*_coefficients[j];
-//          Util::add(*(_buffer[i]),*(_buffer[j]),*(_buffer[i]),1.0,_coefficients[j]);
-//
-//      tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
-//
-//      //_buffer[i] = _buffer[i] + noise;
-//      Util::add(*(_buffer[i]),noise,*(_buffer[i]));
-
-        tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
-
-        //_buffer[i] = _buffer[i] + noise;
-        Util::add(*(_buffer[i-1]),noise,*(_buffer[i]));
-
-#ifdef DEBUG3
-        cout << "El ruido fue (_noiseMean = " << _noiseMean << ",_noiseVariance = " << _noiseVariance << endl << noise;
-        cout << "*(_buffer["<< i <<"])" << endl << *(_buffer[i]) << endl;
-#endif
-    }
+        _buffer[i] = _buffer[i-1] + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
 
     //convergence
-    tMatrix aux(_rows,_columns);
     for(i=0;i<_iterationsForConvergence;i++)
     {
-        aux = 0.0;
+        MatrixXd aux = MatrixXd::Zero(_rows,_columns);
         for(j=0;j<_nCoefficients;j++)
             // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
-            Util::add(aux,*(_buffer[(i+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
-
-        tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
+            aux += _coefficients[j]*_buffer[(i+_nCoefficients-1-j) % _nCoefficients];
 
         // _buffer[i % _nCoefficients] = aux + noise;
-        Util::add(aux,noise,*(_buffer[i % _nCoefficients]));
-
-#ifdef DEBUG4
-        cout << "convergiendo" << endl << *(_buffer[i % _nCoefficients]);
-        cout << "noise" << endl << noise;
-        cout << "Una tecla..."; getchar();
-#endif
+        _buffer[i % _nCoefficients] = aux + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
     }
-
-#ifdef DEBUG5
-    tMatrix resta(_rows,_columns);
-    cout << "seed es" << endl << seed;
-    Util::add(*(_buffer[i % _nCoefficients]),seed,resta);
-    cout << "resta es" << endl << resta;
-    cout << "Una tecla..."; getchar();
-#endif
 
     // the index of the next matrix is gonna be returned is kept
     _iNextMatrix = i;
 }
 
-ARprocess::ARprocess(const ARprocess &arprocess):_coefficients(arprocess._coefficients),_noiseVariance(arprocess._noiseVariance),_noiseMean(arprocess._noiseMean),_nCoefficients(arprocess._nCoefficients),_rows(arprocess._rows),_columns(arprocess._columns),_iNextMatrix(arprocess._iNextMatrix),_iterationsForConvergence(arprocess._iterationsForConvergence),_buffer(new tMatrix*[_nCoefficients])/*,_randomGenerator(arprocess._randomGenerator)*/
+MatrixXd ARprocess::nextMatrix_eigen()
 {
-    for(int i=0;i<_nCoefficients;i++)
-    {
-        _buffer[i] = new tMatrix(_rows,_columns);
-        *(_buffer[i]) = *(arprocess._buffer[i]);
-    }
-}
-
-ARprocess::~ARprocess()
-{
-    for(int i=0;i<_nCoefficients;i++)
-        delete _buffer[i];
-    delete[] _buffer;
-}
-
-tMatrix ARprocess::nextMatrix()
-{
-    tMatrix aux(_rows,_columns);
-
-    aux = 0.0;
+    MatrixXd aux = MatrixXd::Zero(_rows,_columns);
     for(int j=0;j<_nCoefficients;j++)
         // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
-        Util::add(aux,*(_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients]),aux,1.0,_coefficients[j]);
-
-    tMatrix noise = StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
-
+        aux += _coefficients[j]*_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients];
+    
     // _buffer[i % _nCoefficients] = aux + noise;
-    Util::add(aux,noise,*(_buffer[_iNextMatrix % _nCoefficients]));
+    _buffer[_iNextMatrix % _nCoefficients] = aux + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
 
-#ifdef DEBUG
-    cout << "Otra matriz" << endl << *(_buffer[_iNextMatrix++ % _nCoefficients]);
-    cout << "Una tecla..."; getchar();
-#endif
-
-    return *(_buffer[_iNextMatrix++ % _nCoefficients]);
+    return _buffer[_iNextMatrix++ % _nCoefficients];
 }
 
 vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance)
@@ -161,40 +86,30 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
     const double c = 3e8;
 
     double dopplerFrequency = velocity/(c/carrierFrequency);
-#ifdef DEBUG
-    cout << "dopplerFrequency = " << dopplerFrequency << endl;
-#endif
     double normDopplerFrequency = T*dopplerFrequency;
-#ifdef DEBUGDOPPLER
-    cout << "normDopplerFrequency = " << normDopplerFrequency << endl;
-    normDopplerFrequency = 0.02;
-#endif
 
-    tMatrix autocorrelationsMatrix(order,order);
-    tVector autocorrelationsVector(order);
+//     tMatrix autocorrelationsMatrix(order,order);
+//     tVector autocorrelationsVector(order);
+    MatrixXd autocorrelationsMatrix(order,order);
+    VectorXd autocorrelationsVector(order);
 
     vector<double> autocorrelations(order+1);
     for(int i=0;i<=order;i++)
         autocorrelations[i] = jn(0,2.0*M_PI*normDopplerFrequency*double(i));
 
-#ifdef DEBUG
-    cout << "Todas las correlaciones" << endl;
-    Util::print(autocorrelations);
-    cout << "jn(0,2.0): " << jn(0,2.0) << endl;
-#endif
-
     for(int m=0;m<order;m++)
     {
         for(int k=0;k<order;k++)
             autocorrelationsMatrix(m,k) = autocorrelations[abs(m-k)];
-//          autocorrelationsMatrix(m,k) = jn(0,2.0*M_PI*normDopplerFrequency*double(abs(m-k)));
 
-//      autocorrelationsVector(m) = jn(0,2.0*M_PI*normDopplerFrequency*double(m));
         autocorrelationsVector(m) = autocorrelations[m+1];
     }
 
-    tVector coefficients(order);
-    LaLinearSolveIP(autocorrelationsMatrix,coefficients,autocorrelationsVector);
+//     tVector coefficients(order);
+//     LaLinearSolveIP(autocorrelationsMatrix,coefficients,autocorrelationsVector);
+
+    VectorXd coefficients;
+    autocorrelationsMatrix.lu().solve(autocorrelationsVector,&coefficients);
 
     // the variance of the noise will be computed in the loop...
     noiseVariance = autocorrelations[0];
@@ -206,12 +121,6 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
         noiseVariance -= coefficients(i)*autocorrelations[i+1];
         coefficientsCppVector[i] = coefficients(i);
     }
-
-#ifdef DEBUG
-    cout << "noiseVariance is: " << noiseVariance << endl;
-    cout << "autocorrelationsMatrix" << endl << autocorrelationsMatrix;
-    cout << "autocorrelationsVector" << endl << autocorrelationsVector;
-#endif
 
     // it takes into accout rounding errors
     if(noiseVariance<0.0)

@@ -28,10 +28,15 @@
 #include <types.h>
 #include <Alphabet.h>
 #include <Bits.h>
+#include <Util.h>
 
 class Demodulator{
 public:
-	static Bits demodulate(const tMatrix &simbolos,Alphabet alfabeto);
+    static Bits demodulate(const tMatrix &simbolos,Alphabet alfabeto)
+    {
+        return demodulate(Util::lapack2eigen(simbolos),alfabeto);
+    }
+    static Bits demodulate(const MatrixXd &simbolos,Alphabet alfabeto);   
 };
 
 #endif

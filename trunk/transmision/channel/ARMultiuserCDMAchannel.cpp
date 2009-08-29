@@ -25,5 +25,5 @@ ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spread
 {
     //initialization
     for(int i=_memory-1;i<_length;i++)
-            _userCoeffs[i] = Util::lapack2eigen(_ARprocess.nextMatrix());
+            _userCoeffs[i] = _ARprocess.nextMatrix_eigen();
 }

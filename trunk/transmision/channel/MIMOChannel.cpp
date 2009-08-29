@@ -34,69 +34,52 @@ MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),
  * @param noise
  * @return
  */
-tMatrix MIMOChannel::transmit(tMatrix &symbols,Noise &noise)
+ MatrixXd MIMOChannel::transmit(const MatrixXd &symbols,const Noise &noise) const
 {
     if(symbols.rows()!=_nInputs)
-        throw RuntimeException("MIMOChannel::Transmit: symbol vectors length is wrong.");
+        throw RuntimeException("MIMOChannel::transmit: symbol vectors length is wrong.");
     else if(symbols.cols()>_length)
-        throw RuntimeException("MIMOChannel::Transmit: channel length is shorter than then number of symbol vectors.");
+        throw RuntimeException("MIMOChannel::transmit: channel length is shorter than then number of symbol vectors.");
     else if(noise.nOutputs()!=_nOutputs || symbols.cols()>noise.length())
-        throw RuntimeException("MIMOChannel::Transmit: missmatched noise dimensions.");
+        throw RuntimeException("MIMOChannel::transmit: missmatched noise dimensions.");
 
     // the number of resulting observations depends on the channel _memory
     int nObservations = symbols.cols() - (effectiveMemory() - 1);
 
     if(nObservations<1)
-        throw RuntimeException("MIMOChannel::Transmit: not enough symbol vectors for this channel _memory.");
+        throw RuntimeException("MIMOChannel::transmit: not enough symbol vectors for this channel _memory.");
 
-    tMatrix observations = tMatrix(_nOutputs,symbols.cols());
+    MatrixXd observations(_nOutputs,symbols.cols());
 
     int j;
-    tVector currentObservationVector(_nOutputs);
-
-    tRange allChannelMatrixRows(0,_nOutputs-1);
-
+    
     for(int iSymbolVector=effectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
-//         tMatrix currentChannelMatrix = (*this)[iSymbolVector];
-        tMatrix currentChannelMatrix = getTransmissionMatrix(iSymbolVector);        
+        MatrixXd currentChannelMatrix = getTransmissionMatrix_eigen(iSymbolVector);
 
-        //currentObservationVector will accumulate the contributions of the
-        // different symbol vectors that participate in the current observation
-        // (_memory >= 1). Besides, it will always accumulate the noise.
-        currentObservationVector = noise[iSymbolVector];
+        //we will accumulate the contributions of the different symbol vectors that participate in the current observation (_memory >= 1).
+        // Besides, we will always accumulate the noise.
+        observations.col(iSymbolVector) = noise.at(iSymbolVector);
 
         for(j=0;j<memory(iSymbolVector);j++)
-        {
-            // currentObservationVector = currentObservationVector + currentChannelMatrix(allChannelMatrixRows,*(new tRange(j*_nInputs,(j+1)*_nInputs-1)))*symbols.col(iSymbolVector-_memory+1+j)
-            tRange rowsRange(j*_nInputs,(j+1)*_nInputs-1);
-            Blas_Mat_Vec_Mult(currentChannelMatrix(allChannelMatrixRows,rowsRange),symbols.col(iSymbolVector-memory(iSymbolVector)+1+j), currentObservationVector,1.0,1.0);
-        }
-
-#ifdef DEBUG
-//         cout << "current channel matrix at " << iSymbolVector << endl << currentChannelMatrix;
-        cout << "observations at " << iSymbolVector << endl << currentObservationVector;
-#endif
-
-        // the just computed observation is set in the observations matrix
-        for(j=0;j<_nOutputs;j++)
-            observations(j,iSymbolVector) = currentObservationVector(j);
+            observations.col(iSymbolVector) += currentChannelMatrix.block(0,j*_nInputs,_nOutputs,_nInputs)*symbols.col(iSymbolVector-memory(iSymbolVector)+1+j);
     }
 
     return observations;
 }
 
-vector<tMatrix> MIMOChannel::range(int a,int b)
+vector<MatrixXd> MIMOChannel::range_eigen(int a,int b)
 {
     int nMatrices = b - a + 1;
 
     if(nMatrices<1)
-        throw RuntimeException("MIMOChannel::Range: selected range of time is invalid.");
-    vector<tMatrix> res(nMatrices);
+        throw RuntimeException("MIMOChannel::range: selected range of time is invalid.");
+
+    vector<MatrixXd> res(nMatrices);
 
     for(int i=0;i<nMatrices;i++)
-        res[i] = operator[](a+i);
+        res[i] = at(a+i);
 
     return res;
 }

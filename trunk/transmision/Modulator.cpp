@@ -26,13 +26,13 @@ Modulator::Modulator()
 {
 }
 
-tMatrix Modulator::modulate(const Bits &bits, Alphabet alphabet)
+MatrixXd Modulator::modulate_eigen(const Bits &bits, Alphabet alphabet)
 {
 	if((bits.nBitsPerStream()% alphabet.nBitsPerSymbol())!=0)
 		cout << "Too many bits." << endl;
 	int nSymbolsByStream = bits.nBitsPerStream()/ alphabet.nBitsPerSymbol();
 
-	tMatrix res(bits.nStreams(),nSymbolsByStream);
+    MatrixXd res(bits.nStreams(),nSymbolsByStream);   
 
 	// once filled, it will converted to a symbol by alphabet
 	vector<tBit> currentBitSequence(alphabet.nBitsPerSymbol());

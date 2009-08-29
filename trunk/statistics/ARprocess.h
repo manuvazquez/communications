@@ -33,6 +33,7 @@
 #include <StatUtil.h>
 #include <lapackpp/gmd.h>
 #include <lapackpp/laslv.h>
+#include <Eigen/LU>
 
 class ARprocess{
 
@@ -42,17 +43,20 @@ private:
 	double _noiseMean;
 	int _nCoefficients, _rows, _columns, _iNextMatrix;
 	int _iterationsForConvergence;
-	tMatrix **_buffer;
+    std::vector<MatrixXd> _buffer;   
 
-	void CommonConstructorsCode(const tMatrix &seed);
+    void CommonConstructorsCode(const MatrixXd &seed);   
 
 public:
 	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
 	ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T);
-	ARprocess(const ARprocess &arprocess);
-	~ARprocess();
 
-	tMatrix nextMatrix();
+//     tMatrix nextMatrix()
+//     {
+//         return Util::eigen2lapack(nextMatrix_eigen());
+//     }
+    MatrixXd nextMatrix_eigen();
+    
 	static vector<double> parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 
 	int rows() {return _rows;}

@@ -19,24 +19,24 @@
  ***************************************************************************/
 #include "Demodulator.h"
 
-Bits Demodulator::demodulate(const tMatrix &symbols,Alphabet alphabet)
+Bits Demodulator::demodulate(const MatrixXd &symbols,Alphabet alphabet)
 {
-	int nBitsByStream = symbols.cols()*alphabet.nBitsPerSymbol();
-	int nStreams = symbols.rows();
-	tBit *matrix = new tBit[nStreams*nBitsByStream];
+    int nBitsByStream = symbols.cols()*alphabet.nBitsPerSymbol();
+    int nStreams = symbols.rows();
+    tBit *matrix = new tBit[nStreams*nBitsByStream];
 
-	int iBit,j,k;
+    int iBit,j,k;
 
-	for(int i=0;i<nStreams;i++)
-	{
-		iBit = 0;
-		for(j=0;j<symbols.cols();j++)
-		{
-			vector<tBit> bitsSequence = alphabet[(tSymbol)symbols(i,j)];
-			for(k=0;k<alphabet.nBitsPerSymbol();k++,iBit++)
-				matrix[i*nBitsByStream+iBit] = bitsSequence[k];
-		}
-	}
-	return Bits(matrix,nStreams,nBitsByStream);
+    for(int i=0;i<nStreams;i++)
+    {
+        iBit = 0;
+        for(j=0;j<symbols.cols();j++)
+        {
+            vector<tBit> bitsSequence = alphabet[(tSymbol)symbols(i,j)];
+            for(k=0;k<alphabet.nBitsPerSymbol();k++,iBit++)
+                matrix[i*nBitsByStream+iBit] = bitsSequence[k];
+        }
+    }
+    return Bits(matrix,nStreams,nBitsByStream);
 
 }

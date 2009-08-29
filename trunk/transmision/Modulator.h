@@ -28,12 +28,17 @@
 #include <types.h>
 #include <Bits.h>
 #include <Alphabet.h>
+#include <Util.h>
 
 class Modulator{
 public:
     Modulator();
 
-    static tMatrix modulate(const Bits &bits,Alphabet alfabeto);
+    static tMatrix modulate(const Bits &bits,Alphabet alfabeto)
+    {
+        return Util::eigen2lapack(modulate_eigen(bits,alfabeto));
+    }
+    static MatrixXd modulate_eigen(const Bits &bits,Alphabet alfabeto);
 };
 
 #endif
