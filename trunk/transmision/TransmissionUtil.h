@@ -44,10 +44,6 @@ public:
     static double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet);
     static double computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
 //     static tVector MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2);
-    static tVector MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2)
-    {
-        return Util::eigen2lapack(MSEalongTime(Util::lapack2eigen(estimatedChannelMatrices),from1,to1,Util::lapack2eigen(trueChannelMatrices),from2,to2));
-    }
     static VectorXd MSEalongTime(const std::vector<MatrixXd> &estimatedChannelMatrices,uint from1,uint to1,const std::vector<MatrixXd> &trueChannelMatrices,uint from2,uint to2);
     static MatrixXd generateTrainingSequence(const Alphabet &alphabet,uint nInputs,uint length);
 };

@@ -21,7 +21,7 @@
 
 // #define DEBUG2
 
-EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
+EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
 {
 	int i;
 
@@ -34,13 +34,11 @@ EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory
 	for(i=0;i<preambleLength;i++)
 		_channelMatrices[i] = nullMatrix;
 
-    MatrixXd symbols_eigen = Util::lapack2eigen(symbols);
-    MatrixXd observations_eigen = Util::lapack2eigen(observations);
+//     MatrixXd symbols_eigen = Util::lapack2eigen(symbols);
+//     MatrixXd observations_eigen = Util::lapack2eigen(observations);
 
 	for(i=preambleLength;i<_length;i++)
-	{
-        _channelMatrices[i] = channelMatrixEstimatorClone->nextMatrix(observations_eigen.col(i),symbols_eigen.block(0,i-memory+1,nInputs,memory),noiseVariances[i]);      
-	}
+        _channelMatrices[i] = channelMatrixEstimatorClone->nextMatrix(observations.col(i),symbols.block(0,i-memory+1,nInputs,memory),noiseVariances[i]);      
 
 	delete channelMatrixEstimatorClone;
 }

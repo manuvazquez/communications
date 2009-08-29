@@ -32,7 +32,7 @@ using namespace std;
 
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
-    tMatrix *realSymbols;
+    MatrixXd *realSymbols;
     Noise *realNoise;
 #endif
 
@@ -103,8 +103,12 @@ BaseSystem::BaseSystem()
     strcat(outputFileName,presentTimeString);
 
     // a specific preamble is generated...
-    preamble = tMatrix(N,preambleLength);
-    preamble = -1.0;
+//     preamble = tMatrix(N,preambleLength);
+//     preamble = -1.0;
+    preamble = MatrixXd::Zero(1,1);
+    preamble.resize(N,preambleLength);
+    if(preamble.size()>0)
+        preamble.setConstant(-1.0);
     
     // the frame length in bits is
     nBitsGenerated = (frameLength+nSmoothingSymbolsVectors)*alphabet->nBitsPerSymbol();
@@ -208,10 +212,16 @@ void BaseSystem::Simulate()
         Bits bits(N,nBitsGenerated,randomGenerator);        
 
         // ... and then modulated by means of the alphabet
-        symbols = Modulator::modulate(bits,*alphabet);
+        MatrixXd symbolsWithoutPreamble = Modulator::modulate_eigen(bits,*alphabet);
 
         // the preamble is set before the symbols to be transmitted
-        symbols = Util::append(preamble,symbols);
+        if(preamble.size()>0)
+        {
+            symbols.resize(preamble.rows(),preamble.cols()+symbolsWithoutPreamble.cols());
+            symbols << preamble,symbolsWithoutPreamble;
+        }else
+            symbols = symbolsWithoutPreamble;
+//         symbols = Util::append(preamble,symbols);
 
         // all the above symbols must be processed except those generated due to the smoothing
         iLastSymbolVectorToBeDetected = symbols.cols() - nSmoothingSymbolsVectors;
@@ -260,14 +270,16 @@ void BaseSystem::Simulate()
 
                 // if there is training sequence
                 if(trainSeqLength!=0)
-                    algorithms[iAlgorithm]->run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
+                    algorithms[iAlgorithm]->run(observations,noise->variances(),symbols.block(0,preambleLength,N,trainSeqLength));
+//                     algorithms[iAlgorithm]->run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
                 // if there is NOT training sequence
                 else
                     algorithms[iAlgorithm]->run(observations,noise->variances());
 
-                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
+                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors_eigen();
                 
-                pe = TransmissionUtil::computeSER(symbols(tRange(),rFrameDuration),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
+//                 pe = TransmissionUtil::computeSER(symbols(tRange(),rFrameDuration),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
+                pe = TransmissionUtil::computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
                 
                 BeforeEndingAlgorithm(iAlgorithm);
 
@@ -305,16 +317,23 @@ void BaseSystem::Simulate()
 
 void BaseSystem::OnlyOnce()
 {
-    overallPeMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-    presentFramePe = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+//     overallPeMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+//     presentFramePe = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+// 
+//     overallMseMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+//     presentFrameMSE = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
 
-    overallMseMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-    presentFrameMSE = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
+    overallPeMatrix = MatrixXd::Zero(SNRs.size(),algorithms.size());
+    presentFramePe = MatrixXd::Zero(SNRs.size(),algorithms.size());
+
+    overallMseMatrix = MatrixXd::Zero(SNRs.size(),algorithms.size());
+    presentFrameMSE = MatrixXd::Zero(SNRs.size(),algorithms.size());
 
     // Pe evolution
     for(uint i=0;i<SNRs.size();i++)
     {
-        overallPeTimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
+//         overallPeTimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
+        overallPeTimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
         overallErrorsNumberTimeEvolution[i] = LaGenMatInt::zeros(algorithms.size(),frameLength);
     }
 
@@ -324,7 +343,8 @@ void BaseSystem::OnlyOnce()
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
-        presentFrameMSEtimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
+        presentFrameMSEtimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
+//         presentFrameMSEtimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
 #endif
 
     presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
@@ -332,10 +352,10 @@ void BaseSystem::OnlyOnce()
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
 {
-    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
+    mse = algorithms[iAlgorithm]->MSE(channel->range_eigen(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    tVector mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices_eigen(),0,frameLength-1,channel->range_eigen(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
@@ -351,7 +371,8 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     presentFrameMSE(iSNR,iAlgorithm) = mse;
 
     // Pe evolution
-    tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
+//     tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
+    MatrixXd transmittedSymbols = symbols.block(0,preambleLength,N,frameLength);
 
     if(detectedSymbols.rows()!=0)
     {

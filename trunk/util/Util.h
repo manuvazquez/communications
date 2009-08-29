@@ -70,10 +70,14 @@ public:
     static double squareError(const tMatrix &A,const tMatrix &B);
     static double normalizedSquareError(const tMatrix &A,const tMatrix &B);    
     static void print(const tMatrix &A);
+    static void print(const MatrixXd &A);
     static void matrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
+    static void matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f); // eigen
     template<class T> static void matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
     static void matricesVectorsVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f);
+    static void matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f); // eigen
     static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f);
+    static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f); // eigen
     template<class T> static void scalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
@@ -88,7 +92,7 @@ public:
     static void shiftUp(tVector &v,int n);
     static void shiftUp(VectorXd &v,int n); // eigen
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
-    static tMatrix applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs);
+    static MatrixXd applyPermutation(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
     static tMatrix cholesky(const tMatrix &matrix);
 //     static MatrixXd cholesky(const MatrixXd &matrix); // eigen
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);

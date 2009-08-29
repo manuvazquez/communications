@@ -24,16 +24,16 @@
 #include <ChannelMatrixEstimator.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 class EstimatedMIMOChannel : public StillMemoryMIMOChannel
 {
 protected:
-	std::vector<MatrixXd> _channelMatrices;
+    std::vector<MatrixXd> _channelMatrices;
 public:
-    EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const tMatrix &symbols, const tMatrix &observations, const vector<double> &noiseVariances);
+    EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances);
 
-	MatrixXd at(int n) const { return _channelMatrices[n];}
+    MatrixXd at(int n) const { return _channelMatrices[n];}
 };
 
 #endif

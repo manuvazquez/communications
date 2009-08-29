@@ -75,7 +75,7 @@ protected:
     Alphabet *alphabet;
 
     Noise *noise;
-    tMatrix observations;
+    MatrixXd observations;
 
     // SNRs to be processed
     std::vector<int> SNRs;
@@ -86,7 +86,7 @@ protected:
     // a vector that will contain the names of the algorithms
     std::vector<std::string> algorithmsNames;
 
-    tMatrix preamble;
+    MatrixXd preamble;
 
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     int nSmoothingSymbolsVectors;
@@ -96,17 +96,17 @@ protected:
     std::vector<std::vector<uint> > permutations;
 
     // matrices for results
-    vector<tMatrix> peMatrices, MSEMatrices;
+    vector<MatrixXd> peMatrices, MSEMatrices;
 
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
     // ...so that they can be printed when the program finishes (they are not saved)
-    tMatrix overallPeMatrix,overallMseMatrix;
+    MatrixXd overallPeMatrix,overallMseMatrix;
     
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms in order to save them
-    tMatrix presentFramePe,presentFrameMSE;
+    MatrixXd presentFramePe,presentFrameMSE;
 
     // BER time evolution
-    std::vector<tMatrix> overallPeTimeEvolution;
+    std::vector<MatrixXd> overallPeTimeEvolution;
     std::vector<LaGenMatInt> overallErrorsNumberTimeEvolution;
 
     // seeds
@@ -115,8 +115,8 @@ protected:
     LaGenMatLongInt presentFrameStatUtilSeeds;
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    vector<tMatrix> presentFrameMSEtimeEvolution;
-    vector<vector<tMatrix> > MSEtimeEvolution;
+    vector<MatrixXd> presentFrameMSEtimeEvolution;
+    vector<vector<MatrixXd> > MSEtimeEvolution;
 #endif
 
     // some useful ranges
@@ -128,8 +128,8 @@ protected:
 
     std::vector<Algorithm *> algorithms;
 
-    tMatrix symbols;
-    tMatrix detectedSymbols;
+    MatrixXd symbols;
+    MatrixXd detectedSymbols;
 
     ofstream f,xmlFile;
 

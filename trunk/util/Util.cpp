@@ -399,7 +399,30 @@ void Util::print(const tMatrix &A)
     }
 }
 
+void Util::print(const MatrixXd &A)
+{
+    int j;
+    for(int i=0;i<A.rows();i++)
+    {
+        for(j=0;j<A.cols();j++)
+            cout << setprecision(6) << setw(12) << left << A(i,j);
+        cout << endl;
+    }
+}
+
 void Util::matrixToOctaveFileStream(tMatrix A,string name,ofstream &f)
+{
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
+
+    for(int i=0;i<A.rows();i++)
+    {
+        for(int j=0;j<A.cols();j++)
+            f << A(i,j) << " ";
+        f << endl;
+    }
+}
+
+void Util::matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f)
 {
     f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
 
@@ -429,6 +452,7 @@ template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices
 }
 template void Util::matricesVectorToOctaveFileStream(vector<tMatrix> matrices,string name,ofstream &f);
 template void Util::matricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
+template void Util::matricesVectorToOctaveFileStream(vector<MatrixXd> matrices,string name,ofstream &f);
 
 void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f)
 {
@@ -449,7 +473,46 @@ void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<tMatrix> > matr
                     f << " " << matrices[l][k](i,j) << endl;
 }
 
+void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f)
+{
+    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
+    {
+        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        return;
+    }
+
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 4" << endl << " " << matrices[0][0].rows() << " " << matrices[0][0].cols() << " " << matrices[0].size() << " " << matrices.size() << endl;
+
+    int i,j;
+    uint k;
+    for(uint l=0;l<matrices.size();l++)
+        for(k=0;k<matrices[l].size();k++)
+            for(j=0;j<matrices[l][k].cols();j++)
+                for(i=0;i<matrices[l][k].rows();i++)
+                    f << " " << matrices[l][k](i,j) << endl;
+}
+
 void Util::matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f)
+{
+    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
+    {
+        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        return;
+    }
+
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 5" << endl << " " << matrices[0][0][0].rows() << " " << matrices[0][0][0].cols() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << endl;
+
+    int i,j;
+    uint k,l;
+    for(uint m=0;m<matrices.size();m++)
+        for(l=0;l<matrices[m].size();l++)
+            for(k=0;k<matrices[m][l].size();k++)
+                for(j=0;j<matrices[m][l][k].cols();j++)
+                    for(i=0;i<matrices[m][l][k].rows();i++)
+                        f << " " << matrices[m][l][k](i,j) << endl;
+}
+
+void Util::matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
     {
@@ -653,7 +716,7 @@ template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
 template vector<vector<int> > Util::Permutations(int *array, int nElements);
 template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
 
-tMatrix Util::applyPermutation(const tMatrix &symbols,const vector<uint> &permutation,const vector<int> &signs)
+MatrixXd Util::applyPermutation(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {
     #ifdef DEBUG
         cout << "hola" << endl;
@@ -663,10 +726,10 @@ tMatrix Util::applyPermutation(const tMatrix &symbols,const vector<uint> &permut
     if(permutation.size()!=N || signs.size()!=N)
         throw RuntimeException("Util::ApplyPermutation: length of the received permutation is not N.");
 
-    tMatrix res(symbols.rows(),symbols.cols());
+    MatrixXd res(symbols.rows(),symbols.cols());
     for(uint i=0;i<N;i++)
     {
-        res.row(i).inject(symbols.row(permutation[i]));
+        res.row(i) = symbols.row(permutation[i]);
         res.row(i) *= signs[permutation[i]];
     }
     #ifdef DEBUG

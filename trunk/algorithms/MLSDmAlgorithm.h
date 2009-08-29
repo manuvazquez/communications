@@ -36,13 +36,13 @@ protected:
     vector<int> _particlesBestChannelOrders;
 
     int iBestChannelOrder(int iBestParticle);
-    virtual void beforeInitializingParticles(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
+    virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
     {
-        beforeInitializingParticles(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
+        beforeInitializingParticles(observations,noiseVariances,Util::lapack2eigen(trainingSequence));
     }
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence);
 public:
-    MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
+    MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
 
     ~MLSDmAlgorithm();
 

@@ -53,9 +53,9 @@ public:
     ~KalmanEstimator();
     
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
-    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
+    virtual tMatrix nextMatrix(const tVector &observations,const MatrixXd &symbolsMatrix,double noiseVariance)
     {
-        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance));
+        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),symbolsMatrix,noiseVariance));
     }
     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
 //     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)

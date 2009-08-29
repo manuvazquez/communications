@@ -41,7 +41,7 @@ protected:
     virtual MatrixXd detectedSymbolsForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector< double >& noiseVariances,const MatrixXd& trainingSequence) = 0;
     
 public:
-    CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector< ChannelMatrixEstimator * > channelEstimators, tMatrix preamble);
+    CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble);
 
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);

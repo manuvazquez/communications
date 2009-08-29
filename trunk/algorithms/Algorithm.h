@@ -48,32 +48,16 @@ public:
 
     string getName() const {return _name;}
 
-    virtual void run(tMatrix observations,vector<double> noiseVariances)
-    {
-        run(Util::lapack2eigen(observations),noiseVariances);
-    }
     virtual void run(MatrixXd observations,vector<double> noiseVariances) = 0;
     
-    virtual void run(tMatrix observations,vector<double> noiseVariances, tMatrix trainingSequence)
-    {
-        run(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(trainingSequence));
-    }
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence) = 0;
 
-    virtual tMatrix getDetectedSymbolVectors()
-    {
-        return Util::eigen2lapack(getDetectedSymbolVectors_eigen());
-    }
     /**
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
     * @return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
     */    
     virtual MatrixXd getDetectedSymbolVectors_eigen() = 0;
     
-    virtual vector<tMatrix> getEstimatedChannelMatrices()
-    {
-        return Util::eigen2lapack(getEstimatedChannelMatrices_eigen());
-    }
     /**
      *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
@@ -83,31 +67,10 @@ public:
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}
 
-    double MSE(const vector<tMatrix> &channelMatrices)
-    {
-        return MSE(Util::lapack2eigen(channelMatrices));
-    }
     double MSE(const vector<MatrixXd> &channelMatrices);
 
-    tVector substractKnownSymbolsContribution(const vector<tMatrix> &matrices,int m,int c,int d,const tVector &observations,const tMatrix &symbolVectors)
-    {
-        return Util::eigen2lapack(substractKnownSymbolsContribution(Util::lapack2eigen(matrices),m,c,d,Util::lapack2eigen(observations),Util::lapack2eigen(symbolVectors)));
-    }
     VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int d,const VectorXd &observations,const MatrixXd &symbolVectors);
 
-    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int start,int d)
-    {
-        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,start,d));
-    }
-    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m)
-    {
-        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,0,matrices.size()-1));
-    }
-    tMatrix channelMatrices2stackedChannelMatrix(vector<tMatrix> matrices,int m,int d)
-    {
-        return Util::eigen2lapack(channelMatrices2stackedChannelMatrix(Util::lapack2eigen(matrices),m,0,d));
-    }
-    
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d);
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m)
     {

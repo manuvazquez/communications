@@ -40,20 +40,20 @@ enum tStage {exitStage,arrivalStage};
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 private:
-	// decimal inputs will be converted to a symbol vector and stored in here
-	vector<tSymbol> _inputVector;
+    // decimal inputs will be converted to a symbol vector and stored in here
+    vector<tSymbol> _inputVector;
 
-	// states in decimal format will be converted to a symbol vector and stored in here
-	vector<tSymbol> _stateVector;
+    // states in decimal format will be converted to a symbol vector and stored in here
+    vector<tSymbol> _stateVector;
 protected:
     int _d;
-	Trellis _trellis;
+    Trellis _trellis;
     ViterbiPath *_exitStage, *_arrivalStage;
     MatrixXd _preamble,*_detectedSymbolVectors;
 
     void DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix);
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const tMatrix &preamble,int smoothingLag);
+    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag);
 
     ~ViterbiAlgorithm();
 
