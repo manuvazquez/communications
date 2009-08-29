@@ -144,7 +144,8 @@ int ParticleFilter::iBestParticle() const
             if(particleAlreadyCounted[iTestedParticle])
                 continue;
 
-            if(getParticle(iParticle)->getAllSymbolVectors().equal_to(getParticle(iTestedParticle)->getAllSymbolVectors()))
+//             if(getParticle(iParticle)->getAllSymbolVectors().equal_to(getParticle(iTestedParticle)->getAllSymbolVectors()))
+            if(getParticle(iParticle)->getSymbolVectors() == getParticle(iTestedParticle)->getSymbolVectors())
             {
                 accumulatedWeights[iParticle] += getParticle(iTestedParticle)->getWeight();
                 particleAlreadyCounted[iTestedParticle] = true;

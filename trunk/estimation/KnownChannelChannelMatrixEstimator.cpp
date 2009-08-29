@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator((*channel)[iFirstChannelMatrix], N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
+KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N): ChannelMatrixEstimator(channel->at(iFirstChannelMatrix), N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
 {
 }
 
@@ -32,7 +32,10 @@ KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::clone() 
 
 MatrixXd KnownChannelChannelMatrixEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-    _lastEstimatedChannelMatrix = (*_channel)[_iNextMatrix++];
-    _lastEstimatedChannelMatrix_eigen = Util::lapack2eigen(_lastEstimatedChannelMatrix);
-    return _lastEstimatedChannelMatrix_eigen;
+//     _lastEstimatedChannelMatrix = (*_channel)[_iNextMatrix++];
+//     _lastEstimatedChannelMatrix_eigen = Util::lapack2eigen(_lastEstimatedChannelMatrix);
+//     return _lastEstimatedChannelMatrix_eigen;
+    _lastEstimatedChannelMatrix_eigen = _channel->at(_iNextMatrix++);
+    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
+    return _lastEstimatedChannelMatrix_eigen;    
 }

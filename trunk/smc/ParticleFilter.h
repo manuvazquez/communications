@@ -29,6 +29,7 @@
 #include <Particle.h>
 #include <ParticleWithChannelEstimation.h>
 #include <StatUtil.h>
+#include <Eigen/Array> 
 
 class ParticleFilter{
 protected:

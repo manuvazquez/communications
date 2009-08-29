@@ -126,9 +126,7 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 			processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
 			// channel matrix is estimated by means of the particle channel estimator
-            VectorXd currentObservation = observations.col(iObservationToBeProcessed);
-            MatrixXd currentSymbolVectors = processedParticle->getSymbolVectors().block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder);
-            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(Util::eigen2lapack(currentObservation),Util::eigen2lapack(currentSymbolVectors),noiseVariances[iObservationToBeProcessed]));
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors().block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]));
 
 			processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
 

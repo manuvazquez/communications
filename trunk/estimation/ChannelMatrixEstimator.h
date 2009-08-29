@@ -38,23 +38,14 @@ protected:
 public:
     // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
     ChannelMatrixEstimator(tMatrix initialEstimation,int N);
+    ChannelMatrixEstimator(MatrixXd initialEstimation,int N);
     virtual ~ChannelMatrixEstimator() {};
 
-    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix) { _lastEstimatedChannelMatrix = matrix; _lastEstimatedChannelMatrix_eigen = Util::lapack2eigen(matrix);}
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelMatrix_eigen = matrix; _lastEstimatedChannelMatrix = Util::eigen2lapack(matrix);} // eigen
     
-    virtual tMatrix nextMatrix(const tVector &observations,const tMatrix &symbolsMatrix,double noiseVariance)
-    {
-        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance));
-    }
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance) = 0;
     
     virtual ChannelMatrixEstimator *clone() const = 0;
-    
-    virtual double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
-    {
-        return likelihood(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance);
-    }    
     
     virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
     {
@@ -67,10 +58,6 @@ public:
     virtual tMatrix lastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
     virtual MatrixXd lastEstimatedChannelMatrix_eigen() { return _lastEstimatedChannelMatrix_eigen;}
     
-    vector<tMatrix> nextMatricesFromObservationsSequence(const tMatrix &observations,vector<double> &noiseVariances,const tMatrix &symbolVectors,int iFrom,int iTo)
-    {
-        return Util::eigen2lapack(nextMatricesFromObservationsSequence(Util::lapack2eigen(observations),noiseVariances,Util::lapack2eigen(symbolVectors),iFrom,iTo));
-    }
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo);
 };
 

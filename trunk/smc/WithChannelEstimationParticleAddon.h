@@ -51,16 +51,6 @@ public:
             _estimatedChannelMatrices[iChannelOrder][n] = matrix;
     }
 
-    tMatrix getChannelMatrix(int iChannelOrder,int n) const
-    {
-        return Util::eigen2lapack(_estimatedChannelMatrices[iChannelOrder][n]);
-    }
-
-    void setChannelMatrix(int iChannelOrder,int n,const tMatrix &matrix)
-    {
-            _estimatedChannelMatrices[iChannelOrder][n] = Util::lapack2eigen(matrix);
-    }
-
     ChannelMatrixEstimator *getChannelMatrixEstimator(int iChannelOrder) const
     { 
         return _channelMatrixEstimators[iChannelOrder];

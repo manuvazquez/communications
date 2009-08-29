@@ -23,7 +23,7 @@
 
 CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const tMatrix &spreadingCodes): KnownChannelChannelMatrixEstimator(channel, iFirstChannelMatrix, N),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
 {
-    if((*_channel)[iFirstChannelMatrix].rows()!=1)
+    if(_channel->at(iFirstChannelMatrix).rows()!=1)
         throw RuntimeException("CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator: channel matrices don't have a single row.");
 
     _nOutputs = _spreadingCodes.rows();

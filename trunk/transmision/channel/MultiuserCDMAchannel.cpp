@@ -25,5 +25,5 @@ MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingC
 
 MatrixXd MultiuserCDMAchannel::getTransmissionMatrix_eigen(const int n) const
 {
-    return _spreadingCodes*Util::toVector((Util::lapack2eigen((*this)[n])),rowwise).asDiagonal();
+    return _spreadingCodes*Util::toVector(this->at(n),rowwise).asDiagonal();
 }

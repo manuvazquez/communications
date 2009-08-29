@@ -34,7 +34,6 @@ protected:
     int _nOutputs,_nInputs;
     std::vector<double> _amplitudes;
     double _generatedCoefficientsMean;
-//     tMatrix _means,_variances;
     MatrixXd _means,_variances;
 
     void GenerateMatrices();
@@ -43,7 +42,6 @@ public:
 
     virtual ~DelayPowerProfile();
 
-//     virtual tMatrix generateChannelMatrix(Random &random);
     tMatrix generateChannelMatrix(Random &random)
     {
         return Util::eigen2lapack(generateChannelMatrix_eigen(random));
@@ -52,14 +50,12 @@ public:
     
     virtual void print() const;
 
-//     tMatrix means() const { return _means;}
     tMatrix means() const
     {
         return Util::eigen2lapack(means_eigen());
     }
     MatrixXd means_eigen() const { return _means;}
     
-//     tMatrix variances() const {return _variances;}
     tMatrix variances() const
     {
         return Util::eigen2lapack(variances_eigen());

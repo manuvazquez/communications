@@ -46,17 +46,13 @@ public:
     virtual int memory(int n) const = 0;
     virtual int effectiveMemory() const = 0;
     
-    tMatrix operator[](int n) const
-    {
-        return Util::eigen2lapack(at(n));
-    }
     virtual MatrixXd at(int n) const = 0;
     
     tMatrix getTransmissionMatrix(const int n) const
     {
         return Util::eigen2lapack(getTransmissionMatrix_eigen(n));
     }
-    virtual MatrixXd getTransmissionMatrix_eigen(const int n) const { return Util::lapack2eigen(operator[](n));}
+    virtual MatrixXd getTransmissionMatrix_eigen(const int n) const { return at(n);}
     
     tMatrix transmit(tMatrix &symbols,Noise &noise)
     {

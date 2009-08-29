@@ -133,7 +133,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, vector<
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             // channel matrix is estimated by means of the particle channel estimator
-            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,Util::eigen2lapack(processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector_eigen(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed])));
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector_eigen(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
                         
             // users activity
             for(k=0;k<_nInputs;k++)

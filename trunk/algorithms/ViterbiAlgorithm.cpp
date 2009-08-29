@@ -70,7 +70,7 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,i
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,observations.col(iProcessedObservation),Util::lapack2eigen(channel[iProcessedObservation]));
+                DeployState(iState,observations.col(iProcessedObservation),channel.at(iProcessedObservation));
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
@@ -93,7 +93,7 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,i
         for(iState=0;iState<_trellis.Nstates();iState++)
         {
             if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,observations.col(iProcessedObservation),Util::lapack2eigen(channel[iProcessedObservation]));
+                DeployState(iState,observations.col(iProcessedObservation),channel.at(iProcessedObservation));
         }
 
         // _arrivalStage becomes _exitStage for the next iteration

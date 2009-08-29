@@ -78,7 +78,7 @@ void PSPAlgorithm::ProcessOneObservation(const VectorXd &observations,double noi
 			PSPPath &sourcePath = _exitStage[bestPathCandidate._fromState][bestPathCandidate._fromSurvivor];
 			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.getChannelMatrixEstimator()->clone();
 
-			newChannelMatrixEstimator->nextMatrix(Util::eigen2lapack(observations),Util::eigen2lapack(bestPathCandidate._detectedSymbolVectors),noiseVariance);
+            newChannelMatrixEstimator->nextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 
 			_arrivalStage[iState][iSurvivor].update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
 		}
