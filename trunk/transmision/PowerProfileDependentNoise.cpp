@@ -21,7 +21,7 @@
 
 PowerProfileDependentNoise::PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix_eigen(_nOutputs,_length,0.0,1.0)),_stdDev(1.0)
 {
-	MatrixXd variancesMatrix = Util::lapack2eigen(powerProfile.variances());
+	MatrixXd variancesMatrix = powerProfile.variances_eigen();
 	int i,j;
 	double variancesSum = 0.0;
 	for(i=0;i<variancesMatrix.rows();i++)

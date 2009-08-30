@@ -40,7 +40,7 @@ Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
 
 void Elsevier2007ARChannelSystem::BuildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix_eigen(randomGenerator),ARcoefficients,ARvariance));
 }
 
 void Elsevier2007ARChannelSystem::BeforeEndingFrame(int iFrame)

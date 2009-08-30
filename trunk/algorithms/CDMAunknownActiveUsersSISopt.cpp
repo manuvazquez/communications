@@ -23,7 +23,7 @@
 
 #ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
-    extern tMatrix *realSymbols;
+    extern MatrixXd *realSymbols;
     extern Noise *realNoise;
 #endif
 

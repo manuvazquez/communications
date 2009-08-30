@@ -39,25 +39,25 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    nFrames = 1;
-    L=3,N=2,frameLength=50;
-    m = 3;
-    d = m - 1;
-    trainSeqLength = 10;
-    preambleLength = 10;
-  
-    // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 10;
-    
-//     nFrames = 2;
-//     L=3,N=2,frameLength=300;
-//     m = 1;
+//     nFrames = 1;
+//     L=3,N=2,frameLength=50;
+//     m = 3;
 //     d = m - 1;
-//     trainSeqLength = 0;
-//     preambleLength = 0;
-//     
+//     trainSeqLength = 10;
+//     preambleLength = 10;
+//   
 //     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 6;
+//     nSmoothingSymbolsVectors = 10;
+    
+    nFrames = 2;
+    L=3,N=2,frameLength=300;
+    m = 1;
+    d = m - 1;
+    trainSeqLength = 0;
+    preambleLength = 0;
+    
+    // the algorithms with the higher smoothing lag require
+    nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
@@ -425,7 +425,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::scalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+    Util::matricesVectorToOctaveFileStream(channel->range_eigen(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);

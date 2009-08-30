@@ -19,25 +19,7 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(tMatrix initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix(initialEstimation),_lastEstimatedChannelMatrix_eigen(Util::lapack2eigen(initialEstimation))
-{
-    if(_nInputsXchannelOrder < _nInputs)
-        throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
-
-    // check erased because of "OneChannelOrderPerTransmitAtennaWrapperEstimator"
-    /*
-    if((_nInputsXchannelOrder % _nInputs) != 0)
-        throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is not a multiple of N");
-    */
-
-    if((_nInputsXchannelOrder % _nInputs) == 0)
-        _channelOrder = _nInputsXchannelOrder/_nInputs;
-    // _channelOrder=-1 accounts for the case of a "OneChannelOrderPerTransmitAtennaWrapperEstimator" being used, whose internal ChannelMatrixEstimator does not need to have a number of columns multiple of _nInputs
-    else
-        _channelOrder = -1;
-}
-
-ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix_eigen(initialEstimation),_lastEstimatedChannelMatrix(Util::eigen2lapack(initialEstimation))
+ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelMatrix_eigen(initialEstimation)
 {
     if(_nInputsXchannelOrder < _nInputs)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");

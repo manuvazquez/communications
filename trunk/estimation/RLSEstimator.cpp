@@ -51,6 +51,5 @@ MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& 
 
     _invRtilde_eigen = _invForgettingFactor*_invRtilde_eigen - (_invForgettingFactor*_invRtilde_eigen*symbolsVector)*g.transpose();
 
-    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
     return _lastEstimatedChannelMatrix_eigen;
 }

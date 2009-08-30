@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_length)
+ARMultiuserCDMAchannel::ARMultiuserCDMAchannel(int length, const MatrixXd& spreadingCodes, const ARprocess &arProcess): MultiuserCDMAchannel(length, spreadingCodes),_ARprocess(arProcess),_userCoeffs(_length)
 {
     //initialization
     for(int i=_memory-1;i<_length;i++)

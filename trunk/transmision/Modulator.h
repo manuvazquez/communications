@@ -34,10 +34,6 @@ class Modulator{
 public:
     Modulator();
 
-    static tMatrix modulate(const Bits &bits,Alphabet alfabeto)
-    {
-        return Util::eigen2lapack(modulate_eigen(bits,alfabeto));
-    }
     static MatrixXd modulate_eigen(const Bits &bits,Alphabet alfabeto);
 };
 

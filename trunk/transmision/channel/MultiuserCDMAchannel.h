@@ -33,7 +33,7 @@ protected:
     MatrixXd _spreadingCodes;
     
 public:
-    MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes);    
+    MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes);    
 
     virtual MatrixXd getTransmissionMatrix_eigen(const int n) const;    
 };

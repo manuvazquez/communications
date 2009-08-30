@@ -36,6 +36,5 @@ MatrixXd NLMSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd&
     
     _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen - _mu/error.dot(error)*error*symbolsVector.transpose();
     
-    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
     return _lastEstimatedChannelMatrix_eigen;
 }

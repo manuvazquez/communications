@@ -31,7 +31,7 @@ It models a multiuser CDMA channel in which each user has a single coefficent (t
 class ARMultiuserCDMAchannel : public MultiuserCDMAchannel
 {
 public:
-    ARMultiuserCDMAchannel(int length, const tMatrix& spreadingCodes,const ARprocess &arProcess);
+    ARMultiuserCDMAchannel(int length, const MatrixXd& spreadingCodes,const ARprocess &arProcess);
 
 protected:
     ARprocess _ARprocess;

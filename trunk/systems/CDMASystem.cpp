@@ -30,7 +30,7 @@ CDMASystem::CDMASystem(): SMCSystem()
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
     
     // spreading spreadingCodes for the users are generated randomly
-    _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
+    _spreadingCodes = StatUtil::randnMatrix_eigen(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
     
 #ifdef PRINT_INFO
@@ -128,5 +128,5 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols;
 #endif    
     
-    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix_eigen(randomGenerator),ARcoefficients,ARvariance));
 }

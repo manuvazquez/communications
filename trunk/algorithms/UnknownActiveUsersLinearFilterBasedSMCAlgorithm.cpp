@@ -27,7 +27,7 @@
 
 #ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
-    extern tMatrix *realSymbols;
+    extern MatrixXd *realSymbols;
     extern Noise *realNoise;
 #endif
 
@@ -93,8 +93,8 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
 
 #ifdef DEBUG_CHANNEL_SAMPLES
-            tMatrix channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
-            cout << "channel matrix " << (*realChannel)[iObservationToBeProcessed];
+            MatrixXd channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix_eigen();
+            cout << "channel matrix " << realChannel->at(iObservationToBeProcessed);
             cout << "last estimated channel matrix " << channelMatrixEstimation;
             cout << "channelMatrixSample = " << endl << channelMatrixSample;
             double normalizedMSE = Util::normalizedSquareError(channelMatrixEstimation,(*realChannel)[iObservationToBeProcessed]);

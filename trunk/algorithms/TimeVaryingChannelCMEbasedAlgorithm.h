@@ -32,7 +32,6 @@
 class TimeVaryingChannelCMEbasedAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
-//     tMatrix _symbolVectors;
     MatrixXd _symbolVectors;    
 public:
     TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, const MatrixXd &symbolVectors);

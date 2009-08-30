@@ -45,67 +45,40 @@ class Util{
 
 public:
 
-    static void add(const tMatrix &A,const tMatrix &B,tMatrix &C,double = 1.0,double = 1.0);
-    static void add(const tVector &a,const tVector &b,tVector &c,double = 1.0,double = 1.0);
-    static void mult(const tVector &a,const tVector &b,tMatrix &C,double = 1.0);
-    static void transpose(const tMatrix &A,tMatrix &B);
     static tVector toVector(const tMatrix &matrix,tOrder order);
-    static VectorXd toVector(const MatrixXd &matrix,tOrder order); // eigen
-    static tMatrix toMatrix(const tVector &vector,tOrder order,int rows,int cols);
-    static tMatrix toMatrix(const tVector &vector,tOrder order,uint rows);
-    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols); // eigen
-    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows); // eigen
-    static tMatrix toMatrix(const vector<double> &vector,tOrder order,uint rows,uint cols);
-    static tMatrix append(const tMatrix &A,const tMatrix &B);
-    static tMatrix verticalAppend(const tMatrix &A,const tMatrix &B);
-    static tVector normalize(const tVector &v);
-    static VectorXd normalize(const VectorXd &v); // eigen
+    static VectorXd toVector(const MatrixXd &matrix,tOrder order);
+    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols);
+    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
+    static VectorXd normalize(const VectorXd &v);
     static void normalize(std::vector<double> &v);    
-    static double sum(const tVector &v);
-    static double sum(const VectorXd &v); // eigen
-    static void max(const tVector &v,int &index);
-    static void min(const tVector &v,int &index);
-    static double squareErrorPaddingWithZeros(const tMatrix &A,const tMatrix &B);
+    static double sum(const VectorXd &v);
     static double squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B);
-    static double squareError(const tMatrix &A,const tMatrix &B);
-    static double normalizedSquareError(const tMatrix &A,const tMatrix &B);    
-    static void print(const tMatrix &A);
     static void print(const MatrixXd &A);
-    static void matrixToOctaveFileStream(tMatrix A,string name,ofstream &f);
-    static void matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f); // eigen
+    static void matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f);
     template<class T> static void matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
-    static void matricesVectorsVectorToOctaveFileStream(vector<vector<tMatrix> > matrices,string name,ofstream &f);
-    static void matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f); // eigen
-    static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<tMatrix> > > matrices,string name,ofstream &f);
-    static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f); // eigen
+    static void matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f);
+    static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f);
     template<class T> static void scalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static int max(const std::vector<T> &vector);
     template<class T> static void min(const std::vector<T> &vector,int &iMin);
     template<class T> static T sum(const std::vector<T> &vector);
-    static void elementWiseDiv(const tMatrix &A,const tMatrix &B,tMatrix &C);
-    static void elementWiseMult(const tMatrix &A,const tMatrix &B,tMatrix &C);    
     template<class T> static void print(const std::vector<T> &vector);
     template<class T> static void print(const std::vector<std::vector<T> > &matrix);
     template<class T> static void print(const T* array,int nElements);
-    static void shiftUp(tVector &v,int n);
-    static void shiftUp(VectorXd &v,int n); // eigen
+    static void shiftUp(VectorXd &v,int n);
     template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
     static MatrixXd applyPermutation(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
-    static tMatrix cholesky(const tMatrix &matrix);
-//     static MatrixXd cholesky(const MatrixXd &matrix); // eigen
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
-    static std::vector<int> nMax(int n,const tVector &v);
-    static std::vector<int> nMax(int n,const VectorXd &v); // eigen
-    static tMatrix flipLR(const tMatrix &A);
-    static MatrixXd flipLR(const MatrixXd &A); // eigen
-    static tMatrix sign(const tMatrix &A);
+    static std::vector<int> nMax(int n,const VectorXd &v);
+    static MatrixXd flipLR(const MatrixXd &A);
+    static MatrixXd sign(const MatrixXd &A);
     static MatrixXd lapack2eigen(const tMatrix &A);
     static VectorXd lapack2eigen(const tVector &v);
     static vector<MatrixXd> lapack2eigen(const vector<tMatrix> &v);
-    static vector<vector<MatrixXd> > lapack2eigen(const vector<vector<tMatrix> > &v); // ---
+    static vector<vector<MatrixXd> > lapack2eigen(const vector<vector<tMatrix> > &v);
     static tMatrix eigen2lapack(const MatrixXd &A);
     static tVector eigen2lapack(const VectorXd &v);
     static vector<tMatrix> eigen2lapack(const vector<MatrixXd> &v);

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MultiuserCDMAchannel.h"
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const tMatrix &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
+MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(spreadingCodes)
 {
 }
 

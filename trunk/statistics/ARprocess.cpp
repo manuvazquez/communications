@@ -23,21 +23,20 @@
 
 using namespace std;
 
-ARprocess::ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
+ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
-    CommonConstructorsCode(Util::lapack2eigen(seed));
+    CommonConstructorsCode(seed);
 }
 
-ARprocess::ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
+ARprocess::ARprocess(MatrixXd seed,int order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
 {
     _coefficients = parametersFromYuleWalker(order,velocity,carrierFrequency,T,_noiseVariance);
 
     _nCoefficients = _coefficients.size();
 
-    CommonConstructorsCode(Util::lapack2eigen(seed));
+    CommonConstructorsCode(seed);
 }
 
-// void ARprocess::CommonConstructorsCode(const tMatrix &seed)
 void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
 {
     int i,j;

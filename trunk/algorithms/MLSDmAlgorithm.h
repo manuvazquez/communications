@@ -36,10 +36,6 @@ protected:
     vector<int> _particlesBestChannelOrders;
 
     int iBestChannelOrder(int iBestParticle);
-    virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const tMatrix &trainingSequence)
-    {
-        beforeInitializingParticles(observations,noiseVariances,Util::lapack2eigen(trainingSequence));
-    }
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence);
 public:
     MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance);
@@ -48,10 +44,6 @@ public:
 
     virtual ParticleFilter* getParticleFilterPointer() {return _particleFilter;}
     virtual void initializeParticles();
-    virtual void process(const tMatrix& observations, vector<double> noiseVariances)
-    {
-        process(Util::lapack2eigen(observations),noiseVariances);
-    }
     virtual void process(const MatrixXd& observations, vector<double> noiseVariances);
 
 };

@@ -53,27 +53,13 @@ public:
     ~KalmanEstimator();
     
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
-    virtual tMatrix nextMatrix(const tVector &observations,const MatrixXd &symbolsMatrix,double noiseVariance)
-    {
-        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),symbolsMatrix,noiseVariance));
-    }
     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
-//     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
-//     {
-//         return likelihood(Util::lapack2eigen(observations),Util::lapack2eigen(symbolsMatrix),noiseVariance);
-//     }
-//     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
     {
         return likelihood(Util::eigen2lapack(observations),Util::eigen2lapack(symbolsMatrix),noiseVariance);
     }
     virtual KalmanEstimator *clone() const;
-    virtual tMatrix sampleFromPredictive() const { return Util::eigen2lapack(sampleFromPredictive_eigen());}
     virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
-    virtual void setFirstEstimatedChannelMatrix(const tMatrix &matrix)
-    {
-        setFirstEstimatedChannelMatrix(Util::lapack2eigen(matrix));
-    }
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix); // eigen
 };
 

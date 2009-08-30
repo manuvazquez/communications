@@ -94,7 +94,6 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
     _lastEstimatedChannelMatrix_eigen = Util::toMatrix(_kalmanFilter->filteredMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
-    _lastEstimatedChannelMatrix = Util::eigen2lapack(_lastEstimatedChannelMatrix_eigen);
 
     return _lastEstimatedChannelMatrix_eigen;
 }
@@ -238,7 +237,6 @@ KalmanEstimator *KalmanEstimator::clone() const
     return new KalmanEstimator(*this);
 }
 
-// eigen
 MatrixXd KalmanEstimator::sampleFromPredictive_eigen() const
 {
     return Util::toMatrix(
@@ -246,7 +244,6 @@ MatrixXd KalmanEstimator::sampleFromPredictive_eigen() const
         ,rowwise,_nChannelMatrixRows);
 }
 
-// eigen
 void KalmanEstimator::setFirstEstimatedChannelMatrix(const MatrixXd &matrix)
 {
     ChannelMatrixEstimator::setFirstEstimatedChannelMatrix(matrix);

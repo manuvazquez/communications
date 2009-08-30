@@ -23,7 +23,7 @@
 
 #ifdef IMPORT_REAL_DATA
 	extern MIMOChannel *realChannel;
-	extern tMatrix *realSymbols;
+	extern MatrixXd *realSymbols;
 	extern Noise *realNoise;
 #endif
 
@@ -40,7 +40,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
     double accumulatedSquaredObservationsError;
 
 #ifdef IMPORT_REAL_DATA
-    tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
+    MatrixXd channelMatrix = realChannel->at(_preamble.cols());
 #endif
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)

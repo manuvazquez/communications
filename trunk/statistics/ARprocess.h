@@ -21,7 +21,7 @@
 #define ARPROCESS_H
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <vector>
@@ -38,29 +38,25 @@
 class ARprocess{
 
 private:
-	vector<double> _coefficients;
-	double _noiseVariance;
-	double _noiseMean;
-	int _nCoefficients, _rows, _columns, _iNextMatrix;
-	int _iterationsForConvergence;
+    vector<double> _coefficients;
+    double _noiseVariance;
+    double _noiseMean;
+    int _nCoefficients, _rows, _columns, _iNextMatrix;
+    int _iterationsForConvergence;
     std::vector<MatrixXd> _buffer;   
 
     void CommonConstructorsCode(const MatrixXd &seed);   
 
 public:
-	ARprocess(tMatrix seed,vector<double> coefficients,double noiseVariance);
-	ARprocess(tMatrix seed,int order,double velocity,double carrierFrequency,double T);
+    ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance);
+    ARprocess(MatrixXd seed,int order,double velocity,double carrierFrequency,double T);
 
-//     tMatrix nextMatrix()
-//     {
-//         return Util::eigen2lapack(nextMatrix_eigen());
-//     }
     MatrixXd nextMatrix_eigen();
     
-	static vector<double> parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
+    static vector<double> parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 
-	int rows() {return _rows;}
-	int cols() {return _columns;}
+    int rows() {return _rows;}
+    int cols() {return _columns;}
 };
 
 #endif

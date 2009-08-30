@@ -40,16 +40,8 @@ public:
 	virtual void print() const = 0;
 	virtual double stdDevAt(int n) const = 0;
     
-    tVector operator[](int n) const
-    {
-        return Util::eigen2lapack(at(n));
-    }
     virtual VectorXd at(uint n) const = 0;
     
-    tMatrix range(int start,int end) const
-    {
-        return Util::eigen2lapack(range_eigen(start,end));
-    }
     virtual MatrixXd range_eigen(int start,int end) const {throw RuntimeException("Noise::range: not implemented.");}   
     
     

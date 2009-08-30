@@ -37,7 +37,7 @@
 class CDMASystem : public SMCSystem
 {
 protected:
-    tMatrix _spreadingCodes;
+    MatrixXd _spreadingCodes;
     
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
     vector<vector<bool> > _usersActivity;

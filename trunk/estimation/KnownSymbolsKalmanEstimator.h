@@ -30,17 +30,11 @@ class KnownSymbolsKalmanEstimator : public KalmanEstimator
 protected:
     int _presentTime;
     const MatrixXd &_symbols;
-//     const MatrixXd &_symbols_eigen;   
 public:
     KnownSymbolsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, int N, vector<double> ARcoefficient, double ARvariance,const MatrixXd &symbols,int startDetectionTime);
 
     KnownSymbolsKalmanEstimator* clone() const;
 
-//     virtual tMatrix nextMatrix(const tVector &observations, const MatrixXd &symbolsMatrix, double noiseVariance);
-    virtual tMatrix nextMatrix(const tVector &observations, const MatrixXd &symbolsMatrix, double noiseVariance)
-    {
-        return Util::eigen2lapack(nextMatrix(Util::lapack2eigen(observations),symbolsMatrix,noiseVariance));
-    }
     virtual MatrixXd nextMatrix(const VectorXd &observations, const MatrixXd &symbolsMatrix, double noiseVariance); // eigen
 
 

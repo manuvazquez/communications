@@ -42,24 +42,12 @@ public:
 
     virtual ~DelayPowerProfile();
 
-    tMatrix generateChannelMatrix(Random &random)
-    {
-        return Util::eigen2lapack(generateChannelMatrix_eigen(random));
-    }
     virtual MatrixXd generateChannelMatrix_eigen(Random &random);
     
     virtual void print() const;
 
-    tMatrix means() const
-    {
-        return Util::eigen2lapack(means_eigen());
-    }
     MatrixXd means_eigen() const { return _means;}
     
-    tMatrix variances() const
-    {
-        return Util::eigen2lapack(variances_eigen());
-    }    
     MatrixXd variances_eigen() const {return _variances;}
     
     int nInputs() { return _nInputs;}

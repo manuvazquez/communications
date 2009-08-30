@@ -37,10 +37,6 @@ private:
     static void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
 public:
     static double computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
-    static double computeSER(const tMatrix &sourceSymbols,const tMatrix &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
-    {
-        return computeSER(Util::lapack2eigen(sourceSymbols),Util::lapack2eigen(detectedSymbols),mask,permutations,alphabet);
-    }
     static double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet);
     static double computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
 //     static tVector MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2);

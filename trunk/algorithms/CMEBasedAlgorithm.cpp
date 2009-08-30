@@ -22,9 +22,9 @@
 // #define IMPORT_REAL_DATA
 
 #ifdef IMPORT_REAL_DATA
-	extern MIMOChannel *realChannel;
-	extern tMatrix *realSymbols;
-	extern Noise *realNoise;
+    extern MIMOChannel *realChannel;
+    extern MatrixXd *realSymbols;
+    extern Noise *realNoise;
 #endif
 
 CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, const MatrixXd &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
@@ -38,7 +38,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     std::vector<double> CMEs(_candidateOrders.size());
 
 #ifdef IMPORT_REAL_DATA
-    tMatrix channelMatrix = (*realChannel)[_preamble.cols()];
+    MatrixXd channelMatrix = realChannel->at(_preamble.cols());
 #endif
     double variance = noiseVariances[_symbolVectors.cols()-1];
 
@@ -102,6 +102,6 @@ MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors_eigen()
 
 vector<MatrixXd> CMEBasedAlgorithm::getEstimatedChannelMatrices_eigen()
 {
-	return vector<MatrixXd>(0);
+    return vector<MatrixXd>(0);
 }
 

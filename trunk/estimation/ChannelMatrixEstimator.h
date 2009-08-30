@@ -32,16 +32,14 @@
 class ChannelMatrixEstimator{
 protected:
     int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
-    tMatrix _lastEstimatedChannelMatrix;
     MatrixXd _lastEstimatedChannelMatrix_eigen;
 
 public:
     // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
-    ChannelMatrixEstimator(tMatrix initialEstimation,int N);
     ChannelMatrixEstimator(MatrixXd initialEstimation,int N);
     virtual ~ChannelMatrixEstimator() {};
 
-    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelMatrix_eigen = matrix; _lastEstimatedChannelMatrix = Util::eigen2lapack(matrix);} // eigen
+    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelMatrix_eigen = matrix;} // eigen
     
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance) = 0;
     
@@ -55,7 +53,6 @@ public:
     int cols() { return _nInputsXchannelOrder;}
     int rows() { return _nOutputs;}
     int memory();
-    virtual tMatrix lastEstimatedChannelMatrix() { return _lastEstimatedChannelMatrix;}
     virtual MatrixXd lastEstimatedChannelMatrix_eigen() { return _lastEstimatedChannelMatrix_eigen;}
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo);
