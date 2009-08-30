@@ -27,8 +27,6 @@
 */
 
 #include <Util.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas2pp.h>
 
 class LMSEstimator : public ChannelMatrixEstimator
 {

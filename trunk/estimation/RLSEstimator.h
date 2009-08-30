@@ -29,12 +29,6 @@
 #include <exceptions.h>
 #include <Util.h>
 #include <StatUtil.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
 
 class RLSEstimator : public ChannelMatrixEstimator
 {

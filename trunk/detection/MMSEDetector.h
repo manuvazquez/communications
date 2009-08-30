@@ -27,12 +27,6 @@
 */
 
 #include <Util.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-
 #include <Eigen/LU>
 
 class MMSEDetector : public LinearDetector

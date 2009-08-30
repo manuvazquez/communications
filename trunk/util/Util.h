@@ -34,10 +34,6 @@
 #include <types.h>
 #include <exceptions.h>
 #include "utilExceptions.h"
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/sybmd.h>
-#include <lapackpp/sybfd.h>
 
 enum tOrder {rowwise,columnwise};
 
@@ -45,7 +41,7 @@ class Util{
 
 public:
 
-    static tVector toVector(const tMatrix &matrix,tOrder order);
+//     static tVector toVector(const tMatrix &matrix,tOrder order); // lapackpp
     static VectorXd toVector(const MatrixXd &matrix,tOrder order);
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols);
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
@@ -75,13 +71,15 @@ public:
     static std::vector<int> nMax(int n,const VectorXd &v);
     static MatrixXd flipLR(const MatrixXd &A);
     static MatrixXd sign(const MatrixXd &A);
-    static MatrixXd lapack2eigen(const tMatrix &A);
-    static VectorXd lapack2eigen(const tVector &v);
-    static vector<MatrixXd> lapack2eigen(const vector<tMatrix> &v);
-    static vector<vector<MatrixXd> > lapack2eigen(const vector<vector<tMatrix> > &v);
-    static tMatrix eigen2lapack(const MatrixXd &A);
-    static tVector eigen2lapack(const VectorXd &v);
-    static vector<tMatrix> eigen2lapack(const vector<MatrixXd> &v);
+    
+    // lapack to eigen...
+//     static MatrixXd lapack2eigen(const tMatrix &A);
+//     static VectorXd lapack2eigen(const tVector &v);
+//     static vector<MatrixXd> lapack2eigen(const vector<tMatrix> &v);
+//     static vector<vector<MatrixXd> > lapack2eigen(const vector<vector<tMatrix> > &v);
+//     static tMatrix eigen2lapack(const MatrixXd &A);
+//     static tVector eigen2lapack(const VectorXd &v);
+//     static vector<tMatrix> eigen2lapack(const vector<MatrixXd> &v);
 };
 
 #endif

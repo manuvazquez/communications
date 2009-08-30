@@ -30,10 +30,6 @@
 #include <math.h>
 #include <Trellis.h>
 #include <ViterbiPath.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-// #include <lapackpp/blas3pp.h>
 
 enum tStage {exitStage,arrivalStage};
 

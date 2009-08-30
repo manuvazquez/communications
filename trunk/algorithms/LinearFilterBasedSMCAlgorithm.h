@@ -27,10 +27,6 @@
 */
 
 #include <LinearDetector.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
 #include <ARchannel.h>
 #include <ChannelDependentNoise.h>
 #include <ParticleWithChannelEstimationAndLinearDetection.h>

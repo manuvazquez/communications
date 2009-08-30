@@ -84,8 +84,6 @@ void APPbasedChannelOrderEstimator::update(const VectorXd &observations,const st
     for(int i=0;i<_nInputs;i++)
         _symbolVector(_nInputs_maxChannelOrder-_nInputs+i) = symbolVector(i);
 
-    tVector noiselessObservation(observations.size());
-
     double normalizationCt = 0.0;
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)

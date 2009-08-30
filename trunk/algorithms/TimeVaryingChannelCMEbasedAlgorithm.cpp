@@ -35,7 +35,6 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
 {
     int m,iTxAntenna,iDelay;
     int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
-    tRange rAll;
     VectorXd CMEs(_candidateOrders.size());
     double accumulatedSquaredObservationsError;
 

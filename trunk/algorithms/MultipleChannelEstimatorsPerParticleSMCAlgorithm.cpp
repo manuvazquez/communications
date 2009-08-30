@@ -66,8 +66,6 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(MatrixXd observations
     MatrixXd preambleTrainingSequence(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
     preambleTrainingSequence << _preamble,trainingSequence;
 
-    tRange rSymbolVectorsTrainingSequece(0,preambleTrainingSequence.cols()-1);
-
     beforeInitializingParticles(observations,noiseVariances,trainingSequence);
 
     this->initializeParticles();

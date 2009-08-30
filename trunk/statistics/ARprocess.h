@@ -31,8 +31,6 @@
 #include <Util.h>
 #include <Random.h>
 #include <StatUtil.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/laslv.h>
 #include <Eigen/LU>
 
 class ARprocess{

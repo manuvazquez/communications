@@ -29,7 +29,6 @@
 #include <ChannelMatrixEstimator.h>
 #include <Util.h>
 #include <StatUtil.h>
-#include <lapackpp/blas2pp.h>
 
 class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 {

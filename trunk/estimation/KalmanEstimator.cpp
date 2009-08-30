@@ -24,7 +24,6 @@
 KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
 {
     // stateTransitionMatrix is a blockwise matrix that represents the state transition matrix
-//     tMatrix stateTransitionMatrix = LaGenMatDouble::zeros(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     MatrixXd stateTransitionMatrix = MatrixXd::Zero(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);    
     
     uint i,j,iBlockCol,iBlockRow;
@@ -40,14 +39,11 @@ KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixX
             stateTransitionMatrix((ARcoefficients.size()-1)*_nChannelCoeffs+i,j) = ARcoefficients[ARcoefficients.size()-1-iBlockCol];
     
     // covariance matrix is set
-//     tMatrix stateEquationCovariance = LaGenMatDouble::zeros(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     MatrixXd stateEquationCovariance = MatrixXd::Zero(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     
     for(i=_nExtStateVectorCoeffs-_nChannelCoeffs;i<_nExtStateVectorCoeffs;i++)
         stateEquationCovariance(i,i) = ARvariance;
 
-//     tVector initialMeanVector(_nExtStateVectorCoeffs);
-//     tMatrix initialCovariance = LaGenMatDouble::zeros(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     VectorXd initialMeanVector(_nExtStateVectorCoeffs);
     MatrixXd initialCovariance = MatrixXd::Zero(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
     for(iBlockRow=0;iBlockRow<ARcoefficients.size();iBlockRow++)
@@ -98,7 +94,6 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     return _lastEstimatedChannelMatrix_eigen;
 }
 
-// eigen
 MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)
 {
     int i,j;
@@ -114,122 +109,121 @@ MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)
     return res;
 }
 
-double KalmanEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
-{
-    if(observations.size()!=_nOutputs || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_nInputsXchannelOrder)
-        throw RuntimeException("KalmanEstimator::likelihood: observations vector length or symbols matrix length are wrong.");
-
-    // pivots vector needed for factorizations
-    tLongIntVector piv(_nExtStateVectorCoeffs);
-
-    tMatrix invPredictiveCovariance = _kalmanFilter->predictiveCovariance();
-    LUFactorizeIP(invPredictiveCovariance,piv);
-    
-    // detPredictiveCovariance = det(_kalmanFilter->predictiveCovariance())
-    double detPredictiveCovariance = 1.0;
-    for(int i=0;i<_nExtStateVectorCoeffs;i++)
-        detPredictiveCovariance *= invPredictiveCovariance(i,i);
-
-    // invPredictiveCovariance = inv(_kalmanFilter->predictiveCovariance())
-    LaLUInverseIP(invPredictiveCovariance,piv);
-
-    tMatrix F = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
-    
-    tMatrix extStateMeasurementMatrix = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
-    for(uint i=0;i<_nOutputs;i++)
-        for(uint j=_nExtStateVectorCoeffs-_nChannelCoeffs;j<_nExtStateVectorCoeffs;j++)
-                extStateMeasurementMatrix(i,j) = F(i,j-(_nExtStateVectorCoeffs-_nChannelCoeffs));    
-    
-#ifdef PRINT_INFO2
-    cout << "F is " << F.rows() << " x " << F.cols() << endl << F;
-    cout << "invPredictiveCovariance is " << invPredictiveCovariance.rows() << " x " << invPredictiveCovariance.cols() << endl << invPredictiveCovariance;
-#endif    
-
-    tMatrix B = invPredictiveCovariance;
-    // B = invPredictiveCovariance + (1.0/noiseVariance) extStateMeasurementMatrix' * extStateMeasurementMatrix
-    Blas_Mat_Trans_Mat_Mult(extStateMeasurementMatrix,extStateMeasurementMatrix,B,1.0/noiseVariance,1.0);    
-
-
-    // B = inv(B) <------------------------------------------------------------------------
-    LUFactorizeIP(B,piv);
-    LaLUInverseIP(B,piv);
-
-    tVector invPredictiveCovariancePredictiveMean(_nExtStateVectorCoeffs);
-
-    // invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->predictiveMean()
-    Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
-
-    tVector auxAuxArgExp = invPredictiveCovariancePredictiveMean;
-    // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) extStateMeasurementMatrix' * observations
-    Blas_Mat_Trans_Vec_Mult(extStateMeasurementMatrix,observations,auxAuxArgExp,1.0/noiseVariance,1.0);    
-
-    tVector auxAuxArgExpInvB(_nExtStateVectorCoeffs);
-
-    // auxAuxArgExpInvB = B' * auxAuxArgExp = auxAuxArgExp * B
-    Blas_Mat_Trans_Vec_Mult(B,auxAuxArgExp,auxAuxArgExpInvB);
-
-    // _auxArgExp = auxAuxArgExpInvB . auxAuxArgExp
-    double auxArgExp = Blas_Dot_Prod(auxAuxArgExpInvB,auxAuxArgExp);
-
-    tVector observationsNoiseCovariance = observations;
-//  observationsNoiseCovariance *= noiseVariance;
-    observationsNoiseCovariance *= 1.0/noiseVariance; // <--------------------------------------------------------------------------------------
-
-    // _observationsNoiseCovarianceObservations = observationsNoiseCovariance . observations
-    double observationsNoiseCovarianceObservations = Blas_Dot_Prod(observationsNoiseCovariance,observations);
-
-    // predictiveMeanInvPredictiveCovariancePredictiveMean = _kalmanFilter->predictiveMean() . invPredictiveCovariancePredictiveMean
-    double predictiveMeanInvPredictiveCovariancePredictiveMean = Blas_Dot_Prod(_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
-
-    double argExp = -0.5*(observationsNoiseCovarianceObservations + predictiveMeanInvPredictiveCovariancePredictiveMean - auxArgExp);
-
-    //detInvB = det(B) (recall B = inv(B))
-    LUFactorizeIP(B,piv);
-    double detInvB = 1.0;
-    for(int i=0;i<_nExtStateVectorCoeffs;i++)
-        detInvB *= B(i,i);
-
-    return sqrt(fabs(detInvB))/(pow(2*M_PI*noiseVariance,_nOutputs/2)*sqrt(fabs(detPredictiveCovariance)))*exp(argExp);
-}
-
-// eigen
-// double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
+// double KalmanEstimator::likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance)
 // {
-//     if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
+//     if(observations.size()!=_nOutputs || (symbolsMatrix.rows()*symbolsMatrix.cols())!=_nInputsXchannelOrder)
 //         throw RuntimeException("KalmanEstimator::likelihood: observations vector length or symbols matrix length are wrong.");
-//         
-//     Eigen::LDLT<MatrixXd> ldltOfPredictiveCovariance(_kalmanFilter->predictiveCovariance_eigen());
 // 
-//     MatrixXd invPredictiveCovariance = MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
-//     ldltOfPredictiveCovariance.solveInPlace(invPredictiveCovariance);
-//     
-//     
-//     double invPredictiveCovarianceDeterminant = 1.0;    
-//     for(int i=0;i<ldltOfPredictiveCovariance.vectorD().rows();i++)
-//         invPredictiveCovarianceDeterminant *= ldltOfPredictiveCovariance.vectorD().coeff(i);        
-//         
-//         
-//     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);
-//     extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise)).lazy();
-//     
-//     
-//     MatrixXd invNoiseVariance_extStateMeasurementMatrixT = (1.0/noiseVariance*extStateMeasurementMatrix.transpose()).lazy();
+//     // pivots vector needed for factorizations
+//     tLongIntVector piv(_nExtStateVectorCoeffs);
 // 
-//     Eigen::LU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
-// 
-//     MatrixXd invB;
-//     luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs),&invB);
+//     tMatrix invPredictiveCovariance = _kalmanFilter->predictiveCovariance();
+//     LUFactorizeIP(invPredictiveCovariance,piv);
 //     
-//     VectorXd invPredictiveCovariancePredictiveMean = (invPredictiveCovariance*_kalmanFilter->predictiveMean_eigen()).lazy();
-//     
-//     VectorXd auxAuxArgExp = (invPredictiveCovariancePredictiveMean + invNoiseVariance_extStateMeasurementMatrixT*observations).lazy();
+//     // detPredictiveCovariance = det(_kalmanFilter->predictiveCovariance())
+//     double detPredictiveCovariance = 1.0;
+//     for(int i=0;i<_nExtStateVectorCoeffs;i++)
+//         detPredictiveCovariance *= invPredictiveCovariance(i,i);
 // 
-//     VectorXd auxAuxArgExpInvB = (invB.transpose()*auxAuxArgExp).lazy();
-//     
-//     double argExp = -0.5*(1.0/noiseVariance*observations.dot(observations) + _kalmanFilter->predictiveMean_eigen().dot(invPredictiveCovariancePredictiveMean) - auxAuxArgExpInvB.dot(auxAuxArgExp));
+//     // invPredictiveCovariance = inv(_kalmanFilter->predictiveCovariance())
+//     LaLUInverseIP(invPredictiveCovariance,piv);
 // 
-//     return sqrt(fabs(1.0/luforB.determinant()))/(pow(2*M_PI*noiseVariance,_nOutputs/2)*sqrt(fabs(invPredictiveCovarianceDeterminant)))*exp(argExp);
+//     tMatrix F = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
+//     
+//     tMatrix extStateMeasurementMatrix = LaGenMatDouble::zeros(_nOutputs,_nExtStateVectorCoeffs);
+//     for(uint i=0;i<_nOutputs;i++)
+//         for(uint j=_nExtStateVectorCoeffs-_nChannelCoeffs;j<_nExtStateVectorCoeffs;j++)
+//                 extStateMeasurementMatrix(i,j) = F(i,j-(_nExtStateVectorCoeffs-_nChannelCoeffs));    
+//     
+// #ifdef PRINT_INFO2
+//     cout << "F is " << F.rows() << " x " << F.cols() << endl << F;
+//     cout << "invPredictiveCovariance is " << invPredictiveCovariance.rows() << " x " << invPredictiveCovariance.cols() << endl << invPredictiveCovariance;
+// #endif    
+// 
+//     tMatrix B = invPredictiveCovariance;
+//     // B = invPredictiveCovariance + (1.0/noiseVariance) extStateMeasurementMatrix' * extStateMeasurementMatrix
+//     Blas_Mat_Trans_Mat_Mult(extStateMeasurementMatrix,extStateMeasurementMatrix,B,1.0/noiseVariance,1.0);    
+// 
+// 
+//     // B = inv(B) <------------------------------------------------------------------------
+//     LUFactorizeIP(B,piv);
+//     LaLUInverseIP(B,piv);
+// 
+//     tVector invPredictiveCovariancePredictiveMean(_nExtStateVectorCoeffs);
+// 
+//     // invPredictiveCovariancePredictiveMean = invPredictiveCovariance * _kalmanFilter->predictiveMean()
+//     Blas_Mat_Vec_Mult(invPredictiveCovariance,_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
+// 
+//     tVector auxAuxArgExp = invPredictiveCovariancePredictiveMean;
+//     // auxAuxArgExp = invPredictiveCovariancePredictiveMean + (1.0/noiseVariance) extStateMeasurementMatrix' * observations
+//     Blas_Mat_Trans_Vec_Mult(extStateMeasurementMatrix,observations,auxAuxArgExp,1.0/noiseVariance,1.0);    
+// 
+//     tVector auxAuxArgExpInvB(_nExtStateVectorCoeffs);
+// 
+//     // auxAuxArgExpInvB = B' * auxAuxArgExp = auxAuxArgExp * B
+//     Blas_Mat_Trans_Vec_Mult(B,auxAuxArgExp,auxAuxArgExpInvB);
+// 
+//     // _auxArgExp = auxAuxArgExpInvB . auxAuxArgExp
+//     double auxArgExp = Blas_Dot_Prod(auxAuxArgExpInvB,auxAuxArgExp);
+// 
+//     tVector observationsNoiseCovariance = observations;
+// //  observationsNoiseCovariance *= noiseVariance;
+//     observationsNoiseCovariance *= 1.0/noiseVariance; // <--------------------------------------------------------------------------------------
+// 
+//     // _observationsNoiseCovarianceObservations = observationsNoiseCovariance . observations
+//     double observationsNoiseCovarianceObservations = Blas_Dot_Prod(observationsNoiseCovariance,observations);
+// 
+//     // predictiveMeanInvPredictiveCovariancePredictiveMean = _kalmanFilter->predictiveMean() . invPredictiveCovariancePredictiveMean
+//     double predictiveMeanInvPredictiveCovariancePredictiveMean = Blas_Dot_Prod(_kalmanFilter->predictiveMean(),invPredictiveCovariancePredictiveMean);
+// 
+//     double argExp = -0.5*(observationsNoiseCovarianceObservations + predictiveMeanInvPredictiveCovariancePredictiveMean - auxArgExp);
+// 
+//     //detInvB = det(B) (recall B = inv(B))
+//     LUFactorizeIP(B,piv);
+//     double detInvB = 1.0;
+//     for(int i=0;i<_nExtStateVectorCoeffs;i++)
+//         detInvB *= B(i,i);
+// 
+//     return sqrt(fabs(detInvB))/(pow(2*M_PI*noiseVariance,_nOutputs/2)*sqrt(fabs(detPredictiveCovariance)))*exp(argExp);
 // }
+
+double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
+{
+    if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
+        throw RuntimeException("KalmanEstimator::likelihood: observations vector length or symbols matrix length are wrong.");
+        
+    Eigen::LDLT<MatrixXd> ldltOfPredictiveCovariance(_kalmanFilter->predictiveCovariance_eigen());
+
+    MatrixXd invPredictiveCovariance = MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);
+    ldltOfPredictiveCovariance.solveInPlace(invPredictiveCovariance);
+    
+    
+    double invPredictiveCovarianceDeterminant = 1.0;    
+    for(int i=0;i<ldltOfPredictiveCovariance.vectorD().rows();i++)
+        invPredictiveCovarianceDeterminant *= ldltOfPredictiveCovariance.vectorD().coeff(i);        
+        
+        
+    MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);
+    extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise)).lazy();
+    
+    
+    MatrixXd invNoiseVariance_extStateMeasurementMatrixT = (1.0/noiseVariance*extStateMeasurementMatrix.transpose()).lazy();
+
+    Eigen::LU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
+
+    MatrixXd invB;
+    luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs),&invB);
+    
+    VectorXd invPredictiveCovariancePredictiveMean = (invPredictiveCovariance*_kalmanFilter->predictiveMean_eigen()).lazy();
+    
+    VectorXd auxAuxArgExp = (invPredictiveCovariancePredictiveMean + invNoiseVariance_extStateMeasurementMatrixT*observations).lazy();
+
+    VectorXd auxAuxArgExpInvB = (invB.transpose()*auxAuxArgExp).lazy();
+    
+    double argExp = -0.5*(1.0/noiseVariance*observations.dot(observations) + _kalmanFilter->predictiveMean_eigen().dot(invPredictiveCovariancePredictiveMean) - auxAuxArgExpInvB.dot(auxAuxArgExp));
+
+    return sqrt(fabs(1.0/luforB.determinant()))/(pow(2*M_PI*noiseVariance,_nOutputs/2)*sqrt(fabs(invPredictiveCovarianceDeterminant)))*exp(argExp);
+}
 
 KalmanEstimator *KalmanEstimator::clone() const
 {

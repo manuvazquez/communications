@@ -67,8 +67,6 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     // at first, there is only one particle
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
-        tRange rmMinus1PrecedentColumns(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
-
         // it keeps track of the place where a new tParticleCandidate will be stored within the vector
         int iCandidate = 0;
 

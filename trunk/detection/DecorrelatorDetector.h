@@ -26,13 +26,6 @@
 	@author Manu <manu@rustneversleeps>
 */
 
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-
 #include <Eigen/LU>
 
 class DecorrelatorDetector : public LinearDetector

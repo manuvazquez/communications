@@ -31,16 +31,6 @@
 #include <sys/time.h>
 #include <vector>
 
-#include <lapackpp/gmd.h>
-#include <lapackpp/gmi.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
-#include <lapackpp/sybmd.h>
-#include <lapackpp/sybfd.h>
-
 #include <Alphabet.h>
 #include <Bits.h>
 #include <Modulator.h>
@@ -107,20 +97,18 @@ protected:
 
     // BER time evolution
     std::vector<MatrixXd> overallPeTimeEvolution;
-    std::vector<LaGenMatInt> overallErrorsNumberTimeEvolution;
+    std::vector<MatrixXi> overallErrorsNumberTimeEvolution;
+//     std::vector<LaGenMatInt> overallErrorsNumberTimeEvolution;
 
     // seeds
     std::vector<uint32_t> mainSeeds,statUtilSeeds;
-    std::vector<LaGenMatLongInt> beforeRunStatUtilSeeds;
-    LaGenMatLongInt presentFrameStatUtilSeeds;
+//     std::vector<LaGenMatLongInt> beforeRunStatUtilSeeds;
+//     LaGenMatLongInt presentFrameStatUtilSeeds;
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     vector<MatrixXd> presentFrameMSEtimeEvolution;
     vector<vector<MatrixXd> > MSEtimeEvolution;
 #endif
-
-    // some useful ranges
-    tRange rFrameDuration,rTrainingSeqDuration,rAll;
 
     Random randomGenerator;
 

@@ -36,9 +36,6 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
 
-	// it selects all rows in the symbols Matrix
-	tRange rAll;
-
 	// it includes all symbol vectors involved in the smoothing
     MatrixXd smoothingSymbolVectors(_nInputs,_channelOrder+_d);
 

@@ -77,8 +77,6 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
 
     int lastSymbolVectorStart = _nInputsXchannelOrderaxOrder - _nInputs;
 
-    tRange rMaxChannelOrderMinus1PrecedentColumns(_startDetectionTime-_maxOrder+1,_startDetectionTime-1);
-
     vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
     int iBestChannelOrder = 0,timesBestChannelOrder = 0;
 

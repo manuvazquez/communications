@@ -29,8 +29,6 @@
 #include <Bits.h>
 #include <Alphabet.h>
 #include <Util.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas3pp.h>
 
 class TransmissionUtil{
 private:

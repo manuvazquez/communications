@@ -23,12 +23,6 @@
 #include <Noise.h>
 #include <math.h>
 #include <StillMemoryMIMOChannel.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/larvd.h>
-#include <lapackpp/lacvd.h>
-#include <lapackpp/blas1pp.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
 
 /**
     @author Manu <manu@rustneversleeps>

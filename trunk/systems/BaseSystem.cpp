@@ -39,25 +39,25 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 1;
-//     L=3,N=2,frameLength=50;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
-    nFrames = 2;
-    L=3,N=2,frameLength=300;
-    m = 1;
+    nFrames = 1;
+    L=3,N=2,frameLength=50;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 6;
+    nSmoothingSymbolsVectors = 10;
+    
+//     nFrames = 2;
+//     L=3,N=2,frameLength=300;
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
 //     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
@@ -103,8 +103,6 @@ BaseSystem::BaseSystem()
     strcat(outputFileName,presentTimeString);
 
     // a specific preamble is generated...
-//     preamble = tMatrix(N,preambleLength);
-//     preamble = -1.0;
     preamble = MatrixXd::Zero(1,1);
     preamble.resize(N,preambleLength);
     if(preamble.size()>0)
@@ -136,9 +134,6 @@ BaseSystem::BaseSystem()
     permutations = Util::Permutations(firstPermutation,N);
     delete[] firstPermutation;
 
-    // useful ranges are initialized
-    rFrameDuration = tRange(preambleLength,preambleLength+frameLength-1);
-
     peMatrices.reserve(nFrames);
     MSEMatrices.reserve(nFrames);
 
@@ -147,7 +142,7 @@ BaseSystem::BaseSystem()
 
     mainSeeds.reserve(nFrames);
     statUtilSeeds.reserve(nFrames);
-    beforeRunStatUtilSeeds.reserve(nFrames);
+//     beforeRunStatUtilSeeds.reserve(nFrames);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     presentFrameMSEtimeEvolution.resize(SNRs.size());
@@ -221,7 +216,6 @@ void BaseSystem::Simulate()
             symbols << preamble,symbolsWithoutPreamble;
         }else
             symbols = symbolsWithoutPreamble;
-//         symbols = Util::append(preamble,symbols);
 
         // all the above symbols must be processed except those generated due to the smoothing
         iLastSymbolVectorToBeDetected = symbols.cols() - nSmoothingSymbolsVectors;
@@ -266,7 +260,7 @@ void BaseSystem::Simulate()
 //                 StatUtil::getRandomGenerator().setSeed();
 
                 // the seed kept by the class StatUtil is saved
-                presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::getRandomGenerator().getSeed();
+//                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::getRandomGenerator().getSeed();
 
                 // if there is training sequence
                 if(trainSeqLength!=0)
@@ -317,12 +311,6 @@ void BaseSystem::Simulate()
 
 void BaseSystem::OnlyOnce()
 {
-//     overallPeMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-//     presentFramePe = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-// 
-//     overallMseMatrix = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-//     presentFrameMSE = LaGenMatDouble::zeros(SNRs.size(),algorithms.size());
-
     overallPeMatrix = MatrixXd::Zero(SNRs.size(),algorithms.size());
     presentFramePe = MatrixXd::Zero(SNRs.size(),algorithms.size());
 
@@ -332,9 +320,8 @@ void BaseSystem::OnlyOnce()
     // Pe evolution
     for(uint i=0;i<SNRs.size();i++)
     {
-//         overallPeTimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
         overallPeTimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
-        overallErrorsNumberTimeEvolution[i] = LaGenMatInt::zeros(algorithms.size(),frameLength);
+        overallErrorsNumberTimeEvolution[i] = MatrixXi::Zero(algorithms.size(),frameLength);
     }
 
     // we fill the vector with the names of the algorithms
@@ -344,10 +331,9 @@ void BaseSystem::OnlyOnce()
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
         presentFrameMSEtimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
-//         presentFrameMSEtimeEvolution[i] = tMatrix(algorithms.size(),frameLength);
 #endif
 
-    presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
+//     presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
@@ -399,8 +385,8 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 #endif
 
     // seeds just before the run of the algorithms
-    beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
-    Util::matricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
+//     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
+//     Util::matricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 //         for(uint i=0;i<algorithmsNames.size();i++)

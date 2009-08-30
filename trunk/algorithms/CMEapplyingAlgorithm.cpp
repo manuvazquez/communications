@@ -39,7 +39,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
 void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
     int m,iTxAntenna,iRxAntenna,iDelay;
-    tVector CMEs(_candidateOrders.size());
+    VectorXd CMEs(_candidateOrders.size());
 
 #ifdef EXPORT_REAL_DATA
     MatrixXd channelMatrix = realChannel->at(_preamble.cols());

@@ -18,11 +18,8 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "MIMOChannel.h"
-#include <lapackpp/blas2pp.h>
 
 // #define DEBUG
-
-using namespace la;
 
 MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {

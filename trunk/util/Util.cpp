@@ -21,21 +21,21 @@
 
 using namespace std;
 
-tVector Util::toVector(const tMatrix &matrix,tOrder order)
-{
-    int i,nElements;
-
-    nElements = matrix.rows()*matrix.cols();
-    tVector vector(nElements);
-
-    if(order==rowwise)
-        for(i=0;i<nElements;i++)
-            vector(i) = matrix(i/matrix.cols(),i%matrix.cols());
-    else
-        for(i=0;i<nElements;i++)
-            vector(i) = matrix(i%matrix.rows(),i/matrix.rows());
-    return vector;
-}
+// tVector Util::toVector(const tMatrix &matrix,tOrder order)
+// {
+//     int i,nElements;
+// 
+//     nElements = matrix.rows()*matrix.cols();
+//     tVector vector(nElements);
+// 
+//     if(order==rowwise)
+//         for(i=0;i<nElements;i++)
+//             vector(i) = matrix(i/matrix.cols(),i%matrix.cols());
+//     else
+//         for(i=0;i<nElements;i++)
+//             vector(i) = matrix(i%matrix.rows(),i/matrix.rows());
+//     return vector;
+// }
 
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
 {
@@ -189,7 +189,7 @@ template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
-template void Util::matricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
+// template void Util::matricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
 template void Util::matricesVectorToOctaveFileStream(vector<MatrixXd> matrices,string name,ofstream &f);
 
 void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f)
@@ -503,84 +503,86 @@ MatrixXd Util::sign(const MatrixXd &A)
     return res;
 }
 
-MatrixXd Util::lapack2eigen(const tMatrix &A)
-{
-    if(A.rows()==0 || A.cols()==0)
-    {
-        MatrixXd res(1,1);
-        res.resize(A.rows(),A.cols());
-        return res;
-    }
-    
-    int i,j;
-    MatrixXd res(A.rows(),A.cols());
-    
-    for(i=0;i<A.rows();i++)
-        for(j=0;j<A.cols();j++)
-            res(i,j) = A(i,j);
-            
-    return res;
-}
-VectorXd Util::lapack2eigen(const tVector &v)
-{
-    int i;
-    VectorXd res(v.size());
-    
-    for(i=0;i<v.size();i++)
-        res(i) = v(i);
-    
-    return res;
-}
+// lapack to eigen and the other way around conversions
 
-vector<MatrixXd> Util::lapack2eigen(const vector<tMatrix> &v)
-{
-    vector<MatrixXd> res(v.size());
-    
-    for(uint i=0;i<v.size();i++)
-        res[i] = Util::lapack2eigen(v[i]);
-        
-    return res;
-}
-
-vector<vector<MatrixXd> > Util::lapack2eigen(const vector<vector<tMatrix> > &v)
-{
-    vector<vector<MatrixXd> > res(v.size());
-    
-    for(uint i=0;i<v.size();i++)
-        for(uint j=0;j<v[i].size();j++)
-            res[i].push_back(Util::lapack2eigen(v[i][j]));
-        
-    return res;
-}
-
-tMatrix Util::eigen2lapack(const MatrixXd &A)
-{
-    int i,j;
-    tMatrix res(A.rows(),A.cols());
-    
-    for(i=0;i<A.rows();i++)
-        for(j=0;j<A.cols();j++)
-            res(i,j) = A(i,j);
-            
-    return res;
-}
-tVector Util::eigen2lapack(const VectorXd &v)
-{
-    int i;
-    tVector res(v.size());
-    
-    for(i=0;i<v.size();i++)
-        res(i) = v(i);
-    
-    return res;
-}
-
-vector<tMatrix> Util::eigen2lapack(const vector<MatrixXd> &v)
-{
-    vector<tMatrix> res(v.size());
-    
-    for(uint i=0;i<v.size();i++)
-        res[i] = Util::eigen2lapack(v[i]);
-        
-    return res;
-}
+// MatrixXd Util::lapack2eigen(const tMatrix &A)
+// {
+//     if(A.rows()==0 || A.cols()==0)
+//     {
+//         MatrixXd res(1,1);
+//         res.resize(A.rows(),A.cols());
+//         return res;
+//     }
+//     
+//     int i,j;
+//     MatrixXd res(A.rows(),A.cols());
+//     
+//     for(i=0;i<A.rows();i++)
+//         for(j=0;j<A.cols();j++)
+//             res(i,j) = A(i,j);
+//             
+//     return res;
+// }
+// VectorXd Util::lapack2eigen(const tVector &v)
+// {
+//     int i;
+//     VectorXd res(v.size());
+//     
+//     for(i=0;i<v.size();i++)
+//         res(i) = v(i);
+//     
+//     return res;
+// }
+// 
+// vector<MatrixXd> Util::lapack2eigen(const vector<tMatrix> &v)
+// {
+//     vector<MatrixXd> res(v.size());
+//     
+//     for(uint i=0;i<v.size();i++)
+//         res[i] = Util::lapack2eigen(v[i]);
+//         
+//     return res;
+// }
+// 
+// vector<vector<MatrixXd> > Util::lapack2eigen(const vector<vector<tMatrix> > &v)
+// {
+//     vector<vector<MatrixXd> > res(v.size());
+//     
+//     for(uint i=0;i<v.size();i++)
+//         for(uint j=0;j<v[i].size();j++)
+//             res[i].push_back(Util::lapack2eigen(v[i][j]));
+//         
+//     return res;
+// }
+// 
+// tMatrix Util::eigen2lapack(const MatrixXd &A)
+// {
+//     int i,j;
+//     tMatrix res(A.rows(),A.cols());
+//     
+//     for(i=0;i<A.rows();i++)
+//         for(j=0;j<A.cols();j++)
+//             res(i,j) = A(i,j);
+//             
+//     return res;
+// }
+// tVector Util::eigen2lapack(const VectorXd &v)
+// {
+//     int i;
+//     tVector res(v.size());
+//     
+//     for(i=0;i<v.size();i++)
+//         res(i) = v(i);
+//     
+//     return res;
+// }
+// 
+// vector<tMatrix> Util::eigen2lapack(const vector<MatrixXd> &v)
+// {
+//     vector<tMatrix> res(v.size());
+//     
+//     for(uint i=0;i<v.size();i++)
+//         res[i] = Util::eigen2lapack(v[i]);
+//         
+//     return res;
+// }

@@ -27,15 +27,9 @@
 #include <types.h>
 #include <exceptions.h>
 #include <Util.h>
-#include <lapackpp/gmd.h>
-#include <lapackpp/blas2pp.h>
-#include <lapackpp/blas3pp.h>
-#include <lapackpp/laslv.h>
-#include <lapackpp/lavli.h>
 
 #include <Eigen/Core>
 #include <Eigen/LU>
-// USING_PART_OF_NAMESPACE_EIGEN
 
 class KalmanFilter{
 private:
@@ -48,10 +42,10 @@ public:
 
     void step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen); // eigen
 
-    tVector predictiveMean() const { return Util::eigen2lapack(_predictiveMean_eigen);}
-    tVector filteredMean() const { return Util::eigen2lapack(_filteredMean_eigen);}
-    tMatrix predictiveCovariance() const { return Util::eigen2lapack(_predictiveCovariance_eigen);}
-    tMatrix filteredCovariance() const { return Util::eigen2lapack(_filteredCovariance_eigen);}
+//     tVector predictiveMean() const { return Util::eigen2lapack(_predictiveMean_eigen);}
+//     tVector filteredMean() const { return Util::eigen2lapack(_filteredMean_eigen);}
+//     tMatrix predictiveCovariance() const { return Util::eigen2lapack(_predictiveCovariance_eigen);}
+//     tMatrix filteredCovariance() const { return Util::eigen2lapack(_filteredCovariance_eigen);}
     
     VectorXd predictiveMean_eigen() const { return _predictiveMean_eigen;} // eigen
     VectorXd filteredMean_eigen() const { return _filteredMean_eigen;} // eigen
