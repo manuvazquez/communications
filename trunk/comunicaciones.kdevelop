@@ -32,7 +32,7 @@
       <directoryradio>executable</directoryradio>
       <runarguments>
         <comunicaciones/>
-        <com/>
+        <com></com>
       </runarguments>
       <customdirectory>/</customdirectory>
       <programargs/>
@@ -44,7 +44,7 @@
       <autoinstall>false</autoinstall>
       <autokdesu>false</autokdesu>
       <debugarguments>
-        <com/>
+        <com></com>
       </debugarguments>
       <cwd>
         <com>/home/manu/c++/comunicaciones/optimized/./algorithms</com>
@@ -206,9 +206,7 @@
     <dest>/home/manu/c++/comunicaciones</dest>
   </substmap>
   <kdevcppsupport>
-    <references>
-      <pcs>lapackpp</pcs>
-    </references>
+    <references/>
     <codecompletion>
       <includeGlobalFunctions>true</includeGlobalFunctions>
       <includeTypes>true</includeTypes>

@@ -8,11 +8,11 @@ METASOURCES = AUTO
 bin_PROGRAMS = com
 
 com_LDADD = $(top_builddir)/systems/libsys.a \
-	$(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a $(top_builddir)/algorithms/libalgorithms.a \
-	$(top_builddir)/detection/libdetection.a $(top_builddir)/detection/trellis/libtrellis.a \
-	$(top_builddir)/estimation/libestimation.a $(top_builddir)/filters/libfilters.a $(top_builddir)/smc/libsmc.a \
-	$(top_builddir)/smc/resampling/libresampling.a $(top_builddir)/transmision/channel/libchannel.a \
-	$(top_builddir)/transmision/channel/delayPowerProfile/libdelayPowerProfile.a $(top_builddir)/statistics/libstatistics.a \
-	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/util/libutil.a \
-	$(top_builddir)/randomutil/librandomutil.a /usr/lib/liblapackpp.la
+	$(top_builddir)/transmision/libtransmision.a $(top_builddir)/statistics/libstatistics.a \
+	$(top_builddir)/util/libutil.a $(top_builddir)/transmision/channel/libchannel.a \
+	$(top_builddir)/transmision/channel/delayPowerProfile/libdelayPowerProfile.a $(top_builddir)/detection/libdetection.a \
+	$(top_builddir)/estimation/libestimation.a $(top_builddir)/filters/libfilters.a \
+	$(top_builddir)/algorithms/libalgorithms.a $(top_builddir)/algorithms/USIS2SIS/libUSIS2SIS.a \
+	$(top_builddir)/detection/trellis/libtrellis.a $(top_builddir)/smc/libsmc.a \
+	$(top_builddir)/smc/resampling/libresampling.a $(top_builddir)/randomutil/librandomutil.a
 com_SOURCES = com.cpp

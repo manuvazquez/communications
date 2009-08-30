@@ -19,3 +19,4 @@ libsys_a_SOURCES = BaseSystem.cpp CDMASystem.cpp \
 	TesisComplejidadReducidaBesselNumeroParticulasSystem.cpp TesisComplejidadReducidaBesselSystem.cpp \
 	TesisComplejidadReducidaSystem.cpp TesisOrdenCanalDesconocidoARSystem.cpp \
 	TesisOrdenCanalDesconocidoBesselSystem.cpp TesisOrdenCanalDesconocidoSystem.cpp WSA08System.cpp
+libsys_a_LIBADD = $(top_builddir)/algorithms/libalgorithms.a
