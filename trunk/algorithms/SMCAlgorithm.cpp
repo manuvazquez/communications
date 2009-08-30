@@ -21,11 +21,11 @@
 
 // #define DEBUG
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),
 // _variables initialization
 _particleFilter(new ParticleFilter(nParticles)),
 _particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_estimatorIndex(0),
-_channelMean(Util::toVector(Util::lapack2eigen(channelMatrixMean),rowwise)),_channelCovariance(Util::toVector(Util::lapack2eigen(channelMatrixVariances),rowwise).asDiagonal()),_randomParticlesInitilization(false)
+_channelMean(Util::toVector(channelMatrixMean,rowwise)),_channelCovariance(Util::toVector(channelMatrixVariances,rowwise).asDiagonal()),_randomParticlesInitilization(false)
 {
     if(channelMatrixMean.rows()!=Nr || channelMatrixMean.cols()!=(N*m))
     {

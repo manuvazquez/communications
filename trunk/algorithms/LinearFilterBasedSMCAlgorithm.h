@@ -38,7 +38,7 @@
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm *resamplingAlgorithm,const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles, ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
     /**
      * Constructor for allowing the algorithm to operate over an already constructed particle filter

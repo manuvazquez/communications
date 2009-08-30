@@ -44,10 +44,6 @@ public:
 
     ~UnknownChannelOrderAlgorithm();
 
-    tMatrix getChannelOrderAPPsAlongTime()
-    {
-        return Util::eigen2lapack(getChannelOrderAPPsAlongTime_eigen());
-    }  
     MatrixXd getChannelOrderAPPsAlongTime_eigen() { return _channelOrderAPPs.block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
     bool performsChannelOrderAPPestimation() const { return true;}
 };

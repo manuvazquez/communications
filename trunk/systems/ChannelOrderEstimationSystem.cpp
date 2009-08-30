@@ -34,8 +34,8 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 	iTrueChannelOrder = -1;
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		channelOrderCoefficientsMeans[iChannelOrder] = LaGenMatDouble::zeros(L,N*candidateChannelOrders[iChannelOrder]);
-		channelOrderCoefficientsVariances[iChannelOrder] = LaGenMatDouble::ones(L,N*candidateChannelOrders[iChannelOrder]);
+		channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(L,N*candidateChannelOrders[iChannelOrder]);
+		channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(L,N*candidateChannelOrders[iChannelOrder]);
 		if(candidateChannelOrders[iChannelOrder] == m)
 			iTrueChannelOrder = iChannelOrder;
 	}
@@ -71,7 +71,7 @@ void ChannelOrderEstimationSystem::OnlyOnce()
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
-	presentFrameChannelOrderAPPsAlongTime = vector<vector<tMatrix> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<tMatrix>(SNRs.size(),LaGenMatDouble::zeros(candidateChannelOrders.size(),frameLength)));
+	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),frameLength)));
 }
 
 void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
@@ -81,7 +81,7 @@ void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
 	if(algorithms[iAlgorithm]->performsChannelOrderAPPestimation())
 	{
 		//...the probability of the different channel orders at each time instant is retrieved
-		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->getChannelOrderAPPsAlongTime();
+		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->getChannelOrderAPPsAlongTime_eigen();
 
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}

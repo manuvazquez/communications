@@ -36,12 +36,12 @@ protected:
 	vector<int> candidateChannelOrders;
 	int iTrueChannelOrder;
 
-	vector<tMatrix> channelOrderCoefficientsMeans;
-	vector<tMatrix> channelOrderCoefficientsVariances;
+	vector<MatrixXd> channelOrderCoefficientsMeans;
+	vector<MatrixXd> channelOrderCoefficientsVariances;
 
 	// channel order APP evolution
-    vector<vector<vector<tMatrix> > > channelOrderAPPsAlongTime;
-    vector<vector<tMatrix> > presentFrameChannelOrderAPPsAlongTime;
+    vector<vector<vector<MatrixXd> > > channelOrderAPPsAlongTime;
+    vector<vector<MatrixXd> > presentFrameChannelOrderAPPsAlongTime;
     vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
 
 	virtual void OnlyOnce();

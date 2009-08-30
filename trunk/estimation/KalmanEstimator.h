@@ -48,7 +48,7 @@ protected:
     virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector) { return Util::eigen2lapack(buildMeasurementMatrix(Util::lapack2eigen(symbolsVector))); }
     virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector); // eigen
 public:
-    KalmanEstimator(const tMatrix &initialEstimation,const tMatrix &variances,int N,vector<double> ARcoefficients,double ARvariance);
+    KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,int N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
     

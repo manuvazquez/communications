@@ -38,7 +38,7 @@ protected:
     }
     virtual MatrixXd buildMeasurementMatrix(const VectorXd& symbolsVector); // eigen
 public:
-    CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
+    CDMAKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes);
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;

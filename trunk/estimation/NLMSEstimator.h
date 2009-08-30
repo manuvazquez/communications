@@ -28,7 +28,7 @@
 class NLMSEstimator : public LMSEstimator
 {
 public:
-    NLMSEstimator(const tMatrix& initialEstimation, int N, double mu);
+    NLMSEstimator(const MatrixXd& initialEstimation, int N, double mu);
 
     virtual NLMSEstimator* clone() const;
 

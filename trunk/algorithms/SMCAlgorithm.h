@@ -72,7 +72,7 @@ protected:
     virtual void beforeInitializingParticles(const MatrixXd &observations, const MatrixXd &trainingSequence) {}
 
 public:
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const tMatrix &channelMatrixMean, const tMatrix &channelMatrixVariances);
+    SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances);
 
     /**
      * Constructor for allowing the algorithm to operate over a already constructed particle filter

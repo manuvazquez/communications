@@ -25,6 +25,7 @@ SMCSystem::SMCSystem()
  : BaseSystem(),ARcoefficients(1)
 {
     nParticles = 192;
+//     nParticles = 1;
 //     nParticles = 1000;
 //     nParticles = 5;    
     resamplingRatio = 0.9;

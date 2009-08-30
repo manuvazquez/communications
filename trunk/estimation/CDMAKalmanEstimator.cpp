@@ -21,7 +21,7 @@
 
 // #define PRINT_INFO
 
-CDMAKalmanEstimator::CDMAKalmanEstimator(const tMatrix& initialEstimation, const tMatrix& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
+CDMAKalmanEstimator::CDMAKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, vector< double > ARcoefficients, double ARvariance, const tMatrix &spreadingCodes): KalmanEstimator(initialEstimation, variances, spreadingCodes.cols(), ARcoefficients, ARvariance),_spreadingCodes(Util::lapack2eigen(spreadingCodes))
 {
     if(spreadingCodes.cols()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::CDMAKalmanEstimator: the number of spreading codes doesn't match the number of users.");
