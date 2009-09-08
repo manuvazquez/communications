@@ -23,7 +23,7 @@
 #include <LinearDetector.h>
 
 /**
-	@author Manu <manu@rustneversleeps>
+    @author Manu <manu@rustneversleeps>
 */
 
 #include <Eigen/LU>
@@ -35,11 +35,11 @@ protected:
 public:
     DecorrelatorDetector(int rows, int cols, double alphabetVariance);
 
-    virtual double nthSymbolVariance(int n);
+    virtual double nthSymbolVariance(int n,double noiseVariance);
     virtual LinearDetector* clone();
-    virtual MatrixXd computedFilter_eigen() { return _filter_eigen;} // eigen
+    virtual MatrixXd computedFilter_eigen() { return _filter_eigen;}
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
-	virtual void stateStep(VectorXd observations) {}
+    virtual void stateStep(VectorXd observations) {}
 
 };
 

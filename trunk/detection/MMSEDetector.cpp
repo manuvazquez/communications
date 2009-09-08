@@ -36,13 +36,11 @@ MMSEDetector *MMSEDetector::clone()
 	return new MMSEDetector(*this);
 }
 
-// eigen
 MatrixXd MMSEDetector::computedFilter_eigen()
 {
     return _filter_eigen.block(0,_detectionStart,_channelMatrixRows,_nSymbolsToBeDetected);
 }
 
-// eigen
 VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
 {
     MatrixXd _Rx_eigen = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
@@ -57,18 +55,12 @@ VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, con
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-// eigen
-double MMSEDetector::nthSymbolVariance(int n)
+double MMSEDetector::nthSymbolVariance(int n,double noiseVariance)
 {
-//     tVector Rxf(_channelMatrixRows);
-
-    // Rxf = _Rx * filter.col(_channelMatrixCols-_nSymbolsToBeDetected+n)
-//     Blas_Mat_Vec_Mult(_Rx,_filter.col(_detectionStart+n),Rxf);
-//  return Blas_Dot_Prod(_filter.col(_detectionStart+n),Rxf) - pow(Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n)),2.0);
-    return (1.0 - _filter_eigen.col(_channelMatrixCols-_nSymbolsToBeDetected+n).dot(_channelMatrix_eigen.col(_channelMatrixCols-_nSymbolsToBeDetected+n)));
+    return nthSymbolGain(n)*(1.0-nthSymbolGain(n));
 }
 
-// double MMSEDetector::nthSymbolGain(int n) const
-// {
-// 	return Blas_Dot_Prod(_filter.col(_detectionStart+n),_channelMatrix.col(_detectionStart+n));
-// }
+double MMSEDetector::nthSymbolGain(int n) const
+{
+    return _filter_eigen.col(_detectionStart+n).dot(_channelMatrix_eigen.col(_detectionStart+n));   
+}

@@ -112,7 +112,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
             // sampling
             for(iSampledSymbol=0;iSampledSymbol<(_nInputs*(_d+1));iSampledSymbol++)
             {
-                s2q = dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol);
+                s2q = dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol,noiseVariances[iObservationToBeProcessed]);
 
                 sumProb = 0.0;
 

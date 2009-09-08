@@ -43,7 +43,6 @@ void RMMSEDetector::stateStep(VectorXd observations)
     _alphaPowerSumNow = _alphaPowerSumPrevious + _alphaPower;
 }
 
-// eigen
 VectorXd RMMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix,const MatrixXd &noiseCovariance)
 {
     if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
@@ -71,7 +70,7 @@ RMMSEDetector *RMMSEDetector::clone()
 }
 
 // eigen
-double RMMSEDetector::nthSymbolVariance(int n)
+double RMMSEDetector::nthSymbolVariance(int n,double noiseVariance)
 {
     return _alphabetVariance*(1.0 - 2.0*_filter_eigen.col(n).dot(_channelMatrix_eigen.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) + _filter_eigen.col(n).dot(_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen*_filter_eigen.col(n));
 }

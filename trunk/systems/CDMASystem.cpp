@@ -93,11 +93,6 @@ void CDMASystem::BeforeEndingFrame(int iFrame)
 
 void CDMASystem::BuildChannel()
 {
-  
-#ifdef DEBUG
-  cout << "symbols before" << endl << symbols;
-#endif
-    
     // when users are not transmitting, their symbols are zero
     _usersActivity = vector<vector<bool> >(symbols.rows(),vector<bool>(frameLength));
     
@@ -118,12 +113,6 @@ void CDMASystem::BuildChannel()
             isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
         }
             
-#ifdef DEBUG
-    Util::print(usersActive);
-    cout << "users activity at time 0" << endl;
-    Util::print(_usersActivity);
-#endif            
-                
 #ifdef PRINT_INFO
     cout << "symbols after generating users activity" << endl << symbols;
 #endif    

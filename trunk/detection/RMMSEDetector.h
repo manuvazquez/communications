@@ -50,9 +50,9 @@ public:
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
 
     RMMSEDetector *clone();
-    void stateStep(VectorXd observations); // eigen
+    void stateStep(VectorXd observations);
 
-    double nthSymbolVariance(int n);
+    double nthSymbolVariance(int n,double noiseVariance);
     MatrixXd computedFilter_eigen() { return _filter_eigen;}
 
 };
