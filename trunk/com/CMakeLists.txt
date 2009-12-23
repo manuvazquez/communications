@@ -1,0 +1,33 @@
+include_directories(.
+		    ${PROJECT_SOURCE_DIR}/util
+		    ${PROJECT_SOURCE_DIR}/random
+		    ${PROJECT_SOURCE_DIR}/statistics
+		    ${PROJECT_SOURCE_DIR}/filters
+		    ${PROJECT_SOURCE_DIR}/detection
+		    ${PROJECT_SOURCE_DIR}/detection/trellis
+		    ${PROJECT_SOURCE_DIR}/smc
+		    ${PROJECT_SOURCE_DIR}/smc/resampling
+		    ${PROJECT_SOURCE_DIR}/transmission
+		    ${PROJECT_SOURCE_DIR}/transmission/channel
+		    ${PROJECT_SOURCE_DIR}/transmission/channel/delayPowerProfile
+		    ${PROJECT_SOURCE_DIR}/algorithms
+		    ${PROJECT_SOURCE_DIR}/algorithms/USIS2SIS
+		    ${PROJECT_SOURCE_DIR}/systems
+		    ${PROJECT_SOURCE_DIR}/estimation)
+ADD_EXECUTABLE (com com)
+TARGET_LINK_LIBRARIES (com
+		    util
+		    random
+		    statistics
+		    filters
+		    detection
+		    trellis
+		    smc
+		    resampling
+		    transmission
+		    channel
+		    delayPowerProfile
+		    algorithms
+		    USIS2SIS
+		    systems
+		    estimation)

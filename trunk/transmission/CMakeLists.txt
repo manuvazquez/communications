@@ -1,0 +1,17 @@
+include_directories(. 
+		    ./channel
+		    ./channel/delayPowerProfile
+		    ${PROJECT_SOURCE_DIR}/util
+		    ${PROJECT_SOURCE_DIR}/random
+		    ${PROJECT_SOURCE_DIR}/statistics)
+ADD_LIBRARY (transmission STATIC 
+			  Alphabet
+			  Bits
+			  ChannelDependentNoise
+			  Demodulator
+			  Modulator
+			  Noise
+			  NullNoise
+			  PowerProfileDependentNoise
+			  TransmissionUtil)
+add_subdirectory(channel)

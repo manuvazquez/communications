@@ -1,0 +1,19 @@
+include_directories(. 
+		    ${PROJECT_SOURCE_DIR}/util
+		    ${PROJECT_SOURCE_DIR}/transmission
+		    ${PROJECT_SOURCE_DIR}/transmission/channel
+		    ${PROJECT_SOURCE_DIR}/statistics
+		    ${PROJECT_SOURCE_DIR}/random
+		    ${PROJECT_SOURCE_DIR}/filters)
+ADD_LIBRARY (estimation STATIC
+			APPbasedChannelOrderEstimator
+			CDMAKalmanEstimator
+			CDMAKnownChannelChannelMatrixEstimator
+			ChannelMatrixEstimator
+			ChannelOrderEstimator
+			KalmanEstimator
+			KnownChannelChannelMatrixEstimator
+			KnownSymbolsKalmanEstimator
+			LMSEstimator
+			NLMSEstimator
+			RLSEstimator)

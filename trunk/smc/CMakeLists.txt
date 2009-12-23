@@ -1,0 +1,22 @@
+include_directories(.
+		    ${PROJECT_SOURCE_DIR}/util
+		    ${PROJECT_SOURCE_DIR}/random
+		    ${PROJECT_SOURCE_DIR}/statistics
+		    ${PROJECT_SOURCE_DIR}/detection
+		    ${PROJECT_SOURCE_DIR}/estimation)
+ADD_LIBRARY (smc STATIC
+		Particle
+		ParticleFilter
+		ParticleWithChannelEstimationAndActiveUsers
+		ParticleWithChannelEstimationAndChannelOrderAPP
+		ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers
+		ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation
+		ParticleWithChannelEstimationAndLinearDetection
+		ParticleWithChannelEstimation
+		ResamplingCriterion
+		WithActiveUsersParticleAddon
+		WithChannelEstimationParticleAddon
+		WithChannelOrderAppParticleAddon
+		WithChannelOrderEstimationParticleAddon
+		WithLinearDetectionParticleAddon)
+add_subdirectory(resampling)

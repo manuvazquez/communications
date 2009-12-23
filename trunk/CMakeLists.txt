@@ -1,0 +1,20 @@
+cmake_minimum_required(VERSION 2.6)
+project(COMMUNICATIONS,CXX)
+
+set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0")
+#SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0  -DNDEBUG") # in order to take out the assertions in eigen
+
+include_directories(/usr/include/eigen2 ${PROJECT_SOURCE_DIR}/includes)
+add_subdirectory(random)
+add_subdirectory(util)
+add_subdirectory(statistics)
+add_subdirectory(filters)
+add_subdirectory(transmission)
+add_subdirectory(detection)
+add_subdirectory(estimation)
+add_subdirectory(smc)
+add_subdirectory(algorithms)
+add_subdirectory(systems)
+add_subdirectory(com)
