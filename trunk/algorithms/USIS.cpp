@@ -218,7 +218,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
 
                 // all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols":
                 // i) the already known:
-                forWeightUpdateNeededSymbols.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
+                forWeightUpdateNeededSymbols.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
 
                 // ii) the just sampled
                 forWeightUpdateNeededSymbols.block(0,m-1,_nInputs,_maxOrder) = Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs);

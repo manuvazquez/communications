@@ -37,7 +37,7 @@ void MLSDmFeedBackAlgorithm::process(const MatrixXd& observations, vector<double
     {
         for(int iChannelOrder=0;iChannelOrder<bestParticle->nChannelMatrixEstimators();iChannelOrder++)
         {
-            MatrixXd symbolVectors = bestParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
+            MatrixXd symbolVectors = bestParticle->getSymbolVectors(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
             bestParticle->getChannelMatrixEstimator(iChannelOrder)->nextMatrix(observations.col(iObservationToBeProcessed),symbolVectors,noiseVariances[iObservationToBeProcessed]);
         }
     }

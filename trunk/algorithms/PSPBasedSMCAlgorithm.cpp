@@ -77,7 +77,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
         {
             ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
-            symbolVectorsMatrix.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
+            symbolVectorsMatrix.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 

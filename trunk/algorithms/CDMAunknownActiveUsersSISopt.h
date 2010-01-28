@@ -32,16 +32,12 @@ It implements an (optimal) algorithm that aims to detect the active users in a S
 class CDMAunknownActiveUsersSISopt : public SMCAlgorithm
 {
 public:
-    CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const UsersActivityDistribution &usersActivityPdf);
+    CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances);
 
 protected:
-    const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity
-
     virtual void initializeParticles();
     void process(const MatrixXd &observations, vector< double > noiseVariances);
 
-    double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector, const std::vector<bool> &lastUsersActivity) const;
-    double probSymbolsVectorXprobActiveUsers(const VectorXd &symbolsVector) const;
     bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}
 };
 

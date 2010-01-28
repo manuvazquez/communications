@@ -92,7 +92,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
         {
             processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getParticle(iParticle));
 
-            symbolVectorsMatrix.block(0,0,_nInputs,_maxOrder-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1);
+            symbolVectorsMatrix.block(0,0,_nInputs,_maxOrder-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1);
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
             for(iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
@@ -151,7 +151,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
             {
                 processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getParticle(iParticle));
                 
-                symbolVectorsMatrix.block(0,0,_nInputs,_maxOrder-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1);
+                symbolVectorsMatrix.block(0,0,_nInputs,_maxOrder-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-_maxOrder+1,iObservationToBeProcessed-1);
                 
                 for(k=0;k<_nInputs;k++)
                     symbolVectorsMatrix(k,_maxOrder-1) = _alphabet[StatUtil::discrete_rnd(uniformDistribution)];

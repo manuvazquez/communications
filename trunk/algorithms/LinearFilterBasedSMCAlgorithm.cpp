@@ -101,7 +101,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
             if(_substractContributionFromKnownSymbols)
             {
                 // transformed observations
-                softEstimations =  dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->detect(substractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_e,stackedObservations,_particleFilter->getParticle(iParticle)->getSymbolVectors_eigen(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1)),stackedChannelMatrix.block(0,(_c+_channelOrder-1)*_nInputs,stackedChannelMatrix.rows(),(_e+1)*_nInputs),
+                softEstimations =  dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->detect(substractKnownSymbolsContribution(matricesToStack,_channelOrder,_c,_e,stackedObservations,_particleFilter->getParticle(iParticle)->getSymbolVectors(iObservationToBeProcessed-_c-_channelOrder+1,iObservationToBeProcessed-1)),stackedChannelMatrix.block(0,(_c+_channelOrder-1)*_nInputs,stackedChannelMatrix.rows(),(_e+1)*_nInputs),
                         stackedNoiseCovariance);
             } else
                 softEstimations =  dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
@@ -148,7 +148,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
 
             // all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols"
             // i) the already known:
-            forWeightUpdateNeededSymbols.block(0,0,_nInputs,_channelOrder-1) = _particleFilter->getParticle(iParticle)->getSymbolVectors_eigen(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
+            forWeightUpdateNeededSymbols.block(0,0,_nInputs,_channelOrder-1) = _particleFilter->getParticle(iParticle)->getSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
             // ii) the just sampled
             forWeightUpdateNeededSymbols.block(0,_channelOrder-1,_nInputs,_d+1) = Util::toMatrix(sampledSmoothingVector,columnwise,_nInputs);

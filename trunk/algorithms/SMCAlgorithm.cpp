@@ -143,7 +143,7 @@ void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
 
 MatrixXd SMCAlgorithm::getDetectedSymbolVectors_eigen()
 {
-    return _particleFilter->getBestParticle()->getSymbolVectors_eigen(_preamble.cols(),_iLastSymbolVectorToBeDetected-1);
+    return _particleFilter->getBestParticle()->getSymbolVectors(_preamble.cols(),_iLastSymbolVectorToBeDetected-1);
 }
 
 vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices_eigen()

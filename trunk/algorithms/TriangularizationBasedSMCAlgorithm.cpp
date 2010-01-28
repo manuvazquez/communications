@@ -46,7 +46,7 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
             ParticleWithChannelEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimation *> (_particleFilter->getParticle(iParticle));
 
             // the already detected symbol vectors are stored in "involvedSymbolVectors"
-            involvedSymbolVectors.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
+            involvedSymbolVectors.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
 
             // predicted channel matrices are stored in a vector in order to stack them
             // (first one is obtained via the Kalman Filter)

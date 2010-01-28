@@ -87,7 +87,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
 
                     // the m-1 already detected symbol vectors are copied into the matrix (just needed if m>1):
                     if(m>1)
-                        smoothingSymbolVectors.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
+                        smoothingSymbolVectors.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
 
                     // current tested vector is copied in the m-th position
                     for(k=0;k<static_cast<uint>(_nInputs);k++)
@@ -154,7 +154,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
                 auxChannelEstimator = dynamic_cast <KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(iChannelOrder));
 
                 // for efficiency's sake
-                MatrixXd involvedSymbolVectors = processedParticle->getSymbolVectors_eigen(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
+                MatrixXd involvedSymbolVectors = processedParticle->getSymbolVectors(iObservationToBeProcessed-_candidateOrders[iChannelOrder]+1,iObservationToBeProcessed);
 
                 // the a posteriori probability for each channel order must be updated with the previous app for this order and the likelihood at the present instant with the sampled symbol vector
                 newChannelOrderAPPs[iChannelOrder] = processedParticle->getChannelOrderAPP(iChannelOrder)*

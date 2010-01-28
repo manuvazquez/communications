@@ -45,7 +45,7 @@ public:
     double getWeight() const { return _weight;}
     void setWeight(double weight) { _weight = weight;}
 
-    VectorXd getSymbolVector_eigen(int n) const { return _symbolVectors.col(n);}
+    VectorXd getSymbolVector(int n) const { return _symbolVectors.col(n);}
     
     void setSymbolVector(int n,const VectorXd &v) { _symbolVectors.col(n) = v;}
     void setSymbolVector(int n,const std::vector<tSymbol> &v)
@@ -54,7 +54,7 @@ public:
             _symbolVectors(i,n) = v[i];
     }
 
-    MatrixXd getSymbolVectors_eigen(int a,int b) const { return _symbolVectors.block(0,a,_symbolVectors.rows(),b-a+1);}
+    MatrixXd getSymbolVectors(int a,int b) const { return _symbolVectors.block(0,a,_symbolVectors.rows(),b-a+1);}
     MatrixXd getSymbolVectors() { return _symbolVectors;}
 
     void setSymbolVectors(int a,int b,const MatrixXd &symbolVectors)
