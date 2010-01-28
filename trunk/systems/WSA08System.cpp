@@ -23,7 +23,7 @@ WSA08System::WSA08System()
  : ChannelOrderEstimationSystem()
 {
     nSurvivors = 3;
-	adjustSurvivorsFromParticlesNumber = false;
+    adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
     forgettingFactor = 0.99;

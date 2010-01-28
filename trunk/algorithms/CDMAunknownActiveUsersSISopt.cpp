@@ -96,7 +96,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, vector<
                 // the corresponding testing vector is generated from the index
                 extendedAlphabet.int2symbolsArray(iTestedCombination,testedCombination);
 
-                // symbols are copied into a lapackpp vector
+                // symbols are copied into a vector
                 for(k=0;k<_nInputs;k++)
                     symbolsVector(k) = testedCombination[k];
 
@@ -141,7 +141,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, vector<
             
             processedParticle->setActivityAtTime(iObservationToBeProcessed,usersActivity);
             
-            processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
+            processedParticle->setWeight(processedParticle->getWeight()* likelihoodsSum);
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();
