@@ -12,6 +12,7 @@ include_directories(.
 		    ${PROJECT_SOURCE_DIR}/estimation)
 ADD_LIBRARY (algorithms STATIC
 			Algorithm
+			CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge
 			CDMAunknownActiveUsersSISopt
 			CMEapplyingAlgorithm
 			CMEBasedAlgorithm

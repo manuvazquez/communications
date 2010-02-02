@@ -22,7 +22,7 @@
 
 #include <SMCAlgorithm.h>
 
-/**
+/*!
 An SMC algorithm based on linear filters that for a system whose users are not permanently active (at the moment only for flat channels)
 
     @author Manu <manu@rustneversleeps>

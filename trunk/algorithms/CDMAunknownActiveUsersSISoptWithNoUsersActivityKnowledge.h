@@ -17,50 +17,28 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "SMCSystem.h"
+#ifndef CDMAUNKNOWNACTIVEUSERSSISOPTWITHNOUSERSACTIVITYKNOWLEDGE_H
+#define CDMAUNKNOWNACTIVEUSERSSISOPTWITHNOUSERSACTIVITYKNOWLEDGE_H
 
-// #define DEBUG
+#include <SMCAlgorithm.h>
+#include <ParticleWithChannelEstimationAndActiveUsers.h>
+#include <UsersActivityDistribution.h>
 
-SMCSystem::SMCSystem()
- : BaseSystem(),ARcoefficients(1)
+/**
+It implements an (optimal) algorithm that aims to detect the active users in a SISO CDMA system along with the transmitted data
+
+    @author Manu <manu@rustneversleeps>
+*/
+class CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge : public SMCAlgorithm
 {
-//     nParticles = 1;
-    nParticles = 200;
-//     nParticles = 1000;
-    resamplingRatio = 0.9;
+public:
+    CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances);
 
-    // back and forward smoothing
-    c = 0;
-    e = d;
+protected:
+    virtual void initializeParticles();
+    void process(const MatrixXd &observations, vector< double > noiseVariances);
 
-    // AR process parameters
-    ARcoefficients[0] = 0.99999;
-    ARvariance=0.0001;
+    bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}
+};
 
-    // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
-
-    algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
-
-    firstSampledChannelMatrixVariance = 0.0;
-}
-
-
-SMCSystem::~SMCSystem()
-{
-  delete algoritmoRemuestreo;
-}
-
-void SMCSystem::BeforeEndingFrame(int iFrame)
-{
-#ifdef DEBUG
-	cout << "en SMCSystem::BeforeEndingFrame" << endl;
 #endif
-    BaseSystem::BeforeEndingFrame(iFrame);
-    Util::scalarToOctaveFileStream(nParticles,"nParticles",f);
-    Util::scalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
-    Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
-    Util::scalarToOctaveFileStream(ARvariance,"ARvariance",f);
-    Util::scalarToOctaveFileStream(c,"c",f);
-    Util::scalarToOctaveFileStream(e,"e",f);
-}

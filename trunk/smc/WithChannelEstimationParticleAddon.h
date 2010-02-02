@@ -56,6 +56,15 @@ public:
         return _channelMatrixEstimators[iChannelOrder];
     }
 
+	//! It returns the channel matrix estimator for the first order (useful when only one channel order is present)
+	/*!
+	  \return the channel matrix estimator for the first channel order
+	*/
+    ChannelMatrixEstimator *getChannelMatrixEstimator() const
+    { 
+        return _channelMatrixEstimators[0];
+    }
+
     int nChannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
 
 };

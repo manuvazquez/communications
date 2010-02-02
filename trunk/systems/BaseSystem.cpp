@@ -50,7 +50,8 @@ BaseSystem::BaseSystem()
 //     nSmoothingSymbolsVectors = 10;
     
 //     nFrames = 2000;
-	nFrames = 10;
+// 	nFrames = 10;
+	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=7,N=3,frameLength=10;	
     m = 1;

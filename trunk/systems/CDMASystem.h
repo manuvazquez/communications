@@ -24,12 +24,8 @@
 #include <FlatPowerProfile.h>
 #include <ARMultiuserCDMAchannel.h>
 #include <CDMAKalmanEstimator.h>
-#include <CDMAunknownActiveUsersSISopt.h>
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
-#include <KnownFlatChannelOptimalAlgorithm.h>
-#include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
 #include <UsersActivityDistribution.h>
-#include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 
 /**
 	@author Manu <manu@rustneversleeps>

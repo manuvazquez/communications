@@ -19,6 +19,12 @@
  ***************************************************************************/
 #include "CDMASystem.h"
 
+#include <CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge.h>
+#include <KnownFlatChannelOptimalAlgorithm.h>
+#include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
+#include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
+#include <CDMAunknownActiveUsersSISopt.h>
+
 // #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
@@ -78,10 +84,12 @@ void CDMASystem::AddAlgorithms()
     delete cdmaKnownChannelChannelMatrixEstimator;
     cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
  
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+//     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
     
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
-        
+    algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),usersActivityPdf));	
+	
     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),usersActivityPdf));            
 }
 
@@ -105,8 +113,8 @@ void CDMASystem::BuildChannel()
     }
       
     // set of active users evolves according to the given probabilities
-    for(uint iTime=trainSeqLength+1;iTime<frameLength;iTime++)    
-        for(uint iUser=0;iUser<symbols.rows();iUser++)
+    for(int iTime=trainSeqLength+1;iTime<frameLength;iTime++)    
+        for(int iUser=0;iUser<symbols.rows();iUser++)
         {   
             _usersActivity[iUser][iTime] = usersActivityPdf.sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
             symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
