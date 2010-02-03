@@ -62,7 +62,7 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 	for(iRow=0;iRow<nOutputs;iRow++)
 		for(iCol=0;iCol<nInputs*memory;iCol++)
 		{
-            VectorXd sample = Ls[iCol/nInputs]*StatUtil::randnMatrix_eigen(length,1,0.0,1.0);
+            VectorXd sample = Ls[iCol/nInputs]*StatUtil::randnMatrix(length,1,0.0,1.0);
 
 			for(iTime=0;iTime<length;iTime++)
 				_channelMatrices[iTime](iRow,iCol) = sample(iTime);

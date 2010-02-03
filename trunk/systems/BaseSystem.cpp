@@ -54,6 +54,7 @@ BaseSystem::BaseSystem()
 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=7,N=3,frameLength=10;	
+//     L=7,N=3,frameLength=300;	
     m = 1;
     d = m - 1;
     trainSeqLength = 0;

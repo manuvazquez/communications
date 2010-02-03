@@ -112,7 +112,7 @@ vector<int> StatUtil::discrete_rnd(int nSamples,const VectorXd &probabilities,Ra
     return res;
 }
 
-MatrixXd StatUtil::randnMatrix_eigen(int rows,int cols,double mean,double variance,Random &randomGenerator)
+MatrixXd StatUtil::randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
 {
     MatrixXd res(rows,cols);
     double stdDv = sqrt(variance);
@@ -131,7 +131,7 @@ VectorXd StatUtil::randnMatrix(const VectorXd &mean,const MatrixXd &covariance,R
         throw RuntimeException("StatUtil::randnMatrix: dimensions of the mean or the covariance are wrong.");
 
 //     return mean + Util::cholesky(covariance)*randnMatrix_eigen(mean.size(),1,0.0,1.0,randomGenerator);
-    return mean + Eigen::LLT<MatrixXd>(covariance).matrixL()*randnMatrix_eigen(mean.size(),1,0.0,1.0,randomGenerator);
+    return mean + Eigen::LLT<MatrixXd>(covariance).matrixL()*randnMatrix(mean.size(),1,0.0,1.0,randomGenerator);
 }
 
 double StatUtil::normalPdf(double x,double mean,double variance)

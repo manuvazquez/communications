@@ -36,7 +36,7 @@ CDMASystem::CDMASystem(): SMCSystem()
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
     
     // spreading spreadingCodes for the users are generated randomly
-    _spreadingCodes = StatUtil::randnMatrix_eigen(L,N,0.0,1.0);
+    _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
     
 #ifdef PRINT_INFO
@@ -59,7 +59,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
     powerProfile = new FlatPowerProfile(1,N,m,1.0);
     
-    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients,ARvariance,_spreadingCodes);
+    cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;
     
     mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);    
@@ -86,11 +86,11 @@ void CDMASystem::AddAlgorithms()
  
 //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
     
-    algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+    algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),usersActivityPdf));	
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));	
 	
-    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),usersActivityPdf));            
+    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));            
 }
 
 void CDMASystem::BeforeEndingFrame(int iFrame)
@@ -125,5 +125,5 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols;
 #endif    
     
-    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix_eigen(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }

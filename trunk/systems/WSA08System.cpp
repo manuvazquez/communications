@@ -50,7 +50,7 @@ WSA08System::WSA08System()
 
 	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
-	rlsEstimator = new RLSEstimator(powerProfile->means_eigen(),N,forgettingFactor);
+	rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
@@ -62,7 +62,7 @@ WSA08System::WSA08System()
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means_eigen(),powerProfile->variances_eigen(),N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
 }
 
 

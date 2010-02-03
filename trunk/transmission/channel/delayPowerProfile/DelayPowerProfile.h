@@ -42,13 +42,13 @@ public:
 
     virtual ~DelayPowerProfile();
 
-    virtual MatrixXd generateChannelMatrix_eigen(Random &random);
+    virtual MatrixXd generateChannelMatrix(Random &random);
     
     virtual void print() const;
 
-    MatrixXd means_eigen() const { return _means;}
+    MatrixXd means() const { return _means;}
     
-    MatrixXd variances_eigen() const {return _variances;}
+    MatrixXd variances() const {return _variances;}
     
     int nInputs() { return _nInputs;}
     int nOutputs() { return _nOutputs;}

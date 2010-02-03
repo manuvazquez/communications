@@ -52,7 +52,7 @@ TVT2007System::TVT2007System()
 
 	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
 
-	rlsEstimator = new RLSEstimator(powerProfile->means_eigen(),N,forgettingFactor);
+	rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
 		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
@@ -64,13 +64,12 @@ TVT2007System::TVT2007System()
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means_eigen(),powerProfile->variances_eigen(),N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
 }
 
 
 TVT2007System::~TVT2007System()
 {
-// 	delete channel;
 	delete powerProfile;
 
 	delete rmmseDetector;
@@ -91,13 +90,9 @@ TVT2007System::~TVT2007System()
 
 void TVT2007System::BuildChannel()
 {
-//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
-// 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
-#ifdef DEBUG
-	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
-	cout << "El canal al final" << endl << (*channel)[frameLength];
-#endif
+//   channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
+//   channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
 }
 
 void TVT2007System::AddAlgorithms()

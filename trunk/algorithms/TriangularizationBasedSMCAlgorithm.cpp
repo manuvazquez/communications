@@ -53,7 +53,7 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
             matricesToStack[0] = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();
 
             for(iSmoothing=1;iSmoothing<=_d;iSmoothing++)
-                matricesToStack[iSmoothing] = _ARcoefficient*matricesToStack[iSmoothing-1]+StatUtil::randnMatrix_eigen(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance);
+                matricesToStack[iSmoothing] = _ARcoefficient*matricesToStack[iSmoothing-1]+StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance);
 
             // matrices are stacked to give
             MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);

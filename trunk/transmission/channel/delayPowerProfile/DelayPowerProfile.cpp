@@ -27,7 +27,7 @@ DelayPowerProfile::~DelayPowerProfile()
 {
 }
 
-MatrixXd DelayPowerProfile::generateChannelMatrix_eigen(Random &random)
+MatrixXd DelayPowerProfile::generateChannelMatrix(Random &random)
 {
 	MatrixXd res = MatrixXd::Zero(_nOutputs,_nInputs*_amplitudes.size());
 

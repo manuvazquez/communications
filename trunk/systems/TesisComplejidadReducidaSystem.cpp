@@ -88,12 +88,12 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 
     // estimacion conjunta del canal y los datos
     rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
-    rlsEstimator = new RLSEstimator(powerProfile->means_eigen(),N,forgettingFactor);
-    lmsEstimator = new LMSEstimator(powerProfile->means_eigen(),N,muLMS);
-    nlmsEstimator = new NLMSEstimator(powerProfile->means_eigen(),N,muNLMS);
+    rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
+    lmsEstimator = new LMSEstimator(powerProfile->means(),N,muLMS);
+    nlmsEstimator = new NLMSEstimator(powerProfile->means(),N,muNLMS);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means_eigen(),powerProfile->variances_eigen(),N,ARcoefficients,ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means_eigen(),powerProfile->variances_eigen(),N,ARcoefficients,ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance,symbols,preambleLength);
 
     kalmanEstimatedChannel = NULL;
 }
@@ -118,13 +118,13 @@ TesisComplejidadReducidaSystem::~TesisComplejidadReducidaSystem()
 void TesisComplejidadReducidaSystem::AddAlgorithms()
 {
     // ---------------------------------------------------------- con variables auxiliares ----------------------------------------------------
-    algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],ARvariance));
+    algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],ARvariance));
 
     // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
-    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,mmseDetectorSmall,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,mmseDetectorSmall,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
 
     // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
-    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
+    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,true));
 
     algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0],true));
 
@@ -133,18 +133,18 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
 
     // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,lmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("NLMS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,nlmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("LMS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,lmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("NLMS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,nlmsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
     // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
     // common to all simulation algorithms
     delete kalmanEstimatedChannel;
      kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observations,noise->variances());
 
-    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-    algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+    algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 

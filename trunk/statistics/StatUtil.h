@@ -51,7 +51,7 @@ public:
     // same functions as above but receiving c++ vectors instead of Lapack++ vectors
     static int discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
-    static MatrixXd randnMatrix_eigen(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
+    static MatrixXd randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
     static VectorXd randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator = _randomGenerator); // eigen
     static double normalPdf(double x,double mean,double variance);
     static double normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance); // eigen

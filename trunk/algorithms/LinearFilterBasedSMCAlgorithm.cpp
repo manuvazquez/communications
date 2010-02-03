@@ -90,7 +90,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
 
             for(iSmoothing=_c+1;iSmoothing<=_c+_e;iSmoothing++)
                 // matricesToStack[iSmoothing] = _ARcoefficient * matricesToStack[iSmoothing-1] + rand(_nOutputs,_nInputsXchannelOrder)*_ARprocessVariance
-                matricesToStack[iSmoothing] = _ARcoefficient*matricesToStack[iSmoothing-1] + StatUtil::randnMatrix_eigen(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance);
+                matricesToStack[iSmoothing] = _ARcoefficient*matricesToStack[iSmoothing-1] + StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_ARprocessVariance);
 
             // matrices are stacked to give
             MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);

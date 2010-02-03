@@ -22,7 +22,7 @@
 // #define PRINT_INFO
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
- : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix_eigen(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length)
+ : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length)
 {
     for(int i=0;i<_length;i++)
         _stdDevs[i] = 1.0;

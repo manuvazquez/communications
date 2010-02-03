@@ -49,7 +49,7 @@ void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
 
     //the buffer is filled
     for(i=1;i<_nCoefficients;i++)
-        _buffer[i] = _buffer[i-1] + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
+        _buffer[i] = _buffer[i-1] + StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
     //convergence
     for(i=0;i<_iterationsForConvergence;i++)
@@ -60,7 +60,7 @@ void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
             aux += _coefficients[j]*_buffer[(i+_nCoefficients-1-j) % _nCoefficients];
 
         // _buffer[i % _nCoefficients] = aux + noise;
-        _buffer[i % _nCoefficients] = aux + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
+        _buffer[i % _nCoefficients] = aux + StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
     }
 
     // the index of the next matrix is gonna be returned is kept
@@ -75,7 +75,7 @@ MatrixXd ARprocess::nextMatrix_eigen()
         aux += _coefficients[j]*_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients];
     
     // _buffer[i % _nCoefficients] = aux + noise;
-    _buffer[_iNextMatrix % _nCoefficients] = aux + StatUtil::randnMatrix_eigen(_rows,_columns,_noiseMean,_noiseVariance);
+    _buffer[_iNextMatrix % _nCoefficients] = aux + StatUtil::randnMatrix(_rows,_columns,_noiseMean,_noiseVariance);
 
     return _buffer[_iNextMatrix++ % _nCoefficients];
 }

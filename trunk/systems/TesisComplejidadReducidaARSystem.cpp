@@ -32,7 +32,7 @@ TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
 
 void TesisComplejidadReducidaARSystem::BuildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix_eigen(randomGenerator),ARcoefficients,ARvariance));
+    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
 void TesisComplejidadReducidaARSystem::BeforeEndingFrame(int iFrame)
