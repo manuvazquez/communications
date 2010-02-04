@@ -10,7 +10,6 @@
   - mFirstColumns pilla una columna de mas
 - ML_UnknownChannelOrderSMCAlgorithm
   - sustituir _startDetectionSymbolVector-_startDetectionObservation+iObservationToBeProcessed por otra cosa
-- añadir simbolos para suavizado, no bits
 - quitar nParticlesPerChannelOrder de UnknownChannelOrderSMCAlgorithm
 - eliminar _iFirstObsevation de UnknownChannelOrderAlgorithm
 - añadir el atributo _antennasChannelOrder a MIMOChannel (y el método get correspondiente)
@@ -37,4 +36,7 @@
 - LinearFilterBasedSMCAlgorithm
   - cuando se sustraiga la contribución de los símbolos anteriores automáticamente se elija el detector pequeño y lo contrario
 - delete observationVectorLength from KalmanFilter constructor
-- push _allSymbolsRows up an upper class (maybe Algorithm)
+- normalizar códigos
+- cálculo de la probabilidad de error
+- canales buenos
+- como genero SNR

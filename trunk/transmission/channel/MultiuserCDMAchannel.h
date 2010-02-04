@@ -35,7 +35,12 @@ protected:
 public:
     MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes);    
 
-    virtual MatrixXd getTransmissionMatrix_eigen(const int n) const;    
+	//! It returns the "equivalent" channel matrix for this system
+	/*!
+	  \param n time instant
+	  \return the channel matrix
+	*/
+    virtual MatrixXd getTransmissionMatrix(const int n) const;    
 };
 
 #endif

@@ -53,7 +53,7 @@ MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),
     for(int iSymbolVector=effectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
-        MatrixXd currentChannelMatrix = getTransmissionMatrix_eigen(iSymbolVector);
+        MatrixXd currentChannelMatrix = getTransmissionMatrix(iSymbolVector);
 
         //we will accumulate the contributions of the different symbol vectors that participate in the current observation (_memory >= 1).
         // Besides, we will always accumulate the noise.

@@ -50,8 +50,8 @@ BaseSystem::BaseSystem()
 //     nSmoothingSymbolsVectors = 10;
     
 //     nFrames = 2000;
-// 	nFrames = 10;
-	nFrames = 200;
+	nFrames = 10;
+// 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=7,N=3,frameLength=10;	
 //     L=7,N=3,frameLength=300;	
@@ -276,9 +276,10 @@ void BaseSystem::Simulate()
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors_eigen();
                 
-//                 pe = TransmissionUtil::computeSER(symbols(tRange(),rFrameDuration),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
-                pe = TransmissionUtil::computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
+//                 pe = TransmissionUtil::computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
                 
+                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection);
+				
                 BeforeEndingAlgorithm(iAlgorithm);
 
                 delete algorithms[iAlgorithm];
@@ -422,8 +423,88 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 
     if(powerProfile!=NULL)
     {
-        Util::scalarsVectorToOctaveFileStream(powerProfile->tapsAmplitudes(),"powerProfileVariances",f);
+        Util::scalarsVectorToOctaveFileStream(powerProfile->tapsPowers(),"powerProfileVariances",f);
         Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
     }
     
+}
+
+double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask)
+{
+    if(detectedSymbols.rows() == 0)
+        return 0.0;
+
+    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+    {
+        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+        throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
+    }
+
+    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+    {
+        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
+      throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
+    }
+        
+#ifdef PRINT_INFO
+    cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
+    Util::print(mask);
+#endif
+
+    uint iBestPermutation = 0;
+    vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
+
+    // max number of errors
+    int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
+    
+    uint nAccountedSymbols = 0;
+    uint iInput;
+
+    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    {
+        int permutationErrors = 0;
+        
+        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        {
+            iInput = permutations[iPermut][iStream];
+          
+            int errorsInverting=0,errorsWithoutInverting=0;
+            
+            for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+            {
+                // if this symbol is not accounted for
+                if(!mask[iStream][iTime])
+                    continue;
+
+                // if the symbols differ, an error happened...
+                errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+                
+                // ...unless there the symbol sign needs to be switched because of the ambiguity
+                errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
+                
+                nAccountedSymbols++;
+            }              
+            
+            if(errorsWithoutInverting<errorsInverting)
+            {
+                permutationErrors += errorsWithoutInverting;
+                bestPermutationSigns[iStream] = 1;
+            }
+            else
+            {
+                permutationErrors += errorsInverting;
+                bestPermutationSigns[iStream] = -1;
+            }
+        } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        
+        if(permutationErrors<minErrors)
+        {
+            minErrors = permutationErrors;
+            iBestPermutation = iPermut;
+        }
+    }
+    
+    nAccountedSymbols /= permutations.size();
+    
+    return (double)minErrors/(double)(nAccountedSymbols);
 }

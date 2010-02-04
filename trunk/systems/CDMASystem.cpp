@@ -25,6 +25,8 @@
 #include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 #include <CDMAunknownActiveUsersSISopt.h>
 
+#include <math.h>
+
 // #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
@@ -38,6 +40,9 @@ CDMASystem::CDMASystem(): SMCSystem()
     // spreading spreadingCodes for the users are generated randomly
     _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
+	
+	// the spreading codes are normalized
+// 	_spreadingCodes /= sqrt(L);
     
 #ifdef PRINT_INFO
     cout << "generated spreadingCodes..." << endl << _spreadingCodes;

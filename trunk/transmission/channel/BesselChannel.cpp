@@ -38,7 +38,7 @@ BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, 
 	for(iTime=0;iTime<length;iTime++)
         _channelMatrices[iTime] = MatrixXd(nOutputs,nInputs*memory);   
 
-	vector<double> tapsVariances = powerProfile.tapsAmplitudes();
+	vector<double> tapsVariances = powerProfile.tapsPowers();
     vector<MatrixXd> Ls(memory);   
     MatrixXd covarianceMatrix(length,length);   
 

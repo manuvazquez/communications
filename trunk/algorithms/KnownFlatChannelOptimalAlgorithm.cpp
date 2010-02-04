@@ -59,7 +59,7 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         nodes.push_back(rootNode);
         
         // the corresponding channel matrix is kept in a variable (for the sake of clarity)
-        MatrixXd H = _channel.getTransmissionMatrix_eigen(iProcessedObservation);
+        MatrixXd H = _channel.getTransmissionMatrix(iProcessedObservation);
         
         // the Cholesky decomposition of HtH
         Eigen::LLT<MatrixXd> lltOfHTH(H.transpose()*H);

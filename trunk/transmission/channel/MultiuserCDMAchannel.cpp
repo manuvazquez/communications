@@ -23,7 +23,7 @@ MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const MatrixXd &spreading
 {
 }
 
-MatrixXd MultiuserCDMAchannel::getTransmissionMatrix_eigen(const int n) const
+MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
 {
     return _spreadingCodes*Util::toVector(this->at(n),rowwise).asDiagonal();
 }

@@ -26,14 +26,14 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, doub
 
 	while((power=exp(-delay/1e-6))>threshold)
 	{
-		_amplitudes.push_back(power);
+		_tapsPowers.push_back(power);
 		delay += T;
 		normConst += power;
 	}
 
-	for(uint i=0;i<_amplitudes.size();i++)
+	for(uint i=0;i<_tapsPowers.size();i++)
 		// normalization
-		_amplitudes[i] /= normConst;
+		_tapsPowers[i] /= normConst;
 
 	GenerateMatrices();
 }
@@ -47,18 +47,18 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, int 
 	for(i=0;i<m;i++)
 	{
 		power = (1.0/tRMS)*exp(-(1.0/tRMS)*delay);
-		_amplitudes.push_back(power);
+		_tapsPowers.push_back(power);
 		delay += T;
 		normConst += power;
 	}
 
 	for(i=0;i<m;i++)
 		// normalization
-		_amplitudes[i] /= normConst;
+		_tapsPowers[i] /= normConst;
 
-	std::vector<double> _amplitudesBak = _amplitudes;
+	std::vector<double> _amplitudesBak = _tapsPowers;
 	for(uint i=0;i<_amplitudesBak.size();i++)
-		_amplitudes[_amplitudes.size()-1-i] = _amplitudesBak[i];
+		_tapsPowers[_tapsPowers.size()-1-i] = _amplitudesBak[i];
 
 	GenerateMatrices();
 }

@@ -63,85 +63,85 @@ double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bi
     return (double)errors/(double)(length*bits1.nStreams());
 }
 
-double TransmissionUtil::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
-{
-    if(detectedSymbols.rows() == 0)
-        return 0.0;
-
-    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
-    {
-        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-        throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
-    }
-
-    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
-    {
-        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
-      throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
-    }
-        
-#ifdef PRINT_INFO
-    cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
-    Util::print(mask);
-#endif
-
-    uint iBestPermutation = 0;
-    vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
-
-    // max number of errors
-    int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
-    
-    uint nAccountedSymbols = 0;
-    uint iInput;
-
-    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
-    {
-        int permutationErrors = 0;
-        
-        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-        {
-            iInput = permutations[iPermut][iStream];
-          
-            int errorsInverting=0,errorsWithoutInverting=0;
-            
-            for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
-            {
-                // if this symbol is not accounted for
-                if(!mask[iStream][iTime])
-                    continue;
-
-                // if the symbols differ, an error happened...
-                errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
-                
-                // ...unless there the symbol sign needs to be switched because of the ambiguity
-                errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
-                
-                nAccountedSymbols++;
-            }              
-            
-            if(errorsWithoutInverting<errorsInverting)
-            {
-                permutationErrors += errorsWithoutInverting;
-                bestPermutationSigns[iStream] = 1;
-            }
-            else
-            {
-                permutationErrors += errorsInverting;
-                bestPermutationSigns[iStream] = -1;
-            }
-        } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-        
-        if(permutationErrors<minErrors)
-        {
-            minErrors = permutationErrors;
-            iBestPermutation = iPermut;
-        }
-    }
-    
-    nAccountedSymbols /= permutations.size();
-    
-    return (double)minErrors/(double)(nAccountedSymbols);
-}
+// double TransmissionUtil::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
+// {
+//     if(detectedSymbols.rows() == 0)
+//         return 0.0;
+// 
+//     if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+//     {
+//         cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+//         throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
+//     }
+// 
+//     if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+//     {
+//         cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
+//       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
+//     }
+//         
+// #ifdef PRINT_INFO
+//     cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
+//     Util::print(mask);
+// #endif
+// 
+//     uint iBestPermutation = 0;
+//     vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
+// 
+//     // max number of errors
+//     int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
+//     
+//     uint nAccountedSymbols = 0;
+//     uint iInput;
+// 
+//     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+//     {
+//         int permutationErrors = 0;
+//         
+//         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+//         {
+//             iInput = permutations[iPermut][iStream];
+//           
+//             int errorsInverting=0,errorsWithoutInverting=0;
+//             
+//             for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+//             {
+//                 // if this symbol is not accounted for
+//                 if(!mask[iStream][iTime])
+//                     continue;
+// 
+//                 // if the symbols differ, an error happened...
+//                 errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+//                 
+//                 // ...unless there the symbol sign needs to be switched because of the ambiguity
+//                 errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
+//                 
+//                 nAccountedSymbols++;
+//             }              
+//             
+//             if(errorsWithoutInverting<errorsInverting)
+//             {
+//                 permutationErrors += errorsWithoutInverting;
+//                 bestPermutationSigns[iStream] = 1;
+//             }
+//             else
+//             {
+//                 permutationErrors += errorsInverting;
+//                 bestPermutationSigns[iStream] = -1;
+//             }
+//         } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+//         
+//         if(permutationErrors<minErrors)
+//         {
+//             minErrors = permutationErrors;
+//             iBestPermutation = iPermut;
+//         }
+//     }
+//     
+//     nAccountedSymbols /= permutations.size();
+//     
+//     return (double)minErrors/(double)(nAccountedSymbols);
+// }
 
 double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
 {

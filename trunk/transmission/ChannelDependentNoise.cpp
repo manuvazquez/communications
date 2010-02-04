@@ -36,7 +36,7 @@ void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
 
     for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
-        MatrixXd channelMatrix = _channel->getTransmissionMatrix_eigen(j);
+        MatrixXd channelMatrix = _channel->getTransmissionMatrix(j);
         
         variance = 0.0;
         for(i=0;i<channelMatrix.rows();i++)

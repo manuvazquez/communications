@@ -127,10 +127,22 @@ protected:
     virtual void BuildChannel() = 0;
     virtual void BeforeEndingFrame(int iFrame);
     virtual void BeforeEndingAlgorithm(int iAlgorithm);
-    /**
+	
+    /*!
      * Actions performed only once (first SNR, first frame)
      */
     virtual void OnlyOnce();
+
+	//! It computes de symbol error rate
+	/*!
+	  \param sourceSymbols the sequence of symbols actually transmitted
+	  \param detectedSymbols the sequence of symbols detected
+	  \param mask a matrix of bools indicating which symbols are to be taken into account in the calculus (in case not all of them are relevant)
+	  \param permutations a matrix containing the permutations within the symbol vectors that are to be explored
+	  \return the computed probability
+	*/
+	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask);
+
 public:
     BaseSystem();
 

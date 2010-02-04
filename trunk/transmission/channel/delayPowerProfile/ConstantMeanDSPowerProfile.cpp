@@ -26,24 +26,24 @@ ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(int nOutputs, int nInputs
 	double quotient;
 	int k;
 	int nDelays = int(ceil(_continuousDelays[_continuousDelays.size()-1]/T))+1;
-	_amplitudes.resize(nDelays,0.0);
+	_tapsPowers.resize(nDelays,0.0);
 
 	for(uint i=0;i<_continuousDelays.size();i++)
 	{
 		quotient = _continuousDelays[i] / T;
 		if(quotient == floor(quotient))
 		{
-			_amplitudes[int(quotient)] += _continuousPowers[i];
+			_tapsPowers[int(quotient)] += _continuousPowers[i];
 			continue;
 		}
 		k = int(_continuousDelays[i] / T);
-		_amplitudes[k] += ((k+1)- _continuousDelays[i]/T)*_continuousPowers[i];
-		_amplitudes[k+1] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
+		_tapsPowers[k] += ((k+1)- _continuousDelays[i]/T)*_continuousPowers[i];
+		_tapsPowers[k+1] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
 	}
 
-	vector<double> _amplitudesBak = _amplitudes;
+	vector<double> _amplitudesBak = _tapsPowers;
 	for(uint i=0;i<_amplitudesBak.size();i++)
-		_amplitudes[_amplitudes.size()-1-i] = _amplitudesBak[i];
+		_tapsPowers[_tapsPowers.size()-1-i] = _amplitudesBak[i];
 
 	GenerateMatrices();
 }

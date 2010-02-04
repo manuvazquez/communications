@@ -48,7 +48,7 @@ public:
     
     virtual MatrixXd at(int n) const = 0;
     
-    virtual MatrixXd getTransmissionMatrix_eigen(const int n) const { return at(n);}
+    virtual MatrixXd getTransmissionMatrix(const int n) const { return at(n);}
     
     MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
     

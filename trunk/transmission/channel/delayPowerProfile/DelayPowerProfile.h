@@ -32,8 +32,11 @@
 class DelayPowerProfile{
 protected:
     int _nOutputs,_nInputs;
-    std::vector<double> _amplitudes;
-    double _generatedCoefficientsMean;
+	
+	//! it keeps the power (variance) of each one of the channel taps
+    std::vector<double> _tapsPowers;
+    
+	double _generatedCoefficientsMean;
     MatrixXd _means,_variances;
 
     void GenerateMatrices();
@@ -49,11 +52,11 @@ public:
     MatrixXd means() const { return _means;}
     
     MatrixXd variances() const {return _variances;}
-    
+   
     int nInputs() { return _nInputs;}
     int nOutputs() { return _nOutputs;}
-    int memory() const { return _amplitudes.size();}
-    std::vector<double> tapsAmplitudes() const { return _amplitudes;}
+    int memory() const { return _tapsPowers.size();}
+    std::vector<double> tapsPowers() const { return _tapsPowers;}
 };
 
 #endif

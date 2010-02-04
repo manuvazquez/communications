@@ -35,6 +35,8 @@ public:
 
 protected:
     ARprocess _ARprocess;
+	
+	//! it keeps the coefficients of the different users (different from the matrix channel)
     vector<MatrixXd> _userCoeffs;
     
     virtual MatrixXd at(int n) const { return _userCoeffs[n];}
