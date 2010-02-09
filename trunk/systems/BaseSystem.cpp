@@ -153,6 +153,10 @@ BaseSystem::BaseSystem()
     MSEtimeEvolution.reserve(nFrames);
 #endif
 
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	channelMatrices.reserve(nFrames);
+#endif
+
 #ifndef RANDOM_SEED
         // we don't want the same bits to be generated over and over
         randomGenerator.setSeed(0);
@@ -167,15 +171,6 @@ BaseSystem::BaseSystem()
     xmlFile.open("data.xml",ofstream::trunc);
     xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
     xmlFile << "<com>" << endl;
-//     xmlFile << "  <parameters";
-//     xmlFile << " nInputs=\"" << N << "\"";
-//     xmlFile << " nOutputs=\"" << L << "\"";
-//     xmlFile << " frameLength=\"" << frameLength << "\"";
-//     xmlFile << " channelOrder=\"" << m << "\"";
-//     xmlFile << " smoothingLag=\"" << d << "\"";
-//     xmlFile << " trainingSeqLength=\"" << trainSeqLength << "\"";
-//     xmlFile << " preambleLength=\"" << preambleLength << "\"";
-//     xmlFile << ">" << endl;
     xmlFile << "  <parameters>" << endl;
     xmlFile << "    <nInputs type=\"scalar\">" << N << "</nInputs>" << endl;
     xmlFile << "    <nOutputs type=\"scalar\">" << L << "</nOutputs>" << endl;
@@ -289,8 +284,10 @@ void BaseSystem::Simulate()
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
         f.open(outputFileName,ofstream::trunc);
+
         BeforeEndingFrame(iFrame);
-        f.close();
+        
+		f.close();
 
         // ---------------------------------------------------------
 
@@ -343,7 +340,7 @@ void BaseSystem::OnlyOnce()
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
 {
-    mse = algorithms[iAlgorithm]->MSE(channel->range_eigen(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
+    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices_eigen(),0,frameLength-1,channel->range_eigen(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
@@ -389,6 +386,10 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	channelMatrices.push_back(channel->range(preambleLength,iLastSymbolVectorToBeDetected));
+#endif
+
     // seeds just before the run of the algorithms
 //     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
 //     Util::matricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
@@ -416,7 +417,10 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::scalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::matricesVectorToOctaveFileStream(channel->range_eigen(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+    Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	Util::matricesVectorsVectorToOctaveFileStream(channelMatrices,"channels",f);
+#endif
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);

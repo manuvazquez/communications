@@ -50,6 +50,8 @@
 
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
+#define KEEP_ALL_CHANNEL_MATRICES
+
 extern bool __done;
 
 class BaseSystem{
@@ -98,7 +100,6 @@ protected:
     // BER time evolution
     std::vector<MatrixXd> overallPeTimeEvolution;
     std::vector<MatrixXi> overallErrorsNumberTimeEvolution;
-//     std::vector<LaGenMatInt> overallErrorsNumberTimeEvolution;
 
     // seeds
     std::vector<uint32_t> mainSeeds,statUtilSeeds;
@@ -108,6 +109,10 @@ protected:
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     vector<MatrixXd> presentFrameMSEtimeEvolution;
     vector<vector<MatrixXd> > MSEtimeEvolution;
+#endif
+
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	std::vector<std::vector<MatrixXd> > channelMatrices;
 #endif
 
     Random randomGenerator;

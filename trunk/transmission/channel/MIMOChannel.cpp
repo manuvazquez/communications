@@ -66,7 +66,7 @@ MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),
     return observations;
 }
 
-vector<MatrixXd> MIMOChannel::range_eigen(int a,int b)
+vector<MatrixXd> MIMOChannel::range(int a,int b)
 {
     int nMatrices = b - a + 1;
 

@@ -60,7 +60,7 @@ public:
     
     MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
     
-    vector<MatrixXd> range_eigen(int a,int b);
+    vector<MatrixXd> range(int a,int b);
 };
 
 #endif

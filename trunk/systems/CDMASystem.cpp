@@ -24,8 +24,8 @@
 #include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
 #include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 #include <CDMAunknownActiveUsersSISopt.h>
-#include <TimeInvariantMultiuserCDMAchannel.h>
 #include <TimeInvariantChannel.h>
+#include <MultiuserCDMAchannel.h>
 
 #include <math.h>
 
@@ -83,7 +83,13 @@ CDMASystem::CDMASystem(): SMCSystem()
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;
     
-    mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);    
+    mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);
+
+    velocity = 50/3.6; // (m/s)
+    carrierFrequency = 2e9; // (Hz)
+    symbolRate = 500e3; // (Hz)
+
+    T = 1.0/symbolRate; // (s)
 }
 
 
@@ -146,12 +152,10 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols;
 #endif    
     
-//     channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	
 	channel = new MultiuserCDMAchannel(new ARchannel(N,1,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
-	
-// 	channel = new TimeInvariantMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs()));
 
+// 	channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);
+	
 // 	channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
 }
 

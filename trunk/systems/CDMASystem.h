@@ -22,7 +22,6 @@
 
 #include <SMCSystem.h>
 #include <FlatPowerProfile.h>
-#include <ARMultiuserCDMAchannel.h>
 #include <CDMAKalmanEstimator.h>
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
 #include <UsersActivityDistribution.h>
@@ -39,6 +38,8 @@ protected:
     vector<vector<bool> > _usersActivity;
     
     double userPersistenceProb,newActiveUserProb,userPriorProb;
+	
+    double velocity,carrierFrequency,symbolRate,T;
     
     CDMAKalmanEstimator *cdmaKalmanEstimator;
     CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
