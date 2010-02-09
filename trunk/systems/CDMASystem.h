@@ -55,6 +55,7 @@ public:
 
     ~CDMASystem();
 
+	bool areSequencesOrthogonal(const MatrixXd &spreadingCodes);
 };
 
 #endif

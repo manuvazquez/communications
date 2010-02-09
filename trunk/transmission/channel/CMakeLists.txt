@@ -7,5 +7,6 @@ ADD_LIBRARY (channel STATIC
 		      MIMOChannel
 		      MultiuserCDMAchannel
 		      StillMemoryMIMOChannel
+		      TimeInvariantMultiuserCDMAchannel
 		      TimeInvariantChannel)
 add_subdirectory(delayPowerProfile)

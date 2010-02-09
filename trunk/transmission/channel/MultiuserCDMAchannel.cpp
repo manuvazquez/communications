@@ -19,11 +19,20 @@
  ***************************************************************************/
 #include "MultiuserCDMAchannel.h"
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(spreadingCodes)
+MultiuserCDMAchannel::MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, length),_spreadingCodes(spreadingCodes),_channel(NULL)
 {
 }
 
+MultiuserCDMAchannel::MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, channel->length()),_spreadingCodes(spreadingCodes),_channel(channel)
+{
+}
+
+// MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
+// {
+//     return _spreadingCodes*Util::toVector(this->at(n),rowwise).asDiagonal();
+// }
+
 MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
 {
-    return _spreadingCodes*Util::toVector(this->at(n),rowwise).asDiagonal();
+    return _spreadingCodes*Util::toVector(_channel->at(n),rowwise).asDiagonal();
 }

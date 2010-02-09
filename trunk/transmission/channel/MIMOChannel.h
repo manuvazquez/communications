@@ -42,8 +42,16 @@ public:
     int length() const {return _length;};
     int nInputsnOutputs() const {return _nInputsnOutputs;};
     int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
-    int nInputsMemory(int n) const {return _nInputs*memory(n);};
+    int nInputsMemory(int n) const {return _nInputs*memory(n);}
+	
+	//! It returns the memory of the (possibly time-varying) channel
+	/*!
+		/param n time instant
+		/return the memory of the channel at the given time instant
+	*/
     virtual int memory(int n) const = 0;
+	
+	//! It returns the maximum memory of the channel
     virtual int effectiveMemory() const = 0;
     
     virtual MatrixXd at(int n) const = 0;

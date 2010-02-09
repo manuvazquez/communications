@@ -36,7 +36,4 @@
 - LinearFilterBasedSMCAlgorithm
   - cuando se sustraiga la contribución de los símbolos anteriores automáticamente se elija el detector pequeño y lo contrario
 - delete observationVectorLength from KalmanFilter constructor
-- normalizar códigos
 - cálculo de la probabilidad de error
-- canales buenos
-- como genero SNR

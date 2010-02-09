@@ -24,10 +24,12 @@
 #include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
 #include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 #include <CDMAunknownActiveUsersSISopt.h>
+#include <TimeInvariantMultiuserCDMAchannel.h>
+#include <TimeInvariantChannel.h>
 
 #include <math.h>
 
-// #define PRINT_INFO
+#define PRINT_CODES_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
 ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
@@ -40,12 +42,26 @@ CDMASystem::CDMASystem(): SMCSystem()
     // spreading spreadingCodes for the users are generated randomly
     _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
     _spreadingCodes = Util::sign(_spreadingCodes);
+
+// 	MatrixXd kasamiCodes (L,N);
+// 	
+// 	kasamiCodes <<	 1,  -1,  -1,
+// 					-1,   1,   1,
+// 					 1,   1,   1,
+// 					-1,  -1,   1,
+// 					 1,   1,  -1,
+// 					 1,  -1,   1,
+// 					-1,  -1,  -1,
+// 					-1,   1,  -1;
+// 
+// 	_spreadingCodes = kasamiCodes;
 	
 	// the spreading codes are normalized
 // 	_spreadingCodes /= sqrt(L);
     
-#ifdef PRINT_INFO
-    cout << "generated spreadingCodes..." << endl << _spreadingCodes;
+#ifdef PRINT_CODES_INFO
+    cout << "generated spreadingCodes..." << endl << _spreadingCodes << endl;
+	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
     
     // AR process parameters
@@ -130,5 +146,32 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols;
 #endif    
     
-    channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+//     channel = new ARMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+	
+	channel = new MultiuserCDMAchannel(new ARchannel(N,1,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
+	
+// 	channel = new TimeInvariantMultiuserCDMAchannel(symbols.cols(),_spreadingCodes,MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs()));
+
+// 	channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
+}
+
+bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
+{
+  int L = spreadingCodes.rows();
+  int nCodes = spreadingCodes.cols();
+  
+  for(int iOneCode=0;iOneCode<nCodes;iOneCode++)
+	for(int iOtherCode=iOneCode+1;iOtherCode<nCodes;iOtherCode++)
+	{
+	  int sum = 0;
+	  
+	  for(int i=0;i<L;i++)
+		for(int j=0;j<L;j++)
+		  sum += spreadingCodes(i,iOneCode)*spreadingCodes(j,iOtherCode);
+		
+	  if(sum!=0)
+		return false;
+	}
+	
+  return true;
 }

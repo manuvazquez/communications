@@ -31,16 +31,21 @@ class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 {
 protected:
     MatrixXd _spreadingCodes;
+	const MIMOChannel * const _channel;
     
 public:
-    MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes);    
+    MultiuserCDMAchannel(int length, const MatrixXd &spreadingCodes);
+	MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes);
 
 	//! It returns the "equivalent" channel matrix for this system
 	/*!
 	  \param n time instant
 	  \return the channel matrix
 	*/
-    virtual MatrixXd getTransmissionMatrix(const int n) const;    
+    virtual MatrixXd getTransmissionMatrix(const int n) const;
+	
+	// it delegates on the channel within
+	virtual MatrixXd at(int n) const { return _channel->at(n);}
 };
 
 #endif
