@@ -46,8 +46,8 @@ public:
 	
 	//! It returns the memory of the (possibly time-varying) channel
 	/*!
-		/param n time instant
-		/return the memory of the channel at the given time instant
+		\param n time instant
+		\return the memory of the channel at the given time instant
 	*/
     virtual int memory(int n) const = 0;
 	

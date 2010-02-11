@@ -120,3 +120,15 @@ tSymbol Alphabet::hardDecision(double softEstimation) const
 	}
 	return _symbols[iMin];
 }
+
+bool Alphabet::doesItBelong(const tSymbol symbol) const
+{
+	vector<tSymbol>::const_iterator iterator;
+	
+	iterator = find(_symbols.begin(),_symbols.end(),symbol);
+	
+	if(iterator==_symbols.end())
+	  return false;
+	else
+	  return true;
+}

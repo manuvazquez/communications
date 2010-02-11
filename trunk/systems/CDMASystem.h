@@ -46,17 +46,38 @@ protected:
     
     MMSEDetector *mmseDetector;
     
-    UsersActivityDistribution usersActivityPdf;    
+    UsersActivityDistribution usersActivityPdf;
+	
+	// it stores the maximum ratio among the coefficients of a channel matrix for every frame
+	vector<double> _maxCoefficientsRatiosInDBs;
+	
+	// this is used in two different methods (though only computed in one of them...)
+	double _maximumRatio;
+	
+	double maximumRatioThresholdInDBs;
+	
+	MatrixXd presentFramePeActivityDetection;
+	vector<MatrixXd> peActivityDetectionFrames;
     
     virtual void AddAlgorithms();
+	virtual void BeforeEndingAlgorithm(int iAlgorithm);
     virtual void BeforeEndingFrame(int iFrame);
-    virtual void BuildChannel();    
+    virtual void BuildChannel();
+	virtual void OnlyOnce();
 public:
     CDMASystem();
 
     ~CDMASystem();
 
 	bool areSequencesOrthogonal(const MatrixXd &spreadingCodes);
+	
+	/*!
+	  It computes the probability of detecting that a user is transmitting when it's not or the other way around. It relies in \ref computeSER
+	  \param sourceSymbols are the actual transmitted symbols
+	  \param detectedSymbols are the symbols detected
+	  \return the probability of misdetection the activity of a user
+	*/
+	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
 };
 
 #endif

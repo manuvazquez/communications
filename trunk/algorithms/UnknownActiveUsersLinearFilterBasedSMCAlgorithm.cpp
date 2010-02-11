@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
 
-// #define DEBUG
+// #define DEBUG2
 // #define DEBUG_CHANNEL_SAMPLES
 // #define DEBUG_MSE_THRESHOLD 1.5
 
@@ -158,6 +158,9 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
+#ifdef DEBUG2
+					cout << "softEstimations(iSampledSymbol) = " << softEstimations(iSampledSymbol) << " processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol) = " << processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol) << " s2q = " << s2q << endl;
+#endif
                     symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
                     // the computed pdf is accumulated for normalizing purposes

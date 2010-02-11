@@ -49,8 +49,9 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
     
-//     nFrames = 2000;
-	nFrames = 10;
+	nFrames = 2000;
+// 	nFrames = 10;
+// 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=7,N=3,frameLength=10;	
@@ -264,14 +265,11 @@ void BaseSystem::Simulate()
                 // if there is training sequence
                 if(trainSeqLength!=0)
                     algorithms[iAlgorithm]->run(observations,noise->variances(),symbols.block(0,preambleLength,N,trainSeqLength));
-//                     algorithms[iAlgorithm]->run(observations,noise->variances(),symbols(rAll,tRange(preambleLength,preambleLength+trainSeqLength-1)));
                 // if there is NOT training sequence
                 else
                     algorithms[iAlgorithm]->run(observations,noise->variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors_eigen();
-                
-//                 pe = TransmissionUtil::computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,permutations,alphabet);
                 
                 pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection);
 				
@@ -294,7 +292,10 @@ void BaseSystem::Simulate()
         iFrame++;
 
         delete channel;
+		channel = NULL;
+		
         delete noise;
+		noise = NULL;
     } // while((iFrame<nFrames) && (!done))
 
     overallPeMatrix *= 1.0/iFrame;
@@ -359,7 +360,6 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     presentFrameMSE(iSNR,iAlgorithm) = mse;
 
     // Pe evolution
-//     tMatrix transmittedSymbols = symbols(rAll,rFrameDuration);
     MatrixXd transmittedSymbols = symbols.block(0,preambleLength,N,frameLength);
 
     if(detectedSymbols.rows()!=0)
@@ -418,9 +418,11 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
     Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	Util::matricesVectorsVectorToOctaveFileStream(channelMatrices,"channels",f);
 #endif
+
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);

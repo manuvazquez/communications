@@ -37,3 +37,4 @@
   - cuando se sustraiga la contribución de los símbolos anteriores automáticamente se elija el detector pequeño y lo contrario
 - delete observationVectorLength from KalmanFilter constructor
 - cálculo de la probabilidad de error
+- implementar algunas cosas en Alphabet utilizando "doesItBelong"

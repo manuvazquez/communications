@@ -70,6 +70,8 @@ public:
     static std::vector<int> nMax(int n,const VectorXd &v);
     static MatrixXd flipLR(const MatrixXd &A);
     static MatrixXd sign(const MatrixXd &A);
+	static double maxCoefficientsRatio(const MatrixXd &A);
+	static double maxCoefficientsRatio2(const MatrixXd &A);
 };
 
 #endif

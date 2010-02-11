@@ -31,10 +31,13 @@
 
 #define PRINT_CODES_INFO
 
+// #define PRINT_INFO
+
 CDMASystem::CDMASystem(): SMCSystem()
 ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
 ,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
+,maximumRatioThresholdInDBs(15)
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -85,11 +88,16 @@ CDMASystem::CDMASystem(): SMCSystem()
     
     mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);
 
+	// bessel channel parameters
     velocity = 50/3.6; // (m/s)
     carrierFrequency = 2e9; // (Hz)
     symbolRate = 500e3; // (Hz)
 
     T = 1.0/symbolRate; // (s)
+	
+	_maxCoefficientsRatiosInDBs.reserve(nFrames);
+	
+	peActivityDetectionFrames.reserve(nFrames);
 }
 
 
@@ -123,7 +131,16 @@ void CDMASystem::AddAlgorithms()
 void CDMASystem::BeforeEndingFrame(int iFrame)
 {
     SMCSystem::BeforeEndingFrame(iFrame);
+	
+	// the maximum ratio of this frame is added to the vector
+	_maxCoefficientsRatiosInDBs.push_back(_maximumRatio);
+	
+    peActivityDetectionFrames.push_back(presentFramePeActivityDetection);
+    Util::matricesVectorToOctaveFileStream(peActivityDetectionFrames,"peActivityDetectionFrames",f);
+	
+	Util::scalarsVectorToOctaveFileStream(_maxCoefficientsRatiosInDBs,"maxCoefficientsRatiosInDBs",f);
     Util::matrixToOctaveFileStream(_spreadingCodes,"spreadingCodes",f);
+	Util::scalarToOctaveFileStream(maximumRatioThresholdInDBs,"maximumRatioThresholdInDBs",f);
 }
 
 void CDMASystem::BuildChannel()
@@ -149,14 +166,24 @@ void CDMASystem::BuildChannel()
         }
             
 #ifdef PRINT_INFO
-    cout << "symbols after generating users activity" << endl << symbols;
+    cout << "symbols after generating users activity" << endl << symbols << endl;
 #endif    
-    
-	channel = new MultiuserCDMAchannel(new ARchannel(N,1,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
 
-// 	channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);
+	do
+	{
+	  delete channel;
+
+// 	  channel = new MultiuserCDMAchannel(new ARchannel(N,1,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
+	  
+// 	  channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
+	  
+	  channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);	  
+
+	  // we check if the channel is really bad (severe near-far issues)
+	  _maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(preambleLength)));
+	  cout << "the max difference among coefficients in dBs: " << _maximumRatio << endl;
 	
-// 	channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
+	} while(_maximumRatio>maximumRatioThresholdInDBs);
 }
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
@@ -178,4 +205,66 @@ bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
 	}
 	
   return true;
+}
+
+double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd detectedSymbols)
+{
+#ifdef DEBUG
+	cout << "source symbols" << endl << sourceSymbols << endl;
+	cout << "detected symbols" << endl << detectedSymbols << endl;
+#endif
+
+	if(sourceSymbols.rows()!= detectedSymbols.rows())
+	{
+		cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << endl;
+		throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix row numbers differ.");
+	}
+
+	if(sourceSymbols.cols()!= detectedSymbols.cols())
+	{
+		cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << endl;    
+	  throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix column numbers differ.");
+	}
+	
+	vector<vector<bool> > mask(N,vector<bool>(frameLength,true));
+	
+    for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
+        for(int iInput=0;iInput<N;iInput++)
+            isSymbolAccountedForDetection[iInput][iTime] = false;        
+  
+
+	// in order to compute the probability of activity detection it makes no difference the symbol detected
+	for(int i=0;i<sourceSymbols.rows();i++)
+	  for(int j=0;j<sourceSymbols.cols();j++)
+	  {
+		if(alphabet->doesItBelong(sourceSymbols(i,j)))
+		  sourceSymbols(i,j) = alphabet->operator[](0);
+		if(alphabet->doesItBelong(detectedSymbols(i,j)))
+		  detectedSymbols(i,j) = alphabet->operator[](0);
+	  }
+
+#ifdef DEBUG
+	cout << "despues" << endl;
+	cout << "source symbols" << endl << sourceSymbols << endl;
+	cout << "detected symbols" << endl << detectedSymbols << endl;
+#endif
+
+	  return computeSER(sourceSymbols,detectedSymbols,mask);
+}
+
+void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)
+{
+	SMCSystem::BeforeEndingAlgorithm(iAlgorithm);
+
+	double peActivity = computeActivityDetectionER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols);
+	
+    // the activity detection error probability is accumulated
+    presentFramePeActivityDetection(iSNR,iAlgorithm) = peActivity;	
+}
+
+void CDMASystem::OnlyOnce()
+{
+	SMCSystem::OnlyOnce();
+
+	presentFramePeActivityDetection = MatrixXd::Zero(SNRs.size(),algorithms.size());
 }

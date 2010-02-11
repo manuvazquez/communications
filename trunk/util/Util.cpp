@@ -21,22 +21,6 @@
 
 using namespace std;
 
-// tVector Util::toVector(const tMatrix &matrix,tOrder order)
-// {
-//     int i,nElements;
-// 
-//     nElements = matrix.rows()*matrix.cols();
-//     tVector vector(nElements);
-// 
-//     if(order==rowwise)
-//         for(i=0;i<nElements;i++)
-//             vector(i) = matrix(i/matrix.cols(),i%matrix.cols());
-//     else
-//         for(i=0;i<nElements;i++)
-//             vector(i) = matrix(i%matrix.rows(),i/matrix.rows());
-//     return vector;
-// }
-
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
 {
     int i,nElements;
@@ -503,3 +487,70 @@ MatrixXd Util::sign(const MatrixXd &A)
     return res;
 }
 
+//! first (inefficient) implementation of \ref maxCoefficientsRatio
+double Util::maxCoefficientsRatio2(const MatrixXd &A)
+{
+  int iMax1,jMax1,iMax2,jMax2;
+  double max = -1.0;
+  double ratio;
+  
+  int i,j,i2,j2;
+  
+  for(i=0;i<A.rows();i++)
+	for(j=0;j<A.cols();j++)
+	{
+	  for(i2=i;i2<A.rows();i2++)
+		for(j2=j+1;j2<A.cols();j2++)
+		{
+		  ratio = fabs(A(i,j)/A(i2,j2));
+		  
+		  // if we have divided the smaller coefficient by the larger one
+		  if(ratio<1.0)
+			ratio = 1.0/ratio;
+		  
+		  if(ratio>max)
+		  {
+			max = ratio;
+			iMax1 = i;
+			jMax1 = j;
+			iMax2 = i2;
+			jMax2 = j2;
+		  }
+		}
+	}
+	
+	return max;
+}
+
+double Util::maxCoefficientsRatio(const MatrixXd &A)
+{
+  double max,min;
+  
+  int nElements = A.rows()*A.cols();
+  double currentElement;
+  
+  if(nElements<2)
+	throw RuntimeException("Util::maxCoefficientsRatio: the channel has a single coefficient.");
+  
+  max = fabs(A(0,0));
+  min = fabs(A(1/A.cols(),1 % A.cols()));
+  
+  // in case we missed...
+  if(max<min)
+  {
+	double aux = max;
+	max = min;
+	min = aux;
+  }
+  
+  for(int i=2;i<nElements;i++)
+  {
+	currentElement = fabs(A(i/A.cols(),i % A.cols()));
+	if(currentElement > max)
+	  max = currentElement;
+	else if(currentElement < min)
+	  min = currentElement;
+  }
+  
+  return max/min;
+}

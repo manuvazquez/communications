@@ -28,6 +28,7 @@ class Alphabet
         int symbolsArray2int(std::vector<tSymbol> symbolsVector) const;
         tSymbol hardDecision(double softEstimation) const;
         tSymbol opposite(const tSymbol symbol) const { return -1.0*symbol;}
+		bool doesItBelong(const tSymbol symbol) const;
 };
 #endif
 
