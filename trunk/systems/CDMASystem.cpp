@@ -37,7 +37,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
 ,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
-,maximumRatioThresholdInDBs(15)
+// ,maximumRatioThresholdInDBs(15)
+,maximumRatioThresholdInDBs(200)
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -118,10 +119,8 @@ void CDMASystem::AddAlgorithms()
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
     delete cdmaKnownChannelChannelMatrixEstimator;
     cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
- 
-//     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKnownChannelChannelMatrixEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
-    
-    algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+     
+//     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));	
 	

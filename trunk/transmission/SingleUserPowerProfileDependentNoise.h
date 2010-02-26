@@ -17,18 +17,32 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "MultiuserCDMAchannel.h"
+#ifndef SINGLEUSERPOWERPROFILEDEPENDENTNOISE_H
+#define SINGLEUSERPOWERPROFILEDEPENDENTNOISE_H
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, channel->length()),_spreadingCodes(spreadingCodes),_channel(channel)
-{
-}
+#include <Noise.h>
 
-MultiuserCDMAchannel::~MultiuserCDMAchannel()
-{
-  delete _channel;
-}
+/**
+	@author Manu <manu@rustneversleeps>
+*/
 
-MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
+#include <math.h>
+#include <DelayPowerProfile.h>
+
+class SingleUserPowerProfileDependentNoise : public Noise
 {
-    return _spreadingCodes*Util::toVector(_channel->at(n),rowwise).asDiagonal();
-}
+protected:
+	MatrixXd _matrix;
+	double _varianceConstant,_stdDev;
+	uint _iUser;
+public:
+    SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
+
+	virtual double stdDevAt(int n) const {return _stdDev;}
+    virtual VectorXd at(uint n) const;
+    virtual void setSNR(int SNR, double alphabetVariance);
+	virtual void print() const { cout << _matrix;}
+
+};
+
+#endif

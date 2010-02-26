@@ -121,7 +121,6 @@ void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const
 
     double newCost;
     int arrivalState;
-//     tVector computedObservations(channel.nOutputs()),error(channel.nOutputs());
 
     // "symbolVectors" will contain all the symbols involved in the current observation
     MatrixXd symbolVectors(channel.nInputs(),channel.memory());

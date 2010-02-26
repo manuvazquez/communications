@@ -22,11 +22,16 @@
 #include <defines.h>
 #include <typeinfo>
 #include <string.h>
+
+#include <SingleUserPowerProfileDependentNoise.h>
+
 #define DATE_LENGTH 100
 
 #define EXPORT_REAL_DATA
 #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
+
+// #define DEBUG
 
 using namespace std;
 
@@ -55,6 +60,7 @@ BaseSystem::BaseSystem()
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=7,N=3,frameLength=10;	
+//     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
     d = m - 1;
@@ -65,8 +71,9 @@ BaseSystem::BaseSystem()
     nSmoothingSymbolsVectors = 6;
 
 //     SNRs.push_back(3);SNRs.push_back(6);SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-    SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
-//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
+//     SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+	SNRs.push_back(3);SNRs.push_back(6);
+    SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);SNRs.push_back(18);SNRs.push_back(21);
 //     SNRs.push_back(9);
 //     SNRs.push_back(2);    
 //     SNRs.push_back(15);
@@ -223,13 +230,14 @@ void BaseSystem::Simulate()
         BuildChannel();
 
 #ifdef PRINT_PARAMETERS
-        cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
+        std::cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
 #endif
 
         // noise is generated according to the channel
 //         noise = new NullNoise(L,channel->length());
-        noise = new ChannelDependentNoise(channel);
+//         noise = new ChannelDependentNoise(channel);
 //         noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
+		noise = new SingleUserPowerProfileDependentNoise(L,channel->length(),*powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -243,6 +251,12 @@ void BaseSystem::Simulate()
 
             // noise SNR is set
             noise->setSNR(SNRs[iSNR],alphabet->variance());
+
+#ifdef DEBUG
+			cout << "noise is" << endl;
+			noise->print();
+			cout << endl;
+#endif
 
             // transmission
             observations = channel->transmit(symbols,*noise);

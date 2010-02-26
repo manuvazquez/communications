@@ -17,18 +17,33 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "MultiuserCDMAchannel.h"
+#include "SingleUserPowerProfileDependentNoise.h"
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, channel->length()),_spreadingCodes(spreadingCodes),_channel(channel)
+#define DEBUG
+
+SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
 {
+	MatrixXd variancesMatrix = powerProfile.variances();
+	int i;
+	double variancesSum = 0.0;
+	for(i=0;i<variancesMatrix.rows();i++)
+		variancesSum += variancesMatrix(i,_iUser);
+
+	_varianceConstant = variancesSum/double(_nOutputs);
+#ifdef DEBUG
+	cout << "variancesSum = " << variancesSum << endl;
+#endif
 }
 
-MultiuserCDMAchannel::~MultiuserCDMAchannel()
+VectorXd SingleUserPowerProfileDependentNoise::at(uint n) const
 {
-  delete _channel;
+    return _matrix.col(n);
 }
 
-MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
+void SingleUserPowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)
 {
-    return _spreadingCodes*Util::toVector(_channel->at(n),rowwise).asDiagonal();
+	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
+
+	_matrix *= (newStdDev/_stdDev);
+	_stdDev = newStdDev;
 }

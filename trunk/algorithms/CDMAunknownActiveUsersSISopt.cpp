@@ -18,7 +18,7 @@
 
 #include <ParticleWithChannelEstimation.h>
 
-// #define DEBUG
+// #define DEBUG2
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const UsersActivityDistribution &usersActivityPdf): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdf(usersActivityPdf)
 {    
@@ -78,7 +78,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 				  symbolsVector(k) = testedCombination[k];
 
 #ifdef DEBUG2
-			  cout << "testing iTestedCombination = " << endl << iTestedCombination << endl;
+			  cout << "testing iTestedCombination = " << iTestedCombination << endl;
 			  cout << symbolsVector << endl;
 #endif
 			  

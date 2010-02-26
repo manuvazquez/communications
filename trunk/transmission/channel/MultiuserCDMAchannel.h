@@ -35,6 +35,8 @@ protected:
     
 public:
 	MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes);
+	
+	~MultiuserCDMAchannel();
 
 	//! It returns the "equivalent" channel matrix for this system
 	/*!

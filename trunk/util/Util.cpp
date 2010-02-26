@@ -530,7 +530,10 @@ double Util::maxCoefficientsRatio(const MatrixXd &A)
   double currentElement;
   
   if(nElements<2)
-	throw RuntimeException("Util::maxCoefficientsRatio: the channel has a single coefficient.");
+  {
+	return 1.0;
+// 	throw RuntimeException("Util::maxCoefficientsRatio: the channel has a single coefficient.");
+  }
   
   max = fabs(A(0,0));
   min = fabs(A(1/A.cols(),1 % A.cols()));
