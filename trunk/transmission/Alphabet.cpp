@@ -132,3 +132,56 @@ bool Alphabet::doesItBelong(const tSymbol symbol) const
 	else
 	  return true;
 }
+
+VectorXd Alphabet::int2eigenVector(int number, uint length) const
+{
+	if(number>=pow((double)_length,(double)length))
+		throw RuntimeException("Alphabet::int2eigenVector: vector size is smaller than needed.");
+
+	VectorXd res = VectorXd::Constant(length,_symbols[0]);
+	
+	uint remainder,i;
+
+	i=1;
+	do
+	{
+		remainder = number % _length;
+		res(length-i) =  _symbols[remainder];
+		number /= _length;
+		i++;
+	}while(number!=0);
+
+	return res;
+}
+
+MatrixXd Alphabet::int2eigenMatrix(int number, uint rows, uint cols) const
+{
+	uint length = rows*cols;
+	
+	if(number>=pow((double)_length,(double)(length)))
+		throw RuntimeException("Alphabet::int2eigenVector: vector size is smaller than needed.");
+
+	MatrixXd res = MatrixXd::Constant(rows,cols,_symbols[0]);
+	
+	uint remainder;
+
+	length--;
+	do
+	{
+		remainder = number % _length;
+		res(length % rows,length / rows) = _symbols[remainder];
+		number /= _length;
+		length--;
+	}while(number!=0);
+
+	return res;
+}
+
+Alphabet Alphabet::buildNewAlphabetByAddingSymbol(tSymbol symbol) const
+{
+  vector<tSymbol> newSymbols = _symbols;
+  
+  newSymbols.push_back(symbol);
+  
+  return Alphabet(newSymbols);
+}

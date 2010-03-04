@@ -40,6 +40,9 @@ public:
     bool sampleGivenItWas(bool previous) const;
     double probXgivenY(bool X, bool Y) const;
     double probApriori(bool X) const;
+	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+	double probApriori(VectorXd &symbolsVector) const;
+	double probXgivenY(VectorXd &X, VectorXd &Y) const;
 };
 
 #endif

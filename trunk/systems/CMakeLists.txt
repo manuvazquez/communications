@@ -44,4 +44,5 @@ TARGET_LINK_LIBRARIES (systems
 		      smc
 		      resampling
 		      filters
-		      algorithms)
+		      algorithms
+			  USIS2SIS)

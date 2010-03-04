@@ -35,19 +35,28 @@ enum tStage {exitStage,arrivalStage};
 
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
-private:
-    // decimal inputs will be converted to a symbol vector and stored in here
-    vector<tSymbol> _inputVector;
-
-    // states in decimal format will be converted to a symbol vector and stored in here
-    vector<tSymbol> _stateVector;
 protected:
     int _d;
-    Trellis _trellis;
+    Trellis *_trellis;
     ViterbiPath *_exitStage, *_arrivalStage;
     MatrixXd _preamble,*_detectedSymbolVectors;
+	
+	//! this is needed for algorithms that are children of Viterbi and require some kind of special initialization involving the first observation
+	//! e.g. ViterbiAlgorithmWithAprioriProbabilities
+	int _iFirstInLoopProcessedObservation;
 
-    void DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix);
+    virtual void DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
+	void swapStages();
+	
+	/*!
+	  It initializes the trellis...that including the corresponding "trellis" object...so, this method MUST be called by this class or any child
+	*/
+// 	virtual void initializeTrellis();
+	
+	/*!
+	  it peforms the basic operations of any Viterbi algorithm (expansion of nodes, keep the best...). Specific operations for a particular Viterbi algorithm must be carried out in \ref run
+	*/
+	void process(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
 public:
     ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag);
 
@@ -58,7 +67,7 @@ public:
         int bestState = 0;
         double bestCost = _exitStage[0].getCost();
 
-        for(int iState=1;iState<_trellis.Nstates();iState++)
+        for(int iState=1;iState<_trellis->Nstates();iState++)
             if(_exitStage[iState].getCost() < bestCost)
             {
                 bestState = iState;
@@ -70,7 +79,7 @@ public:
     void run(MatrixXd observations, vector< double > noiseVariances);    
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
-    void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    virtual void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     
     MatrixXd getDetectedSymbolVectors_eigen();
     void PrintStage(tStage exitOrArrival);

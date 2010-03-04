@@ -31,21 +31,31 @@ class ViterbiPath{
 protected:
     int _nTimeInstants;
     double _cost;
-public:
     MatrixXd *_detectedSequence;
+public:
     ViterbiPath();
-    ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence); // eigen
+    ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence);
+	ViterbiPath(int nTimeInstants,double cost);
     ViterbiPath(const ViterbiPath &path);
     virtual ~ViterbiPath();
 
     double getCost() const { return _cost;}
     void clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool IsEmpty() const { return (_detectedSequence == NULL);}
-    VectorXd getSymbolVector(int n) const { return _detectedSequence->col(n);} // eigen
+    VectorXd getSymbolVector(int n) const { return _detectedSequence->col(n);}
+    MatrixXd getDetectedSequence()  const { return *_detectedSequence;}
 
     virtual void print() const;
+	
+	/*! 
+	  It updates this path by overwriting it with a new one built from \ref path
+	  \param path the other \ref ViterbiPath from which most of the information to build the new one will be taken
+	  \param newSymbolVector this will be added to the sequence accumulated by \ref path
+	  \param newCost the cost assigned to the new \ref ViterbiPath
+	*/
     void update(const ViterbiPath &path, VectorXd newSymbolVector, double newCost); // eigen
-    virtual void Ref(const ViterbiPath &path);
+    
+	virtual void Ref(const ViterbiPath &path);
     virtual void operator=(const ViterbiPath &path);
 };
 

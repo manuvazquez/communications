@@ -29,6 +29,10 @@ ViterbiPath::ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence)
 {
 }
 
+ViterbiPath::ViterbiPath(int nTimeInstants,double cost):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(NULL)
+{
+}
+
 ViterbiPath::ViterbiPath(const ViterbiPath &path):_nTimeInstants(path._nTimeInstants),_cost(path._cost)
 {
 	if(path._detectedSequence!=NULL)

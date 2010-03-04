@@ -41,6 +41,7 @@ ADD_LIBRARY (algorithms STATIC
 			UnknownChannelAlgorithm
 			UnknownChannelOrderAlgorithm
 			USIS
-			ViterbiAlgorithm)
-TARGET_LINK_LIBRARIES (algorithms smc)
+			ViterbiAlgorithm
+			ViterbiAlgorithmWithAprioriProbabilities)
+TARGET_LINK_LIBRARIES (algorithms smc trellis)
 add_subdirectory(USIS2SIS)

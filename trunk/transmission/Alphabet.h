@@ -29,6 +29,15 @@ class Alphabet
         tSymbol hardDecision(double softEstimation) const;
         tSymbol opposite(const tSymbol symbol) const { return -1.0*symbol;}
 		bool doesItBelong(const tSymbol symbol) const;
+		VectorXd int2eigenVector(int number, uint length) const;
+		MatrixXd int2eigenMatrix(int number, uint rows, uint cols) const;
+		
+		/*!
+		  it builds a new alphabet from this one with one additional symbol \ref symbol
+		  \param symbol the symbol to be added
+		  \return a new \ref Alphabet object
+		*/
+		Alphabet buildNewAlphabetByAddingSymbol(tSymbol symbol) const;
 };
 #endif
 

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "SingleUserPowerProfileDependentNoise.h"
 
-#define DEBUG
+// #define DEBUG
 
 SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
 {
