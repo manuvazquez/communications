@@ -9,10 +9,10 @@ using namespace std;
 
 Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(secuenciasBits),_nBitsBySymbol(secuenciasBits[0].size()),_length(secuenciasBits.size())
 {
-    // si no coincide el numero de simbolos con el numero de secuencias de bits
+    // if the number of bits sequences and that of the symbols don't match...
     if(secuenciasBits.size()!=simbolos.size())
     {
-			throw RuntimeException("Alphabet.cpp: el numero de secuencias de bits es distinto al de simbolos.");
+			throw RuntimeException("Alphabet::Alphabet: number of bit sequences is different from that of symbols.");
 
     }
 
@@ -45,7 +45,7 @@ tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada) const
     iterator = find(_bitsSequences.begin(),_bitsSequences.end(),secuenciaBitsBuscada);
     if(iterator==_bitsSequences.end())
     {
-			throw RuntimeException("Alphabet::operator[]: Esta secuencia de bits no forma parte del alfabeto.");
+			throw RuntimeException("Alphabet::operator[]: this sequence of bits doesn't belong to the alphabet.");
     }
 	return _symbols[iterator - _bitsSequences.begin()];
 }
@@ -56,7 +56,7 @@ vector<tBit> Alphabet::operator [ ](tSymbol simbolo) const
 	iterator = find(_symbols.begin(),_symbols.end(),simbolo);
 	if(iterator==_symbols.end())
 	{
-		throw RuntimeException("Alphabet::operator[]: Este simbolo no forma parte del alfabeto.");
+		throw RuntimeException("Alphabet::operator[]: this symbol doesn't belong to the alphabet.");
 	}
 	return _bitsSequences[iterator - _symbols.begin()];
 }
@@ -94,7 +94,7 @@ int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
 		{
-			throw RuntimeException("Alphabet::symbolsArray2int: Symbol not found.");
+			throw RuntimeException("Alphabet::symbolsArray2int: symbol not found.");
 		}
 		res += base*(iterator - _symbols.begin());
 		base *= _length;

@@ -96,7 +96,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(MatrixXd observations
     this->process(observations,noiseVariances);
 }
 
-MatrixXd MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVectors()
 {
     return getParticleFilterPointer()->getBestParticle()->getSymbolVectors(_preamble.cols(),_iLastSymbolVectorToBeDetected-1);
 }

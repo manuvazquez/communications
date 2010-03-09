@@ -136,7 +136,6 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
     }
 }
 
-// eigen
 void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
     if(observations.cols()<(_startDetectionTime+1+_d))
@@ -160,7 +159,6 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     process(observations,noiseVariances);
 }
 
-// eigen
 void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
@@ -253,7 +251,7 @@ void PSPAlgorithm::DeployState(int iState,const VectorXd &observations,double no
     } // for(int iInput=0;iInput<_trellis.NpossibleInputs();iInput++)
 }
 
-MatrixXd PSPAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd PSPAlgorithm::getDetectedSymbolVectors()
 {
     return _detectedSymbolVectors->block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }

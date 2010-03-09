@@ -54,7 +54,7 @@ public:
     ~KnownFlatChannelOptimalAlgorithm();
 
     void run(MatrixXd observations, vector< double > noiseVariances);
-    MatrixXd getDetectedSymbolVectors_eigen();
+    MatrixXd getDetectedSymbolVectors();
 
 };
 

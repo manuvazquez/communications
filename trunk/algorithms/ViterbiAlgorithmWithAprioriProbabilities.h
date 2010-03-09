@@ -25,7 +25,6 @@ class ViterbiAlgorithmWithAprioriProbabilities : public ViterbiAlgorithm
 {
 public:
     ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag, const UsersActivityDistribution usersActivityPdf);
-// 	~ViterbiAlgorithmWithAprioriProbabilities();
 	
 	virtual void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
 protected:
@@ -33,7 +32,6 @@ protected:
 	Alphabet _extendedAlphabet;
   
   virtual void DeployState(int iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance);
-//   virtual void initializeTrellis();
 };
 
 #endif // VITERBIALGORITHMWITHAPRIORIPROBABILITIES_H

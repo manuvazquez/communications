@@ -49,14 +49,10 @@ protected:
 	void swapStages();
 	
 	/*!
-	  It initializes the trellis...that including the corresponding "trellis" object...so, this method MUST be called by this class or any child
-	*/
-// 	virtual void initializeTrellis();
-	
-	/*!
 	  it peforms the basic operations of any Viterbi algorithm (expansion of nodes, keep the best...). Specific operations for a particular Viterbi algorithm must be carried out in \ref run
 	*/
 	void process(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+
 public:
     ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag);
 
@@ -81,7 +77,7 @@ public:
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
     virtual void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     
-    MatrixXd getDetectedSymbolVectors_eigen();
+    MatrixXd getDetectedSymbolVectors();
     void PrintStage(tStage exitOrArrival);
 };
 

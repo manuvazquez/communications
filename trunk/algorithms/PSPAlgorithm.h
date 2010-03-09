@@ -62,7 +62,7 @@ public:
     void run(MatrixXd observations, vector< double > noiseVariances);
     void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);   
 
-    MatrixXd getDetectedSymbolVectors_eigen();
+    MatrixXd getDetectedSymbolVectors();
     std::vector<MatrixXd> getEstimatedChannelMatrices_eigen();
     void PrintState(int iState);
 

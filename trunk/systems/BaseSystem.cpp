@@ -44,31 +44,31 @@ using namespace std;
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-//     nFrames = 10;
-//     L=3,N=2,frameLength=300;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//   
-//     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
-    
-	nFrames = 2000;
-// 	nFrames = 10;
-// 	nFrames = 1;
-// 	nFrames = 200;
-//     L=3,N=2,frameLength=300;
-    L=7,N=3,frameLength=10;	
-//     L=7,N=1,frameLength=10;
-//     L=7,N=3,frameLength=300;	
-    m = 1;
+    nFrames = 10;
+    L=3,N=2,frameLength=300;
+    m = 3;
     d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
-    
+    trainSeqLength = 10;
+    preambleLength = 10;
+  
     // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 6;
+    nSmoothingSymbolsVectors = 10;
+    
+// 	nFrames = 2000;
+// // 	nFrames = 10;
+// // 	nFrames = 1;
+// // 	nFrames = 200;
+// //     L=3,N=2,frameLength=300;
+//     L=7,N=3,frameLength=10;	
+// //     L=7,N=1,frameLength=10;
+// //     L=7,N=3,frameLength=300;	
+//     m = 1;
+//     d = m - 1;
+//     trainSeqLength = 0;
+//     preambleLength = 0;
+//     
+//     // the algorithms with the higher smoothing lag require
+//     nSmoothingSymbolsVectors = 6;
 
 	SNRs.push_back(3);
 // 	SNRs.push_back(6);
@@ -279,7 +279,7 @@ void BaseSystem::Simulate()
                 else
                     algorithms[iAlgorithm]->run(observations,noise->variances());
 
-                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors_eigen();
+                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
                 
                 pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection);
 				

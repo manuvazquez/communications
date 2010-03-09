@@ -92,7 +92,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
     run(observations,noiseVariances);
 }
 
-MatrixXd TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
 {
     MatrixXd aux(1,1);
     aux.resize(0,0);

@@ -43,14 +43,12 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 
 void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
-//   initializeTrellis();
-  
   const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
   
   if(channel.memory()==1)
 	throw RuntimeException("ViterbiAlgorithm::initializeTrellis: algorithm is only implemented for frequency-selective channels.");
   
-  // first, we initialize the Trellis object
+  // the Trellis object is initialized
   _trellis = new Trellis(_alphabet,_nInputs,channel.memory());
 
   _exitStage = new ViterbiPath[_trellis->Nstates()];
@@ -163,8 +161,7 @@ void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const
 
 }
 
-// eigen
-MatrixXd ViterbiAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd ViterbiAlgorithm::getDetectedSymbolVectors()
 {
     return _detectedSymbolVectors->block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
@@ -199,30 +196,3 @@ void ViterbiAlgorithm::swapStages()
   for(int iState=0;iState<_trellis->Nstates();iState++)
 	  _arrivalStage[iState].clean();
 }
-
-// void ViterbiAlgorithm::initializeTrellis()
-// {
-//   const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
-//   
-//   if(channel.memory()==1)
-// 	throw RuntimeException("ViterbiAlgorithm::initializeTrellis: algorithm is only implemented for frequency-selective channels.");
-//   
-//   // first, we initialize the Trellis object
-//   _trellis = new Trellis(_alphabet,_nInputs,channel.memory());
-// 
-//   _exitStage = new ViterbiPath[_trellis->Nstates()];
-//   _arrivalStage = new ViterbiPath[_trellis->Nstates()];
-// 
-//     // the symbols contained in the preamble are copied into a c++ vector...
-//     vector<tSymbol> preambleVector(_nInputs*(channel.memory()-1));
-// 
-//     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-//     int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_nInputs;
-//     for(int i=iFirstPreambleSymbolNeeded;i<_preamble.size();i++)
-//         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
-//   
-// 	// the sequence of symbols is converted to a number using the corresponding method from "Alphabet"
-//     int initialState = _alphabet.symbolsArray2int(preambleVector);
-// 
-//     _exitStage[initialState] = ViterbiPath(_iLastSymbolVectorToBeDetected,0.0,_preamble);
-// }

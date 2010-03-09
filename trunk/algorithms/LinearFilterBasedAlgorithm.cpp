@@ -120,7 +120,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
-MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
     return _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }

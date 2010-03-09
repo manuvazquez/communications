@@ -40,7 +40,7 @@ public:
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
-    virtual MatrixXd getDetectedSymbolVectors_eigen();
+    virtual MatrixXd getDetectedSymbolVectors();
     
     virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();      
 };

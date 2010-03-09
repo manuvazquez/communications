@@ -137,7 +137,7 @@ int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
     return iBest;
 }
 
-MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()
 {
     return _detectedSymbols;
 }

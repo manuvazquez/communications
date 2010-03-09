@@ -36,7 +36,7 @@ void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations
     run(observations,noiseVariances);
 }
 
-MatrixXd KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVectors()
 {
     MatrixXd aux(1,1);
     aux.resize(0,0);

@@ -20,29 +20,7 @@ ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabiliti
 {
   if(channel.memory()>1)
 	throw RuntimeException("ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities: algorithm is only implemented for flat channels.");
-  
-//     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
-//   vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
-// 
-//   for(int i=0;i<_alphabet.length();i++)
-// 	  extendedAlphabetSymbols[i] = _alphabet[i];
-//   extendedAlphabetSymbols[_alphabet.length()] = 0.0;
-// 
-//   _extendedAlphabet = new Alphabet(extendedAlphabetSymbols);
-  
-//   initializeTrellis();
-  
-//   // first, we initialize the Trellis object
-//   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
-// 
-//   _exitStage = new ViterbiPath[_trellis->Nstates()];
-//   _arrivalStage = new ViterbiPath[_trellis->Nstates()];
 }
-
-// ViterbiAlgorithmWithAprioriProbabilities::~ViterbiAlgorithmWithAprioriProbabilities()
-// {
-// //   delete _extendedAlphabet;
-// }
 
 void ViterbiAlgorithmWithAprioriProbabilities::DeployState(int iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance)
 {
@@ -74,18 +52,9 @@ void ViterbiAlgorithmWithAprioriProbabilities::DeployState(int iState, const Vec
     } // for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
 }
 
-// void ViterbiAlgorithmWithAprioriProbabilities::initializeTrellis()
-// {
-// //   // first, we initialize the Trellis object
-// //   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
-// // 
-// //   _exitStage = new ViterbiPath[_trellis->Nstates()];
-// //   _arrivalStage = new ViterbiPath[_trellis->Nstates()];
-// }
-
 void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
-    // first, we initialize the Trellis object
+    // the Trellis object is initialized
   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
 
   _exitStage = new ViterbiPath[_trellis->Nstates()];

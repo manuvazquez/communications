@@ -93,7 +93,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,
     run(observations,noiseVariances);
 }
 
-MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors_eigen()
+MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors()
 {
     MatrixXd aux(1,1);
     aux.resize(0,0);

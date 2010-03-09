@@ -51,5 +51,5 @@ MatrixXd LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(u
         _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[iChannelOrder]->getDetectedSymbolVectors_eigen();
+    return algorithms[iChannelOrder]->getDetectedSymbolVectors();
 }
