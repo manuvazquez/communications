@@ -99,7 +99,7 @@ void ViterbiPath::operator=(const ViterbiPath &path)
 
 void ViterbiPath::print() const
 {
-	if(this->IsEmpty())
+	if(this->isEmpty())
 		throw RuntimeException("ViterbiPath::print(): Path is empty.");
 
 	cout << "Sequence:" << endl << *(_detectedSequence);

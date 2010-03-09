@@ -45,7 +45,7 @@ protected:
 	//! e.g. ViterbiAlgorithmWithAprioriProbabilities
 	int _iFirstInLoopProcessedObservation;
 
-    virtual void DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
+    virtual void deployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
 	void swapStages();
 	
 	/*!
@@ -58,7 +58,7 @@ public:
 
     ~ViterbiAlgorithm();
 
-    int BestState()
+    int bestState()
     {
         int bestState = 0;
         double bestCost = _exitStage[0].getCost();
@@ -78,7 +78,7 @@ public:
     virtual void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
     
     MatrixXd getDetectedSymbolVectors();
-    void PrintStage(tStage exitOrArrival);
+    void printStage(tStage exitOrArrival);
 };
 
 #endif

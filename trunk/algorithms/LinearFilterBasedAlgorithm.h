@@ -52,7 +52,7 @@ public:
 
     virtual MatrixXd getDetectedSymbolVectors();
     
-    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen();     
+    virtual vector<MatrixXd> getEstimatedChannelMatrices();     
 
 };
 

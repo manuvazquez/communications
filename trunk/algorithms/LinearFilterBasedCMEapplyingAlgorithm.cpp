@@ -40,7 +40,7 @@ std::vector<MatrixXd> LinearFilterBasedCMEapplyingAlgorithm::estimatedChannelMat
         _algorithmAlreadyExecuted[iChannelOrder] = true;
     }
 
-    return algorithms[iChannelOrder]->getEstimatedChannelMatrices_eigen();
+    return algorithms[iChannelOrder]->getEstimatedChannelMatrices();
 }
 
 MatrixXd LinearFilterBasedCMEapplyingAlgorithm::detectedSymbolsForChannelOrder(uint iChannelOrder, const MatrixXd& observations, const vector<double>& noiseVariances,const MatrixXd& trainingSequence)

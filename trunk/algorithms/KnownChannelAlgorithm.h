@@ -37,7 +37,7 @@ public:
     using Algorithm::run;
 
     void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
-    vector<MatrixXd> getEstimatedChannelMatrices_eigen();    
+    vector<MatrixXd> getEstimatedChannelMatrices();    
 };
 
 #endif

@@ -104,7 +104,7 @@ MatrixXd CMEapplyingAlgorithm::getDetectedSymbolVectors()
     return MatrixXd(0,0);
 }
 
-vector<MatrixXd> CMEapplyingAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> CMEapplyingAlgorithm::getEstimatedChannelMatrices()
 {
     return vector<MatrixXd>(0);
 }

@@ -43,7 +43,7 @@ MatrixXd KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getDetectedSymbolVect
     return aux;
 }
 
-vector<MatrixXd> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::getEstimatedChannelMatrices()
 {
     return _estimatedChannelMatrices;
 }

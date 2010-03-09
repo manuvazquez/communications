@@ -146,7 +146,7 @@ MatrixXd SMCAlgorithm::getDetectedSymbolVectors()
     return _particleFilter->getBestParticle()->getSymbolVectors(_preamble.cols(),_iLastSymbolVectorToBeDetected-1);
 }
 
-vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices()
 {
     vector<MatrixXd> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

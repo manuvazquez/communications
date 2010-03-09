@@ -89,7 +89,7 @@ BaseSystem::BaseSystem()
     alphabetBitSequences[0][0] = 0; alphabetBitSequences[1][0] = 1;
     vector<tSymbol> alphabetSymbols(2);
     alphabetSymbols[0] = -1; alphabetSymbols[1] = 1;
-    alphabet = new Alphabet(1,2,alphabetBitSequences,alphabetSymbols);
+    alphabet = new Alphabet(alphabetBitSequences,alphabetSymbols);
 
     // host name is concatenated into the file name
     char hostname[HOSTNAME_LENGTH];
@@ -354,7 +354,7 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices_eigen(),0,frameLength-1,channel->range_eigen(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range_eigen(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif

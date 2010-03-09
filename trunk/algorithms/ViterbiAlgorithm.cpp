@@ -82,15 +82,15 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
     {
         for(iState=0;iState<_trellis->Nstates();iState++)
         {
-            if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
+            if(!_exitStage[iState].isEmpty())
+                deployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
 		swapStages();
     }
 
-    iBestState = BestState();
+    iBestState = bestState();
 
     // the first detected vector is copied into "_detectedSymbolVectors"
     _detectedSymbolVectors->col(_preamble.cols()) = _exitStage[iBestState].getSymbolVector(_preamble.cols());
@@ -99,14 +99,14 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
     {
         for(iState=0;iState<_trellis->Nstates();iState++)
         {
-            if(!_exitStage[iState].IsEmpty())
-                DeployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
+            if(!_exitStage[iState].isEmpty())
+                deployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
         }
 
         // _arrivalStage becomes _exitStage for the next iteration
 		swapStages();
 
-        iBestState = BestState();
+        iBestState = bestState();
 
         _detectedSymbolVectors->col(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1) = _exitStage[iBestState].getSymbolVector(iProcessedObservation-firstSymbolVectorDetectedAt+_preamble.cols()+1);
     }
@@ -127,7 +127,7 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
 	}
 }
 
-void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance)
+void ViterbiAlgorithm::deployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance)
 {
     const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
 
@@ -141,7 +141,7 @@ void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const
 	symbolVectors.block(0,0,channel.nInputs(),channel.memory()-1) = _alphabet.int2eigenMatrix(iState,channel.nInputs(),channel.memory()-1);
 	
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
+    for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
 		symbolVectors.col(channel.memory()-1) = _alphabet.int2eigenVector(iInput,channel.nInputs());
 		
@@ -152,7 +152,7 @@ void ViterbiAlgorithm::DeployState(int iState,const VectorXd &observations,const
         arrivalState = (*_trellis)(iState,iInput);
 
         // if there is nothing in the arrival state
-        if((_arrivalStage[arrivalState].IsEmpty()) ||
+        if((_arrivalStage[arrivalState].isEmpty()) ||
             // or there is a path whose cost is greater
             (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
@@ -166,7 +166,7 @@ MatrixXd ViterbiAlgorithm::getDetectedSymbolVectors()
     return _detectedSymbolVectors->block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
 
-void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
+void ViterbiAlgorithm::printStage(tStage exitOrArrival)
 {
     ViterbiPath *stage;
     if(exitOrArrival == exitStage)
@@ -177,7 +177,7 @@ void ViterbiAlgorithm::PrintStage(tStage exitOrArrival)
     for(int i=0;i<_trellis->Nstates();i++)
     {
         cout << "State " << i << endl;
-        if(stage[i].IsEmpty())
+        if(stage[i].isEmpty())
             cout << "Empty" << endl;
         else
 		stage[i].print();

@@ -101,7 +101,7 @@ MatrixXd MultipleChannelEstimatorsPerParticleSMCAlgorithm::getDetectedSymbolVect
     return getParticleFilterPointer()->getBestParticle()->getSymbolVectors(_preamble.cols(),_iLastSymbolVectorToBeDetected-1);
 }
 
-vector<MatrixXd> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedChannelMatrices()
 {
     vector<MatrixXd> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

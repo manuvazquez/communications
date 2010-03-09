@@ -100,7 +100,7 @@ MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors()
     return aux;
 }
 
-vector<MatrixXd> CMEBasedAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> CMEBasedAlgorithm::getEstimatedChannelMatrices()
 {
     return vector<MatrixXd>(0);
 }

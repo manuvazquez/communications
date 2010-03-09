@@ -11,14 +11,14 @@ class Alphabet
     private:
         std::vector<tSymbol> _symbols;
         std::vector<std::vector<tBit> > _bitsSequences;
-        int _nBitsBySymbol,_length;
+        int _nBitsPerSymbol,_length;
         double _mean,_variance;
         
         void computeMeanAndVariance();
     public:
-        Alphabet(int nBitsPorSimbolo,int longitudAlphabet,std::vector<std::vector<tBit> > secuenciasBits,std::vector<tSymbol> simbolos);
+        Alphabet(std::vector<std::vector<tBit> > secuenciasBits,std::vector<tSymbol> simbolos);
         Alphabet(std::vector<tSymbol> simbolos);        
-        int nBitsPerSymbol() const { return _nBitsBySymbol;}
+        int nBitsPerSymbol() const { return _nBitsPerSymbol;}
         double variance() const { return _variance;}
         tSymbol operator [](std::vector<tBit> secuenciaBitsBuscada) const;
         tSymbol operator [](int index) const { return _symbols[index];}

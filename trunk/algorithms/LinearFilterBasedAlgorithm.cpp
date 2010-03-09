@@ -125,7 +125,7 @@ MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
     return _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
 
-vector<MatrixXd> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices()
 {
     vector<MatrixXd> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());

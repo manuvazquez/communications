@@ -39,11 +39,27 @@ private:
 	// states in decimal format will be converted to a symbol vector and stored in here
 	vector<tSymbol> _stateVector;
 
-	void BestPairStateSurvivor(int &bestState,int &bestSurvivor);
-    int DisposableSurvivor(int iState);
+	/*!
+	  It goes through all the survivors in all the states of \ref _exitStage and finds the one with the smaller cost
+	  \param bestState returned
+	  \param bestSurvivor returned
+	*/
+	void bestPairStateSurvivor(int &bestState,int &bestSurvivor);
+	
+	/*!
+	  It seeks the survivor with the worst cost...or simply an empty slot in the list of \ref _bestArrivingPaths
+	  \param iState the state of \ref _bestArrivingPaths that is to be searched in
+	  \return the index of the survivor with the worst cost
+	*/
+    int disposableSurvivor(int iState);
+	
+	/*!
+	  It contains code shared by the two \ref run methods
+	*/
+	void initializeTrellis();
 protected:
     int _nSurvivors,_d,_startDetectionTime;
-	Trellis _trellis;
+	Trellis *_trellis;
     PSPPath **_exitStage, **_arrivalStage;
     MatrixXd *_detectedSymbolVectors;
     std::vector<MatrixXd> _estimatedChannelMatrices;
@@ -51,20 +67,20 @@ protected:
 	double _ARcoefficient;
 	PSPPathCandidate **_bestArrivingPaths;
 
-    void ProcessOneObservation(const VectorXd &observations,double noiseVariance);
+    void processOneObservation(const VectorXd &observations,double noiseVariance);
     void process(const MatrixXd &observations,vector<double> noiseVariances);
-    void DeployState(int iState,const VectorXd &observations, double noiseVariance);
+    virtual void deployState(int iState,const VectorXd &observations, double noiseVariance);
 public:
     PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);
 
     ~PSPAlgorithm();
 
-    void run(MatrixXd observations, vector< double > noiseVariances);
-    void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);   
+    virtual void run(MatrixXd observations, vector< double > noiseVariances);
+    virtual void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);   
 
     MatrixXd getDetectedSymbolVectors();
-    std::vector<MatrixXd> getEstimatedChannelMatrices_eigen();
-    void PrintState(int iState);
+    std::vector<MatrixXd> getEstimatedChannelMatrices();
+    void printState(int iState);
 
 };
 

@@ -32,6 +32,7 @@ ADD_LIBRARY (algorithms STATIC
 			MLSDmFeedBackAlgorithm
 			MultipleChannelEstimatorsPerParticleSMCAlgorithm
 			PSPAlgorithm
+			PSPAlgorithmWithAprioriProbabilities
 			PSPBasedSMCAlgorithm
 			SISoptAlgorithm
 			SMCAlgorithm

@@ -29,7 +29,7 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 {
     int windowSize = channelMatrices.size();
 
-    vector<MatrixXd> estimatedChannelMatrices = getEstimatedChannelMatrices_eigen();
+    vector<MatrixXd> estimatedChannelMatrices = getEstimatedChannelMatrices();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
     // if the algorithm didn't make channel estimation

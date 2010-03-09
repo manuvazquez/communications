@@ -22,8 +22,9 @@
 
 #include <PathCandidate.h>
 
-/**
-	@author Manu <manu@rustneversleeps>
+/*!
+	\author Manu <manu@rustneversleeps>
+	This class (along with \ref PathCandidate) is introduced in order to avoid updating the channel estimation for paths that won't survive (In PSP many paths will get to a given state, but only a few will be survivors and need to be actually processed)
 */
 class PSPPathCandidate : public PathCandidate
 {

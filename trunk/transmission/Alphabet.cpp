@@ -7,7 +7,7 @@
 
 using namespace std;
 
-Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(secuenciasBits),_nBitsBySymbol(secuenciasBits[0].size()),_length(secuenciasBits.size())
+Alphabet::Alphabet(vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(secuenciasBits),_nBitsPerSymbol(secuenciasBits[0].size()),_length(secuenciasBits.size())
 {
     // if the number of bits sequences and that of the symbols don't match...
     if(secuenciasBits.size()!=simbolos.size())
@@ -19,7 +19,7 @@ Alphabet::Alphabet(int nBitsPorSimbolo,int longitudAlphabet,vector<vector<tBit> 
     computeMeanAndVariance();
 }
 
-Alphabet::Alphabet(vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(simbolos.size(),vector<tBit>(0)),_nBitsBySymbol(0),_length(simbolos.size())
+Alphabet::Alphabet(vector<tSymbol> symbols):_symbols(symbols),_bitsSequences(symbols.size(),vector<tBit>(0)),_nBitsPerSymbol(0),_length(symbols.size())
 {
     computeMeanAndVariance();
 }
@@ -39,10 +39,10 @@ void Alphabet::computeMeanAndVariance()
     _variance = squaredSymbolsMean - (_mean*_mean);
 }
 
-tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada) const
+tSymbol Alphabet::operator [ ](vector<tBit> soughtBitsSequence) const
 {
     vector<vector<tBit> >::const_iterator iterator;
-    iterator = find(_bitsSequences.begin(),_bitsSequences.end(),secuenciaBitsBuscada);
+    iterator = find(_bitsSequences.begin(),_bitsSequences.end(),soughtBitsSequence);
     if(iterator==_bitsSequences.end())
     {
 			throw RuntimeException("Alphabet::operator[]: this sequence of bits doesn't belong to the alphabet.");
@@ -50,10 +50,10 @@ tSymbol Alphabet::operator [ ](vector<tBit> secuenciaBitsBuscada) const
 	return _symbols[iterator - _bitsSequences.begin()];
 }
 
-vector<tBit> Alphabet::operator [ ](tSymbol simbolo) const
+vector<tBit> Alphabet::operator [ ](tSymbol symbol) const
 {
 	vector<tSymbol>::const_iterator iterator;
-	iterator = find(_symbols.begin(),_symbols.end(),simbolo);
+	iterator = find(_symbols.begin(),_symbols.end(),symbol);
 	if(iterator==_symbols.end())
 	{
 		throw RuntimeException("Alphabet::operator[]: this symbol doesn't belong to the alphabet.");

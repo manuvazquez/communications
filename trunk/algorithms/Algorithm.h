@@ -60,7 +60,7 @@ public:
      *
      * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */    
-    virtual vector<MatrixXd> getEstimatedChannelMatrices_eigen() = 0;
+    virtual vector<MatrixXd> getEstimatedChannelMatrices() = 0;
 
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}

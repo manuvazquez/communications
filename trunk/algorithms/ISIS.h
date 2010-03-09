@@ -44,7 +44,7 @@ protected:
 public:
     ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
-    vector<MatrixXd> getEstimatedChannelMatrices_eigen();
+    vector<MatrixXd> getEstimatedChannelMatrices();
 };
 
 #endif

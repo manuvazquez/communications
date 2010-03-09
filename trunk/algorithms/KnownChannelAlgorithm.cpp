@@ -28,7 +28,7 @@ void KnownChannelAlgorithm::run(MatrixXd observations,vector<double> noiseVarian
     run(observations,noiseVariances);
 }
 
-vector<MatrixXd> KnownChannelAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> KnownChannelAlgorithm::getEstimatedChannelMatrices()
 {
     vector<MatrixXd> res;
 

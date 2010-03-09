@@ -100,7 +100,7 @@ MatrixXd TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
     return aux;
 }
 
-vector<MatrixXd> TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices()
 {
     return vector<MatrixXd>(0);
 }

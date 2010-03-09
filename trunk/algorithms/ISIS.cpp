@@ -188,7 +188,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
     delete[] newChannelOrderAPPs;
 }
 
-vector<MatrixXd> ISIS::getEstimatedChannelMatrices_eigen()
+vector<MatrixXd> ISIS::getEstimatedChannelMatrices()
 {
     return vector<MatrixXd>(0);
 }

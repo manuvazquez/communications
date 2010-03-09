@@ -37,7 +37,7 @@ public:
     ~Trellis();
 
     int Nstates() const { return _nStates;}
-    int NpossibleInputs() const {return _nPossibleInputs;}
+    int nPossibleInputs() const {return _nPossibleInputs;}
     int operator ()(int state, int input) const { return _stateTransitionMatrix[state][input];}
 
 };
