@@ -33,6 +33,10 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 	
 	VectorXd previousSymbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 
+#ifdef DEBUG
+	cout << "iState = " << iState << " noiseVariance = " << noiseVariance << endl;
+#endif
+	
     // now we compute the cost for each possible input
     for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
@@ -46,7 +50,7 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
 
-            VectorXd error = observations - dynamic_cast<KalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
+            VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
 			
 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + (error.dot(error))/(2*noiseVariance) - log(_usersActivityPdf.probXgivenY(symbolsVector,previousSymbolsVector));
 
@@ -71,7 +75,7 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolsVector;
 				}
 		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
-    } // for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
+    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< double > noiseVariances)
@@ -82,11 +86,11 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
     // the Trellis object is initialized
   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
 
-  _exitStage = new PSPPath*[_trellis->Nstates()];
-  _arrivalStage = new PSPPath*[_trellis->Nstates()];
-  _bestArrivingPaths = new PSPPathCandidate*[_trellis->Nstates()];
+  _exitStage = new PSPPath*[_trellis->nStates()];
+  _arrivalStage = new PSPPath*[_trellis->nStates()];
+  _bestArrivingPaths = new PSPPathCandidate*[_trellis->nStates()];
 
-  for(int i=0;i<_trellis->Nstates();i++)
+  for(int i=0;i<_trellis->nStates();i++)
   {
 	  _exitStage[i] = new PSPPath[_nSurvivors];
 	  _arrivalStage[i] = new PSPPath[_nSurvivors];
@@ -96,7 +100,7 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
   double initialCost;
   
   // at the first time instant, a priori probabilities of the active users must be employed (instead of conditioned)
-  for(int iState=0;iState<_trellis->Nstates();iState++)
+  for(int iState=0;iState<_trellis->nStates();iState++)
   {
 	VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	
@@ -104,10 +108,12 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
 
 	VectorXd error = observations.col(_startDetectionTime) - clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen()*symbolsVector;	
 
-	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - log(_usersActivityPdf.probApriori(symbolsVector));
+	initialCost =  (error.dot(error))/(2*noiseVariances[_startDetectionTime]) - log(_usersActivityPdf.probApriori(symbolsVector));
 
+	clonedChannelMatrixEstimator->nextMatrix(observations.col(_startDetectionTime),symbolsVector,noiseVariances[_startDetectionTime]);
+	
 	// only the first survivor is initialized
-	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,0.0,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
+	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,initialCost,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
   }
   
   // first observation was already processed

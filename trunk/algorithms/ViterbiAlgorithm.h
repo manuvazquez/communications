@@ -63,7 +63,7 @@ public:
         int bestState = 0;
         double bestCost = _exitStage[0].getCost();
 
-        for(int iState=1;iState<_trellis->Nstates();iState++)
+        for(int iState=1;iState<_trellis->nStates();iState++)
             if(_exitStage[iState].getCost() < bestCost)
             {
                 bestState = iState;

@@ -116,9 +116,9 @@ CDMASystem::~CDMASystem()
 
 void CDMASystem::AddAlgorithms()
 {
-    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
+    algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength));
     
-    algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel & active users)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength,_usersActivity));    
+    algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*channel,preambleLength,_usersActivity));    
        
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
     delete cdmaKnownChannelChannelMatrixEstimator;
@@ -130,7 +130,7 @@ void CDMASystem::AddAlgorithms()
 	
 //     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
 	
-	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdf));
+	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdf));
 	
 	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdf));
 }

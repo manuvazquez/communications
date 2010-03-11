@@ -32,7 +32,7 @@ PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, 
 
 PSPAlgorithm::~PSPAlgorithm()
 {
-    for(int i=0;i<_trellis->Nstates();i++)
+    for(int i=0;i<_trellis->nStates();i++)
     {
     	delete[] _exitStage[i];
     	delete[] _arrivalStage[i];
@@ -49,7 +49,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 {
 	int iState,iSurvivor;
 
-	for(iState=0;iState<_trellis->Nstates();iState++)
+	for(iState=0;iState<_trellis->nStates();iState++)
 	{
 		// if the first survivor is empty, we assume that so are the remaining ones
 		if(!_exitStage[iState][0].isEmpty())
@@ -57,7 +57,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 	}
 
 	// the best paths arriving at each state are generated from the stored PathCandidate
-	for(iState=0;iState<_trellis->Nstates();iState++)
+	for(iState=0;iState<_trellis->nStates();iState++)
 	{
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
@@ -81,7 +81,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 	_arrivalStage = aux;
 
 	// the _arrivalStage (old _exitStage) and the best arriving paths get cleaned
-	for(iState=0;iState<_trellis->Nstates();iState++)
+	for(iState=0;iState<_trellis->nStates();iState++)
 	{
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
@@ -249,7 +249,7 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolVectors;
 				}
 		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
-    } // for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
+    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 MatrixXd PSPAlgorithm::getDetectedSymbolVectors()
@@ -281,7 +281,7 @@ void PSPAlgorithm::bestPairStateSurvivor(int &bestState,int &bestSurvivor)
 	bestSurvivor = 0;
 	double bestCost = _exitStage[bestState][bestSurvivor].getCost();
 
-	for(int iState=1;iState<_trellis->Nstates();iState++)
+	for(int iState=1;iState<_trellis->nStates();iState++)
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
 			if(_exitStage[iState][iSurvivor].getCost() < bestCost)
@@ -333,11 +333,11 @@ void PSPAlgorithm::initializeTrellis()
 {
   _trellis = new Trellis(_alphabet,_nInputs,_channelOrder);
   
-  _exitStage = new PSPPath*[_trellis->Nstates()];
-  _arrivalStage = new PSPPath*[_trellis->Nstates()];
-  _bestArrivingPaths = new PSPPathCandidate*[_trellis->Nstates()];
+  _exitStage = new PSPPath*[_trellis->nStates()];
+  _arrivalStage = new PSPPath*[_trellis->nStates()];
+  _bestArrivingPaths = new PSPPathCandidate*[_trellis->nStates()];
 
-  for(int i=0;i<_trellis->Nstates();i++)
+  for(int i=0;i<_trellis->nStates();i++)
   {
 	  _exitStage[i] = new PSPPath[_nSurvivors];
 	  _arrivalStage[i] = new PSPPath[_nSurvivors];

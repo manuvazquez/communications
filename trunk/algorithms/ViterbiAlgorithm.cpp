@@ -51,8 +51,8 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,i
   // the Trellis object is initialized
   _trellis = new Trellis(_alphabet,_nInputs,channel.memory());
 
-  _exitStage = new ViterbiPath[_trellis->Nstates()];
-  _arrivalStage = new ViterbiPath[_trellis->Nstates()];
+  _exitStage = new ViterbiPath[_trellis->nStates()];
+  _arrivalStage = new ViterbiPath[_trellis->nStates()];
 
     // the symbols contained in the preamble are copied into a c++ vector...
     vector<tSymbol> preambleVector(_nInputs*(channel.memory()-1));
@@ -80,7 +80,7 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
 
     for(iProcessedObservation=_iFirstInLoopProcessedObservation;iProcessedObservation<firstSymbolVectorDetectedAt;iProcessedObservation++)
     {
-        for(iState=0;iState<_trellis->Nstates();iState++)
+        for(iState=0;iState<_trellis->nStates();iState++)
         {
             if(!_exitStage[iState].isEmpty())
                 deployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
@@ -97,7 +97,7 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
 
     for( iProcessedObservation=firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
-        for(iState=0;iState<_trellis->Nstates();iState++)
+        for(iState=0;iState<_trellis->nStates();iState++)
         {
             if(!_exitStage[iState].isEmpty())
                 deployState(iState,observations.col(iProcessedObservation),channel.getTransmissionMatrix(iProcessedObservation),noiseVariances[iProcessedObservation]);
@@ -157,7 +157,7 @@ void ViterbiAlgorithm::deployState(int iState,const VectorXd &observations,const
             (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
                 _arrivalStage[arrivalState].update(_exitStage[iState],symbolVectors.col(channel.memory()-1),newCost);
-    } // for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
+    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 
 }
 
@@ -174,7 +174,7 @@ void ViterbiAlgorithm::printStage(tStage exitOrArrival)
     else
         stage = _arrivalStage;
 
-    for(int i=0;i<_trellis->Nstates();i++)
+    for(int i=0;i<_trellis->nStates();i++)
     {
         cout << "State " << i << endl;
         if(stage[i].isEmpty())
@@ -193,6 +193,6 @@ void ViterbiAlgorithm::swapStages()
   _arrivalStage = aux;
 
   // the _arrivalStage (old _exitStage) gets cleaned
-  for(int iState=0;iState<_trellis->Nstates();iState++)
+  for(int iState=0;iState<_trellis->nStates();iState++)
 	  _arrivalStage[iState].clean();
 }

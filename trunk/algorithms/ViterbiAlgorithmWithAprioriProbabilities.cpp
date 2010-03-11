@@ -49,7 +49,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
             (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
                 _arrivalStage[arrivalState].update(_exitStage[iState],symbolsVector.col(channel.memory()-1),newCost);
-    } // for(int iInput=0;iInput<_trellis->NpossibleInputs();iInput++)
+    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
@@ -57,15 +57,15 @@ void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<
     // the Trellis object is initialized
   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
 
-  _exitStage = new ViterbiPath[_trellis->Nstates()];
-  _arrivalStage = new ViterbiPath[_trellis->Nstates()];
+  _exitStage = new ViterbiPath[_trellis->nStates()];
+  _arrivalStage = new ViterbiPath[_trellis->nStates()];
 
   const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
   
   double initialCost;
   
   // at the first time instant, a priori probabilities of the active users must be employed (instead of conditioned)
-  for(int iState=0;iState<_trellis->Nstates();iState++)
+  for(int iState=0;iState<_trellis->nStates();iState++)
   {
 	VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	
