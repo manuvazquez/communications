@@ -21,21 +21,10 @@
 
 // #define DEBUG4
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols())/*,_trellis(new Trellis(alphabet,N,m))*/,_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_ARcoefficient(ARcoefficient)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");
-
-//     _exitStage = new PSPPath*[_trellis->Nstates()];
-//     _arrivalStage = new PSPPath*[_trellis->Nstates()];
-//     _bestArrivingPaths = new PSPPathCandidate*[_trellis->Nstates()];
-// 
-//     for(int i=0;i<_trellis->Nstates();i++)
-//     {
-//     	_exitStage[i] = new PSPPath[_nSurvivors];
-//     	_arrivalStage[i] = new PSPPath[_nSurvivors];
-//     	_bestArrivingPaths[i] = new PSPPathCandidate[_nSurvivors];
-//     }
 
     _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected+_d-_preamble.cols());
 }
@@ -73,6 +62,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
 			PSPPathCandidate &bestPathCandidate = _bestArrivingPaths[iState][iSurvivor];
+			
 			if(bestPathCandidate.noPathArrived())
 				continue;
 
@@ -105,7 +95,8 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
 {
 	int iProcessedObservation,iBestState,iBestSurvivor;
 
-    for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
+//     for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
+    for(iProcessedObservation=_iFirstInLoopProcessedObservation;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
 		processOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
 
     bestPairStateSurvivor(iBestState,iBestSurvivor);
@@ -174,6 +165,9 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
     preambleTrainingSequence << _preamble,trainingSequence;
 
     _startDetectionTime = preambleTrainingSequence.cols();
+	
+	// this is needed for PSPAlgorithmWithAprioriProbabilities
+	_iFirstInLoopProcessedObservation = _startDetectionTime;
 
     vector<MatrixXd> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),_startDetectionTime);
 
@@ -232,8 +226,10 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
 
-            VectorXd error = observations - _ARcoefficient*_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen()*Util::toVector(symbolVectors,columnwise);
-                        
+//             VectorXd error = observations - _ARcoefficient*_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen()*Util::toVector(symbolVectors,columnwise);
+
+            VectorXd error = observations - dynamic_cast<KalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*Util::toVector(symbolVectors,columnwise);
+			
             newCost = _exitStage[iState][iSourceSurvivor].getCost() + error.dot(error);
 
             iDisposableSurvivor = disposableSurvivor(arrivalState);

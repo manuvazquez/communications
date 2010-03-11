@@ -27,6 +27,7 @@
 #include <TimeInvariantChannel.h>
 #include <MultiuserCDMAchannel.h>
 #include <ViterbiAlgorithmWithAprioriProbabilities.h>
+#include <PSPAlgorithmWithAprioriProbabilities.h>
 
 #include <math.h>
 
@@ -100,6 +101,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_maxCoefficientsRatiosInDBs.reserve(nFrames);
 	
 	peActivityDetectionFrames.reserve(nFrames);
+	
+	nSurvivors = 2;
 }
 
 
@@ -128,6 +131,8 @@ void CDMASystem::AddAlgorithms()
 //     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
 	
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdf));
+	
+	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdf));
 }
 
 void CDMASystem::BeforeEndingFrame(int iFrame)

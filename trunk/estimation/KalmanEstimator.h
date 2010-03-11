@@ -39,21 +39,17 @@ protected:
     KalmanFilter *_kalmanFilter;
     int _nExtStateVectorCoeffs;
     
-//     virtual tMatrix buildMeasurementMatrix(const tVector &symbolsVector) { return Util::eigen2lapack(buildMeasurementMatrix(Util::lapack2eigen(symbolsVector))); }
-    virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector); // eigen
+    virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
 public:
     KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,int N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
     
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
-//     double likelihood(const tVector &observations,const tMatrix symbolsMatrix,double noiseVariance);
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
-//     {
-//         return likelihood(Util::eigen2lapack(observations),Util::eigen2lapack(symbolsMatrix),noiseVariance);
-//     }
     virtual KalmanEstimator *clone() const;
     virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
+    virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix); // eigen
 };
 

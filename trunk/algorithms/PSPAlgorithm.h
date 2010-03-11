@@ -29,6 +29,7 @@
 #include <Trellis.h>
 #include <PSPPath.h>
 #include <PSPPathCandidate.h>
+#include <KalmanEstimator.h>
 
 class PSPAlgorithm : public KnownChannelOrderAlgorithm
 {
@@ -47,13 +48,6 @@ private:
 	void bestPairStateSurvivor(int &bestState,int &bestSurvivor);
 	
 	/*!
-	  It seeks the survivor with the worst cost...or simply an empty slot in the list of \ref _bestArrivingPaths
-	  \param iState the state of \ref _bestArrivingPaths that is to be searched in
-	  \return the index of the survivor with the worst cost
-	*/
-    int disposableSurvivor(int iState);
-	
-	/*!
 	  It contains code shared by the two \ref run methods
 	*/
 	void initializeTrellis();
@@ -64,14 +58,23 @@ protected:
     MatrixXd *_detectedSymbolVectors;
     std::vector<MatrixXd> _estimatedChannelMatrices;
 	int _firstSymbolVectorDetectedAt;
-	double _ARcoefficient;
 	PSPPathCandidate **_bestArrivingPaths;
+
+	//! this variable will always be equal to \ref _startDetectionTime in this algorithm but not in \ref PSPAlgorithmWithAprioriProbabilities
+	int _iFirstInLoopProcessedObservation;
+
+	/*!
+	  It seeks the survivor with the worst cost...or simply an empty slot in the list of \ref _bestArrivingPaths
+	  \param iState the state of \ref _bestArrivingPaths that is to be searched in
+	  \return the index of the survivor with the worst cost
+	*/
+    int disposableSurvivor(int iState);
 
     void processOneObservation(const VectorXd &observations,double noiseVariance);
     void process(const MatrixXd &observations,vector<double> noiseVariances);
     virtual void deployState(int iState,const VectorXd &observations, double noiseVariance);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, double ARcoefficient, int nSurvivors);
+    PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors);
 
     ~PSPAlgorithm();
 

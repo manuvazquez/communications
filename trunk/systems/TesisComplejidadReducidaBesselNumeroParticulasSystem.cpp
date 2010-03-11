@@ -64,6 +64,6 @@ void TesisComplejidadReducidaBesselNumeroParticulasSystem::AddAlgorithms()
 //         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
     }
 
-    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
+    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors));
     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }

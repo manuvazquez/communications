@@ -22,7 +22,7 @@
 
 #include <KalmanEstimator.h>
 
-/**
+/*!
 It implements a channel matrix estimator for a Multiuser CDMA autoregressive channel. It assumes a single receiving antenna.
 
 	@author Manu <manu@rustneversleeps>
@@ -39,6 +39,8 @@ public:
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;
     virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
+    virtual MatrixXd lastEstimatedChannelMatrix_eigen() const;
+	virtual MatrixXd getPredictive() const;
 };
 
 #endif

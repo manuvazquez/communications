@@ -39,7 +39,6 @@ CDMAKalmanEstimator* CDMAKalmanEstimator::clone() const
     return new CDMAKalmanEstimator(*this);
 }
 
-// eigen
 MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVector)
 {
     if(symbolsVector.size()!=_nInputs)
@@ -58,13 +57,42 @@ MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVect
     return CS;
 }
 
-// eigen
 MatrixXd CDMAKalmanEstimator::sampleFromPredictive_eigen() const
 {
     MatrixXd sampledChannelMatrix = KalmanEstimator::sampleFromPredictive_eigen();
     
     if(sampledChannelMatrix.rows()!=1)
         throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive_eigen: sampled channel matrix is not a row vector.");
+    
+    MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
+    for(int i=0;i<_nOutputs;i++)
+        for(int j=0;j<_nInputs;j++)
+            spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
+            
+    return spreadingCodesXsampledChannelMatrix;
+}
+
+MatrixXd CDMAKalmanEstimator::lastEstimatedChannelMatrix_eigen() const
+{
+    MatrixXd sampledChannelMatrix = KalmanEstimator::lastEstimatedChannelMatrix_eigen();
+    
+    if(sampledChannelMatrix.rows()!=1)
+        throw RuntimeException("CDMAKalmanEstimator::lastEstimatedChannelMatrix_eigen: sampled channel matrix is not a row vector.");
+    
+    MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
+    for(int i=0;i<_nOutputs;i++)
+        for(int j=0;j<_nInputs;j++)
+            spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
+            
+    return spreadingCodesXsampledChannelMatrix;
+}
+
+MatrixXd CDMAKalmanEstimator::getPredictive() const
+{
+    MatrixXd sampledChannelMatrix = KalmanEstimator::getPredictive();
+    
+    if(sampledChannelMatrix.rows()!=1)
+        throw RuntimeException("CDMAKalmanEstimator::getPredictive: sampled channel matrix is not a row vector.");
     
     MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
     for(int i=0;i<_nOutputs;i++)

@@ -58,6 +58,8 @@ protected:
 	
 	MatrixXd presentFramePeActivityDetection;
 	vector<MatrixXd> peActivityDetectionFrames;
+	
+	uint nSurvivors;
     
     virtual void AddAlgorithms();
 	virtual void BeforeEndingAlgorithm(int iAlgorithm);

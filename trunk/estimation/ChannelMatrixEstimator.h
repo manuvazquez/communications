@@ -50,10 +50,10 @@ public:
         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
     }
     
-    int cols() { return _nInputsXchannelOrder;}
-    int rows() { return _nOutputs;}
-    int memory();
-    virtual MatrixXd lastEstimatedChannelMatrix_eigen() { return _lastEstimatedChannelMatrix_eigen;}
+    int cols() const { return _nInputsXchannelOrder;}
+    int rows() const { return _nOutputs;}
+    int memory() const;
+    virtual MatrixXd lastEstimatedChannelMatrix_eigen() const { return _lastEstimatedChannelMatrix_eigen;}
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo);
 };

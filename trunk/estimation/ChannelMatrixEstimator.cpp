@@ -37,7 +37,7 @@ ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,int N)
         _channelOrder = -1;
 }
 
-int ChannelMatrixEstimator::memory()
+int ChannelMatrixEstimator::memory() const
 {
     if(_channelOrder!=-1)
         return _channelOrder;

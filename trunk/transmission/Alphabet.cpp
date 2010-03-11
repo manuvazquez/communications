@@ -7,10 +7,10 @@
 
 using namespace std;
 
-Alphabet::Alphabet(vector<vector<tBit> > secuenciasBits,vector<tSymbol> simbolos):_symbols(simbolos),_bitsSequences(secuenciasBits),_nBitsPerSymbol(secuenciasBits[0].size()),_length(secuenciasBits.size())
+Alphabet::Alphabet(vector<vector<tBit> > bitsSequences,vector<tSymbol> symbols):_symbols(symbols),_bitsSequences(bitsSequences),_nBitsPerSymbol(bitsSequences[0].size()),_length(bitsSequences.size())
 {
     // if the number of bits sequences and that of the symbols don't match...
-    if(secuenciasBits.size()!=simbolos.size())
+    if(bitsSequences.size()!=symbols.size())
     {
 			throw RuntimeException("Alphabet::Alphabet: number of bit sequences is different from that of symbols.");
 
@@ -39,10 +39,10 @@ void Alphabet::computeMeanAndVariance()
     _variance = squaredSymbolsMean - (_mean*_mean);
 }
 
-tSymbol Alphabet::operator [ ](vector<tBit> soughtBitsSequence) const
+tSymbol Alphabet::operator [ ](vector<tBit> searchedBitsSequence) const
 {
     vector<vector<tBit> >::const_iterator iterator;
-    iterator = find(_bitsSequences.begin(),_bitsSequences.end(),soughtBitsSequence);
+    iterator = find(_bitsSequences.begin(),_bitsSequences.end(),searchedBitsSequence);
     if(iterator==_bitsSequences.end())
     {
 			throw RuntimeException("Alphabet::operator[]: this sequence of bits doesn't belong to the alphabet.");

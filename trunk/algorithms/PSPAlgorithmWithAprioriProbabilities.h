@@ -19,16 +19,24 @@
 
 #include <PSPAlgorithm.h>
 
+#include <UsersActivityDistribution.h>
+#include <KalmanEstimator.h>
 
 class PSPAlgorithmWithAprioriProbabilities : public PSPAlgorithm
 {
 
 protected:
-virtual void deployState(int iState, const VectorXd& observations, double noiseVariance);
+  const UsersActivityDistribution _usersActivityPdf;
+  Alphabet _extendedAlphabet;
+
+  virtual void deployState(int iState, const VectorXd& observations, double noiseVariance);
 
 public:
-virtual void run(MatrixXd observations, vector< double > noiseVariances);
-virtual void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);
+
+  PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors, const UsersActivityDistribution usersActivityPdf);
+  
+  virtual void run(MatrixXd observations, vector< double > noiseVariances);
+  virtual void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);
 };
 
 #endif // PSPALGORITHMWITHAPRIORIPROBABILITIES_H

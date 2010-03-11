@@ -38,3 +38,8 @@
 - delete observationVectorLength from KalmanFilter constructor
 - cálculo de la probabilidad de error
 - implementar algunas cosas en Alphabet utilizando "doesItBelong"
+- que UnknownActiveUsersLinearFilterBasedSMCAlgorithm reciba un KalmanEstimator en lugar de un ChannelMatrixEstimator (puesto que asume que es un Kalman luego)
+- los algoritmos viejos no están preparados para canales generados por procesos AR de orden > 1 (a la hora de predecir matrices de canal)
+- comprobar que el PSP recibe un KalmanEstimator y el PSP con a priori un CDMAKalmanEstimator
+- CDMAKalmanEstimator
+  - lastEstimatedChannelMatrix_eigen y otras: refactorizar código común
