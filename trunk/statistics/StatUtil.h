@@ -29,6 +29,7 @@
 #include <types.h>
 #include <Random.h>
 #include <Util.h>
+#include <UsersActivityDistribution.h>
 
 #include <Eigen/Cholesky>
 
@@ -48,7 +49,7 @@ public:
     static int discrete_rnd(const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
     static vector<int> discrete_rnd(int nSamples,const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
     
-    // same functions as above but receiving c++ vectors instead of Lapack++ vectors
+    // same functions as above but receiving c++ vectors instead of "eigen" vectors
     static int discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
     static MatrixXd randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
@@ -60,6 +61,8 @@ public:
     static double mean(const MatrixXd &A);
     static vector<int> withoutReplacementSampling(int nSamples,const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
     static Random& getRandomGenerator() { return _randomGenerator;}
+    static double probApriori(const VectorXd &symbolsVector, const std::vector<UsersActivityDistribution> &symbolsDistributions);
+    static double probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersActivityDistribution> &symbolsDistributions);
 };
 
 #endif

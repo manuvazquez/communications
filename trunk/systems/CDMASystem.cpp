@@ -36,11 +36,13 @@
 // #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
+// ,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(1.0)
 ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
-,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
+// ,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
+,usersActivityPdfs(N,UsersActivityDistribution(userPersistenceProb,newActiveUserProb,userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
-,maximumRatioThresholdInDBs(200)
+,maximumRatioThresholdInDBs(20)
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -130,9 +132,9 @@ void CDMASystem::AddAlgorithms()
 	
 //     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
 	
-	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdf));
+	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
-	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdf));
+	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdfs));
 }
 
 void CDMASystem::BeforeEndingFrame(int iFrame)
@@ -158,7 +160,7 @@ void CDMASystem::BuildChannel()
     // at the first time instant the prior probability is used to decide which users are active
     for(uint iUser=0;iUser<static_cast<uint>(symbols.rows());iUser++)
     {
-        _usersActivity[iUser][trainSeqLength] = usersActivityPdf.sampleFromPrior();        
+        _usersActivity[iUser][trainSeqLength] = usersActivityPdfs[iUser].sampleFromPrior();        
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
         isSymbolAccountedForDetection[iUser][trainSeqLength] = _usersActivity[iUser][trainSeqLength];
     }
@@ -167,7 +169,7 @@ void CDMASystem::BuildChannel()
     for(int iTime=trainSeqLength+1;iTime<frameLength;iTime++)    
         for(int iUser=0;iUser<symbols.rows();iUser++)
         {   
-            _usersActivity[iUser][iTime] = usersActivityPdf.sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
+            _usersActivity[iUser][iTime] = usersActivityPdfs[iUser].sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
             symbols(iUser,preambleLength+iTime) = symbols(iUser,preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
             isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
         }

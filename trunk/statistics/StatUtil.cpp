@@ -261,3 +261,32 @@ inline double StatUtil::computeFromActiveOperands(const VectorXd &probabilities,
             res += probabilities(i);
     return res;
 }
+
+double StatUtil::probApriori(const VectorXd &symbolsVector, const std::vector<UsersActivityDistribution> &symbolsDistributions)
+{
+  if(symbolsVector.size()!=symbolsDistributions.size())
+	throw RuntimeException("StatUtil::probApriori: the number of symbols in the vector and that of distributions don't match.");
+  
+  double res = 1.0;
+  
+  for(int i=0;i<symbolsVector.size();i++)
+	res *= symbolsDistributions[i].probApriori(symbolsDistributions[i].isUserActive(symbolsVector(i)));
+  
+  return res;
+}
+
+double StatUtil::probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersActivityDistribution> &symbolsDistributions)
+{ 
+  if(X.size()!=Y.size())
+	throw RuntimeException("StatUtil::probXgivenY: the sizes of the vectors don't match.");
+
+  if(X.size()!=symbolsDistributions.size())
+	throw RuntimeException("StatUtil::probXgivenY: the number of symbols in the vectors and that of distributions don't match.");  
+  
+  double res = 1.0;
+  
+  for(int i=0;i<X.size();i++)
+	res *= symbolsDistributions[i].probXgivenY(symbolsDistributions[i].isUserActive(X(i)),symbolsDistributions[i].isUserActive(Y(i)));
+  
+  return res;
+}

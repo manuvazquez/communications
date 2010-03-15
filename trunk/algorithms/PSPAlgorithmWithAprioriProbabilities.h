@@ -26,14 +26,14 @@ class PSPAlgorithmWithAprioriProbabilities : public PSPAlgorithm
 {
 
 protected:
-  const UsersActivityDistribution _usersActivityPdf;
+  const std::vector<UsersActivityDistribution> _usersActivityPdfs;
   Alphabet _extendedAlphabet;
 
   virtual void deployState(int iState, const VectorXd& observations, double noiseVariance);
 
 public:
 
-  PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors, const UsersActivityDistribution usersActivityPdf);
+  PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs);
   
   virtual void run(MatrixXd observations, vector< double > noiseVariances);
   virtual void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);

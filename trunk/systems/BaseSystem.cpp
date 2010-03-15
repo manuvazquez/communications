@@ -54,8 +54,8 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
     
-	nFrames = 2000;
-// 	nFrames = 10;
+// 	nFrames = 2000;
+	nFrames = 10;
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;

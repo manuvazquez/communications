@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "UsersActivityDistribution.h"
 
+#include <StatUtil.h>
+
 UsersActivityDistribution::UsersActivityDistribution(const double userPersistenceProb, const double newActiveUserProb, const double userPriorProb):_prior(2),_userActiveGivenItWasPdf(2),_userActiveGivenItWasNotPdf(2)
 {
     _prior[0] = 1.0 - userPriorProb;
@@ -62,25 +64,25 @@ double UsersActivityDistribution::probApriori(bool X) const
         return _prior[0];
 }
 
-double UsersActivityDistribution::probApriori(VectorXd &symbolsVector) const
-{
-  double res = 1.0;
-  
-  for(int i=0;i<symbolsVector.size();i++)
-	res *= probApriori(isUserActive(symbolsVector(i)));
-  
-  return res;
-}
-
-double UsersActivityDistribution::probXgivenY(VectorXd &X, VectorXd &Y) const
-{
-  if(X.size()!=Y.size())
-	throw RuntimeException("UsersActivityDistribution::probXgivenY: the sizes of the vector don't match.");
-  
-  double res = 1.0;
-  
-  for(int i=0;i<X.size();i++)
-	res *= probXgivenY(isUserActive(X(i)),isUserActive(Y(i)));
-  
-  return res;
-}
+// double UsersActivityDistribution::probApriori(VectorXd &symbolsVector) const
+// {
+//   double res = 1.0;
+//   
+//   for(int i=0;i<symbolsVector.size();i++)
+// 	res *= probApriori(isUserActive(symbolsVector(i)));
+//   
+//   return res;
+// }
+// 
+// double UsersActivityDistribution::probXgivenY(VectorXd &X, VectorXd &Y) const
+// {
+//   if(X.size()!=Y.size())
+// 	throw RuntimeException("UsersActivityDistribution::probXgivenY: the sizes of the vector don't match.");
+//   
+//   double res = 1.0;
+//   
+//   for(int i=0;i<X.size();i++)
+// 	res *= probXgivenY(isUserActive(X(i)),isUserActive(Y(i)));
+//   
+//   return res;
+// }

@@ -46,7 +46,8 @@ protected:
     
     MMSEDetector *mmseDetector;
     
-    UsersActivityDistribution usersActivityPdf;
+//     UsersActivityDistribution usersActivityPdf;
+	std::vector<UsersActivityDistribution> usersActivityPdfs;
 	
 	// it stores the maximum ratio among the coefficients of a channel matrix for every frame
 	vector<double> _maxCoefficientsRatiosInDBs;
@@ -80,6 +81,7 @@ public:
 	  \return the probability of misdetection the activity of a user
 	*/
 	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
+	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
 };
 
 #endif
