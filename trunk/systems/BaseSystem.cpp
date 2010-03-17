@@ -34,20 +34,15 @@
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
 
-#define PRINT_COMPUTE_SER_INFO
-#define PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
-#define PRINT_BEST_PERMUATION_ERRORS
+// #define PRINT_COMPUTE_SER_INFO
+// #define PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
+// #define PRINT_BEST_PERMUATION_ERRORS
 
 // #define STOP_AFTER_EACH_FRAME
-#define STOP_AFTER_EACH_SNR
+// #define STOP_AFTER_EACH_SNR
 
-// #define SAVE_SEEDS
-
-#ifdef SAVE_SEEDS
-  #undef LOAD_SEEDS
-#else
-  #define LOAD_SEEDS
-#endif
+#define SAVE_SEEDS
+#define LOAD_SEEDS
 
 // #define DEBUG
 
@@ -77,7 +72,7 @@ BaseSystem::BaseSystem()
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
-    L=8,N=3,frameLength=1000;	
+    L=8,N=3,frameLength=300;
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
@@ -214,8 +209,8 @@ void BaseSystem::Simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    randomGenerator.setSeed(3999963640);
-    StatUtil::getRandomGenerator().setSeed(1405946204);
+    randomGenerator.setSeed(104213010);
+    StatUtil::getRandomGenerator().setSeed(2130443794);
 	
 	cout << "seeds are being loaded..." << endl;
 	cout << "-----------------" << endl;
@@ -398,7 +393,8 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
 
-    cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
+//     cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
+    cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;	
 
     // the error probability is accumulated
     overallPeMatrix(iSNR,iAlgorithm) += pe;

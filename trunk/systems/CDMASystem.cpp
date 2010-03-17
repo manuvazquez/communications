@@ -75,8 +75,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-	nSurvivors = 8;
 	nSurvivors = 2;
+// 	nSurvivors = 8;
+// 	nSurvivors = 20;
 
     // AR process parameters
     ARcoefficients = vector<double>(2);
@@ -211,6 +212,8 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols << endl;
 #endif    
 
+	double thisChannelMatrixMaximumRatio;
+
 	do
 	{
 	  delete channel;
@@ -223,6 +226,15 @@ void CDMASystem::BuildChannel()
 
 	  // we check if the channel is really bad (severe near-far issues)
 	  _maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(preambleLength)));
+	  
+	  // all the channel matrices contained in this channel are checked
+	  for(int i=preambleLength+1;i<channel->length();i++)
+	  {
+		thisChannelMatrixMaximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(i)));
+		if(thisChannelMatrixMaximumRatio < _maximumRatio)
+		  _maximumRatio = thisChannelMatrixMaximumRatio;
+	  }
+	  
 	  cout << "the max difference among coefficients in dBs: " << _maximumRatio << endl;
 	
 	} while(_maximumRatio>maximumRatioThresholdInDBs);
@@ -309,4 +321,9 @@ void CDMASystem::OnlyOnce()
 	SMCSystem::OnlyOnce();
 
 	presentFramePeActivityDetection = MatrixXd::Zero(SNRs.size(),algorithms.size());
+}
+
+bool CDMASystem::isChannelOk(const ChannelMatrixEstimator * const channel)
+{
+  return true;
 }

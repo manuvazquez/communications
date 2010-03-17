@@ -20,7 +20,7 @@
 #include "PSPAlgorithm.h"
 
 // #define DEBUG
-#define DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
+// #define DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
 
 PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
 {

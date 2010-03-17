@@ -36,6 +36,7 @@
 #include "utilExceptions.h"
 
 enum tOrder {rowwise,columnwise};
+enum tColors {green,red};
 
 class Util{
 
@@ -70,8 +71,13 @@ public:
     static std::vector<int> nMax(int n,const VectorXd &v);
     static MatrixXd flipLR(const MatrixXd &A);
     static MatrixXd sign(const MatrixXd &A);
+	
+	/*!
+	  it returns the maximum ratio among coefficients of the matrix (in absolute value)
+	  \param the matrix to be analyzed
+	  \return the ratio
+	*/
 	static double maxCoefficientsRatio(const MatrixXd &A);
-	static double maxCoefficientsRatio2(const MatrixXd &A);
 };
 
 #endif

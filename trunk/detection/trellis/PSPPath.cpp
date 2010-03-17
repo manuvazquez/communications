@@ -37,19 +37,19 @@ PSPPath::PSPPath(int nTimeInstants,double cost, MatrixXd initialSequence, std::v
     if(initialChannelMatrices[0].size() > initialSequence.cols())
         throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is less than number of received detected channel matrices.");
 
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-        _estimatedChannelMatrices = new MatrixXd*[channelMatrixEstimators.size()];
-    #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+	_estimatedChannelMatrices = new MatrixXd*[channelMatrixEstimators.size()];
+#endif
 
     for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
         _channelMatrixEstimators[iChannelMatrixEstimator] = channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            _estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-            for(uint i=0;i<initialChannelMatrices[iChannelMatrixEstimator].size();i++)
-                _estimatedChannelMatrices[iChannelMatrixEstimator][initialSequence.cols()-1-i] = initialChannelMatrices[iChannelMatrixEstimator][i];
-        #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
+		for(uint i=0;i<initialChannelMatrices[iChannelMatrixEstimator].size();i++)
+			_estimatedChannelMatrices[iChannelMatrixEstimator][initialSequence.cols()-1-i] = initialChannelMatrices[iChannelMatrixEstimator][i];
+#endif
     }
 }
 
@@ -62,11 +62,11 @@ PSPPath::PSPPath(const PSPPath &path):ViterbiPath(path),_channelMatrixEstimators
     {
         _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            _estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-                for(int i=0;i<_nTimeInstants;i++)
-                    _estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
-        #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
+			for(int i=0;i<_nTimeInstants;i++)
+				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+#endif
     }
 }
 
@@ -77,14 +77,14 @@ PSPPath::~PSPPath()
     {
         delete _channelMatrixEstimators[i];
 
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            delete[] _estimatedChannelMatrices[i];
-        #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		delete[] _estimatedChannelMatrices[i];
+#endif
     }
 
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-        delete[] _estimatedChannelMatrices;
-    #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+	delete[] _estimatedChannelMatrices;
+#endif
 }
 
 
@@ -96,10 +96,10 @@ void PSPPath::clean()
         delete _channelMatrixEstimators[i];
         _channelMatrixEstimators[i] = NULL;
 
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            delete[] _estimatedChannelMatrices[i];
-            _estimatedChannelMatrices[i] = NULL;
-        #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		delete[] _estimatedChannelMatrices[i];
+		_estimatedChannelMatrices[i] = NULL;
+#endif
 
     }
 }
@@ -109,12 +109,12 @@ void PSPPath::print() const
     ViterbiPath::print();
     cout << "number of channel matrix estimators: " << _channelMatrixEstimators.size() << endl;
 
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-        for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_channelMatrixEstimators.size();iChannelMatrixEstimator++)
-        {
-            cout << "channel order index: " << iChannelMatrixEstimator << endl << _estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] << endl;
-        }
-    #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+	for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_channelMatrixEstimators.size();iChannelMatrixEstimator++)
+	{
+		cout << "channel order index: " << iChannelMatrixEstimator << endl << _estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] << endl;
+	}
+#endif
 }
 
 void PSPPath::update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators)
@@ -130,30 +130,30 @@ void PSPPath::update(const PSPPath& path, VectorXd newSymbolVector, double newCo
         _channelMatrixEstimators.resize(path._channelMatrixEstimators.size(),NULL);
     }
 
-    #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-        if(_estimatedChannelMatrices==NULL)
-        {
-            _estimatedChannelMatrices = new MatrixXd*[_channelMatrixEstimators.size()];
-            for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_channelMatrixEstimators.size();iChannelMatrixEstimator++)
-                _estimatedChannelMatrices[iChannelMatrixEstimator] = NULL;
-        }
-    #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+	if(_estimatedChannelMatrices==NULL)
+	{
+		_estimatedChannelMatrices = new MatrixXd*[_channelMatrixEstimators.size()];
+		for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<_channelMatrixEstimators.size();iChannelMatrixEstimator++)
+			_estimatedChannelMatrices[iChannelMatrixEstimator] = NULL;
+	}
+#endif
 
     for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<path._channelMatrixEstimators.size();iChannelMatrixEstimator++)
     {
         delete _channelMatrixEstimators[iChannelMatrixEstimator];
         _channelMatrixEstimators[iChannelMatrixEstimator] = newChannelMatrixEstimators[iChannelMatrixEstimator];
 
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
-            _estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
+		_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
 
-            for(int i=0;i<_nTimeInstants;i++)
-                _estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+		for(int i=0;i<_nTimeInstants;i++)
+			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 
-            // the new matrix is added at the right index based on the last detected vector
-            _estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->lastEstimatedChannelMatrix_eigen();
-        #endif
+		// the new matrix is added at the right index based on the last detected vector
+		_estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->lastEstimatedChannelMatrix_eigen();
+#endif
     }
 }
 
@@ -164,19 +164,19 @@ void PSPPath::operator=(const PSPPath &path)
     // this Path has not been intialized
     if(_channelMatrixEstimators.size()==0)
     {
-        #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-            _estimatedChannelMatrices = new MatrixXd*[path._channelMatrixEstimators.size()];
-        #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+		_estimatedChannelMatrices = new MatrixXd*[path._channelMatrixEstimators.size()];
+#endif
         _channelMatrixEstimators.resize(path._channelMatrixEstimators.size());
         for(uint iChannelMatrixEstimator=0;iChannelMatrixEstimator<path._channelMatrixEstimators.size();iChannelMatrixEstimator++)
         {
             _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
-            #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-                _estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-                for(int i=0;i<_nTimeInstants;i++)
-                    _estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
-            #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+			_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
+			for(int i=0;i<_nTimeInstants;i++)
+				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+#endif
         }
     }else
     {
@@ -187,12 +187,12 @@ void PSPPath::operator=(const PSPPath &path)
             delete _channelMatrixEstimators[iChannelMatrixEstimator];
             _channelMatrixEstimators[iChannelMatrixEstimator] = path._channelMatrixEstimators[iChannelMatrixEstimator]->clone();
 
-            #ifndef DO_NOT_STORE_CHANNEL_MATRICES
-                delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
-                _estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-                for(int i=0;i<_nTimeInstants;i++)
-                    _estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
-            #endif
+#ifndef DO_NOT_STORE_CHANNEL_MATRICES
+			delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
+			_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
+			for(int i=0;i<_nTimeInstants;i++)
+				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
+#endif
         }
     }
 }

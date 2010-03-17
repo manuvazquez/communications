@@ -84,6 +84,8 @@ public:
 	*/
 	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
 	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+  private:
+	bool isChannelOk(const ChannelMatrixEstimator * const channel);
 };
 
 #endif
