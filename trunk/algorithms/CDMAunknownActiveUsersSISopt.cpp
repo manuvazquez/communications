@@ -20,7 +20,7 @@
 
 // #define DEBUG2
 
-CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const UsersActivityDistribution &usersActivityPdf): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdf(usersActivityPdf)
+CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdfs(usersActivityPdfs)
 {    
   _randomParticlesInitilization = true;    
 }
@@ -181,11 +181,11 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUs
 	  if(isUserActive(symbolsVector(i)))
 	  {
 		probSymbolWhenUserNotActive = 0.0;
-		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdf.probXgivenY(true,previousTimeInstantUsersActivity[i]);
+		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdfs[i].probXgivenY(true,previousTimeInstantUsersActivity[i]);
 	  }
 	  else
 	  {
-		probSymbolWhenUserNotActive = _usersActivityPdf.probXgivenY(false,previousTimeInstantUsersActivity[i]);
+		probSymbolWhenUserNotActive = _usersActivityPdfs[i].probXgivenY(false,previousTimeInstantUsersActivity[i]);
 		probSymbolWhenUserActive = 0.0;
 	  }
 
@@ -214,11 +214,11 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUs
 	  if(isUserActive(symbolsVector(i)))
 	  {
 		probSymbolWhenUserNotActive = 0.0;
-		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdf.probApriori(true);
+		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdfs[i].probApriori(true);
 	  }
 	  else
 	  {
-		probSymbolWhenUserNotActive = _usersActivityPdf.probApriori(false);
+		probSymbolWhenUserNotActive = _usersActivityPdfs[i].probApriori(false);
 		probSymbolWhenUserActive = 0.0;
 	  }
 

@@ -22,14 +22,32 @@
 #include <defines.h>
 #include <typeinfo>
 #include <string.h>
+#include <assert.h>
 
 #include <SingleUserPowerProfileDependentNoise.h>
 
 #define DATE_LENGTH 100
 
 #define EXPORT_REAL_DATA
-#define PRINT_PARAMETERS
+
+// #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
+// #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
+
+#define PRINT_COMPUTE_SER_INFO
+#define PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
+#define PRINT_BEST_PERMUATION_ERRORS
+
+// #define STOP_AFTER_EACH_FRAME
+#define STOP_AFTER_EACH_SNR
+
+// #define SAVE_SEEDS
+
+#ifdef SAVE_SEEDS
+  #undef LOAD_SEEDS
+#else
+  #define LOAD_SEEDS
+#endif
 
 // #define DEBUG
 
@@ -54,12 +72,12 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
     
-// 	nFrames = 2000;
-	nFrames = 10;
+	nFrames = 2000;
+// 	nFrames = 10;
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
-    L=7,N=3,frameLength=10;	
+    L=8,N=3,frameLength=1000;	
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
@@ -194,17 +212,25 @@ BaseSystem::~BaseSystem()
 void BaseSystem::Simulate()
 {
 
-//     // for repeating simulations
-//     randomGenerator.setSeed();
-//     StatUtil::getRandomGenerator().setSeed();
+#ifdef LOAD_SEEDS
+    // for repeating simulations
+    randomGenerator.setSeed(3999963640);
+    StatUtil::getRandomGenerator().setSeed(1405946204);
+	
+	cout << "seeds are being loaded..." << endl;
+	cout << "-----------------" << endl;
+	cout << "-----------------" << endl;
+#endif
 
     int iFrame = 0;
     while((iFrame<nFrames) && (!__done))
     {
 
+#ifdef SAVE_SEEDS
         // the seeds are kept for saving later
         mainSeeds.push_back(randomGenerator.getSeed());
         statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
+#endif
 
         // bits are generated ...
         Bits bits(N,nBitsGenerated,randomGenerator);        
@@ -229,6 +255,11 @@ void BaseSystem::Simulate()
         std::cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
 #endif
 
+#ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
+    cout << "isSymbolAccountedForDetection" << endl;
+    Util::print(isSymbolAccountedForDetection);
+#endif    
+        
         // noise is generated according to the channel
 //         noise = new NullNoise(L,channel->length());
 //         noise = new ChannelDependentNoise(channel);
@@ -289,6 +320,10 @@ void BaseSystem::Simulate()
             }
 
             algorithms.clear();
+			
+#ifdef STOP_AFTER_EACH_SNR
+		getchar();
+#endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
         f.open(outputFileName,ofstream::trunc);
@@ -306,6 +341,10 @@ void BaseSystem::Simulate()
 		
         delete noise;
 		noise = NULL;
+		
+#ifdef STOP_AFTER_EACH_FRAME
+		getchar();
+#endif
     } // while((iFrame<nFrames) && (!done))
 
     overallPeMatrix *= 1.0/iFrame;
@@ -462,16 +501,17 @@ double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
     }
         
-#ifdef PRINT_INFO
-    cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
+#ifdef PRINT_COMPUTE_SER_INFO
+    cout << "source symbols" << endl << sourceSymbols << endl << endl << "detected symbols" << endl << detectedSymbols << endl << endl << "mask" << endl;
     Util::print(mask);
 #endif
 
     uint iBestPermutation = 0;
-    vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
+    vector<int> thisPermutationSigns(sourceSymbols.rows()),bestPermutationSigns(sourceSymbols.rows());
 
     // max number of errors
-    int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
+    int minErrors = sourceSymbols.rows()*sourceSymbols.cols();
+//     int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
     
     uint nAccountedSymbols = 0;
     uint iInput;
@@ -493,23 +533,34 @@ double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
                     continue;
 
                 // if the symbols differ, an error happened...
-                errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
+                errorsWithoutInverting += (sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime));
                 
-                // ...unless there the symbol sign needs to be switched because of the ambiguity
-                errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
+                // ...unless the symbol sign needs to be switched because of the ambiguity
+                errorsInverting += (sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime)));
                 
                 nAccountedSymbols++;
             }              
-            
+
+#ifdef PRINT_BEST_PERMUATION_ERRORS
+			if(iPermut==0)
+			{
+			cout << "====================" << endl;
+			cout << "iStream = " << iStream << endl;
+			cout << "errorsWithoutInverting = " << errorsWithoutInverting << endl;
+			cout << "errorsInverting = " << errorsInverting << endl;
+			cout << "====================" << endl;
+			}
+#endif
+
             if(errorsWithoutInverting<errorsInverting)
             {
                 permutationErrors += errorsWithoutInverting;
-                bestPermutationSigns[iStream] = 1;
+                thisPermutationSigns[iStream] = 1;
             }
             else
             {
                 permutationErrors += errorsInverting;
-                bestPermutationSigns[iStream] = -1;
+                thisPermutationSigns[iStream] = -1;
             }
         } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
         
@@ -517,8 +568,18 @@ double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
         {
             minErrors = permutationErrors;
             iBestPermutation = iPermut;
+			bestPermutationSigns = thisPermutationSigns;
         }
     }
+    
+#ifdef PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
+	cout << "best permutation is " << iBestPermutation << endl;
+	cout << "its signs" << endl;
+	Util::print(bestPermutationSigns);
+	cout << endl;
+#endif
+    
+	assert(nAccountedSymbols % permutations.size() == 0);
     
     nAccountedSymbols /= permutations.size();
     

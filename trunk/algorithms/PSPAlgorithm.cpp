@@ -19,7 +19,8 @@
  ***************************************************************************/
 #include "PSPAlgorithm.h"
 
-// #define DEBUG4
+// #define DEBUG
+#define DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
 
 PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
 {
@@ -70,6 +71,10 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 			ChannelMatrixEstimator * newChannelMatrixEstimator = sourcePath.getChannelMatrixEstimator()->clone();
 
             newChannelMatrixEstimator->nextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
+			
+#ifdef DEBUG
+			cout << "updated channel matrix estimator" << endl << newChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen() << endl;
+#endif
 
 			_arrivalStage[iState][iSurvivor].update(sourcePath,bestPathCandidate._newSymbolVector,bestPathCandidate._cost,vector<ChannelMatrixEstimator *>(1,newChannelMatrixEstimator));
 		}
@@ -118,6 +123,10 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
 
     	_estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(iProcessedObservation));
     }
+
+#ifdef DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
+	cout << "last estimated channel matrix is" << endl << _exitStage[iBestState][iBestSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen() << endl;
+#endif
 
     // last detected symbol vectors are processed
     for(iProcessedObservation=_iLastSymbolVectorToBeDetected+_d-_firstSymbolVectorDetectedAt+_startDetectionTime+1;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)

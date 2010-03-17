@@ -35,13 +35,13 @@ An SMC algorithm based on linear filters that for a system whose users are not p
 class UnknownActiveUsersLinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const UsersActivityDistribution &usersActivityPdf);
+    UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs);
 
     ~UnknownActiveUsersLinearFilterBasedSMCAlgorithm();
 
 protected:
     LinearDetector *_linearDetector;
-    const UsersActivityDistribution &_usersActivityPdf; /// object describing the pdf of the users activity    
+    const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity    
 
     virtual void initializeParticles();
     virtual void process(const MatrixXd& observations, vector< double > noiseVariances);

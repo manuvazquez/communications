@@ -52,8 +52,6 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 
             VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
 			
-// 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + (error.dot(error))/(2*noiseVariance) - log(_usersActivityPdf.probXgivenY(symbolsVector,previousSymbolsVector));
-
 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
 
             iDisposableSurvivor = disposableSurvivor(arrivalState);
@@ -110,7 +108,6 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
 
 	VectorXd error = observations.col(_startDetectionTime) - clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen()*symbolsVector;	
 
-// 	initialCost =  (error.dot(error))/(2*noiseVariances[_startDetectionTime]) - log(_usersActivityPdf.probApriori(symbolsVector));
 	initialCost =  (error.dot(error))/(2*noiseVariances[_startDetectionTime]) - log(StatUtil::probApriori(symbolsVector,_usersActivityPdfs));
 
 	clonedChannelMatrixEstimator->nextMatrix(observations.col(_startDetectionTime),symbolsVector,noiseVariances[_startDetectionTime]);

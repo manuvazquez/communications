@@ -39,7 +39,6 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
 		
         VectorXd error = observations - channelMatrix*symbolsVector;
 
-//         newCost = _exitStage[iState].getCost() + (error.dot(error))/(2*noiseVariance) - log(_usersActivityPdf.probXgivenY(symbolsVector,previousSymbolsVector));
 		newCost = _exitStage[iState].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
 
         arrivalState = (*_trellis)(iState,iInput);
@@ -72,7 +71,6 @@ void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<
 	
 	VectorXd error = observations.col(_preamble.cols()) - channel.getTransmissionMatrix(_preamble.cols())*symbolsVector;
 
-// 	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - log(_usersActivityPdf.probApriori(symbolsVector));
 	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - log(StatUtil::probApriori(symbolsVector,_usersActivityPdfs));
 
 	_exitStage[iState] = ViterbiPath(_iLastSymbolVectorToBeDetected,initialCost,symbolsVector);

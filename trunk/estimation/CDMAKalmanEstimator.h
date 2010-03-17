@@ -32,13 +32,13 @@ class CDMAKalmanEstimator : public KalmanEstimator
 protected:
     MatrixXd _spreadingCodes;
     
-    virtual MatrixXd buildMeasurementMatrix(const VectorXd& symbolsVector); // eigen
+    virtual MatrixXd buildMeasurementMatrix(const VectorXd& symbolsVector);
 public:
     CDMAKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, vector< double > ARcoefficients, double ARvariance, const MatrixXd &spreadingCodes);
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;
-    virtual MatrixXd sampleFromPredictive_eigen() const; // eigen
+    virtual MatrixXd sampleFromPredictive_eigen() const;
     virtual MatrixXd lastEstimatedChannelMatrix_eigen() const;
 	virtual MatrixXd getPredictive() const;
 };

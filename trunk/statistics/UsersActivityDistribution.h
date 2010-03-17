@@ -42,8 +42,6 @@ public:
     double probApriori(bool X) const;
 	void setApriori(const double userPriorProb) { _prior[0] = 1.0 - userPriorProb; _prior[1] = userPriorProb;}
 	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
-// 	double probApriori(VectorXd &symbolsVector) const;
-// 	double probXgivenY(VectorXd &X, VectorXd &Y) const;
 };
 
 #endif

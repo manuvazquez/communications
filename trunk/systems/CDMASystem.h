@@ -46,7 +46,6 @@ protected:
     
     MMSEDetector *mmseDetector;
     
-//     UsersActivityDistribution usersActivityPdf;
 	std::vector<UsersActivityDistribution> usersActivityPdfs;
 	
 	// it stores the maximum ratio among the coefficients of a channel matrix for every frame
@@ -60,8 +59,11 @@ protected:
 	MatrixXd presentFramePeActivityDetection;
 	vector<MatrixXd> peActivityDetectionFrames;
 	
-	uint nSurvivors;
-    
+	int nSurvivors;
+
+    bool adjustSurvivorsFromParticlesNumber;
+    bool adjustParticlesNumberFromSurvivors;
+	
     virtual void AddAlgorithms();
 	virtual void BeforeEndingAlgorithm(int iAlgorithm);
     virtual void BeforeEndingFrame(int iFrame);

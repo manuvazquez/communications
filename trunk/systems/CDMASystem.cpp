@@ -32,37 +32,40 @@
 #include <math.h>
 
 #define PRINT_CODES_INFO
+// #define PRINT_ACTIVITY_SAMPLING
 
 // #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
-// ,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(1.0)
+// ,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(0.5)
 ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
-// ,usersActivityPdf(userPersistenceProb,newActiveUserProb,userPriorProb)
 ,usersActivityPdfs(N,UsersActivityDistribution(userPersistenceProb,newActiveUserProb,userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
 ,maximumRatioThresholdInDBs(20)
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
-    
-    // spreading spreadingCodes for the users are generated randomly
-    _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
-    _spreadingCodes = Util::sign(_spreadingCodes);
 
-// 	MatrixXd kasamiCodes (L,N);
-// 	
-// 	kasamiCodes <<	 1,  -1,  -1,
-// 					-1,   1,   1,
-// 					 1,   1,   1,
-// 					-1,  -1,   1,
-// 					 1,   1,  -1,
-// 					 1,  -1,   1,
-// 					-1,  -1,  -1,
-// 					-1,   1,  -1;
-// 
-// 	_spreadingCodes = kasamiCodes;
+	// first users starts transmitting something
+	usersActivityPdfs[0].setApriori(1.0);
+	
+    // spreading spreadingCodes for the users are generated randomly
+//     _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
+//     _spreadingCodes = Util::sign(_spreadingCodes);
+
+	MatrixXd kasamiCodes (L,N);
+	
+	kasamiCodes <<	 1,  -1,  -1,
+					-1,   1,   1,
+					 1,   1,   1,
+					-1,  -1,   1,
+					 1,   1,  -1,
+					 1,  -1,   1,
+					-1,  -1,  -1,
+					-1,   1,  -1;
+
+	_spreadingCodes = kasamiCodes;
 	
 	// the spreading codes are normalized
 // 	_spreadingCodes /= sqrt(L);
@@ -71,7 +74,10 @@ CDMASystem::CDMASystem(): SMCSystem()
     cout << "generated spreadingCodes..." << endl << _spreadingCodes << endl;
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
-    
+
+	nSurvivors = 8;
+	nSurvivors = 2;
+
     // AR process parameters
     ARcoefficients = vector<double>(2);
     ARcoefficients[0] = 0.59999;
@@ -104,7 +110,27 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 	peActivityDetectionFrames.reserve(nFrames);
 	
-	nSurvivors = 2;
+	// adjusting the number of particles from that of the survivors or the other way around
+	adjustSurvivorsFromParticlesNumber = false;
+    adjustParticlesNumberFromSurvivors = true;
+	
+    // check the adjustments for particle and survivor numbers
+    if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
+        throw RuntimeException("CDMASystem::CDMASystem: \"adjustParticlesNumberFromSurvivors\" and \"adjustSurvivorsFromParticlesNumber\" shouldn't be true at the same time.");
+
+    if(adjustParticlesNumberFromSurvivors)
+    {
+		cout << "Number of particles adjusted from " << nParticles;
+        nParticles = (int)pow((double)alphabet->length()+1,N)*nSurvivors;
+        cout << " to " << nParticles << endl;
+    }
+
+    if(adjustSurvivorsFromParticlesNumber)
+    {
+        cout << "Number of survivors adjusted from " << nSurvivors;
+        nSurvivors = int(ceil(double(nParticles)/pow((double)alphabet->length()+1,double(N))));
+        cout << " to " << nSurvivors << endl;
+    }
 }
 
 
@@ -128,9 +154,9 @@ void CDMASystem::AddAlgorithms()
      
 //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));	
+//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));	
 	
-//     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdf));
+//     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
 	
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
@@ -150,6 +176,10 @@ void CDMASystem::BeforeEndingFrame(int iFrame)
 	Util::scalarsVectorToOctaveFileStream(_maxCoefficientsRatiosInDBs,"maxCoefficientsRatiosInDBs",f);
     Util::matrixToOctaveFileStream(_spreadingCodes,"spreadingCodes",f);
 	Util::scalarToOctaveFileStream(maximumRatioThresholdInDBs,"maximumRatioThresholdInDBs",f);
+	Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+	Util::scalarToOctaveFileStream(userPersistenceProb,"userPersistenceProb",f);
+	Util::scalarToOctaveFileStream(newActiveUserProb,"newActiveUserProb",f);
+	Util::scalarToOctaveFileStream(userPriorProb,"userPriorProb",f);
 }
 
 void CDMASystem::BuildChannel()
@@ -160,7 +190,10 @@ void CDMASystem::BuildChannel()
     // at the first time instant the prior probability is used to decide which users are active
     for(uint iUser=0;iUser<static_cast<uint>(symbols.rows());iUser++)
     {
-        _usersActivity[iUser][trainSeqLength] = usersActivityPdfs[iUser].sampleFromPrior();        
+        _usersActivity[iUser][trainSeqLength] = usersActivityPdfs[iUser].sampleFromPrior();
+#ifdef PRINT_ACTIVITY_SAMPLING
+		cout << "user " << iUser << ": " << _usersActivity[iUser][trainSeqLength] << endl;
+#endif
         symbols(iUser,preambleLength+trainSeqLength) = double(_usersActivity[iUser][trainSeqLength])*symbols(iUser,preambleLength+trainSeqLength);
         isSymbolAccountedForDetection[iUser][trainSeqLength] = _usersActivity[iUser][trainSeqLength];
     }

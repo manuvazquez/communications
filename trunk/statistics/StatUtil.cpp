@@ -26,12 +26,11 @@
 using namespace std;
 
 #ifdef RANDOM_SEED
-Random StatUtil::_randomGenerator;
-Random StatUtil::_particlesInitializerRandomGenerator;
+  Random StatUtil::_randomGenerator;
+  Random StatUtil::_particlesInitializerRandomGenerator;
 #else
-Random StatUtil::_randomGenerator(10);
-Random StatUtil::_particlesInitializerRandomGenerator(20);
-// Random StatUtil::_particlesInitializerRandomGenerator(200);
+  Random StatUtil::_randomGenerator(10);
+  Random StatUtil::_particlesInitializerRandomGenerator(20);
 #endif
 
 int StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)

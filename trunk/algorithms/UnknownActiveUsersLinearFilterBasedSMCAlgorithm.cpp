@@ -19,10 +19,6 @@
  ***************************************************************************/
 #include "UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
 
-// #define DEBUG2
-// #define DEBUG_CHANNEL_SAMPLES
-// #define DEBUG_MSE_THRESHOLD 1.5
-
 // #define IMPORT_REAL_DATA
 
 #ifdef IMPORT_REAL_DATA
@@ -31,7 +27,7 @@
     extern Noise *realNoise;
 #endif
 
-UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const UsersActivityDistribution &usersActivityPdf): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdf(usersActivityPdf)
+UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdfs(usersActivityPdfs)
 {
     _randomParticlesInitilization = true; 
 }
@@ -63,7 +59,6 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
     }    
 }
 
-// eigen
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
     int iParticle,iSampledSymbol,iAlphabet,iSampled;
@@ -92,38 +87,15 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             
             channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
 
-#ifdef DEBUG_CHANNEL_SAMPLES
-            MatrixXd channelMatrixEstimation = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix_eigen();
-            cout << "channel matrix " << realChannel->at(iObservationToBeProcessed);
-            cout << "last estimated channel matrix " << channelMatrixEstimation;
-            cout << "channelMatrixSample = " << endl << channelMatrixSample;
-            double normalizedMSE = Util::normalizedSquareError(channelMatrixEstimation,(*realChannel)[iObservationToBeProcessed]);
-            cout << "normalized MSE = " << normalizedMSE << endl;
-            if(normalizedMSE < DEBUG_MSE_THRESHOLD)
-                getchar();                    
-#endif
-
             // sampling of the users activity using:            
             // i) a priori (first time instant)
             if(iObservationToBeProcessed==_startDetectionTime)
                 for(iInput=0;iInput<_nInputs;iInput++)
-                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdf.sampleFromPrior());
+                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdfs[iInput].sampleFromPrior());
             // ii) conditional pdf (after first time instant)
             else
                 for(iInput=0;iInput<_nInputs;iInput++)
-                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdf.sampleGivenItWas(processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1)));                
-
-#ifdef DEBUG
-            if(iObservationToBeProcessed>_startDetectionTime)
-            {
-                cout << "previous users activity" << endl;
-                Util::print(processedParticle->getActivityAtTime(iObservationToBeProcessed-1));
-                cout << endl;
-            }
-            cout << "sampled users activity" << endl;
-            Util::print(processedParticle->getActivityAtTime(iObservationToBeProcessed));
-            cout << endl;
-#endif
+                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdfs[iInput].sampleGivenItWas(processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1)));                
 
             VectorXd softEstimations;
 
@@ -148,19 +120,12 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
                 }
                 
                 s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol,noiseVariances[iObservationToBeProcessed]);
-                
-#ifdef DEBUG
-                cout << "s2q = " << s2q << endl;
-#endif                
-                
+                   
                 sumProb = 0.0;
 
                 // the probability for each posible symbol alphabet is computed
                 for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 {
-#ifdef DEBUG2
-					cout << "softEstimations(iSampledSymbol) = " << softEstimations(iSampledSymbol) << " processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol) = " << processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol) << " s2q = " << s2q << endl;
-#endif
                     symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
 
                     // the computed pdf is accumulated for normalizing purposes
@@ -182,15 +147,6 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
                 proposal *= symbolProb(iSampledSymbol,iSampled);
                 probSymbolsVectorApriori /= double(_alphabet.length());
             }
-
-#ifdef DEBUG
-            cout << "soft estimations" << endl << softEstimations;
-            cout << "true transmitted symbol vector" << endl << realSymbols->col(iObservationToBeProcessed);
-            cout << "sampled vector" << endl << sampledVector;
-            cout << "from" << endl << symbolProb;
-            if(normalizedMSE < DEBUG_MSE_THRESHOLD)
-                getchar();            
-#endif
 
             // sampled symbol vector is stored for the corresponding particle
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
