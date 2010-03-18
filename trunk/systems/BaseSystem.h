@@ -51,6 +51,7 @@
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
 #define KEEP_ALL_CHANNEL_MATRICES
+#define KEEP_ALL_CHANNEL_ESTIMATIONS
 
 extern bool __done;
 
@@ -103,8 +104,11 @@ protected:
 
     // seeds
     std::vector<uint32_t> mainSeeds,statUtilSeeds;
-//     std::vector<LaGenMatLongInt> beforeRunStatUtilSeeds;
-//     LaGenMatLongInt presentFrameStatUtilSeeds;
+	
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	// channel estimations
+	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > channelEstimations;
+#endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     vector<MatrixXd> presentFrameMSEtimeEvolution;

@@ -49,7 +49,7 @@ public:
     ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance);
     ARprocess(MatrixXd seed,int order,double velocity,double carrierFrequency,double T);
 
-    MatrixXd nextMatrix_eigen();
+    MatrixXd nextMatrix();
     
     static vector<double> parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 

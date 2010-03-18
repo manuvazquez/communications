@@ -32,7 +32,7 @@ MatrixXd LMSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& 
 {
     VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
     
-    _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen - _mu*(_lastEstimatedChannelMatrix_eigen*symbolsVector-observations)*symbolsVector.transpose();
+    _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix - _mu*(_lastEstimatedChannelMatrix*symbolsVector-observations)*symbolsVector.transpose();
     
-    return _lastEstimatedChannelMatrix_eigen;
+    return _lastEstimatedChannelMatrix;
 }

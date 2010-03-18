@@ -124,7 +124,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
                 matricesToStack[iChannelOrder] = vector<MatrixXd>(_maxOrder,MatrixXd(_nOutputs,Nm));
 
                 // predicted channel matrices are sampled and stored in a vector in order to stack them
-                matricesToStack[iChannelOrder][0] = _ARcoefficient*processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix_eigen() + StatUtil::randnMatrix(_nOutputs,Nm,0.0,_samplingVariance);
+                matricesToStack[iChannelOrder][0] = _ARcoefficient*processedParticle->getChannelMatrixEstimator(iChannelOrder)->lastEstimatedChannelMatrix() + StatUtil::randnMatrix(_nOutputs,Nm,0.0,_samplingVariance);
 
                 for(iSmoothing=1;iSmoothing<_maxOrder;iSmoothing++)
                     matricesToStack[iChannelOrder][iSmoothing] = _ARcoefficient*matricesToStack[iChannelOrder][iSmoothing-1] + StatUtil::randnMatrix(_nOutputs,Nm,0.0,_ARprocessVariance);

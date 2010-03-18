@@ -50,7 +50,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
         for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
             _channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),noiseVariances[iSymbolVector]);
 
-        MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix_eigen();
+        MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
         vector<VectorXd> hs(_nOutputs,VectorXd::Zero(_nInputs*m,1));
 

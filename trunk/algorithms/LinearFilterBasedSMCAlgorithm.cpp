@@ -83,7 +83,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
         {
             // already estimated channel matrices are stored in a vector in order to stack them
             for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)
-                matricesToStack[iSmoothing+_c] = dynamic_cast <WithChannelEstimationParticleAddon *> (_particleFilter->getParticle(iParticle))->getChannelMatrix_eigen(_estimatorIndex,iObservationToBeProcessed+iSmoothing);
+                matricesToStack[iSmoothing+_c] = dynamic_cast <WithChannelEstimationParticleAddon *> (_particleFilter->getParticle(iParticle))->getChannelMatrix(_estimatorIndex,iObservationToBeProcessed+iSmoothing);
 
             // first of the predicted ones is obtained via a virtual method
             fillFirstEstimatedChannelMatrix(iParticle,matricesToStack[_c]);

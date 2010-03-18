@@ -54,7 +54,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
         {
             _channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),noiseVariances[iSymbolVector]);
 
-            VectorXd observationError = observations.col(iSymbolVector) - _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix_eigen()*Util::toVector(_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),columnwise);
+            VectorXd observationError = observations.col(iSymbolVector) - _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix()*Util::toVector(_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),columnwise);
 
             accumulatedSquaredObservationsError += double(skipNumber>50)*observationError.dot(observationError)/noiseVariances[iSymbolVector];
 

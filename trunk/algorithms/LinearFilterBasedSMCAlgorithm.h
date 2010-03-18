@@ -69,7 +69,7 @@ protected:
     virtual void fillFirstEstimatedChannelMatrix(int iParticle,MatrixXd &firstEstimatedChannelMatrix) const
     {
         // firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
-        firstEstimatedChannelMatrix = _ARcoefficient*dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix_eigen() + StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance);
+        firstEstimatedChannelMatrix = _ARcoefficient*dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix() + StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance);
         
     }
 

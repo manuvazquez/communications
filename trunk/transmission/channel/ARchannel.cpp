@@ -28,5 +28,5 @@ ARchannel::ARchannel(int nInputs, int nOutputs, int memory, int length, ARproces
 
 	//initialization
 	for(int i=_memory-1;i<_length;i++)
-			_channelMatrices[i] = _ARproc.nextMatrix_eigen();
+			_channelMatrices[i] = _ARproc.nextMatrix();
 }

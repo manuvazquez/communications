@@ -32,7 +32,7 @@ ChannelMatrixEstimator* RLSEstimator::clone() const
 // eigen
 double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
-    return StatUtil::normalPdf(observations,_lastEstimatedChannelMatrix_eigen*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
+    return StatUtil::normalPdf(observations,_lastEstimatedChannelMatrix*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
 }
 
 // eigen
@@ -47,9 +47,9 @@ MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& 
 
     VectorXd g = invForgettingFactorSymbolsVectorInvRtilde / (1.0 + symbolsVector.dot(invForgettingFactorSymbolsVectorInvRtilde));
 
-    _lastEstimatedChannelMatrix_eigen = _lastEstimatedChannelMatrix_eigen + (observations-_lastEstimatedChannelMatrix_eigen*symbolsVector)*g.transpose();
+    _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix + (observations-_lastEstimatedChannelMatrix*symbolsVector)*g.transpose();
 
     _invRtilde_eigen = _invForgettingFactor*_invRtilde_eigen - (_invForgettingFactor*_invRtilde_eigen*symbolsVector)*g.transpose();
 
-    return _lastEstimatedChannelMatrix_eigen;
+    return _lastEstimatedChannelMatrix;
 }

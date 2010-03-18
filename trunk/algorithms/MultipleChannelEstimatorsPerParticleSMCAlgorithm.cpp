@@ -112,7 +112,7 @@ vector<MatrixXd> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedC
     int indexBestChannelOrder = iBestChannelOrder(iBestParticle);
 
     for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
-        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(getParticleFilterPointer()->getParticle(iBestParticle))->getChannelMatrix_eigen(indexBestChannelOrder,i));
+        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(getParticleFilterPointer()->getParticle(iBestParticle))->getChannelMatrix(indexBestChannelOrder,i));
 
     return channelMatrices;
 }

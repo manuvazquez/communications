@@ -41,7 +41,7 @@ public:
     
     WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon);
 
-    MatrixXd getChannelMatrix_eigen(int iChannelOrder,int n) const
+    MatrixXd getChannelMatrix(int iChannelOrder,int n) const
     {
         return _estimatedChannelMatrices[iChannelOrder][n];
     }

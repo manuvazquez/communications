@@ -72,9 +72,9 @@ MatrixXd CDMAKalmanEstimator::sampleFromPredictive_eigen() const
     return spreadingCodesXsampledChannelMatrix;
 }
 
-MatrixXd CDMAKalmanEstimator::lastEstimatedChannelMatrix_eigen() const
+MatrixXd CDMAKalmanEstimator::lastEstimatedChannelMatrix() const
 {
-    MatrixXd sampledChannelMatrix = KalmanEstimator::lastEstimatedChannelMatrix_eigen();
+    MatrixXd sampledChannelMatrix = KalmanEstimator::lastEstimatedChannelMatrix();
     
     if(sampledChannelMatrix.rows()!=1)
         throw RuntimeException("CDMAKalmanEstimator::lastEstimatedChannelMatrix_eigen: sampled channel matrix is not a row vector.");

@@ -67,7 +67,7 @@ void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
     _iNextMatrix = i;
 }
 
-MatrixXd ARprocess::nextMatrix_eigen()
+MatrixXd ARprocess::nextMatrix()
 {
     MatrixXd aux = MatrixXd::Zero(_rows,_columns);
     for(int j=0;j<_nCoefficients;j++)

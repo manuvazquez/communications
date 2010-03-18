@@ -36,7 +36,6 @@
 #include "utilExceptions.h"
 
 enum tOrder {rowwise,columnwise};
-enum tColors {green,red};
 
 class Util{
 

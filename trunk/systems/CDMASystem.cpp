@@ -75,8 +75,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-	nSurvivors = 2;
+// 	nSurvivors = 2;
 // 	nSurvivors = 8;
+	nSurvivors = 10;
 // 	nSurvivors = 20;
 
     // AR process parameters
@@ -155,9 +156,9 @@ void CDMASystem::AddAlgorithms()
      
 //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));	
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));	
 	
-//     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
+    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
 	
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
@@ -212,8 +213,6 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols << endl;
 #endif    
 
-	double thisChannelMatrixMaximumRatio;
-
 	do
 	{
 	  delete channel;
@@ -222,22 +221,9 @@ void CDMASystem::BuildChannel()
 	  
 // 	  channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
 	  
-	  channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);	  
+	  channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);
 
-	  // we check if the channel is really bad (severe near-far issues)
-	  _maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(preambleLength)));
-	  
-	  // all the channel matrices contained in this channel are checked
-	  for(int i=preambleLength+1;i<channel->length();i++)
-	  {
-		thisChannelMatrixMaximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(i)));
-		if(thisChannelMatrixMaximumRatio < _maximumRatio)
-		  _maximumRatio = thisChannelMatrixMaximumRatio;
-	  }
-	  
-	  cout << "the max difference among coefficients in dBs: " << _maximumRatio << endl;
-	
-	} while(_maximumRatio>maximumRatioThresholdInDBs);
+	} while(!isChannelOk(channel));
 }
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
@@ -323,7 +309,41 @@ void CDMASystem::OnlyOnce()
 	presentFramePeActivityDetection = MatrixXd::Zero(SNRs.size(),algorithms.size());
 }
 
-bool CDMASystem::isChannelOk(const ChannelMatrixEstimator * const channel)
+bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
 {
+  double thisChannelMatrixMaximumRatio;
+  int iChannelMatrix;
+  
+  // we check if the channel is really bad (severe near-far issues)...
+  _maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(preambleLength)));
+  
+  //...or if any of its coefficients changes sign
+  MatrixXd firstSignsMatrix = Util::sign(channel->at(preambleLength));
+  
+  // all the channel matrices contained in this channel are checked
+  for(iChannelMatrix=preambleLength+1;iChannelMatrix<channel->length();iChannelMatrix++)
+  {
+	// check if how large is the difference of power between coefficients
+	thisChannelMatrixMaximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(iChannelMatrix)));
+	if(thisChannelMatrixMaximumRatio < _maximumRatio)
+	  _maximumRatio = thisChannelMatrixMaximumRatio;
+	
+// 	// check if any coefficient changes sign
+	if(Util::sign(channel->at(iChannelMatrix))!=firstSignsMatrix)
+	{
+	  cout << COLOR_PINK << "Coefficients change sign...channel is NOT ok!!" << COLOR_NORMAL << endl;
+	  return false;
+	}
+  }
+  
+  cout << COLOR_WHITE << "the max difference among coefficients in dBs: " << COLOR_NORMAL << _maximumRatio << endl;
+  cout << channel->nOutputs() << " " << channel->nInputs() << endl;
+  
+  if(_maximumRatio > maximumRatioThresholdInDBs)
+  {
+	cout << COLOR_PINK << "the max difference among coefficients in dBs is " << COLOR_NORMAL << _maximumRatio << COLOR_PINK << "...channel is NOT ok!!" << COLOR_NORMAL << endl;
+	return false;
+  }
+  
   return true;
 }

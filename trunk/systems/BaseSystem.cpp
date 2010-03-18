@@ -42,7 +42,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-#define LOAD_SEEDS
+// #define LOAD_SEEDS
 
 // #define DEBUG
 
@@ -67,12 +67,12 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
     
-	nFrames = 2000;
-// 	nFrames = 10;
+// 	nFrames = 2000;
+	nFrames = 10;
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
-    L=8,N=3,frameLength=300;
+    L=8,N=3,frameLength=1000;
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
@@ -174,6 +174,10 @@ BaseSystem::BaseSystem()
 	channelMatrices.reserve(nFrames);
 #endif
 
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	channelEstimations.reserve(nFrames);
+#endif
+
 #ifndef RANDOM_SEED
         // we don't want the same bits to be generated over and over
         randomGenerator.setSeed(0);
@@ -212,9 +216,7 @@ void BaseSystem::Simulate()
     randomGenerator.setSeed(104213010);
     StatUtil::getRandomGenerator().setSeed(2130443794);
 	
-	cout << "seeds are being loaded..." << endl;
-	cout << "-----------------" << endl;
-	cout << "-----------------" << endl;
+	cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
 #endif
 
     int iFrame = 0;
@@ -294,9 +296,6 @@ void BaseSystem::Simulate()
             {
 //                 // in order to repeat a concrete simulation...
 //                 StatUtil::getRandomGenerator().setSeed();
-
-                // the seed kept by the class StatUtil is saved
-//                 presentFrameStatUtilSeeds(iSNR,iAlgorithm) = StatUtil::getRandomGenerator().getSeed();
 
                 // if there is training sequence
                 if(trainSeqLength!=0)
@@ -380,7 +379,10 @@ void BaseSystem::OnlyOnce()
         presentFrameMSEtimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
 #endif
 
-//     presentFrameStatUtilSeeds = LaGenMatLongInt(SNRs.size(),algorithms.size());
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	// channel estimations
+	channelEstimations = std::vector<std::vector<std::vector<std::vector<MatrixXd> > > >(nFrames,std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size(),std::vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength))));
+#endif
 }
 
 void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
@@ -393,7 +395,10 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
 
-//     cout << algorithms[iAlgorithm]->getName() << ": Pe = " << pe << " , MSE = " << mse << endl;
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+// 	channelEstimations
+#endif
+
     cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;	
 
     // the error probability is accumulated
@@ -434,10 +439,6 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	channelMatrices.push_back(channel->range(preambleLength,iLastSymbolVectorToBeDetected));
 #endif
-
-    // seeds just before the run of the algorithms
-//     beforeRunStatUtilSeeds.push_back(presentFrameStatUtilSeeds);
-//     Util::matricesVectorToOctaveFileStream(beforeRunStatUtilSeeds,"beforeRunStatUtilSeeds",f);
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 //         for(uint i=0;i<algorithmsNames.size();i++)

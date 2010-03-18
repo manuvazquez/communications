@@ -155,7 +155,7 @@ vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices()
     int iBestParticle = _particleFilter->iBestParticle();
 
     for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
-        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iBestParticle))->getChannelMatrix_eigen(_estimatorIndex,i));
+        channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iBestParticle))->getChannelMatrix(_estimatorIndex,i));
 
     return channelMatrices;
 }

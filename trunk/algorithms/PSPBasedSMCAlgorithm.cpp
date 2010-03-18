@@ -81,7 +81,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
-            MatrixXd estimatedChannelMatrix = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix_eigen();
+            MatrixXd estimatedChannelMatrix = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
             estimatedChannelMatrix *= _ARcoefficient;
 
             for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)

@@ -106,14 +106,14 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
 	
 	CDMAKalmanEstimator *clonedChannelMatrixEstimator = dynamic_cast <CDMAKalmanEstimator *> (_channelEstimator->clone());
 
-	VectorXd error = observations.col(_startDetectionTime) - clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen()*symbolsVector;	
+	VectorXd error = observations.col(_startDetectionTime) - clonedChannelMatrixEstimator->lastEstimatedChannelMatrix()*symbolsVector;	
 
 	initialCost =  (error.dot(error))/(2*noiseVariances[_startDetectionTime]) - log(StatUtil::probApriori(symbolsVector,_usersActivityPdfs));
 
 	clonedChannelMatrixEstimator->nextMatrix(observations.col(_startDetectionTime),symbolsVector,noiseVariances[_startDetectionTime]);
 	
 	// only the first survivor is initialized
-	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,initialCost,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
+	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,initialCost,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelMatrix())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
   }
   
   // first observation was already processed
