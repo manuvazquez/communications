@@ -89,9 +89,9 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
-    _lastEstimatedChannelMatrix = Util::toMatrix(_kalmanFilter->filteredMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
+    _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
 
-    return _lastEstimatedChannelMatrix;
+    return _lastEstimatedChannelCoefficientsMatrix;
 }
 
 MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)

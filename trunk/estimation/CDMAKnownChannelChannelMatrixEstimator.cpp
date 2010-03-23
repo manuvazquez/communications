@@ -38,7 +38,7 @@ double CDMAKnownChannelChannelMatrixEstimator::likelihood(const VectorXd &observ
     MatrixXd channelCoefficientsXsymbols = symbolsMatrix;
         
     for(int i=0;i<_nInputs;i++)
-        channelCoefficientsXsymbols(i,0) *= _lastEstimatedChannelMatrix(0,i);
+        channelCoefficientsXsymbols(i,0) *= _lastEstimatedChannelCoefficientsMatrix(0,i);
          
     return StatUtil::normalPdf(observations,_spreadingCodes*channelCoefficientsXsymbols,noiseVariance);
 }

@@ -32,6 +32,6 @@ KnownChannelChannelMatrixEstimator* KnownChannelChannelMatrixEstimator::clone() 
 
 MatrixXd KnownChannelChannelMatrixEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-    _lastEstimatedChannelMatrix = _channel->at(_iNextMatrix++);
-    return _lastEstimatedChannelMatrix;    
+    _lastEstimatedChannelCoefficientsMatrix = _channel->at(_iNextMatrix++);
+    return _lastEstimatedChannelCoefficientsMatrix;    
 }

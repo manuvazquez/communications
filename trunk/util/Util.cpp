@@ -110,7 +110,8 @@ double Util::sum(const VectorXd &v)
 double Util::squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B)
 {
     if(A.rows()!=B.rows())
-        throw IncompatibleOperandsException("Util::squareError: matrix have different number of rows.");
+        throw RuntimeException("Util::squareErrorPaddingWithZeros: matrix have different number of rows.");
+// 		throw IncompatibleOperandsException("Util::squareError: matrix have different number of rows.");
 
     double res = 0.0;
     int i,j1,j2;

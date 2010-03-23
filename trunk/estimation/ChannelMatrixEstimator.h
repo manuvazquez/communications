@@ -32,15 +32,24 @@
 class ChannelMatrixEstimator{
 protected:
     int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
-    MatrixXd _lastEstimatedChannelMatrix;
+
+	// this stores the last estimated channel coefficients
+    MatrixXd _lastEstimatedChannelCoefficientsMatrix;
 
 public:
     // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
     ChannelMatrixEstimator(MatrixXd initialEstimation,int N);
     virtual ~ChannelMatrixEstimator() {};
 
-    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelMatrix = matrix;} // eigen
-    
+    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelCoefficientsMatrix = matrix;} // eigen
+
+    /*!
+	  It updates the channel estimation of this estimator (it thus modifies the state of the estimator)
+	  \param observations a vector with the new observations
+	  \param symbolsMatrix the symbols involved in the observations
+	  \param noiseVariance the noise variance at the relevant time instant
+	  \return the updated estimation of the channel
+	*/
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance) = 0;
     
     virtual ChannelMatrixEstimator *clone() const = 0;
@@ -53,7 +62,14 @@ public:
     int cols() const { return _nInputsXchannelOrder;}
     int rows() const { return _nOutputs;}
     int memory() const;
-    virtual MatrixXd lastEstimatedChannelMatrix() const { return _lastEstimatedChannelMatrix;}
+
+	/*!
+	  It returns the last estimated channel matrix, that is, the one that multiplied by the symbols vector gives rise to the observations. This doesnt' necessarily coincide with the matrix ONLY containing channel coefficients (though usually, it does), which is returned by \ref lastEstimatedChannelCoefficientsMatrix
+	  \return the last estimated channel matrix
+	*/
+    virtual MatrixXd lastEstimatedChannelMatrix() const { return lastEstimatedChannelCoefficientsMatrix();}
+
+    virtual MatrixXd lastEstimatedChannelCoefficientsMatrix() const { return _lastEstimatedChannelCoefficientsMatrix;}
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo);
 };

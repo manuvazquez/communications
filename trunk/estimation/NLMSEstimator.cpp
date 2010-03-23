@@ -32,9 +32,9 @@ MatrixXd NLMSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd&
 {
     VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
     
-    VectorXd error = _lastEstimatedChannelMatrix*symbolsVector-observations;
+    VectorXd error = _lastEstimatedChannelCoefficientsMatrix*symbolsVector-observations;
     
-    _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix - _mu/error.dot(error)*error*symbolsVector.transpose();
+    _lastEstimatedChannelCoefficientsMatrix = _lastEstimatedChannelCoefficientsMatrix - _mu/error.dot(error)*error*symbolsVector.transpose();
     
-    return _lastEstimatedChannelMatrix;
+    return _lastEstimatedChannelCoefficientsMatrix;
 }

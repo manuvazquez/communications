@@ -152,7 +152,8 @@ void PSPPath::update(const PSPPath& path, VectorXd newSymbolVector, double newCo
 			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 
 		// the new matrix is added at the right index based on the last detected vector
-		_estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->lastEstimatedChannelMatrix();
+		_estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->lastEstimatedChannelCoefficientsMatrix();
+// 		_estimatedChannelMatrices[iChannelMatrixEstimator][_detectedSequence->cols()-1] = newChannelMatrixEstimators[iChannelMatrixEstimator]->lastEstimatedChannelMatrix();
 #endif
     }
 }

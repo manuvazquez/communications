@@ -37,9 +37,22 @@ public:
     MIMOChannel(int nInputs,int nOutputs,int length);
     virtual ~MIMOChannel() {};
     
-    int nInputs() const { return _nInputs;};
-    int nOutputs() const { return _nOutputs;};
-    int length() const {return _length;};
+    int nInputs() const { return _nInputs;}
+    int nOutputs() const { return _nOutputs;}
+
+	/*!
+	  It returns the number of rows of the REAL channel matrix that represents the channel (it is usually the number of outputs)
+	  \return number of rows of the internal channel coefficients matrix
+	*/
+	virtual int channelCoefficientsMatrixRows() const { return _nOutputs;}
+
+	/*!
+	  It returns the number of columns of the REAL channel matrix that represents the channel (it is usually the number of inputs)
+	  \return number of columns of the internal channel coefficients matrix
+	*/
+	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
+
+	int length() const {return _length;};
     int nInputsnOutputs() const {return _nInputsnOutputs;};
     int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
     int nInputsMemory(int n) const {return _nInputs*memory(n);}

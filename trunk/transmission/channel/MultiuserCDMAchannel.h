@@ -47,6 +47,9 @@ public:
 	
 	// it delegates on the channel within
 	virtual MatrixXd at(int n) const { return _channel->at(n);}
+
+	virtual int channelCoefficientsMatrixRows() const { return _channel->nOutputs();}
+	virtual int channelCoefficientsMatrixCols() const { return _channel->nInputs();}
 };
 
 #endif

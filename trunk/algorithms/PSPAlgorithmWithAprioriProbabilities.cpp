@@ -113,7 +113,7 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
 	clonedChannelMatrixEstimator->nextMatrix(observations.col(_startDetectionTime),symbolsVector,noiseVariances[_startDetectionTime]);
 	
 	// only the first survivor is initialized
-	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,initialCost,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelMatrix())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
+	_exitStage[iState][0] = PSPPath(_iLastSymbolVectorToBeDetected+_d,initialCost,symbolsVector,vector<vector<MatrixXd> > (1,vector<MatrixXd>(1,clonedChannelMatrixEstimator->lastEstimatedChannelCoefficientsMatrix())),vector<ChannelMatrixEstimator *>(1,clonedChannelMatrixEstimator));
   }
   
   // first observation was already processed

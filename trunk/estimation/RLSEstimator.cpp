@@ -29,13 +29,11 @@ ChannelMatrixEstimator* RLSEstimator::clone() const
 	return new RLSEstimator(*this);
 }
 
-// eigen
 double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
-    return StatUtil::normalPdf(observations,_lastEstimatedChannelMatrix*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
+    return StatUtil::normalPdf(observations,_lastEstimatedChannelCoefficientsMatrix*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
 }
 
-// eigen
 MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
     if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
@@ -47,9 +45,9 @@ MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& 
 
     VectorXd g = invForgettingFactorSymbolsVectorInvRtilde / (1.0 + symbolsVector.dot(invForgettingFactorSymbolsVectorInvRtilde));
 
-    _lastEstimatedChannelMatrix = _lastEstimatedChannelMatrix + (observations-_lastEstimatedChannelMatrix*symbolsVector)*g.transpose();
+    _lastEstimatedChannelCoefficientsMatrix = _lastEstimatedChannelCoefficientsMatrix + (observations-_lastEstimatedChannelCoefficientsMatrix*symbolsVector)*g.transpose();
 
     _invRtilde_eigen = _invForgettingFactor*_invRtilde_eigen - (_invForgettingFactor*_invRtilde_eigen*symbolsVector)*g.transpose();
 
-    return _lastEstimatedChannelMatrix;
+    return _lastEstimatedChannelCoefficientsMatrix;
 }

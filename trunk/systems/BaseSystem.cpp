@@ -400,15 +400,20 @@ void BaseSystem::BeforeEndingAlgorithm()
   // we get the channel matrices estimated by this algorithm
   vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
 
+//   cout << "channel->channelCoefficientsMatrixRows() = " << channel->channelCoefficientsMatrixRows() << " channel->channelCoefficientsMatrixCols() = " << channel->channelCoefficientsMatrixCols() << endl;
+  
   // if none, that meaning the algorithm does not performa channel matrix estimation,...
   if(thisAlgorithmEstimatedChannelMatrices.size()==0)
 	// we generate a sequence of matrices
-	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength,MatrixXd::Zero(channel->nOutputs(),channel->nInputs()));
+	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength,MatrixXd::Zero(channel->channelCoefficientsMatrixRows(),channel->channelCoefficientsMatrixCols()));
   else
 	if(thisAlgorithmEstimatedChannelMatrices.size()!=iLastSymbolVectorToBeDetected-preambleLength)
 	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
 
-  cout << "thisAlgorithmEstimatedChannelMatrices tiene " << thisAlgorithmEstimatedChannelMatrices.size() << "matrices." << endl;
+//   cout << "iFrame = " << iFrame << " iAlgorithm = " << iAlgorithm << endl;
+//   for(int venga=0;venga<thisAlgorithmEstimatedChannelMatrices.size();venga++)
+// 	cout << "matriz " << venga << endl << thisAlgorithmEstimatedChannelMatrices[venga] << endl;
+	
   presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
@@ -476,10 +481,11 @@ void BaseSystem::BeforeEndingFrame()
     Util::scalarToOctaveFileStream(preambleLength,"preambleLength",f);
     Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
     Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
-    Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
 	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	Util::matricesVectorsVectorToOctaveFileStream(channelMatrices,"channels",f);
+#else
+    Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
 #endif
 
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
@@ -494,7 +500,7 @@ void BaseSystem::BeforeEndingFrame()
     
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	channelEstimations.push_back(presentFrameChannelMatrixEstimations);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelMatrixEstimations",f);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelEstimations",f);
 #endif
 }
 

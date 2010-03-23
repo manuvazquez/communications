@@ -42,12 +42,23 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
     double mse = 0;
     int windowStart = nEstimatedChannelMatrices - windowSize;
 
+#ifdef DEBUG
+	cout << "computing MSE..." << endl;
+	cout << "windowStart = " << windowStart << " nEstimatedChannelMatrices = " << nEstimatedChannelMatrices << endl;
+#endif
+	
     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
     try {
         for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+		{
             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm
             // (i.e. the sum of all the elements squared) of the real channel matrix
+#ifdef DEBUG
+			cout << "comparing" << endl << channelMatrices.at(i-windowStart) << endl << "and" << endl << estimatedChannelMatrices.at(i) << endl;
+			cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0) << endl;
+#endif
             mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0);
+		}
     } catch (IncompatibleOperandsException) {
         return 0.0;
     }

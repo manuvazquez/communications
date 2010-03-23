@@ -156,9 +156,15 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             // the weight is updated
             processedParticle->setWeight((likelihood*probSymbolsVectorApriori/proposal)*processedParticle->getWeight());
 
-            // and the estimation of the channel matrix
-            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
-                                                processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]));
+			//the estimation of the channel matrix is updated
+			processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]);
+
+			// and the channel matrix coefficients (NOT the channel matrix) stored
+            processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelCoefficientsMatrix());
+
+//             // and the estimation of the channel matrix
+//             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,
+//                                                 processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]));
 
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 

@@ -130,7 +130,12 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 		  processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
 		  // channel matrix is estimated by means of the particle channel estimator
-		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
+		  processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]);
+
+		  // the last estimated channel coefficients (NOT channel matrix) are stored in the particle
+		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelCoefficientsMatrix());
+
+// 		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
 		  processedParticle->setWeight(processedParticle->getWeight()* likelihoodsSum);
 	  } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
@@ -189,11 +194,6 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUs
 		probSymbolWhenUserActive = 0.0;
 	  }
 
-// 	  if(isUserActive(symbolsVector(i)))
-// 		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdf.probXgivenY(true,previousTimeInstantUsersActivity[i]);
-// 	  else
-// 		probSymbolWhenUserActive = 0.0;
-	  
 	  overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
     }
 
@@ -222,11 +222,6 @@ double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUs
 		probSymbolWhenUserActive = 0.0;
 	  }
 
-// 	  if(isUserActive(symbolsVector(i)))
-// 		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdf.probApriori(true);
-// 	  else
-// 		probSymbolWhenUserActive = 0.0;
-	  
 	  overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
     }
 

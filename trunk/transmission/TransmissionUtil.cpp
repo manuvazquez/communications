@@ -63,86 +63,6 @@ double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bi
     return (double)errors/(double)(length*bits1.nStreams());
 }
 
-// double TransmissionUtil::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,vector<vector<uint> > permutations,const Alphabet * const alphabet)
-// {
-//     if(detectedSymbols.rows() == 0)
-//         return 0.0;
-// 
-//     if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
-//     {
-//         cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-//         throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
-//     }
-// 
-//     if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
-//     {
-//         cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
-//       throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
-//     }
-//         
-// #ifdef PRINT_INFO
-//     cout << "source symbols" << endl << sourceSymbols << "detected symbols" << endl << detectedSymbols << "mask" << endl;
-//     Util::print(mask);
-// #endif
-// 
-//     uint iBestPermutation = 0;
-//     vector<int> bestPermutationSigns(sourceSymbols.rows(),1);
-// 
-//     // max number of errors
-//     int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
-//     
-//     uint nAccountedSymbols = 0;
-//     uint iInput;
-// 
-//     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
-//     {
-//         int permutationErrors = 0;
-//         
-//         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-//         {
-//             iInput = permutations[iPermut][iStream];
-//           
-//             int errorsInverting=0,errorsWithoutInverting=0;
-//             
-//             for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
-//             {
-//                 // if this symbol is not accounted for
-//                 if(!mask[iStream][iTime])
-//                     continue;
-// 
-//                 // if the symbols differ, an error happened...
-//                 errorsWithoutInverting += sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime);
-//                 
-//                 // ...unless there the symbol sign needs to be switched because of the ambiguity
-//                 errorsInverting += sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime));
-//                 
-//                 nAccountedSymbols++;
-//             }              
-//             
-//             if(errorsWithoutInverting<errorsInverting)
-//             {
-//                 permutationErrors += errorsWithoutInverting;
-//                 bestPermutationSigns[iStream] = 1;
-//             }
-//             else
-//             {
-//                 permutationErrors += errorsInverting;
-//                 bestPermutationSigns[iStream] = -1;
-//             }
-//         } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-//         
-//         if(permutationErrors<minErrors)
-//         {
-//             minErrors = permutationErrors;
-//             iBestPermutation = iPermut;
-//         }
-//     }
-//     
-//     nAccountedSymbols /= permutations.size();
-//     
-//     return (double)minErrors/(double)(nAccountedSymbols);
-// }
-
 double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
 {
     if(detectedBits.nBitsPerStream()==0 || detectedBits.nStreams()==0)
@@ -249,48 +169,6 @@ VectorXd TransmissionUtil::MSEalongTime(const std::vector<MatrixXd> &estimatedCh
 
     return res;
 }
-
-// tVector TransmissionUtil::MSEalongTime(const std::vector<tMatrix> &estimatedChannelMatrices,int from1,int to1,const std::vector<tMatrix> &trueChannelMatrices,int from2,int to2)
-// {
-// 
-//     tVector res(to1-from1+1);
-// 
-//     // if the algorithm didn't make channel estimation
-//     if(estimatedChannelMatrices.size()==0)
-//     {
-//         res = 0.0;
-//         return res;
-//     }
-// 
-//     if((to1-from1)!=(to2-from2))
-//     {
-//         cout << "Range 1: " << (to1-from1) << " | " << "Range 2: " << to2-from2 << endl;
-//         throw RuntimeException("TransmissionUtil::MSEalongTime: comparisons range length are different.");
-//     }
-// 
-//     if(to1<from1)
-//         throw RuntimeException("TransmissionUtil::MSEalongTime: comparisons range are negatives.");
-// 
-//     if(to1>estimatedChannelMatrices.size() || to2>trueChannelMatrices.size() || from1<0 || from2<0)
-//     {
-//         cout << from1 << endl << to1 << endl << from2 << endl << to2 << endl << estimatedChannelMatrices.size() << endl << trueChannelMatrices.size() << endl;
-//         throw RuntimeException("TransmissionUtil::MSEalongTime: one or several comparison limits are wrong.");
-//     }
-// 
-//     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-//     try {
-//         for(int iSource1=from1,iSource2=from2,iRes=0;iSource1<=to1;iSource1++,iSource2++,iRes++)
-//         {
-//             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-//             res(iRes) = Util::squareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(Blas_NormF(trueChannelMatrices.at(iSource2)),2.0);
-// 
-//         }
-//     } catch (IncompatibleOperandsException) {
-//         return res;
-//     }
-// 
-//     return res;
-// }
 
 MatrixXd TransmissionUtil::generateTrainingSequence(const Alphabet &alphabet,uint nInputs,uint length)
 {
