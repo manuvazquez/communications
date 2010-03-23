@@ -30,7 +30,7 @@ class TesisComplejidadReducidaARSystem : public TesisComplejidadReducidaSystem
 protected:
     double channelVariance;
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
 public:
     TesisComplejidadReducidaARSystem();
 

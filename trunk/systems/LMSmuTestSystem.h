@@ -52,7 +52,7 @@ protected:
     vector<ChannelMatrixEstimator *> LMSchannelEstimators;
 
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
     virtual void AddAlgorithms();
 public:
     LMSmuTestSystem();

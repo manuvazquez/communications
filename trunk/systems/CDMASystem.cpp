@@ -75,9 +75,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-// 	nSurvivors = 2;
+	nSurvivors = 2;
 // 	nSurvivors = 8;
-	nSurvivors = 10;
+// 	nSurvivors = 10;
 // 	nSurvivors = 20;
 
     // AR process parameters
@@ -156,18 +156,18 @@ void CDMASystem::AddAlgorithms()
      
 //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));	
+//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));	
 	
-    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
+//     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
 	
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
 	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdfs));
 }
 
-void CDMASystem::BeforeEndingFrame(int iFrame)
+void CDMASystem::BeforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame(iFrame);
+    SMCSystem::BeforeEndingFrame();
 	
 	// the maximum ratio of this frame is added to the vector
 	_maxCoefficientsRatiosInDBs.push_back(_maximumRatio);
@@ -182,6 +182,31 @@ void CDMASystem::BeforeEndingFrame(int iFrame)
 	Util::scalarToOctaveFileStream(userPersistenceProb,"userPersistenceProb",f);
 	Util::scalarToOctaveFileStream(newActiveUserProb,"newActiveUserProb",f);
 	Util::scalarToOctaveFileStream(userPriorProb,"userPriorProb",f);
+
+// 	MatrixXd A(2,2);
+// 	A << 1,2,
+// 		 3,4;
+// 	MatrixXd B = A*2;
+// 	vector<MatrixXd> primerVector;
+// 	primerVector.push_back(A);
+// 	primerVector.push_back(B);
+// 	vector<vector<MatrixXd> > segundoVector;
+// 	segundoVector.push_back(primerVector);
+// 	segundoVector.push_back(primerVector);
+// 	segundoVector.push_back(primerVector);
+// 	vector<vector<vector<MatrixXd> > > tercerVector;
+// 	tercerVector.push_back(segundoVector);
+// 	tercerVector.push_back(segundoVector);
+// 	tercerVector.push_back(segundoVector);
+// 	tercerVector.push_back(segundoVector);
+// 	vector<vector<vector<vector<MatrixXd> > > > cuartoVector;
+// 	cuartoVector.push_back(tercerVector);
+// 	cuartoVector.push_back(tercerVector);
+// 	cuartoVector.push_back(tercerVector);
+// 	cuartoVector.push_back(tercerVector);
+// 	cuartoVector.push_back(tercerVector);
+// 
+// 	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(cuartoVector,"tocho",f);
 }
 
 void CDMASystem::BuildChannel()
@@ -292,9 +317,9 @@ double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd d
 	  return computeSER(sourceSymbols,detectedSymbols,mask);
 }
 
-void CDMASystem::BeforeEndingAlgorithm(int iAlgorithm)
+void CDMASystem::BeforeEndingAlgorithm()
 {
-	SMCSystem::BeforeEndingAlgorithm(iAlgorithm);
+	SMCSystem::BeforeEndingAlgorithm();
 
 	double peActivity = computeActivityDetectionER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols);
 	
@@ -331,13 +356,16 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
 // 	// check if any coefficient changes sign
 	if(Util::sign(channel->at(iChannelMatrix))!=firstSignsMatrix)
 	{
-	  cout << COLOR_PINK << "Coefficients change sign...channel is NOT ok!!" << COLOR_NORMAL << endl;
-	  return false;
+// 	  cout << COLOR_PINK << "Coefficients change sign...channel is NOT ok!!" << COLOR_NORMAL << endl;
+// 	  return false;
 	}
   }
   
   cout << COLOR_WHITE << "the max difference among coefficients in dBs: " << COLOR_NORMAL << _maximumRatio << endl;
+
+#ifdef DEBUG
   cout << channel->nOutputs() << " " << channel->nInputs() << endl;
+#endif
   
   if(_maximumRatio > maximumRatioThresholdInDBs)
   {

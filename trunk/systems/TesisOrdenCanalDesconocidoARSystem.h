@@ -55,7 +55,7 @@ protected:
 
 //     virtual void AddAlgorithms();
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
 public:
     TesisOrdenCanalDesconocidoARSystem();
 };

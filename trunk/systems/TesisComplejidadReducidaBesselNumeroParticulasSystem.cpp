@@ -24,9 +24,9 @@ TesisComplejidadReducidaBesselNumeroParticulasSystem::TesisComplejidadReducidaBe
     particlesNumbers.push_back(30);particlesNumbers.push_back(50);particlesNumbers.push_back(100);particlesNumbers.push_back(500);particlesNumbers.push_back(1000);
 }
 
-void TesisComplejidadReducidaBesselNumeroParticulasSystem::BeforeEndingFrame(int iFrame)
+void TesisComplejidadReducidaBesselNumeroParticulasSystem::BeforeEndingFrame()
 {
-    TesisComplejidadReducidaBesselSystem::BeforeEndingFrame(iFrame);
+    TesisComplejidadReducidaBesselSystem::BeforeEndingFrame();
     Util::scalarsVectorToOctaveFileStream(particlesNumbers,"particlesNumbers",f);
 }
 

@@ -74,7 +74,7 @@ protected:
     KalmanEstimator *kalmanEstimator;
 
     virtual void AddAlgorithms();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
 public:
     TesisOrdenCanalDesconocidoSystem();
 

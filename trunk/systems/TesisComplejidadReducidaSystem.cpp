@@ -153,9 +153,9 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
 //     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,symbols));
 }
 
-void TesisComplejidadReducidaSystem::BeforeEndingFrame(int iFrame)
+void TesisComplejidadReducidaSystem::BeforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame(iFrame);
+    SMCSystem::BeforeEndingFrame();
 
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
     Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);

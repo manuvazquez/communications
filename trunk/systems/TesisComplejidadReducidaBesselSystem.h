@@ -38,7 +38,7 @@ protected:
     double symbolRate; // (Hz)
     double T; // (s)
 
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
     virtual void BuildChannel();
 
 };

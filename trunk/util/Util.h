@@ -53,6 +53,7 @@ public:
     template<class T> static void matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
     static void matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f);
     static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f);
+	static void matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<vector<vector<MatrixXd> > > > matrices,string name,ofstream &f); //
     template<class T> static void scalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);

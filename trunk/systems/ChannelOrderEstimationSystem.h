@@ -45,9 +45,9 @@ protected:
     vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
 
 	virtual void OnlyOnce();
-    virtual void BeforeEndingAlgorithm(int iAlgorithm);
+    virtual void BeforeEndingAlgorithm();
 	virtual void AddAlgorithms();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
 public:
     ChannelOrderEstimationSystem();
 };

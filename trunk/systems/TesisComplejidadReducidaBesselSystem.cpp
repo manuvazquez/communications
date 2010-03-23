@@ -33,9 +33,9 @@ TesisComplejidadReducidaBesselSystem::~TesisComplejidadReducidaBesselSystem()
 }
 
 
-void TesisComplejidadReducidaBesselSystem::BeforeEndingFrame(int iFrame)
+void TesisComplejidadReducidaBesselSystem::BeforeEndingFrame()
 {
-    TesisComplejidadReducidaSystem::BeforeEndingFrame(iFrame);
+    TesisComplejidadReducidaSystem::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(velocity,"velocity",f);
     Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
     Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);

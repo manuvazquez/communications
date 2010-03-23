@@ -47,9 +47,9 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
     channelOrderAPPsAlongTime.reserve(nFrames);
 }
 
-void ChannelOrderEstimationSystem::BeforeEndingFrame(int iFrame)
+void ChannelOrderEstimationSystem::BeforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame(iFrame);
+    SMCSystem::BeforeEndingFrame();
 
 	Util::scalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
 	Util::scalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
@@ -74,9 +74,9 @@ void ChannelOrderEstimationSystem::OnlyOnce()
 	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),frameLength)));
 }
 
-void ChannelOrderEstimationSystem::BeforeEndingAlgorithm(int iAlgorithm)
+void ChannelOrderEstimationSystem::BeforeEndingAlgorithm()
 {
-	SMCSystem::BeforeEndingAlgorithm(iAlgorithm);
+	SMCSystem::BeforeEndingAlgorithm();
 
 	if(algorithms[iAlgorithm]->performsChannelOrderAPPestimation())
 	{

@@ -94,9 +94,9 @@ void LMSmuTestSystem::BuildChannel()
     channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
 }
 
-void LMSmuTestSystem::BeforeEndingFrame(int iFrame)
+void LMSmuTestSystem::BeforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame(iFrame);
+    SMCSystem::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(velocity,"velocity",f);
     Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
     Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);

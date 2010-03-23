@@ -51,12 +51,12 @@ SMCSystem::~SMCSystem()
   delete algoritmoRemuestreo;
 }
 
-void SMCSystem::BeforeEndingFrame(int iFrame)
+void SMCSystem::BeforeEndingFrame()
 {
 #ifdef DEBUG
 	cout << "en SMCSystem::BeforeEndingFrame" << endl;
 #endif
-    BaseSystem::BeforeEndingFrame(iFrame);
+    BaseSystem::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(nParticles,"nParticles",f);
     Util::scalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
     Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);

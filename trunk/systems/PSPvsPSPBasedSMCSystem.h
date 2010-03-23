@@ -48,7 +48,7 @@ protected:
     KalmanEstimator *kalmanEstimator;
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
 
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
     virtual void AddAlgorithms();
     virtual void BuildChannel();
 };

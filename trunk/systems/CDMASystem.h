@@ -65,8 +65,8 @@ protected:
     bool adjustParticlesNumberFromSurvivors;
 	
     virtual void AddAlgorithms();
-	virtual void BeforeEndingAlgorithm(int iAlgorithm);
-    virtual void BeforeEndingFrame(int iFrame);
+	virtual void BeforeEndingAlgorithm();
+    virtual void BeforeEndingFrame();
     virtual void BuildChannel();
 	virtual void OnlyOnce();
 public:

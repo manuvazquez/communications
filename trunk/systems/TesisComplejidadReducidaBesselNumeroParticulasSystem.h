@@ -33,7 +33,7 @@ public:
 protected:
     vector<int> particlesNumbers;
 
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
     virtual void AddAlgorithms();
 };
 

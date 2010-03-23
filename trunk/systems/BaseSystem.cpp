@@ -42,7 +42,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-// #define LOAD_SEEDS
+#define LOAD_SEEDS
 
 // #define DEBUG
 
@@ -72,7 +72,7 @@ BaseSystem::BaseSystem()
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
-    L=8,N=3,frameLength=1000;
+    L=8,N=3,frameLength=300;
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
@@ -219,7 +219,7 @@ void BaseSystem::Simulate()
 	cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
 #endif
 
-    int iFrame = 0;
+    iFrame = 0;
     while((iFrame<nFrames) && (!__done))
     {
 
@@ -292,7 +292,7 @@ void BaseSystem::Simulate()
                 OnlyOnce();
 
             // algorithms are executed
-            for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+            for(iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
 //                 // in order to repeat a concrete simulation...
 //                 StatUtil::getRandomGenerator().setSeed();
@@ -308,7 +308,7 @@ void BaseSystem::Simulate()
                 
                 pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection);
 				
-                BeforeEndingAlgorithm(iAlgorithm);
+                BeforeEndingAlgorithm();
 
                 delete algorithms[iAlgorithm];
             }
@@ -322,7 +322,7 @@ void BaseSystem::Simulate()
 
         f.open(outputFileName,ofstream::trunc);
 
-        BeforeEndingFrame(iFrame);
+        BeforeEndingFrame();
         
 		f.close();
 
@@ -381,22 +381,35 @@ void BaseSystem::OnlyOnce()
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	// channel estimations
-	channelEstimations = std::vector<std::vector<std::vector<std::vector<MatrixXd> > > >(nFrames,std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size(),std::vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength))));
+//   channelEstimations = std::vector<std::vector<std::vector<std::vector<MatrixXd> > > >(nFrames,std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size())));
+  presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size()));
 #endif
 }
 
-void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
+void BaseSystem::BeforeEndingAlgorithm()
 {
     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
-    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range_eigen(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
+    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-// 	channelEstimations
+  // we get the channel matrices estimated by this algorithm
+  vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
+
+  // if none, that meaning the algorithm does not performa channel matrix estimation,...
+  if(thisAlgorithmEstimatedChannelMatrices.size()==0)
+	// we generate a sequence of matrices
+	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength,MatrixXd::Zero(channel->nOutputs(),channel->nInputs()));
+  else
+	if(thisAlgorithmEstimatedChannelMatrices.size()!=iLastSymbolVectorToBeDetected-preambleLength)
+	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
+
+  cout << "thisAlgorithmEstimatedChannelMatrices tiene " << thisAlgorithmEstimatedChannelMatrices.size() << "matrices." << endl;
+  presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
     cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;	
@@ -421,7 +434,7 @@ void BaseSystem::BeforeEndingAlgorithm(int iAlgorithm)
     }
 }
 
-void BaseSystem::BeforeEndingFrame(int iFrame)
+void BaseSystem::BeforeEndingFrame()
 {
     // pe
     peMatrices.push_back(presentFramePe);
@@ -437,7 +450,7 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	channelMatrices.push_back(channel->range(preambleLength,iLastSymbolVectorToBeDetected));
+	channelMatrices.push_back(channel->range(preambleLength,iLastSymbolVectorToBeDetected-1));
 #endif
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
@@ -479,6 +492,10 @@ void BaseSystem::BeforeEndingFrame(int iFrame)
         Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
     }
     
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	channelEstimations.push_back(presentFrameChannelMatrixEstimations);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelMatrixEstimations",f);
+#endif
 }
 
 double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask)

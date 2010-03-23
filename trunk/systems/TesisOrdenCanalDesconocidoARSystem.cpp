@@ -31,9 +31,9 @@ void TesisOrdenCanalDesconocidoARSystem::BuildChannel()
     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
-void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame(int iFrame)
+void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame()
 {
-    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
+    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }
 

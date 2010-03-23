@@ -33,9 +33,9 @@ void TesisOrdenCanalDesconocidoBesselSystem::BuildChannel()
     channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
 }
 
-void TesisOrdenCanalDesconocidoBesselSystem::BeforeEndingFrame(int iFrame)
+void TesisOrdenCanalDesconocidoBesselSystem::BeforeEndingFrame()
 {
-    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame(iFrame);
+    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(velocity,"velocity",f);
     Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
     Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);

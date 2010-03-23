@@ -47,7 +47,7 @@ protected:
     KalmanEstimator *kalmanEstimator;
 
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
     virtual void AddAlgorithms();
 public:
     PSPvsSMCSystem();

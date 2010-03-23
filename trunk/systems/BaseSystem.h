@@ -59,6 +59,7 @@ class BaseSystem{
 protected:
     double pe,mse;
     uint iSNR;
+	int iFrame,iAlgorithm;
     int iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
@@ -104,10 +105,10 @@ protected:
 
     // seeds
     std::vector<uint32_t> mainSeeds,statUtilSeeds;
-	
+
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	// channel estimations
 	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > channelEstimations;
+	std::vector<std::vector<std::vector<MatrixXd> > >  presentFrameChannelMatrixEstimations;
 #endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
@@ -134,8 +135,8 @@ protected:
 
     virtual void AddAlgorithms() = 0;
     virtual void BuildChannel() = 0;
-    virtual void BeforeEndingFrame(int iFrame);
-    virtual void BeforeEndingAlgorithm(int iAlgorithm);
+    virtual void BeforeEndingFrame();
+    virtual void BeforeEndingAlgorithm();
 	
     /*!
      * Actions performed only once (first SNR, first frame)

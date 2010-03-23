@@ -522,3 +522,38 @@ double Util::maxCoefficientsRatio(const MatrixXd &A)
   
   return max/min;
 }
+
+void Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<vector<vector<MatrixXd> > > > matrices,string name,ofstream &f)
+{
+    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
+    {
+        cout << "Matrix " << name << " would be an empty matrix." << endl;
+		cout << "dimensions are:" << endl;
+		cout << matrices.size() << endl;
+		cout << matrices[0].size() << endl;
+		cout << matrices[0][0].size() << endl;
+		cout << matrices[0][0][0].size() << endl;
+		cout << matrices[0][0][0][0].rows() << endl;
+		cout << matrices[0][0][0][0].cols() << endl;
+        return;
+    }
+
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 6" << endl << " " << matrices[0][0][0][0].rows() << " " << matrices[0][0][0][0].cols() << " " << matrices[0][0][0].size() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << endl;
+
+    int i,j;
+    uint k,l,m;
+    for(uint n=0;n<matrices.size();n++)
+        for(m=0;m<matrices[n].size();m++)
+            for(l=0;l<matrices[n][m].size();l++)
+				for(k=0;k<matrices[n][m][l].size();k++)
+// 				  // if this is an empty matrix
+// 				  if(matrices[n][m][l][k].cols() == 0 || matrices[n][m][l][k].rows())
+// 					// its space is filled with NaN's
+// 					for(j=0;j<matrices[0][0][0][0].cols();j++)
+// 					  for(i=0;i<matrices[0][0][0][0].rows();i++)
+// 						f << " NaN" << endl;
+// 				  else
+					for(j=0;j<matrices[n][m][l][k].cols();j++)
+						for(i=0;i<matrices[n][m][l][k].rows();i++)
+							f << " " << matrices[n][m][l][k](i,j) << endl;
+}

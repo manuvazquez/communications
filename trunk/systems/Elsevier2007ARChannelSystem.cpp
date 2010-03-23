@@ -43,8 +43,8 @@ void Elsevier2007ARChannelSystem::BuildChannel()
     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 }
 
-void Elsevier2007ARChannelSystem::BeforeEndingFrame(int iFrame)
+void Elsevier2007ARChannelSystem::BeforeEndingFrame()
 {
-    Elsevier2007System::BeforeEndingFrame(iFrame);
+    Elsevier2007System::BeforeEndingFrame();
     Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
 }

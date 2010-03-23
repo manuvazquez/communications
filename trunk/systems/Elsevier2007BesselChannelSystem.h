@@ -38,7 +38,7 @@ protected:
     double T; // (s)
 
     virtual void BuildChannel();
-    virtual void BeforeEndingFrame(int iFrame);
+    virtual void BeforeEndingFrame();
 public:
     Elsevier2007BesselChannelSystem();
 

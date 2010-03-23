@@ -50,15 +50,15 @@ public:
     
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence) = 0;
 
-    /**
+    /*!
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
-    * @return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
+    * \return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
     */    
     virtual MatrixXd getDetectedSymbolVectors() = 0;
     
-    /**
+    /*!
      *
-     * @return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
+     * \return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */    
     virtual vector<MatrixXd> getEstimatedChannelMatrices() = 0;
 
