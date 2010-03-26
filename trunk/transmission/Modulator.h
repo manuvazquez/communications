@@ -34,7 +34,7 @@ class Modulator{
 public:
     Modulator();
 
-    static MatrixXd modulate_eigen(const Bits &bits,Alphabet alfabeto);
+    static MatrixXd modulate(const Bits &bits,Alphabet alfabeto);
 };
 
 #endif

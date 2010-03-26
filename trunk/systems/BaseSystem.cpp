@@ -152,7 +152,7 @@ BaseSystem::BaseSystem()
     // ambiguity resolution
     uint *firstPermutation = new uint[N];
     for(int i=0;i<N;i++) firstPermutation[i] = i;
-    permutations = Util::Permutations(firstPermutation,N);
+    permutations = Util::permutations(firstPermutation,N);
     delete[] firstPermutation;
 
     peMatrices.reserve(nFrames);
@@ -230,10 +230,13 @@ void BaseSystem::Simulate()
 #endif
 
         // bits are generated ...
-        Bits bits(N,nBitsGenerated,randomGenerator);        
+        Bits bits(N,nBitsGenerated,randomGenerator);
+
+		// differential modulation
+// 		bits = bits.differentialEncoding();
 
         // ... and then modulated by means of the alphabet
-        MatrixXd symbolsWithoutPreamble = Modulator::modulate_eigen(bits,*alphabet);
+        MatrixXd symbolsWithoutPreamble = Modulator::modulate(bits,*alphabet);
 
         // the preamble is set before the symbols to be transmitted
         if(preamble.size()>0)
@@ -305,8 +308,10 @@ void BaseSystem::Simulate()
                     algorithms[iAlgorithm]->run(observations,noise->variances());
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
+
+// 				detectedSymbols = Demodulator::demodulate(detectedSymbols,*alphabet);
                 
-                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection);
+                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
 				
                 BeforeEndingAlgorithm();
 
@@ -388,7 +393,8 @@ void BaseSystem::OnlyOnce()
 
 void BaseSystem::BeforeEndingAlgorithm()
 {
-    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
+    mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),permutations[_iBestPermutation],_bestPermutationSigns);
+//     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
@@ -504,7 +510,7 @@ void BaseSystem::BeforeEndingFrame()
 #endif
 }
 
-double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask)
+double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask, uint &iBestPermutation, std::vector< int > &bestPermutationSigns)
 {
     if(detectedSymbols.rows() == 0)
         return 0.0;
@@ -526,12 +532,12 @@ double BaseSystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
     Util::print(mask);
 #endif
 
-    uint iBestPermutation = 0;
-    vector<int> thisPermutationSigns(sourceSymbols.rows()),bestPermutationSigns(sourceSymbols.rows());
+    iBestPermutation = 0;
+    vector<int> thisPermutationSigns(sourceSymbols.rows());
+	bestPermutationSigns = vector<int>(sourceSymbols.rows());
 
     // max number of errors
     int minErrors = sourceSymbols.rows()*sourceSymbols.cols();
-//     int minErrors = sourceSymbols.rows()*sourceSymbols.cols()*alphabet->nBitsPerSymbol();
     
     uint nAccountedSymbols = 0;
     uint iInput;

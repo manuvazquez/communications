@@ -64,13 +64,16 @@ public:
     template<class T> static void print(const std::vector<std::vector<T> > &matrix);
     template<class T> static void print(const T* array,int nElements);
     static void shiftUp(VectorXd &v,int n);
-    template<class T> static vector<vector<T> > Permutations(T *array, int nElements);
-    static MatrixXd applyPermutation(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
+    template<class T> static vector<vector<T> > permutations(T *array, int nElements);
+    static MatrixXd applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
+	static MatrixXd applyPermutationOnColumns(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
+	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
     template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> nMax(int n,const VectorXd &v);
     static MatrixXd flipLR(const MatrixXd &A);
     static MatrixXd sign(const MatrixXd &A);
+	static std::vector<uint> computeInversePermutation(const std::vector<uint> &permutation);
 	
 	/*!
 	  it returns the maximum ratio among coefficients of the matrix (in absolute value)

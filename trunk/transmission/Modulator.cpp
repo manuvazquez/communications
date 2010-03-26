@@ -26,7 +26,7 @@ Modulator::Modulator()
 {
 }
 
-MatrixXd Modulator::modulate_eigen(const Bits &bits, Alphabet alphabet)
+MatrixXd Modulator::modulate(const Bits &bits, Alphabet alphabet)
 {
 	if((bits.nBitsPerStream()% alphabet.nBitsPerSymbol())!=0)
 		cout << "Too many bits." << endl;

@@ -66,6 +66,7 @@ public:
     virtual bool performsChannelOrderAPPestimation() const { return false;}
 
     double MSE(const vector<MatrixXd> &channelMatrices);
+	double MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns);
 
     VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int d,const VectorXd &observations,const MatrixXd &symbolVectors);
 

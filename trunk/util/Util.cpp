@@ -351,7 +351,7 @@ void Util::shiftUp(VectorXd &v,int n)
         v(i) = v(i+n);
 }
 
-template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
+template<class T> vector<vector<T> > Util::permutations(T *array, int nElements)
 {
     vector<vector<T> > res;
 
@@ -365,14 +365,14 @@ template<class T> vector<vector<T> > Util::Permutations(T *array, int nElements)
 
     return res;
 }
-template vector<vector<int> > Util::Permutations(int *array, int nElements);
-template vector<vector<uint> > Util::Permutations(uint *array, int nElements);
+template vector<vector<int> > Util::permutations(int *array, int nElements);
+template vector<vector<uint> > Util::permutations(uint *array, int nElements);
 
-MatrixXd Util::applyPermutation(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs)
+MatrixXd Util::applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {
     uint N = symbols.rows();
     if(permutation.size()!=N || signs.size()!=N)
-        throw RuntimeException("Util::ApplyPermutation: length of the received permutation is not N.");
+        throw RuntimeException("Util::applyPermutationOnRows: length of the received permutation is not N.");
 
     MatrixXd res(symbols.rows(),symbols.cols());
     for(uint i=0;i<N;i++)
@@ -382,6 +382,36 @@ MatrixXd Util::applyPermutation(const MatrixXd &symbols,const vector<uint> &perm
     }
     return res;
 }
+
+MatrixXd Util::applyPermutationOnColumns(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs)
+{
+    uint N = symbols.cols();
+    if(permutation.size()!=N || signs.size()!=N)
+        throw RuntimeException("Util::applyPermutationOnColumns: length of the received permutation is not N.");
+
+    MatrixXd res(symbols.rows(),symbols.cols());
+    for(uint i=0;i<N;i++)
+    {
+        res.col(i) = symbols.col(permutation[i]);
+        res.col(i) *= signs[permutation[i]];
+    }
+    return res;
+}
+
+template<class T> vector<T> Util::applyPermutation(const vector<T> &v,const vector<uint> &permutation)
+{
+  if(v.size()!=permutation.size())
+	throw RuntimeException("Util::applyPermutation: the size of the vector to be permuted and that of the permutation doesn't match.");
+  
+  vector<T> res(v.size());
+
+  for(uint i=0;i<v.size();i++)
+	res[i] = v[permutation[i]];
+
+  return res;
+}
+template vector<uint> Util::applyPermutation(const vector<uint> &v,const vector<uint> &permutation);
+template vector<int> Util::applyPermutation(const vector<int> &v,const vector<uint> &permutation);
 
 template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
 {
@@ -557,4 +587,18 @@ void Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<
 					for(j=0;j<matrices[n][m][l][k].cols();j++)
 						for(i=0;i<matrices[n][m][l][k].rows();i++)
 							f << " " << matrices[n][m][l][k](i,j) << endl;
+}
+
+std::vector<uint> Util::computeInversePermutation(const std::vector<uint> &permutation)
+{
+  std::vector<uint> res(permutation.size());
+
+  uint i,j;
+  
+  for(i=0;i<res.size();i++)
+	for(j=0;j<permutation.size();j++)
+	  if(permutation[j]==i)
+		res[i] = j;
+
+  return res;
 }

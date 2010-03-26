@@ -48,23 +48,35 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 #endif
 	
     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-    try {
-        for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
-		{
-            // the square error committed by the estimated matrix is normalized by the squared Frobenius norm
-            // (i.e. the sum of all the elements squared) of the real channel matrix
+	for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+	{
+		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
+		// (i.e. the sum of all the elements squared) of the real channel matrix
 #ifdef DEBUG
-			cout << "comparing" << endl << channelMatrices.at(i-windowStart) << endl << "and" << endl << estimatedChannelMatrices.at(i) << endl;
-			cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0) << endl;
+		cout << "comparing" << endl << channelMatrices.at(i-windowStart) << endl << "and" << endl << estimatedChannelMatrices.at(i) << endl;
+		cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0) << endl;
 #endif
-            mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0);
-		}
-    } catch (IncompatibleOperandsException) {
-        return 0.0;
-    }
+		mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0);
+	}
 
     return mse/(double)windowSize;
 }
+
+double Algorithm::MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns)
+{
+  vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
+
+  // signs are permuted according to the best permutation WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES. We have to permute them according to the best permutation with respect to the real channel matrices
+  vector<int> realChannelMatricesSignsPermutation = Util::applyPermutation(Util::applyPermutation(bestPermutationSigns,realChannelMatricesPermutation),realChannelMatricesPermutation);
+
+  vector<MatrixXd> permutedChannelMatrices(channelMatrices.size());
+  
+  for(uint i=0;i<channelMatrices.size();i++)
+	permutedChannelMatrices[i] = Util::applyPermutationOnColumns(channelMatrices[i],realChannelMatricesPermutation,realChannelMatricesSignsPermutation);
+
+  return MSE(permutedChannelMatrices);
+}
+
 
 MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d)
 {
