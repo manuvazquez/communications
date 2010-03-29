@@ -11,10 +11,7 @@ Alphabet::Alphabet(vector<vector<tBit> > bitsSequences,vector<tSymbol> symbols):
 {
     // if the number of bits sequences and that of the symbols don't match...
     if(bitsSequences.size()!=symbols.size())
-    {
-			throw RuntimeException("Alphabet::Alphabet: number of bit sequences is different from that of symbols.");
-
-    }
+	  throw RuntimeException("Alphabet::Alphabet: number of bit sequences is different from that of symbols.");
 
     computeMeanAndVariance();
 }

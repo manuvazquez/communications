@@ -85,7 +85,7 @@ protected:
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     int nSmoothingSymbolsVectors;
     
-    vector<vector<bool> > isSymbolAccountedForDetection;
+    vector<vector<bool> > isSymbolAccountedForDetection,isBitAccountedForDetection;
 
     std::vector<std::vector<uint> > permutations;
 	uint _iBestPermutation;
@@ -155,6 +155,8 @@ protected:
 	  \return the computed probability
 	*/
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+
+	virtual double computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 
 public:
     BaseSystem();

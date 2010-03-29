@@ -32,7 +32,9 @@
 
 class Demodulator{
 public:
-    static Bits demodulate(const MatrixXd &simbolos,Alphabet alfabeto);   
+    static Bits demodulate(const MatrixXd &symbols,Alphabet alphabet);
+	static Bits demodulate(const MatrixXd &symbols,const Alphabet &alphabet,const std::vector<std::vector<bool> > &mask);
+	static std::vector<std::vector<bool> > demodulate(const std::vector<std::vector<bool> > &mask,const Alphabet &alphabet);
 };
 
 #endif

@@ -45,6 +45,7 @@
 #define LOAD_SEEDS
 
 // #define DEBUG
+// #define DEBUG2
 
 using namespace std;
 
@@ -73,6 +74,7 @@ BaseSystem::BaseSystem()
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
     L=8,N=3,frameLength=300;
+//     L=8,N=3,frameLength=3;
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	
     m = 1;
@@ -230,13 +232,13 @@ void BaseSystem::Simulate()
 #endif
 
         // bits are generated ...
-        Bits bits(N,nBitsGenerated,randomGenerator);
+        Bits generatedBits(N,nBitsGenerated,randomGenerator);
 
 		// differential modulation
 // 		bits = bits.differentialEncoding();
 
         // ... and then modulated by means of the alphabet
-        MatrixXd symbolsWithoutPreamble = Modulator::modulate(bits,*alphabet);
+        MatrixXd symbolsWithoutPreamble = Modulator::modulate(generatedBits,*alphabet);
 
         // the preamble is set before the symbols to be transmitted
         if(preamble.size()>0)
@@ -279,7 +281,7 @@ void BaseSystem::Simulate()
             // noise SNR is set
             noise->setSNR(SNRs[iSNR],alphabet->variance());
 
-#ifdef DEBUG
+#ifdef PRINT_NOISE
 			cout << "noise is" << endl;
 			noise->print();
 			cout << endl;
@@ -309,10 +311,41 @@ void BaseSystem::Simulate()
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
 
-// 				detectedSymbols = Demodulator::demodulate(detectedSymbols,*alphabet);
-                
-                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+				Bits detectedBits = Demodulator::demodulate(detectedSymbols,*alphabet,isSymbolAccountedForDetection);
+// 				cout << detectedBits.nStreams() << " x " << detectedBits.nBitsPerStream() << endl;
+				Bits sourceBits = Demodulator::demodulate(symbols.block(0,preambleLength,N,frameLength),*alphabet,isSymbolAccountedForDetection);
+
+#ifdef DEBUG
+				cout << "isSymbolAccountedForDetection" << endl;
+				Util::print(isSymbolAccountedForDetection);
+				cout << endl;
+				cout << "isBitAccountedForDetection" << endl;
+				Util::print(isBitAccountedForDetection);
+				cout << endl;				
+				cout << "sourceBits" << endl;
+				sourceBits.print();
+				cout << endl;
+				cout << "detectedBits" << endl;
+				detectedBits.print();
+				cout << endl;
+				cout << "source symbols" << endl << symbols.block(0,preambleLength,N,frameLength) << endl;
+				cout << "detected symbols" << endl << detectedSymbols << endl;
+#endif
+				// from the symbols which shouldn't be accounted for detection we obtain the bits that shouldn't
+				isBitAccountedForDetection = Demodulator::demodulate(isSymbolAccountedForDetection,*alphabet);
 				
+// 				pe = computeBER(sourceBits,detectedBits,isBitAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+				
+                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+
+#ifdef DEBUG
+				cout << "peBER = " << pe << endl << "peSER = " << peSER << endl;
+				if (pe!=peSER)
+				{
+				  cout << "son distintos" << endl;
+				  getchar();
+				}
+#endif
                 BeforeEndingAlgorithm();
 
                 delete algorithms[iAlgorithm];
@@ -406,8 +439,6 @@ void BaseSystem::BeforeEndingAlgorithm()
   // we get the channel matrices estimated by this algorithm
   vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
 
-//   cout << "channel->channelCoefficientsMatrixRows() = " << channel->channelCoefficientsMatrixRows() << " channel->channelCoefficientsMatrixCols() = " << channel->channelCoefficientsMatrixCols() << endl;
-  
   // if none, that meaning the algorithm does not performa channel matrix estimation,...
   if(thisAlgorithmEstimatedChannelMatrices.size()==0)
 	// we generate a sequence of matrices
@@ -416,10 +447,6 @@ void BaseSystem::BeforeEndingAlgorithm()
 	if(thisAlgorithmEstimatedChannelMatrices.size()!=iLastSymbolVectorToBeDetected-preambleLength)
 	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
 
-//   cout << "iFrame = " << iFrame << " iAlgorithm = " << iAlgorithm << endl;
-//   for(int venga=0;venga<thisAlgorithmEstimatedChannelMatrices.size();venga++)
-// 	cout << "matriz " << venga << endl << thisAlgorithmEstimatedChannelMatrices[venga] << endl;
-	
   presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
@@ -609,5 +636,123 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     
     nAccountedSymbols /= permutations.size();
     
+    return (double)minErrors/(double)(nAccountedSymbols);
+}
+
+double BaseSystem::computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
+{
+    if(detectedBits.nStreams() == 0)
+	{
+	  cout << "no bits detected" << endl;
+      return 0.0;
+	}
+
+    if(sourceBits.nStreams()!= detectedBits.nStreams() || detectedBits.nStreams()!= mask.size())
+    {
+        cout << "sourceSymbols.nStreams() = " << sourceBits.nStreams() << " detectedSymbols.nStreams() = " << detectedBits.nStreams() << " mask.size() = " << mask.size() << endl;
+        throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
+    }
+
+    if(sourceBits.nBitsPerStream()!= detectedBits.nBitsPerStream() || detectedBits.nBitsPerStream()!= mask[0].size())
+    {
+        cout << "sourceSymbols.nBitsPerStream() = " << sourceBits.nBitsPerStream() << " detectedSymbols.nBitsPerStream() = " << detectedBits.nBitsPerStream() << " mask[0].size() = " << mask[0].size() << endl;
+      throw RuntimeException("BaseSystem::computeSER: matrix column numbers differ.");
+    }
+
+#ifdef PRINT_COMPUTE_SER_INFO
+    cout << "source symbols" << endl << sourceSymbols << endl << endl << "detected symbols" << endl << detectedSymbols << endl << endl << "mask" << endl;
+    Util::print(mask);
+#endif
+
+    iBestPermutation = 0;
+    vector<int> thisPermutationSigns(sourceBits.nStreams());
+	bestPermutationSigns = vector<int>(sourceBits.nStreams());
+
+    // max number of errors
+    int minErrors = sourceBits.nStreams()*sourceBits.nBitsPerStream();
+
+    uint nAccountedSymbols = 0;
+    uint iInput;
+
+    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    {
+        int permutationErrors = 0;
+
+#ifdef DEBUG2
+		cout << "iPermut = " << iPermut << endl;
+		Util::print(permutations[iPermut]);
+		cout << endl << "=======" << endl;
+#endif
+
+        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        {
+
+#ifdef DEBUG2
+			cout << "iStream = " << iStream << endl;
+#endif
+		  
+            iInput = permutations[iPermut][iStream];
+
+            int errorsInverting=0,errorsWithoutInverting=0;
+
+            for(uint iTime=0;iTime<static_cast<uint> (sourceBits.nBitsPerStream());iTime++)
+            {
+                // if this symbol is not accounted for
+                if(!mask[iStream][iTime])
+                    continue;
+
+                // if the symbols differ, an error happened...
+                errorsWithoutInverting += (sourceBits(iStream,iTime) != detectedBits(iInput,iTime));
+
+                // ...unless the symbol sign needs to be switched because of the ambiguity
+                errorsInverting += sourceBits(iStream,iTime) != Bits::oppositeBit(detectedBits(iInput,iTime));
+
+#ifdef DEBUG2
+				cout << "sourceBits(iStream,iTime) = " << sourceBits(iStream,iTime) << endl << " detectedBits(iInput,iTime)) = " << detectedBits(iInput,iTime) << endl << " Bits::oppositeBit(detectedBits(iInput,iTime)) = " << Bits::oppositeBit(detectedBits(iInput,iTime)) << endl;
+#endif
+
+                nAccountedSymbols++;
+            }
+
+#ifdef DEBUG2
+			cout << "errorsWithoutInverting = " << errorsWithoutInverting << endl << "errorsInverting = " << errorsInverting << endl;
+#endif
+
+            if(errorsWithoutInverting<errorsInverting)
+            {
+                permutationErrors += errorsWithoutInverting;
+                thisPermutationSigns[iStream] = 1;
+            }
+            else
+            {
+                permutationErrors += errorsInverting;
+                thisPermutationSigns[iStream] = -1;
+            }
+        } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+
+        if(permutationErrors<minErrors)
+        {
+            minErrors = permutationErrors;
+            iBestPermutation = iPermut;
+			bestPermutationSigns = thisPermutationSigns;
+        }
+    }
+
+#ifdef PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
+	cout << "BaseSystem::computeBER: best permutation is " << iBestPermutation << endl;
+	Util::print(permutations[iBestPermutation]);
+	cout << endl << "its signs" << endl;
+	Util::print(bestPermutationSigns);
+	cout << endl;
+#endif
+
+	assert(nAccountedSymbols % permutations.size() == 0);
+
+    nAccountedSymbols /= permutations.size();
+
+#ifdef DEBUG2
+	cout << "---------------------------" << endl;
+#endif
+	
     return (double)minErrors/(double)(nAccountedSymbols);
 }

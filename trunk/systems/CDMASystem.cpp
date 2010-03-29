@@ -142,6 +142,11 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	vector<uint> nuevaPerm = Util::applyPermutation(perm,perm);
 // 	Util::print(Util::applyPermutation(Util::applyPermutation(perm,perm),perm));
 // 	Util::print(Util::computeInversePermutation(perm));
+
+// 	vector<vector<bool> > bitsMask = Demodulator::demodulate(isSymbolAccountedForDetection,*alphabet);
+// 	cout << "la mascara de bits" << endl;
+// 	Util::print(bitsMask);
+// 	cout << endl;
 }
 
 
