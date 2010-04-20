@@ -84,6 +84,8 @@ public:
 	*/
 	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
 	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+	
   private:
 	bool isChannelOk(const MIMOChannel * const channel);
 };

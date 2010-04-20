@@ -37,8 +37,8 @@
 // #define PRINT_INFO
 
 CDMASystem::CDMASystem(): SMCSystem()
-// ,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(0.5)
-,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
+,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(0.5)
+// ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
 ,usersActivityPdfs(N,UsersActivityDistribution(userPersistenceProb,newActiveUserProb,userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
@@ -146,6 +146,32 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	vector<vector<bool> > bitsMask = Demodulator::demodulate(isSymbolAccountedForDetection,*alphabet);
 // 	cout << "la mascara de bits" << endl;
 // 	Util::print(bitsMask);
+// 	cout << endl;
+
+
+// 	std::vector<std::vector<uint> > prueba(3,std::vector<uint>(4));
+// 	
+// 	prueba[0][0] = 1;
+// 	prueba[0][1] = 2;
+// 	prueba[0][2] = 3;
+// 	prueba[0][3] = 4;
+// 	prueba[1][0] = 5;
+// 	prueba[1][1] = 6;
+// 	prueba[1][2] = 7;
+// 	prueba[1][3] = 8;
+// 	prueba[2][0] = 9;
+// 	prueba[2][1] = 10;
+// 	prueba[2][2] = 11;
+// 	prueba[2][3] = 12;
+// 	
+// 	cout << "original" << endl;
+// 	Util::print(prueba);
+// 	cout << endl;
+// 	
+// 	std::vector<std::vector<uint> > sumatriz = Util::block(prueba,1,2,2,2);
+// 	
+// 	cout << "sumatriz" << endl;
+// 	Util::print(sumatriz);
 // 	cout << endl;
 }
 
@@ -390,4 +416,49 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
   }
   
   return true;
+}
+
+double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
+{
+  MatrixXd lastSignsMatrix = Util::sign(channel->at(preambleLength));
+  uint iLastSignChange = preambleLength;
+  
+  double res = 0.0;
+  
+  uint iChannelMatrix;
+  
+  for(iChannelMatrix=preambleLength+1;iChannelMatrix<preambleLength+frameLength;iChannelMatrix++)
+  {
+	// check if any coefficient changes sign
+	if(Util::sign(channel->at(iChannelMatrix))!=lastSignsMatrix)
+	{
+// 	  cout << COLOR_PINK << "Coefficients change sign...channel is NOT ok!!" << COLOR_NORMAL << endl;
+// 	  cout << "iChannelMatrix = " << iChannelMatrix << endl;
+	  
+	  res += (iChannelMatrix-iLastSignChange)*BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 iBestPermutation,bestPermutationSigns);
+							 
+	  lastSignsMatrix = Util::sign(channel->at(iChannelMatrix));
+	  iLastSignChange = iChannelMatrix;
+
+// 	  cout << "frame is checked from " << iLastSignChange << " during " << iChannelMatrix-iLastSignChange << endl;
+// 	  getchar();
+	}
+  }
+  
+//   if(iLastSignChange!=(preambleLength+frameLength-1))
+//   {
+	res += (iChannelMatrix-iLastSignChange)*BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
+							 iBestPermutation,bestPermutationSigns);
+
+// 	cout << "frame is checked from " << iLastSignChange << " during " << iChannelMatrix-iLastSignChange << endl;
+//   }
+  
+  res /= frameLength;
+  
+  return res;
 }

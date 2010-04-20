@@ -66,9 +66,19 @@ public:
 	
 	//! It returns the maximum memory of the channel
     virtual int effectiveMemory() const = 0;
-    
+
+	//! It returns a matrix representing the channel at a given time instant
+	/*!
+		\param n time instant
+		\return matrix that represents the channel at time \ref n
+	*/
     virtual MatrixXd at(int n) const = 0;
     
+	//! It returns the channel matrix at a given time instant, as used in the signal model (it could be multiplied by a codes matrix in CDMA, e.g.)
+	/*!
+		\param n time instant
+		\return channel matrix at time \ref n
+	*/
     virtual MatrixXd getTransmissionMatrix(const int n) const { return at(n);}
     
     MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;

@@ -77,10 +77,21 @@ public:
 	
 	/*!
 	  it returns the maximum ratio among coefficients of the matrix (in absolute value)
-	  \param the matrix to be analyzed
+	  \param A the matrix to be analyzed
 	  \return the ratio
 	*/
 	static double maxCoefficientsRatio(const MatrixXd &A);
+
+	/*!
+	  it returns a submatrix of the received matrix
+	  \param matrix the original matrix
+	  \param iStartRow the first row kept
+	  \param iStartColumn the first column kept
+	  \param nRows number of rows kept
+	  \param nCols number of columns kept
+	  \return the specified submatrix
+	*/
+	template<class T> static std::vector<std::vector<T> > block(const std::vector<std::vector<T> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
 };
 
 #endif

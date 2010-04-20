@@ -41,8 +41,8 @@
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
 
-#define SAVE_SEEDS
-#define LOAD_SEEDS
+// #define SAVE_SEEDS
+// #define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -69,11 +69,12 @@ BaseSystem::BaseSystem()
 //     nSmoothingSymbolsVectors = 10;
     
 // 	nFrames = 2000;
-	nFrames = 10;
+// 	nFrames = 10;
 // 	nFrames = 1;
-// 	nFrames = 200;
+	nFrames = 200;
 //     L=3,N=2,frameLength=300;
-    L=8,N=3,frameLength=300;
+//     L=8,N=3,frameLength=300;
+    L=8,N=3,frameLength=1000;
 //     L=8,N=3,frameLength=3;
 //     L=7,N=1,frameLength=10;
 //     L=7,N=3,frameLength=300;	

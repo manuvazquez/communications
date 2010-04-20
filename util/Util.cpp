@@ -387,7 +387,10 @@ MatrixXd Util::applyPermutationOnColumns(const MatrixXd &symbols,const vector<ui
 {
     uint N = symbols.cols();
     if(permutation.size()!=N || signs.size()!=N)
-        throw RuntimeException("Util::applyPermutationOnColumns: length of the received permutation is not N.");
+	{
+	  cout << "permutation.size() = " << permutation.size() << " signs.size() = " << signs.size() << " N = " << N << endl;
+	  throw RuntimeException("Util::applyPermutationOnColumns: length of the received permutation is not N.");
+	}
 
     MatrixXd res(symbols.rows(),symbols.cols());
     for(uint i=0;i<N;i++)
@@ -602,3 +605,19 @@ std::vector<uint> Util::computeInversePermutation(const std::vector<uint> &permu
 
   return res;
 }
+
+template<class T> std::vector<std::vector<T> > Util::block(const std::vector<std::vector<T> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols)
+{
+  if(iStartRow+nRows>matrix.size() || iStartColumn+nCols>matrix[0].size())
+	throw RuntimeException("Util::block: not so many rows or columns.");
+  
+  std::vector<std::vector<T> > res(nRows,std::vector<T>(nCols));
+  
+  for(uint iRow=0;iRow<nRows;iRow++)
+	for(uint iCol=0;iCol<nCols;iCol++)
+	  res[iRow][iCol] = matrix[iRow+iStartRow][iCol+iStartColumn];
+	
+  return res;
+}
+template std::vector<std::vector<bool> > Util::block(const std::vector<std::vector<bool> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
+template std::vector<std::vector<uint> > Util::block(const std::vector<std::vector<uint> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
