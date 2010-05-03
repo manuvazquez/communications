@@ -19,18 +19,9 @@
  ***************************************************************************/
 
 // the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#define RANDOM_SEED
 
 // wether the estimated channel matrices are kept or discarded
 // #define DO_NOT_STORE_CHANNEL_MATRICES
 
 #define ALGORITHM_NAME_MAX_LENGTH 80
-
-
-#define COLOR_NORMAL "\033[0m"
-#define COLOR_MAROON "\033[0;31m"
-#define COLOR_LIGHT_PINK "\033[1;31m"
-#define COLOR_GREEN "\033[1;32m"
-#define COLOR_PINK "\033[1;35m"
-#define COLOR_WHITE "\033[1;37m"
-#define COLOR_LIGHT_BLUE "\033[1;36m"

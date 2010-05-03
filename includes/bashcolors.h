@@ -1,0 +1,7 @@
+#define COLOR_NORMAL "\033[0m"
+#define COLOR_MAROON "\033[0;31m"
+#define COLOR_LIGHT_PINK "\033[1;31m"
+#define COLOR_GREEN "\033[1;32m"
+#define COLOR_PINK "\033[1;35m"
+#define COLOR_WHITE "\033[1;37m"
+#define COLOR_LIGHT_BLUE "\033[1;36m"

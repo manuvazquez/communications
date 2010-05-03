@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "Util.h"
 
+#include <bashcolors.h>
+
 using namespace std;
 
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
@@ -162,7 +164,7 @@ template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices
 {
     if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
     {
-        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        cout << "Util::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
         return;
     }
 
@@ -181,7 +183,7 @@ void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > mat
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
     {
-        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        cout << "Util::matricesVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
         return;
     }
 
@@ -200,7 +202,7 @@ void Util::matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<M
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
     {
-        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        cout << "Util::matricesVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
         return;
     }
 
@@ -561,7 +563,7 @@ void Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
     {
-        cout << "Matrix " << name << " would be an empty matrix." << endl;
+        cout << "Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
 		cout << "dimensions are:" << endl;
 		cout << matrices.size() << endl;
 		cout << matrices[0].size() << endl;

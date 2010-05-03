@@ -31,6 +31,8 @@
 
 #include <math.h>
 
+#include <bashcolors.h>
+
 #define PRINT_CODES_INFO
 // #define PRINT_ACTIVITY_SAMPLING
 
