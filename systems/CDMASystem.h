@@ -64,6 +64,10 @@ protected:
     bool adjustSurvivorsFromParticlesNumber;
     bool adjustParticlesNumberFromSurvivors;
 	
+	// needed for solving ambiguity when computing MSE
+	std::vector<std::vector<int> > piecesBestPermutationSigns;
+	std::vector<uint> piecesBestPermuationIndexes;
+	
     virtual void AddAlgorithms();
 	virtual void BeforeEndingAlgorithm();
     virtual void BeforeEndingFrame();
@@ -84,7 +88,9 @@ public:
 	*/
 	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
 	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+	
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 	
   private:
 	bool isChannelOk(const MIMOChannel * const channel);

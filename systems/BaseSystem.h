@@ -74,18 +74,27 @@ protected:
     // SNRs to be processed
     std::vector<int> SNRs;
 
-    // BER and MSE computing
-    int MSEwindowStart,symbolsDetectionWindowStart;
+    //! when SER computing starts (with respect to the beginning of the frame length)
+    int symbolsDetectionWindowStart;
+	
+	//! when MSE computing starts (with respect to the beginning of the frame length)
+	int MSEwindowStart;
 
     // a vector that will contain the names of the algorithms
     std::vector<std::string> algorithmsNames;
 
     MatrixXd preamble;
 
-    // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
+    //! algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     int nSmoothingSymbolsVectors;
     
-    vector<vector<bool> > isSymbolAccountedForDetection,isBitAccountedForDetection;
+	/*! 
+	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol
+	  Hence,it doesn't include preamble symbols or smoothing symbols.
+	*/
+    vector<vector<bool> > isSymbolAccountedForDetection;
+    
+    vector<vector<bool> > isBitAccountedForDetection;
 
     std::vector<std::vector<uint> > permutations;
 	uint _iBestPermutation;
@@ -145,7 +154,7 @@ protected:
      */
     virtual void OnlyOnce();
 
-	//! It computes de symbol error rate
+	//! It computes de Symbol Error Rate
 	/*!
 	  \param sourceSymbols the sequence of symbols actually transmitted
 	  \param detectedSymbols the sequence of symbols detected
@@ -156,7 +165,17 @@ protected:
 	*/
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	
-	virtual double computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+// 	virtual double computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+
+	//! It computes de Mean Square Error
+	/*!
+	  \param realChannelMatrices the sequence of actual channel matrices used during the transmission
+	  \param detectedChannelMatrices the detected channel matrices
+	  \return the computed MSE
+	*/
+	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
+	
+	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
 
 public:
     BaseSystem();

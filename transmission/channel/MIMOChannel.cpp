@@ -21,6 +21,9 @@
 
 // #define DEBUG
 
+// so that eigen doesn't complain about A!=B matrix operations (it's been told that it's a bug...)
+#include<Eigen/Array>
+
 MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {
 }
@@ -79,4 +82,27 @@ vector<MatrixXd> MIMOChannel::range(int a,int b)
         res[i] = at(a+i);
 
     return res;
+}
+
+std::vector<uint> MIMOChannel::getInputsZeroCrossings(uint iFrom, uint length) const
+{
+  MatrixXd lastSignsMatrix = Util::sign(at(iFrom));
+  
+  std::vector<uint> res;
+  res.push_back(iFrom);
+  
+  uint iChannelMatrix;
+  
+  for(iChannelMatrix=iFrom+1;iChannelMatrix<iFrom+length;iChannelMatrix++)
+  {
+	if(Util::sign(at(iChannelMatrix))!=lastSignsMatrix)
+	{
+	  lastSignsMatrix = Util::sign(at(iChannelMatrix));
+	  res.push_back(iChannelMatrix);
+	}
+  }
+
+  res.push_back(iChannelMatrix);
+
+  return res;
 }

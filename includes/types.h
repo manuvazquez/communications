@@ -9,6 +9,4 @@ typedef unsigned int uint;
 
 USING_PART_OF_NAMESPACE_EIGEN
 
-// typedef Matrix< uint32_t , Eigen::Dynamic , Eigen::Dynamic > MatrixXli;
-
 #endif

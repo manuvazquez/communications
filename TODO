@@ -43,3 +43,4 @@
 - comprobar que el PSP recibe un KalmanEstimator y el PSP con a priori un CDMAKalmanEstimator
 - CDMAKalmanEstimator
   - lastEstimatedChannelMatrix_eigen y otras: refactorizar código común
+- metodo que indique que algoritmos hacen estimación de canal y usarlo

@@ -84,6 +84,13 @@ public:
     MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
     
     vector<MatrixXd> range(int a,int b);
+    
+	//! It returns the instants where the coefficients corresponding to any of the inputs cross zero (i.e., its column changes sign)
+	/*!
+		\return a vector with the time instants where the sign of the coefficients corresponding to an input changes.
+		It always includes the initial and final instants, so that the instants define a partition of the total length.
+	*/
+    std::vector<uint> getInputsZeroCrossings(uint iFrom, uint length) const;
 };
 
 #endif
