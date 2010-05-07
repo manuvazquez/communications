@@ -43,7 +43,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-#define LOAD_SEEDS
+// #define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -204,21 +204,21 @@ BaseSystem::BaseSystem()
     channel = NULL;
     powerProfile = NULL;
     
-#define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
-    
-    // data saving
-    xmlFile.open("data.xml",ofstream::trunc);
-    xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
-    xmlFile << "<com>" << endl;
-    xmlFile << "  <parameters>" << endl;
-    xmlFile << "    <nInputs type=\"scalar\">" << N << "</nInputs>" << endl;
-    xmlFile << "    <nOutputs type=\"scalar\">" << L << "</nOutputs>" << endl;
-    xmlFile << "    <frameLength type=\"scalar\">" << frameLength << "</frameLength>" << endl;
-    xmlFile << "    <channelOrder type=\"scalar\">" << m << "</channelOrder>" << endl;
-    xmlFile << "    <smoothingLag type=\"scalar\">" << d << "</smoothingLag>" << endl;
-    xmlFile << "    <trainingSeqLength type=\"scalar\">" << trainSeqLength << "</trainingSeqLength>" << endl;
-    xmlFile << "    <preambleLength type=\"scalar\">" << preambleLength << "</preambleLength>" << endl;
-    xmlFile << "  </parameters>" << endl;
+// #define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
+//     
+//     // data parameters saving
+//     xmlFile.open("data.xml",ofstream::trunc);
+//     xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
+//     xmlFile << "<com>" << endl;
+//     xmlFile << "  <parameters>" << endl;
+//     xmlFile << "    <nInputs type=\"scalar\">" << N << "</nInputs>" << endl;
+//     xmlFile << "    <nOutputs type=\"scalar\">" << L << "</nOutputs>" << endl;
+//     xmlFile << "    <frameLength type=\"scalar\">" << frameLength << "</frameLength>" << endl;
+//     xmlFile << "    <channelOrder type=\"scalar\">" << m << "</channelOrder>" << endl;
+//     xmlFile << "    <smoothingLag type=\"scalar\">" << d << "</smoothingLag>" << endl;
+//     xmlFile << "    <trainingSeqLength type=\"scalar\">" << trainSeqLength << "</trainingSeqLength>" << endl;
+//     xmlFile << "    <preambleLength type=\"scalar\">" << preambleLength << "</preambleLength>" << endl;
+//     xmlFile << "  </parameters>" << endl;
 }
 
 BaseSystem::~BaseSystem()
@@ -327,41 +327,8 @@ void BaseSystem::Simulate()
 
                 detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
 
-				Bits detectedBits = Demodulator::demodulate(detectedSymbols,*alphabet,isSymbolAccountedForDetection);
-// 				cout << detectedBits.nStreams() << " x " << detectedBits.nBitsPerStream() << endl;
-				Bits sourceBits = Demodulator::demodulate(symbols.block(0,preambleLength,N,frameLength),*alphabet,isSymbolAccountedForDetection);
-
-#ifdef DEBUG
-				cout << "isSymbolAccountedForDetection" << endl;
-				Util::print(isSymbolAccountedForDetection);
-				cout << endl;
-				cout << "isBitAccountedForDetection" << endl;
-				Util::print(isBitAccountedForDetection);
-				cout << endl;				
-				cout << "sourceBits" << endl;
-				sourceBits.print();
-				cout << endl;
-				cout << "detectedBits" << endl;
-				detectedBits.print();
-				cout << endl;
-				cout << "source symbols" << endl << symbols.block(0,preambleLength,N,frameLength) << endl;
-				cout << "detected symbols" << endl << detectedSymbols << endl;
-#endif
-				// from the symbols which shouldn't be accounted for detection we obtain the bits that shouldn't
-				isBitAccountedForDetection = Demodulator::demodulate(isSymbolAccountedForDetection,*alphabet);
-				
-// 				pe = computeBER(sourceBits,detectedBits,isBitAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
-				
                 pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
 
-#ifdef DEBUG
-				cout << "peBER = " << pe << endl << "peSER = " << peSER << endl;
-				if (pe!=peSER)
-				{
-				  cout << "son distintos" << endl;
-				  getchar();
-				}
-#endif
                 BeforeEndingAlgorithm();
 
                 delete algorithms[iAlgorithm];
@@ -434,8 +401,7 @@ void BaseSystem::OnlyOnce()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	// channel estimations
-//   channelEstimations = std::vector<std::vector<std::vector<std::vector<MatrixXd> > > >(nFrames,std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size())));
+  // channel estimations
   presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size()));
 #endif
 }
@@ -444,8 +410,6 @@ void BaseSystem::BeforeEndingAlgorithm()
 {
 //     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),permutations[_iBestPermutation],_bestPermutationSigns);
 //     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
-	
-// 	double mse2;
 	
 	// the channel matrices estimated by the algorithm are stored
 	std::vector<MatrixXd> estimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
@@ -459,14 +423,10 @@ void BaseSystem::BeforeEndingAlgorithm()
 	  mse = computeMSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
 	}else
 	{
-// 	  cout << "no channel estimation" << endl;
-	  
 	  // it should be zero
 	  mse = computeMSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
 	}
 	
-// 	cout << "mse = " << mse << " mse2 = " << mse2 << endl;
-
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)
@@ -588,13 +548,13 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
     {
         cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-        throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
+        throw RuntimeException("BaseSystem::computeSER: matrix row numbers differ.");
     }
 
     if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
     {
         cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
-      throw RuntimeException("TransmissionUtil::computeSER: matrix column numbers differ.");
+      throw RuntimeException("BaseSystem::computeSER: matrix column numbers differ.");
     }
         
 #ifdef PRINT_COMPUTE_SER_INFO
@@ -686,124 +646,6 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
       return (double)minErrors/(double)(nAccountedSymbols);
 }
 
-// double BaseSystem::computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
-// {
-//     if(detectedBits.nStreams() == 0)
-// 	{
-// 	  cout << "no bits detected" << endl;
-//       return 0.0;
-// 	}
-// 
-//     if(sourceBits.nStreams()!= detectedBits.nStreams() || detectedBits.nStreams()!= mask.size())
-//     {
-//         cout << "sourceSymbols.nStreams() = " << sourceBits.nStreams() << " detectedSymbols.nStreams() = " << detectedBits.nStreams() << " mask.size() = " << mask.size() << endl;
-//         throw RuntimeException("TransmissionUtil::computeSER: matrix row numbers differ.");
-//     }
-// 
-//     if(sourceBits.nBitsPerStream()!= detectedBits.nBitsPerStream() || detectedBits.nBitsPerStream()!= mask[0].size())
-//     {
-//         cout << "sourceSymbols.nBitsPerStream() = " << sourceBits.nBitsPerStream() << " detectedSymbols.nBitsPerStream() = " << detectedBits.nBitsPerStream() << " mask[0].size() = " << mask[0].size() << endl;
-//       throw RuntimeException("BaseSystem::computeSER: matrix column numbers differ.");
-//     }
-// 
-// #ifdef PRINT_COMPUTE_SER_INFO
-//     cout << "source symbols" << endl << sourceSymbols << endl << endl << "detected symbols" << endl << detectedSymbols << endl << endl << "mask" << endl;
-//     Util::print(mask);
-// #endif
-// 
-//     iBestPermutation = 0;
-//     vector<int> thisPermutationSigns(sourceBits.nStreams());
-// 	bestPermutationSigns = vector<int>(sourceBits.nStreams());
-// 
-//     // max number of errors
-//     int minErrors = sourceBits.nStreams()*sourceBits.nBitsPerStream();
-// 
-//     uint nAccountedSymbols = 0;
-//     uint iInput;
-// 
-//     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
-//     {
-//         int permutationErrors = 0;
-// 
-// #ifdef DEBUG2
-// 		cout << "iPermut = " << iPermut << endl;
-// 		Util::print(permutations[iPermut]);
-// 		cout << endl << "=======" << endl;
-// #endif
-// 
-//         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-//         {
-// 
-// #ifdef DEBUG2
-// 			cout << "iStream = " << iStream << endl;
-// #endif
-// 		  
-//             iInput = permutations[iPermut][iStream];
-// 
-//             int errorsInverting=0,errorsWithoutInverting=0;
-// 
-//             for(uint iTime=0;iTime<static_cast<uint> (sourceBits.nBitsPerStream());iTime++)
-//             {
-//                 // if this symbol is not accounted for
-//                 if(!mask[iStream][iTime])
-//                     continue;
-// 
-//                 // if the symbols differ, an error happened...
-//                 errorsWithoutInverting += (sourceBits(iStream,iTime) != detectedBits(iInput,iTime));
-// 
-//                 // ...unless the symbol sign needs to be switched because of the ambiguity
-//                 errorsInverting += sourceBits(iStream,iTime) != Bits::oppositeBit(detectedBits(iInput,iTime));
-// 
-// #ifdef DEBUG2
-// 				cout << "sourceBits(iStream,iTime) = " << sourceBits(iStream,iTime) << endl << " detectedBits(iInput,iTime)) = " << detectedBits(iInput,iTime) << endl << " Bits::oppositeBit(detectedBits(iInput,iTime)) = " << Bits::oppositeBit(detectedBits(iInput,iTime)) << endl;
-// #endif
-// 
-//                 nAccountedSymbols++;
-//             }
-// 
-// #ifdef DEBUG2
-// 			cout << "errorsWithoutInverting = " << errorsWithoutInverting << endl << "errorsInverting = " << errorsInverting << endl;
-// #endif
-// 
-//             if(errorsWithoutInverting<errorsInverting)
-//             {
-//                 permutationErrors += errorsWithoutInverting;
-//                 thisPermutationSigns[iStream] = 1;
-//             }
-//             else
-//             {
-//                 permutationErrors += errorsInverting;
-//                 thisPermutationSigns[iStream] = -1;
-//             }
-//         } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-// 
-//         if(permutationErrors<minErrors)
-//         {
-//             minErrors = permutationErrors;
-//             iBestPermutation = iPermut;
-// 			bestPermutationSigns = thisPermutationSigns;
-//         }
-//     }
-// 
-// #ifdef PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
-// 	cout << "BaseSystem::computeBER: best permutation is " << iBestPermutation << endl;
-// 	Util::print(permutations[iBestPermutation]);
-// 	cout << endl << "its signs" << endl;
-// 	Util::print(bestPermutationSigns);
-// 	cout << endl;
-// #endif
-// 
-// 	assert(nAccountedSymbols % permutations.size() == 0);
-// 
-//     nAccountedSymbols /= permutations.size();
-// 
-// #ifdef DEBUG2
-// 	cout << "---------------------------" << endl;
-// #endif
-// 	
-//     return (double)minErrors/(double)(nAccountedSymbols);
-// }
-
 double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
 {
     int nRealChannelMatrices = realChannelMatrices.size();
@@ -851,4 +693,48 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
   }
 
   return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices);
+}
+
+double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
+{
+    if(detectedSymbols.rows() == 0)
+        return -1.0;
+
+    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+    {
+        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+        throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
+    }
+
+    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+    {
+        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
+      throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
+    }
+
+    // max number of errors
+	uint errors = 0;
+    
+    uint nAccountedSymbols = 0;
+
+	for(uint iStream=0;iStream<N;iStream++)
+	{
+		for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+		{
+			// if this symbol is not accounted for
+			if(!mask[iStream][iTime])
+				continue;
+
+			// if the symbols differ, an error happened...
+			errors += (sourceSymbols(iStream,iTime) != detectedSymbols(iStream,iTime));
+			
+			nAccountedSymbols++;
+		}              
+	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+    
+    // if all the symbols were masked
+    if(nAccountedSymbols==0)
+      return 0.0;
+    else
+      return (double)errors/(double)(nAccountedSymbols);
 }

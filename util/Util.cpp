@@ -443,7 +443,7 @@ template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T>
 template void Util::nextVector(vector<double> &vector,const vector<vector<double> > &alphabets);
 
 /**
- * It finds out how many times appear each element. @param firstOccurrence and @param times will be deleted
+ * It finds out how many times appear each element. \ref firstOccurrence and \ref times will be deleted
  * @param v
  * @param firstOccurrence
  * @param times

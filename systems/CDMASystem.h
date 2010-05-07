@@ -56,8 +56,8 @@ protected:
 	
 	double maximumRatioThresholdInDBs;
 	
-	MatrixXd presentFramePeActivityDetection;
-	vector<MatrixXd> peActivityDetectionFrames;
+	MatrixXd _presentFramePeActivityDetection;
+	vector<MatrixXd> _peActivityDetectionFrames;
 	
 	int nSurvivors;
 
@@ -65,8 +65,18 @@ protected:
     bool adjustParticlesNumberFromSurvivors;
 	
 	// needed for solving ambiguity when computing MSE
-	std::vector<std::vector<int> > piecesBestPermutationSigns;
-	std::vector<uint> piecesBestPermuationIndexes;
+	
+	// each element of the vector (a vector itself) stores the signs of the best permutation corresponding
+	// to one of the pieces into which the frame was dividing in order to compute the SER
+	std::vector<std::vector<int> > _piecesBestPermutationSigns;
+	
+	// each element of the vector stores the index of the best permutation corresponding to one of the
+	// pieces into which the frame was dividing in order to compute the SER
+	std::vector<uint> _piecesBestPermuationIndexes;
+	
+	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place
+	// it ALWAYS includes the first index (0) and the last ("frameLength")
+	std::vector<uint> _signChanges;
 	
     virtual void AddAlgorithms();
 	virtual void BeforeEndingAlgorithm();
@@ -86,12 +96,13 @@ public:
 	  \param detectedSymbols are the symbols detected
 	  \return the probability of misdetection the activity of a user
 	*/
-	double computeActivityDetectionER(MatrixXd sourceSymbols,MatrixXd detectedSymbols);
-	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+	double computeActivityDetectionErrorRate(MatrixXd sourceSymbols,MatrixXd detectedSymbols) const;
 	
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
-	
+
+	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+
   private:
 	bool isChannelOk(const MIMOChannel * const channel);
 };

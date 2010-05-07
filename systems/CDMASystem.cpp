@@ -115,7 +115,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 	_maxCoefficientsRatiosInDBs.reserve(nFrames);
 	
-	peActivityDetectionFrames.reserve(nFrames);
+	_peActivityDetectionFrames.reserve(nFrames);
 	
     // adjusting the number of particles from that of the survivors or the other way around
     adjustSurvivorsFromParticlesNumber = false;
@@ -217,8 +217,8 @@ void CDMASystem::BeforeEndingFrame()
 	// the maximum ratio of this frame is added to the vector
 	_maxCoefficientsRatiosInDBs.push_back(_maximumRatio);
 	
-    peActivityDetectionFrames.push_back(presentFramePeActivityDetection);
-    Util::matricesVectorToOctaveFileStream(peActivityDetectionFrames,"peActivityDetectionFrames",f);
+    _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
+    Util::matricesVectorToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",f);
 	
 	Util::scalarsVectorToOctaveFileStream(_maxCoefficientsRatiosInDBs,"maxCoefficientsRatiosInDBs",f);
     Util::matrixToOctaveFileStream(_spreadingCodes,"spreadingCodes",f);
@@ -227,31 +227,6 @@ void CDMASystem::BeforeEndingFrame()
 	Util::scalarToOctaveFileStream(userPersistenceProb,"userPersistenceProb",f);
 	Util::scalarToOctaveFileStream(newActiveUserProb,"newActiveUserProb",f);
 	Util::scalarToOctaveFileStream(userPriorProb,"userPriorProb",f);
-
-// 	MatrixXd A(2,2);
-// 	A << 1,2,
-// 		 3,4;
-// 	MatrixXd B = A*2;
-// 	vector<MatrixXd> primerVector;
-// 	primerVector.push_back(A);
-// 	primerVector.push_back(B);
-// 	vector<vector<MatrixXd> > segundoVector;
-// 	segundoVector.push_back(primerVector);
-// 	segundoVector.push_back(primerVector);
-// 	segundoVector.push_back(primerVector);
-// 	vector<vector<vector<MatrixXd> > > tercerVector;
-// 	tercerVector.push_back(segundoVector);
-// 	tercerVector.push_back(segundoVector);
-// 	tercerVector.push_back(segundoVector);
-// 	tercerVector.push_back(segundoVector);
-// 	vector<vector<vector<vector<MatrixXd> > > > cuartoVector;
-// 	cuartoVector.push_back(tercerVector);
-// 	cuartoVector.push_back(tercerVector);
-// 	cuartoVector.push_back(tercerVector);
-// 	cuartoVector.push_back(tercerVector);
-// 	cuartoVector.push_back(tercerVector);
-// 
-// 	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(cuartoVector,"tocho",f);
 }
 
 void CDMASystem::BuildChannel()
@@ -317,8 +292,35 @@ bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
   return true;
 }
 
-double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd detectedSymbols)
+// double CDMASystem::computeActivityDetectionErrorRate(const MatrixXd& sourceSymbols, MatrixXd& detectedSymbols) const
+// {
+//   if(symbolsDetectionWindowStart!=0)
+// 	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: the starting point for the window inside which the SER will be computed should be zero.");
+//   
+//   double res = 0.0;
+// 
+//   if(detectedSymbols.rows()==0)
+// 	return -1.0;
+//   
+//   if(detectedSymbols.rows()!=detectedSymbols.rows())
+// 	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: size of the source symbols and that of the detected ones don't match.");
+//       
+//   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
+//   {
+// 	res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
+// 								permutations[piecesBestPermuationIndexes[iSignChange-1]],piecesBestPermutationSigns[iSignChange-1]);
+//   }
+// 
+//   res /= realChannelMatrices.size();
+// 
+//   return res;
+// }
+
+double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
 {
+  if(symbolsDetectionWindowStart!=0)
+	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
+
 #ifdef DEBUG
 	cout << "source symbols" << endl << sourceSymbols << endl;
 	cout << "detected symbols" << endl << detectedSymbols << endl;
@@ -332,7 +334,7 @@ double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd d
 
 	if(sourceSymbols.cols()!= detectedSymbols.cols())
 	{
-		cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << endl;    
+	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << endl;    
 	  throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix column numbers differ.");
 	}
 	
@@ -340,10 +342,10 @@ double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd d
 	
     for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
         for(int iInput=0;iInput<N;iInput++)
-            isSymbolAccountedForDetection[iInput][iTime] = false;        
+            mask[iInput][iTime] = false;        
   
-
 	// in order to compute the probability of activity detection it makes no difference the symbol detected
+	// the only thing that matters is wether a symbol (any) was detected or not
 	for(int i=0;i<sourceSymbols.rows();i++)
 	  for(int j=0;j<sourceSymbols.cols();j++)
 	  {
@@ -359,9 +361,23 @@ double CDMASystem::computeActivityDetectionER(MatrixXd sourceSymbols, MatrixXd d
 	cout << "detected symbols" << endl << detectedSymbols << endl;
 #endif
 
-	  uint iBestPermutation;
-	  vector<int> bestPermutation;
-	  return computeSER(sourceSymbols,detectedSymbols,mask,iBestPermutation,bestPermutation);
+  double res = 0.0;
+
+  for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
+  {
+	res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
+			computeSERwithoutSolvingAmbiguity(sourceSymbols,
+											  Util::applyPermutationOnRows(detectedSymbols,permutations[_piecesBestPermuationIndexes[iSignChange]],vector<int>(N,1)),
+											  Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]));
+  }
+
+// 	  uint iBestPermutation;
+// 	  vector<int> bestPermutation;
+// 	  return computeSER(sourceSymbols,detectedSymbols,mask,iBestPermutation,bestPermutation);
+
+  res /= sourceSymbols.cols();
+  
+  return res;
 }
 
 void CDMASystem::BeforeEndingAlgorithm()
@@ -371,14 +387,14 @@ void CDMASystem::BeforeEndingAlgorithm()
 // 	double peActivity = computeActivityDetectionER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols);
 // 	
 //     // the activity detection error probability is accumulated
-//     presentFramePeActivityDetection(iSNR,iAlgorithm) = peActivity;	
+//     _presentFramePeActivityDetection(iSNR,iAlgorithm) = peActivity;	
 }
 
 void CDMASystem::OnlyOnce()
 {
 	SMCSystem::OnlyOnce();
 
-	presentFramePeActivityDetection = MatrixXd::Zero(SNRs.size(),algorithms.size());
+	_presentFramePeActivityDetection = MatrixXd::Zero(SNRs.size(),algorithms.size());
 }
 
 bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
@@ -488,28 +504,45 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
 // }
 
 double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
-{  
+{
+  if(symbolsDetectionWindowStart!=0)
+	throw RuntimeException("CDMASystem::computeSER: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
+
   double res = 0.0;
   
-  piecesBestPermuationIndexes.clear();
-  piecesBestPermutationSigns.clear();
+  _piecesBestPermuationIndexes.clear();
+  _piecesBestPermutationSigns.clear();
   
-  std::vector<uint> signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
+//   _signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
+  //								^
+  //								|
+  // even though ultimately only symbol vectors from "symbolsDetectionWindowStart" will be taken into account for detection, we don't
+  // have to worry about it here, since the mask will take care of that. That being so, "_signChanges" actually contains all the sign changes
+  // that occur within the frame
+  _signChanges = channel->getInputsZeroCrossings(preambleLength,frameLength);
 
-  for(uint iSignChange=1;iSignChange<signChanges.size();iSignChange++)
+  for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
   {
-	  res += (signChanges[iSignChange]-signChanges[iSignChange-1])*
-				BaseSystem::computeSER(sourceSymbols.block(0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
-				detectedSymbols.block(0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
-				Util::block(mask,0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
+	  // we need to find out how many symbols are gonna be taken into account within this subframe
+	  uint nAccountedSymbols = 0;
+	  for(uint i=0;i<N;i++)
+		for(uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
+		  nAccountedSymbols += mask[i][j];
+
+// 	  res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
+	  res += nAccountedSymbols*
+				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				detectedSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 				iBestPermutation,bestPermutationSigns);
 				
 	  // we need to store which the best permutations were along with their corresponding signs
-	  piecesBestPermuationIndexes.push_back(iBestPermutation);
-	  piecesBestPermutationSigns.push_back(bestPermutationSigns);
+	  _piecesBestPermuationIndexes.push_back(iBestPermutation);
+	  _piecesBestPermutationSigns.push_back(bestPermutationSigns);
   }
 
-  res /= sourceSymbols.cols();
+//   res /= sourceSymbols.cols();
+  res /= sourceSymbols.cols()*sourceSymbols.rows();
 
   return res;
 }
@@ -535,7 +568,7 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 	}
 #endif
 
-  std::vector<uint> signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
+//   __signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
   
   // we know that the received channel matrices go from time instant preambleLength+MSEwindowStart (both known parameters of the system) 
   // to the end of the frame. The first matrix of realChannelMatrices/estimatedChannelMatrices corresponds to the time instant:
@@ -543,38 +576,38 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
   
   // we find which interval "iChannelMatricesStart" belongs to
   uint iSignChange = 1;
-  while((signChanges[iSignChange]<=iChannelMatricesStart) && 
-		(iSignChange<signChanges.size()))
+  while((_signChanges[iSignChange]<=iChannelMatricesStart) && 
+		(iSignChange<_signChanges.size()))
 	iSignChange++;
   
 #ifdef DEBUG_MSE
-  cout << "computing MSE between " << iChannelMatricesStart << " and " << signChanges[iSignChange] << " ( " << (signChanges[iSignChange]-iChannelMatricesStart) << " matrices)" << endl;
-  cout << "the permutation is " << piecesBestPermuationIndexes[iSignChange-1] << endl;
+  cout << "computing MSE between " << iChannelMatricesStart << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-iChannelMatricesStart) << " matrices)" << endl;
+  cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
   cout << "and the signs" << endl;
-  Util::print(piecesBestPermutationSigns[iSignChange-1]);
+  Util::print(_piecesBestPermutationSigns[iSignChange-1]);
   cout << endl;
 #endif
 
-  std::vector<MatrixXd> toCheckRealChannelMatrices(realChannelMatrices.begin(),realChannelMatrices.begin()+signChanges[iSignChange]-iChannelMatricesStart);
-  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin(),estimatedChannelMatrices.begin()+signChanges[iSignChange]-iChannelMatricesStart);
+  std::vector<MatrixXd> toCheckRealChannelMatrices(realChannelMatrices.begin(),realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
+  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin(),estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
   
-  res += (signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
-								permutations[piecesBestPermuationIndexes[iSignChange-1]],piecesBestPermutationSigns[iSignChange-1]);
+  res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
+								permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
 
   iSignChange++;
   
-  for(;iSignChange<signChanges.size();iSignChange++)
+  for(;iSignChange<_signChanges.size();iSignChange++)
   {
-	toCheckRealChannelMatrices = std::vector<MatrixXd>(realChannelMatrices.begin()+signChanges[iSignChange-1]-iChannelMatricesStart,realChannelMatrices.begin()+signChanges[iSignChange]-iChannelMatricesStart);
-	toCheckEstimatedChannelMatrices = std::vector<MatrixXd>(estimatedChannelMatrices.begin()+signChanges[iSignChange-1]-iChannelMatricesStart,estimatedChannelMatrices.begin()+signChanges[iSignChange]-iChannelMatricesStart);
+	toCheckRealChannelMatrices = std::vector<MatrixXd>(realChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
+	toCheckEstimatedChannelMatrices = std::vector<MatrixXd>(estimatedChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
 	
-	res += (signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
-								permutations[piecesBestPermuationIndexes[iSignChange-1]],piecesBestPermutationSigns[iSignChange-1]);
+	res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
+								permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
 
 #ifdef DEBUG_MSE
-	cout << "computing MSE between " << signChanges[iSignChange-1] << " and " << signChanges[iSignChange] << " ( " << (signChanges[iSignChange]-signChanges[iSignChange-1]) << " matrices)" << endl;
+	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
 #endif
-	getchar();
+// 	getchar();
   }
 
   res /= realChannelMatrices.size();
@@ -594,14 +627,14 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 //   
 //   double res = 0.0;
 //   
-//   std::vector<uint> signChanges = channel->getInputsZeroCrossings(preambleLength+MSEwindowStart,frameLength-MSEwindowStart);
+//   std::vector<uint> _signChanges = channel->getInputsZeroCrossings(preambleLength+MSEwindowStart,frameLength-MSEwindowStart);
 // 
-//   for(uint iSignChange=1;iSignChange<signChanges.size();iSignChange++)
+//   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
 //   {
-// 	  res += (signChanges[iSignChange]-signChanges[iSignChange-1])*
-// 				BaseSystem::computeSER(sourceSymbols.block(0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
-// 				detectedSymbols.block(0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
-// 				Util::block(mask,0,signChanges[iSignChange-1],N,signChanges[iSignChange]-signChanges[iSignChange-1]),
+// 	  res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
+// 				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+// 				detectedSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+// 				Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 // 				iBestPermutation,bestPermutationSigns);
 // 				
 // 	  // we need to store which the best permutations were along with their corresponding signs

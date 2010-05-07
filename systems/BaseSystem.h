@@ -74,10 +74,10 @@ protected:
     // SNRs to be processed
     std::vector<int> SNRs;
 
-    //! when SER computing starts (with respect to the beginning of the frame length)
+    // when SER computing starts (with respect to the beginning of the frame length)
     int symbolsDetectionWindowStart;
 	
-	//! when MSE computing starts (with respect to the beginning of the frame length)
+	// when MSE computing starts (with respect to the beginning of the frame length)
 	int MSEwindowStart;
 
     // a vector that will contain the names of the algorithms
@@ -85,17 +85,15 @@ protected:
 
     MatrixXd preamble;
 
-    //! algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
+    // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     int nSmoothingSymbolsVectors;
     
-	/*! 
+	/*
 	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol
 	  Hence,it doesn't include preamble symbols or smoothing symbols.
 	*/
     vector<vector<bool> > isSymbolAccountedForDetection;
     
-    vector<vector<bool> > isBitAccountedForDetection;
-
     std::vector<std::vector<uint> > permutations;
 	uint _iBestPermutation;
 	std::vector<int> _bestPermutationSigns;
@@ -164,6 +162,8 @@ protected:
 	  \return the computed probability
 	*/
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+	
+	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
 	
 // 	virtual double computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 
