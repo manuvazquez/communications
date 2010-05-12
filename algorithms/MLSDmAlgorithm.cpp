@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "MLSDmAlgorithm.h"
 
-#define DEBUG4
+// #define DEBUG
 
 MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
@@ -82,6 +82,9 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
 
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
+#ifdef DEBUG
+		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+#endif
         // it keeps track of the place where a new tParticleCandidate will be stored within the array
         iCandidate = 0;
 

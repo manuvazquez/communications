@@ -25,7 +25,8 @@
 #include <UsersActivityDistribution.h>
 
 /**
-It implements an (optimal) algorithm that aims to detect the active users in a SISO CDMA system along with the transmitted data
+It implements a (non optimal) algorithm that aims to detect the active users in a SISO CDMA system along with the transmitted data without any knowledge
+about the activity pdfs (transition and a priori)
 
     @author Manu <manu@rustneversleeps>
 */

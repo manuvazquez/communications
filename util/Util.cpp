@@ -373,7 +373,14 @@ MatrixXd Util::applyPermutationOnRows(const MatrixXd &symbols,const vector<uint>
 {
     uint N = symbols.rows();
     if(permutation.size()!=N || signs.size()!=N)
-        throw RuntimeException("Util::applyPermutationOnRows: length of the received permutation is not N.");
+	{
+	  cout << "permutation.size() = " << permutation.size() << " signs.size() = " << signs.size() << endl;
+	  Util::print(permutation);
+	  cout << endl;
+	  Util::print(signs);
+	  cout << endl;
+	  throw RuntimeException("Util::applyPermutationOnRows: length of the received permutation is not N.");
+	}
 
     MatrixXd res(symbols.rows(),symbols.cols());
     for(uint i=0;i<N;i++)

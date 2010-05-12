@@ -24,6 +24,7 @@
 #include <FlatPowerProfile.h>
 #include <CDMAKalmanEstimator.h>
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
+#include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UsersActivityDistribution.h>
 
 /**
@@ -43,7 +44,7 @@ protected:
     
     CDMAKalmanEstimator *cdmaKalmanEstimator;
     CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
-    
+	
     MMSEDetector *mmseDetector;
     
 	std::vector<UsersActivityDistribution> usersActivityPdfs;

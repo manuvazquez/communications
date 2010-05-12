@@ -66,7 +66,8 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices,const vector<uint>
 {
   vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
 
-  // signs are permuted according to the best permutation WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES. We have to permute them according to the best permutation with respect to the real channel matrices
+  // signs permutation is given  WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES. 
+  // We have to permute them according to the best permutation with respect to the real channel matrices
   vector<int> realChannelMatricesSignsPermutation = Util::applyPermutation(Util::applyPermutation(bestPermutationSigns,realChannelMatricesPermutation),realChannelMatricesPermutation);
 
   vector<MatrixXd> permutedChannelMatrices(channelMatrices.size());

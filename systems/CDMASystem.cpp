@@ -38,8 +38,9 @@
 
 // #define PRINT_INFO
 
-#define DEBUG_SER
-#define DEBUG_MSE
+// #define DEBUG_SER
+// #define DEBUG_MSE
+// #define DEBUG_ACTIVITY_DETECTION_ERROR_RATE
 
 CDMASystem::CDMASystem(): SMCSystem()
 ,userPersistenceProb(0.99),newActiveUserProb(0.01),userPriorProb(0.5)
@@ -80,8 +81,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-	nSurvivors = 2;
-// 	nSurvivors = 8;
+// 	nSurvivors = 2;
+	nSurvivors = 8;
 // 	nSurvivors = 10;
 // 	nSurvivors = 20;
 
@@ -103,7 +104,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     
     cdmaKalmanEstimator = new CDMAKalmanEstimator(powerProfile->means(),powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     cdmaKnownChannelChannelMatrixEstimator = NULL;
-    
+	
     mmseDetector = new MMSEDetector(L,N,alphabet->variance(),N);
 
 	// bessel channel parameters
@@ -138,46 +139,6 @@ CDMASystem::CDMASystem(): SMCSystem()
         nSurvivors = int(ceil(double(nParticles)/pow((double)alphabet->length()+1,double(N))));
         cout << " to " << nSurvivors << endl;
     }
-
-//     vector<uint> perm(3);
-// 	perm[0] = 1;
-// 	perm[1] = 2;
-// 	perm[2] = 0;
-// 
-// 	vector<uint> nuevaPerm = Util::applyPermutation(perm,perm);
-// 	Util::print(Util::applyPermutation(Util::applyPermutation(perm,perm),perm));
-// 	Util::print(Util::computeInversePermutation(perm));
-
-// 	vector<vector<bool> > bitsMask = Demodulator::demodulate(isSymbolAccountedForDetection,*alphabet);
-// 	cout << "la mascara de bits" << endl;
-// 	Util::print(bitsMask);
-// 	cout << endl;
-
-
-// 	std::vector<std::vector<uint> > prueba(3,std::vector<uint>(4));
-// 	
-// 	prueba[0][0] = 1;
-// 	prueba[0][1] = 2;
-// 	prueba[0][2] = 3;
-// 	prueba[0][3] = 4;
-// 	prueba[1][0] = 5;
-// 	prueba[1][1] = 6;
-// 	prueba[1][2] = 7;
-// 	prueba[1][3] = 8;
-// 	prueba[2][0] = 9;
-// 	prueba[2][1] = 10;
-// 	prueba[2][2] = 11;
-// 	prueba[2][3] = 12;
-// 	
-// 	cout << "original" << endl;
-// 	Util::print(prueba);
-// 	cout << endl;
-// 	
-// 	std::vector<std::vector<uint> > sumatriz = Util::block(prueba,1,2,2,2);
-// 	
-// 	cout << "sumatriz" << endl;
-// 	Util::print(sumatriz);
-// 	cout << endl;
 }
 
 
@@ -201,19 +162,21 @@ void CDMASystem::AddAlgorithms()
      
 //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-//     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
+    algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
 	
-//     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
+    algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
 	
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
 	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdfs));
+	
+	algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,symbols));
 }
 
 void CDMASystem::BeforeEndingFrame()
 {
     SMCSystem::BeforeEndingFrame();
-	
+
 	// the maximum ratio of this frame is added to the vector
 	_maxCoefficientsRatiosInDBs.push_back(_maximumRatio);
 	
@@ -292,68 +255,49 @@ bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
   return true;
 }
 
-// double CDMASystem::computeActivityDetectionErrorRate(const MatrixXd& sourceSymbols, MatrixXd& detectedSymbols) const
-// {
-//   if(symbolsDetectionWindowStart!=0)
-// 	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: the starting point for the window inside which the SER will be computed should be zero.");
-//   
-//   double res = 0.0;
-// 
-//   if(detectedSymbols.rows()==0)
-// 	return -1.0;
-//   
-//   if(detectedSymbols.rows()!=detectedSymbols.rows())
-// 	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: size of the source symbols and that of the detected ones don't match.");
-//       
-//   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
-//   {
-// 	res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
-// 								permutations[piecesBestPermuationIndexes[iSignChange-1]],piecesBestPermutationSigns[iSignChange-1]);
-//   }
-// 
-//   res /= realChannelMatrices.size();
-// 
-//   return res;
-// }
-
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
 {
   if(symbolsDetectionWindowStart!=0)
 	throw RuntimeException("CDMASystem::computeActivityDetectionErrorRate: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
 
+  if(detectedSymbols.rows()==0)
+	return -1.0;
+  
 #ifdef DEBUG
 	cout << "source symbols" << endl << sourceSymbols << endl;
 	cout << "detected symbols" << endl << detectedSymbols << endl;
 #endif
 
-	if(sourceSymbols.rows()!= detectedSymbols.rows())
-	{
-		cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << endl;
-		throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix row numbers differ.");
-	}
+  if(sourceSymbols.rows()!= detectedSymbols.rows())
+  {
+	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << endl;
+	  throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix row numbers differ.");
+  }
 
-	if(sourceSymbols.cols()!= detectedSymbols.cols())
-	{
-	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << endl;    
-	  throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix column numbers differ.");
-	}
-	
-	vector<vector<bool> > mask(N,vector<bool>(frameLength,true));
-	
-    for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
-        for(int iInput=0;iInput<N;iInput++)
-            mask[iInput][iTime] = false;        
+  if(sourceSymbols.cols()!= detectedSymbols.cols())
+  {
+	cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << endl;    
+	throw RuntimeException("CDMASystem::computeActivityDetectionER: matrix column numbers differ.");
+  }
+
+  vector<vector<bool> > mask(N,vector<bool>(frameLength,true));
   
-	// in order to compute the probability of activity detection it makes no difference the symbol detected
-	// the only thing that matters is wether a symbol (any) was detected or not
-	for(int i=0;i<sourceSymbols.rows();i++)
-	  for(int j=0;j<sourceSymbols.cols();j++)
-	  {
-		if(alphabet->doesItBelong(sourceSymbols(i,j)))
-		  sourceSymbols(i,j) = alphabet->operator[](0);
-		if(alphabet->doesItBelong(detectedSymbols(i,j)))
-		  detectedSymbols(i,j) = alphabet->operator[](0);
-	  }
+//   return computeSERwithoutSolvingAmbiguity(sourceSymbols,detectedSymbols,mask);
+
+  for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
+	  for(int iInput=0;iInput<N;iInput++)
+		  mask[iInput][iTime] = false;        
+
+  // in order to compute the probability of activity detection it makes no difference the symbol detected
+  // the only thing that matters is wether a symbol (any) was detected or not
+  for(int i=0;i<sourceSymbols.rows();i++)
+	for(int j=0;j<sourceSymbols.cols();j++)
+	{
+	  if(alphabet->doesItBelong(sourceSymbols(i,j)))
+		sourceSymbols(i,j) = alphabet->operator[](0);
+	  if(alphabet->doesItBelong(detectedSymbols(i,j)))
+		detectedSymbols(i,j) = alphabet->operator[](0);
+	}
 
 #ifdef DEBUG
 	cout << "despues" << endl;
@@ -365,15 +309,18 @@ double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, Mat
 
   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
   {
+#ifdef DEBUG_ACTIVITY_DETECTION_ERROR_RATE
+	cout << "computing activity detection from " << _signChanges[iSignChange-1] << " to " << _signChanges[iSignChange] << " (" << _signChanges[iSignChange]-_signChanges[iSignChange-1] << ")" << endl;
+	cout << "permutation being applied is" << endl;
+	Util::print(permutations[_piecesBestPermuationIndexes[iSignChange-1]]);
+	cout << endl;
+#endif
 	res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
-			computeSERwithoutSolvingAmbiguity(sourceSymbols,
-											  Util::applyPermutationOnRows(detectedSymbols,permutations[_piecesBestPermuationIndexes[iSignChange]],vector<int>(N,1)),
-											  Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]));
+			computeSERwithoutSolvingAmbiguity(
+			  sourceSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+			  Util::applyPermutationOnRows(detectedSymbols,permutations[_piecesBestPermuationIndexes[iSignChange-1]],vector<int>(N,1)).block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+			  Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]));
   }
-
-// 	  uint iBestPermutation;
-// 	  vector<int> bestPermutation;
-// 	  return computeSER(sourceSymbols,detectedSymbols,mask,iBestPermutation,bestPermutation);
 
   res /= sourceSymbols.cols();
   
@@ -382,12 +329,12 @@ double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, Mat
 
 void CDMASystem::BeforeEndingAlgorithm()
 {
-	SMCSystem::BeforeEndingAlgorithm();
+  SMCSystem::BeforeEndingAlgorithm();
 
-// 	double peActivity = computeActivityDetectionER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols);
-// 	
-//     // the activity detection error probability is accumulated
-//     _presentFramePeActivityDetection(iSNR,iAlgorithm) = peActivity;	
+  double peActivity = computeActivityDetectionErrorRate(symbols.block(0,preambleLength,N,frameLength),detectedSymbols);
+  
+  // the activity detection error probability is accumulated
+  _presentFramePeActivityDetection(iSNR,iAlgorithm) = peActivity;
 }
 
 void CDMASystem::OnlyOnce()
@@ -439,74 +386,13 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
   return true;
 }
 
-// double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
-// {
-//   MatrixXd lastSignsMatrix = Util::sign(channel->at(preambleLength));
-//   uint iLastSignChange = preambleLength;
-//   
-//   double res = 0.0;
-//   
-//   uint iChannelMatrix;
-//   
-// #ifdef DEBUG_SER
-//   cout << " ======= starting computeSER in CDMA... ========" << endl;
-// #endif
-//   
-//   for(iChannelMatrix=preambleLength+1;iChannelMatrix<preambleLength+frameLength;iChannelMatrix++)
-//   {
-// 	// check if any coefficient changes sign
-// 	if(Util::sign(channel->at(iChannelMatrix))!=lastSignsMatrix)
-// 	{
-// 	  res += (iChannelMatrix-iLastSignChange)*BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 iBestPermutation,bestPermutationSigns);
-// #ifdef DEBUG_SER
-// 	cout << "computing SER between " << iLastSignChange << " and " << iChannelMatrix << endl;
-// 	cout << "result is " << BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 iBestPermutation,bestPermutationSigns) << endl;
-// #endif
-// 							 
-// 	  lastSignsMatrix = Util::sign(channel->at(iChannelMatrix));
-// 	  iLastSignChange = iChannelMatrix;
-// 	}
-//   }
-//   
-// //   if(iLastSignChange!=(preambleLength+frameLength-1))
-// //   {
-// 	res += (iChannelMatrix-iLastSignChange)*BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 iBestPermutation,bestPermutationSigns);
-// 
-// #ifdef DEBUG_SER
-// 	cout << "computing SER between " << iLastSignChange << " and " << iChannelMatrix << endl;
-// 	cout << "result is " << BaseSystem::computeSER(sourceSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 detectedSymbols.block(0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 Util::block(mask,0,iLastSignChange,N,iChannelMatrix-iLastSignChange),
-// 							 iBestPermutation,bestPermutationSigns) << endl;
-// #endif
-// 	
-// // 	cout << "frame is checked from " << iLastSignChange << " during " << iChannelMatrix-iLastSignChange << endl;
-// //   }
-//   
-//   res /= frameLength;
-// 
-// #ifdef DEBUG_SER
-//   cout << "zero crossings..." << endl;
-//   Util::print(channel->getInputsZeroCrossings(preambleLength,frameLength));
-//   cout << endl;
-// #endif
-//   
-//   return res;
-// }
-
 double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
 {
   if(symbolsDetectionWindowStart!=0)
 	throw RuntimeException("CDMASystem::computeSER: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
+  
+  if(detectedSymbols.rows()==0)
+	return -1.0;
 
   double res = 0.0;
   
@@ -521,16 +407,24 @@ double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
   // that occur within the frame
   _signChanges = channel->getInputsZeroCrossings(preambleLength,frameLength);
 
+  uint overallNumberAccountedSymbols = 0;
+  
   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
   {
 	  // we need to find out how many symbols are gonna be taken into account within this subframe
-	  uint nAccountedSymbols = 0;
-	  for(uint i=0;i<N;i++)
+	  uint thisSubframeNumberAccountedSymbols = 0;
+	  for(int i=0;i<N;i++)
 		for(uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
-		  nAccountedSymbols += mask[i][j];
+		  thisSubframeNumberAccountedSymbols += mask[i][j];
+
+	  overallNumberAccountedSymbols += thisSubframeNumberAccountedSymbols;
+	  
+#ifdef DEBUG_SER
+	  cout << "thisSubframeNumberAccountedSymbols = " << thisSubframeNumberAccountedSymbols << endl;
+#endif
 
 // 	  res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
-	  res += nAccountedSymbols*
+	  res += thisSubframeNumberAccountedSymbols*
 				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 				detectedSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 				Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
@@ -541,8 +435,14 @@ double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
 	  _piecesBestPermutationSigns.push_back(bestPermutationSigns);
   }
 
+#ifdef DEBUG_SER
+//   cout << "overallNumberAccountedSymbols = " << overallNumberAccountedSymbols << endl;
+//   cout << "_piecesBestPermuationIndexes.size() = " << _piecesBestPermuationIndexes.size() << endl;
+#endif
+
 //   res /= sourceSymbols.cols();
-  res /= sourceSymbols.cols()*sourceSymbols.rows();
+//   res /= sourceSymbols.cols()*sourceSymbols.rows();
+  res /= overallNumberAccountedSymbols;
 
   return res;
 }
@@ -614,35 +514,3 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 
   return res;
 }
-
-// double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
-// {
-//   if(detectedSymbols.rows()==0)
-// 	return BaseSystem::computeMSE(realChannelMatrices,estimatedChannelMatrices);
-//   
-//   if(realChannelMatrices.size()!=estimatedChannelMatrices.size())
-// 	throw RuntimeException("CDMASystem::computeMSE: number of REAL channel matrices is not equal to that of ESTIMATED channel matrices.");
-//   
-//   if(realChannelMatrices.size()!=
-//   
-//   double res = 0.0;
-//   
-//   std::vector<uint> _signChanges = channel->getInputsZeroCrossings(preambleLength+MSEwindowStart,frameLength-MSEwindowStart);
-// 
-//   for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
-//   {
-// 	  res += (_signChanges[iSignChange]-_signChanges[iSignChange-1])*
-// 				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
-// 				detectedSymbols.block(0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
-// 				Util::block(mask,0,_signChanges[iSignChange-1],N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
-// 				iBestPermutation,bestPermutationSigns);
-// 				
-// 	  // we need to store which the best permutations were along with their corresponding signs
-// 	  piecesBestPermuationIndexes.push_back(iBestPermutation);
-// 	  piecesBestPermutationSigns.push_back(bestPermutationSigns);
-//   }
-// 
-//   res /= frameLength;
-// 
-//   return res;
-// }

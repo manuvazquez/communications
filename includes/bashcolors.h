@@ -5,3 +5,6 @@
 #define COLOR_PINK "\033[1;35m"
 #define COLOR_WHITE "\033[1;37m"
 #define COLOR_LIGHT_BLUE "\033[1;36m"
+
+// derived
+#define COLOR_FRAME_NUMBER_SNR COLOR_LIGHT_BLUE

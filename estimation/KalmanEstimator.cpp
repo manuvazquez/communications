@@ -76,7 +76,11 @@ KalmanEstimator::~KalmanEstimator()
 MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance)
 {
     if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
-        throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
+	{
+	  cout << "observations.size() = " << observations.size() << " _nOutputs = " << _nOutputs << endl;
+	  cout << " symbolsMatrix.size() = " << symbolsMatrix.size() << " _nInputsXchannelOrder = " << _nInputsXchannelOrder << endl;
+	  throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
+	}
 
     MatrixXd observationEquationCovariance = noiseVariance*MatrixXd::Identity(_nOutputs,_nOutputs);
     

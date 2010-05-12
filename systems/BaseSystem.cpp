@@ -43,10 +43,11 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-// #define LOAD_SEEDS
+#define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
+// #define DEBUG_SER_WITHOUT_SOLVING_AMBIGUITY
 
 using namespace std;
 
@@ -85,7 +86,7 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-	nFrames = 10;
+	nFrames = 10000;
 // 	nFrames = 1;
 // 	nFrames = 200;
 //     L=3,N=2,frameLength=300;
@@ -231,8 +232,11 @@ void BaseSystem::Simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    randomGenerator.setSeed(3013783408);
-    StatUtil::getRandomGenerator().setSeed(1878942058);
+    randomGenerator.setSeed(1251453452);
+    StatUtil::getRandomGenerator().setSeed(4117327754);
+
+//     randomGenerator.setSeed(3013783408);
+//     StatUtil::getRandomGenerator().setSeed(1878942058);
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
 #endif
@@ -292,7 +296,7 @@ void BaseSystem::Simulate()
 
         for(iSNR=0;iSNR<SNRs.size();iSNR++)
         {
-            cout << "SNR = " << SNRs[iSNR] << " [Frame " << iFrame << "]..." << endl;
+            cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << SNRs[iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
 
             // noise SNR is set
             noise->setSNR(SNRs[iSNR],alphabet->variance());
@@ -315,9 +319,6 @@ void BaseSystem::Simulate()
             // algorithms are executed
             for(iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
             {
-//                 // in order to repeat a concrete simulation...
-//                 StatUtil::getRandomGenerator().setSeed();
-
                 // if there is training sequence
                 if(trainSeqLength!=0)
                     algorithms[iAlgorithm]->run(observations,noise->variances(),symbols.block(0,preambleLength,N,trainSeqLength));
@@ -448,7 +449,7 @@ void BaseSystem::BeforeEndingAlgorithm()
   presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
-    cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;	
+    cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;
 
     // the error probability is accumulated
     overallPeMatrix(iSNR,iAlgorithm) += pe;
@@ -697,44 +698,58 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
 {
-    if(detectedSymbols.rows() == 0)
-        return -1.0;
+#ifdef DEBUG
+  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask[0].size() = " << mask[0].size() << endl;
+#endif
+  
+  if(detectedSymbols.rows() == 0)
+	  return -1.0;
 
-    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
-    {
-        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-        throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
-    }
+  if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+  {
+	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+	  throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
+  }
 
-    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
-    {
-        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
-      throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
-    }
+  if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+  {
+	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
+	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
+  }
 
-    // max number of errors
-	uint errors = 0;
-    
-    uint nAccountedSymbols = 0;
+#ifdef DEBUG_SER_WITHOUT_SOLVING_AMBIGUITY
+  if(iAlgorithm==3 && iSNR==4)
+  {
+	cout << "sourceSymbols" << endl << sourceSymbols << endl;
+	cout << "detectedSymbols" << endl << detectedSymbols << endl;
+	Util::print(mask);
+	cout << endl;
+  }
+#endif
 
-	for(uint iStream=0;iStream<N;iStream++)
-	{
-		for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
-		{
-			// if this symbol is not accounted for
-			if(!mask[iStream][iTime])
-				continue;
+  // max number of errors
+  uint errors = 0;
 
-			// if the symbols differ, an error happened...
-			errors += (sourceSymbols(iStream,iTime) != detectedSymbols(iStream,iTime));
-			
-			nAccountedSymbols++;
-		}              
-	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-    
-    // if all the symbols were masked
-    if(nAccountedSymbols==0)
-      return 0.0;
-    else
-      return (double)errors/(double)(nAccountedSymbols);
+  uint nAccountedSymbols = 0;
+
+  for(uint iStream=0;iStream<N;iStream++)
+  {
+	  for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+	  {
+		  // if this symbol is not accounted for
+		  if(!mask[iStream][iTime])
+			  continue;
+
+		  // if the symbols differ, an error happened...
+		  errors += (sourceSymbols(iStream,iTime) != detectedSymbols(iStream,iTime));
+		  
+		  nAccountedSymbols++;
+	  }              
+  } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+
+  // if all the symbols were masked
+  if(nAccountedSymbols==0)
+	return 0.0;
+  else
+	return (double)errors/(double)(nAccountedSymbols);
 }

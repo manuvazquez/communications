@@ -28,7 +28,7 @@ void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations
     _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
     for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
-        _estimatedChannelMatrices.push_back( _channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iSymbolVector]));
+        _estimatedChannelMatrices.push_back(_channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iSymbolVector]));
 }
 
 void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,MatrixXd trainingSequence)
