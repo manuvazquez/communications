@@ -49,6 +49,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 ,usersActivityPdfs(N,UsersActivityDistribution(userPersistenceProb,newActiveUserProb,userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
 ,maximumRatioThresholdInDBs(20)
+// ,_extendedAlphabet(alphabet->buildNewAlphabetByAddingSymbol(0.0))
 {
     if(m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -81,8 +82,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-// 	nSurvivors = 2;
-	nSurvivors = 8;
+	nSurvivors = 2;
+// 	nSurvivors = 8;
 // 	nSurvivors = 10;
 // 	nSurvivors = 20;
 
@@ -160,12 +161,12 @@ void CDMASystem::AddAlgorithms()
     delete cdmaKnownChannelChannelMatrixEstimator;
     cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(channel,preambleLength,N,_spreadingCodes);
      
-//     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+// //     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
     algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
-	
+
     algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,mmseDetector,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),usersActivityPdfs));
-	
+
 	algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi (known channel)",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d,usersActivityPdfs));
 	
 	algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors,usersActivityPdfs));
@@ -221,6 +222,8 @@ void CDMASystem::BuildChannel()
     cout << "symbols after generating users activity" << endl << symbols << endl;
 #endif    
 
+	bool aCoefficientChangesSign;
+
 	do
 	{
 	  delete channel;
@@ -230,8 +233,12 @@ void CDMASystem::BuildChannel()
 // 	  channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
 	  
 	  channel = new MultiuserCDMAchannel(new BesselChannel(N,1,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile),_spreadingCodes);
+	  
+	  aCoefficientChangesSign = channel->getInputsZeroCrossings(preambleLength,frameLength).size() > 2;
+	  cout << "aCoefficientChangesSign = " << aCoefficientChangesSign << endl;
 
-	} while(!isChannelOk(channel));
+// 	} while(!isChannelOk(channel) || !aCoefficientChangesSign);
+	} while(!isChannelOk(channel) || aCoefficientChangesSign);
 }
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
@@ -392,12 +399,16 @@ double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
 	throw RuntimeException("CDMASystem::computeSER: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
   
   if(detectedSymbols.rows()==0)
+  {
+	_piecesBestPermuationIndexes = std::vector<uint>(_signChanges.size()-1,0);
+	_piecesBestPermutationSigns = std::vector<std::vector<int> >(_signChanges.size()-1,std::vector<int>(N,1));
 	return -1.0;
+  }
+
+  _piecesBestPermuationIndexes.clear();
+  _piecesBestPermutationSigns.clear();  
 
   double res = 0.0;
-  
-  _piecesBestPermuationIndexes.clear();
-  _piecesBestPermutationSigns.clear();
   
 //   _signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
   //								^
@@ -449,8 +460,6 @@ double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
 
 double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
 {
-//   return BaseSystem::computeMSE(realChannelMatrices,estimatedChannelMatrices);
-
   double res = 0.0;
 
   if(estimatedChannelMatrices.size()==0)
@@ -476,8 +485,7 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
   
   // we find which interval "iChannelMatricesStart" belongs to
   uint iSignChange = 1;
-  while((_signChanges[iSignChange]<=iChannelMatricesStart) && 
-		(iSignChange<_signChanges.size()))
+  while(_signChanges[iSignChange]<=iChannelMatricesStart && iSignChange<_signChanges.size())
 	iSignChange++;
   
 #ifdef DEBUG_MSE
@@ -507,7 +515,6 @@ double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 #ifdef DEBUG_MSE
 	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
 #endif
-// 	getchar();
   }
 
   res /= realChannelMatrices.size();

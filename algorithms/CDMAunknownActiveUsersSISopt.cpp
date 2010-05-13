@@ -27,14 +27,17 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
 
 void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::vector< double, std::allocator< double > > noiseVariances)
 {
+//   // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
+//   vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
+// 
+//   for(int i=0;i<_alphabet.length();i++)
+// 	  extendedAlphabetSymbols[i] = _alphabet[i];
+//   extendedAlphabetSymbols[_alphabet.length()] = 0.0;
+// 
+//   Alphabet extendedAlphabet(extendedAlphabetSymbols);
+  
   // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
-  vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
-
-  for(int i=0;i<_alphabet.length();i++)
-	  extendedAlphabetSymbols[i] = _alphabet[i];
-  extendedAlphabetSymbols[_alphabet.length()] = 0.0;
-
-  Alphabet extendedAlphabet(extendedAlphabetSymbols);
+  Alphabet extendedAlphabet = _alphabet.buildNewAlphabetByAddingSymbol(0.0);
 	  
 //   extendedAlphabet = _alphabet; // <-----------------------------------------------------------
 
@@ -87,10 +90,12 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 			  // the probability of these users being active and this particular symbol vector being transmitted is computed...
 			  // ...either taking into account the users previous state in case this exists
 			  if(iObservationToBeProcessed!=_startDetectionTime)
-				  likelihoods[iTestedCombination] *=probSymbolsVectorGivenPreviousTimeInstantUsersActivity(symbolsVector,getUsersActivityFromSymbolsVector(processedParticle->getSymbolVector(iObservationToBeProcessed-1)));
+				  likelihoods[iTestedCombination] *= StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(
+													  symbolsVector,Util::getUsersActivityFromSymbolsVector(processedParticle->getSymbolVector(iObservationToBeProcessed-1)),
+													  _usersActivityPdfs,_alphabet.length());
 			  // ...or not doing so when it's the first time instant
 			  else
-				  likelihoods[iTestedCombination] *=probSymbolsVectorGivenPreviousTimeInstantUsersActivity(symbolsVector);
+				  likelihoods[iTestedCombination] *= StatUtil::probSymbolsVector(symbolsVector,_usersActivityPdfs,_alphabet.length());
 
 #ifdef DEBUG
 			  cout << "iTestedCombination " <<  endl << symbolsVector << endl;
@@ -167,79 +172,4 @@ void CDMAunknownActiveUsersSISopt::initializeParticles()
         if(_preamble.cols()!=0)
             _particleFilter->getParticle(iParticle)->setSymbolVectors(0,_preamble.cols(),_preamble);
     }
-}
-
-// this needs some optimizing
-double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd& symbolsVector, const std::vector< bool >& previousTimeInstantUsersActivity) const
-{
-    if(symbolsVector.size()!=_nInputs)
-        throw RuntimeException("CDMAunknownActiveUsersSISoptWithUsersActivitySampling::probSymbolsVectorGivenPreviousTimeInstantUsersActivity: symbols vector dimensions are wrong.");
-    
-    if(static_cast<uint> (symbolsVector.size())!=previousTimeInstantUsersActivity.size())
-        throw RuntimeException("CDMAunknownActiveUsersSISoptWithUsersActivitySampling::probSymbolsVectorGivenPreviousTimeInstantUsersActivity: symbols vector size doesn't coincide with that of the vector containing information about the users activity in the previous time instant.");
-        
-    double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
-	double overallProb = 1.0;
-    
-    for(int i=0;i<symbolsVector.size();i++)
-    {
-	  if(isUserActive(symbolsVector(i)))
-	  {
-		probSymbolWhenUserNotActive = 0.0;
-		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdfs[i].probXgivenY(true,previousTimeInstantUsersActivity[i]);
-	  }
-	  else
-	  {
-		probSymbolWhenUserNotActive = _usersActivityPdfs[i].probXgivenY(false,previousTimeInstantUsersActivity[i]);
-		probSymbolWhenUserActive = 0.0;
-	  }
-
-	  overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
-    }
-
-    return overallProb;
-}
-
-// this needs some optimizing
-double CDMAunknownActiveUsersSISopt::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd &symbolsVector) const
-{
-    if(symbolsVector.size()!=_nInputs)
-        throw RuntimeException("CDMAunknownActiveUsersSISoptWithUsersActivitySampling::probSymbolsVectorGivenPreviousTimeInstantUsersActivity: symbols vector dimensions are wrong.");
-                        
-    double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
-	double overallProb = 1.0;
-    
-    for(int i=0;i<symbolsVector.size();i++)
-    {
-	  if(isUserActive(symbolsVector(i)))
-	  {
-		probSymbolWhenUserNotActive = 0.0;
-		probSymbolWhenUserActive = 1/double(_alphabet.length()) * _usersActivityPdfs[i].probApriori(true);
-	  }
-	  else
-	  {
-		probSymbolWhenUserNotActive = _usersActivityPdfs[i].probApriori(false);
-		probSymbolWhenUserActive = 0.0;
-	  }
-
-	  overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
-    }
-
-    return overallProb;
-}
-
-//! It takes a symbols vector and returns a vector indicating the active users
-/*!
-  \param symbolsVector a symbol vector
-  \return a vector of bools
-*/
-
-std::vector<bool> CDMAunknownActiveUsersSISopt::getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector) const
-{
-  std::vector<bool> res(symbolsVector.size());
-  
-  for(int i=0;i<symbolsVector.size();i++)
-	res[i] = isUserActive(symbolsVector(i));
-  
-  return res;
 }

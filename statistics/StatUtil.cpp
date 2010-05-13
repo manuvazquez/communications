@@ -269,7 +269,8 @@ double StatUtil::probApriori(const VectorXd &symbolsVector, const std::vector<Us
   double res = 1.0;
   
   for(int i=0;i<symbolsVector.size();i++)
-	res *= symbolsDistributions[i].probApriori(symbolsDistributions[i].isUserActive(symbolsVector(i)));
+	res *= symbolsDistributions[i].probApriori(Util::isUserActive(symbolsVector(i)));
+// 	res *= symbolsDistributions[i].probApriori(symbolsDistributions[i].isUserActive(symbolsVector(i)));  
   
   return res;
 }
@@ -285,7 +286,60 @@ double StatUtil::probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersAc
   double res = 1.0;
   
   for(int i=0;i<X.size();i++)
-	res *= symbolsDistributions[i].probXgivenY(symbolsDistributions[i].isUserActive(X(i)),symbolsDistributions[i].isUserActive(Y(i)));
+	res *= symbolsDistributions[i].probXgivenY(Util::isUserActive(X(i)),Util::isUserActive(Y(i)));
+// 	res *= symbolsDistributions[i].probXgivenY(symbolsDistributions[i].isUserActive(X(i)),symbolsDistributions[i].isUserActive(Y(i)));  
   
   return res;
+}
+
+// this definitely needs some optimizing
+double StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd& symbolsVector, const std::vector< bool >& previousTimeInstantUsersActivity, const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength)
+{
+    if(static_cast<uint> (symbolsVector.size())!=previousTimeInstantUsersActivity.size())
+        throw RuntimeException("StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity: symbols vector size doesn't coincide with that of the vector containing information about the users activity in the previous time instant.");
+        
+    double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
+	double overallProb = 1.0;
+    
+    for(int i=0;i<symbolsVector.size();i++)
+    {
+	  if(Util::isUserActive(symbolsVector(i)))
+	  {
+		probSymbolWhenUserNotActive = 0.0;
+		probSymbolWhenUserActive = 1/double(alphabetLength) * usersActivityPdfs[i].probXgivenY(true,previousTimeInstantUsersActivity[i]);
+	  }
+	  else
+	  {
+		probSymbolWhenUserNotActive = usersActivityPdfs[i].probXgivenY(false,previousTimeInstantUsersActivity[i]);
+		probSymbolWhenUserActive = 0.0;
+	  }
+
+	  overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
+    }
+
+    return overallProb;
+}
+
+double StatUtil::probSymbolsVector(const VectorXd &symbolsVector,const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength)
+{
+  double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
+  double overallProb = 1.0;
+
+  for(int i=0;i<symbolsVector.size();i++)
+  {
+	if(Util::isUserActive(symbolsVector(i)))
+	{
+	  probSymbolWhenUserNotActive = 0.0;
+	  probSymbolWhenUserActive = 1/double(alphabetLength) * usersActivityPdfs[i].probApriori(true);
+	}
+	else
+	{
+	  probSymbolWhenUserNotActive = usersActivityPdfs[i].probApriori(false);
+	  probSymbolWhenUserActive = 0.0;
+	}
+
+	overallProb *= (probSymbolWhenUserNotActive + probSymbolWhenUserActive);
+  }
+
+  return overallProb;
 }

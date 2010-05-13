@@ -38,8 +38,6 @@ public:
 protected:
     virtual void initializeParticles();
     void process(const MatrixXd &observations, vector< double > noiseVariances);
-
-    bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}
 };
 
 #endif

@@ -30,11 +30,6 @@ protected:
   
 	virtual void process(const MatrixXd& observations, std::vector< double, std::allocator< double > > noiseVariances);
     virtual void initializeParticles();
-
-	double probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd &symbolsVector, const std::vector<bool> &previousTimeInstantUsersActivity) const;
-	double probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd &symbolsVector) const;
-	std::vector<bool> getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector) const;
-	bool isUserActive(const tSymbol symbol) const { return symbol!=0.0;}
 };
 
 #endif // CDMAUNKNOWNACTIVEUSERSSISOPTWITHUSERSACTIVITYSAMPLING_H

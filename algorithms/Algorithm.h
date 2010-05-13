@@ -64,6 +64,7 @@ public:
 
 
     virtual bool performsChannelOrderAPPestimation() const { return false;}
+    virtual bool performsSymbolsDetection() const { return true; }
 
     double MSE(const vector<MatrixXd> &channelMatrices);
 	double MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns);

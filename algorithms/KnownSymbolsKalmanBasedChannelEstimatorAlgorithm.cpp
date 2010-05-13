@@ -19,16 +19,25 @@
  ***************************************************************************/
 #include "KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h"
 
+// #define DEBUG
+
 KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,ChannelMatrixEstimator* channelEstimator, MatrixXd preamble,const MatrixXd &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
 {
 }
 
 void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
+  _estimatedChannelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
-    for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
-        _estimatedChannelMatrices.push_back(_channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iSymbolVector]));
+  for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
+  {
+#ifdef DEBUG
+	cout << "observation is" << endl << observations.col(iSymbolVector) << endl;
+	cout << "_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder)" << endl << _symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder) << endl;
+	getchar();
+#endif
+	_estimatedChannelMatrices.push_back(_channelEstimator->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iSymbolVector]));
+  }
 }
 
 void KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,MatrixXd trainingSequence)

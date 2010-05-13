@@ -629,3 +629,14 @@ template<class T> std::vector<std::vector<T> > Util::block(const std::vector<std
 }
 template std::vector<std::vector<bool> > Util::block(const std::vector<std::vector<bool> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
 template std::vector<std::vector<uint> > Util::block(const std::vector<std::vector<uint> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
+
+
+std::vector<bool> Util::getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector)
+{
+  std::vector<bool> res(symbolsVector.size());
+  
+  for(int i=0;i<symbolsVector.size();i++)
+	res[i] = isUserActive(symbolsVector(i));
+  
+  return res;
+}

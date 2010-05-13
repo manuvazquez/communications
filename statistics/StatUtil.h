@@ -63,6 +63,9 @@ public:
     static Random& getRandomGenerator() { return _randomGenerator;}
     static double probApriori(const VectorXd &symbolsVector, const std::vector<UsersActivityDistribution> &symbolsDistributions);
     static double probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersActivityDistribution> &symbolsDistributions);
+	
+	static double probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd& symbolsVector, const std::vector< bool >& previousTimeInstantUsersActivity, const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength);
+	static double probSymbolsVector(const VectorXd &symbolsVector,const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength);	
 };
 
 #endif

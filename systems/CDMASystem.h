@@ -79,6 +79,8 @@ protected:
 	// it ALWAYS includes the first index (0) and the last ("frameLength")
 	std::vector<uint> _signChanges;
 	
+// 	Alphabet _extendedAlphabet;
+	
     virtual void AddAlgorithms();
 	virtual void BeforeEndingAlgorithm();
     virtual void BeforeEndingFrame();
@@ -101,8 +103,6 @@ public:
 	
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
-
-	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
 
   private:
 	bool isChannelOk(const MIMOChannel * const channel);

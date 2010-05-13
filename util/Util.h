@@ -92,6 +92,20 @@ public:
 	  \return the specified submatrix
 	*/
 	template<class T> static std::vector<std::vector<T> > block(const std::vector<std::vector<T> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
+	
+	//! It returns if the the corresponding symbol implies the user is active
+	/*!
+	  \param symbol
+	  \return true if the corresponding users is active
+	*/
+	static bool isUserActive(const tSymbol symbol) { return symbol!=0.0;}
+	
+	//! It takes a symbols vector and returns a vector indicating the active users
+	/*!
+	  \param symbolsVector a symbol vector
+	  \return a vector of bools
+	*/
+	static std::vector<bool> getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector);
 };
 
 #endif
