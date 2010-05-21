@@ -38,16 +38,16 @@ protected:
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
     vector<vector<bool> > _usersActivity;
     
-    double userPersistenceProb,newActiveUserProb,userPriorProb;
+    double _userPersistenceProb,_newActiveUserProb,_userPriorProb;
 	
-    double velocity,carrierFrequency,symbolRate,T;
+    double _velocity,_carrierFrequency,_symbolRate,_T;
     
-    CDMAKalmanEstimator *cdmaKalmanEstimator;
-    CDMAKnownChannelChannelMatrixEstimator *cdmaKnownChannelChannelMatrixEstimator;
+    CDMAKalmanEstimator *_cdmaKalmanEstimator;
+    CDMAKnownChannelChannelMatrixEstimator *_cdmaKnownChannelChannelMatrixEstimator;
 	
-    MMSEDetector *mmseDetector;
+    MMSEDetector *_mmseDetector;
     
-	std::vector<UsersActivityDistribution> usersActivityPdfs;
+	std::vector<UsersActivityDistribution> _usersActivityPdfs;
 	
 	// it stores the maximum ratio among the coefficients of a channel matrix for every frame
 	vector<double> _maxCoefficientsRatiosInDBs;
@@ -55,15 +55,15 @@ protected:
 	// this is used in two different methods (though only computed in one of them...)
 	double _maximumRatio;
 	
-	double maximumRatioThresholdInDBs;
+	double _maximumRatioThresholdInDBs;
 	
 	MatrixXd _presentFramePeActivityDetection;
 	vector<MatrixXd> _peActivityDetectionFrames;
 	
-	int nSurvivors;
+	int _nSurvivors;
 
-    bool adjustSurvivorsFromParticlesNumber;
-    bool adjustParticlesNumberFromSurvivors;
+    bool _adjustSurvivorsFromParticlesNumber;
+    bool _adjustParticlesNumberFromSurvivors;
 	
 	// needed for solving ambiguity when computing MSE
 	

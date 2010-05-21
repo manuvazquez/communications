@@ -16,7 +16,10 @@
 
 #include "ViterbiAlgorithmWithAprioriProbabilities.h"
 
-ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, int smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs):ViterbiAlgorithm(name, alphabet,L,Nr,N, iLastSymbolVectorToBeDetected, channel,preamble,smoothingLag),_usersActivityPdfs(usersActivityPdfs),_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
+ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, int smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs)
+:ViterbiAlgorithm(name, alphabet,L,Nr,N, iLastSymbolVectorToBeDetected, channel,preamble,smoothingLag),
+_usersActivityPdfs(usersActivityPdfs),
+_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
 {
   if(channel.memory()>1)
 	throw RuntimeException("ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities: algorithm is only implemented for flat channels.");
@@ -39,7 +42,10 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
 		
         VectorXd error = observations - channelMatrix*symbolsVector;
 
-		newCost = _exitStage[iState].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
+// 		newCost = _exitStage[iState].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
+		newCost = _exitStage[iState].getCost() + 
+				  (error.dot(error))/(2*noiseVariance) - 
+				  log(StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(symbolsVector,Util::getUsersActivityFromSymbolsVector(previousSymbolsVector),_usersActivityPdfs,_alphabet.length()));
 
         arrivalState = (*_trellis)(iState,iInput);
 
@@ -54,7 +60,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
 
 void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
 {
-    // the Trellis object is initialized
+    // the Trellis object is initialized (we instruct it to build a trellis assuming the memory is 2)
   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
 
   _exitStage = new ViterbiPath[_trellis->nStates()];
@@ -71,7 +77,9 @@ void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<
 	
 	VectorXd error = observations.col(_preamble.cols()) - channel.getTransmissionMatrix(_preamble.cols())*symbolsVector;
 
-	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - log(StatUtil::probApriori(symbolsVector,_usersActivityPdfs));
+// 	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - log(StatUtil::probApriori(symbolsVector,_usersActivityPdfs));
+	initialCost =  (error.dot(error))/(2*noiseVariances[_preamble.cols()]) - 
+					log(StatUtil::probSymbolsVector(symbolsVector,_usersActivityPdfs,_alphabet.length()));
 
 	_exitStage[iState] = ViterbiPath(_iLastSymbolVectorToBeDetected,initialCost,symbolsVector);
   }
