@@ -22,10 +22,10 @@
 Elsevier2007System::Elsevier2007System()
 {
     // the required linear detectors are built
-    mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),N*(d+1));
-    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->variance(),N*(d+1));
-    mmseDetectorXL = new MMSEDetector(L*(c+e+1),N*(e+1),alphabet->variance(),N*(d+1),0);
-    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->variance());
+    mmseDetectorLarge = new MMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),_N*(_d+1));
+    mmseDetectorSmall = new MMSEDetector(_L*(c+_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1));
+    mmseDetectorXL = new MMSEDetector(_L*(c+e+1),_N*(e+1),_alphabet->variance(),_N*(_d+1),0);
+    decorrelatorDetector = new DecorrelatorDetector(_L*(c+_d+1),_N*(_d+1),_alphabet->variance());
 
 	kalmanEstimatedChannel = NULL;
 }
@@ -39,10 +39,10 @@ Elsevier2007System::~Elsevier2007System()
 	delete kalmanEstimatedChannel;
 }
 
-void Elsevier2007System::AddAlgorithms()
+void Elsevier2007System::addAlgorithms()
 {
 	delete kalmanEstimatedChannel;
-	 kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observations,noise->variances());
+	 kalmanEstimatedChannel = new EstimatedMIMOChannel(_N,_L,_m,_symbols.cols(),_preambleLength,kalmanEstimator,_symbols,_observations,_noise->variances());
 
 //     algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
 
@@ -52,7 +52,7 @@ void Elsevier2007System::AddAlgorithms()
 
 	// si no se resta la contribución de los símbolos anteriores (#define SUBSTRACT_CONTRIBUTION_FROM_KNOWN_SYMBOLS en LinearFilterBasedSMCAlgorithm) entonces
 	// se debe usar mmseDetectorLarge
-    algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,mmseDetectorLarge,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (MMSE)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,mmseDetectorLarge,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
 //     algorithms.push_back(new LinearFilterBasedMKFAlgorithm("MKF (Decorrelator)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,decorrelatorDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

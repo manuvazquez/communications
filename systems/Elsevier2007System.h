@@ -39,7 +39,7 @@ protected:
 
 	EstimatedMIMOChannel *kalmanEstimatedChannel;
 
-    virtual void AddAlgorithms();
+    virtual void addAlgorithms();
 public:
     Elsevier2007System();
     ~Elsevier2007System();

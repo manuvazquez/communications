@@ -31,7 +31,7 @@ SMCSystem::SMCSystem()
 
     // back and forward smoothing
     c = 0;
-    e = d;
+    e = _d;
 
     // AR process parameters
     ARcoefficients[0] = 0.99999;
@@ -51,16 +51,16 @@ SMCSystem::~SMCSystem()
   delete algoritmoRemuestreo;
 }
 
-void SMCSystem::BeforeEndingFrame()
+void SMCSystem::beforeEndingFrame()
 {
 #ifdef DEBUG
 	cout << "en SMCSystem::BeforeEndingFrame" << endl;
 #endif
-    BaseSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(nParticles,"nParticles",f);
-    Util::scalarToOctaveFileStream(resamplingRatio,"resamplingRatio",f);
-    Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",f);
-    Util::scalarToOctaveFileStream(ARvariance,"ARvariance",f);
-    Util::scalarToOctaveFileStream(c,"c",f);
-    Util::scalarToOctaveFileStream(e,"e",f);
+    BaseSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(nParticles,"nParticles",_f);
+    Util::scalarToOctaveFileStream(resamplingRatio,"resamplingRatio",_f);
+    Util::scalarsVectorToOctaveFileStream(ARcoefficients,"ARcoefficients",_f);
+    Util::scalarToOctaveFileStream(ARvariance,"ARvariance",_f);
+    Util::scalarToOctaveFileStream(c,"c",_f);
+    Util::scalarToOctaveFileStream(e,"e",_f);
 }

@@ -39,9 +39,9 @@ LMSmuTestSystem::LMSmuTestSystem()
 
     vector<double> differentialDelays,powers;
 
-    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
-    powerProfile->print();
+    _powerProfile->print();
 
     // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
@@ -49,22 +49,22 @@ LMSmuTestSystem::LMSmuTestSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
     if(adjustSurvivorsFromParticlesNumber)
     {
         cout << "Number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
         cout << " to " << nSurvivors << endl;
     }
 
     // estimacion conjunta del canal y los datos
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
+    rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 
     for(uint iMu=0;iMu<musLMS.size();iMu++)
-        LMSchannelEstimators.push_back(new NLMSEstimator(powerProfile->means(),N,musLMS[iMu]));
+        LMSchannelEstimators.push_back(new NLMSEstimator(_powerProfile->means(),_N,musLMS[iMu]));
 }
 
 LMSmuTestSystem::~LMSmuTestSystem()
@@ -74,34 +74,34 @@ LMSmuTestSystem::~LMSmuTestSystem()
     for(uint iMu=0;iMu<musLMS.size();iMu++)
         delete LMSchannelEstimators[iMu];
 
-    delete powerProfile;
+    delete _powerProfile;
 }
 
-void LMSmuTestSystem::AddAlgorithms()
+void LMSmuTestSystem::addAlgorithms()
 {
     char algorithmName[ALGORITHM_NAME_MAX_LENGTH];
 
     for(uint iMu=0;iMu<musLMS.size();iMu++)
     {
         sprintf(algorithmName,"LMS-D-SIS mu = %f",musLMS[iMu]);
-        algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,LMSchannelEstimators[iMu],rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
     }
 }
 
-void LMSmuTestSystem::BuildChannel()
+void LMSmuTestSystem::buildChannel()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
-void LMSmuTestSystem::BeforeEndingFrame()
+void LMSmuTestSystem::beforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    SMCSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-    Util::scalarsVectorToOctaveFileStream(musLMS,"musLMS",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+    Util::scalarsVectorToOctaveFileStream(musLMS,"musLMS",_f);
 }

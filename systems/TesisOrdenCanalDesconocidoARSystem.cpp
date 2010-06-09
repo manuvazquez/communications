@@ -26,14 +26,14 @@ TesisOrdenCanalDesconocidoARSystem::TesisOrdenCanalDesconocidoARSystem()
 //     powerProfile = new FlatPowerProfile(L,N,m,channelVariance);
 }
 
-void TesisOrdenCanalDesconocidoARSystem::BuildChannel()
+void TesisOrdenCanalDesconocidoARSystem::buildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }
 
-void TesisOrdenCanalDesconocidoARSystem::BeforeEndingFrame()
+void TesisOrdenCanalDesconocidoARSystem::beforeEndingFrame()
 {
-    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
+    TesisOrdenCanalDesconocidoSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
 }
 

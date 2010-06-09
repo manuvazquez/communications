@@ -34,44 +34,44 @@ WSA08System::WSA08System()
 	velocity = 50.0; // m/s
 
 
-    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
 	if(adjustParticlesNumberFromSurvivors)
 	{
-		nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
+		nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << COLOR_WHITE << "Number of particles adjusted to " << COLOR_NORMAL << nParticles << endl;
     }
 
 	if(adjustSurvivorsFromParticlesNumber)
 	{
 		cout << COLOR_WHITE << "Number of survivors adjusted from " << COLOR_NORMAL << nSurvivors;
-		nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+		nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
 		cout << COLOR_WHITE << " to " << COLOR_NORMAL << nSurvivors << endl;
 	}
 
-	rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
+	rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 
-	rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
+	rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
-		kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients,ARvariance));
-		noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,1.0));
+		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,forgettingFactor));
+		kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],_N,ARcoefficients,ARvariance));
+		noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,1.0));
 	}
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
 }
 
 
 WSA08System::~WSA08System()
 {
 // 	delete channel;
-	delete powerProfile;
+	delete _powerProfile;
 
 	delete rmmseDetector;
 
@@ -89,10 +89,10 @@ WSA08System::~WSA08System()
 	delete kalmanEstimator;
 }
 
-void WSA08System::BuildChannel()
+void WSA08System::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,2e9,1.0/500.0e3,*powerProfile);
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
 #ifdef DEBUG
 	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
@@ -100,15 +100,15 @@ void WSA08System::BuildChannel()
 #endif
 }
 
-void WSA08System::AddAlgorithms()
+void WSA08System::addAlgorithms()
 {
-	ChannelOrderEstimationSystem::AddAlgorithms();
+	ChannelOrderEstimationSystem::addAlgorithms();
 
 // 	algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors));
+	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 	
 // 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm +1 survivor",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors+1));
 
@@ -116,15 +116,15 @@ void WSA08System::AddAlgorithms()
 
 // 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (overestimated)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,candidateChannelOrders[iTrueChannelOrder+1],dynamic_cast <KalmanEstimator *> (kalmanChannelEstimators[iTrueChannelOrder+1]),preamble,candidateChannelOrders[iTrueChannelOrder+1]-1,iLastSymbolVectorToBeDetected+candidateChannelOrders[iTrueChannelOrder+1]-1,nSurvivors));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void WSA08System::BeforeEndingFrame()
+void WSA08System::beforeEndingFrame()
 {
-    ChannelOrderEstimationSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-	Util::scalarToOctaveFileStream(velocity,"velocity",f);
+    ChannelOrderEstimationSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
+	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
 }
 

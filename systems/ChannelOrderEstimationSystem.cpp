@@ -34,9 +34,9 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 	iTrueChannelOrder = -1;
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
 	{
-		channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(L,N*candidateChannelOrders[iChannelOrder]);
-		channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(L,N*candidateChannelOrders[iChannelOrder]);
-		if(candidateChannelOrders[iChannelOrder] == m)
+		channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(_L,_N*candidateChannelOrders[iChannelOrder]);
+		channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(_L,_N*candidateChannelOrders[iChannelOrder]);
+		if(candidateChannelOrders[iChannelOrder] == _m)
 			iTrueChannelOrder = iChannelOrder;
 	}
 
@@ -44,50 +44,50 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 		throw RuntimeException("ChannelOrderEstimationSystem::ChannelOrderEstimationSystem: the memory of the channel is not one of the possible candidates.");
 
 	// channel order APP evolution
-    channelOrderAPPsAlongTime.reserve(nFrames);
+    channelOrderAPPsAlongTime.reserve(_nFrames);
 }
 
-void ChannelOrderEstimationSystem::BeforeEndingFrame()
+void ChannelOrderEstimationSystem::beforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame();
+    SMCSystem::beforeEndingFrame();
 
-	Util::scalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",f);
-	Util::scalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",f);
+	Util::scalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",_f);
+	Util::scalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
 
 	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-	Util::matricesVectorsVectorsVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",f);
+	Util::matricesVectorsVectorsVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);
 }
 
-void ChannelOrderEstimationSystem::OnlyOnce()
+void ChannelOrderEstimationSystem::onlyOnce()
 {
-	SMCSystem::OnlyOnce();
+	SMCSystem::onlyOnce();
 
 	// we find out which algorithms perform channel order APP estimation
-	for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+	for(uint iAlgorithm=0;iAlgorithm<_algorithms.size();iAlgorithm++)
 	{
-		if(algorithms[iAlgorithm]->performsChannelOrderAPPestimation())
+		if(_algorithms[iAlgorithm]->performsChannelOrderAPPestimation())
 			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
 			iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
-	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),frameLength)));
+	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),_frameLength)));
 }
 
-void ChannelOrderEstimationSystem::BeforeEndingAlgorithm()
+void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
 {
-	SMCSystem::BeforeEndingAlgorithm();
+	SMCSystem::beforeEndingAlgorithm();
 
-	if(algorithms[iAlgorithm]->performsChannelOrderAPPestimation())
+	if(_algorithms[_iAlgorithm]->performsChannelOrderAPPestimation())
 	{
 		//...the probability of the different channel orders at each time instant is retrieved
-		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(algorithms[iAlgorithm]))->getChannelOrderAPPsAlongTime_eigen();
+		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getChannelOrderAPPsAlongTime_eigen();
 
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}
 }
 
-void ChannelOrderEstimationSystem::AddAlgorithms()
+void ChannelOrderEstimationSystem::addAlgorithms()
 {
 	iAlgorithmPerformingChannelOrderAPPestimation = 0;
 }

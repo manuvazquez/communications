@@ -58,8 +58,8 @@ protected:
     NLMSEstimator *nlmsEstimator;
     RMMSEDetector *rmmseDetector;
 
-    virtual void BeforeEndingFrame();
-    virtual void AddAlgorithms();
+    virtual void beforeEndingFrame();
+    virtual void addAlgorithms();
 public:
     TesisComplejidadReducidaSystem();
     ~TesisComplejidadReducidaSystem();

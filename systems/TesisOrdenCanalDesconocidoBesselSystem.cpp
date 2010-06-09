@@ -28,16 +28,16 @@ TesisOrdenCanalDesconocidoBesselSystem::TesisOrdenCanalDesconocidoBesselSystem()
     T = 1.0/symbolRate; // (s)
 }
 
-void TesisOrdenCanalDesconocidoBesselSystem::BuildChannel()
+void TesisOrdenCanalDesconocidoBesselSystem::buildChannel()
 {
-    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
-void TesisOrdenCanalDesconocidoBesselSystem::BeforeEndingFrame()
+void TesisOrdenCanalDesconocidoBesselSystem::beforeEndingFrame()
 {
-    TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    TesisOrdenCanalDesconocidoSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 }
 

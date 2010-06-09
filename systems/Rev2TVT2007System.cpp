@@ -26,12 +26,12 @@ Rev2TVT2007System::Rev2TVT2007System(): TVT2007System()
 	uniquekalmanChannelEstimator.push_back(kalmanChannelEstimators[1]);
 }
 
-void Rev2TVT2007System::AddAlgorithms()
+void Rev2TVT2007System::addAlgorithms()
 {
-	ChannelOrderEstimationSystem::AddAlgorithms();
+	ChannelOrderEstimationSystem::addAlgorithms();
 
-	algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,uniquekalmanChannelEstimator,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,uniquekalmanChannelEstimator,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 

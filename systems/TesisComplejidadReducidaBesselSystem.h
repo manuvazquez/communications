@@ -38,8 +38,8 @@ protected:
     double symbolRate; // (Hz)
     double T; // (s)
 
-    virtual void BeforeEndingFrame();
-    virtual void BuildChannel();
+    virtual void beforeEndingFrame();
+    virtual void buildChannel();
 
 };
 

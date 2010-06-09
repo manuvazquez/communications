@@ -63,7 +63,7 @@ protected:
 
     double firstSampledChannelMatrixVariance;
 
-    virtual void BeforeEndingFrame();
+    virtual void beforeEndingFrame();
 public:
     SMCSystem();
 

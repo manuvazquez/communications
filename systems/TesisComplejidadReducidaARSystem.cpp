@@ -30,13 +30,13 @@ TesisComplejidadReducidaARSystem::~TesisComplejidadReducidaARSystem()
 }
 
 
-void TesisComplejidadReducidaARSystem::BuildChannel()
+void TesisComplejidadReducidaARSystem::buildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }
 
-void TesisComplejidadReducidaARSystem::BeforeEndingFrame()
+void TesisComplejidadReducidaARSystem::beforeEndingFrame()
 {
-    TesisComplejidadReducidaSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
+    TesisComplejidadReducidaSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
 }

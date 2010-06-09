@@ -60,9 +60,9 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 
 //     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
 //     powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
-    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
-    powerProfile->print();
+    _powerProfile->print();
 
     // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
@@ -70,30 +70,30 @@ TesisComplejidadReducidaSystem::TesisComplejidadReducidaSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
     if(adjustSurvivorsFromParticlesNumber)
     {
         cout << "Number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
         cout << " to " << nSurvivors << endl;
     }
 
     // variables auxiliares
 //     mmseDetectorLarge = new MMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),N*(d+1));
-    mmseDetectorSmall = new MMSEDetector(L*(c+d+1),N*(d+1),alphabet->variance(),N*(d+1));
-    decorrelatorDetector = new DecorrelatorDetector(L*(c+d+1),N*(d+1),alphabet->variance());
+    mmseDetectorSmall = new MMSEDetector(_L*(c+_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1));
+    decorrelatorDetector = new DecorrelatorDetector(_L*(c+_d+1),_N*(_d+1),_alphabet->variance());
 
     // estimacion conjunta del canal y los datos
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
-    rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
-    lmsEstimator = new LMSEstimator(powerProfile->means(),N,muLMS);
-    nlmsEstimator = new NLMSEstimator(powerProfile->means(),N,muNLMS);
+    rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
+    rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
+    lmsEstimator = new LMSEstimator(_powerProfile->means(),_N,muLMS);
+    nlmsEstimator = new NLMSEstimator(_powerProfile->means(),_N,muNLMS);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance,_symbols,_preambleLength);
 
     kalmanEstimatedChannel = NULL;
 }
@@ -112,10 +112,10 @@ TesisComplejidadReducidaSystem::~TesisComplejidadReducidaSystem()
     delete kalmanEstimatedChannel;
     delete kalmanEstimator;
     delete knownSymbolsKalmanEstimator;
-    delete powerProfile;
+    delete _powerProfile;
 }
 
-void TesisComplejidadReducidaSystem::AddAlgorithms()
+void TesisComplejidadReducidaSystem::addAlgorithms()
 {
     // ---------------------------------------------------------- con variables auxiliares ----------------------------------------------------
 //     algorithms.push_back(new TriangularizationBasedSMCAlgorithm("Cholesky",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],ARvariance));
@@ -130,7 +130,7 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
 
 //     algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter (known symbols) + MMSE",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,knownSymbolsKalmanEstimator,preamble,c,d,mmseDetectorSmall,ARcoefficients[0],true));
 
-    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors));
+    _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
     // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
 //     algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,rlsEstimator,rmmseDetector,preamble,c,d,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
@@ -140,26 +140,26 @@ void TesisComplejidadReducidaSystem::AddAlgorithms()
     // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
     // common to all simulation algorithms
     delete kalmanEstimatedChannel;
-     kalmanEstimatedChannel = new EstimatedMIMOChannel(N,L,m,symbols.cols(),preambleLength,kalmanEstimator,symbols,observations,noise->variances());
+     kalmanEstimatedChannel = new EstimatedMIMOChannel(_N,_L,_m,_symbols.cols(),_preambleLength,kalmanEstimator,_symbols,_observations,_noise->variances());
 
 //     algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
 //     algorithms.push_back(new SISoptAlgorithm ("SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),preamble,d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi (estimated channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (kalmanEstimatedChannel)),_preamble,_d));
 
 //     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,symbols));
 }
 
-void TesisComplejidadReducidaSystem::BeforeEndingFrame()
+void TesisComplejidadReducidaSystem::beforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame();
+    SMCSystem::beforeEndingFrame();
 
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
-    Util::scalarToOctaveFileStream(muLMS,"muLMS",f);
-    Util::scalarToOctaveFileStream(muNLMS,"muNLMS",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+    Util::scalarToOctaveFileStream(muLMS,"muLMS",_f);
+    Util::scalarToOctaveFileStream(muNLMS,"muNLMS",_f);
 }

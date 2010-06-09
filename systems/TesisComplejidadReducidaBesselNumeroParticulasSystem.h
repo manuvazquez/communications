@@ -33,8 +33,8 @@ public:
 protected:
     vector<int> particlesNumbers;
 
-    virtual void BeforeEndingFrame();
-    virtual void AddAlgorithms();
+    virtual void beforeEndingFrame();
+    virtual void addAlgorithms();
 };
 
 #endif

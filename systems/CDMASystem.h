@@ -81,11 +81,11 @@ protected:
 	
 // 	Alphabet _extendedAlphabet;
 	
-    virtual void AddAlgorithms();
-	virtual void BeforeEndingAlgorithm();
-    virtual void BeforeEndingFrame();
-    virtual void BuildChannel();
-	virtual void OnlyOnce();
+    virtual void addAlgorithms();
+	virtual void beforeEndingAlgorithm();
+    virtual void beforeEndingFrame();
+    virtual void buildChannel();
+	virtual void onlyOnce();
 public:
     CDMASystem();
 

@@ -33,17 +33,17 @@ TesisComplejidadReducidaBesselSystem::~TesisComplejidadReducidaBesselSystem()
 }
 
 
-void TesisComplejidadReducidaBesselSystem::BeforeEndingFrame()
+void TesisComplejidadReducidaBesselSystem::beforeEndingFrame()
 {
-    TesisComplejidadReducidaSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    TesisComplejidadReducidaSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 }
 
-void TesisComplejidadReducidaBesselSystem::BuildChannel()
+void TesisComplejidadReducidaBesselSystem::buildChannel()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 

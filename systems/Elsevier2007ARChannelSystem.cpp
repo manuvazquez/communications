@@ -23,28 +23,28 @@ Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()
  : Elsevier2007System()
 {
     channelVariance = 1.0;
-    powerProfile = new FlatPowerProfile(L,N,m,channelVariance);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,channelVariance);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
-    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance,symbols,preambleLength);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+    knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance,_symbols,_preambleLength);
 }
 
 
 Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
 {
-  delete powerProfile;
+  delete _powerProfile;
 //   delete channel;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
 }
 
-void Elsevier2007ARChannelSystem::BuildChannel()
+void Elsevier2007ARChannelSystem::buildChannel()
 {
-    channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
+    _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }
 
-void Elsevier2007ARChannelSystem::BeforeEndingFrame()
+void Elsevier2007ARChannelSystem::beforeEndingFrame()
 {
-    Elsevier2007System::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",f);
+    Elsevier2007System::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
 }

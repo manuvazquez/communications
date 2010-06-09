@@ -120,7 +120,8 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
                     // the AR coefficiente is accounted for
 //                  involvedSymbolVectors *= _ARcoefficient; <--------------------------------- (when Kalman estimator, it is already accounted for)
 
-                    particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->getChannelOrderAPP(iChannelOrder)*processedParticle->getChannelMatrixEstimator(iChannelOrder)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
+                    particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder) = processedParticle->getChannelOrderAPP(iChannelOrder)*
+								  processedParticle->getChannelMatrixEstimator(iChannelOrder)->likelihood(observations.col(iObservationToBeProcessed),involvedSymbolVectors,noiseVariances[iObservationToBeProcessed]);
 
 
                     likelihood += particleCandidates[iCandidate].unnormalizedChannelOrderAPPs(iChannelOrder);

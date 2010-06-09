@@ -59,9 +59,9 @@ PSPvsSMCSystem::PSPvsSMCSystem()
 
 //     powerProfile = new ConstantMeanDSPowerProfile(L,N,differentialDelays,powers,T);
 //     powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
-    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
-    powerProfile->print();
+    _powerProfile->print();
 
     // check the adjustments for particle and survivor numbers
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
@@ -69,45 +69,45 @@ PSPvsSMCSystem::PSPvsSMCSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
     if(adjustSurvivorsFromParticlesNumber)
     {
         cout << "Number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
         cout << " to " << nSurvivors << endl;
     }
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
 }
 
 PSPvsSMCSystem::~PSPvsSMCSystem()
 {
     delete kalmanEstimator;
-    delete powerProfile;
+    delete _powerProfile;
 }
 
-void PSPvsSMCSystem::AddAlgorithms()
+void PSPvsSMCSystem::addAlgorithms()
 {
-    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors));
+    _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-    algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+    _algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances()));
 }
 
-void PSPvsSMCSystem::BuildChannel()
+void PSPvsSMCSystem::buildChannel()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*powerProfile);
+    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
-void PSPvsSMCSystem::BeforeEndingFrame()
+void PSPvsSMCSystem::beforeEndingFrame()
 {
-    SMCSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",f);
+    SMCSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
 }

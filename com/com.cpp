@@ -69,5 +69,5 @@ int main(int argc,char* argv[])
 
     CDMASystem system;
 
-    system.Simulate();
+    system.simulate();
 }

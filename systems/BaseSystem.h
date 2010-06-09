@@ -57,63 +57,63 @@ extern bool __done;
 
 class BaseSystem{
 protected:
-    double pe,mse;
-    uint iSNR;
-	int iFrame,iAlgorithm;
-    int iLastSymbolVectorToBeDetected;
+    double _pe,_mse;
+    uint _iSNR;
+	int _iFrame,_iAlgorithm;
+    int _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
-    int nFrames,L,N,frameLength,nBitsGenerated,m,d,trainSeqLength,preambleLength;
-    char outputFileName[HOSTNAME_LENGTH+4];
+    int _nFrames,_L,_N,_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+    char _outputFileName[HOSTNAME_LENGTH+4];
 
-    Alphabet *alphabet;
+    Alphabet *_alphabet;
 
-    Noise *noise;
-    MatrixXd observations;
+    Noise *_noise;
+    MatrixXd _observations;
 
     // SNRs to be processed
-    std::vector<int> SNRs;
+    std::vector<int> _SNRs;
 
     // when SER computing starts (with respect to the beginning of the frame length)
-    int symbolsDetectionWindowStart;
+    int _symbolsDetectionWindowStart;
 	
 	// when MSE computing starts (with respect to the beginning of the frame length)
-	int MSEwindowStart;
+	int _MSEwindowStart;
 
     // a vector that will contain the names of the algorithms
-    std::vector<std::string> algorithmsNames;
+    std::vector<std::string> _algorithmsNames;
 
-    MatrixXd preamble;
+    MatrixXd _preamble;
 
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
-    int nSmoothingSymbolsVectors;
+    int _nSmoothingSymbolsVectors;
     
 	/*
 	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol
 	  Hence,it doesn't include preamble symbols or smoothing symbols.
 	*/
-    vector<vector<bool> > isSymbolAccountedForDetection;
+    vector<vector<bool> > _isSymbolAccountedForDetection;
     
-    std::vector<std::vector<uint> > permutations;
+    std::vector<std::vector<uint> > _permutations;
 	uint _iBestPermutation;
 	std::vector<int> _bestPermutationSigns;
 
     // matrices for results
-    vector<MatrixXd> peMatrices, MSEMatrices;
+    vector<MatrixXd> _peMatrices, _MSEMatrices;
 
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
     // ...so that they can be printed when the program finishes (they are not saved)
-    MatrixXd overallPeMatrix,overallMseMatrix;
+    MatrixXd _overallPeMatrix,_overallMseMatrix;
     
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms in order to save them
-    MatrixXd presentFramePe,presentFrameMSE;
+    MatrixXd _presentFramePe,_presentFrameMSE;
 
     // BER time evolution
-    std::vector<MatrixXd> overallPeTimeEvolution;
-    std::vector<MatrixXi> overallErrorsNumberTimeEvolution;
+    std::vector<MatrixXd> _overallPeTimeEvolution;
+    std::vector<MatrixXi> _overallErrorsNumberTimeEvolution;
 
     // seeds
-    std::vector<uint32_t> mainSeeds,statUtilSeeds;
+    std::vector<uint32_t> _mainSeeds,_statUtilSeeds;
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > channelEstimations;
@@ -126,31 +126,31 @@ protected:
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	std::vector<std::vector<MatrixXd> > channelMatrices;
+	std::vector<std::vector<MatrixXd> > _channelMatrices;
 #endif
 
-    Random randomGenerator;
+    Random _randomGenerator;
 
-    MIMOChannel *channel;
+    MIMOChannel *_channel;
 
-    std::vector<Algorithm *> algorithms;
+    std::vector<Algorithm *> _algorithms;
 
-    MatrixXd symbols;
-    MatrixXd detectedSymbols;
+    MatrixXd _symbols;
+    MatrixXd _detectedSymbols;
 
-    ofstream f,xmlFile;
+    ofstream _f,_xmlFile;
 
-    DelayPowerProfile *powerProfile;
+    DelayPowerProfile *_powerProfile;
 
-    virtual void AddAlgorithms() = 0;
-    virtual void BuildChannel() = 0;
-    virtual void BeforeEndingFrame();
-    virtual void BeforeEndingAlgorithm();
+    virtual void addAlgorithms() = 0;
+    virtual void buildChannel() = 0;
+    virtual void beforeEndingFrame();
+    virtual void beforeEndingAlgorithm();
 	
     /*!
      * Actions performed only once (first SNR, first frame)
      */
-    virtual void OnlyOnce();
+    virtual void onlyOnce();
 
 	//! It computes de Symbol Error Rate
 	/*!
@@ -182,7 +182,7 @@ public:
 
     virtual ~BaseSystem();
 
-    void Simulate();
+    void simulate();
 
 };
 

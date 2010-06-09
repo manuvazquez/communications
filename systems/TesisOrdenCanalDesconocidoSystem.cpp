@@ -31,34 +31,34 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
 
-    powerProfile = new FlatPowerProfile(L,N,m,1.0);
+    _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
     if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
         throw RuntimeException("adjustParticlesNumberFromSurvivors y adjustSurvivorsFromParticlesNumber no pueden ser true a la vez.");
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
+        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
     if(adjustSurvivorsFromParticlesNumber)
     {
         cout << "number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(N*(m-1)))));
+        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
         cout << " to " << nSurvivors << endl;
     }
 
-    rmmseDetector = new RMMSEDetector(L*(c+d+1),N*(m+c+d),alphabet->variance(),forgettingFactorDetector,N*(d+1));
-    rlsEstimator = new RLSEstimator(powerProfile->means(),N,forgettingFactor);
+    rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
+    rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
 
     for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
     {
-        RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,forgettingFactor));
-        kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],N,ARcoefficients,ARvariance));
-        noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],N,1.0));
+        RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,forgettingFactor));
+        kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],_N,ARcoefficients,ARvariance));
+        noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,1.0));
 
-        RMMSElinearDetectors.push_back(new RMMSEDetector(L*candidateChannelOrders[iChannelOrder],N*(2*candidateChannelOrders[iChannelOrder]-1),alphabet->variance(),forgettingFactorDetector,N*candidateChannelOrders[iChannelOrder]));
+        RMMSElinearDetectors.push_back(new RMMSEDetector(_L*candidateChannelOrders[iChannelOrder],_N*(2*candidateChannelOrders[iChannelOrder]-1),_alphabet->variance(),forgettingFactorDetector,_N*candidateChannelOrders[iChannelOrder]));
     }
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
@@ -66,19 +66,19 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
     multinomialResamplingAlgorithm = new MultinomialResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(powerProfile->means(),powerProfile->variances(),N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
 
     // USIS2SIS transition criterion(s)
     USISmaximumProbabilityCriterion = new MaximumProbabilityCriterion(0.8);
 //     USISuniformRelatedCriterion = new UniformRelatedCriterion(2.0);
 
-    channelOrderEstimator= new APPbasedChannelOrderEstimator(N,candidateChannelOrders);
+    channelOrderEstimator= new APPbasedChannelOrderEstimator(_N,candidateChannelOrders);
 }
 
 
 TesisOrdenCanalDesconocidoSystem::~TesisOrdenCanalDesconocidoSystem()
 {
-    delete powerProfile;
+    delete _powerProfile;
 
     delete rmmseDetector;
 
@@ -102,21 +102,21 @@ TesisOrdenCanalDesconocidoSystem::~TesisOrdenCanalDesconocidoSystem()
 //  delete USISuniformRelatedCriterion;
 }
 
-void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
+void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
 {
-    ChannelOrderEstimationSystem::AddAlgorithms();
+    ChannelOrderEstimationSystem::addAlgorithms();
 
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m-1,RLSchannelEstimators[iTrueChannelOrder-1],RMMSElinearDetectors[iTrueChannelOrder-1],preamble,c,d-1,d-1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder-1],channelOrderCoefficientsVariances[iTrueChannelOrder-1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m-1,RLSchannelEstimators[iTrueChannelOrder-1],RMMSElinearDetectors[iTrueChannelOrder-1],_preamble,c,_d-1,_d-1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder-1],channelOrderCoefficientsVariances[iTrueChannelOrder-1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,RLSchannelEstimators[iTrueChannelOrder],RMMSElinearDetectors[iTrueChannelOrder],preamble,c,d,d,nParticles,multinomialResamplingAlgorithm,powerProfile->means(),powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,RLSchannelEstimators[iTrueChannelOrder],RMMSElinearDetectors[iTrueChannelOrder],_preamble,c,_d,_d,nParticles,multinomialResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m+1,RLSchannelEstimators[iTrueChannelOrder+1],RMMSElinearDetectors[iTrueChannelOrder+1],preamble,c,d+1,d+1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder+1],channelOrderCoefficientsVariances[iTrueChannelOrder+1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+1,RLSchannelEstimators[iTrueChannelOrder+1],RMMSElinearDetectors[iTrueChannelOrder+1],_preamble,c,_d+1,_d+1,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder+1],channelOrderCoefficientsVariances[iTrueChannelOrder+1],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado por 2)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m+2,RLSchannelEstimators[iTrueChannelOrder+2],RMMSElinearDetectors[iTrueChannelOrder+2],preamble,c,d+2,d+2,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder+2],channelOrderCoefficientsVariances[iTrueChannelOrder+2],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado por 2)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+2,RLSchannelEstimators[iTrueChannelOrder+2],RMMSElinearDetectors[iTrueChannelOrder+2],_preamble,c,_d+2,_d+2,nParticles,multinomialResamplingAlgorithm,channelOrderCoefficientsMeans[iTrueChannelOrder+2],channelOrderCoefficientsVariances[iTrueChannelOrder+2],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm (RLS no forget)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,noForgetRLSchannelEstimators,preamble,preamble.cols(),symbols));
+    _algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm (RLS no forget)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,noForgetRLSchannelEstimators,_preamble,_preamble.cols(),_symbols));
 
-    algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,preamble,preamble.cols(),symbols));
+    _algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_symbols));
 
     // -----------------------------------------------
 //     algorithms.push_back(new LinearFilterBasedCMEapplyingAlgorithm("Linear Filter with CME based order estimation", *alphabet,L,L,N,iLastSymbolVectorToBeDetected,kalmanChannelEstimators,preamble, MMSEsmallLinearDetectors, ARcoefficients[0], true));
@@ -126,24 +126,24 @@ void TesisOrdenCanalDesconocidoSystem::AddAlgorithms()
 
 //     algorithms.push_back(new ISIS("ISIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm));
 
-    algorithms.push_back(new USIS("USIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new USIS("USIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new USIS2SISAlgorithm("USIS2SIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,USISmaximumProbabilityCriterion));
+    _algorithms.push_back(new USIS2SISAlgorithm("USIS2SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,USISmaximumProbabilityCriterion));
 
-    algorithms.push_back(new MLSDmAlgorithm("MLSD-m (RLS)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (RLS)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new MLSDmAlgorithm("MLSD-m (Kalman)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (Kalman)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors));
+    _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-    algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void TesisOrdenCanalDesconocidoSystem::BeforeEndingFrame()
+void TesisOrdenCanalDesconocidoSystem::beforeEndingFrame()
 {
-    ChannelOrderEstimationSystem::BeforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",f);
-    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",f);
-    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",f);
+    ChannelOrderEstimationSystem::beforeEndingFrame();
+    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
 }
 

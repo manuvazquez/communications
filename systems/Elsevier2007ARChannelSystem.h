@@ -33,8 +33,8 @@ class Elsevier2007ARChannelSystem : public Elsevier2007System
 protected:
     double channelVariance;
 
-    virtual void BuildChannel();
-    virtual void BeforeEndingFrame();
+    virtual void buildChannel();
+    virtual void beforeEndingFrame();
 public:
     Elsevier2007ARChannelSystem();
 

@@ -29,7 +29,7 @@
 
 #define DATE_LENGTH 100
 
-#define EXPORT_REAL_DATA
+// #define EXPORT_REAL_DATA
 
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
@@ -43,7 +43,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-#define LOAD_SEEDS
+// #define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -86,47 +86,46 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-	nFrames = 10000;
-// 	nFrames = 1;
-// 	nFrames = 200;
-//     L=3,N=2,frameLength=300;
-//     L=8,N=3,frameLength=300;
-    L=8,N=3,frameLength=1000;
-    m = 1;
-    d = m - 1;
-    trainSeqLength = 0;
-    preambleLength = 0;
+  _nFrames = 10000;
+//   _nFrames = 3;
+//   _nFrames = 200;
+//   _L=8,_N=3,_frameLength=10;
+  _L=8,_N=3,_frameLength=1000;
+  _m = 1;
+  _d = _m - 1;
+  _trainSeqLength = 0;
+  _preambleLength = 0;
     
-    // the algorithms with the higher smoothing lag require
-    nSmoothingSymbolsVectors = 6;
+  // the algorithms with the higher smoothing lag require
+  _nSmoothingSymbolsVectors = 6;
 
 //   SNRs.push_back(0);
-  SNRs.push_back(3);
-  SNRs.push_back(6);
-  SNRs.push_back(9);SNRs.push_back(12);SNRs.push_back(15);
+  _SNRs.push_back(3);
+  _SNRs.push_back(6);
+  _SNRs.push_back(9);_SNRs.push_back(12);_SNRs.push_back(15);
 //   SNRs.push_back(18);SNRs.push_back(21);
 
     // BER and MSE computing
-    symbolsDetectionWindowStart = trainSeqLength;
+    _symbolsDetectionWindowStart = _trainSeqLength;
 //     symbolsDetectionWindowStart = frameLength*3/10; 
 
-    MSEwindowStart = frameLength*9/10;
+    _MSEwindowStart = _frameLength*9/10;
 //     MSEwindowStart = 0;
 
     // results file name prefix
-    sprintf(outputFileName,"res_");
+    sprintf(_outputFileName,"res_");
 
     // alphabet is defined
     vector<vector<tBit> > alphabetBitSequences(2,vector<tBit>(1));
     alphabetBitSequences[0][0] = 0; alphabetBitSequences[1][0] = 1;
     vector<tSymbol> alphabetSymbols(2);
     alphabetSymbols[0] = -1; alphabetSymbols[1] = 1;
-    alphabet = new Alphabet(alphabetBitSequences,alphabetSymbols);
+    _alphabet = new Alphabet(alphabetBitSequences,alphabetSymbols);
 
     // host name is concatenated into the file name
     char hostname[HOSTNAME_LENGTH];
     gethostname(hostname,HOSTNAME_LENGTH);
-    strcat(outputFileName,hostname);
+    strcat(_outputFileName,hostname);
 
     // get present time of the system
     time_t presentTime;
@@ -139,29 +138,29 @@ BaseSystem::BaseSystem()
             presentTimeString[i]='_';
 
     // it is concatenated into the file name
-    strcat(outputFileName,"_");
-    strcat(outputFileName,presentTimeString);
+    strcat(_outputFileName,"_");
+    strcat(_outputFileName,presentTimeString);
 
     // a specific preamble is generated...
-    preamble = MatrixXd::Zero(1,1);
-    preamble.resize(N,preambleLength);
-    if(preamble.size()>0)
-        preamble.setConstant(-1.0);
+    _preamble = MatrixXd::Zero(1,1);
+    _preamble.resize(_N,_preambleLength);
+    if(_preamble.size()>0)
+        _preamble.setConstant(-1.0);
     
     // the frame length in bits is
-    nBitsGenerated = (frameLength+nSmoothingSymbolsVectors)*alphabet->nBitsPerSymbol();
+    _nBitsGenerated = (_frameLength+_nSmoothingSymbolsVectors)*_alphabet->nBitsPerSymbol();
     
     // which symbols are to be taken into account when detecting
-    isSymbolAccountedForDetection = vector<vector<bool> >(N,vector<bool>(frameLength));
+    _isSymbolAccountedForDetection = vector<vector<bool> >(_N,vector<bool>(_frameLength));
 
     // the preamble symbols before symbolsDetectionWindowStart are ignored for detection
-    for(int iTime=0;iTime<symbolsDetectionWindowStart;iTime++)
-        for(int iInput=0;iInput<N;iInput++)
-            isSymbolAccountedForDetection[iInput][iTime] = false;        
+    for(int iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
+        for(int iInput=0;iInput<_N;iInput++)
+            _isSymbolAccountedForDetection[iInput][iTime] = false;        
   
-    for(int iTime=symbolsDetectionWindowStart;iTime<frameLength;iTime++)
-        for(int iInput=0;iInput<N;iInput++)
-            isSymbolAccountedForDetection[iInput][iTime] = true;   
+    for(int iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
+        for(int iInput=0;iInput<_N;iInput++)
+            _isSymbolAccountedForDetection[iInput][iTime] = true;   
     
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
     cout << "isSymbolAccountedForDetection" << endl;
@@ -169,19 +168,19 @@ BaseSystem::BaseSystem()
 #endif    
     
     // ambiguity resolution
-    uint *firstPermutation = new uint[N];
-    for(int i=0;i<N;i++) firstPermutation[i] = i;
-    permutations = Util::permutations(firstPermutation,N);
+    uint *firstPermutation = new uint[_N];
+    for(int i=0;i<_N;i++) firstPermutation[i] = i;
+    _permutations = Util::permutations(firstPermutation,_N);
     delete[] firstPermutation;
 
-    peMatrices.reserve(nFrames);
-    MSEMatrices.reserve(nFrames);
+    _peMatrices.reserve(_nFrames);
+    _MSEMatrices.reserve(_nFrames);
 
-    overallPeTimeEvolution.resize(SNRs.size());
-    overallErrorsNumberTimeEvolution.resize(SNRs.size());
+    _overallPeTimeEvolution.resize(_SNRs.size());
+    _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
 
-    mainSeeds.reserve(nFrames);
-    statUtilSeeds.reserve(nFrames);
+    _mainSeeds.reserve(_nFrames);
+    _statUtilSeeds.reserve(_nFrames);
 //     beforeRunStatUtilSeeds.reserve(nFrames);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
@@ -190,7 +189,7 @@ BaseSystem::BaseSystem()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	channelMatrices.reserve(nFrames);
+	_channelMatrices.reserve(_nFrames);
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
@@ -199,11 +198,11 @@ BaseSystem::BaseSystem()
 
 #ifndef RANDOM_SEED
         // we don't want the same bits to be generated over and over
-        randomGenerator.setSeed(0);
+        _randomGenerator.setSeed(0);
 #endif
 
-    channel = NULL;
-    powerProfile = NULL;
+    _channel = NULL;
+    _powerProfile = NULL;
     
 // #define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
 //     
@@ -224,10 +223,10 @@ BaseSystem::BaseSystem()
 
 BaseSystem::~BaseSystem()
 {
-    delete alphabet;
+    delete _alphabet;
 }
 
-void BaseSystem::Simulate()
+void BaseSystem::simulate()
 {
 
 #ifdef LOAD_SEEDS
@@ -241,37 +240,37 @@ void BaseSystem::Simulate()
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
 #endif
 
-    iFrame = 0;
-    while((iFrame<nFrames) && (!__done))
+    _iFrame = 0;
+    while((_iFrame<_nFrames) && (!__done))
     {
 
 #ifdef SAVE_SEEDS
         // the seeds are kept for saving later
-        mainSeeds.push_back(randomGenerator.getSeed());
-        statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
+        _mainSeeds.push_back(_randomGenerator.getSeed());
+        _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
 #endif
 
         // bits are generated ...
-        Bits generatedBits(N,nBitsGenerated,randomGenerator);
+        Bits generatedBits(_N,_nBitsGenerated,_randomGenerator);
 
 		// differential modulation
 // 		bits = bits.differentialEncoding();
 
         // ... and then modulated by means of the alphabet
-        MatrixXd symbolsWithoutPreamble = Modulator::modulate(generatedBits,*alphabet);
+        MatrixXd symbolsWithoutPreamble = Modulator::modulate(generatedBits,*_alphabet);
 
         // the preamble is set before the symbols to be transmitted
-        if(preamble.size()>0)
+        if(_preamble.size()>0)
         {
-            symbols.resize(preamble.rows(),preamble.cols()+symbolsWithoutPreamble.cols());
-            symbols << preamble,symbolsWithoutPreamble;
+            _symbols.resize(_preamble.rows(),_preamble.cols()+symbolsWithoutPreamble.cols());
+            _symbols << _preamble,symbolsWithoutPreamble;
         }else
-            symbols = symbolsWithoutPreamble;
+            _symbols = symbolsWithoutPreamble;
 
         // all the above symbols must be processed except those generated due to the smoothing
-        iLastSymbolVectorToBeDetected = symbols.cols() - nSmoothingSymbolsVectors;
+        _iLastSymbolVectorToBeDetected = _symbols.cols() - _nSmoothingSymbolsVectors;
 
-        BuildChannel();
+        buildChannel();
 
 #ifdef PRINT_PARAMETERS
         std::cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
@@ -286,7 +285,7 @@ void BaseSystem::Simulate()
 //         noise = new NullNoise(L,channel->length());
 //         noise = new ChannelDependentNoise(channel);
 //         noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
-		noise = new SingleUserPowerProfileDependentNoise(L,channel->length(),*powerProfile);
+		_noise = new SingleUserPowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &symbols;
@@ -294,12 +293,12 @@ void BaseSystem::Simulate()
             realNoise = noise;
 #endif
 
-        for(iSNR=0;iSNR<SNRs.size();iSNR++)
+        for(_iSNR=0;_iSNR<_SNRs.size();_iSNR++)
         {
-            cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << SNRs[iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
+            cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << _iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
 
             // noise SNR is set
-            noise->setSNR(SNRs[iSNR],alphabet->variance());
+            _noise->setSNR(_SNRs[_iSNR],_alphabet->variance());
 
 #ifdef PRINT_NOISE
 			cout << "noise is" << endl;
@@ -308,93 +307,93 @@ void BaseSystem::Simulate()
 #endif
 
             // transmission
-            observations = channel->transmit(symbols,*noise);
+            _observations = _channel->transmit(_symbols,*_noise);
 
-             AddAlgorithms();
+             addAlgorithms();
 
             // here the number of algoriths is known. So, the first iteration:
-            if(iFrame==0 && iSNR==0)
-                OnlyOnce();
+            if(_iFrame==0 && _iSNR==0)
+                onlyOnce();
 
             // algorithms are executed
-            for(iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
+            for(_iAlgorithm=0;_iAlgorithm<_algorithms.size();_iAlgorithm++)
             {
                 // if there is training sequence
-                if(trainSeqLength!=0)
-                    algorithms[iAlgorithm]->run(observations,noise->variances(),symbols.block(0,preambleLength,N,trainSeqLength));
+                if(_trainSeqLength!=0)
+                    _algorithms[_iAlgorithm]->run(_observations,_noise->variances(),_symbols.block(0,_preambleLength,_N,_trainSeqLength));
                 // if there is NOT training sequence
                 else
-                    algorithms[iAlgorithm]->run(observations,noise->variances());
+                    _algorithms[_iAlgorithm]->run(_observations,_noise->variances());
 
-                detectedSymbols = algorithms[iAlgorithm]->getDetectedSymbolVectors();
+                _detectedSymbols = _algorithms[_iAlgorithm]->getDetectedSymbolVectors();
 
-                pe = computeSER(symbols.block(0,preambleLength,N,frameLength),detectedSymbols,isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+                _pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
 
-                BeforeEndingAlgorithm();
+                beforeEndingAlgorithm();
 
-                delete algorithms[iAlgorithm];
+                delete _algorithms[_iAlgorithm];
             }
 
-            algorithms.clear();
+            _algorithms.clear();
 			
 #ifdef STOP_AFTER_EACH_SNR
 		getchar();
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-        f.open(outputFileName,ofstream::trunc);
+        _f.open(_outputFileName,ofstream::trunc);
 
-        BeforeEndingFrame();
+        beforeEndingFrame();
         
-		f.close();
+		_f.close();
 
         // ---------------------------------------------------------
 
-        iFrame++;
+        _iFrame++;
 
-        delete channel;
-		channel = NULL;
+        delete _channel;
+		_channel = NULL;
 		
-        delete noise;
-		noise = NULL;
+        delete _noise;
+		_noise = NULL;
 		
 #ifdef STOP_AFTER_EACH_FRAME
 		getchar();
 #endif
     } // while((iFrame<nFrames) && (!done))
 
-    overallPeMatrix *= 1.0/iFrame;
-    overallMseMatrix *= 1.0/iFrame;
+    _overallPeMatrix *= 1.0/_iFrame;
+    _overallMseMatrix *= 1.0/_iFrame;
 
     cout << "Overall SER:" << endl;
-    Util::print(overallPeMatrix);
+    Util::print(_overallPeMatrix);
 
     cout << "Overall MSE:" << endl;
-    Util::print(overallMseMatrix);
+    Util::print(_overallMseMatrix);
     
     // data saving
-    xmlFile << "</com>" << endl;
-    xmlFile.close();
+    _xmlFile << "</com>" << endl;
+    _xmlFile.close();
 }
 
-void BaseSystem::OnlyOnce()
+void BaseSystem::onlyOnce()
 {
-    overallPeMatrix = MatrixXd::Zero(SNRs.size(),algorithms.size());
-    presentFramePe = MatrixXd::Zero(SNRs.size(),algorithms.size());
+    _overallPeMatrix = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+    _presentFramePe = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
 
-    overallMseMatrix = MatrixXd::Zero(SNRs.size(),algorithms.size());
-    presentFrameMSE = MatrixXd::Zero(SNRs.size(),algorithms.size());
+    _overallMseMatrix = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+    _presentFrameMSE = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
 
     // Pe evolution
-    for(uint i=0;i<SNRs.size();i++)
+    for(uint i=0;i<_SNRs.size();i++)
     {
-        overallPeTimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
-        overallErrorsNumberTimeEvolution[i] = MatrixXi::Zero(algorithms.size(),frameLength);
+        _overallPeTimeEvolution[i] = MatrixXd(_algorithms.size(),_frameLength);
+        _overallErrorsNumberTimeEvolution[i] = MatrixXi::Zero(_algorithms.size(),_frameLength);
     }
 
     // we fill the vector with the names of the algorithms
-    for(uint iAlgorithm=0;iAlgorithm<algorithms.size();iAlgorithm++)
-        algorithmsNames.push_back(algorithms[iAlgorithm]->getName());
+    for(uint iAlgorithm=0;iAlgorithm<_algorithms.size();iAlgorithm++)
+        _algorithmsNames.push_back(_algorithms[iAlgorithm]->getName());
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
@@ -407,25 +406,25 @@ void BaseSystem::OnlyOnce()
 #endif
 }
 
-void BaseSystem::BeforeEndingAlgorithm()
+void BaseSystem::beforeEndingAlgorithm()
 {
 //     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),permutations[_iBestPermutation],_bestPermutationSigns);
 //     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
 	
 	// the channel matrices estimated by the algorithm are stored
-	std::vector<MatrixXd> estimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
+	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 	
 	if(estimatedChannelMatrices.size()!=0)
 	{
-	  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+MSEwindowStart,estimatedChannelMatrices.end());
+	  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
 // 	  cout << "estimatedChannelMatrices.size() = " << estimatedChannelMatrices.size() << " toCheckEstimatedChannelMatrices.size() = " << toCheckEstimatedChannelMatrices.size() << endl;
 // 	  cout << "channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() = " << channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() << endl;
 
-	  mse = computeMSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
+	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
 	}else
 	{
 	  // it should be zero
-	  mse = computeMSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
+	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
 	}
 	
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
@@ -449,37 +448,37 @@ void BaseSystem::BeforeEndingAlgorithm()
   presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
-    cout << COLOR_GREEN << algorithms[iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << pe << " , MSE = " << mse << endl;
+    cout << COLOR_GREEN << _algorithms[_iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << _pe << " , MSE = " << _mse << endl;
 
     // the error probability is accumulated
-    overallPeMatrix(iSNR,iAlgorithm) += pe;
-    presentFramePe(iSNR,iAlgorithm) = pe;
+    _overallPeMatrix(_iSNR,_iAlgorithm) += _pe;
+    _presentFramePe(_iSNR,_iAlgorithm) = _pe;
 
     // and the MSE
-    overallMseMatrix(iSNR,iAlgorithm) += mse;
-    presentFrameMSE(iSNR,iAlgorithm) = mse;
+    _overallMseMatrix(_iSNR,_iAlgorithm) += _mse;
+    _presentFrameMSE(_iSNR,_iAlgorithm) = _mse;
 
     // Pe evolution
-    MatrixXd transmittedSymbols = symbols.block(0,preambleLength,N,frameLength);
+    MatrixXd transmittedSymbols = _symbols.block(0,_preambleLength,_N,_frameLength);
 
-    if(detectedSymbols.rows()!=0)
+    if(_detectedSymbols.rows()!=0)
     {
-        for(int k=0;k<frameLength;k++)
-            for(int iUser=0;iUser<N;iUser++)
-                if(detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
-                    overallErrorsNumberTimeEvolution[iSNR](iAlgorithm,k)++;
+        for(int k=0;k<_frameLength;k++)
+            for(int iUser=0;iUser<_N;iUser++)
+                if(_detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
+                    _overallErrorsNumberTimeEvolution[_iSNR](_iAlgorithm,k)++;
     }
 }
 
-void BaseSystem::BeforeEndingFrame()
+void BaseSystem::beforeEndingFrame()
 {
     // pe
-    peMatrices.push_back(presentFramePe);
-    Util::matricesVectorToOctaveFileStream(peMatrices,"pe",f);
+    _peMatrices.push_back(_presentFramePe);
+    Util::matricesVectorToOctaveFileStream(_peMatrices,"pe",_f);
 
     // MSE
-    MSEMatrices.push_back(presentFrameMSE);
-    Util::matricesVectorToOctaveFileStream(MSEMatrices,"mse",f);
+    _MSEMatrices.push_back(_presentFrameMSE);
+    Util::matricesVectorToOctaveFileStream(_MSEMatrices,"mse",_f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
@@ -487,7 +486,7 @@ void BaseSystem::BeforeEndingFrame()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	channelMatrices.push_back(channel->range(preambleLength,iLastSymbolVectorToBeDetected-1));
+	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
 #endif
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
@@ -496,43 +495,43 @@ void BaseSystem::BeforeEndingFrame()
 //                 overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
 //     Util::matricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
-    Util::scalarToOctaveFileStream(iFrame+1,"nFrames",f);
+    Util::scalarToOctaveFileStream(_iFrame+1,"nFrames",_f);
 
-    Util::stringsVectorToOctaveFileStream(algorithmsNames,"algorithmsNames",f);
-    Util::scalarToOctaveFileStream(L,"L",f);
-    Util::scalarToOctaveFileStream(N,"N",f);
-    Util::scalarToOctaveFileStream(m,"m",f);
-    Util::scalarToOctaveFileStream(frameLength,"frameLength",f);
-    Util::scalarToOctaveFileStream(trainSeqLength,"trainSeqLength",f);
-    Util::scalarToOctaveFileStream(d,"d",f);
-    Util::scalarToOctaveFileStream(symbolsDetectionWindowStart,"symbolsDetectionWindowStart",f);
-    Util::scalarToOctaveFileStream(MSEwindowStart,"MSEwindowStart",f);
-    Util::scalarsVectorToOctaveFileStream(SNRs,"SNRs",f);
-    Util::matrixToOctaveFileStream(preamble,"preamble",f);
-    Util::scalarToOctaveFileStream(nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",f);    
-    Util::scalarToOctaveFileStream(preambleLength,"preambleLength",f);
-    Util::scalarsVectorToOctaveFileStream(mainSeeds,"mainSeeds",f);
-    Util::scalarsVectorToOctaveFileStream(statUtilSeeds,"statUtilSeeds",f);
+    Util::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
+    Util::scalarToOctaveFileStream(_L,"L",_f);
+    Util::scalarToOctaveFileStream(_N,"N",_f);
+    Util::scalarToOctaveFileStream(_m,"m",_f);
+    Util::scalarToOctaveFileStream(_frameLength,"frameLength",_f);
+    Util::scalarToOctaveFileStream(_trainSeqLength,"trainSeqLength",_f);
+    Util::scalarToOctaveFileStream(_d,"d",_f);
+    Util::scalarToOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
+    Util::scalarToOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
+    Util::scalarsVectorToOctaveFileStream(_SNRs,"SNRs",_f);
+    Util::matrixToOctaveFileStream(_preamble,"preamble",_f);
+    Util::scalarToOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
+    Util::scalarToOctaveFileStream(_preambleLength,"preambleLength",_f);
+    Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
+    Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
 	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	Util::matricesVectorsVectorToOctaveFileStream(channelMatrices,"channels",f);
+	Util::matricesVectorsVectorToOctaveFileStream(_channelMatrices,"channels",_f);
 #else
     Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
 #endif
 
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*channel).name())),"channelClass",f);
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*noise).name())),"noiseClass",f);
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
+    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
 
-    if(powerProfile!=NULL)
+    if(_powerProfile!=NULL)
     {
-        Util::scalarsVectorToOctaveFileStream(powerProfile->tapsPowers(),"powerProfileVariances",f);
-        Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*powerProfile).name())),"powerProfileClass",f);
+        Util::scalarsVectorToOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
+        Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
     }
     
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	channelEstimations.push_back(presentFrameChannelMatrixEstimations);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelEstimations",f);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelEstimations",_f);
 #endif
 }
 
@@ -573,15 +572,15 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     uint nAccountedSymbols = 0;
     uint iInput;
 
-    for(uint iPermut=0;iPermut<permutations.size();iPermut++)
+    for(uint iPermut=0;iPermut<_permutations.size();iPermut++)
     {
         int permutationErrors = 0;
         
-        for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+        for(uint iStream=0;iStream<_permutations[iPermut].size();iStream++)
         {
-            iInput = permutations[iPermut][iStream];
+            iInput = _permutations[iPermut][iStream];
           
-            int errorsInverting=0,errorsWithoutInverting=0;
+            int currentStreamErrorsInverting=0,currentStreamErrorsWithoutInverting=0;
             
             for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
             {
@@ -590,10 +589,10 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
                     continue;
 
                 // if the symbols differ, an error happened...
-                errorsWithoutInverting += (sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime));
+                currentStreamErrorsWithoutInverting += (sourceSymbols(iStream,iTime) != detectedSymbols(iInput,iTime));
                 
                 // ...unless the symbol sign needs to be switched because of the ambiguity
-                errorsInverting += (sourceSymbols(iStream,iTime) != alphabet->opposite(detectedSymbols(iInput,iTime)));
+                currentStreamErrorsInverting += (sourceSymbols(iStream,iTime) != _alphabet->opposite(detectedSymbols(iInput,iTime)));
                 
                 nAccountedSymbols++;
             }              
@@ -609,14 +608,14 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
 			}
 #endif
 
-            if(errorsWithoutInverting<errorsInverting)
+            if(currentStreamErrorsWithoutInverting<currentStreamErrorsInverting)
             {
-                permutationErrors += errorsWithoutInverting;
+                permutationErrors += currentStreamErrorsWithoutInverting;
                 thisPermutationSigns[iStream] = 1;
             }
             else
             {
-                permutationErrors += errorsInverting;
+                permutationErrors += currentStreamErrorsInverting;
                 thisPermutationSigns[iStream] = -1;
             }
         } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
@@ -636,9 +635,9 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
 	cout << endl;
 #endif
     
-	assert(nAccountedSymbols % permutations.size() == 0);
+	assert(nAccountedSymbols % _permutations.size() == 0);
     
-    nAccountedSymbols /= permutations.size();
+    nAccountedSymbols /= _permutations.size();
     
     // if all the symbols were masked
     if(nAccountedSymbols==0)
@@ -660,10 +659,6 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
         throw RuntimeException("BaseSystem::computeMSE: number of real channel matrices doesn't match that of the estimated.");
 
     double mse = 0;
-
-	
-// 	cout << "realChannelMatrices.at(0) = " << endl << realChannelMatrices.at(0) << endl;
-// 	cout << "estimatedChannelMatrices.at(0) = " << endl << estimatedChannelMatrices.at(0) << endl;
 	
 	for(int i=0;i<nRealChannelMatrices;i++)
 	{
@@ -732,7 +727,7 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 
   uint nAccountedSymbols = 0;
 
-  for(uint iStream=0;iStream<N;iStream++)
+  for(uint iStream=0;iStream<_N;iStream++)
   {
 	  for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
 	  {

@@ -34,7 +34,7 @@ public:
     Rev2TVT2007System();
 
 protected:
-    virtual void AddAlgorithms();
+    virtual void addAlgorithms();
 
 };
 

@@ -44,10 +44,10 @@ protected:
     vector<vector<MatrixXd> > presentFrameChannelOrderAPPsAlongTime;
     vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
 
-	virtual void OnlyOnce();
-    virtual void BeforeEndingAlgorithm();
-	virtual void AddAlgorithms();
-    virtual void BeforeEndingFrame();
+	virtual void onlyOnce();
+    virtual void beforeEndingAlgorithm();
+	virtual void addAlgorithms();
+    virtual void beforeEndingFrame();
 public:
     ChannelOrderEstimationSystem();
 };
