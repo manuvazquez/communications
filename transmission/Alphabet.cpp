@@ -5,7 +5,7 @@
 
 // #define DEBUG
 
-using namespace std;
+using std::vector;
 
 Alphabet::Alphabet(vector<vector<tBit> > bitsSequences,vector<tSymbol> symbols):_symbols(symbols),_bitsSequences(bitsSequences),_nBitsPerSymbol(bitsSequences[0].size()),_length(bitsSequences.size())
 {

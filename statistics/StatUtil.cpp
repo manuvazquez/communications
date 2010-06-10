@@ -23,8 +23,6 @@
 
 // #define DEBUG
 
-using namespace std;
-
 #ifdef RANDOM_SEED
   Random StatUtil::_randomGenerator;
   Random StatUtil::_particlesInitializerRandomGenerator;

@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "ContinuousPowerProfile.h"
 
-using namespace std;
-
 ContinuousPowerProfile::ContinuousPowerProfile(int nOutputs, int nInputs, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nOutputs, nInputs),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
 {
 	if(differentialDelays.size()!=powers.size())

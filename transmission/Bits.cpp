@@ -23,6 +23,9 @@
 
 // #define NOBIT 2
 
+using std::cout;
+using std::endl;
+
 Bits::Bits():_nStreams(0),_nBitsPerStream(0),_nBits(0),_matrix(NULL)
 {
 }
@@ -134,9 +137,9 @@ int Bits::operator-(const Bits &bits) const
 	return res;
 }
 
-vector<tBit> Bits::GetStream(int index) const
+std::vector<tBit> Bits::GetStream(int index) const
 {
-	vector<tBit> res(_nBitsPerStream);
+	std::vector<tBit> res(_nBitsPerStream);
 
 	for(uint i=index*_nBitsPerStream,j=0;j<_nBitsPerStream;i++,j++)
 		res[j] = _matrix[i];

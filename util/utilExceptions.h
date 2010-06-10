@@ -23,18 +23,18 @@
 
 #include <stdexcept>
 
-using namespace std;
+using std::ofstream;
 
 //excepcion generica que solo contiene el mensaje de error
-class AllElementsNullException : public runtime_error
+class AllElementsNullException : public std::runtime_error
 {
 	public:
-		AllElementsNullException(string s) : runtime_error(s) { }
+		AllElementsNullException(std::string s) : runtime_error(s) { }
 };
 
-class IncompatibleOperandsException : public runtime_error
+class IncompatibleOperandsException : public std::runtime_error
 {
 	public:
-		IncompatibleOperandsException(string s) : runtime_error(s) { }
+		IncompatibleOperandsException(std::string s) : std::runtime_error(s) { }
 };
 #endif

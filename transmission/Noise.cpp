@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "Noise.h"
 
-using namespace std;
-
 Noise::Noise(int nOutputs,int length): _nOutputs(nOutputs),_length(length)
 {
 }

@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
-using namespace std;
-
 ARchannel::ARchannel(int nInputs, int nOutputs, int memory, int length, ARprocess ARproc): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length),_ARproc(ARproc)
 {
 	if(ARproc.rows()!=nOutputs || ARproc.cols()!=(nInputs*memory))

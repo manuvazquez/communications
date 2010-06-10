@@ -23,10 +23,10 @@
 
 #include <stdexcept>
 
-using namespace std;
+using std::string;
 
 //excepcion generica que solo contiene el mensaje de error
-class RuntimeException : public runtime_error
+class RuntimeException : public std::runtime_error
 {
 	public:
 		RuntimeException(string s) : runtime_error(s) { }

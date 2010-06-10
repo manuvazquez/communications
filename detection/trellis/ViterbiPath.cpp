@@ -21,6 +21,9 @@
 
 // #define DEBUG
 
+using std::cout;
+using std::endl;
+
 ViterbiPath::ViterbiPath():_nTimeInstants(0),_cost(0.0),_detectedSequence(NULL)
 {
 }

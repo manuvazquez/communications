@@ -24,11 +24,9 @@
 
 #include <stdexcept>
 
-using namespace std;
-
-class NullWeightsException : public runtime_error
+class NullWeightsException : public std::runtime_error
 {
 	public:
-		NullWeightsException(string s) : runtime_error(s) { }
+		NullWeightsException(std::string s) : runtime_error(s) { }
 };
 #endif

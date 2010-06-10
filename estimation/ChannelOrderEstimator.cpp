@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "ChannelOrderEstimator.h"
 
-using namespace std;
-
 ChannelOrderEstimator::ChannelOrderEstimator(int N, std::vector<int> candidateOrders):_nInputs(N),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
 {
 }

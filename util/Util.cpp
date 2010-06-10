@@ -21,8 +21,6 @@
 
 #include <bashcolors.h>
 
-using namespace std;
-
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
 {
     int i,nElements;
@@ -142,7 +140,7 @@ void Util::print(const MatrixXd &A)
     for(int i=0;i<A.rows();i++)
     {
         for(j=0;j<A.cols();j++)
-            cout << setprecision(6) << setw(12) << left << A(i,j);
+            cout << std::setprecision(6) << std::setw(12) << std::left << A(i,j);
         cout << endl;
     }
 }
@@ -362,7 +360,7 @@ template<class T> vector<vector<T> > Util::permutations(T *array, int nElements)
         for(int j=0;j<nElements;j++)
             res[iPermut][j] = array[j];
         iPermut++;
-    } while(next_permutation(array,array+nElements));
+    } while(std::next_permutation(array,array+nElements));
 
     return res;
 }
@@ -424,7 +422,7 @@ template<class T> vector<T> Util::applyPermutation(const vector<T> &v,const vect
 template vector<uint> Util::applyPermutation(const vector<uint> &v,const vector<uint> &permutation);
 template vector<int> Util::applyPermutation(const vector<int> &v,const vector<uint> &permutation);
 
-template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T> > &alphabets)
+template<class T> void Util::nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets)
 {
     if(vector.size()!=alphabets.size())
         throw RuntimeException("Util::NextVector: number of alphabets must be equal to the number of elements of the vector.");
@@ -447,7 +445,7 @@ template<class T> void Util::nextVector(vector<T> &vector,const vector<vector<T>
         iPos--;
     }
 }
-template void Util::nextVector(vector<double> &vector,const vector<vector<double> > &alphabets);
+template void Util::nextVector(std::vector<double> &vector,const std::vector<std::vector<double> > &alphabets);
 
 /**
  * It finds out how many times appear each element. \ref firstOccurrence and \ref times will be deleted

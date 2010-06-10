@@ -1,7 +1,7 @@
 #include "Random.h"
 #include <math.h>
 
-using namespace std;
+using std::complex;
 
 double Random::randn ()
 {

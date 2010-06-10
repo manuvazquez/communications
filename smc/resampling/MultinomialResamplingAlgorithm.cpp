@@ -21,8 +21,6 @@
 
 #define DEBUG
 
-using namespace std;
-
 MultinomialResamplingAlgorithm::MultinomialResamplingAlgorithm(ResamplingCriterion resamplingCriterion):ResamplingAlgorithm(resamplingCriterion)
 {
 }

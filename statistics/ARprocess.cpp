@@ -21,8 +21,6 @@
 
 // #define DEBUG5
 
-using namespace std;
-
 ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
     CommonConstructorsCode(seed);

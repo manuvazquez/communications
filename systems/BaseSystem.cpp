@@ -49,8 +49,6 @@
 // #define DEBUG2
 // #define DEBUG_SER_WITHOUT_SOLVING_AMBIGUITY
 
-using namespace std;
-
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
     MatrixXd *realSymbols;

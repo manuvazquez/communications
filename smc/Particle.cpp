@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "Particle.h"
 
-using namespace std;
-
 Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectors(MatrixXd::Zero(symbolVectorLength,nTimeInstants))
 {
 }

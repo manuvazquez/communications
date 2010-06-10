@@ -26,6 +26,7 @@
 
 #define EIGEN
 
+#include <stdint.h>
 #include <iomanip>
 #include <math.h>
 #include <algorithm>
@@ -37,10 +38,13 @@
 
 enum tOrder {rowwise,columnwise};
 
+using std::vector;
+using std::cout;
+using std::endl;
+
 class Util{
-
+  
 public:
-
     static VectorXd toVector(const MatrixXd &matrix,tOrder order);
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols);
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
@@ -68,7 +72,7 @@ public:
     static MatrixXd applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
 	static MatrixXd applyPermutationOnColumns(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
-    template<class T> static void nextVector(vector<T> &vector,const vector<vector<T> > &alphabets);
+    template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
     static std::vector<int> nMax(int n,const VectorXd &v);
     static MatrixXd flipLR(const MatrixXd &A);

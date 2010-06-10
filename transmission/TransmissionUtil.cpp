@@ -21,8 +21,6 @@
 
 // #define PRINT_INFO
 
-using namespace std;
-
 void TransmissionUtil::BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
 {
     if((to1-from1)!=(to2-from2))
