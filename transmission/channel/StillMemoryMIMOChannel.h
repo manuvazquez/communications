@@ -37,6 +37,12 @@ public:
 	int effectiveMemory() const {return _memory;}
 	int nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};
 	int nInputsmemory() const {return _nInputsMemory;};
+	
+	//! it shapes the channel matrices of the channel so that the outputs have the specified channel orders (introducing zeros whenever necessary)
+	/*!
+		\param channelOrders a vector of uint with the channel orders of the different outputs
+	*/
+	void setSubchannelOrders(std::vector<uint> subchannelOrders);
 };
 
 #endif

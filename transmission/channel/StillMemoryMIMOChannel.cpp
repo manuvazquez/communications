@@ -23,3 +23,34 @@ StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nInputs, int nOutputs, int me
 {
 }
 
+void StillMemoryMIMOChannel::setSubchannelOrders(std::vector<uint> subchannelOrders)
+{
+  if(subchannelOrders.size()!=static_cast<uint>(_nOutputs))
+	throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: number of channel order is not equal to the number of outputs.");
+  
+  MatrixXd matrix;
+  uint maxChannelOrderFound=0;
+
+  // we need to check that all the channel orders passed are smaller than the overall channel order
+  for(uint i=0;i<subchannelOrders.size();i++)
+  {
+	// we need to check that the overall channel order is present...
+	maxChannelOrderFound += (subchannelOrders[i]==static_cast<uint>(_memory));
+	
+	//...and that all the channel orders passed are smaller than the overall channel order
+	if(subchannelOrders[i]>static_cast<uint>(_memory))
+	  throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: one subchannel order or more is bigger than the overall channel order.");
+  }
+  
+  if(!maxChannelOrderFound)
+	throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: none of the subchannel orders is equal to the maximum.");
+  
+  for(int iMat=_memory-1;iMat<_length;iMat++)
+  {
+	matrix = at(iMat);
+	for(uint iRow=0;iRow<static_cast<uint>(_nOutputs);iRow++)
+	  for(uint iCol=0;iCol<static_cast<uint>(matrix.cols())-_nInputs*subchannelOrders[iRow];iCol++)
+		matrix(iRow,iCol) = 0.0;
+	set(iMat,matrix);
+  }
+}

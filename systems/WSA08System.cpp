@@ -24,7 +24,7 @@
 WSA08System::WSA08System()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 2;
+    nSurvivors = 1;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
@@ -32,7 +32,6 @@ WSA08System::WSA08System()
     forgettingFactorDetector = 0.95;
 
 	velocity = 50.0; // m/s
-
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
@@ -93,6 +92,16 @@ void WSA08System::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
+	
+	
+// 	std::vector<uint> subchannelOrders(3,1);
+// 	subchannelOrders[0] = 3;
+// 	subchannelOrders[2] = 1;
+// 	
+// 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(subchannelOrders);
+// 	cout << _channel->at(100) << endl;
+// 	getchar();
+
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
 #ifdef DEBUG
 	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];

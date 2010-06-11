@@ -39,7 +39,15 @@ protected:
 public:
     BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
 
-    MatrixXd at(int n) const { return _channelMatrices[n];};
+    MatrixXd at(int n) const { return _channelMatrices[n];}
+    
+    virtual void set(int n, MatrixXd mat)
+    {
+	  if(mat.rows()!=_nOutputs || mat.cols()!=_nInputsMemory)
+		throw RuntimeException("BesselChannel:set: matrix dimensions are wrong.");
+
+	  _channelMatrices[n] = mat;
+	}    
 };
 
 #endif

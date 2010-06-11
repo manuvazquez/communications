@@ -36,7 +36,15 @@ protected:
 public:
 	ARchannel(int nInputs, int nOutputs, int memory, int length,ARprocess ARproc);
 
-	MatrixXd at(int n) const { return _channelMatrices[n];};
+	MatrixXd at(int n) const { return _channelMatrices[n];}
+	
+    virtual void set(int n, MatrixXd mat)
+    {
+	  if(mat.rows()!=_nOutputs || mat.cols()!=_nInputsMemory)
+		throw RuntimeException("ARchannel:set: matrix dimensions are wrong.");
+
+	  _channelMatrices[n] = mat;
+	}   
 };
 
 #endif

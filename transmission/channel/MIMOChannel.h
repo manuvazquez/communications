@@ -34,11 +34,12 @@ class MIMOChannel{
 protected:
     int _nInputs, _nOutputs,_length,_nInputsnOutputs;
 public:
+	MIMOChannel();
     MIMOChannel(int nInputs,int nOutputs,int length);
     virtual ~MIMOChannel() {};
     
-    int nInputs() const { return _nInputs;}
-    int nOutputs() const { return _nOutputs;}
+    virtual int nInputs() const { return _nInputs;}
+    virtual int nOutputs() const { return _nOutputs;}
 
 	/*!
 	  It returns the number of rows of the REAL channel matrix that represents the channel (it is usually the number of outputs)
@@ -52,12 +53,12 @@ public:
 	*/
 	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
 
-	int length() const {return _length;};
-    int nInputsnOutputs() const {return _nInputsnOutputs;};
-    int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
-    int nInputsMemory(int n) const {return _nInputs*memory(n);}
+	virtual int length() const {return _length;};
+    virtual int nInputsnOutputs() const {return _nInputsnOutputs;};
+    virtual int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
+    virtual int nInputsMemory(int n) const {return _nInputs*memory(n);}
 	
-	//! It returns the memory of the (possibly time-varying) channel
+	//! It returns the (possibly time-varying) memory of the channel
 	/*!
 		\param n time instant
 		\return the memory of the channel at the given time instant
@@ -81,16 +82,26 @@ public:
 	*/
     virtual MatrixXd getTransmissionMatrix(const int n) const { return at(n);}
     
-    MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
+    virtual MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
     
-    vector<MatrixXd> range(int a,int b);
+    virtual vector<MatrixXd> range(int a,int b);
     
 	//! It returns the instants where the coefficients corresponding to any of the inputs cross zero (i.e., its column changes sign)
 	/*!
 		\return a vector with the time instants where the sign of the coefficients corresponding to an input changes.
 		It always includes the initial and final instants, so that the instants define a partition of the total length.
 	*/
-    std::vector<uint> getInputsZeroCrossings(uint iFrom, uint length) const;
+    virtual std::vector<uint> getInputsZeroCrossings(uint iFrom, uint length) const;
+	
+	//! It sets the matrix representing the channel at the given time instant
+	/*!
+		\param n time instant
+		\param mat matrix to be set
+	*/
+    virtual void set(int n, MatrixXd mat)
+    {
+	  throw RuntimeException("MIMOChannel::set: the method is not implemented in the subclass.");
+	}
 };
 
 #endif

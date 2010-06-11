@@ -48,7 +48,7 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 
-    _nInputsXchannelOrderaxOrder = _nInputs*_maxOrder;
+    _nInputsXmaxChannelOrder = _nInputs*_maxOrder;
 
     _channelOrderAPPs = MatrixXd::Zero(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
     _channelOrderAPPs.block(0,0,_candidateOrders.size(),_preamble.cols()).setConstant(1.0/double(_candidateOrders.size()));
