@@ -44,3 +44,4 @@
 - CDMAKalmanEstimator
   - lastEstimatedChannelMatrix_eigen y otras: refactorizar código común
 - metodo que indique que algoritmos hacen estimación de canal y usarlo
+- fix BUG in USIS2SIS: when it wants to switch to a regular SIS algorithm right at the end of the frame, bad things happen

@@ -50,9 +50,12 @@ void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const
         knownChannelOrderAlgorithm.runFrom(iProcessedObservation,observations,noiseVariances);
         _processDoneExternally = true;
 
+#ifdef DEBUG
+		cout << "USIS2SIS: transition criterion holds (iProcessedObservation = " << iProcessedObservation << " )" << endl;
+#endif
+
         // the APP of the selected channel order is set to 1.0
-//         _channelOrderAPPs(tRange(iMax,iMax),tRange(iProcessedObservation,_iLastSymbolVectorToBeDetected-1)) = 1.0;
-        _channelOrderAPPs.row(iMax).segment(iProcessedObservation,_iLastSymbolVectorToBeDetected-iProcessedObservation).setConstant(1.0);
+        _channelOrderAPPs[0].row(iMax).segment(iProcessedObservation,_iLastSymbolVectorToBeDetected-iProcessedObservation).setConstant(1.0);
 
         return;
     }

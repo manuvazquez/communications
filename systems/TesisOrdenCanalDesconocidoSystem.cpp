@@ -128,7 +128,7 @@ void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
 
     _algorithms.push_back(new USIS("USIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
-    _algorithms.push_back(new USIS2SISAlgorithm("USIS2SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,USISmaximumProbabilityCriterion));
+//     _algorithms.push_back(new USIS2SISAlgorithm("USIS2SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,USISmaximumProbabilityCriterion));
 
     _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (RLS)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 

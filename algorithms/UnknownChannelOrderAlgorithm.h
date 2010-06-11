@@ -38,13 +38,23 @@ protected:
     int *_channelOrder2index;
     MatrixXd _preamble;   
 
-    MatrixXd _channelOrderAPPs;   
+	// a vector of matrices with the channel order a posteriori probabilities. Each matrix corresponds to a different output (or receiving antenna)
+	// if all the outputs have the same channel order (and channel order APPs, consequently), only one is stored, i.e., it's a vector with a single
+	// element
+    std::vector<MatrixXd> _channelOrderAPPs;
+// 	MatrixXd _channelOrderAPPs;
 public:
     UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,int iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 
-    MatrixXd getChannelOrderAPPsAlongTime_eigen() { return _channelOrderAPPs.block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
+	// if no output is specified, the first one is assumed
+	/*!
+	  It returns a matrix that contains the a posteriori channel order probabilities at all time instants for the FIRST output
+	  \return matrix in which each row represents a candidate channel order, and each column a time instant
+	*/
+    MatrixXd getComputedChannelOrderAPPs() { return _channelOrderAPPs[0].block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
+    
     bool performsChannelOrderAPPestimation() const { return true;}
 };
 

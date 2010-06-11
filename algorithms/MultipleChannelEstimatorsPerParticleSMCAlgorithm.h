@@ -35,8 +35,10 @@ protected:
     int _d;
     int _startDetectionTime;
 
+	// mean and variance which will server to initialize
     double _channelUniqueMean, _channelUniqueVariance;
 
+	// 
     vector<MatrixXd> _channelMeanVectors;
     vector<MatrixXd> _channelCovariances;
     
@@ -47,7 +49,7 @@ protected:
     virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0; // eigen
     virtual int iBestChannelOrder(int iBestParticle) = 0;
 
-    virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {} //eigen
+    virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
     virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {} // eigen
 public:
     MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);

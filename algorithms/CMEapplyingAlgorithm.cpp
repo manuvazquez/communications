@@ -96,7 +96,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
     } // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _channelOrderAPPs.row(iChannelOrder).setConstant(CMEs(iChannelOrder));
+        _channelOrderAPPs[0].row(iChannelOrder).setConstant(CMEs(iChannelOrder));
 }
 
 MatrixXd CMEapplyingAlgorithm::getDetectedSymbolVectors()

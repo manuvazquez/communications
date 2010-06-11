@@ -50,8 +50,13 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 
     _nInputsXmaxChannelOrder = _nInputs*_maxOrder;
 
-    _channelOrderAPPs = MatrixXd::Zero(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
-    _channelOrderAPPs.block(0,0,_candidateOrders.size(),_preamble.cols()).setConstant(1.0/double(_candidateOrders.size()));
+	// the initial channel order a posteriori probabilities for any output 
+    MatrixXd channelOrderAPPs = MatrixXd::Zero(_candidateOrders.size(),_iLastSymbolVectorToBeDetected+_maxOrder-1);
+	
+	// before the beginning of the frame we assume all the channel orders are equally likely
+    channelOrderAPPs.block(0,0,_candidateOrders.size(),_preamble.cols()).setConstant(1.0/double(_candidateOrders.size()));
+	
+	_channelOrderAPPs = std::vector<MatrixXd>(estimatesOneChannelOrderPerOutput()?L:1,channelOrderAPPs);
 }
 
 

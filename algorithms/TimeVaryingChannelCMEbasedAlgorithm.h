@@ -29,6 +29,9 @@
 #include <math.h>
 #include <RLSEstimator.h>
 
+// added to avoid linking error
+#include <Eigen/LU>
+
 class TimeVaryingChannelCMEbasedAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:

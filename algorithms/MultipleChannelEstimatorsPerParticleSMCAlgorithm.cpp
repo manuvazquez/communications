@@ -33,8 +33,10 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
     {
-        _channelMeanVectors.push_back(VectorXd::Constant(_nOutputs*_nInputs*_candidateOrders[iChannelOrder],_channelUniqueMean));
-        _channelCovariances.push_back(VectorXd::Constant(_nOutputs*_nInputs*_candidateOrders[iChannelOrder],_channelUniqueMean).asDiagonal());        
+//         _channelMeanVectors.push_back(VectorXd::Constant(_nOutputs*_nInputs*_candidateOrders[iChannelOrder],_channelUniqueMean));
+		_channelMeanVectors.push_back(VectorXd::Constant(channelEstimators[iChannelOrder]->rows()*channelEstimators[iChannelOrder]->cols(),_channelUniqueMean));
+//         _channelCovariances.push_back(VectorXd::Constant(_nOutputs*_nInputs*_candidateOrders[iChannelOrder],_channelUniqueMean).asDiagonal());
+		_channelCovariances.push_back(VectorXd::Constant(channelEstimators[iChannelOrder]->rows()*channelEstimators[iChannelOrder]->cols(),_channelUniqueMean).asDiagonal()); 
     }
 }
 

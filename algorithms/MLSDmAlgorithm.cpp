@@ -44,7 +44,7 @@ void MLSDmAlgorithm::initializeParticles()
 
     // the available APP's just before the _startDetectionTime instant are copied into the particle
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        particle->setChannelOrderAPP(_channelOrderAPPs(iChannelOrder,_startDetectionTime-1),iChannelOrder);
+        particle->setChannelOrderAPP(_channelOrderAPPs[0](iChannelOrder,_startDetectionTime-1),iChannelOrder);
 
     _particleFilter->addParticle(particle);
 }
@@ -219,7 +219,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
         processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getBestParticle());
 
         for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-            _channelOrderAPPs(iChannelOrder,iObservationToBeProcessed) = processedParticle->getChannelOrderAPP(iChannelOrder);
+            _channelOrderAPPs[0](iChannelOrder,iObservationToBeProcessed) = processedParticle->getChannelOrderAPP(iChannelOrder);
 
 		// this doesn't make much sense...probably some debug stuff
         if(_particlesBestChannelOrders[_particleFilter->iBestParticle()]==iBestChannelOrder)
@@ -257,7 +257,7 @@ void MLSDmAlgorithm::beforeInitializingParticles(const MatrixXd &observations,ve
         clonedChannelEstimators[iOrder] = _channelEstimators[iOrder]->clone();
 
         // at the beginning, all the channel orders have the same probability
-        _channelOrderAPPs(iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
+        _channelOrderAPPs[0](iOrder,_preamble.cols()-1) = 1.0/double(_candidateOrders.size());
     }
 
     double normConst;
@@ -269,7 +269,7 @@ void MLSDmAlgorithm::beforeInitializingParticles(const MatrixXd &observations,ve
         for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
         {
             // unnormalized channel order APP
-            unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs(iOrder,i-1)*clonedChannelEstimators[iOrder]->likelihood(observations.col(i),sequenceToProcess.block(0,i-_candidateOrders[iOrder]+1,_nInputs,_candidateOrders[iOrder]),noiseVariances[i]);
+            unnormalizedChannelOrderAPPs[iOrder] = _channelOrderAPPs[0](iOrder,i-1)*clonedChannelEstimators[iOrder]->likelihood(observations.col(i),sequenceToProcess.block(0,i-_candidateOrders[iOrder]+1,_nInputs,_candidateOrders[iOrder]),noiseVariances[i]);
             normConst += unnormalizedChannelOrderAPPs[iOrder];
 
             clonedChannelEstimators[iOrder]->nextMatrix(observations.col(i),sequenceToProcess.block(0,i-_candidateOrders[iOrder]+1,_nInputs,_candidateOrders[iOrder]),noiseVariances[i]);
@@ -277,10 +277,10 @@ void MLSDmAlgorithm::beforeInitializingParticles(const MatrixXd &observations,ve
 
         if(normConst!=0.0)
             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-                _channelOrderAPPs(iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
+                _channelOrderAPPs[0](iOrder,i) = unnormalizedChannelOrderAPPs[iOrder] / normConst;
         else
             for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)
-                _channelOrderAPPs(iOrder,i) = _channelOrderAPPs(iOrder,i-1);
+                _channelOrderAPPs[0](iOrder,i) = _channelOrderAPPs[0](iOrder,i-1);
     }
 
     for(uint iOrder=0;iOrder<_candidateOrders.size();iOrder++)

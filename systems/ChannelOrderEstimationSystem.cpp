@@ -81,7 +81,7 @@ void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
 	if(_algorithms[_iAlgorithm]->performsChannelOrderAPPestimation())
 	{
 		//...the probability of the different channel orders at each time instant is retrieved
-		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getChannelOrderAPPsAlongTime_eigen();
+		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs();
 
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}

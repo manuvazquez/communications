@@ -84,7 +84,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
     } // for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-        _channelOrderAPPs.row(iChannelOrder).setConstant(CMEs(iChannelOrder));
+        _channelOrderAPPs[0].row(iChannelOrder).setConstant(CMEs(iChannelOrder));
 }
 
 void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
