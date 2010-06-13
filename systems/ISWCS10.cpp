@@ -17,24 +17,21 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "WSA08System.h"
+#include "ISWCS10.h"
 
 #include <bashcolors.h>
+#include <OneChannelOrderPerOutputSMCAlgorithm.h>
 
-WSA08System::WSA08System()
+ISWCS10::ISWCS10()
  : ChannelOrderEstimationSystem()
 {
     nSurvivors = 1;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
-    forgettingFactor = 0.99;
-    forgettingFactorDetector = 0.95;
-
 	velocity = 50.0; // m/s
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
-// 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
 	if(adjustParticlesNumberFromSurvivors)
 	{
@@ -49,15 +46,8 @@ WSA08System::WSA08System()
 		cout << COLOR_WHITE << " to " << COLOR_NORMAL << nSurvivors << endl;
 	}
 
-	rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
-
-	rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-	{
-		RLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,forgettingFactor));
 		kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],_N,ARcoefficients,ARvariance));
-		noForgetRLSchannelEstimators.push_back(new RLSEstimator(channelOrderCoefficientsMeans[iChannelOrder],_N,1.0));
-	}
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
@@ -67,20 +57,13 @@ WSA08System::WSA08System()
 }
 
 
-WSA08System::~WSA08System()
+ISWCS10::~ISWCS10()
 {
 // 	delete channel;
 	delete _powerProfile;
 
-	delete rmmseDetector;
-
-	delete rlsEstimator;
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-	{
-		delete RLSchannelEstimators[iChannelOrder];
 		delete kalmanChannelEstimators[iChannelOrder];
-		delete noForgetRLSchannelEstimators[iChannelOrder];
-	}
 
 	delete withoutReplacementResamplingAlgorithm;
 	delete bestParticlesResamplingAlgorithm;
@@ -88,10 +71,20 @@ WSA08System::~WSA08System()
 	delete kalmanEstimator;
 }
 
-void WSA08System::buildChannel()
+void ISWCS10::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
+	
+	
+	std::vector<uint> subchannelOrders(3,1);
+	subchannelOrders[0] = 3;
+	subchannelOrders[2] = 1;
+	
+	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(subchannelOrders);
+
+// 	cout << _channel->at(100) << endl;
+// 	getchar();
 
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
 #ifdef DEBUG
@@ -100,11 +93,11 @@ void WSA08System::buildChannel()
 #endif
 }
 
-void WSA08System::addAlgorithms()
+void ISWCS10::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
-// 	algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,RLSchannelEstimators,preamble,preamble.cols(),d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
 	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
@@ -119,12 +112,10 @@ void WSA08System::addAlgorithms()
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void WSA08System::beforeEndingFrame()
+void ISWCS10::beforeEndingFrame()
 {
     ChannelOrderEstimationSystem::beforeEndingFrame();
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
-	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
 	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
 }
 

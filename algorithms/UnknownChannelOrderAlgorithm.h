@@ -55,7 +55,7 @@ public:
 	*/
     MatrixXd getComputedChannelOrderAPPs() { return _channelOrderAPPs[0].block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
     
-    bool performsChannelOrderAPPestimation() const { return true;}
+    bool estimatesOneSingleChannelOrder() const { return true;}
 };
 
 #endif

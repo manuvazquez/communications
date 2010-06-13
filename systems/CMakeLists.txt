@@ -33,7 +33,8 @@ ADD_LIBRARY (systems STATIC
 		    TesisOrdenCanalDesconocidoBesselSystem
 		    TesisOrdenCanalDesconocidoSystem
 		    TVT2007System
-		    WSA08System)
+		    WSA08System
+			ISWCS10)
 TARGET_LINK_LIBRARIES (systems
 		      util
 		      statistics

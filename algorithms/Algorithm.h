@@ -63,7 +63,7 @@ public:
     virtual vector<MatrixXd> getEstimatedChannelMatrices() = 0;
 
 
-    virtual bool performsChannelOrderAPPestimation() const { return false;}
+    virtual bool estimatesOneSingleChannelOrder() const { return false;}
     virtual bool performsSymbolsDetection() const { return true; }
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
 
