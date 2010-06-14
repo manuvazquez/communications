@@ -37,7 +37,11 @@ protected:
     MatrixXd _lastEstimatedChannelCoefficientsMatrix;
 
 public:
-    // initialEstimation is basically what LastEstimatedChannelMatrix is going to return when NextMatrix hasn't yet been called
+	/*!
+	  It builds a \ref ChannelMatrixEstimator object
+	  \param initialEstimation a matrix representing the initial estimation. It's what \ref lastEstimatedChannelMatrix returns when \ref nextMatrix hasn't been called yet
+	  \param N number of inputs of the system
+	*/
     ChannelMatrixEstimator(MatrixXd initialEstimation,int N);
     virtual ~ChannelMatrixEstimator() {};
 

@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef ISWCS10_H
-#define ISWCS10_H
+#ifndef ISWCS10SYSTEM_H
+#define ISWCS10SYSTEM_H
 
 #include <ChannelOrderEstimationSystem.h>
 
@@ -37,7 +37,7 @@
 #include <PSPAlgorithm.h>
 #include <TimeInvariantChannel.h>
 
-class ISWCS10 : public ChannelOrderEstimationSystem
+class ISWCS10System : public ChannelOrderEstimationSystem
 {
 protected:
     int nSurvivors;
@@ -56,9 +56,9 @@ protected:
     virtual void buildChannel();
     virtual void beforeEndingFrame();
 public:
-    ISWCS10();
+    ISWCS10System();
 
-    ~ISWCS10();
+    ~ISWCS10System();
 };
 
 #endif

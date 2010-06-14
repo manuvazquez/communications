@@ -18,5 +18,8 @@ ADD_LIBRARY (smc STATIC
 		WithChannelEstimationParticleAddon
 		WithChannelOrderAppParticleAddon
 		WithChannelOrderEstimationParticleAddon
-		WithLinearDetectionParticleAddon)
+		WithLinearDetectionParticleAddon
+		WithMultipleChannelsEstimationParticleAddon
+		WithMultipleChannelOrderAppParticleAddon
+		ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp)
 add_subdirectory(resampling)

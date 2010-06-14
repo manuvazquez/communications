@@ -24,8 +24,8 @@
 ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
  : SMCSystem()
 {
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);candidateChannelOrders.push_back(4);
-	candidateChannelOrders.push_back(5);
+	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);
+	candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);
 // 	candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
 	channelOrderCoefficientsMeans.resize(candidateChannelOrders.size());

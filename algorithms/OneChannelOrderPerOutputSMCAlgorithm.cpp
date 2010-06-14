@@ -16,10 +16,15 @@
 
 #include "OneChannelOrderPerOutputSMCAlgorithm.h"
 
+#include <ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp.h>
+
 OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, std::vector< ChannelMatrixEstimator* > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm)
 :UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
 ,_resamplingAlgorithm(resamplingAlgorithm),_smoothingLag(smoothingLag),_randomParticlesInitilization(false)
+// ,_channelMatrixEstimators(_L,std::<ChannelMatrixEstimator*>
 {
+//   for (uint iOutput=0;iOutput<_L;iOutput++)
+	
 }
 
 std::vector< MatrixXd, std::allocator< MatrixXd > > OneChannelOrderPerOutputSMCAlgorithm::getEstimatedChannelMatrices()

@@ -34,7 +34,7 @@ PSPPath::PSPPath(int nTimeInstants,double cost, MatrixXd initialSequence, std::v
     if(initialChannelMatrices.size()!=channelMatrixEstimators.size())
         throw RuntimeException("PSPPath::PSPPath: channel order implied by the length of the \"initialChannelMatrices\" vector is not equal to that implied by \"channelMatrixEstimators\".");
 
-    if(initialChannelMatrices[0].size() > initialSequence.cols())
+    if(initialChannelMatrices[0].size() > static_cast<uint>(initialSequence.cols()))
         throw RuntimeException("PSPPath::PSPPath: number of received detected symbol vectors is less than number of received detected channel matrices.");
 
 #ifndef DO_NOT_STORE_CHANNEL_MATRICES

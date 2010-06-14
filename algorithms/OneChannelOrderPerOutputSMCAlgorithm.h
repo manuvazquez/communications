@@ -27,6 +27,9 @@ protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _smoothingLag;
 	
+	// _channelMatrixEstimators[i][j] is the the channel matrix estimator for the j-th channel order on the i-th output
+	std::vector<std::vector<ChannelMatrixEstimator*> > _channelMatrixEstimators;
+	
 //     int _startDetectionTime;
 
 // 	// mean and variance which will server to initialize

@@ -17,12 +17,12 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "ISWCS10.h"
+#include "ISWCS10System.h"
 
 #include <bashcolors.h>
 #include <OneChannelOrderPerOutputSMCAlgorithm.h>
 
-ISWCS10::ISWCS10()
+ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
     nSurvivors = 1;
@@ -47,7 +47,8 @@ ISWCS10::ISWCS10()
 	}
 
 	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-		kalmanChannelEstimators.push_back(new KalmanEstimator(channelOrderCoefficientsMeans[iChannelOrder],channelOrderCoefficientsVariances[iChannelOrder],_N,ARcoefficients,ARvariance));
+		kalmanChannelEstimators.push_back(new KalmanEstimator(MatrixXd::Zero(1,_N*candidateChannelOrders[iChannelOrder]),
+															  MatrixXd::Ones(1,_N*candidateChannelOrders[iChannelOrder]),_N,ARcoefficients,ARvariance));
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
@@ -57,7 +58,7 @@ ISWCS10::ISWCS10()
 }
 
 
-ISWCS10::~ISWCS10()
+ISWCS10System::~ISWCS10System()
 {
 // 	delete channel;
 	delete _powerProfile;
@@ -71,7 +72,7 @@ ISWCS10::~ISWCS10()
 	delete kalmanEstimator;
 }
 
-void ISWCS10::buildChannel()
+void ISWCS10System::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
@@ -93,7 +94,7 @@ void ISWCS10::buildChannel()
 #endif
 }
 
-void ISWCS10::addAlgorithms()
+void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
@@ -112,7 +113,7 @@ void ISWCS10::addAlgorithms()
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void ISWCS10::beforeEndingFrame()
+void ISWCS10System::beforeEndingFrame()
 {
     ChannelOrderEstimationSystem::beforeEndingFrame();
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
