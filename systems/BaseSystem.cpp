@@ -43,7 +43,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-// #define LOAD_SEEDS
+#define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -229,8 +229,11 @@ void BaseSystem::simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    randomGenerator.setSeed(1251453452);
-    StatUtil::getRandomGenerator().setSeed(4117327754);
+    _randomGenerator.setSeed(2009756120);
+    StatUtil::getRandomGenerator().setSeed(926777238);
+
+// 	randomGenerator.setSeed(1251453452);
+//     StatUtil::getRandomGenerator().setSeed(4117327754);
 
 //     randomGenerator.setSeed(3013783408);
 //     StatUtil::getRandomGenerator().setSeed(1878942058);

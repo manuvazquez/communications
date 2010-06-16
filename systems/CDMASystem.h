@@ -79,8 +79,6 @@ protected:
 	// it ALWAYS includes the first index (0) and the last ("frameLength")
 	std::vector<uint> _signChanges;
 	
-// 	Alphabet _extendedAlphabet;
-	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
     virtual void beforeEndingFrame();

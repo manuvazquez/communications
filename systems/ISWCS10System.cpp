@@ -81,9 +81,16 @@ void ISWCS10System::buildChannel()
 	std::vector<uint> subchannelOrders(3,1);
 	subchannelOrders[0] = 3;
 	subchannelOrders[2] = 1;
-	
+
+// 	std::vector<uint> subchannelOrders(3,2);
+// 	subchannelOrders[0] = 4;
+// 	subchannelOrders[2] = 3;
+
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(subchannelOrders);
 
+	if(_channel->getInputsZeroCrossings(_preambleLength,_frameLength).size()!=0)
+	  cout << "there are zero crossings!" << endl;
+	
 // 	cout << _channel->at(100) << endl;
 // 	getchar();
 
@@ -120,3 +127,63 @@ void ISWCS10System::beforeEndingFrame()
 	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
 }
 
+double ISWCS10System::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
+{
+//   if(_symbolsDetectionWindowStart!=0)
+// 	throw RuntimeException("ISWCS10System::computeSER: this is only implemented when the starting point for SER computing is zero (the beginning of the frame).");
+  
+  if(detectedSymbols.rows()==0)
+  {
+	_piecesBestPermuationIndexes = std::vector<uint>(_signChanges.size()-1,0);
+	_piecesBestPermutationSigns = std::vector<std::vector<int> >(_signChanges.size()-1,std::vector<int>(_N,1));
+	return -1.0;
+  }
+
+  _piecesBestPermuationIndexes.clear();
+  _piecesBestPermutationSigns.clear();  
+
+  double res = 0.0;
+  
+//   _signChanges = _channel->getInputsZeroCrossings(_preambleLength+_symbolsDetectionWindowStart,_frameLength-_preambleLength-_symbolsDetectionWindowStart);
+  _signChanges = _channel->getInputsZeroCrossings(_preambleLength+_symbolsDetectionWindowStart,_frameLength-_symbolsDetectionWindowStart);
+  //								^
+  //								|
+  // even though ultimately only symbol vectors from "symbolsDetectionWindowStart" will be taken into account for detection, we don't
+  // have to worry about it here, since the mask will take care of that. That being so, "_signChanges" actually contains all the sign changes
+  // that occur within the frame
+//   _signChanges = _channel->getInputsZeroCrossings(_preambleLength,_frameLength);
+
+  uint overallNumberAccountedSymbols = 0;
+  
+  for(uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
+  {
+	  // we need to find out how many symbols are gonna be taken into account within this subframe
+	  uint thisSubframeNumberAccountedSymbols = 0;
+	  for(int i=0;i<_N;i++)
+		for(uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
+		  thisSubframeNumberAccountedSymbols += mask[i][j-_preambleLength];
+
+	  overallNumberAccountedSymbols += thisSubframeNumberAccountedSymbols;
+
+// 	  cout << "_frameLength = " << _frameLength << endl;
+// 	  cout << " _signChanges[iSignChange-1] = " << _signChanges[iSignChange-1] << endl;
+// 	  cout << " _signChanges[iSignChange] = " << _signChanges[iSignChange] << endl;
+// 	  cout << "_signChanges[iSignChange]-_signChanges[iSignChange-1] = " << _signChanges[iSignChange]-_signChanges[iSignChange-1] << endl;
+// 	  cout << " mask.rows() = " << mask.size() << " mask.cols() = " << mask[0].size() << endl;
+// 	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " sourceSymbols.cols() = " << sourceSymbols.cols() << endl;
+	  
+	  res += thisSubframeNumberAccountedSymbols*
+				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1]-_preambleLength,_N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				detectedSymbols.block(0,_signChanges[iSignChange-1]-_preambleLength,_N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				Util::block(mask,0,_signChanges[iSignChange-1]-_preambleLength,_N,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				iBestPermutation,bestPermutationSigns);
+				
+	  // we need to store which the best permutations were along with their corresponding signs
+	  _piecesBestPermuationIndexes.push_back(iBestPermutation);
+	  _piecesBestPermutationSigns.push_back(bestPermutationSigns);
+  }
+
+  res /= overallNumberAccountedSymbols;
+
+  return res;
+}
