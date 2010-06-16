@@ -34,7 +34,7 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 
     // if the algorithm didn't make channel estimation
     if(nEstimatedChannelMatrices==0)
-        return 0.0;
+        return -1.0;
 
     if(windowSize>nEstimatedChannelMatrices)
         throw RuntimeException("Algorithm::MSE: more channel matrices passed than detected.");

@@ -42,6 +42,8 @@ public:
     { 
 		return _channelEstimationParticleAddons[iChannel].getChannelMatrixEstimator(iChannelOrder);
     }
+    
+    uint nChannelMatrixEstimators(uint iChannel) const {return _channelEstimationParticleAddons[iChannel].nChannelMatrixEstimators();}
 };
 
 #endif // WITHMULTIPLECHANNELSESTIMATIONPARTICLEADDON_H

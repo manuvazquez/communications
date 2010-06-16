@@ -26,10 +26,6 @@ class OneChannelOrderPerOutputSMCAlgorithm : public UnknownChannelOrderAlgorithm
 protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _smoothingLag;
-	
-	// _channelMatrixEstimators[i][j] is the the channel matrix estimator for the j-th channel order on the i-th output
-	std::vector<std::vector<ChannelMatrixEstimator*> > _channelMatrixEstimators;
-	
 //     int _startDetectionTime;
 
 // 	// mean and variance which will server to initialize
@@ -42,19 +38,25 @@ protected:
     // indicates whether the particles will be initialized randomly or all the same
     bool _randomParticlesInitilization;
 
+	// _channelMatrixEstimators[i][j] is the the channel matrix estimator for the j-th channel order on the i-th output
+	std::vector<std::vector<ChannelMatrixEstimator*> > _channelMatrixEstimators;
+	
+	ParticleFilter *_particleFilter;
+	uint _startDetectionTime;
+
 	/*!
 	  It returns a pointer to the particle filter used by the algorithm
 	  \return a pointer to a particle filter
 	*/
-// 	virtual ParticleFilter* particleFilter() = 0;
-	virtual ParticleFilter* particleFilter() {}
+	virtual ParticleFilter* particleFilter() { return _particleFilter;}
 
-//     virtual void initializeParticles() = 0;
-	virtual void initializeParticles() {}
+	virtual void initializeParticles();
 
 //     virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0;
-	virtual void process(const MatrixXd &observations,vector<double> noiseVariances) {}
-	
+	virtual void process(const MatrixXd &observations,const vector<double> &noiseVariances);
+
+	void processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
+
 //     virtual int iBestChannelOrder(int iBestParticle) = 0;
 
 //     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
@@ -62,11 +64,14 @@ protected:
 public:
   
 	OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
-  
-    virtual std::vector< MatrixXd, std::allocator< MatrixXd > > getEstimatedChannelMatrices();
+	~OneChannelOrderPerOutputSMCAlgorithm();
+
+	virtual bool estimatesOneChannelOrderPerOutput() const { return true;}
+
+    virtual vector<MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();
-    virtual void run(MatrixXd observations, std::vector< double, std::allocator< double > > noiseVariances, MatrixXd trainingSequence);
-    virtual void run(MatrixXd observations, std::vector< double, std::allocator< double > > noiseVariances);
+    virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);
+    virtual void run(MatrixXd observations, std::vector< double> noiseVariances);
 };
 
 #endif // ONECHANNELORDERPEROUTPUTSMCALGORITHM_H

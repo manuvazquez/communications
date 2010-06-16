@@ -18,6 +18,6 @@
 
 WithMultipleChannelOrderAppParticleAddon::WithMultipleChannelOrderAppParticleAddon(uint nChannels,uint nChannelOrderAPP)
 {
-  for(uint i=0;i<nChannels;i++);
-  _channelOrderAppParticleAddons.push_back(WithChannelOrderAppParticleAddon(nChannelOrderAPP));
+  for(uint i=0;i<nChannels;i++)
+	_channelOrderAppParticleAddons.push_back(WithChannelOrderAppParticleAddon(nChannelOrderAPP));
 }

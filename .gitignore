@@ -1,5 +1,5 @@
-.kdev4/
+#.kdev4/
+#*.kdev4
 build/
-*.kdev4
 *~
 changelog

@@ -1,0 +1,29 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x1c\x00c\x00o\x00m\x00m\x00u\x00n\x00i\x00c\x00a\x00t\x00i\x00o\x00n\x00s)
+
+[CMake]
+BuildDirs[$e]=$HOME/communications/build/release,$HOME/communications/build/debug
+CMakeDir=/usr/share/cmake/Modules
+Current CMake Binary=file:///usr/bin/cmake
+CurrentBuildDir=file:///home/manu/communications/build/release
+CurrentBuildType=Release
+CurrentInstallDir=file:///usr/local
+ProjectRootRelative=./
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=Nueva configuración Aplicación nativa
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=default
+Project Target=communications,com,com
+Working Directory=
+isExecutable=false

@@ -56,7 +56,8 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 	// before the beginning of the frame we assume all the channel orders are equally likely
     channelOrderAPPs.block(0,0,_candidateOrders.size(),_preamble.cols()).setConstant(1.0/double(_candidateOrders.size()));
 	
-	_channelOrderAPPs = std::vector<MatrixXd>(estimatesOneChannelOrderPerOutput()?L:1,channelOrderAPPs);
+// 	_channelOrderAPPs = std::vector<MatrixXd>(estimatesOneChannelOrderPerOutput()?L:1,channelOrderAPPs);
+	_channelOrderAPPs = std::vector<MatrixXd>(1,channelOrderAPPs);
 }
 
 
