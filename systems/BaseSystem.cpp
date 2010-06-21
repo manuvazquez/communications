@@ -43,7 +43,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-#define LOAD_SEEDS
+//#define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -60,11 +60,11 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-    _nFrames = 100;
+    _nFrames = 10000;
     _L=3,_N=3,_frameLength=300;
     _m = 3;
     _d = _m - 1;
-    _trainSeqLength = 10;
+    _trainSeqLength = 20;
     _preambleLength = 10;
   
     // the algorithms with the higher smoothing lag require
@@ -229,8 +229,8 @@ void BaseSystem::simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    _randomGenerator.setSeed(2009756120);
-    StatUtil::getRandomGenerator().setSeed(926777238);
+    _randomGenerator.setSeed(545218430);
+    StatUtil::getRandomGenerator().setSeed(122139150);
 
 // 	randomGenerator.setSeed(1251453452);
 //     StatUtil::getRandomGenerator().setSeed(4117327754);

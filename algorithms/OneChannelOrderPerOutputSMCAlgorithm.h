@@ -67,6 +67,7 @@ public:
 	~OneChannelOrderPerOutputSMCAlgorithm();
 
 	virtual bool estimatesOneChannelOrderPerOutput() const { return true;}
+	virtual bool estimatesOneSingleChannelOrder() const { return false;}
 
     virtual vector<MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();

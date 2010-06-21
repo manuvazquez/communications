@@ -52,19 +52,19 @@ protected:
 
     KalmanEstimator *kalmanEstimator;
 
-	// needed for solving ambiguity when computing MSE
-	
-	// each element of the vector (a vector itself) stores the signs of the best permutation corresponding
-	// to one of the pieces into which the frame was dividing in order to compute the SER
-	std::vector<std::vector<int> > _piecesBestPermutationSigns;
-	
-	// each element of the vector stores the index of the best permutation corresponding to one of the
-	// pieces into which the frame was dividing in order to compute the SER
-	std::vector<uint> _piecesBestPermuationIndexes;
-	
-	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place
-	// it ALWAYS includes the first index (0) and the last ("frameLength")
-	std::vector<uint> _signChanges;
+// 	// needed for solving ambiguity when computing MSE
+// 	
+// 	// each element of the vector (a vector itself) stores the signs of the best permutation corresponding
+// 	// to one of the pieces into which the frame was dividing in order to compute the SER
+// 	std::vector<std::vector<int> > _piecesBestPermutationSigns;
+// 	
+// 	// each element of the vector stores the index of the best permutation corresponding to one of the
+// 	// pieces into which the frame was dividing in order to compute the SER
+// 	std::vector<uint> _piecesBestPermuationIndexes;
+// 	
+// 	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place
+// 	// it ALWAYS includes the first index (0) and the last ("frameLength")
+// 	std::vector<uint> _signChanges;
 
     virtual void addAlgorithms();
     virtual void buildChannel();
@@ -74,7 +74,7 @@ public:
 
     ~ISWCS10System();
 	
-	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+// 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 };
 
 #endif

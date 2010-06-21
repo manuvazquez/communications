@@ -32,6 +32,7 @@ class ChannelOrderEstimationSystem : public SMCSystem
 {
 private:
 	int iAlgorithmPerformingChannelOrderAPPestimation;
+	int iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation;
 protected:
 	vector<int> candidateChannelOrders;
 	int iTrueChannelOrder;
@@ -39,10 +40,15 @@ protected:
 	vector<MatrixXd> channelOrderCoefficientsMeans;
 	vector<MatrixXd> channelOrderCoefficientsVariances;
 
-	// channel order APP evolution
+	// channel order APP evolution for a single channel order
     vector<vector<vector<MatrixXd> > > channelOrderAPPsAlongTime;
     vector<vector<MatrixXd> > presentFrameChannelOrderAPPsAlongTime;
     vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
+
+	// channel order APP evolution for one channel order per output
+	vector<vector<vector<vector<MatrixXd> > > > oneChannelOrderPerOutputAPPsAlongTime;
+    vector<vector<vector<MatrixXd> > > presentFrameOneChannelOrderPerOutputAPPsAlongTime;
+    vector<int> iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation;
 
 	virtual void onlyOnce();
     virtual void beforeEndingAlgorithm();

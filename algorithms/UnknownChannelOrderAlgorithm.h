@@ -53,9 +53,16 @@ public:
 	  It returns a matrix that contains the a posteriori channel order probabilities at all time instants for the FIRST output
 	  \return matrix in which each row represents a candidate channel order, and each column a time instant
 	*/
-    MatrixXd getComputedChannelOrderAPPs() { return _channelOrderAPPs[0].block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}   
+    MatrixXd getComputedChannelOrderAPPs() { return _channelOrderAPPs[0].block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}
+
+	/*!
+	  It returns a matrix that contains the a posteriori channel order probabilities at all time instants for the a given output
+	  \param iOutput the output for which the channel order APPs are wanted
+	  \return matrix in which each row represents a candidate channel order, and each column a time instant
+	*/
+    MatrixXd getComputedChannelOrderAPPs(uint iOutput) { return _channelOrderAPPs[iOutput].block(0,_preamble.cols(),_candidateOrders.size(),_iLastSymbolVectorToBeDetected-_preamble.cols());}
     
-    bool estimatesOneSingleChannelOrder() const { return true;}
+    virtual bool estimatesOneSingleChannelOrder() const { return true;}
 };
 
 #endif

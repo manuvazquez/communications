@@ -68,6 +68,8 @@ void OneChannelOrderPerOutputSMCAlgorithm::run(MatrixXd observations, std::vecto
 
   initializeParticles();
 
+_particleFilter->getParticle(0)->setSymbolVectors(_preamble.cols(),_preamble.cols()+trainingSequence.cols(),trainingSequence);
+
 
 #ifdef DEBUG
   for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)

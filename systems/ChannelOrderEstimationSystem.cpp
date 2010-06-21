@@ -57,6 +57,9 @@ void ChannelOrderEstimationSystem::beforeEndingFrame()
 
 	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
 	Util::matricesVectorsVectorsVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);
+	
+	oneChannelOrderPerOutputAPPsAlongTime.push_back(presentFrameOneChannelOrderPerOutputAPPsAlongTime);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
 }
 
 void ChannelOrderEstimationSystem::onlyOnce()
@@ -69,10 +72,17 @@ void ChannelOrderEstimationSystem::onlyOnce()
 		if(_algorithms[iAlgorithm]->estimatesOneSingleChannelOrder())
 			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
 			iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
+		
+		if(_algorithms[iAlgorithm]->estimatesOneChannelOrderPerOutput())
+			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
+			iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.push_back(iAlgorithm+1);
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
 	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),_frameLength)));
+	presentFrameOneChannelOrderPerOutputAPPsAlongTime = vector<vector<vector<MatrixXd> > >(_L,
+														  vector<vector<MatrixXd> >(iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.size(),
+																vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),_frameLength))));
 }
 
 void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
@@ -86,9 +96,18 @@ void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
 
 		iAlgorithmPerformingChannelOrderAPPestimation++;
 	}
+	else
+	  if(_algorithms[_iAlgorithm]->estimatesOneChannelOrderPerOutput())
+	  {
+		for(uint iOutput=0;iOutput<static_cast<uint>(_L);iOutput++)
+			presentFrameOneChannelOrderPerOutputAPPsAlongTime[iOutput][iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs(iOutput);
+		
+		iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation++;
+	  }
 }
 
 void ChannelOrderEstimationSystem::addAlgorithms()
 {
 	iAlgorithmPerformingChannelOrderAPPestimation = 0;
+	iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation = 0;
 }
