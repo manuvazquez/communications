@@ -26,6 +26,7 @@ ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
     nSurvivors = 1;
+// 	nSurvivors = 2;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
@@ -46,15 +47,16 @@ ISWCS10System::ISWCS10System()
 		cout << COLOR_WHITE << " to " << COLOR_NORMAL << nSurvivors << endl;
 	}
 
-	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
-		kalmanChannelEstimators.push_back(new KalmanEstimator(MatrixXd::Zero(1,_N*candidateChannelOrders[iChannelOrder]),
-															  MatrixXd::Ones(1,_N*candidateChannelOrders[iChannelOrder]),_N,ARcoefficients,ARvariance));
+	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
+		kalmanChannelEstimators.push_back(new KalmanEstimator(MatrixXd::Zero(1,_N*_candidateChannelOrders[iChannelOrder]),
+															  MatrixXd::Ones(1,_N*_candidateChannelOrders[iChannelOrder]),_N,ARcoefficients,ARvariance));
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+    _kalmanEstimatorForActualChannelOrder = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+	_kalmanEstimatorForMaximumChannelOrder = new KalmanEstimator(_channelOrderCoefficientsMeans[_iMaxChannelOrder],_channelOrderCoefficientsVariances[_iMaxChannelOrder],_N,ARcoefficients,ARvariance);
 }
 
 
@@ -63,13 +65,14 @@ ISWCS10System::~ISWCS10System()
 // 	delete channel;
 	delete _powerProfile;
 
-	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
 		delete kalmanChannelEstimators[iChannelOrder];
 
 	delete withoutReplacementResamplingAlgorithm;
 	delete bestParticlesResamplingAlgorithm;
 
-	delete kalmanEstimator;
+	delete _kalmanEstimatorForActualChannelOrder;
+	delete _kalmanEstimatorForMaximumChannelOrder;
 }
 
 void ISWCS10System::buildChannel()
@@ -77,14 +80,14 @@ void ISWCS10System::buildChannel()
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
 	
-	std::vector<uint> subchannelOrders(3,1);
-	subchannelOrders[0] = 3;
-	subchannelOrders[2] = 1;
+// 	std::vector<uint> subchannelOrders(3,1);
+// 	subchannelOrders[1] = 3;
 
-// 	std::vector<uint> subchannelOrders(3,2);
-// 	subchannelOrders[0] = 4;
-// 	subchannelOrders[2] = 3;
+// 	std::vector<uint> subchannelOrders(3,3);
+// 	subchannelOrders[1] = 1;
 
+	std::vector<uint> subchannelOrders(3,3);
+	
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(subchannelOrders);
 
 // 	if(_channel->getInputsZeroCrossings(_preambleLength,_frameLength).size()!=0)
@@ -106,17 +109,11 @@ void ISWCS10System::addAlgorithms()
 
 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
-// 	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
+// 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 	
-// 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm +1 survivor",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,nSurvivors+1));
-
-// 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (underestimated)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,candidateChannelOrders[iTrueChannelOrder-1],dynamic_cast <KalmanEstimator *> (kalmanChannelEstimators[iTrueChannelOrder-1]),preamble,candidateChannelOrders[iTrueChannelOrder-1]-1,iLastSymbolVectorToBeDetected+candidateChannelOrders[iTrueChannelOrder-1]-1,nSurvivors));
-
-// 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (overestimated)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,candidateChannelOrders[iTrueChannelOrder+1],dynamic_cast <KalmanEstimator *> (kalmanChannelEstimators[iTrueChannelOrder+1]),preamble,candidateChannelOrders[iTrueChannelOrder+1]-1,iLastSymbolVectorToBeDetected+candidateChannelOrders[iTrueChannelOrder+1]-1,nSurvivors));
-
-    _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
+    _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
 void ISWCS10System::beforeEndingFrame()

@@ -55,7 +55,8 @@ protected:
 //     virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0;
 	virtual void process(const MatrixXd &observations,const vector<double> &noiseVariances);
 
-	void processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
+// 	void processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
+	std::vector<std::vector<MatrixXd> > processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
 
 //     virtual int iBestChannelOrder(int iBestParticle) = 0;
 

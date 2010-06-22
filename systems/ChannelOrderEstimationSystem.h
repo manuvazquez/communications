@@ -31,24 +31,25 @@
 class ChannelOrderEstimationSystem : public SMCSystem
 {
 private:
-	int iAlgorithmPerformingChannelOrderAPPestimation;
-	int iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation;
+	int _iAlgorithmPerformingChannelOrderAPPestimation;
+	int _iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation;
 protected:
-	vector<int> candidateChannelOrders;
-	int iTrueChannelOrder;
+	vector<int> _candidateChannelOrders;
+	int _iTrueChannelOrder;
+	int _iMaxChannelOrder;
 
-	vector<MatrixXd> channelOrderCoefficientsMeans;
-	vector<MatrixXd> channelOrderCoefficientsVariances;
+	vector<MatrixXd> _channelOrderCoefficientsMeans;
+	vector<MatrixXd> _channelOrderCoefficientsVariances;
 
 	// channel order APP evolution for a single channel order
-    vector<vector<vector<MatrixXd> > > channelOrderAPPsAlongTime;
-    vector<vector<MatrixXd> > presentFrameChannelOrderAPPsAlongTime;
-    vector<int> iAlgorithmsPerformingChannelOrderAPPestimation;
+    vector<vector<vector<MatrixXd> > > _channelOrderAPPsAlongTime;
+    vector<vector<MatrixXd> > _presentFrameChannelOrderAPPsAlongTime;
+    vector<int> _iAlgorithmsPerformingChannelOrderAPPestimation;
 
 	// channel order APP evolution for one channel order per output
-	vector<vector<vector<vector<MatrixXd> > > > oneChannelOrderPerOutputAPPsAlongTime;
-    vector<vector<vector<MatrixXd> > > presentFrameOneChannelOrderPerOutputAPPsAlongTime;
-    vector<int> iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation;
+	vector<vector<vector<vector<MatrixXd> > > > _oneChannelOrderPerOutputAPPsAlongTime;
+    vector<vector<vector<MatrixXd> > > _presentFrameOneChannelOrderPerOutputAPPsAlongTime;
+    vector<int> _iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation;
 
 	virtual void onlyOnce();
     virtual void beforeEndingAlgorithm();

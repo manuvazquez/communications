@@ -21,45 +21,58 @@
 
 // #define DEBUG
 
+#include<algorithm>
+
 ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
  : SMCSystem()
 {
-	candidateChannelOrders.push_back(1);
-	candidateChannelOrders.push_back(2);candidateChannelOrders.push_back(3);
-	candidateChannelOrders.push_back(4);candidateChannelOrders.push_back(5);
+	_candidateChannelOrders.push_back(1);
+	_candidateChannelOrders.push_back(2);_candidateChannelOrders.push_back(3);
+	_candidateChannelOrders.push_back(4);_candidateChannelOrders.push_back(5);
 // 	candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
-	channelOrderCoefficientsMeans.resize(candidateChannelOrders.size());
-	channelOrderCoefficientsVariances.resize(candidateChannelOrders.size());
+	_channelOrderCoefficientsMeans.resize(_candidateChannelOrders.size());
+	_channelOrderCoefficientsVariances.resize(_candidateChannelOrders.size());
 
-	iTrueChannelOrder = -1;
-	for(uint iChannelOrder=0;iChannelOrder<candidateChannelOrders.size();iChannelOrder++)
+	// to locate the true channel order
+	_iTrueChannelOrder = -1;
+	
+	// to locate the maximum channel order
+	_iMaxChannelOrder = -1;
+	int maxChannelOrder = -1;
+	
+	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
 	{
-		channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(_L,_N*candidateChannelOrders[iChannelOrder]);
-		channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(_L,_N*candidateChannelOrders[iChannelOrder]);
-		if(candidateChannelOrders[iChannelOrder] == _m)
-			iTrueChannelOrder = iChannelOrder;
+		_channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(_L,_N*_candidateChannelOrders[iChannelOrder]);
+		_channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(_L,_N*_candidateChannelOrders[iChannelOrder]);
+		if(_candidateChannelOrders[iChannelOrder] == _m)
+			_iTrueChannelOrder = iChannelOrder;
+		if(_candidateChannelOrders[iChannelOrder] > maxChannelOrder)
+		{
+		  _iMaxChannelOrder = iChannelOrder;
+		  maxChannelOrder = _candidateChannelOrders[iChannelOrder];
+		}
 	}
 
-	if(iTrueChannelOrder==-1)
+	if(_iTrueChannelOrder==-1)
 		throw RuntimeException("ChannelOrderEstimationSystem::ChannelOrderEstimationSystem: the memory of the channel is not one of the possible candidates.");
 
 	// channel order APP evolution
-    channelOrderAPPsAlongTime.reserve(_nFrames);
+    _channelOrderAPPsAlongTime.reserve(_nFrames);
 }
 
 void ChannelOrderEstimationSystem::beforeEndingFrame()
 {
     SMCSystem::beforeEndingFrame();
 
-	Util::scalarsVectorToOctaveFileStream(candidateChannelOrders,"candidateOrders",_f);
-	Util::scalarsVectorToOctaveFileStream(iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
+	Util::scalarsVectorToOctaveFileStream(_candidateChannelOrders,"candidateOrders",_f);
+	Util::scalarsVectorToOctaveFileStream(_iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
 
-	channelOrderAPPsAlongTime.push_back(presentFrameChannelOrderAPPsAlongTime);
-	Util::matricesVectorsVectorsVectorToOctaveFileStream(channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);
+	_channelOrderAPPsAlongTime.push_back(_presentFrameChannelOrderAPPsAlongTime);
+	Util::matricesVectorsVectorsVectorToOctaveFileStream(_channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);
 	
-	oneChannelOrderPerOutputAPPsAlongTime.push_back(presentFrameOneChannelOrderPerOutputAPPsAlongTime);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
+	_oneChannelOrderPerOutputAPPsAlongTime.push_back(_presentFrameOneChannelOrderPerOutputAPPsAlongTime);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(_oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
 }
 
 void ChannelOrderEstimationSystem::onlyOnce()
@@ -71,18 +84,18 @@ void ChannelOrderEstimationSystem::onlyOnce()
 	{
 		if(_algorithms[iAlgorithm]->estimatesOneSingleChannelOrder())
 			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
-			iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
+			_iAlgorithmsPerformingChannelOrderAPPestimation.push_back(iAlgorithm+1);
 		
 		if(_algorithms[iAlgorithm]->estimatesOneChannelOrderPerOutput())
 			// +1 is because in Octave/Matlab (where this information is supposed to be useful) there is no 0 index
-			iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.push_back(iAlgorithm+1);
+			_iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.push_back(iAlgorithm+1);
 	}
 
 	// we set the size of the results matrix for channel order APPs evolution according to the number of algorithms counted above
-	presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),_frameLength)));
-	presentFrameOneChannelOrderPerOutputAPPsAlongTime = vector<vector<vector<MatrixXd> > >(_L,
-														  vector<vector<MatrixXd> >(iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.size(),
-																vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(candidateChannelOrders.size(),_frameLength))));
+	_presentFrameChannelOrderAPPsAlongTime = vector<vector<MatrixXd> >(_iAlgorithmsPerformingChannelOrderAPPestimation.size(),vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(_candidateChannelOrders.size(),_frameLength)));
+	_presentFrameOneChannelOrderPerOutputAPPsAlongTime = vector<vector<vector<MatrixXd> > >(_L,
+														  vector<vector<MatrixXd> >(_iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation.size(),
+																vector<MatrixXd>(_SNRs.size(),MatrixXd::Zero(_candidateChannelOrders.size(),_frameLength))));
 }
 
 void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
@@ -92,22 +105,22 @@ void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
 	if(_algorithms[_iAlgorithm]->estimatesOneSingleChannelOrder())
 	{
 		//...the probability of the different channel orders at each time instant is retrieved
-		presentFrameChannelOrderAPPsAlongTime[iAlgorithmPerformingChannelOrderAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs();
+		_presentFrameChannelOrderAPPsAlongTime[_iAlgorithmPerformingChannelOrderAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs();
 
-		iAlgorithmPerformingChannelOrderAPPestimation++;
+		_iAlgorithmPerformingChannelOrderAPPestimation++;
 	}
 	else
 	  if(_algorithms[_iAlgorithm]->estimatesOneChannelOrderPerOutput())
 	  {
 		for(uint iOutput=0;iOutput<static_cast<uint>(_L);iOutput++)
-			presentFrameOneChannelOrderPerOutputAPPsAlongTime[iOutput][iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs(iOutput);
+			_presentFrameOneChannelOrderPerOutputAPPsAlongTime[iOutput][_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs(iOutput);
 		
-		iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation++;
+		_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation++;
 	  }
 }
 
 void ChannelOrderEstimationSystem::addAlgorithms()
 {
-	iAlgorithmPerformingChannelOrderAPPestimation = 0;
-	iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation = 0;
+	_iAlgorithmPerformingChannelOrderAPPestimation = 0;
+	_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation = 0;
 }

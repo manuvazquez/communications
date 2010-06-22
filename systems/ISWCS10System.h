@@ -50,7 +50,7 @@ protected:
 
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
 
-    KalmanEstimator *kalmanEstimator;
+    KalmanEstimator *_kalmanEstimatorForActualChannelOrder,*_kalmanEstimatorForMaximumChannelOrder;
 
 // 	// needed for solving ambiguity when computing MSE
 // 	
