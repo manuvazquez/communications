@@ -82,8 +82,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 #endif
 
 //   _nSurvivors = 1;
-//   _nSurvivors = 2;
-  _nSurvivors = 8;
+  _nSurvivors = 2;
+//   _nSurvivors = 8;
 //   _nSurvivors = 10;
 //   _nSurvivors = 20;
 //   _nSurvivors = 40;
@@ -110,7 +110,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     _mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 
 	// bessel channel parameters
-    _velocity = 50/3.6; // (m/s)
+    _velocity = 180/3.6; // (m/s)
     _carrierFrequency = 2e9; // (Hz)
     _symbolRate = 500e3; // (Hz)
 
@@ -233,7 +233,7 @@ void CDMASystem::buildChannel()
 	{
 	  delete _channel;
 
-// 	  channel = new MultiuserCDMAchannel(new ARchannel(N,1,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
+// 	  _channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
 	  
 // 	  channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
 	  
@@ -248,6 +248,7 @@ void CDMASystem::buildChannel()
 // 		getchar();
 	  }
 
+// 	} while(!isChannelOk(_channel));
 // 	} while(!isChannelOk(_channel) || !coefficientsSignChangeHappened); // los coeficientes del canal cambian de signo
 	} while(!isChannelOk(_channel) || coefficientsSignChangeHappened); // los coeficientes del canal NO cambian de signo
 }

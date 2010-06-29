@@ -25,8 +25,8 @@
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
-    nSurvivors = 1;
-// 	nSurvivors = 2;
+//     nSurvivors = 1;
+	nSurvivors = 2;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
@@ -57,6 +57,30 @@ ISWCS10System::ISWCS10System()
 
     _kalmanEstimatorForActualChannelOrder = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
 	_kalmanEstimatorForMaximumChannelOrder = new KalmanEstimator(_channelOrderCoefficientsMeans[_iMaxChannelOrder],_channelOrderCoefficientsVariances[_iMaxChannelOrder],_N,ARcoefficients,ARvariance);
+
+// 	// 1-3-1
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[1] = 3;
+
+// 	// 3-1-3
+// 	_subchannelOrders = std::vector<uint>(3,3);
+// 	_subchannelOrders[1] = 1;
+
+// 	// 3-3-3
+// 	_subchannelOrders = std::vector<uint>(3,3);
+
+// ---------------------------------
+
+// 	// 4-1-1
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
+
+// 	// 4-3-2
+// 	_subchannelOrders = std::vector<uint>(3);
+// 	_subchannelOrders[0] = 4;_subchannelOrders[1] = 3;_subchannelOrders[2] = 2;
+
+	// 4-4-4
+	_subchannelOrders = std::vector<uint>(3,4);
 }
 
 
@@ -79,28 +103,10 @@ void ISWCS10System::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
-	
-// 	std::vector<uint> subchannelOrders(3,1);
-// 	subchannelOrders[1] = 3;
 
-// 	std::vector<uint> subchannelOrders(3,3);
-// 	subchannelOrders[1] = 1;
-
-	std::vector<uint> subchannelOrders(3,3);
-	
-	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(subchannelOrders);
-
-// 	if(_channel->getInputsZeroCrossings(_preambleLength,_frameLength).size()!=0)
-// 	  cout << "there are zero crossings!" << endl;
-	
-// 	cout << _channel->at(100) << endl;
-// 	getchar();
+	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
 
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
-#ifdef DEBUG
-	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
-	cout << "El canal al final" << endl << (*channel)[frameLength];
-#endif
 }
 
 void ISWCS10System::addAlgorithms()
@@ -121,6 +127,7 @@ void ISWCS10System::beforeEndingFrame()
     ChannelOrderEstimationSystem::beforeEndingFrame();
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
 	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+	Util::scalarsVectorToOctaveFileStream(_subchannelOrders,"subchannelOrders",_f);
 }
 
 // double ISWCS10System::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)

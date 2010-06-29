@@ -65,7 +65,7 @@ BaseSystem::BaseSystem()
     _L=3,_N=3,_frameLength=300;
     _m = 3;
     _d = _m - 1;
-    _trainSeqLength = 20;
+    _trainSeqLength = 10;
     _preambleLength = 10;
   
     // the algorithms with the higher smoothing lag require

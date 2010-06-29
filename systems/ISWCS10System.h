@@ -51,6 +51,8 @@ protected:
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
 
     KalmanEstimator *_kalmanEstimatorForActualChannelOrder,*_kalmanEstimatorForMaximumChannelOrder;
+	
+	std::vector<uint> _subchannelOrders;
 
 // 	// needed for solving ambiguity when computing MSE
 // 	
