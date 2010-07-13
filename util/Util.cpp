@@ -571,13 +571,13 @@ void Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
     {
         cout << "Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-		cout << "dimensions are:" << endl;
-		cout << matrices.size() << endl;
-		cout << matrices[0].size() << endl;
-		cout << matrices[0][0].size() << endl;
-		cout << matrices[0][0][0].size() << endl;
-		cout << matrices[0][0][0][0].rows() << endl;
-		cout << matrices[0][0][0][0].cols() << endl;
+// 		cout << "dimensions are:" << endl;
+// 		cout << matrices.size() << endl;
+// 		cout << matrices[0].size() << endl;
+// 		cout << matrices[0][0].size() << endl;
+// 		cout << matrices[0][0][0].size() << endl;
+// 		cout << matrices[0][0][0][0].rows() << endl;
+// 		cout << matrices[0][0][0][0].cols() << endl;
         return;
     }
 

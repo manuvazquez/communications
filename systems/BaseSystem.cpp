@@ -24,6 +24,7 @@
 #include <typeinfo>
 #include <string.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #include <SingleUserPowerProfileDependentNoise.h>
 
@@ -55,15 +56,16 @@
     Noise *realNoise;
 #endif
 
+// #define TYPEID(x) strpbrk(typeid(x).name(),"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
     _nFrames = 10000;
-// 	_nFrames = 5;
     _L=3,_N=3,_frameLength=300;
-    _m = 3;
+    _m = 4;
     _d = _m - 1;
     _trainSeqLength = 10;
     _preambleLength = 10;
@@ -87,8 +89,6 @@ BaseSystem::BaseSystem()
 
 //   _nFrames = 10000;
 // //   _nFrames = 3;
-// //   _nFrames = 200;
-// //   _L=8,_N=3,_frameLength=10;
 //   _L=8,_N=3,_frameLength=1000;
 //   _m = 1;
 //   _d = _m - 1;
@@ -100,8 +100,8 @@ BaseSystem::BaseSystem()
 
 //   SNRs.push_back(0);
   _SNRs.push_back(3);
-  _SNRs.push_back(6);
-  _SNRs.push_back(9);_SNRs.push_back(12);_SNRs.push_back(15);
+  _SNRs.push_back(6);_SNRs.push_back(9);
+  _SNRs.push_back(12);_SNRs.push_back(15);
   _SNRs.push_back(18);_SNRs.push_back(21);
 
     // BER and MSE computing
@@ -139,6 +139,10 @@ BaseSystem::BaseSystem()
     // it is concatenated into the file name
     strcat(_outputFileName,"_");
     strcat(_outputFileName,presentTimeString);
+	
+	// the name for the temporal file is obtained from the final one
+	 strcpy(_tempOutputFileName,_outputFileName);
+	 strcat(_tempOutputFileName,"_tmp");
 
     // a specific preamble is generated...
     _preamble = MatrixXd::Zero(1,1);
@@ -343,11 +347,17 @@ void BaseSystem::simulate()
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-        _f.open(_outputFileName,ofstream::trunc);
+//         _f.open(_outputFileName,ofstream::trunc);
+		_f.open(_tempOutputFileName,ofstream::trunc);
 
         beforeEndingFrame();
         
 		_f.close();
+
+		// the temporal file is renamed as the final
+		std::string mvCommand = string(MV_COMMAND) + string(" ") + string(_tempOutputFileName) + string(" ") + string(_outputFileName);
+// 		std::cout << mvCommand << endl;
+		system(mvCommand.c_str());
 
         // ---------------------------------------------------------
 

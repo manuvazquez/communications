@@ -27,3 +27,6 @@ EnvironmentGroup=default
 Project Target=communications,com,com
 Working Directory=
 isExecutable=false
+
+[MakeBuilder]
+Number Of Jobs=1

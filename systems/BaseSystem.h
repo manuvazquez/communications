@@ -47,6 +47,7 @@
 #include <TransmissionUtil.h>
 
 #define HOSTNAME_LENGTH 50
+#define MV_COMMAND "mv"
 
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
@@ -65,6 +66,7 @@ protected:
     // GLOBAL PARAMETERS
     int _nFrames,_L,_N,_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
     char _outputFileName[HOSTNAME_LENGTH+4];
+	char _tempOutputFileName[HOSTNAME_LENGTH+4+4];
 
     Alphabet *_alphabet;
 
