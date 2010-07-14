@@ -37,7 +37,7 @@ double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symb
 MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
     if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
-        throw RuntimeException("RLSEstimator::NextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
+        throw RuntimeException("RLSEstimator::nextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
 
     VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
 

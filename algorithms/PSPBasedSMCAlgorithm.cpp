@@ -29,7 +29,8 @@
 	extern Noise *realNoise;
 #endif
 
-PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, double ARcoefficient): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient)
+PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*, double ARcoefficient*/): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+// ,_ARcoefficient(ARcoefficient)
 {
 }
 
@@ -38,11 +39,9 @@ void PSPBasedSMCAlgorithm::initializeParticles()
 	// we begin with only one particle
 	_particleFilter->addParticle(new ParticleWithChannelEstimation(1.0,_nInputs,_iLastSymbolVectorToBeDetected+_d,_channelEstimator->clone()));
 
-// 	_particleFilter->getParticle(0)->setSymbolVectors(tRange(0,_preamble.cols()-1),_preamble);
     _particleFilter->getParticle(0)->setSymbolVectors(0,_preamble.cols(),_preamble);
 }
 
-// eigen
 void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
     uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
@@ -62,7 +61,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     MatrixXd symbolVectorsMatrix(_nInputs,_channelOrder);
     VectorXd symbolsVector(_nInputsXchannelOrder);
 
-    int lastSymbolVectorStart = _nInputsXchannelOrder - _nInputs;
+    int iLastSymbolVectorStartWithinStackedVector = _nInputsXchannelOrder - _nInputs;
 
     // at first, there is only one particle
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
@@ -82,7 +81,9 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
             MatrixXd estimatedChannelMatrix = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
-            estimatedChannelMatrix *= _ARcoefficient;
+
+			// FIXME: when the channel estimator is not a KF, the estimation it returns must be multiplied by the AR coefficient
+//             estimatedChannelMatrix *= _ARcoefficient;
 
             for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
             {
@@ -91,7 +92,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 
                 // current tested vector is copied in the m-th position
                 for(int k=0;k<_nInputs;k++)
-                    symbolVectorsMatrix(k,_channelOrder-1) = symbolsVector(lastSymbolVectorStart+k) = testedVector[k];
+                    symbolVectorsMatrix(k,_channelOrder-1) = symbolsVector(iLastSymbolVectorStartWithinStackedVector+k) = testedVector[k];
 
                 particleCandidates[iCandidate].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;

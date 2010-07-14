@@ -43,7 +43,9 @@ protected:
     int nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
-	double velocity;
+	double _velocity;
+	double _carrierFrequency;
+	double _period;
 
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;

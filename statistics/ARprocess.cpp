@@ -90,7 +90,7 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
 
     vector<double> autocorrelations(order+1);
     for(int i=0;i<=order;i++)
-        autocorrelations[i] = jn(0,2.0*M_PI*normDopplerFrequency*double(i));
+        autocorrelations[i] = j0(2.0*M_PI*normDopplerFrequency*double(i));
 
     for(int m=0;m<order;m++)
     {
@@ -100,16 +100,13 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
         autocorrelationsVector(m) = autocorrelations[m+1];
     }
 
-//     tVector coefficients(order);
-//     LaLinearSolveIP(autocorrelationsMatrix,coefficients,autocorrelationsVector);
-
     VectorXd coefficients;
     autocorrelationsMatrix.lu().solve(autocorrelationsVector,&coefficients);
 
     // the variance of the noise will be computed in the loop...
     noiseVariance = autocorrelations[0];
 
-    // ...besides, the lapackpp vector will be copied to a standard c++ vector
+    // ...besides, the eigen vector will be copied to a standard c++ vector
     vector<double> coefficientsCppVector(order);
     for(int i=0;i<order;i++)
     {

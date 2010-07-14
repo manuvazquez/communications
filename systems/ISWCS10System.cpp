@@ -22,6 +22,11 @@
 #include <bashcolors.h>
 #include <OneChannelOrderPerOutputSMCAlgorithm.h>
 
+#include <PSPBasedSMCAlgorithm.h>
+
+// #define USE_BESSEL_CHANNEL
+#define USE_AR_CHANNEL
+
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
@@ -30,7 +35,19 @@ ISWCS10System::ISWCS10System()
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
-	velocity = 50.0; // m/s
+	_velocity = 50.0; // m/s
+	_carrierFrequency = 2e9;
+	_period = 1.0/500.0e3;
+
+
+	// in order to use a Bessel channel (considering the Clarke model), the parameters of the AR process that the algorithms will consider are derived from those of the Clarke model
+	double computedARprocessVariance;
+	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
+	
+	cout << "computedARprocessVariance = " << computedARprocessVariance << endl;
+	Util::print(computedARcoeffs);
+	cout << endl;
+	
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
@@ -48,16 +65,36 @@ ISWCS10System::ISWCS10System()
 	}
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
+	{
+	  #if defined USE_AR_CHANNEL
 		kalmanChannelEstimators.push_back(new KalmanEstimator(MatrixXd::Zero(1,_N*_candidateChannelOrders[iChannelOrder]),
 															  MatrixXd::Ones(1,_N*_candidateChannelOrders[iChannelOrder]),_N,ARcoefficients,ARvariance));
+	  #elif defined USE_BESSEL_CHANNEL
+		  kalmanChannelEstimators.push_back(new KalmanEstimator(MatrixXd::Zero(1,_N*_candidateChannelOrders[iChannelOrder]),
+															  MatrixXd::Ones(1,_N*_candidateChannelOrders[iChannelOrder]),_N,computedARcoeffs,computedARprocessVariance));
+	  #else
+		std::cout << "in ISWCS10System.cpp not defined a type channel to use" << std::endl;
+		exit(1);
+	  #endif
+	}
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
-    _kalmanEstimatorForActualChannelOrder = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
-	_kalmanEstimatorForMaximumChannelOrder = new KalmanEstimator(_channelOrderCoefficientsMeans[_iMaxChannelOrder],_channelOrderCoefficientsVariances[_iMaxChannelOrder],_N,ARcoefficients,ARvariance);
-
+	
+	#if defined USE_AR_CHANNEL
+	  _kalmanEstimatorForActualChannelOrder = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+	  _kalmanEstimatorForMaximumChannelOrder = new KalmanEstimator(_channelOrderCoefficientsMeans[_iMaxChannelOrder],_channelOrderCoefficientsVariances[_iMaxChannelOrder],_N,ARcoefficients,ARvariance);
+	#elif defined USE_BESSEL_CHANNEL
+	  _kalmanEstimatorForActualChannelOrder = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,computedARcoeffs,computedARprocessVariance);
+	  _kalmanEstimatorForMaximumChannelOrder = new KalmanEstimator(_channelOrderCoefficientsMeans[_iMaxChannelOrder],_channelOrderCoefficientsVariances[_iMaxChannelOrder],_N,computedARcoeffs,computedARprocessVariance);
+	#else
+	  std::cout << "in ISWCS10System.cpp not defined a type channel to use" << std::endl;
+	  exit(1);
+	#endif	
+	
+	
 // 	// 1-3-1
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[1] = 3;
@@ -75,12 +112,12 @@ ISWCS10System::ISWCS10System()
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 4;
 
-// 	// 4-3-2
-// 	_subchannelOrders = std::vector<uint>(3);
-// 	_subchannelOrders[0] = 4;_subchannelOrders[1] = 3;_subchannelOrders[2] = 2;
+	// 4-3-2
+	_subchannelOrders = std::vector<uint>(3);
+	_subchannelOrders[0] = 4;_subchannelOrders[1] = 3;_subchannelOrders[2] = 2;
 
-	// 4-4-4
-	_subchannelOrders = std::vector<uint>(3,4);
+// 	// 4-4-4
+// 	_subchannelOrders = std::vector<uint>(3,4);
 }
 
 
@@ -102,7 +139,7 @@ ISWCS10System::~ISWCS10System()
 void ISWCS10System::buildChannel()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
 
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
 
@@ -118,6 +155,8 @@ void ISWCS10System::addAlgorithms()
 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
 // 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
+
+	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 	
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
@@ -126,7 +165,7 @@ void ISWCS10System::beforeEndingFrame()
 {
     ChannelOrderEstimationSystem::beforeEndingFrame();
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
+	Util::scalarToOctaveFileStream(_velocity,"velocity",_f);
 	Util::scalarsVectorToOctaveFileStream(_subchannelOrders,"subchannelOrders",_f);
 }
 
