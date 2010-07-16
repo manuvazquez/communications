@@ -56,6 +56,11 @@ std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weight
 	for(uint i=0;i<mask.size();i++)
 		nActiveElements += mask[i];
 	
+	// if no element is to be taken into account...
+	if(nActiveElements==0)
+		//...we directly return an empty vector
+		return std::vector<int>(0);
+	
 	VectorXd filteredWeights(nActiveElements);
 	std::vector<uint> mapping;
 	
@@ -83,8 +88,8 @@ std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weight
 // 	Util::print(mapping);
 // 	cout << endl;
 
-	std::vector<int> res(n);
-	for(int i=0;i<n;i++)
+	std::vector<int> res(relativeIndexes.size());
+	for(uint i=0;i<relativeIndexes.size();i++)
 		res[i] = mapping[relativeIndexes[i]];
 	
 	return res;

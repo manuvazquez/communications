@@ -20,6 +20,11 @@
 #include <ChannelOrderEstimator.h>
 
 // #define DEBUG
+#define IMPORT_CHANNEL_ORDER
+
+#ifdef IMPORT_CHANNEL_ORDER
+	extern int realChannelOrder;
+#endif
 
 OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, std::vector< ChannelMatrixEstimator* > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm)
 :UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
@@ -27,16 +32,16 @@ OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm(strin
 ,_channelMatrixEstimators(_nOutputs,std::vector<ChannelMatrixEstimator*>(_candidateOrders.size())),_particleFilter(new ParticleFilter(nParticles))
 ,_startDetectionTime(_preamble.cols())
 {
-  for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-	if(channelEstimators[iChannelOrder]->rows()!=1)
-	  throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm: one of the channel matrix estimators is not meant for a SISO channel.");
-
-  for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
 	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-	_channelMatrixEstimators[iOutput][iChannelOrder] = channelEstimators[iChannelOrder]->clone();
-  
-  // FIXME: this is a little bit confusing: _channelOrderAPPs[0] was correctly initialized in an upper class for the case when there is only one channel order
-  _channelOrderAPPs = std::vector<MatrixXd>(_nOutputs,_channelOrderAPPs[0]);
+		if(channelEstimators[iChannelOrder]->rows()!=1)
+			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm: one of the channel matrix estimators is not meant for a SISO channel.");
+
+	for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
+		for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+			_channelMatrixEstimators[iOutput][iChannelOrder] = channelEstimators[iChannelOrder]->clone();
+
+	// FIXME: this is a little bit confusing: _channelOrderAPPs[0] was correctly initialized in an upper class for the case when there is only one channel order
+	_channelOrderAPPs = std::vector<MatrixXd>(_nOutputs,_channelOrderAPPs[0]);
 }
 
 OneChannelOrderPerOutputSMCAlgorithm::~OneChannelOrderPerOutputSMCAlgorithm()
@@ -88,35 +93,35 @@ MatrixXd OneChannelOrderPerOutputSMCAlgorithm::getDetectedSymbolVectors()
 
 void OneChannelOrderPerOutputSMCAlgorithm::run(MatrixXd observations, std::vector<double> noiseVariances, MatrixXd trainingSequence)
 {
-  std::vector<std::vector<MatrixXd> >  estimatedChannelMatrices = processTrainingSequence(observations,noiseVariances,trainingSequence);
+	std::vector<std::vector<MatrixXd> >  estimatedChannelMatrices = processTrainingSequence(observations,noiseVariances,trainingSequence);
 
-  _startDetectionTime += trainingSequence.cols();
+	_startDetectionTime += trainingSequence.cols();
 
-  initializeParticles();
-  
-  ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp * initialParticle = dynamic_cast<ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *> (_particleFilter->getParticle(0));
-  
-  for(int i=_preamble.cols();i<_preamble.cols()+trainingSequence.cols();i++)
-	for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
-	  for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-		initialParticle->setChannelMatrix(iOutput,iChannelOrder,i,estimatedChannelMatrices[iOutput][iChannelOrder]);
+	initializeParticles();
 
-  initialParticle->setSymbolVectors(_preamble.cols(),_preamble.cols()+trainingSequence.cols(),trainingSequence);
+	ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp * initialParticle = dynamic_cast<ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *> (_particleFilter->getParticle(0));
+
+	for(int i=_preamble.cols();i<_preamble.cols()+trainingSequence.cols();i++)
+		for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
+			for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+			initialParticle->setChannelMatrix(iOutput,iChannelOrder,i,estimatedChannelMatrices[iOutput][iChannelOrder]);
+
+	initialParticle->setSymbolVectors(_preamble.cols(),_preamble.cols()+trainingSequence.cols(),trainingSequence);
 
 
 #ifdef DEBUG
-  for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
-	for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
-	  cout << "channel order probability " << iChannelOrder << " for output " << iOutput << " at " <<  _preamble.cols()+trainingSequence.cols()-1 << ": " << _channelOrderAPPs[iOutput](iChannelOrder,_preamble.cols()+trainingSequence.cols()-1) << endl;
-  
-  cout << "before process" << endl;
+	for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
+		for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
+			cout << "channel order probability " << _candidateOrders[iChannelOrder] << " for output " << iOutput << " at " <<  _preamble.cols()+trainingSequence.cols()-1 << ": " << _channelOrderAPPs[iOutput](iChannelOrder,_preamble.cols()+trainingSequence.cols()-1) << endl;
+
+	cout << "before process" << endl;
 #endif
 
-  process(observations,noiseVariances);
+	process(observations,noiseVariances);
 
-  #ifdef DEBUG
-  cout << "finished run!!" << endl;
-//   getchar();
+#ifdef DEBUG
+	cout << "finished run!!" << endl;
+	//   getchar();
 #endif
 }
 
@@ -227,22 +232,17 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
     uint iChannelOrder,iTestedVector;
     ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *processedParticle;
 	
-// 	int iBestUnnormalizedChannelOrderAPP;
-	
 	// over all the survivor candidates
     double normConst;
 	
 	double singleOutputLikelihood;
 
-    typedef struct{
-        int fromParticle;
-        MatrixXd symbolVectorsMatrix;
-//         int iBestChannelOrder;
-//         MatrixXd unnormalizedChannelOrderAPPs;
-		MatrixXd channelOrderAPPs;
-//         double likelihood;
-        double weight;
-    }tParticleCandidate;
+//     typedef struct{
+//         int fromParticle;
+//         MatrixXd symbolVectorsMatrix;
+// 		MatrixXd channelOrderAPPs;
+//         double weight;
+//     }tParticleCandidate;
 
     tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->capacity()*nSymbolVectors];
 
@@ -254,13 +254,10 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 	// when all the symbols involved in an observation are stacked row-wise, this indicates where the last symbol vector starts
     int iLastSymbolVectorStartWithinVector = _nInputsXmaxChannelOrder - _nInputs;
 
-//     vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
-//     int iBestChannelOrder = 0,timesBestChannelOrder = 0;
-
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_smoothingLag;iObservationToBeProcessed++)
     {
 #ifdef DEBUG
-		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
+		cout << "============= iObservationToBeProcessed = " << iObservationToBeProcessed << " ==============" << endl;
 #endif
         // it keeps track of the place where a new tParticleCandidate will be stored within the array
         iCandidate = 0;
@@ -288,12 +285,13 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 				
 				std::vector<double> unnormalizedChannelOrderAPPs(_candidateOrders.size());
 				
-//                 particleCandidates[iCandidate].unnormalizedChannelOrderAPPs = MatrixXd(_nOutputs,_candidateOrders.size());
-
 				particleCandidates[iCandidate].channelOrderAPPs = MatrixXd(_nOutputs,_candidateOrders.size());
 
 				for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
 				{
+#ifdef DEBUG
+				  cout << "......... iOutput = " << iOutput << " .............." << endl;
+#endif
 				  singleOutputLikelihood = 0.0;
 				
 				  for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
@@ -307,6 +305,11 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 
 
 					  singleOutputLikelihood += unnormalizedChannelOrderAPPs[iChannelOrder];
+#ifdef DEBUG
+					  cout << " //////// channelOrder = " << _candidateOrders[iChannelOrder] << " \\\\\\\\\\\\" << endl;
+					  cout << processedParticle->getChannelMatrixEstimator(iOutput,iChannelOrder)->lastEstimatedChannelMatrix() << endl;
+					  getchar();
+#endif
 				  }
 				  
 				  // normalization
@@ -320,12 +323,8 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
                 if(vectorLikelihood==0.0)
                     continue;
 
-//                 particleCandidates[iCandidate].unnormalizedChannelOrderAPPs.maxCoeff(&iBestUnnormalizedChannelOrderAPP);
-				
                 particleCandidates[iCandidate].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
-//                 particleCandidates[iCandidate].iBestChannelOrder = iBestUnnormalizedChannelOrderAPP;
-//                 particleCandidates[iCandidate].likelihood = vectorLikelihood;
                 particleCandidates[iCandidate].weight = processedParticle->getWeight()*vectorLikelihood;
 				
 				// normalization constant is computed taking advantage of the loop
@@ -356,8 +355,6 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 				particleCandidates[iParticle].fromParticle = iParticle;
                 particleCandidates[iCandidate].symbolVectorsMatrix = symbolVectorsMatrix;
 
-//                 particleCandidates[iCandidate].iBestChannelOrder = processedParticle->iMaxChannelOrderAPP();
-//                 particleCandidates[iCandidate].likelihood = 1.0;
                 particleCandidates[iCandidate].weight = processedParticle->getWeight();
 				
 				for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
@@ -377,16 +374,32 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
         for(int i=0;i<iCandidate;i++)
             weights(i) = particleCandidates[i].weight/normConst;
 
-        // the candidates that are going to give rise to particles are selected
-        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->capacity(),weights);
+		// overall survivors --------------------------------------------------------------
+//         // the candidates that are going to give rise to particles are selected
+//         vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
+
+		// x survivors per state -----------------------------------------------------------
+		vector<int> indexesSelectedCandidates;
+		
+		uint nSurvivors = _particleFilter->capacity()/int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1))));
+		if(_particleFilter->capacity() % int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)))) !=0)
+			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm:process: the number of computed survivors is not integer.");
+		
+		std::vector<std::vector<bool> > stateMasks = imposeFixedNumberOfSurvivorsPerState(particleCandidates,iCandidate);
+		for(uint i=0;i<stateMasks.size();i++)
+		{
+			std::vector<int> thisStateIndexes = _resamplingAlgorithm->obtainIndexes(nSurvivors,weights,stateMasks[i]);
+			indexesSelectedCandidates.insert(indexesSelectedCandidates.end(),thisStateIndexes.begin(),thisStateIndexes.end());
+		}
+
+// 		cout << "first mask" << endl;
+// 		Util::print(stateMasks[0]);
+// 		getchar();
 
         // every survivor candidate is associated with an old particle
         vector<int> indexesParticles(indexesSelectedCandidates.size());
         for(uint i=0;i<indexesSelectedCandidates.size();i++)
-        {
             indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
-//             _particlesBestChannelOrders[i] = particleCandidates[indexesSelectedCandidates[i]].iBestChannelOrder;
-        }
 
         // the chosen particles are kept without modification (yet)
         _particleFilter->keepParticles(indexesParticles);
@@ -428,4 +441,41 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 
     delete[] particleCandidates;
+}
+
+std::vector<std::vector<bool> > OneChannelOrderPerOutputSMCAlgorithm::imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates,uint nCandidates)
+{
+	int nStates = pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)));
+	
+	std::vector<std::vector<bool> > statesMasks(nStates,std::vector<bool>(nCandidates,false));
+	
+	for(int iState=0;iState<nStates;iState++)
+	{
+// 		cout << "iState = " << iState << endl;
+		
+		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,realChannelOrder-1);
+		
+// 		cout << "state" << endl << state << endl;
+// 		uint encontrados = 0;
+		
+		for(uint iCandidate=0;iCandidate<nCandidates;iCandidate++)
+		{
+// 			cout << "iCandidate = " << iCandidate << endl;
+// 			cout << "particleCandidates[iCandidate].symbolVectorsMatrix" << endl << particleCandidates[iCandidate].symbolVectorsMatrix << endl;
+			if(particleCandidates[iCandidate].symbolVectorsMatrix.block(0,particleCandidates[iCandidate].symbolVectorsMatrix.cols()-realChannelOrder+1,_nInputs,realChannelOrder-1) == state)
+			{
+				statesMasks[iState][iCandidate] = true;
+// 				encontrados++;
+			}
+		}
+// 		cout << "encontrados = " << encontrados << endl;
+// 		if(encontrados!=0)
+// 		{
+// 			cout << "distinto de 0!" << endl;
+// 			getchar();
+// 		}
+// 		getchar();
+	}
+	
+	return statesMasks;
 }

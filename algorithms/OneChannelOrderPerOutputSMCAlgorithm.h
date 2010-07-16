@@ -24,16 +24,16 @@
 class OneChannelOrderPerOutputSMCAlgorithm : public UnknownChannelOrderAlgorithm
 {
 protected:
+	
+    typedef struct{
+        int fromParticle;
+        MatrixXd symbolVectorsMatrix;
+		MatrixXd channelOrderAPPs;
+        double weight;
+    }tParticleCandidate;
+
     ResamplingAlgorithm *_resamplingAlgorithm;
     int _smoothingLag;
-//     int _startDetectionTime;
-
-// 	// mean and variance which will server to initialize
-//     double _channelUniqueMean, _channelUniqueVariance;
-// 
-// 	// 
-//     vector<MatrixXd> _channelMeanVectors;
-//     vector<MatrixXd> _channelCovariances;
     
     // indicates whether the particles will be initialized randomly or all the same
     bool _randomParticlesInitilization;
@@ -52,16 +52,12 @@ protected:
 
 	virtual void initializeParticles();
 
-//     virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0;
 	virtual void process(const MatrixXd &observations,const vector<double> &noiseVariances);
 
-// 	void processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
 	std::vector<std::vector<MatrixXd> > processTrainingSequence(const MatrixXd &observations, const std::vector<double> &noiseVariances, const MatrixXd &trainingSequence);
+	
+	std::vector<std::vector<bool> > imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates, uint nCandidates);
 
-//     virtual int iBestChannelOrder(int iBestParticle) = 0;
-
-//     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
-//     virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {}
 public:
   
 	OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
