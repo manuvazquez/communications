@@ -180,7 +180,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
             weights(i) = particleCandidates[i].weight/normConst;
 
         // the candidates that are going to give rise to particles are selected
-        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->capacity(),weights);
+        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
 
         // every survivor candidate is associated with an old particle
         vector<int> indexesParticles(indexesSelectedCandidates.size());

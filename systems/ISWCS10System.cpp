@@ -44,9 +44,9 @@ ISWCS10System::ISWCS10System()
 	double computedARprocessVariance;
 	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
 	
-	cout << "computedARprocessVariance = " << computedARprocessVariance << endl;
-	Util::print(computedARcoeffs);
-	cout << endl;
+// 	cout << "computedARprocessVariance = " << computedARprocessVariance << endl;
+// 	Util::print(computedARcoeffs);
+// 	cout << endl;
 	
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
@@ -112,12 +112,29 @@ ISWCS10System::ISWCS10System()
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 4;
 
-	// 4-3-2
-	_subchannelOrders = std::vector<uint>(3);
-	_subchannelOrders[0] = 4;_subchannelOrders[1] = 3;_subchannelOrders[2] = 2;
+// 	// 4-3-2
+// 	_subchannelOrders = std::vector<uint>(3);
+// 	_subchannelOrders[0] = 4;_subchannelOrders[1] = 3;_subchannelOrders[2] = 2;
 
-// 	// 4-4-4
-// 	_subchannelOrders = std::vector<uint>(3,4);
+	// 4-4-4
+	_subchannelOrders = std::vector<uint>(3,4);
+	
+	
+	
+// 	VectorXd prueba(6);
+// 	
+// 	std::vector<bool> pruebabool(6,true);
+// 	pruebabool[0] = false;
+// 	pruebabool[2] = false;
+// 	pruebabool[5] = false;
+// 	
+// 	prueba[0] = 0.2; prueba[1] = 0.07; prueba[2] = 0.4;
+// 	prueba[3] = 0.01; prueba[4] = 0.02; prueba[5] = 0.3;
+// // 	std::vector<int> iprueba = bestParticlesResamplingAlgorithm->obtainIndexes(2,prueba);
+// 	std::vector<int> iprueba = bestParticlesResamplingAlgorithm->obtainIndexes(2,prueba,pruebabool);
+// 	
+// 	Util::print(iprueba);
+// 	cout << endl;
 }
 
 
@@ -154,11 +171,11 @@ void ISWCS10System::addAlgorithms()
 
 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-// 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
+// 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (maximum suborder within the set)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 
 	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 	
-    _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
+//     _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
 void ISWCS10System::beforeEndingFrame()

@@ -225,6 +225,7 @@ template<class T> void Util::scalarToOctaveFileStream(T scalar,string name,ofstr
 
 template void Util::scalarToOctaveFileStream(int scalar,string name,ofstream &f);
 template void Util::scalarToOctaveFileStream(double scalar,string name,ofstream &f);
+template void Util::scalarToOctaveFileStream(uint scalar,string name,ofstream &f);
 
 void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
 {

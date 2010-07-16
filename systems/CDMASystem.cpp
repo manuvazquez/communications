@@ -304,7 +304,7 @@ double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, Mat
 //   return computeSERwithoutSolvingAmbiguity(sourceSymbols,detectedSymbols,mask);
 
   for(int iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
-	  for(int iInput=0;iInput<_N;iInput++)
+	  for(uint iInput=0;iInput<_N;iInput++)
 		  mask[iInput][iTime] = false;        
 
   // in order to compute the probability of activity detection it makes no difference the symbol detected
@@ -436,7 +436,7 @@ double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &dete
   {
 	  // we need to find out how many symbols are gonna be taken into account within this subframe
 	  uint thisSubframeNumberAccountedSymbols = 0;
-	  for(int i=0;i<_N;i++)
+	  for(uint i=0;i<_N;i++)
 		for(uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
 		  thisSubframeNumberAccountedSymbols += mask[i][j];
 

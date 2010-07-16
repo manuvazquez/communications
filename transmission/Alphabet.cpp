@@ -167,6 +167,7 @@ MatrixXd Alphabet::int2eigenMatrix(int number, uint rows, uint cols) const
 	{
 		remainder = number % _length;
 		res(length % rows,length / rows) = _symbols[remainder];
+// 		res(length % cols,length / cols) = _symbols[remainder];
 		number /= _length;
 		length--;
 	}while(number!=0);

@@ -30,7 +30,7 @@ ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::clone() const
 	return new ResidualResamplingAlgorithm(*this);
 }
 
-std::vector<int> ResidualResamplingAlgorithm::ObtainIndexes(int n,const VectorXd &weights) const
+std::vector<int> ResidualResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weights) const
 {
 	VectorXd residues(weights.size());
 	int *timesToBeResampled = new int[weights.size()];

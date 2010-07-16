@@ -30,7 +30,8 @@
 
 #define DATE_LENGTH 100
 
-// #define EXPORT_REAL_DATA
+#define EXPORT_REAL_DATA
+#define EXPORT_REAL_CHANNEL_ORDER
 
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
@@ -44,7 +45,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-//#define LOAD_SEEDS
+// #define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -54,6 +55,10 @@
     MIMOChannel *realChannel;
     MatrixXd *realSymbols;
     Noise *realNoise;
+#endif
+
+#ifdef EXPORT_REAL_CHANNEL_ORDER
+	int realChannelOrder;
 #endif
 
 // #define TYPEID(x) strpbrk(typeid(x).name(),"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
@@ -99,10 +104,11 @@ BaseSystem::BaseSystem()
 //   _nSmoothingSymbolsVectors = 6;
 
 //   SNRs.push_back(0);
-  _SNRs.push_back(3);
-  _SNRs.push_back(6);_SNRs.push_back(9);
-  _SNRs.push_back(12);_SNRs.push_back(15);
-  _SNRs.push_back(18);_SNRs.push_back(21);
+//   _SNRs.push_back(3);
+//   _SNRs.push_back(6);_SNRs.push_back(9);
+//   _SNRs.push_back(12);_SNRs.push_back(15);
+//   _SNRs.push_back(18);
+  _SNRs.push_back(21);
 
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;
@@ -111,6 +117,11 @@ BaseSystem::BaseSystem()
     _MSEwindowStart = _frameLength*9/10;
 //     MSEwindowStart = 0;
 
+	// ---------------------------------------------------------------------------------------------
+
+#ifdef EXPORT_REAL_CHANNEL_ORDER
+	realChannelOrder = _m;
+#endif
     // results file name prefix
     sprintf(_outputFileName,"res_");
 
@@ -158,11 +169,11 @@ BaseSystem::BaseSystem()
 
     // the preamble symbols before symbolsDetectionWindowStart are ignored for detection
     for(int iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
-        for(int iInput=0;iInput<_N;iInput++)
+        for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = false;        
   
     for(int iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
-        for(int iInput=0;iInput<_N;iInput++)
+        for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = true;   
     
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
@@ -172,7 +183,7 @@ BaseSystem::BaseSystem()
     
     // ambiguity resolution
     uint *firstPermutation = new uint[_N];
-    for(int i=0;i<_N;i++) firstPermutation[i] = i;
+    for(uint i=0;i<_N;i++) firstPermutation[i] = i;
     _permutations = Util::permutations(firstPermutation,_N);
     delete[] firstPermutation;
 
@@ -234,11 +245,17 @@ void BaseSystem::simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    _randomGenerator.setSeed(545218430);
-    StatUtil::getRandomGenerator().setSeed(122139150);
+    _randomGenerator.setSeed(841799218);
+    StatUtil::getRandomGenerator().setSeed(2681529526);
+
+//     _randomGenerator.setSeed(3067194212);
+//     StatUtil::getRandomGenerator().setSeed(1240086365);
+
+//     _randomGenerator.setSeed(545218430);
+//     StatUtil::getRandomGenerator().setSeed(122139150);
 
 // 	randomGenerator.setSeed(1251453452);
-//     StatUtil::getRandomGenerator().setSeed(4117327754);
+// 	StatUtil::getRandomGenerator().setSeed(4117327754);
 
 //     randomGenerator.setSeed(3013783408);
 //     StatUtil::getRandomGenerator().setSeed(1878942058);
@@ -294,9 +311,9 @@ void BaseSystem::simulate()
 		_noise = new SingleUserPowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
 
 #ifdef EXPORT_REAL_DATA
-            realSymbols = &symbols;
-            realChannel = channel;
-            realNoise = noise;
+            realSymbols = &_symbols;
+            realChannel = _channel;
+            realNoise = _noise;
 #endif
 
         for(_iSNR=0;_iSNR<_SNRs.size();_iSNR++)
@@ -356,8 +373,8 @@ void BaseSystem::simulate()
 
 		// the temporal file is renamed as the final
 		std::string mvCommand = string(MV_COMMAND) + string(" ") + string(_tempOutputFileName) + string(" ") + string(_outputFileName);
-// 		std::cout << mvCommand << endl;
-		system(mvCommand.c_str());
+		int systemCommandReturn = system(mvCommand.c_str());
+		cout << "moving operation returned " << systemCommandReturn << endl;
 
         // ---------------------------------------------------------
 
@@ -476,7 +493,7 @@ void BaseSystem::beforeEndingAlgorithm()
     if(_detectedSymbols.rows()!=0)
     {
         for(int k=0;k<_frameLength;k++)
-            for(int iUser=0;iUser<_N;iUser++)
+            for(uint iUser=0;iUser<_N;iUser++)
                 if(_detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
                     _overallErrorsNumberTimeEvolution[_iSNR](_iAlgorithm,k)++;
     }
@@ -557,13 +574,13 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     if(detectedSymbols.rows() == 0)
         return 0.0;
 
-    if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+    if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
     {
         cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
         throw RuntimeException("BaseSystem::computeSER: matrix row numbers differ.");
     }
 
-    if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+    if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
     {
         cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
       throw RuntimeException("BaseSystem::computeSER: matrix column numbers differ.");
@@ -712,13 +729,13 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
   if(detectedSymbols.rows() == 0)
 	  return -1.0;
 
-  if(sourceSymbols.rows()!= detectedSymbols.rows() || detectedSymbols.rows()!= mask.size())
+  if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
   {
 	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
 	  throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
   }
 
-  if(sourceSymbols.cols()!= detectedSymbols.cols() || detectedSymbols.cols()!= mask[0].size())
+  if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
   {
 	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
 	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");

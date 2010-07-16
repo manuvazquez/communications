@@ -60,11 +60,12 @@ class BaseSystem{
 protected:
     double _pe,_mse;
     uint _iSNR;
-	int _iFrame,_iAlgorithm;
+	uint _iFrame,_iAlgorithm;
     int _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
-    int _nFrames,_L,_N,_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+    int /*_nFrames,*/_L,/*_N,*/_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+	uint _nFrames,_N;
     char _outputFileName[HOSTNAME_LENGTH+4];
 	char _tempOutputFileName[HOSTNAME_LENGTH+4+4];
 

@@ -20,8 +20,10 @@
 #include "PSPBasedSMCAlgorithm.h"
 
 // #define DEBUG
+// #define IMPORT_REAL_DATA
 
 #include <defines.h>
+
 
 #ifdef IMPORT_REAL_DATA
 	extern MIMOChannel *realChannel;
@@ -66,6 +68,10 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     // at first, there is only one particle
     for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
+	  
+#ifdef DEBUG
+		cout << "================== iObservationToBeProcessed = " << iObservationToBeProcessed << " ===================" << endl;
+#endif
         // it keeps track of the place where a new tParticleCandidate will be stored within the vector
         int iCandidate = 0;
 
@@ -74,6 +80,9 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
         // the candidates from all the particles are generated
         for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
         {
+#ifdef DEBUG
+			cout << "***** Particle = " << iParticle << " *****" << endl;
+#endif
             ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 
             symbolVectorsMatrix.block(0,0,_nInputs,_channelOrder-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed-1);
@@ -81,6 +90,11 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
             symbolsVector = Util::toVector(symbolVectorsMatrix,columnwise);
 
             MatrixXd estimatedChannelMatrix = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix();
+			
+#ifdef DEBUG
+			cout << "last estimated channel matrix is" << endl << estimatedChannelMatrix << endl;
+			cout << "real channel" << endl << realChannel->at(iObservationToBeProcessed) << endl;
+#endif
 
 			// FIXME: when the channel estimator is not a KF, the estimation it returns must be multiplied by the AR coefficient
 //             estimatedChannelMatrix *= _ARcoefficient;
@@ -102,6 +116,10 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
                 iCandidate++;
             } // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
+#ifdef DEBUG
+			getchar();
+#endif
+
         } // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
         // a vector of size the number of generated candidates is declared...
@@ -112,7 +130,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
             weights(i) = particleCandidates[i].weight/normConst;
 
         // the candidates that are going to give particles are selected
-        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->ObtainIndexes(_particleFilter->capacity(),weights);
+        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
 
         // every survivor candidate is associated with an old particle
         vector<int> indexesParticles(indexesSelectedCandidates.size());

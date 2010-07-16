@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper(ResamplingAlgorithm *resamplingAlgorithm,double threshold): ResamplingAlgorithm(resamplingAlgorithm->GetResamplingCriterion()),_threshold(threshold),_realResamplingAlgorithm(resamplingAlgorithm)
+WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper(ResamplingAlgorithm *resamplingAlgorithm,double threshold): ResamplingAlgorithm(resamplingAlgorithm->getResamplingCriterion()),_threshold(threshold),_realResamplingAlgorithm(resamplingAlgorithm)
 {
 }
 

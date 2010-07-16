@@ -36,9 +36,11 @@ public:
 
 	virtual ResamplingAlgorithm* clone() const = 0;
 
-	ResamplingCriterion GetResamplingCriterion() { return _resamplingCriterion;}
+	ResamplingCriterion getResamplingCriterion() { return _resamplingCriterion;}
 
-	virtual std::vector<int> ObtainIndexes(int n,const VectorXd &weights) const = 0;
+	virtual std::vector<int> obtainIndexes(int n,const VectorXd &weights) const = 0;
+	
+	virtual std::vector<int> obtainIndexes(int n,const VectorXd &weights, const std::vector<bool> &mask);
 
     virtual bool resampleWhenNecessary(ParticleFilter *particleFilter);
 };

@@ -72,7 +72,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 
             newChannelMatrixEstimator->nextMatrix(observations,bestPathCandidate._detectedSymbolVectors,noiseVariance);
 			
-#ifdef DEBUG
+#ifdef DEBUG_PRINT_UPDATED_CHANNEL_MATRICES
 			cout << "updated channel matrix estimator" << endl << newChannelMatrixEstimator->lastEstimatedChannelMatrix_eigen() << endl;
 #endif
 
@@ -102,7 +102,13 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
 
 //     for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
     for(iProcessedObservation=_iFirstInLoopProcessedObservation;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
+	{
 		processOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
+#ifdef DEBUG
+		cout << "============== iProcessedObservation = " << iProcessedObservation << " =====================" << endl;
+		getchar();
+#endif
+	}
 
     bestPairStateSurvivor(iBestState,iBestSurvivor);
 
@@ -125,7 +131,7 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
     }
 
 #ifdef DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
-	cout << "last estimated channel matrix is" << endl << _exitStage[iBestState][iBestSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen() << endl;
+	cout << "last estimated channel matrix is" << endl << _exitStage[iBestState][iBestSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix() << endl;
 #endif
 
     // last detected symbol vectors are processed
@@ -238,7 +244,11 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
 //             VectorXd error = observations - _ARcoefficient*_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->lastEstimatedChannelMatrix_eigen()*Util::toVector(symbolVectors,columnwise);
 
             VectorXd error = observations - dynamic_cast<KalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*Util::toVector(symbolVectors,columnwise);
-			
+
+#ifdef DEBUG
+			cout << "las estimated chanel matrix" << endl << dynamic_cast<KalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive() << endl;
+#endif
+
             newCost = _exitStage[iState][iSourceSurvivor].getCost() + error.dot(error);
 
             iDisposableSurvivor = disposableSurvivor(arrivalState);
