@@ -374,27 +374,26 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
         for(int i=0;i<iCandidate;i++)
             weights(i) = particleCandidates[i].weight/normConst;
 
-		// overall survivors --------------------------------------------------------------
-//         // the candidates that are going to give rise to particles are selected
-//         vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
+		// an overall number of survivors is considered
+		// the candidates that are going to give rise to particles are selected
+        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
 
-		// x survivors per state -----------------------------------------------------------
-		vector<int> indexesSelectedCandidates;
+		// ------------------------------ fixed number of survivors per state -----------------------------------------------------------
 		
-		uint nSurvivors = _particleFilter->capacity()/int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1))));
-		if(_particleFilter->capacity() % int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)))) !=0)
-			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm:process: the number of computed survivors is not integer.");
-		
-		std::vector<std::vector<bool> > stateMasks = imposeFixedNumberOfSurvivorsPerState(particleCandidates,iCandidate);
-		for(uint i=0;i<stateMasks.size();i++)
-		{
-			std::vector<int> thisStateIndexes = _resamplingAlgorithm->obtainIndexes(nSurvivors,weights,stateMasks[i]);
-			indexesSelectedCandidates.insert(indexesSelectedCandidates.end(),thisStateIndexes.begin(),thisStateIndexes.end());
-		}
+// 		vector<int> indexesSelectedCandidates;
+// 		
+// 		uint nSurvivors = _particleFilter->capacity()/int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1))));
+// 		if(_particleFilter->capacity() % int(pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)))) !=0)
+// 			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm:process: the number of computed survivors is not integer.");
+// 		
+// 		std::vector<std::vector<bool> > stateMasks = imposeFixedNumberOfSurvivorsPerState(particleCandidates,iCandidate);
+// 		for(uint i=0;i<stateMasks.size();i++)
+// 		{
+// 			std::vector<int> thisStateIndexes = _resamplingAlgorithm->obtainIndexes(nSurvivors,weights,stateMasks[i]);
+// 			indexesSelectedCandidates.insert(indexesSelectedCandidates.end(),thisStateIndexes.begin(),thisStateIndexes.end());
+// 		}
 
-// 		cout << "first mask" << endl;
-// 		Util::print(stateMasks[0]);
-// 		getchar();
+		// ------------------------------ fixed number of survivors per state -----------------------------------------------------------
 
         // every survivor candidate is associated with an old particle
         vector<int> indexesParticles(indexesSelectedCandidates.size());

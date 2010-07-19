@@ -30,8 +30,8 @@
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
-//     nSurvivors = 1;
-	nSurvivors = 2;
+	nSurvivors = 1;
+// 	nSurvivors = 2;
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
@@ -118,23 +118,6 @@ ISWCS10System::ISWCS10System()
 
 	// 4-4-4
 	_subchannelOrders = std::vector<uint>(3,4);
-	
-	
-	
-// 	VectorXd prueba(6);
-// 	
-// 	std::vector<bool> pruebabool(6,true);
-// 	pruebabool[0] = false;
-// 	pruebabool[2] = false;
-// 	pruebabool[5] = false;
-// 	
-// 	prueba[0] = 0.2; prueba[1] = 0.07; prueba[2] = 0.4;
-// 	prueba[3] = 0.01; prueba[4] = 0.02; prueba[5] = 0.3;
-// // 	std::vector<int> iprueba = bestParticlesResamplingAlgorithm->obtainIndexes(2,prueba);
-// 	std::vector<int> iprueba = bestParticlesResamplingAlgorithm->obtainIndexes(2,prueba,pruebabool);
-// 	
-// 	Util::print(iprueba);
-// 	cout << endl;
 }
 
 
@@ -167,7 +150,7 @@ void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
-	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
+// 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 

@@ -68,7 +68,8 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-    _nFrames = 10000;
+	_nFrames = 10000;
+// 	_nFrames = 3;
     _L=3,_N=3,_frameLength=300;
     _m = 4;
     _d = _m - 1;
@@ -103,12 +104,13 @@ BaseSystem::BaseSystem()
 //   // the algorithms with the higher smoothing lag require
 //   _nSmoothingSymbolsVectors = 6;
 
-//   SNRs.push_back(0);
-//   _SNRs.push_back(3);
-//   _SNRs.push_back(6);_SNRs.push_back(9);
-//   _SNRs.push_back(12);_SNRs.push_back(15);
-//   _SNRs.push_back(18);
-  _SNRs.push_back(21);
+// 	_SNRs.push_back(0);
+	_SNRs.push_back(3);
+	_SNRs.push_back(6);_SNRs.push_back(9);
+	_SNRs.push_back(12);
+	_SNRs.push_back(15);
+	_SNRs.push_back(18);
+	_SNRs.push_back(21);
 
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;

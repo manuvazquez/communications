@@ -51,11 +51,11 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     VectorXd computedObservations(_nOutputs);
     double normConst;
 
-    typedef struct{
-        int fromParticle;
-        MatrixXd symbolVectorsMatrix;
-        double weight;
-    }tParticleCandidate;
+//     typedef struct{
+//         int fromParticle;
+//         MatrixXd symbolVectorsMatrix;
+//         double weight;
+//     }tParticleCandidate;
 
     tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->capacity()*nSymbolVectors] ;
 
@@ -131,6 +131,24 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 
         // the candidates that are going to give particles are selected
         vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
+		
+		
+		// -----------------------------------------------
+		
+// 		vector<int> indexesSelectedCandidates;
+// 		
+// 		uint nSurvivors = _particleFilter->capacity()/int(pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1))));
+// 		if(_particleFilter->capacity() % int(pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1)))) !=0)
+// 			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm:process: the number of computed survivors is not integer.");
+// 		
+// 		std::vector<std::vector<bool> > stateMasks = imposeFixedNumberOfSurvivorsPerState(particleCandidates,iCandidate);
+// 		for(uint i=0;i<stateMasks.size();i++)
+// 		{
+// 			std::vector<int> thisStateIndexes = _resamplingAlgorithm->obtainIndexes(nSurvivors,weights,stateMasks[i]);
+// 			indexesSelectedCandidates.insert(indexesSelectedCandidates.end(),thisStateIndexes.begin(),thisStateIndexes.end());
+// 		}
+		
+		// -------------------------------
 
         // every survivor candidate is associated with an old particle
         vector<int> indexesParticles(indexesSelectedCandidates.size());
@@ -158,4 +176,22 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 
     delete[] particleCandidates;
+}
+
+std::vector<std::vector<bool> > PSPBasedSMCAlgorithm::imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates,uint nCandidates)
+{
+	int nStates = pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1)));
+	
+	std::vector<std::vector<bool> > statesMasks(nStates,std::vector<bool>(nCandidates,false));
+	
+	for(int iState=0;iState<nStates;iState++)
+	{
+		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,_channelOrder-1);
+		
+		for(uint iCandidate=0;iCandidate<nCandidates;iCandidate++)
+			if(particleCandidates[iCandidate].symbolVectorsMatrix.block(0,particleCandidates[iCandidate].symbolVectorsMatrix.cols()-_channelOrder+1,_nInputs,_channelOrder-1) == state)
+				statesMasks[iState][iCandidate] = true;
+	}
+	
+	return statesMasks;
 }
