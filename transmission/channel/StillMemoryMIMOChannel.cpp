@@ -42,8 +42,8 @@ void StillMemoryMIMOChannel::setSubchannelOrders(std::vector<uint> subchannelOrd
 	  throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: one subchannel order or more is bigger than the overall channel order.");
   }
   
-  if(!maxChannelOrderFound)
-	throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: none of the subchannel orders is equal to the maximum.");
+//   if(!maxChannelOrderFound)
+// 	throw RuntimeException("StillMemoryMIMOChannel::setSubchannelOrders: none of the subchannel orders is equal to the maximum.");
   
   for(int iMat=_memory-1;iMat<_length;iMat++)
   {

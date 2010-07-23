@@ -28,7 +28,8 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 {
 	_candidateChannelOrders.push_back(1);
 	_candidateChannelOrders.push_back(2);_candidateChannelOrders.push_back(3);
-	_candidateChannelOrders.push_back(4);_candidateChannelOrders.push_back(5);
+	_candidateChannelOrders.push_back(4);
+// 	_candidateChannelOrders.push_back(5);
 // 	candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
 
 	_channelOrderCoefficientsMeans.resize(_candidateChannelOrders.size());

@@ -48,10 +48,11 @@ public:
 	virtual int channelCoefficientsMatrixRows() const { return _nOutputs;}
 
 	/*!
-	  It returns the number of columns of the REAL channel matrix that represents the channel (it is usually the number of inputs)
+	  It returns the number of columns of the REAL channel matrix that represents the channel (it is usually the number of inputs times the channel order)
 	  \return number of columns of the internal channel coefficients matrix
 	*/
-	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
+// 	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
+	virtual int channelCoefficientsMatrixCols() const { return _nInputs*effectiveMemory();}
 
 	virtual int length() const {return _length;};
     virtual int nInputsnOutputs() const {return _nInputsnOutputs;};

@@ -69,15 +69,16 @@ BaseSystem::BaseSystem()
 
 // ------------------------ iswcs 2010 ----------------------
 	_nFrames = 10000;
-// 	_nFrames = 3;
-    _L=3,_N=3,_frameLength=300;
-    _m = 4;
-    _d = _m - 1;
-    _trainSeqLength = 10;
-    _preambleLength = 10;
-  
-    // the algorithms with the higher smoothing lag require
-    _nSmoothingSymbolsVectors = 10;
+	_L=3,_N=3,_frameLength=300;
+// 	_L=3,_N=3,_frameLength=20;
+	_m = 4;
+	_d = _m - 1;
+// 	_trainSeqLength = 10;
+	_trainSeqLength = 15;
+	_preambleLength = 10;
+
+	// the algorithms with the higher smoothing lag require
+	_nSmoothingSymbolsVectors = 10;
 
 // ---------------------------- tesis ------------------------
 
@@ -105,12 +106,13 @@ BaseSystem::BaseSystem()
 //   _nSmoothingSymbolsVectors = 6;
 
 // 	_SNRs.push_back(0);
-	_SNRs.push_back(3);
-	_SNRs.push_back(6);_SNRs.push_back(9);
+ 	_SNRs.push_back(3);
+ 	_SNRs.push_back(6);
+ 	_SNRs.push_back(9);
 	_SNRs.push_back(12);
-	_SNRs.push_back(15);
-	_SNRs.push_back(18);
-	_SNRs.push_back(21);
+ 	_SNRs.push_back(15);
+ 	_SNRs.push_back(18);
+ 	_SNRs.push_back(21);
 
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;
@@ -209,7 +211,7 @@ BaseSystem::BaseSystem()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	channelEstimations.reserve(nFrames);
+	channelEstimations.reserve(_nFrames);
 #endif
 
 #ifndef RANDOM_SEED
@@ -433,7 +435,7 @@ void BaseSystem::onlyOnce()
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
   // channel estimations
-  presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(SNRs.size(),std::vector<std::vector<MatrixXd> >(algorithms.size()));
+  presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
 #endif
 }
 
@@ -466,17 +468,17 @@ void BaseSystem::beforeEndingAlgorithm()
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
   // we get the channel matrices estimated by this algorithm
-  vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = algorithms[iAlgorithm]->getEstimatedChannelMatrices();
+  vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 
   // if none, that meaning the algorithm does not performa channel matrix estimation,...
   if(thisAlgorithmEstimatedChannelMatrices.size()==0)
 	// we generate a sequence of matrices
-	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(iLastSymbolVectorToBeDetected-preambleLength,MatrixXd::Zero(channel->channelCoefficientsMatrixRows(),channel->channelCoefficientsMatrixCols()));
+	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Zero(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols()));
   else
-	if(thisAlgorithmEstimatedChannelMatrices.size()!=iLastSymbolVectorToBeDetected-preambleLength)
+	if(thisAlgorithmEstimatedChannelMatrices.size()!=_iLastSymbolVectorToBeDetected-_preambleLength)
 	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
 
-  presentFrameChannelMatrixEstimations[iSNR][iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
+  presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
     cout << COLOR_GREEN << _algorithms[_iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << _pe << " , MSE = " << _mse << endl;
