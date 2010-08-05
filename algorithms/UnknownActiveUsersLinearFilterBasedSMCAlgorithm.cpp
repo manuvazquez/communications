@@ -85,7 +85,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
         {
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
-            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive_eigen();            
+            channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();            
 
             // sampling of the users activity using:            
             // i) a priori (first time instant)

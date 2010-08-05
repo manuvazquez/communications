@@ -57,9 +57,9 @@ MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVect
     return CS;
 }
 
-MatrixXd CDMAKalmanEstimator::sampleFromPredictive_eigen() const
+MatrixXd CDMAKalmanEstimator::sampleFromPredictive() const
 {
-    MatrixXd sampledChannelMatrix = KalmanEstimator::sampleFromPredictive_eigen();
+    MatrixXd sampledChannelMatrix = KalmanEstimator::sampleFromPredictive();
     
     if(sampledChannelMatrix.rows()!=1)
         throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive_eigen: sampled channel matrix is not a row vector.");

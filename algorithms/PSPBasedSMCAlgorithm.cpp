@@ -25,6 +25,8 @@
 #include <defines.h>
 
 
+#include <KalmanEstimator.h>
+
 #ifdef IMPORT_REAL_DATA
 	extern MIMOChannel *realChannel;
 	extern MatrixXd *realSymbols;
@@ -174,6 +176,11 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 
         _particleFilter->normalizeWeights();
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
+
+// 	// covariance test
+// 	ParticleWithChannelEstimation *bestPart = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getBestParticle());
+// 	KalmanEstimator *bestEst = dynamic_cast<KalmanEstimator *>(bestPart->getChannelMatrixEstimator());
+// 	cout << "covariance" << endl << bestEst->getFilteredCovariance() << endl;
 
     delete[] particleCandidates;
 }

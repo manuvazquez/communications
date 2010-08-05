@@ -157,7 +157,7 @@ KalmanEstimator *KalmanEstimator::clone() const
     return new KalmanEstimator(*this);
 }
 
-MatrixXd KalmanEstimator::sampleFromPredictive_eigen() const
+MatrixXd KalmanEstimator::sampleFromPredictive() const
 {
     return Util::toMatrix(
         StatUtil::randnMatrix(_kalmanFilter->predictiveMean_eigen(),_kalmanFilter->predictiveCovariance_eigen()).end(_nChannelCoeffs)

@@ -108,9 +108,9 @@ ISWCS10System::ISWCS10System()
 
 // ---------------------------------
 
-// 	// 4-1-1
-// 	_subchannelOrders = std::vector<uint>(3,1);
-// 	_subchannelOrders[0] = 4;
+	// 4-1-1
+	_subchannelOrders = std::vector<uint>(3,1);
+	_subchannelOrders[0] = 4;
 
 // 	// 4-3-2
 // 	_subchannelOrders = std::vector<uint>(3);
@@ -121,17 +121,18 @@ ISWCS10System::ISWCS10System()
 
 // ----------------------------------
 
-// 	// 2-1-1
+// 	// 2-1-1 (ambiguity problems!!)
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 2;
 
-	// 2-2-1
-	_subchannelOrders = std::vector<uint>(3,2);
-	_subchannelOrders[2] = 1;
-
-// 	// 2-2-3
+// 	// 2-2-1
 // 	_subchannelOrders = std::vector<uint>(3,2);
+// 	_subchannelOrders[2] = 1;
+
+// 	// 4-3-2
+// 	_subchannelOrders = std::vector<uint>(3,4);
 // 	_subchannelOrders[2] = 3;
+// 	_subchannelOrders[2] = 2;
 
 // 	// 4-4-1
 // 	_subchannelOrders = std::vector<uint>(3,4);
@@ -167,15 +168,15 @@ void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
-	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
+ 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("OneChannelOrderPerOutputSMCAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
-	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
+ 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (known maximum suborder)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
 // 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (maximum suborder within the set)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 
 	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 	
-    _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
+     _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
 void ISWCS10System::beforeEndingFrame()

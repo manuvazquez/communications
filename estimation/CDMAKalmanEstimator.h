@@ -38,7 +38,7 @@ public:
 
     CDMAKalmanEstimator(const CDMAKalmanEstimator& cdmaKalmanEstimator);
     virtual CDMAKalmanEstimator* clone() const;
-    virtual MatrixXd sampleFromPredictive_eigen() const;
+    virtual MatrixXd sampleFromPredictive() const;
     virtual MatrixXd lastEstimatedChannelMatrix() const;
 	virtual MatrixXd getPredictive() const;
 };
