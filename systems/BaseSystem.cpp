@@ -28,6 +28,9 @@
 
 #include <SingleUserPowerProfileDependentNoise.h>
 
+extern uint32_t __randomSeedPassed;
+extern bool __randomSeedHasBeenPassed;
+
 #define DATE_LENGTH 100
 
 #define EXPORT_REAL_DATA
@@ -45,7 +48,7 @@
 // #define STOP_AFTER_EACH_SNR
 
 #define SAVE_SEEDS
-// #define LOAD_SEEDS
+#define LOAD_SEEDS
 
 // #define DEBUG
 // #define DEBUG2
@@ -68,13 +71,15 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-	_nFrames = 10000;
+	_nFrames = 1200;
 	_L=3,_N=3,_frameLength=300;
 // 	_L=3,_N=3,_frameLength=20;
 	_m = 4;
 	_d = _m - 1;
-// 	_trainSeqLength = 10;
+	
+// 	_trainSeqLength = 30;
 	_trainSeqLength = 15;
+	
 	_preambleLength = 10;
 
 	// the algorithms with the higher smoothing lag require
@@ -106,13 +111,15 @@ BaseSystem::BaseSystem()
 //   _nSmoothingSymbolsVectors = 6;
 
 // 	_SNRs.push_back(0);
- 	_SNRs.push_back(3);
- 	_SNRs.push_back(6);
- 	_SNRs.push_back(9);
-	_SNRs.push_back(12);
- 	_SNRs.push_back(15);
- 	_SNRs.push_back(18);
- 	_SNRs.push_back(21);
+// 	_SNRs.push_back(3);
+// 	_SNRs.push_back(6);
+// 	_SNRs.push_back(9);
+// 	_SNRs.push_back(12);
+// 	_SNRs.push_back(15);
+	_SNRs.push_back(18);
+	_SNRs.push_back(21);
+	_SNRs.push_back(24);
+	_SNRs.push_back(27);
 
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;
@@ -249,22 +256,19 @@ void BaseSystem::simulate()
 
 #ifdef LOAD_SEEDS
     // for repeating simulations
-    _randomGenerator.setSeed(841799218);
-    StatUtil::getRandomGenerator().setSeed(2681529526);
-
-//     _randomGenerator.setSeed(3067194212);
-//     StatUtil::getRandomGenerator().setSeed(1240086365);
-
-//     _randomGenerator.setSeed(545218430);
-//     StatUtil::getRandomGenerator().setSeed(122139150);
-
-// 	randomGenerator.setSeed(1251453452);
-// 	StatUtil::getRandomGenerator().setSeed(4117327754);
-
-//     randomGenerator.setSeed(3013783408);
-//     StatUtil::getRandomGenerator().setSeed(1878942058);
+	
+	if(__randomSeedHasBeenPassed)
+	{
+		_randomGenerator.setSeed(__randomSeedPassed);
+		StatUtil::getRandomGenerator().setSeed(__randomSeedPassed);
+	}else
+	{
+		_randomGenerator.setSeed(526240134);
+		StatUtil::getRandomGenerator().setSeed(3000708936);
+	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
+	cout << COLOR_LIGHT_BLUE << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
 #endif
 
     _iFrame = 0;
@@ -434,7 +438,7 @@ void BaseSystem::onlyOnce()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-  // channel estimations
+  // channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iAlgorithm,iSNR)
   presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
 #endif
 }
@@ -475,7 +479,7 @@ void BaseSystem::beforeEndingAlgorithm()
 	// we generate a sequence of matrices
 	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Zero(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols()));
   else
-	if(thisAlgorithmEstimatedChannelMatrices.size()!=_iLastSymbolVectorToBeDetected-_preambleLength)
+	if(thisAlgorithmEstimatedChannelMatrices.size()!=static_cast<uint>(_iLastSymbolVectorToBeDetected-_preambleLength))
 	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
 
   presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;

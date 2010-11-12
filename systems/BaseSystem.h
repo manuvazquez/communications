@@ -52,7 +52,7 @@
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
 #define KEEP_ALL_CHANNEL_MATRICES
-// #define KEEP_ALL_CHANNEL_ESTIMATIONS
+#define KEEP_ALL_CHANNEL_ESTIMATIONS
 
 extern bool __done;
 
@@ -64,7 +64,7 @@ protected:
     int _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
-    int /*_nFrames,*/_L,/*_N,*/_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+    int _L,_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
 	uint _nFrames,_N;
     char _outputFileName[HOSTNAME_LENGTH+4];
 	char _tempOutputFileName[HOSTNAME_LENGTH+4+4];

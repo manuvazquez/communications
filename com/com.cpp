@@ -39,6 +39,8 @@
 #include <signal.h>
 
 bool __done = false;
+bool __randomSeedHasBeenPassed = false;
+uint32_t __randomSeedPassed;
 
 void setDoneTrue(int signal)
 {
@@ -48,29 +50,44 @@ void setDoneTrue(int signal)
 
 int main(int argc,char* argv[])
 {
-//   signal(SIGINT,&setDoneTrue);
+// 	signal(SIGINT,&setDoneTrue);
+// 
+// 	Elsevier2007BesselChannelSystem system;
+// 	Elsevier2007ARChannelSystem  system;
+// 	TVT2007System system;
+// 	WSA08System system;
+// 	PSPvsPSPBasedSMCSystem system;
+// 	Rev2TVT2007System system;
+// 
+// 	LMSmuTestSystem system;
+// 	PSPvsSMCSystem system;
+// 
+// 	TesisOrdenCanalDesconocidoARSystem system;
+// 	TesisOrdenCanalDesconocidoBesselSystem system;
+// 
+// 	TesisComplejidadReducidaBesselSystem system;
+// 	TesisComplejidadReducidaARSystem system;
+// 
+// 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
+// 
+// 	CDMASystem system;
 
-//   Elsevier2007BesselChannelSystem system;
-//   Elsevier2007ARChannelSystem  system;
-//   TVT2007System system;
-//   WSA08System system;
-//   PSPvsPSPBasedSMCSystem system;
-//   Rev2TVT2007System system;
+	std::cout << "received " << argc << " arguments" << endl;
+	
+	// it is assumed that the first argument is a seed for both Random objects
+	if(argc>1)
+	{
+		// seed (char *) is converted to a number
+		std::istringstream stream(argv[1]);
+		
+		// to check if everything went well: if (stream.eof())
 
-//   LMSmuTestSystem system;
-//   PSPvsSMCSystem system;
+		stream >> __randomSeedPassed;
+		cout << "received seed is " << __randomSeedPassed << endl;
+		__randomSeedHasBeenPassed = true;
+	}
 
-//   TesisOrdenCanalDesconocidoARSystem system;
-//   TesisOrdenCanalDesconocidoBesselSystem system;
+	ISWCS10System system;
 
-//   TesisComplejidadReducidaBesselSystem system;
-//   TesisComplejidadReducidaARSystem system;
-
-//   TesisComplejidadReducidaBesselNumeroParticulasSystem system;
-
-//   CDMASystem system;
-
-  ISWCS10System system;
-
-  system.simulate();
+	system.simulate();
 }
