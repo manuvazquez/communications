@@ -33,8 +33,8 @@ extern bool __randomSeedHasBeenPassed;
 
 #define DATE_LENGTH 100
 
-#define EXPORT_REAL_DATA
-#define EXPORT_REAL_CHANNEL_ORDER
+// #define EXPORT_REAL_DATA
+// #define EXPORT_REAL_CHANNEL_ORDER
 
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
@@ -71,15 +71,16 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
+//	_nFrames = 500;
 	_nFrames = 1200;
 	_L=3,_N=3,_frameLength=300;
 // 	_L=3,_N=3,_frameLength=20;
 	_m = 4;
 	_d = _m - 1;
-	
+
 // 	_trainSeqLength = 30;
 	_trainSeqLength = 15;
-	
+
 	_preambleLength = 10;
 
 	// the algorithms with the higher smoothing lag require
@@ -93,7 +94,7 @@ BaseSystem::BaseSystem()
 //     d = m - 1;
 //     trainSeqLength = 10;
 //     preambleLength = 10;
-//   
+//
 //     // the algorithms with the higher smoothing lag require
 //     nSmoothingSymbolsVectors = 10;
 
@@ -106,7 +107,7 @@ BaseSystem::BaseSystem()
 //   _d = _m - 1;
 //   _trainSeqLength = 0;
 //   _preambleLength = 0;
-//     
+//
 //   // the algorithms with the higher smoothing lag require
 //   _nSmoothingSymbolsVectors = 6;
 
@@ -372,12 +373,24 @@ void BaseSystem::simulate()
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-//         _f.open(_outputFileName,ofstream::trunc);
+// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
+// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
+#ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
 		_f.open(_tempOutputFileName,ofstream::trunc);
+// otherwise the file pointer only gets initialized for the end frame
+#else
+	if(_iFrame==_nFrames-1)
+		_f.open(_tempOutputFileName,ofstream::trunc);
+#endif
 
         beforeEndingFrame();
         
+#ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
 		_f.close();
+#else
+	if(_iFrame==_nFrames-1)
+		_f.close();
+#endif
 
 		// the temporal file is renamed as the final
 		std::string mvCommand = string(MV_COMMAND) + string(" ") + string(_tempOutputFileName) + string(" ") + string(_outputFileName);
