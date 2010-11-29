@@ -21,10 +21,11 @@
 // the seed used to create the random objects is generated from the system time
 #define RANDOM_SEED
 
-// wether the estimated channel matrices are kept or discarded
-#define DO_NOT_STORE_ESTIMATED_CHANNEL_MATRICES
+// wether the ENTIRE sequence of channel matrices estimated by every path is kept (it doesn't get saved, either way)
+// this only applies to algorithms using "PSPPath"
+// #define DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 
 // the data will be saved after processing each frame or only at the end of the simulation
-#define SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
+// #define SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
 
 #define ALGORITHM_NAME_MAX_LENGTH 80

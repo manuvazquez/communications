@@ -35,7 +35,7 @@ class PSPPath : public ViterbiPath
 protected:
     std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
 
-    #ifndef DO_NOT_STORE_ESTIMATED_CHANNEL_MATRICES
+    #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
         MatrixXd **_estimatedChannelMatrices;      
     #endif
 public:
@@ -50,7 +50,7 @@ public:
     ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
     MatrixXd getChannelMatrix(int n)
     {
-        #ifndef DO_NOT_STORE_ESTIMATED_CHANNEL_MATRICES
+        #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
             return _estimatedChannelMatrices[0][n];
         #endif
         return MatrixXd::Zero(_channelMatrixEstimators[0]->rows(),_channelMatrixEstimators[0]->cols());

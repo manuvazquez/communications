@@ -71,15 +71,14 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-//	_nFrames = 500;
-	_nFrames = 1200;
+	_nFrames = 500;
+// 	_nFrames = 1200;
 	_L=3,_N=3,_frameLength=300;
-// 	_L=3,_N=3,_frameLength=20;
 	_m = 4;
 	_d = _m - 1;
 
-// 	_trainSeqLength = 30;
-	_trainSeqLength = 15;
+	_trainSeqLength = 30;
+// 	_trainSeqLength = 15;
 
 	_preambleLength = 10;
 
@@ -566,7 +565,8 @@ void BaseSystem::beforeEndingFrame()
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	Util::matricesVectorsVectorToOctaveFileStream(_channelMatrices,"channels",_f);
 #else
-    Util::matricesVectorToOctaveFileStream(channel->range(preambleLength,iLastSymbolVectorToBeDetected),"channel",f);
+	// only last channel is saved
+    Util::matricesVectorToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
 #endif
 
     Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);

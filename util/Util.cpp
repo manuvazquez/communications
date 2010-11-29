@@ -538,8 +538,10 @@ double Util::maxCoefficientsRatio(const MatrixXd &A)
   int nElements = A.rows()*A.cols();
   double currentElement;
   
+	// in case, the call to this function doesn't make sense...
   if(nElements<2)
-	return 1.0;
+	//...it returns a non sense result (the ratio is in absolute value)
+	return -1.0;
   
   max = fabs(A(0,0));
   
