@@ -28,8 +28,11 @@
 
 #include <SingleUserPowerProfileDependentNoise.h>
 
-extern uint32_t __randomSeedPassed;
+extern uint32_t __mainSeedPassed;
+extern uint32_t __statUtilSeedPassed;
+extern uint __nFramesPassed;
 extern bool __randomSeedHasBeenPassed;
+extern bool __nFramesHasBeenPassed;
 
 #define DATE_LENGTH 100
 
@@ -77,8 +80,8 @@ BaseSystem::BaseSystem()
 	_m = 4;
 	_d = _m - 1;
 
-	_trainSeqLength = 30;
-// 	_trainSeqLength = 15;
+// 	_trainSeqLength = 30;
+	_trainSeqLength = 15;
 
 	_preambleLength = 10;
 
@@ -254,17 +257,24 @@ BaseSystem::~BaseSystem()
 void BaseSystem::simulate()
 {
 
+// if a number of frames has been passed...
+if(__nFramesHasBeenPassed)
+{
+	_nFrames = __nFramesPassed;
+	cout << COLOR_LIGHT_BLUE << _nFrames << " frames are going to be simulated." << COLOR_NORMAL << endl;
+}
+
 #ifdef LOAD_SEEDS
     // for repeating simulations
 	
 	if(__randomSeedHasBeenPassed)
 	{
-		_randomGenerator.setSeed(__randomSeedPassed);
-		StatUtil::getRandomGenerator().setSeed(__randomSeedPassed);
+		_randomGenerator.setSeed(__mainSeedPassed);
+		StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
 	}else
 	{
-		_randomGenerator.setSeed(526240134);
-		StatUtil::getRandomGenerator().setSeed(3000708936);
+		_randomGenerator.setSeed(186951016);
+		StatUtil::getRandomGenerator().setSeed(3731316448);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;

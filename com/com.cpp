@@ -40,7 +40,11 @@
 
 bool __done = false;
 bool __randomSeedHasBeenPassed = false;
-uint32_t __randomSeedPassed;
+bool __nFramesHasBeenPassed = false;
+
+uint __nFramesPassed;
+uint32_t __mainSeedPassed;
+uint32_t __statUtilSeedPassed;
 
 void setDoneTrue(int signal)
 {
@@ -74,18 +78,64 @@ int main(int argc,char* argv[])
 
 	std::cout << "received " << argc << " arguments" << endl;
 	
-	// it is assumed that the first argument is a seed for both Random objects
-	if(argc>1)
-	{
-		// seed (char *) is converted to a number
-		std::istringstream stream(argv[1]);
-		
-		// to check if everything went well: if (stream.eof())
+// 	if(argc>1)
+// 	{
+// 		// seed (char *) is converted to a number
+// 		std::istringstream stream(argv[1]);
+// 		
+// 		// to check if everything went well: if (stream.eof())
+// 
+// 		stream >> __randomSeedPassed;
+// 		cout << "received seed is " << __randomSeedPassed << endl;
+// 		__randomSeedHasBeenPassed = true;
+// 	}else 
 
-		stream >> __randomSeedPassed;
-		cout << "received seed is " << __randomSeedPassed << endl;
-		__randomSeedHasBeenPassed = true;
+	std::istringstream argument;
+
+	switch(argc)
+	{
+		case 1:
+			cout << "no arguments received" << endl;
+			break;
+			
+		case 2:
+			argument.clear();
+			argument.str(argv[1]);
+			
+			// to check if everything went well: if (argument.eof())
+
+			argument >> __mainSeedPassed;
+			
+			// we assume both seeds are identical
+			__statUtilSeedPassed = __mainSeedPassed;
+			
+			__randomSeedHasBeenPassed = true;
+			cout << "received seed is " << __mainSeedPassed << endl;
+			break;
+			
+		case 4:
+			argument.clear();
+			argument.str(argv[1]);
+			argument >> __mainSeedPassed;
+			
+			argument.clear();
+			argument.str(argv[2]);
+			argument >> __statUtilSeedPassed;
+			
+			argument.clear();
+			argument.str(argv[3]);
+			argument >> __nFramesPassed;
+			
+			__randomSeedHasBeenPassed = true;
+			__nFramesHasBeenPassed = true;
+			cout << "assuming:" << endl << "\t" << "mainSeed = " << __mainSeedPassed << endl << "\t" << "statUtilSeed = " << __statUtilSeedPassed << endl<< "\t" << "nFrames = " << __nFramesPassed << endl;
+			break;
+			
+		default:
+			cout << "incorrect number of arguments!!" << endl;
+			exit(1);
 	}
+		
 
 	ISWCS10System system;
 
