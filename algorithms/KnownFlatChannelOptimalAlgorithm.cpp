@@ -19,8 +19,6 @@
  ***************************************************************************/
 #include "KnownFlatChannelOptimalAlgorithm.h"
 
-// #define DEBUG3
-
 KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
 {
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
@@ -50,7 +48,6 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         // root node is initialized
         tTreeNode rootNode;
         rootNode.cost = 0.0;
-        
         rootNode.height = 0;
         rootNode.id = 0;
         rootNode.symbolsVector = VectorXd(_nInputs);
@@ -71,7 +68,8 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         // we start by the root node
         iCurrentNode = 0;    
         
-        while(nodes[iCurrentNode].height<_nInputs)
+		//FIXME: _nInputs should be an uint
+        while(nodes[iCurrentNode].height<static_cast<uint>(_nInputs))
         {
             childrenHeight = nodes[iCurrentNode].height+1;
             for(iAlphabet=0;iAlphabet<getAlphabetAt(iProcessedObservation,childrenHeight)->length();iAlphabet++)
@@ -84,7 +82,8 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
                 
                 UxS = 0.0;
             
-                for(i=0;i<child.height;i++)
+				// FIXME: it shouldn't be necessary to convert child.height to int
+                for(i=0;i<static_cast<int>(child.height);i++)
                     UxS += U(_nInputs-child.height,_nInputs-1-i)*child.symbolsVector(_nInputs-1-i);
                                     
                 child.cost = child.cost + (transformedObs(_nInputs-child.height)-UxS)*(transformedObs(_nInputs-child.height)-UxS);

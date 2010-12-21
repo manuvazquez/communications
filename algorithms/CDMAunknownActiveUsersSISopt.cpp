@@ -27,15 +27,6 @@ CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet
 
 void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::vector< double, std::allocator< double > > noiseVariances)
 {
-//   // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
-//   vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
-// 
-//   for(int i=0;i<_alphabet.length();i++)
-// 	  extendedAlphabetSymbols[i] = _alphabet[i];
-//   extendedAlphabetSymbols[_alphabet.length()] = 0.0;
-// 
-//   Alphabet extendedAlphabet(extendedAlphabetSymbols);
-  
   // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
   Alphabet extendedAlphabet = _alphabet.buildNewAlphabetByAddingSymbol(0.0);
 	  

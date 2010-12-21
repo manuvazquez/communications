@@ -103,6 +103,12 @@ public:
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 
   private:
+	  
+	//! It checks the channel for high differences in the coefficients power (near-far problem)
+	/*!
+	  \param channel a pointer to the channel to check
+	  \return true if maximum difference among coefficients (in dBs) is higher than the threshold \ref _maximumRatioThresholdInDBs
+	*/
 	bool isChannelOk(const MIMOChannel * const channel);
 };
 

@@ -23,7 +23,7 @@
 #include <KnownFlatChannelOptimalAlgorithm.h>
 
 /**
-It implements the optimal detection algorithm for a flat channel when at each time instant it is perfectly known which users are transmitting (that entails they don't need to at every moment)
+It implements the optimal detection algorithm for a flat channel when at each time instant it is perfectly known which users are transmitting (they don't need to be at every moment)
 
 	@author Manu <manu@rustneversleeps>
 */

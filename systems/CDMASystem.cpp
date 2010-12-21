@@ -248,9 +248,9 @@ void CDMASystem::buildChannel()
 // 		getchar();
 	  }
 
-// 	} while(!isChannelOk(_channel));
+	} while(!isChannelOk(_channel));
 // 	} while(!isChannelOk(_channel) || !coefficientsSignChangeHappened); // los coeficientes del canal cambian de signo
-	} while(!isChannelOk(_channel) || coefficientsSignChangeHappened); // los coeficientes del canal NO cambian de signo
+// 	} while(!isChannelOk(_channel) || coefficientsSignChangeHappened); // los coeficientes del canal NO cambian de signo
 }
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
@@ -371,8 +371,8 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
   // we check if the channel is really bad (severe near-far issues)...
   _maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(_preambleLength)));
   
-  //...or if any of its coefficients changes sign
-  MatrixXd firstSignsMatrix = Util::sign(channel->at(_preambleLength));
+//   //...or if any of its coefficients changes sign
+//   MatrixXd firstSignsMatrix = Util::sign(channel->at(_preambleLength));
   
   // all the channel matrices contained in this channel are checked
   for(iChannelMatrix=_preambleLength+1;iChannelMatrix<channel->length();iChannelMatrix++)
@@ -383,11 +383,11 @@ bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
 	  _maximumRatio = thisChannelMatrixMaximumRatio;
 	
 // 	// check if any coefficient changes sign
-	if(Util::sign(channel->at(iChannelMatrix))!=firstSignsMatrix)
-	{
+// 	if(Util::sign(channel->at(iChannelMatrix))!=firstSignsMatrix)
+// 	{
 // 	  cout << COLOR_PINK << "Coefficients change sign...channel is NOT ok!!" << COLOR_NORMAL << endl;
 // 	  return false;
-	}
+// 	}
   }
   
   cout << COLOR_WHITE << "the max difference among coefficients in dBs: " << COLOR_NORMAL << _maximumRatio << endl;

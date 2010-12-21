@@ -36,6 +36,8 @@
 #include <CDMASystem.h>
 #include <ISWCS10System.h>
 
+#include <bashcolors.h>
+
 #include <signal.h>
 
 bool __done = false;
@@ -55,47 +57,15 @@ void setDoneTrue(int signal)
 int main(int argc,char* argv[])
 {
 // 	signal(SIGINT,&setDoneTrue);
-// 
-// 	Elsevier2007BesselChannelSystem system;
-// 	Elsevier2007ARChannelSystem  system;
-// 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
-// 	Rev2TVT2007System system;
-// 
-// 	LMSmuTestSystem system;
-// 	PSPvsSMCSystem system;
-// 
-// 	TesisOrdenCanalDesconocidoARSystem system;
-// 	TesisOrdenCanalDesconocidoBesselSystem system;
-// 
-// 	TesisComplejidadReducidaBesselSystem system;
-// 	TesisComplejidadReducidaARSystem system;
-// 
-// 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
-// 
-// 	CDMASystem system;
 
-	std::cout << "received " << argc << " arguments" << endl;
-	
-// 	if(argc>1)
-// 	{
-// 		// seed (char *) is converted to a number
-// 		std::istringstream stream(argv[1]);
-// 		
-// 		// to check if everything went well: if (stream.eof())
-// 
-// 		stream >> __randomSeedPassed;
-// 		cout << "received seed is " << __randomSeedPassed << endl;
-// 		__randomSeedHasBeenPassed = true;
-// 	}else 
+	std::cout << COLOR_WHITE << "received " << COLOR_NORMAL << argc << COLOR_WHITE << " arguments" << COLOR_NORMAL << endl;
 
 	std::istringstream argument;
 
 	switch(argc)
 	{
 		case 1:
-			cout << "no arguments received" << endl;
+// 			cout << COLOR_WHITE <<  "no arguments received" << COLOR_NORMAL << endl;
 			break;
 			
 		case 2:
@@ -137,7 +107,27 @@ int main(int argc,char* argv[])
 	}
 		
 
-	ISWCS10System system;
+// 	Elsevier2007BesselChannelSystem system;
+// 	Elsevier2007ARChannelSystem  system;
+// 	TVT2007System system;
+// 	WSA08System system;
+// 	PSPvsPSPBasedSMCSystem system;
+// 	Rev2TVT2007System system;
+// 
+// 	LMSmuTestSystem system;
+// 	PSPvsSMCSystem system;
+// 
+// 	TesisOrdenCanalDesconocidoARSystem system;
+// 	TesisOrdenCanalDesconocidoBesselSystem system;
+// 
+// 	TesisComplejidadReducidaBesselSystem system;
+// 	TesisComplejidadReducidaARSystem system;
+// 
+// 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
+
+	CDMASystem system;
+
+// 	ISWCS10System system;
 
 	system.simulate();
 }
