@@ -51,7 +51,9 @@
 
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
+// to save all the generated channels (each one being a collection of channel matrices)
 // #define KEEP_ALL_CHANNEL_MATRICES
+
 // #define KEEP_ALL_CHANNEL_ESTIMATIONS
 
 extern bool __done;

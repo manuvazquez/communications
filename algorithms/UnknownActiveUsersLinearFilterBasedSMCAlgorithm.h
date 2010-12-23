@@ -46,6 +46,9 @@ protected:
     virtual void initializeParticles();
     virtual void process(const MatrixXd& observations, vector< double > noiseVariances);
 
+private:
+	double probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution);
+	double probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution);
 };
 
 #endif

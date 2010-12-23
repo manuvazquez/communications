@@ -42,7 +42,6 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
 		
         VectorXd error = observations - channelMatrix*symbolsVector;
 
-// 		newCost = _exitStage[iState].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
 		newCost = _exitStage[iState].getCost() + 
 				  (error.dot(error))/(2*noiseVariance) - 
 				  log(StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(symbolsVector,Util::getUsersActivityFromSymbolsVector(previousSymbolsVector),_usersActivityPdfs,_alphabet.length()));

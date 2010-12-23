@@ -61,14 +61,25 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
-    int iParticle,iSampledSymbol,iAlphabet,iSampled;
-    double proposal,s2q,sumProb,likelihood;
+    int iParticle,iExtendedAlphabet,iSampled;
+    double s2q,sumProb,likelihood;
     MatrixXd forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
     
-    int iOutput,iInput;
-    double probSymbolsVectorApriori;
+    uint iOutput,iInput;
+	
+	// used to store the product of the normalization constants of the proposal for the different users (needed to compute the weight)
+	double normConstantsProduct;
     
-    MatrixXd channelMatrixSample,symbolProb(_nInputs,_alphabet.length());
+	Alphabet extendedAlphabet = _alphabet.buildNewAlphabetByAddingSymbol(0.0);
+	
+    MatrixXd channelMatrixSample,symbolProb(_nInputs,extendedAlphabet.length());
+	
+	// it stores the probability of a soft estimation given each one of the symbols of the extended alphabet
+	VectorXd probSoftEstGivenSymbol(extendedAlphabet.length());
+	
+	// it stores the product of the probability of a soft estimation given the SAMPLED symbol for all the users
+	double probSoftEstGivenSampledSymbolsProduct;
+	
     VectorXd sampledVector(_nInputs);    
     MatrixXd noiseCovariance = MatrixXd::Zero(_nOutputs,_nOutputs);
 
@@ -78,7 +89,8 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
 #endif    
         // noise covariance needs to be constructed
-        for(iOutput=0;iOutput<_nOutputs;iOutput++)
+		// FIXME: _nOutputs should be an uint
+        for(iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
             noiseCovariance(iOutput,iOutput) = noiseVariances[iObservationToBeProcessed];
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
@@ -86,66 +98,59 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
             channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();            
-
-            // sampling of the users activity using:            
-            // i) a priori (first time instant)
-            if(iObservationToBeProcessed==_startDetectionTime)
-                for(iInput=0;iInput<_nInputs;iInput++)
-                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdfs[iInput].sampleFromPrior());
-            // ii) conditional pdf (after first time instant)
-            else
-                for(iInput=0;iInput<_nInputs;iInput++)
-                    processedParticle->setUserActivity(iInput,iObservationToBeProcessed,_usersActivityPdfs[iInput].sampleGivenItWas(processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1)));                
-
-            VectorXd softEstimations;
-
+          
             // the sampled channel matrix is used to obtain soft estimations of the transmitted symbols
-            softEstimations =  processedParticle->getLinearDetector(_estimatorIndex)->detect(observations.col(iObservationToBeProcessed),channelMatrixSample,noiseCovariance);
+            VectorXd softEstimations =  processedParticle->getLinearDetector(_estimatorIndex)->detect(observations.col(iObservationToBeProcessed),channelMatrixSample,noiseCovariance);
 
-            // the evaluated proposal function (necessary for computing the weights) is initialized
-            proposal = 1.0;
-            
-            // and so it is the a priori prob
-            probSymbolsVectorApriori = 1.0;
-
+			normConstantsProduct = 1.0;
+			probSoftEstGivenSampledSymbolsProduct = 1.0;
+			
             // sampling
-            for(iSampledSymbol=0;iSampledSymbol<_nInputs;iSampledSymbol++)
+			// FIXME: _nInputs should be an uint
+            for(iInput=0;iInput<static_cast<uint>(_nInputs);iInput++)
             {
-                // if the user is not active
-                if(!processedParticle->getUserActivity(iSampledSymbol,iObservationToBeProcessed))
-                {
-                    // the symbol is known to be 0.0 (and the proposal doesn' have to be updated)
-                    sampledVector(iSampledSymbol) = 0.0;
-                    continue;
-                }
-                
-                s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iSampledSymbol,noiseVariances[iObservationToBeProcessed]);
+                s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iInput,noiseVariances[iObservationToBeProcessed]);
                    
                 sumProb = 0.0;
-
-                // the probability for each posible symbol alphabet is computed
-                for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+				
+                // the probability for each posible symbol in the EXTENDED alphabet is computed
+                for(iExtendedAlphabet=0;iExtendedAlphabet<extendedAlphabet.length();iExtendedAlphabet++)
                 {
-                    symbolProb(iSampledSymbol,iAlphabet) = StatUtil::normalPdf(softEstimations(iSampledSymbol),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iSampledSymbol)*_alphabet[iAlphabet],s2q);
+                    probSoftEstGivenSymbol(iExtendedAlphabet) = StatUtil::normalPdf(softEstimations(iInput),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iInput)*extendedAlphabet[iExtendedAlphabet],s2q);
+					
+					symbolProb(iInput,iExtendedAlphabet) = probSoftEstGivenSymbol(iExtendedAlphabet);
+					
+					// the first time instant...
+					if(iObservationToBeProcessed==_startDetectionTime)
+						symbolProb(iInput,iExtendedAlphabet)*= probSymbol(extendedAlphabet[iExtendedAlphabet],_usersActivityPdfs[iInput]);
+					// after first time instant
+					else
+						symbolProb(iInput,iExtendedAlphabet)*= probSymbolGivenPreviousActivity(extendedAlphabet[iExtendedAlphabet],processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1),_usersActivityPdfs[iInput]);
 
                     // the computed pdf is accumulated for normalizing purposes
-                    sumProb += symbolProb(iSampledSymbol,iAlphabet);
+                    sumProb += symbolProb(iInput,iExtendedAlphabet);
                 }
+                
+                // the product of the normalization constants for all the users is computed (suma prob is the last normalization constant computed)
+                normConstantsProduct *= sumProb;
 
                 if(sumProb!=0)
-                    for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
-                        symbolProb(iSampledSymbol,iAlphabet) /= sumProb;
+                    for(iExtendedAlphabet=0;iExtendedAlphabet<extendedAlphabet.length();iExtendedAlphabet++)
+                        symbolProb(iInput,iExtendedAlphabet) /= sumProb;
                 else
                 {
-                    for(iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
-                        symbolProb(iSampledSymbol,iAlphabet) = 1.0/double(_alphabet.length());
+                    for(iExtendedAlphabet=0;iExtendedAlphabet<extendedAlphabet.length();iExtendedAlphabet++)
+                        symbolProb(iInput,iExtendedAlphabet) = 1.0/double(extendedAlphabet.length());
                 }
 
-                iSampled = StatUtil::discrete_rnd(symbolProb.row(iSampledSymbol));
-                sampledVector(iSampledSymbol) = _alphabet[iSampled];
+                iSampled = StatUtil::discrete_rnd(symbolProb.row(iInput));
+                sampledVector(iInput) = extendedAlphabet[iSampled];
 
-                proposal *= symbolProb(iSampledSymbol,iSampled);
-                probSymbolsVectorApriori /= double(_alphabet.length());
+				// the product of the soft estimation of the symbols given the SAMPLED symbols is updated
+				probSoftEstGivenSampledSymbolsProduct *= probSoftEstGivenSymbol(iSampled);
+				
+				// we obtain whether the user is active or not according to the sampled symbol
+				processedParticle->setUserActivity(iInput,iObservationToBeProcessed,Util::isUserActive(sampledVector(iInput)));
             }
 
             // sampled symbol vector is stored for the corresponding particle
@@ -154,7 +159,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),channelMatrixSample*sampledVector,noiseVariances[iObservationToBeProcessed]);
 
             // the weight is updated...
-            processedParticle->setWeight((likelihood*probSymbolsVectorApriori/proposal)*processedParticle->getWeight());
+			processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
 
 			// ...the estimation of the channel matrix is updated
 			processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]);
@@ -171,4 +176,20 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+}
+
+double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution)
+{
+	if(Util::isUserActive(symbol))
+		return 1.0/double(_alphabet.length())*userActivityDistribution.probApriori(true);
+	else
+		return userActivityDistribution.probApriori(false);
+}
+
+double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution)
+{
+	if(Util::isUserActive(symbol))
+		return userActivityDistribution.probXgivenY(true,previousActivity)*1.0/double(_alphabet.length());
+	else
+		return userActivityDistribution.probXgivenY(false,previousActivity);
 }
