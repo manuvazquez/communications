@@ -63,7 +63,6 @@ public:
      * @param newSymbolVector
      * @param newCost
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
-     * @param newChannelMatrices
      */
 //     void update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
     void update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators); // eigen

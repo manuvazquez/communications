@@ -38,6 +38,8 @@ private:
     static double computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands); // eigen
     static Random _randomGenerator;
 public:
+	// this is only used in USIS =>
+	// FIXME: it should be taken out
     static Random _particlesInitializerRandomGenerator;
 
 

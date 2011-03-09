@@ -52,7 +52,6 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 
             VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
 			
-// 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + (error.dot(error))/(2*noiseVariance) - log(StatUtil::probXgivenY(symbolsVector,previousSymbolsVector,_usersActivityPdfs));
 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + 
 					  (error.dot(error))/(2*noiseVariance) - 
 					  log(StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(symbolsVector,Util::getUsersActivityFromSymbolsVector(previousSymbolsVector),_usersActivityPdfs,_alphabet.length()));
