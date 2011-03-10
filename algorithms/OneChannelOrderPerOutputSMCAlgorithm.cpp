@@ -450,30 +450,15 @@ std::vector<std::vector<bool> > OneChannelOrderPerOutputSMCAlgorithm::imposeFixe
 	
 	for(int iState=0;iState<nStates;iState++)
 	{
-// 		cout << "iState = " << iState << endl;
-		
 		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,realChannelOrder-1);
-		
-// 		cout << "state" << endl << state << endl;
-// 		uint encontrados = 0;
 		
 		for(uint iCandidate=0;iCandidate<nCandidates;iCandidate++)
 		{
-// 			cout << "iCandidate = " << iCandidate << endl;
-// 			cout << "particleCandidates[iCandidate].symbolVectorsMatrix" << endl << particleCandidates[iCandidate].symbolVectorsMatrix << endl;
 			if(particleCandidates[iCandidate].symbolVectorsMatrix.block(0,particleCandidates[iCandidate].symbolVectorsMatrix.cols()-realChannelOrder+1,_nInputs,realChannelOrder-1) == state)
 			{
 				statesMasks[iState][iCandidate] = true;
-// 				encontrados++;
 			}
 		}
-// 		cout << "encontrados = " << encontrados << endl;
-// 		if(encontrados!=0)
-// 		{
-// 			cout << "distinto de 0!" << endl;
-// 			getchar();
-// 		}
-// 		getchar();
 	}
 	
 	return statesMasks;

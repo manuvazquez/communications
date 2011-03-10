@@ -125,9 +125,9 @@ int main(int argc,char* argv[])
 // 
 // 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
-	CDMASystem system;
+// 	CDMASystem system;
 
-// 	ISWCS10System system;
+	ISWCS10System system;
 
 	system.simulate();
 }
