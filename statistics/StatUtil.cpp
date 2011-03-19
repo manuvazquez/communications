@@ -27,8 +27,8 @@
   Random StatUtil::_randomGenerator;
   Random StatUtil::_particlesInitializerRandomGenerator;
 #else
-  Random StatUtil::_randomGenerator(10);
-  Random StatUtil::_particlesInitializerRandomGenerator(20);
+  Random StatUtil::_randomGenerator(4135925433);
+  Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
 #endif
 
 int StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)

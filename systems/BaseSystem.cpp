@@ -76,7 +76,8 @@ BaseSystem::BaseSystem()
 // ------------------------ iswcs 2010 ----------------------
 	_nFrames = 500;
 	_L=3,_N=3,_frameLength=300;
-	_m = 4;
+// 	_m = 4;
+	_m = 2;
 	_d = _m - 1;
 
 	_trainSeqLength = 15;
@@ -111,12 +112,12 @@ BaseSystem::BaseSystem()
 // 	// the algorithms with the higher smoothing lag require
 // 	_nSmoothingSymbolsVectors = 6;
 
-	_SNRs.push_back(0);
-	_SNRs.push_back(3);
-	_SNRs.push_back(6);
-	_SNRs.push_back(9);
+// 	_SNRs.push_back(0);
+// 	_SNRs.push_back(3);
+// 	_SNRs.push_back(6);
+// 	_SNRs.push_back(9);
 	_SNRs.push_back(12);
-	_SNRs.push_back(15);
+// 	_SNRs.push_back(15);
 // 	_SNRs.push_back(18);
 // 	_SNRs.push_back(21);
 // 	_SNRs.push_back(24);
@@ -224,7 +225,7 @@ BaseSystem::BaseSystem()
 
 #ifndef RANDOM_SEED
         // we don't want the same bits to be generated over and over
-        _randomGenerator.setSeed(0);
+	_randomGenerator.setSeed(3763650855);
 #endif
 
     _channel = NULL;

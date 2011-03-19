@@ -34,8 +34,11 @@ ISWCS10System::ISWCS10System()
 {
 // 	nSurvivors = 1;
 	nSurvivors = 2;
+	
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
+//     adjustSurvivorsFromParticlesNumber = true;
+//     adjustParticlesNumberFromSurvivors = false;
 
 	_velocity = 50.0; // m/s
 	_carrierFrequency = 2e9;
@@ -111,9 +114,9 @@ ISWCS10System::ISWCS10System()
 
 // ---------------------------------
 
-	// 4-1-1
-	_subchannelOrders = std::vector<uint>(3,1);
-	_subchannelOrders[0] = 4;
+// 	// 4-1-1
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
 
 // 	// 4-3-2
 // 	_subchannelOrders = std::vector<uint>(3);
@@ -160,8 +163,8 @@ ISWCS10System::~ISWCS10System()
 void ISWCS10System::buildChannel()
 {
 // 	channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
-// 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
+// 	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
 
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
 }

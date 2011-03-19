@@ -35,6 +35,7 @@
 #include <PSPvsSMCSystem.h>
 #include <CDMASystem.h>
 #include <ISWCS10System.h>
+#include <ISWCS10numberOfSurvivorsImpactSystem.h>
 
 #include <bashcolors.h>
 
@@ -127,7 +128,9 @@ int main(int argc,char* argv[])
 
 // 	CDMASystem system;
 
-	ISWCS10System system;
+// 	ISWCS10System system;
+	
+	ISWCS10numberOfSurvivorsImpactSystem system;
 
 	system.simulate();
 }
