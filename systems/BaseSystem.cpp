@@ -74,10 +74,9 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-	_nFrames = 500;
+	_nFrames = 100;
 	_L=3,_N=3,_frameLength=300;
-// 	_m = 4;
-	_m = 2;
+	_m = 4;
 	_d = _m - 1;
 
 	_trainSeqLength = 15;

@@ -25,9 +25,11 @@
 #include <PSPBasedSMCAlgorithm.h>
 #include <TimeInvariantChannel.h>
 
+// FIXME: do something to avoid the defines below: it's such a pain in the ass having to remember to change this when switching to a different kind of channel in the code
+
 // #define USE_AR_CHANNEL
-// #define USE_BESSEL_CHANNEL
-#define USE_TIME_INVARIANT_CHANNEL
+#define USE_BESSEL_CHANNEL
+// #define USE_TIME_INVARIANT_CHANNEL
 
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()

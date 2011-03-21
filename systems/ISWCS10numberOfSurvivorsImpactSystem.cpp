@@ -24,15 +24,15 @@
 
 ISWCS10numberOfSurvivorsImpactSystem::ISWCS10numberOfSurvivorsImpactSystem():ISWCS10System()
 {
+	nParticlesStudied.push_back(4);
+	nParticlesStudied.push_back(16);
 	nParticlesStudied.push_back(128);
-	nParticlesStudied.push_back(256);
-	nParticlesStudied.push_back(512);
 	nParticlesStudied.push_back(1024);
 	
 	
-	// 2-1-1
-	_subchannelOrders = std::vector<uint>(3,1);
-	_subchannelOrders[0] = 2;
+//	// 2-1-1
+//	_subchannelOrders = std::vector<uint>(3,1);
+//	_subchannelOrders[0] = 2;
 
 // 	// 3-1-1
 // 	_subchannelOrders = std::vector<uint>(3,1);
@@ -45,6 +45,30 @@ ISWCS10numberOfSurvivorsImpactSystem::ISWCS10numberOfSurvivorsImpactSystem():ISW
 // 	// 5-1-1
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 5;
+
+//        // 4-1-1
+//        _subchannelOrders = std::vector<uint>(3,1);
+//        _subchannelOrders[0] = 4;
+//        _subchannelOrders[1] = 1;
+//        _subchannelOrders[2] = 1;
+
+        // 4-1-2
+        _subchannelOrders = std::vector<uint>(3,1);
+        _subchannelOrders[0] = 4;
+        _subchannelOrders[1] = 1;
+        _subchannelOrders[2] = 2;
+
+//        // 4-1-3
+//        _subchannelOrders = std::vector<uint>(3,1);
+//        _subchannelOrders[0] = 4;
+//        _subchannelOrders[1] = 1;
+//        _subchannelOrders[2] = 3;
+
+//        // 4-1-4
+//        _subchannelOrders = std::vector<uint>(3,1);
+//        _subchannelOrders[0] = 4;
+//        _subchannelOrders[1] = 1;
+//        _subchannelOrders[2] = 4;
 }
 
 void ISWCS10numberOfSurvivorsImpactSystem::addAlgorithms()
