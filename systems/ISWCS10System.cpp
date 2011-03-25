@@ -52,22 +52,29 @@ ISWCS10System::ISWCS10System()
 	double computedARprocessVariance;
 	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
 	
+	// by default, AR channel is assumed
 	std::vector<double> kalmanEstimatorARcoeffs = ARcoefficients;
 	double kalmanEstimatorVariance =  ARvariance;
 	
-	#if defined USE_AR_CHANNEL
-		// it's ok: by default, above it is assumed that the channel is AR
-	#elif defined USE_BESSEL_CHANNEL
-		kalmanEstimatorARcoeffs = computedARcoeffs;
-		kalmanEstimatorVariance = computedARprocessVariance;
-	#elif defined USE_TIME_INVARIANT_CHANNEL
-		kalmanEstimatorARcoeffs = std::vector<double>(ARcoefficients.size(),0);
-		kalmanEstimatorARcoeffs[0] = 1.0;
-		kalmanEstimatorVariance = 0;
-	#else
-		std::cout << "ISWCS10System::ISWCS10System: channel type not #defined" << std::endl;
-		exit(1);
-	#endif
+// 	#if defined USE_AR_CHANNEL
+// 		// it's ok: by default, above it is assumed that the channel is AR
+// 	#elif defined USE_BESSEL_CHANNEL
+// 		kalmanEstimatorARcoeffs = computedARcoeffs;
+// 		kalmanEstimatorVariance = computedARprocessVariance;
+// 		std::cout << COLOR_MAROON;
+// 		std::cout << "AR process parameters computed using Yule-Walker:" << std::endl;
+// 		std::cout << "\t AR coefficientes: ";
+// 		Util::print(computedARcoeffs);
+// 		std::cout << std::endl << "\t AR variance: " << computedARprocessVariance << std::endl;
+// 		std::cout << COLOR_NORMAL;
+// 	#elif defined USE_TIME_INVARIANT_CHANNEL
+// 		kalmanEstimatorARcoeffs = std::vector<double>(ARcoefficients.size(),0);
+// 		kalmanEstimatorARcoeffs[0] = 1.0;
+// 		kalmanEstimatorVariance = 0;
+// 	#else
+// 		std::cout << "ISWCS10System::ISWCS10System: channel type not #defined" << std::endl;
+// 		exit(1);
+// 	#endif
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
@@ -116,9 +123,9 @@ ISWCS10System::ISWCS10System()
 
 // ---------------------------------
 
-// 	// 4-1-1
-// 	_subchannelOrders = std::vector<uint>(3,1);
-// 	_subchannelOrders[0] = 4;
+	// 4-1-1
+	_subchannelOrders = std::vector<uint>(3,1);
+	_subchannelOrders[0] = 4;
 
 // 	// 4-3-2
 // 	_subchannelOrders = std::vector<uint>(3);

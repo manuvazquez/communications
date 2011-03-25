@@ -46,29 +46,29 @@ ISWCS10numberOfSurvivorsImpactSystem::ISWCS10numberOfSurvivorsImpactSystem():ISW
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 5;
 
-//        // 4-1-1
-//        _subchannelOrders = std::vector<uint>(3,1);
-//        _subchannelOrders[0] = 4;
-//        _subchannelOrders[1] = 1;
-//        _subchannelOrders[2] = 1;
+	// 4-1-1
+	_subchannelOrders = std::vector<uint>(3,1);
+	_subchannelOrders[0] = 4;
+	_subchannelOrders[1] = 1;
+	_subchannelOrders[2] = 1;
 
-        // 4-1-2
-        _subchannelOrders = std::vector<uint>(3,1);
-        _subchannelOrders[0] = 4;
-        _subchannelOrders[1] = 1;
-        _subchannelOrders[2] = 2;
+// 	// 4-1-2
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
+// 	_subchannelOrders[1] = 1;
+// 	_subchannelOrders[2] = 2;
 
-//        // 4-1-3
-//        _subchannelOrders = std::vector<uint>(3,1);
-//        _subchannelOrders[0] = 4;
-//        _subchannelOrders[1] = 1;
-//        _subchannelOrders[2] = 3;
+// 	// 4-1-3
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
+// 	_subchannelOrders[1] = 1;
+// 	_subchannelOrders[2] = 3;
 
-//        // 4-1-4
-//        _subchannelOrders = std::vector<uint>(3,1);
-//        _subchannelOrders[0] = 4;
-//        _subchannelOrders[1] = 1;
-//        _subchannelOrders[2] = 4;
+// 	// 4-1-4
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
+// 	_subchannelOrders[1] = 1;
+// 	_subchannelOrders[2] = 4;
 }
 
 void ISWCS10numberOfSurvivorsImpactSystem::addAlgorithms()

@@ -271,8 +271,11 @@ if(__nFramesHasBeenPassed)
 		StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
 	}else
 	{
-		_randomGenerator.setSeed(186951016);
-		StatUtil::getRandomGenerator().setSeed(3731316448);
+		_randomGenerator.setSeed(825535300);
+		StatUtil::getRandomGenerator().setSeed(500436508);
+		
+// 		_randomGenerator.setSeed(186951016);
+// 		StatUtil::getRandomGenerator().setSeed(3731316448);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
