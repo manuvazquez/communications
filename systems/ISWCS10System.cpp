@@ -28,8 +28,8 @@
 // FIXME: do something to avoid the defines below: it's such a pain in the ass having to remember to change this when switching to a different kind of channel in the code
 
 // #define USE_AR_CHANNEL
-#define USE_BESSEL_CHANNEL
-// #define USE_TIME_INVARIANT_CHANNEL
+// #define USE_BESSEL_CHANNEL
+#define USE_TIME_INVARIANT_CHANNEL
 
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
@@ -56,25 +56,28 @@ ISWCS10System::ISWCS10System()
 	std::vector<double> kalmanEstimatorARcoeffs = ARcoefficients;
 	double kalmanEstimatorVariance =  ARvariance;
 	
-// 	#if defined USE_AR_CHANNEL
-// 		// it's ok: by default, above it is assumed that the channel is AR
-// 	#elif defined USE_BESSEL_CHANNEL
-// 		kalmanEstimatorARcoeffs = computedARcoeffs;
-// 		kalmanEstimatorVariance = computedARprocessVariance;
-// 		std::cout << COLOR_MAROON;
-// 		std::cout << "AR process parameters computed using Yule-Walker:" << std::endl;
-// 		std::cout << "\t AR coefficientes: ";
-// 		Util::print(computedARcoeffs);
-// 		std::cout << std::endl << "\t AR variance: " << computedARprocessVariance << std::endl;
-// 		std::cout << COLOR_NORMAL;
-// 	#elif defined USE_TIME_INVARIANT_CHANNEL
-// 		kalmanEstimatorARcoeffs = std::vector<double>(ARcoefficients.size(),0);
-// 		kalmanEstimatorARcoeffs[0] = 1.0;
-// 		kalmanEstimatorVariance = 0;
-// 	#else
-// 		std::cout << "ISWCS10System::ISWCS10System: channel type not #defined" << std::endl;
-// 		exit(1);
-// 	#endif
+	#if defined USE_AR_CHANNEL
+		// it's ok: by default, above it is assumed that the channel is AR
+		
+		std::cout << COLOR_MAROON << "assuming AR channel in generating Kalman estimators" << COLOR_NORMAL << std::endl;
+	#elif defined USE_BESSEL_CHANNEL
+		kalmanEstimatorARcoeffs = computedARcoeffs;
+		kalmanEstimatorVariance = computedARprocessVariance;
+		std::cout << COLOR_MAROON;
+		std::cout << "AR process parameters computed using Yule-Walker:" << std::endl;
+		std::cout << "\t AR coefficientes: ";
+		Util::print(computedARcoeffs);
+		std::cout << std::endl << "\t AR variance: " << computedARprocessVariance << std::endl;
+		std::cout << COLOR_NORMAL;
+	#elif defined USE_TIME_INVARIANT_CHANNEL
+		kalmanEstimatorARcoeffs = std::vector<double>(ARcoefficients.size(),0);
+		kalmanEstimatorARcoeffs[0] = 1.0;
+		kalmanEstimatorVariance = 0;
+		std::cout << COLOR_MAROON << "assuming time invariant channel in generating Kalman estimators" << COLOR_NORMAL << std::endl;
+	#else
+		std::cout << "ISWCS10System::ISWCS10System: channel type not #defined" << std::endl;
+		exit(1);
+	#endif
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
@@ -172,8 +175,8 @@ ISWCS10System::~ISWCS10System()
 void ISWCS10System::buildChannel()
 {
 // 	channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-// 	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
+	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
+// 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
 
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
 }

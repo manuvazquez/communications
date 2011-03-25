@@ -128,9 +128,9 @@ int main(int argc,char* argv[])
 
 // 	CDMASystem system;
 
-// 	ISWCS10System system;
+	ISWCS10System system;
 	
-	ISWCS10numberOfSurvivorsImpactSystem system;
+// 	ISWCS10numberOfSurvivorsImpactSystem system;
 
 	system.simulate();
 }

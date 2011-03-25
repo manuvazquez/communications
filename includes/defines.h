@@ -19,7 +19,7 @@
  ***************************************************************************/
 
 // the seed used to create the random objects is generated from the system time
-// #define RANDOM_SEED
+#define RANDOM_SEED
 
 // wether the ENTIRE sequence of channel matrices estimated by every path is kept (it doesn't get saved, either way)
 // this only applies to algorithms using "PSPPath"
