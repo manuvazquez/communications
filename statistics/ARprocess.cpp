@@ -82,12 +82,15 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
 {
     const double c = 3e8;
 
+	// (c/carrierFrequency) is the wavelength
     double dopplerFrequency = velocity/(c/carrierFrequency);
+
     double normDopplerFrequency = T*dopplerFrequency;
 
     MatrixXd autocorrelationsMatrix(order,order);
     VectorXd autocorrelationsVector(order);
 
+	// for efficiency's sake, all needed correlations are computed here
     vector<double> autocorrelations(order+1);
     for(int i=0;i<=order;i++)
         autocorrelations[i] = j0(2.0*M_PI*normDopplerFrequency*double(i));

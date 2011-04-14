@@ -47,8 +47,11 @@ protected:
 	double _carrierFrequency;
 	double _period;
 
-	// vectors of channel estimators and linear detectors for unknown channel order algorithms
+	// vectors of channel estimators for the rows of the channel matrix (one channer per output algorithm)
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
+	
+	// vectors of channel estimators for unknown channel order algorithms (single channel order)
+	vector<ChannelMatrixEstimator *> kalmanWholeChannelEstimators;
 
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;
 

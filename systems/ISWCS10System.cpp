@@ -28,19 +28,21 @@
 // FIXME: do something to avoid the defines below: it's such a pain in the ass having to remember to change this when switching to a different kind of channel in the code
 
 // #define USE_AR_CHANNEL
-// #define USE_BESSEL_CHANNEL
-#define USE_TIME_INVARIANT_CHANNEL
+#define USE_BESSEL_CHANNEL
+// #define USE_TIME_INVARIANT_CHANNEL
 
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
 // 	nSurvivors = 1;
 	nSurvivors = 2;
+
+	nParticles = 128;
 	
-    adjustSurvivorsFromParticlesNumber = false;
-    adjustParticlesNumberFromSurvivors = true;
-//     adjustSurvivorsFromParticlesNumber = true;
-//     adjustParticlesNumberFromSurvivors = false;
+//     adjustSurvivorsFromParticlesNumber = false;
+//     adjustParticlesNumberFromSurvivors = true;
+    adjustSurvivorsFromParticlesNumber = true;
+    adjustParticlesNumberFromSurvivors = false;
 
 	_velocity = 50.0; // m/s
 	_carrierFrequency = 2e9;
@@ -61,14 +63,14 @@ ISWCS10System::ISWCS10System()
 		
 		std::cout << COLOR_MAROON << "assuming AR channel in generating Kalman estimators" << COLOR_NORMAL << std::endl;
 	#elif defined USE_BESSEL_CHANNEL
-		kalmanEstimatorARcoeffs = computedARcoeffs;
-		kalmanEstimatorVariance = computedARprocessVariance;
-		std::cout << COLOR_MAROON;
-		std::cout << "AR process parameters computed using Yule-Walker:" << std::endl;
-		std::cout << "\t AR coefficientes: ";
-		Util::print(computedARcoeffs);
-		std::cout << std::endl << "\t AR variance: " << computedARprocessVariance << std::endl;
-		std::cout << COLOR_NORMAL;
+// 		kalmanEstimatorARcoeffs = computedARcoeffs;
+// 		kalmanEstimatorVariance = computedARprocessVariance;
+// 		std::cout << COLOR_MAROON;
+// 		std::cout << "AR process parameters computed using Yule-Walker:" << std::endl;
+// 		std::cout << "\t AR coefficientes: ";
+// 		Util::print(computedARcoeffs);
+// 		std::cout << std::endl << "\t AR variance: " << computedARprocessVariance << std::endl;
+// 		std::cout << COLOR_NORMAL;
 	#elif defined USE_TIME_INVARIANT_CHANNEL
 		kalmanEstimatorARcoeffs = std::vector<double>(ARcoefficients.size(),0);
 		kalmanEstimatorARcoeffs[0] = 1.0;
@@ -99,6 +101,11 @@ ISWCS10System::ISWCS10System()
 		kalmanChannelEstimators.push_back(new KalmanEstimator(
 											MatrixXd::Zero(1,_N*_candidateChannelOrders[iChannelOrder]),
 											MatrixXd::Ones(1,_N*_candidateChannelOrders[iChannelOrder]),
+											_N,kalmanEstimatorARcoeffs,kalmanEstimatorVariance));
+											
+		kalmanWholeChannelEstimators.push_back(new KalmanEstimator(
+											MatrixXd::Zero(_L,_N*_candidateChannelOrders[iChannelOrder]),
+											MatrixXd::Ones(_L,_N*_candidateChannelOrders[iChannelOrder]),
 											_N,kalmanEstimatorARcoeffs,kalmanEstimatorVariance));
 	}
 
@@ -163,7 +170,10 @@ ISWCS10System::~ISWCS10System()
 	delete _powerProfile;
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
+	{
 		delete kalmanChannelEstimators[iChannelOrder];
+		delete kalmanWholeChannelEstimators[iChannelOrder];
+	}
 
 	delete withoutReplacementResamplingAlgorithm;
 	delete bestParticlesResamplingAlgorithm;
@@ -175,8 +185,8 @@ ISWCS10System::~ISWCS10System()
 void ISWCS10System::buildChannel()
 {
 // 	channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
-// 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
+// 	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
 
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
 }
@@ -185,15 +195,17 @@ void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
- 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
+//  	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
- 	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
+//  	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
 // 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (maximum suborder among the receiving antennas)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 
 	_algorithms.push_back(new PSPBasedSMCAlgorithm("G-PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 	
      _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
+	 
+	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 
 void ISWCS10System::beforeEndingFrame()
