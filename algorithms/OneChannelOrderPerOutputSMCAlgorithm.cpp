@@ -55,8 +55,6 @@ OneChannelOrderPerOutputSMCAlgorithm::~OneChannelOrderPerOutputSMCAlgorithm()
 
 vector<MatrixXd> OneChannelOrderPerOutputSMCAlgorithm::getEstimatedChannelMatrices()
 {
-//   std::vector<MatrixXd> emptyVector;
-
     vector<MatrixXd> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
@@ -68,22 +66,17 @@ vector<MatrixXd> OneChannelOrderPerOutputSMCAlgorithm::getEstimatedChannelMatric
 	  MatrixXd channelMatrix = MatrixXd::Zero(_nOutputs,_nInputsXmaxChannelOrder);
 	  for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
 	  {
-// 		cout << "best channel order = " << particle->iMaxChannelOrderAPP(iOutput) << endl;
 		MatrixXd outputChannelMatrix = particle->getChannelMatrix(iOutput,particle->iMaxChannelOrderAPP(iOutput),i);
 		
 		if(outputChannelMatrix.rows()>1)
 		  throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm::getEstimatedChannelMatrices: estimated channel for one output is bigger than 1.");
 		
 		channelMatrix.block(iOutput,_nInputsXmaxChannelOrder-outputChannelMatrix.cols(),1,outputChannelMatrix.cols()) = outputChannelMatrix;
-		
-// 		cout << "channelMatrix = " << endl << channelMatrix << endl;
-// 		cout << "est" << endl << outputChannelMatrix << endl;
 	  }
 	  channelMatrices.push_back(channelMatrix);
 	}
 
     return channelMatrices;  
-//   return emptyVector;
 }
 
 MatrixXd OneChannelOrderPerOutputSMCAlgorithm::getDetectedSymbolVectors()

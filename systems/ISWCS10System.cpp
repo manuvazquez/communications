@@ -133,9 +133,9 @@ ISWCS10System::ISWCS10System()
 
 // ---------------------------------
 
-	// 4-1-1
-	_subchannelOrders = std::vector<uint>(3,1);
-	_subchannelOrders[0] = 4;
+// 	// 4-1-1
+// 	_subchannelOrders = std::vector<uint>(3,1);
+// 	_subchannelOrders[0] = 4;
 
 // 	// 4-3-2
 // 	_subchannelOrders = std::vector<uint>(3);
@@ -159,9 +159,9 @@ ISWCS10System::ISWCS10System()
 // 	_subchannelOrders[2] = 3;
 // 	_subchannelOrders[2] = 2;
 
-// 	// 4-4-1
-// 	_subchannelOrders = std::vector<uint>(3,4);
-// 	_subchannelOrders[2] = 1;
+	// 4-4-1
+	_subchannelOrders = std::vector<uint>(3,4);
+	_subchannelOrders[2] = 1;
 }
 
 
