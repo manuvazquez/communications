@@ -37,12 +37,12 @@ ISWCS10System::ISWCS10System()
 // 	nSurvivors = 1;
 	nSurvivors = 2;
 
-	nParticles = 128;
-	
-//     adjustSurvivorsFromParticlesNumber = false;
-//     adjustParticlesNumberFromSurvivors = true;
-    adjustSurvivorsFromParticlesNumber = true;
-    adjustParticlesNumberFromSurvivors = false;
+// 	nParticles = 128;
+
+    adjustSurvivorsFromParticlesNumber = false;
+    adjustParticlesNumberFromSurvivors = true;
+//     adjustSurvivorsFromParticlesNumber = true;
+//     adjustParticlesNumberFromSurvivors = false;
 
 	_velocity = 50.0; // m/s
 	_carrierFrequency = 2e9;
@@ -150,18 +150,18 @@ ISWCS10System::ISWCS10System()
 // 	_subchannelOrders = std::vector<uint>(3,1);
 // 	_subchannelOrders[0] = 2;
 
-// 	// 2-2-1
-// 	_subchannelOrders = std::vector<uint>(3,2);
-// 	_subchannelOrders[2] = 1;
+	// 2-2-1
+	_subchannelOrders = std::vector<uint>(3,2);
+	_subchannelOrders[2] = 1;
 
 // 	// 4-3-2
 // 	_subchannelOrders = std::vector<uint>(3,4);
 // 	_subchannelOrders[2] = 3;
 // 	_subchannelOrders[2] = 2;
 
-	// 4-4-1
-	_subchannelOrders = std::vector<uint>(3,4);
-	_subchannelOrders[2] = 1;
+// 	// 4-4-1
+// 	_subchannelOrders = std::vector<uint>(3,4);
+// 	_subchannelOrders[2] = 1;
 }
 
 
@@ -195,9 +195,9 @@ void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
-//  	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
+ 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
-//  	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
+ 	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
 // 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (maximum suborder among the receiving antennas)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 
@@ -205,7 +205,7 @@ void ISWCS10System::addAlgorithms()
 	
      _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 	 
-	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 
 void ISWCS10System::beforeEndingFrame()
