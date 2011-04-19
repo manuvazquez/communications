@@ -117,8 +117,8 @@ BaseSystem::BaseSystem()
 	_SNRs.push_back(9);
 	_SNRs.push_back(12);
 	_SNRs.push_back(15);
-// 	_SNRs.push_back(18);
-// 	_SNRs.push_back(21);
+	_SNRs.push_back(18);
+	_SNRs.push_back(21);
 // 	_SNRs.push_back(24);
 // 	_SNRs.push_back(27);
 

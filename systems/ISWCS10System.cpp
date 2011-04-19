@@ -37,12 +37,12 @@ ISWCS10System::ISWCS10System()
 // 	nSurvivors = 1;
 	nSurvivors = 2;
 
-	nParticles = 128;
+// 	nParticles = 128;
 
-//     adjustSurvivorsFromParticlesNumber = false;
-//     adjustParticlesNumberFromSurvivors = true;
-    adjustSurvivorsFromParticlesNumber = true;
-    adjustParticlesNumberFromSurvivors = false;
+    adjustSurvivorsFromParticlesNumber = false;
+    adjustParticlesNumberFromSurvivors = true;
+//     adjustSurvivorsFromParticlesNumber = true;
+//     adjustParticlesNumberFromSurvivors = false;
 
 	_velocity = 50.0; // m/s
 	_carrierFrequency = 2e9;
@@ -206,7 +206,7 @@ void ISWCS10System::addAlgorithms()
 	
 //      _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 	 
-	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+// 	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 
 void ISWCS10System::beforeEndingFrame()
