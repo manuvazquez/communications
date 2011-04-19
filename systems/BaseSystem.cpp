@@ -111,14 +111,14 @@ BaseSystem::BaseSystem()
 // 	// the algorithms with the higher smoothing lag require
 // 	_nSmoothingSymbolsVectors = 6;
 
-	_SNRs.push_back(0);
+// 	_SNRs.push_back(0);
 	_SNRs.push_back(3);
 	_SNRs.push_back(6);
 	_SNRs.push_back(9);
 	_SNRs.push_back(12);
 	_SNRs.push_back(15);
-	_SNRs.push_back(18);
-	_SNRs.push_back(21);
+// 	_SNRs.push_back(18);
+// 	_SNRs.push_back(21);
 // 	_SNRs.push_back(24);
 // 	_SNRs.push_back(27);
 

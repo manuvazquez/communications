@@ -26,6 +26,6 @@
 // #define DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 
 // whether the data will be saved after processing each frame or only at the end of the simulation
-// #define SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
+#define SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
 
 #define ALGORITHM_NAME_MAX_LENGTH 80

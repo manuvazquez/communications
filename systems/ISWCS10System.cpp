@@ -37,12 +37,12 @@ ISWCS10System::ISWCS10System()
 // 	nSurvivors = 1;
 	nSurvivors = 2;
 
-// 	nParticles = 128;
+	nParticles = 128;
 
-    adjustSurvivorsFromParticlesNumber = false;
-    adjustParticlesNumberFromSurvivors = true;
-//     adjustSurvivorsFromParticlesNumber = true;
-//     adjustParticlesNumberFromSurvivors = false;
+//     adjustSurvivorsFromParticlesNumber = false;
+//     adjustParticlesNumberFromSurvivors = true;
+    adjustSurvivorsFromParticlesNumber = true;
+    adjustParticlesNumberFromSurvivors = false;
 
 	_velocity = 50.0; // m/s
 	_carrierFrequency = 2e9;
@@ -195,15 +195,16 @@ void ISWCS10System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
- 	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
+//  	_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm("MLSD-m",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm));
 
- 	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
+//  	_algorithms.push_back(new PSPAlgorithm("PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
+// 	// not used for the journal paper
 // 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm (maximum suborder among the receiving antennas)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_candidateChannelOrders[_iMaxChannelOrder],_kalmanEstimatorForMaximumChannelOrder,_preamble,_candidateChannelOrders[_iMaxChannelOrder]-1,_iLastSymbolVectorToBeDetected+_candidateChannelOrders[_iMaxChannelOrder]-1,nSurvivors));
 
 	_algorithms.push_back(new PSPBasedSMCAlgorithm("G-PSP",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimatorForActualChannelOrder,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 	
-     _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
+//      _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 	 
 	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
