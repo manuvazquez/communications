@@ -45,3 +45,11 @@
   - lastEstimatedChannelMatrix_eigen y otras: refactorizar código común
 - metodo que indique que algoritmos hacen estimación de canal y usarlo
 - fix BUG in USIS2SIS: when it wants to switch to a regular SIS algorithm right at the end of the frame, bad things happen
+--------------
+- OneChannelOrderPerOutputSMCAlgorithm (and maybe others)
+	- the computed a posteriori channel order probabilities are stored shifted (the third in the second position...). At each time instant, what is actually being computed is the channel order APP for the NEXT time instant.
+- in MIMOChannel
+	- transmit
+		- initialize observations to zero
+- KalmanFilter.cpp
+	- setFilteredCovariance
