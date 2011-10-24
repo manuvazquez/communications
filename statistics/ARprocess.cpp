@@ -21,6 +21,11 @@
 
 // #define DEBUG5
 
+// #include <Eigen/Dense>
+// #include <Eigen/LU>
+
+// using namespace Eigen;
+
 ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
     CommonConstructorsCode(seed);
@@ -103,8 +108,11 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
         autocorrelationsVector(m) = autocorrelations[m+1];
     }
 
-    VectorXd coefficients;
-    autocorrelationsMatrix.lu().solve(autocorrelationsVector,&coefficients);
+//     VectorXd coefficients;
+//     autocorrelationsMatrix.lu().solve(autocorrelationsVector,&coefficients);
+	
+	PartialPivLU<MatrixXd> luDecomp(autocorrelationsMatrix);
+	VectorXd coefficients = luDecomp.solve(autocorrelationsVector);
 
     // the variance of the noise will be computed in the loop...
     noiseVariance = autocorrelations[0];

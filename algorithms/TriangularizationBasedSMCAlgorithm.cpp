@@ -67,9 +67,13 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
 
             Eigen::LLT<MatrixXd> llt(stackedChannelMatrixMinusFlipped.transpose()*stackedChannelMatrixMinusFlipped);
 
-            MatrixXd U = llt.matrixL().transpose();
+// 			MatrixXd L = llt.matrixL();
+//             MatrixXd U = L.transpose();
+			MatrixXd U = llt.matrixL().transpose();
 
-            MatrixXd invLstackedChannelMatrixMinusTrans = llt.matrixL().inverse()*stackedChannelMatrixMinusFlipped.transpose();
+			MatrixXd invLstackedChannelMatrixMinusTrans = llt.matrixL().solve(stackedChannelMatrixMinusFlipped.transpose());
+// 			MatrixXd invLstackedChannelMatrixMinusTrans = llt.matrixL().inverse()*stackedChannelMatrixMinusFlipped.transpose();
+// 			MatrixXd invLstackedChannelMatrixMinusTrans = L.inverse()*stackedChannelMatrixMinusFlipped.transpose();
             VectorXd transformedStackedObservationsMinus = invLstackedChannelMatrixMinusTrans*stackedObservationsMinus;
 
             // the covariance of the transformed observations is computed...

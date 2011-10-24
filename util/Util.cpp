@@ -21,6 +21,9 @@
 
 #include <bashcolors.h>
 
+// using std::cout;
+// using std::endl;
+
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
 {
     int i,nElements;

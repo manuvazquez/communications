@@ -24,8 +24,11 @@
     @author Manu <manu@rustneversleeps>
 */
 
-#define EIGEN
+// #define EIGEN
+// #include <Eigen/Core>
+// using namespace Eigen;
 
+#include <iostream>
 #include <stdint.h>
 #include <iomanip>
 #include <math.h>

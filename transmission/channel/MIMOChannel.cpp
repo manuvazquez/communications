@@ -22,7 +22,8 @@
 // #define DEBUG
 
 // so that eigen doesn't complain about A!=B matrix operations (it's been told that it's a bug...)
-#include<Eigen/Array>
+#include<Eigen/Core>
+// #include<Eigen/Array>
 
 MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {

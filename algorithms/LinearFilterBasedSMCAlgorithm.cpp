@@ -144,7 +144,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
             }
 
             // sampled symbol vector is stored for the corresponding particle
-            _particleFilter->getParticle(iParticle)->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector.start(_nInputs));
+            _particleFilter->getParticle(iParticle)->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector.head(_nInputs));
 
             // all the symbol vectors involved in the smoothing are kept in "forWeightUpdateNeededSymbols"
             // i) the already known:

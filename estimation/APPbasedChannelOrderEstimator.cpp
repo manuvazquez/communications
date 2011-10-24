@@ -53,7 +53,7 @@ MatrixXd APPbasedChannelOrderEstimator::computeProbabilities(const MatrixXd& obs
 
         for(iChannelOrder=0;iChannelOrder<channelMatrices.size();iChannelOrder++)
         {
-            _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations.col(i),channelMatrices[iChannelOrder][i-iFrom]*_symbolVector.end(_candidateOrders[iChannelOrder]*_nInputs),noiseVariances[i]);
+            _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations.col(i),channelMatrices[iChannelOrder][i-iFrom]*_symbolVector.tail(_candidateOrders[iChannelOrder]*_nInputs),noiseVariances[i]);
 
             normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
         }
@@ -91,7 +91,7 @@ void APPbasedChannelOrderEstimator::update(const VectorXd &observations,const st
         if(channelMatrices[iChannelOrder].cols()!=(_nInputs*_candidateOrders[iChannelOrder]))
             throw RuntimeException("APPbasedChannelOrderEstimator::update: one (or several) channel matrices has not the proper dimensions.");
         
-        _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations,channelMatrices[iChannelOrder]*_symbolVector.end(_candidateOrders[iChannelOrder]*_nInputs),noiseVariance);
+        _unnormalizedChannelOrderAPPs[iChannelOrder] = _channelOrderAPPs[iChannelOrder]* StatUtil::normalPdf(observations,channelMatrices[iChannelOrder]*_symbolVector.tail(_candidateOrders[iChannelOrder]*_nInputs),noiseVariance);
 
         normalizationCt += _unnormalizedChannelOrderAPPs[iChannelOrder];
     }

@@ -206,7 +206,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
             }
 
             // sampled symbol vector is stored for the corresponding particle
-            processedParticle->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector.start(_nInputs));
+            processedParticle->setSymbolVector(iObservationToBeProcessed,sampledSmoothingVector.head(_nInputs));
 
             sumLikelihoodsProd = 0.0;
 
@@ -244,7 +244,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
             } // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
 
             // the channel order estimator is updated
-            processedParticle->getChannelOrderEstimator()->update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector.start(_nInputs),noiseVariances[iObservationToBeProcessed]);
+            processedParticle->getChannelOrderEstimator()->update(observations.col(iObservationToBeProcessed),channelOrderEstimatorNeededSampledMatrices,sampledSmoothingVector.head(_nInputs),noiseVariances[iObservationToBeProcessed]);
 
             // the weight is updated
             processedParticle->setWeight((sumLikelihoodsProd/proposal)*processedParticle->getWeight());

@@ -74,17 +74,17 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-	_nFrames = 500;
-	_L=3,_N=3,_frameLength=300;
-	_m = 4;
-	_d = _m - 1;
-
-	_trainSeqLength = 15;
-
-	_preambleLength = 10;
-
-	// the algorithms with the higher smoothing lag require
-	_nSmoothingSymbolsVectors = 10;
+// 	_nFrames = 500;
+// 	_L=3,_N=3,_frameLength=300;
+// 	_m = 4;
+// 	_d = _m - 1;
+// 
+// 	_trainSeqLength = 15;
+// 
+// 	_preambleLength = 10;
+// 
+// 	// the algorithms with the higher smoothing lag require
+// 	_nSmoothingSymbolsVectors = 10;
 
 // ---------------------------- tesis ------------------------
 
@@ -100,16 +100,16 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// // 	_nFrames = 10000;
-// 	_nFrames = 500;
-// 	_L=8,_N=3,_frameLength=1000;
-// 	_m = 1;
-// 	_d = _m - 1;
-// 	_trainSeqLength = 0;
-// 	_preambleLength = 0;
-// 
-// 	// the algorithms with the higher smoothing lag require
-// 	_nSmoothingSymbolsVectors = 6;
+// 	_nFrames = 10000;
+	_nFrames = 2;
+	_L=8,_N=3,_frameLength=1000;
+	_m = 1;
+	_d = _m - 1;
+	_trainSeqLength = 0;
+	_preambleLength = 0;
+
+	// the algorithms with the higher smoothing lag require
+	_nSmoothingSymbolsVectors = 6;
 
 // 	_SNRs.push_back(0);
 	_SNRs.push_back(3);

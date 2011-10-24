@@ -93,7 +93,7 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
-    _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
+    _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean_eigen().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
 
     return _lastEstimatedChannelCoefficientsMatrix;
 }
@@ -130,21 +130,29 @@ double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd s
         
         
     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);
-    extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise)).lazy();
+//     extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise)).lazy();
+	extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
     
     
-    MatrixXd invNoiseVariance_extStateMeasurementMatrixT = (1.0/noiseVariance*extStateMeasurementMatrix.transpose()).lazy();
+//     MatrixXd invNoiseVariance_extStateMeasurementMatrixT = (1.0/noiseVariance*extStateMeasurementMatrix.transpose()).lazy();
+	MatrixXd invNoiseVariance_extStateMeasurementMatrixT = 1.0/noiseVariance*extStateMeasurementMatrix.transpose();
 
-    Eigen::LU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
+//     Eigen::LU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
+	PartialPivLU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
 
-    MatrixXd invB;
-    luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs),&invB);
+//     MatrixXd invB;
+//     luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs),&invB);
+	
+	MatrixXd invB = luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs));
     
-    VectorXd invPredictiveCovariancePredictiveMean = (invPredictiveCovariance*_kalmanFilter->predictiveMean_eigen()).lazy();
+//     VectorXd invPredictiveCovariancePredictiveMean = (invPredictiveCovariance*_kalmanFilter->predictiveMean_eigen()).lazy();
+	VectorXd invPredictiveCovariancePredictiveMean = invPredictiveCovariance*_kalmanFilter->predictiveMean_eigen();
     
-    VectorXd auxAuxArgExp = (invPredictiveCovariancePredictiveMean + invNoiseVariance_extStateMeasurementMatrixT*observations).lazy();
+//     VectorXd auxAuxArgExp = (invPredictiveCovariancePredictiveMean + invNoiseVariance_extStateMeasurementMatrixT*observations).lazy();
+	VectorXd auxAuxArgExp = invPredictiveCovariancePredictiveMean + invNoiseVariance_extStateMeasurementMatrixT*observations;
 
-    VectorXd auxAuxArgExpInvB = (invB.transpose()*auxAuxArgExp).lazy();
+//     VectorXd auxAuxArgExpInvB = (invB.transpose()*auxAuxArgExp).lazy();
+	VectorXd auxAuxArgExpInvB = invB.transpose()*auxAuxArgExp;
     
     double argExp = -0.5*(1.0/noiseVariance*observations.dot(observations) + _kalmanFilter->predictiveMean_eigen().dot(invPredictiveCovariancePredictiveMean) - auxAuxArgExpInvB.dot(auxAuxArgExp));
 
@@ -160,7 +168,7 @@ KalmanEstimator *KalmanEstimator::clone() const
 MatrixXd KalmanEstimator::sampleFromPredictive() const
 {
     return Util::toMatrix(
-        StatUtil::randnMatrix(_kalmanFilter->predictiveMean_eigen(),_kalmanFilter->predictiveCovariance_eigen()).end(_nChannelCoeffs)
+        StatUtil::randnMatrix(_kalmanFilter->predictiveMean_eigen(),_kalmanFilter->predictiveCovariance_eigen()).tail(_nChannelCoeffs)
         ,rowwise,_nChannelMatrixRows);
 }
 

@@ -61,9 +61,15 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         // the Cholesky decomposition of HtH
         Eigen::LLT<MatrixXd> lltOfHTH(H.transpose()*H);
         
-        VectorXd transformedObs = lltOfHTH.matrixL().inverse()*H.transpose()*observations.col(iProcessedObservation);
+// 		// the lower triangualr matrix of the Cholesky decomposition of HtH
+// 		MatrixXd L = (H.transpose()*H).llt().matrixL();
+		
+		VectorXd transformedObs = lltOfHTH.matrixL().solve(H.transpose()*observations.col(iProcessedObservation));
+// 		VectorXd transformedObs = lltOfHTH.matrixL().inverse()*H.transpose()*observations.col(iProcessedObservation);
+// 		VectorXd transformedObs = L.inverse()*H.transpose()*observations.col(iProcessedObservation);
         
-        MatrixXd U = lltOfHTH.matrixL().transpose();
+//         MatrixXd U = L.transpose();
+		 MatrixXd U = lltOfHTH.matrixL().transpose();
         
         // we start by the root node
         iCurrentNode = 0;    

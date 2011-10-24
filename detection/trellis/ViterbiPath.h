@@ -24,6 +24,7 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include <iostream>
 #include <types.h>
 #include <exceptions.h>
 

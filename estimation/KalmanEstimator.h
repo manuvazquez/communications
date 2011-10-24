@@ -49,7 +49,7 @@ public:
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
     virtual KalmanEstimator *clone() const;
     virtual MatrixXd sampleFromPredictive() const; // eigen
-    virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean_eigen().end(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
+    virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean_eigen().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix);
 	
 	//! it returns the corresponding covariance AS STORED by the internal Kalman Filter
