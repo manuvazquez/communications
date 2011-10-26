@@ -37,7 +37,7 @@ extern bool __nFramesHasBeenPassed;
 #define DATE_LENGTH 100
 
 // #define EXPORT_REAL_DATA
-#define EXPORT_REAL_CHANNEL_ORDER
+// #define EXPORT_REAL_CHANNEL_ORDER
 
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
@@ -74,7 +74,7 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 
 // ------------------------ iswcs 2010 ----------------------
-// 	_nFrames = 500;
+// 	_nFrames = 20;
 // 	_L=3,_N=3,_frameLength=300;
 // 	_m = 4;
 // 	_d = _m - 1;
@@ -110,6 +110,9 @@ BaseSystem::BaseSystem()
 
 	// the algorithms with the higher smoothing lag require
 	_nSmoothingSymbolsVectors = 6;
+
+
+// ----------------------------------------------------------
 
 // 	_SNRs.push_back(0);
 	_SNRs.push_back(3);
@@ -223,7 +226,7 @@ BaseSystem::BaseSystem()
 #endif
 
 #ifndef RANDOM_SEED
-        // we don't want the same bits to be generated over and over
+	// we don't want the same bits to be generated over and over
 	_randomGenerator.setSeed(3763650855);
 #endif
 
@@ -273,9 +276,6 @@ if(__nFramesHasBeenPassed)
 	{
 		_randomGenerator.setSeed(825535300);
 		StatUtil::getRandomGenerator().setSeed(500436508);
-		
-// 		_randomGenerator.setSeed(186951016);
-// 		StatUtil::getRandomGenerator().setSeed(3731316448);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -334,7 +334,7 @@ if(__nFramesHasBeenPassed)
             realChannel = _channel;
             realNoise = _noise;
 #endif
-
+			
         for(_iSNR=0;_iSNR<_SNRs.size();_iSNR++)
         {
             cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << _iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
@@ -386,7 +386,7 @@ if(__nFramesHasBeenPassed)
 // only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
 // FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
 #ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
-		_f.open(_tempOutputFileName,ofstream::trunc);
+	_f.open(_tempOutputFileName,ofstream::trunc);
 // otherwise the file pointer only gets initialized for the end frame
 #else
 	if(_iFrame==_nFrames-1)

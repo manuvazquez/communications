@@ -21,7 +21,7 @@
 #define USERSACTIVITYDISTRIBUTION_H
 
 /**
-It implements...
+It stores the parameters of the pmf of ONE user's activity
 
 	@author Manu <manu@rustneversleeps>
 */

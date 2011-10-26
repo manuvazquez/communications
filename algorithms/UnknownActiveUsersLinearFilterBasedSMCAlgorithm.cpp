@@ -131,7 +131,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
                     sumProb += symbolProb(iInput,iExtendedAlphabet);
                 }
                 
-                // the product of the normalization constants for all the users is computed (suma prob is the last normalization constant computed)
+                // the product of the normalization constants for all the users is computed (sumProb is the last normalization constant computed)
                 normConstantsProduct *= sumProb;
 
                 if(sumProb!=0)

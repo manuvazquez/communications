@@ -20,7 +20,7 @@
 #include <ChannelOrderEstimator.h>
 
 // #define DEBUG
-#define IMPORT_CHANNEL_ORDER
+// #define IMPORT_CHANNEL_ORDER
 
 #ifdef IMPORT_CHANNEL_ORDER
 	extern int realChannelOrder;
@@ -435,24 +435,24 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
     delete[] particleCandidates;
 }
 
-std::vector<std::vector<bool> > OneChannelOrderPerOutputSMCAlgorithm::imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates,uint nCandidates)
-{
-	int nStates = pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)));
-	
-	std::vector<std::vector<bool> > statesMasks(nStates,std::vector<bool>(nCandidates,false));
-	
-	for(int iState=0;iState<nStates;iState++)
-	{
-		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,realChannelOrder-1);
-		
-		for(uint iCandidate=0;iCandidate<nCandidates;iCandidate++)
-		{
-			if(particleCandidates[iCandidate].symbolVectorsMatrix.block(0,particleCandidates[iCandidate].symbolVectorsMatrix.cols()-realChannelOrder+1,_nInputs,realChannelOrder-1) == state)
-			{
-				statesMasks[iState][iCandidate] = true;
-			}
-		}
-	}
-	
-	return statesMasks;
-}
+// std::vector<std::vector<bool> > OneChannelOrderPerOutputSMCAlgorithm::imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates,uint nCandidates)
+// {
+// 	int nStates = pow(double(_alphabet.length()),double(_nInputs*(realChannelOrder-1)));
+// 	
+// 	std::vector<std::vector<bool> > statesMasks(nStates,std::vector<bool>(nCandidates,false));
+// 	
+// 	for(int iState=0;iState<nStates;iState++)
+// 	{
+// 		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,realChannelOrder-1);
+// 		
+// 		for(uint iCandidate=0;iCandidate<nCandidates;iCandidate++)
+// 		{
+// 			if(particleCandidates[iCandidate].symbolVectorsMatrix.block(0,particleCandidates[iCandidate].symbolVectorsMatrix.cols()-realChannelOrder+1,_nInputs,realChannelOrder-1) == state)
+// 			{
+// 				statesMasks[iState][iCandidate] = true;
+// 			}
+// 		}
+// 	}
+// 	
+// 	return statesMasks;
+// }

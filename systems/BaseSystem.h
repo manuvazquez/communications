@@ -66,8 +66,25 @@ protected:
     int _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
-    int _L,_frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
-	uint _nFrames,_N;
+
+	
+	/**
+	 * @brief number of outputs
+	 **/
+    int _L;
+
+	int _frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+	
+	/**
+	 * @brief number of frames to be simulated
+	 **/
+	uint _nFrames;
+	
+	/**
+	 * @brief number of inputs
+	 **/
+	uint _N;
+	
     char _outputFileName[HOSTNAME_LENGTH+4];
 	char _tempOutputFileName[HOSTNAME_LENGTH+4+4];
 
@@ -79,8 +96,10 @@ protected:
     // SNRs to be processed
     std::vector<int> _SNRs;
 
-    // when SER computing starts (with respect to the beginning of the frame length)
-    int _symbolsDetectionWindowStart;
+	/**
+	 * @brief when SER computing starts (with respect to the beginning of the frame length)
+	 **/
+	int _symbolsDetectionWindowStart;
 	
 	// when MSE computing starts (with respect to the beginning of the frame length)
 	int _MSEwindowStart;

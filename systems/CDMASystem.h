@@ -32,6 +32,11 @@
 */
 class CDMASystem : public SMCSystem
 {
+private:
+	/**
+	 * @brief this variable is set to true when the information regarding the pieces into which the data frame must be cut (according to the changes in the sign of the channel coefficients) to measure performance (ambiguity issues) is available
+	 **/
+	bool _piecesInfoAvailable;
 protected:
     MatrixXd _spreadingCodes;
     
@@ -67,16 +72,13 @@ protected:
 	
 	// needed for solving ambiguity when computing MSE
 	
-	// each element of the vector (a vector itself) stores the signs of the best permutation corresponding
-	// to one of the pieces into which the frame was dividing in order to compute the SER
+	// each element of the vector (a vector itself) stores the signs of the best permutation corresponding to one of the pieces into which the frame was dividing in order to compute the SER
 	std::vector<std::vector<int> > _piecesBestPermutationSigns;
 	
-	// each element of the vector stores the index of the best permutation corresponding to one of the
-	// pieces into which the frame was dividing in order to compute the SER
+	// each element of the vector stores the index of the best permutation corresponding to one of the pieces into which the frame was dividing in order to compute the SER
 	std::vector<uint> _piecesBestPermuationIndexes;
 	
-	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place
-	// it ALWAYS includes the first index (0) and the last ("frameLength")
+	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place. It ALWAYS includes the first index (0) and the last ("frameLength")
 	std::vector<uint> _signChanges;
 	
     virtual void addAlgorithms();
