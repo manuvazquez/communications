@@ -34,7 +34,7 @@ protected:
     std::vector<int> _candidateOrders;
     std::vector<double> _channelOrderAPPs;
 public:
-    ChannelOrderEstimator(int N, std::vector<int> candidateOrders);
+    ChannelOrderEstimator(uint N, std::vector<int> candidateOrders);
 
     ChannelOrderEstimator(std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
 

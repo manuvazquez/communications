@@ -27,13 +27,13 @@
 	extern Noise *realNoise;
 #endif
 
-TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, const MatrixXd &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
+TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, const MatrixXd &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
 {
 }
 
 void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    int m,iTxAntenna,iDelay;
+    uint m,iTxAntenna,iDelay;
     int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
     VectorXd CMEs(_candidateOrders.size());
     double accumulatedSquaredObservationsError;

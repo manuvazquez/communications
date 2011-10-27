@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(const MatrixXd &initialEstimation,int N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde_eigen(MatrixXd::Identity(_nInputsXchannelOrder,_nInputsXchannelOrder))
+RLSEstimator::RLSEstimator(const MatrixXd &initialEstimation,uint N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde_eigen(MatrixXd::Identity(_nInputsXchannelOrder,_nInputsXchannelOrder))
 {
 }
 

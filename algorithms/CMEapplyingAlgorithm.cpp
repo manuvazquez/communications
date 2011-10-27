@@ -27,7 +27,7 @@
     extern Noise *realNoise;
 #endif
 
-CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, preamble.cols())
+CMEapplyingAlgorithm::CMEapplyingAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, preamble.cols())
 {
 }
 
@@ -38,7 +38,8 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
 
 void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
-    int m,iTxAntenna,iRxAntenna,iDelay;
+    uint m,iDelay;
+	uint iTxAntenna,iRxAntenna;
     VectorXd CMEs(_candidateOrders.size());
 
 #ifdef EXPORT_REAL_DATA
@@ -55,7 +56,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
 //         preambleDetectedSymbolVectors << Util::lapack2eigen(_preamble),detectedSymbolVectors;
         preambleDetectedSymbolVectors << _preamble,detectedSymbolVectors;
 
-        int nSymbolVectors = detectedSymbolVectors.cols();
+        uint nSymbolVectors = detectedSymbolVectors.cols();
         double variance = noiseVariances[detectedSymbolVectors.cols()-1];
 
         m = _candidateOrders[iChannelOrder];
@@ -69,7 +70,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
             for(iDelay=0;iDelay<m;iDelay++)
             {
                 // symbols are transformed
-                for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
+                for(uint CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
                     C(CmatrixRow,iTxAntenna*m+iDelay) = preambleDetectedSymbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
 
                 // channel is transformed

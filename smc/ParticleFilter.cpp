@@ -21,7 +21,7 @@
 
 // #define DEBUG3
 
-ParticleFilter::ParticleFilter(int nParticles):_capacity(nParticles),_nParticles(0),_particles(new Particle*[nParticles])
+ParticleFilter::ParticleFilter(uint nParticles):_capacity(nParticles),_nParticles(0),_particles(new Particle*[nParticles])
 {
     for(uint i=0;i<_capacity;i++)
     {
@@ -49,7 +49,7 @@ void ParticleFilter::clear()
     _nParticles = 0;
 }
 
-void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes)
+void ParticleFilter::keepParticles(std::vector<uint> resamplingIndexes,std::vector<uint> indexes)
 {
     if(resamplingIndexes.size()!=indexes.size())
         throw RuntimeException("ParticleFilter::KeepParticles: the size of the indexes vector and resampling indexes vector don't match.");
@@ -66,7 +66,7 @@ void ParticleFilter::keepParticles(std::vector<int> resamplingIndexes,std::vecto
     }
 
     // the particles out of index are left the same. Their memory will not be released later
-    int previousResampledParticle = 0;
+    uint previousResampledParticle = 0;
     for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
     {
         while(previousResampledParticle<indexes[iParticle])

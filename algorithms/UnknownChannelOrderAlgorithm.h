@@ -33,8 +33,8 @@ class UnknownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
     vector<ChannelMatrixEstimator *> _channelEstimators;
-    vector<int> _candidateOrders;
-    int _maxOrder,_iFirstObservation,_nInputsXmaxChannelOrder;
+    vector<uint> _candidateOrders;
+    uint _maxOrder,_iFirstObservation,_nInputsXmaxChannelOrder;
     int *_channelOrder2index;
     MatrixXd _preamble;   
 
@@ -44,7 +44,7 @@ protected:
     std::vector<MatrixXd> _channelOrderAPPs;
 // 	MatrixXd _channelOrderAPPs;
 public:
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,int iFirstObservation);
+    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 

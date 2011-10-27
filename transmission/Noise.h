@@ -30,13 +30,13 @@
 
 class Noise{
 protected:
-	int _nOutputs,_length;
+	uint _nOutputs,_length;
 public:
-    Noise(int nOutputs,int length);
+    Noise(uint nOutputs,uint length);
 	virtual ~Noise() {};
 
-	int length() const { return _length;}
-	int nOutputs() const { return _nOutputs;}
+	uint length() const { return _length;}
+	uint nOutputs() const { return _nOutputs;}
 	virtual void print() const = 0;
 	virtual double stdDevAt(int n) const = 0;
     

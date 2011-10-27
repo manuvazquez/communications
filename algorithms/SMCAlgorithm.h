@@ -44,7 +44,7 @@ protected:
     ParticleFilter *_particleFilter;
     bool _particleFilterNeedToBeDeleted;
     ResamplingAlgorithm *_resamplingAlgorithm;
-    int _d,_startDetectionTime;
+    uint _d,_startDetectionTime;
 
     // a particle contains a vector of channel estimators (and possibly linear detectors)
     int _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
@@ -72,7 +72,7 @@ protected:
     virtual void beforeInitializingParticles(const MatrixXd &observations, const MatrixXd &trainingSequence) {}
 
 public:
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances);
+    SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances);
 
     /**
      * Constructor for allowing the algorithm to operate over a already constructed particle filter
@@ -88,7 +88,7 @@ public:
      * @param particleFilter
      * @param resamplingAlgorithm
      */
-    SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, MatrixXd preamble,int smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm);
+    SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, MatrixXd preamble,uint smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm);
 
     ~SMCAlgorithm();
 

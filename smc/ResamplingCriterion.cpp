@@ -23,13 +23,13 @@ ResamplingCriterion::ResamplingCriterion(double resamplingRatio): _resamplingRat
 {
 }
 
-bool ResamplingCriterion::resamplingNeeded(VectorXd weights,std::vector<int> indexes)
+bool ResamplingCriterion::resamplingNeeded(VectorXd weights,std::vector<uint> indexes)
 {
     double weights2Sum,nEffectiveParticles;
-    int nParticles = indexes.size();
+    uint nParticles = indexes.size();
 
     weights2Sum = 0;
-    for(int i=0;i<nParticles;i++)
+    for(uint i=0;i<nParticles;i++)
         weights2Sum += weights(indexes[i])*weights(indexes[i]);
 
     if(weights2Sum==0)

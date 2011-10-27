@@ -2,6 +2,7 @@
 #include <math.h>
 #include "Alphabet.h"
 #include "exceptions.h"
+#include <assert.h>
 
 // #define DEBUG
 
@@ -80,13 +81,14 @@ void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const
 		res[tamVector-i] = _symbols[0];
 }
 
-int Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const
+uint Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const
 {
-	int size = symbolsVector.size();
+	uint size = symbolsVector.size();
+	assert(size>0);
 
-	int res = 0, base = 1;
+	uint res = 0, base = 1;
 	vector<tSymbol>::const_iterator iterator;
-	for(int i=size-1;i>=0;i--)
+	for(uint i=size-1;i>=0;i--)
 	{
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())
@@ -104,9 +106,9 @@ tSymbol Alphabet::hardDecision(double softEstimation) const
 	double distance;
 
 	double minDistance = fabs(softEstimation - _symbols[0]);
-	int iMin = 0;
+	uint iMin = 0;
 
-	for(int i=1;i<_length;i++)
+	for(uint i=1;i<_length;i++)
 	{
 		distance = fabs(softEstimation - _symbols[i]);
 		if(distance<minDistance)
@@ -132,6 +134,7 @@ bool Alphabet::doesItBelong(const tSymbol symbol) const
 
 VectorXd Alphabet::int2eigenVector(int number, uint length) const
 {
+	assert(number>=0);
 	if(number>=pow((double)_length,(double)length))
 		throw RuntimeException("Alphabet::int2eigenVector: vector size is smaller than needed.");
 

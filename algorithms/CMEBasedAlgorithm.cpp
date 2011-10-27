@@ -27,14 +27,14 @@
     extern Noise *realNoise;
 #endif
 
-CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, const MatrixXd &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
+CMEBasedAlgorithm::CMEBasedAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, const MatrixXd &symbolVectors): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation),_symbolVectors(symbolVectors)
 {
 }
 
 void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    int m,iTxAntenna,iRxAntenna,iDelay;
-    int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
+    uint m,iTxAntenna,iRxAntenna,iDelay;
+    uint nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
     std::vector<double> CMEs(_candidateOrders.size());
 
 #ifdef IMPORT_REAL_DATA
@@ -47,7 +47,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
         m = _candidateOrders[iChannelOrder];
 
         // channel estimation
-        for(int iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
+        for(uint iSymbolVector=_preamble.cols();iSymbolVector<_iLastSymbolVectorToBeDetected;iSymbolVector++)
             _channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),noiseVariances[iSymbolVector]);
 
         MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
@@ -59,7 +59,7 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
             for(iDelay=0;iDelay<m;iDelay++)
             {
                 // symbols are transformed
-                for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
+                for(uint CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
                     C(CmatrixRow,iTxAntenna*m+iDelay) = _symbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
 
                 // channel is transformed

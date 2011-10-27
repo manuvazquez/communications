@@ -27,7 +27,7 @@
     extern Noise *realNoise;
 #endif
 
-UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdfs(usersActivityPdfs)
+UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdfs(usersActivityPdfs)
 {
     _randomParticlesInitilization = true; 
 }
@@ -44,7 +44,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
       ChannelMatrixEstimator *channelMatrixEstimatorClone;
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         
@@ -61,7 +61,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 
 void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
-    int iParticle,iExtendedAlphabet,iSampled;
+    uint iParticle,iExtendedAlphabet,iSampled;
     double s2q,sumProb,likelihood;
     MatrixXd forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
     
@@ -83,13 +83,12 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
     VectorXd sampledVector(_nInputs);    
     MatrixXd noiseCovariance = MatrixXd::Zero(_nOutputs,_nOutputs);
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
 #ifdef DEBUG
             cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
 #endif    
         // noise covariance needs to be constructed
-		// FIXME: _nOutputs should be an uint
         for(iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
             noiseCovariance(iOutput,iOutput) = noiseVariances[iObservationToBeProcessed];
 
@@ -106,8 +105,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
 			probSoftEstGivenSampledSymbolsProduct = 1.0;
 			
             // sampling
-			// FIXME: _nInputs should be an uint
-            for(iInput=0;iInput<static_cast<uint>(_nInputs);iInput++)
+            for(iInput=0;iInput<_nInputs;iInput++)
             {
                 s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iInput,noiseVariances[iObservationToBeProcessed]);
                    

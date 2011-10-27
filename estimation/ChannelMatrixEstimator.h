@@ -31,7 +31,7 @@
 
 class ChannelMatrixEstimator{
 protected:
-    int _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
+    uint _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
 
 	// this stores the last estimated channel coefficients
     MatrixXd _lastEstimatedChannelCoefficientsMatrix;
@@ -42,7 +42,7 @@ public:
 	  \param initialEstimation a matrix representing the initial estimation. It's what \ref lastEstimatedChannelMatrix returns when \ref nextMatrix hasn't been called yet
 	  \param N number of inputs of the system
 	*/
-    ChannelMatrixEstimator(MatrixXd initialEstimation,int N);
+    ChannelMatrixEstimator(MatrixXd initialEstimation,uint N);
     virtual ~ChannelMatrixEstimator() {};
 
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelCoefficientsMatrix = matrix;} // eigen

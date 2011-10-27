@@ -34,12 +34,12 @@ class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
 	ChannelMatrixEstimator *_channelEstimator;
-	int _channelOrder,_nInputsXchannelOrder;
+	uint _channelOrder,_nInputsXchannelOrder;
     MatrixXd _preamble;   
 
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator,MatrixXd preamble);
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,MatrixXd preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,MatrixXd preamble);
+    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble);
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::channelMatrices2stackedChannelMatrix;

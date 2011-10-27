@@ -36,14 +36,14 @@ enum tStage {exitStage,arrivalStage};
 class ViterbiAlgorithm : public KnownChannelAlgorithm
 {
 protected:
-    int _d;
+    uint _d;
     Trellis *_trellis;
     ViterbiPath *_exitStage, *_arrivalStage;
     MatrixXd _preamble,*_detectedSymbolVectors;
 	
 	//! this is needed for algorithms that are children of Viterbi and require some kind of special initialization involving the first observation
 	//! e.g. ViterbiAlgorithmWithAprioriProbabilities
-	int _iFirstInLoopProcessedObservation;
+	uint _iFirstInLoopProcessedObservation;
 
     virtual void deployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
 	void swapStages();
@@ -51,19 +51,19 @@ protected:
 	/*!
 	  it peforms the basic operations of any Viterbi algorithm (expansion of nodes, keep the best...). Specific operations for a particular Viterbi algorithm must be carried out in \ref run
 	*/
-	void process(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+	void process(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt);
 
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag);
+    ViterbiAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag);
 
     ~ViterbiAlgorithm();
 
-    int bestState()
+    uint bestState()
     {
-        int bestState = 0;
+        uint bestState = 0;
         double bestCost = _exitStage[0].getCost();
 
-        for(int iState=1;iState<_trellis->nStates();iState++)
+        for(uint iState=1;iState<_trellis->nStates();iState++)
             if(_exitStage[iState].getCost() < bestCost)
             {
                 bestState = iState;
@@ -75,7 +75,7 @@ public:
     void run(MatrixXd observations, vector< double > noiseVariances);    
 
     // detection will not start until the "firstSymbolVectorDetectedAt" observation
-    virtual void run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt);
+    virtual void run(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt);
     
     MatrixXd getDetectedSymbolVectors();
     void printStage(tStage exitOrArrival);

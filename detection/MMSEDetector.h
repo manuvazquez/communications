@@ -32,14 +32,14 @@
 class MMSEDetector : public LinearDetector
 {
 protected:
-	int _nSymbolsToBeDetected,_detectionStart;
+	uint _nSymbolsToBeDetected,_detectionStart;
     MatrixXd _filter_eigen;   
 
 	// required for nthSymbolVariance computing
     MatrixXd _channelMatrix_eigen,_Rx_eigen;   
 public:
-    MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected);
-    MMSEDetector(int rows, int cols, double alphabetVariance,int nSymbolsToBeDetected,int startingFrom);
+    MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected);
+    MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom);
 
     virtual MMSEDetector * clone();
     virtual MatrixXd computedFilter_eigen();

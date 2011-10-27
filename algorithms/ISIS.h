@@ -40,9 +40,9 @@ protected:
     virtual void process(const MatrixXd& observations, vector<double> noiseVariances);
 
 	// it's never gonna be called
-    int iBestChannelOrder(int iBestParticle) { return 0;}
+    uint iBestChannelOrder(uint iBestParticle) { return 0u;}
 public:
-    ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+    ISIS(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
     vector<MatrixXd> getEstimatedChannelMatrices();
 };

@@ -21,13 +21,13 @@
 
 Bits Demodulator::demodulate(const MatrixXd &symbols,Alphabet alphabet)
 {
-    int nBitsByStream = symbols.cols()*alphabet.nBitsPerSymbol();
-    int nStreams = symbols.rows();
+    uint nBitsByStream = symbols.cols()*alphabet.nBitsPerSymbol();
+    uint nStreams = symbols.rows();
     tBit *matrix = new tBit[nStreams*nBitsByStream];
 
-    int iBit,j,k;
+    uint iBit,j,k;
 
-    for(int i=0;i<nStreams;i++)
+    for(uint i=0;i<nStreams;i++)
     {
         iBit = 0;
         for(j=0;j<symbols.cols();j++)
@@ -45,15 +45,15 @@ std::vector<std::vector<bool> > Demodulator::demodulate(const std::vector<std::v
   if(mask.size()==0)
 	throw RuntimeException("Demodulator::demodulate: the mask is empty.");
 
-  int nBitsPerStream = mask[0].size()*alphabet.nBitsPerSymbol();
-  int nStreams = mask.size();
+  uint nBitsPerStream = mask[0].size()*alphabet.nBitsPerSymbol();
+  uint nStreams = mask.size();
   std::vector<std::vector<bool> > res(nStreams,std::vector<bool>(nBitsPerStream));
 
   
-  int iBit,k;
+  uint iBit,k;
   uint j;
 
-  for(int i=0;i<nStreams;i++)
+  for(uint i=0;i<nStreams;i++)
   {
 	iBit = 0;
 	for(j=0;j<mask[i].size();j++)
@@ -76,18 +76,18 @@ Bits Demodulator::demodulate(const MatrixXd &symbols,const Alphabet &alphabet,co
   if(mask.size()==0)
 	throw RuntimeException("Demodulator::demodulate: the mask is empty.");
   
-  if(symbols.rows()!=mask.size() || symbols.cols()!=mask[0].size())
+  if(static_cast<uint>(symbols.rows())!=mask.size() || static_cast<uint>(symbols.cols())!=mask[0].size())
 	throw RuntimeException("Demodulator::demodulate: symbols and mask size doesn't match.");
   
-  int nBitsPerStream = symbols.cols()*alphabet.nBitsPerSymbol();
-  int nStreams = symbols.rows();
+  uint nBitsPerStream = symbols.cols()*alphabet.nBitsPerSymbol();
+  uint nStreams = symbols.rows();
   tBit *matrix = new tBit[nStreams*nBitsPerStream];
 
   vector<tBit> noSymbolBitsSequence(alphabet.nBitsPerSymbol(),Bits::noDataBitValue());
 
-  int iBit,j,k;
+  uint iBit,j,k;
 
-  for(int i=0;i<nStreams;i++)
+  for(uint i=0;i<nStreams;i++)
   {
 	iBit = 0;
 	for(j=0;j<symbols.cols();j++)

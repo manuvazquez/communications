@@ -50,11 +50,11 @@
 class SMCSystem : public BaseSystem
 {
 protected:
-    int nParticles;
+    uint nParticles;
     double resamplingRatio;
 
     // back and forward smoothing
-    int c,e;
+    uint c,e;
 
     std::vector<double> ARcoefficients;
     double ARvariance;

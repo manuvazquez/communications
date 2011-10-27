@@ -33,7 +33,7 @@ about the activity pdfs (transition and a priori)
 class CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge : public SMCAlgorithm
 {
 public:
-    CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances);
+    CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances);
 
 protected:
     virtual void initializeParticles();

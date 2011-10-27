@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),
 // _variables initialization
 _particleFilter(new ParticleFilter(nParticles)),
 _particleFilterNeedToBeDeleted(true),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_estimatorIndex(0),
@@ -41,7 +41,7 @@ _channelMean(Util::toVector(channelMatrixMean,rowwise)),_channelCovariance(Util:
 }
 
 // constructor that receives an already functional particle filter
-SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, MatrixXd preamble,int smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, preamble),
+SMCAlgorithm::SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, MatrixXd preamble,uint smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, preamble),
 // _variables initialization
 _particleFilter(particleFilter),_particleFilterNeedToBeDeleted(false),_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_estimatorIndex(0)
 {
@@ -71,7 +71,7 @@ void SMCAlgorithm::initializeParticles()
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
@@ -112,7 +112,7 @@ void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("SMCAlgorithm::Run: Observations matrix or training sequence dimensions are wrong.");
 
-    int iParticle,j;
+    uint iParticle,j;
     
     MatrixXd preambleTrainingSequence(trainingSequence.rows(),_preamble.cols()+trainingSequence.cols());
     preambleTrainingSequence << _preamble,trainingSequence;    
@@ -154,7 +154,7 @@ vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices()
     // best particle is chosen
     int iBestParticle = _particleFilter->iBestParticle();
 
-    for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
+    for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
         channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iBestParticle))->getChannelMatrix(_estimatorIndex,i));
 
     return channelMatrices;
@@ -164,7 +164,7 @@ double SMCAlgorithm::smoothedLikelihood(const vector<MatrixXd> &channelMatrices,
 {
     double likelihoodsProd = 1.0;
 
-    for(int iSmoothing=0;iSmoothing<=_d;iSmoothing++)
+    for(uint iSmoothing=0;iSmoothing<=_d;iSmoothing++)
     {
         VectorXd stackedSymbolVector = Util::toVector(involvedSymbolVectors.block(0,iSmoothing,_nInputs,_channelOrder),columnwise);
 

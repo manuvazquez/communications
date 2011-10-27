@@ -32,7 +32,7 @@ class KnownChannelAlgorithm : public Algorithm
 protected:
 	const MIMOChannel &_channel;
 public:
-    KnownChannelAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const MIMOChannel &channel);
+    KnownChannelAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel &channel);
     
     using Algorithm::run;
 

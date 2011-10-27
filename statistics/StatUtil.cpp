@@ -31,12 +31,12 @@
   Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
 #endif
 
-int StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)
+uint StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)
 {
-    int i;
+    uint i;
     double uniform;
 
-    int nProbabilities = probabilities.size();
+    uint nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
     distributionFunction[0] = probabilities(0);
@@ -45,7 +45,7 @@ int StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator
 
     uniform = randomGenerator.rand();
     
-    int res = 0;
+    uint res = 0;
     while(uniform>distributionFunction[res])
         res++;
 
@@ -140,7 +140,7 @@ double StatUtil::normalPdf(double x,double mean,double variance)
 
 double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance)
 {
-    int N = x.size();
+    uint N = x.size();
     
     Eigen::LDLT<MatrixXd> ldltOfCovariance(covariance);
 

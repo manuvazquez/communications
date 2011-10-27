@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "LinearFilterBasedCMEapplyingAlgorithm.h"
 
-LinearFilterBasedCMEapplyingAlgorithm::LinearFilterBasedCMEapplyingAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, vector< LinearDetector *> linearDetectors, double ARcoefficient, bool substractContributionFromKnownSymbols): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_algorithmAlreadyExecuted(channelEstimators.size(),false)
+LinearFilterBasedCMEapplyingAlgorithm::LinearFilterBasedCMEapplyingAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, vector< LinearDetector *> linearDetectors, double ARcoefficient, bool substractContributionFromKnownSymbols): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_algorithmAlreadyExecuted(channelEstimators.size(),false)
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         algorithms.push_back(new LinearFilterBasedAlgorithm("foo",alphabet,L,Nr,N,iLastSymbolVectorToBeDetected,_candidateOrders[iChannelOrder],channelEstimators[iChannelOrder],preamble,0,_candidateOrders[iChannelOrder]-1,linearDetectors[iChannelOrder],ARcoefficient,substractContributionFromKnownSymbols));

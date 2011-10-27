@@ -21,14 +21,14 @@
 
 // #define DEBUG4
 
-TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
+TriangularizationBasedSMCAlgorithm::TriangularizationBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,double ARcoefficient,double ARprocessVariance): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_ARcoefficient(ARcoefficient),_ARprocessVariance(ARprocessVariance)
 {
 //     _randomParticlesInitilization = true;
 }
 
 void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-    int iParticle,iSmoothing,iAlphabet,iSampled;
+    uint iParticle,iSmoothing,iAlphabet,iSampled;
     double proposal,observationWithouNoise,sumProb,likelihoodsProd;
     vector<MatrixXd> matricesToStack(_d+1,MatrixXd(_nOutputs,_nInputsXchannelOrder));
     MatrixXd observationsCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
@@ -36,7 +36,7 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
     int NmMinus1 = _nInputs*(_channelOrder-1);
     VectorXd symbolProbabilities(_alphabet.length());
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         // the stacked observations vector
         VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed,_nOutputs,_d+1),columnwise);
@@ -80,7 +80,7 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
 
             // ...starting by the covariance of the normal observations
             for(iSmoothing=0;iSmoothing<_d+1;iSmoothing++)
-                for(int i=0;i<_nOutputs;i++)
+                for(uint i=0;i<_nOutputs;i++)
                     observationsCovariance(iSmoothing*_nOutputs+i,iSmoothing*_nOutputs+i) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
             MatrixXd transformedStackedObservationsCovariance = invLstackedChannelMatrixMinusTrans*observationsCovariance*invLstackedChannelMatrixMinusTrans.transpose();

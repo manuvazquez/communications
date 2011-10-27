@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,int smoothingLag): KnownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,  channel),_d(smoothingLag),_trellis(NULL),_preamble(preamble),_detectedSymbolVectors(NULL),_iFirstInLoopProcessedObservation(_preamble.cols())
+ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag): KnownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,  channel),_d(smoothingLag),_trellis(NULL),_preamble(preamble),_detectedSymbolVectors(NULL),_iFirstInLoopProcessedObservation(_preamble.cols())
 {
     if(preamble.cols() < (channel.memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");
@@ -41,7 +41,7 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     run(observations,noiseVariances,_iLastSymbolVectorToBeDetected+_d);
 }
 
-void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt)
 {
   const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
   
@@ -70,10 +70,10 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,i
   process(observations,noiseVariances,firstSymbolVectorDetectedAt);
 }
 
-void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt)
 {  
     const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
-    int iState,iProcessedObservation,iBestState;
+    uint iState,iProcessedObservation,iBestState;
 
     // memory for the symbol vectors being detected is reserved
     _detectedSymbolVectors = new MatrixXd(channel.nInputs(),_iLastSymbolVectorToBeDetected+_d);
@@ -141,7 +141,7 @@ void ViterbiAlgorithm::deployState(int iState,const VectorXd &observations,const
 	symbolVectors.block(0,0,channel.nInputs(),channel.memory()-1) = _alphabet.int2eigenMatrix(iState,channel.nInputs(),channel.memory()-1);
 	
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
 		symbolVectors.col(channel.memory()-1) = _alphabet.int2eigenVector(iInput,channel.nInputs());
 		
@@ -174,7 +174,7 @@ void ViterbiAlgorithm::printStage(tStage exitOrArrival)
     else
         stage = _arrivalStage;
 
-    for(int i=0;i<_trellis->nStates();i++)
+    for(uint i=0;i<_trellis->nStates();i++)
     {
         cout << "State " << i << endl;
         if(stage[i].isEmpty())
@@ -193,6 +193,6 @@ void ViterbiAlgorithm::swapStages()
   _arrivalStage = aux;
 
   // the _arrivalStage (old _exitStage) gets cleaned
-  for(int iState=0;iState<_trellis->nStates();iState++)
+  for(uint iState=0;iState<_trellis->nStates();iState++)
 	  _arrivalStage[iState].clean();
 }

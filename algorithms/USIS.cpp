@@ -22,7 +22,7 @@
 // #define DEBUG
 // #define VIEJA
 
-USIS::USIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_processDoneExternally(false)
+USIS::USIS(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators,vector<LinearDetector *> linearDetectors, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm,ChannelOrderEstimator * channelOrderEstimator,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_linearDetectors(linearDetectors.size()),_channelOrderEstimator(channelOrderEstimator->clone()),_particleFilter(nParticles),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_processDoneExternally(false)
 {
     if(linearDetectors.size()!=_candidateOrders.size())
         throw RuntimeException("USIS::USIS: number of detectors and number of channel matrix estimators (and candidate orders) are different.");
@@ -43,7 +43,7 @@ USIS::~USIS()
 void USIS::initializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
         // a clone of each of the channel matrix estimators...
         vector<ChannelMatrixEstimator *> thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -69,9 +69,9 @@ void USIS::initializeParticles()
 
 void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-    int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
+    uint iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
     uint iChannelOrder;
-    int m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
+    uint m,d,Nm,nLinearFiltersNeeded,iLinearFilterNeeded;
     vector<vector<MatrixXd> > matricesToStack(_candidateOrders.size());
     uint _nInputs_maxOrder = _nInputs*_maxOrder;
     VectorXd sampledVector(_nInputs),sampledSmoothingVector(_nInputs_maxOrder);
@@ -91,7 +91,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
     // _maxOrder = d_{max} + 1
     MatrixXd noiseCovariances[_maxOrder];
 
-    int iObservationToBeProcessed = _startDetectionTime;
+    uint iObservationToBeProcessed = _startDetectionTime;
     while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
     {
         // the stacked observations vector

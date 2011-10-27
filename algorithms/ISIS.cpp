@@ -21,14 +21,14 @@
 
 // #define DEBUG3
 
-ISIS::ISIS(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
+ISIS::ISIS(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm): MultipleChannelEstimatorsPerParticleSMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(nParticles)
 {
 }
 
 void ISIS::initializeParticles()
 {
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
     {
 		// a clone of each of the channel matrix estimators is constructed...
 		vector< ChannelMatrixEstimator * > thisParticleChannelMatrixEstimators(_candidateOrders.size());
@@ -43,8 +43,8 @@ void ISIS::initializeParticles()
 // eigen
 void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
-    int m,d,iSmoothingVector,nSmoothingVectors,Nm;
-    int iSmoothingLag,iParticle,iSampledVector;
+    uint m,d,iSmoothingVector,nSmoothingVectors,Nm;
+    uint iSmoothingLag,iParticle,iSampledVector;
     uint iChannelOrder,k;
     vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
     double auxLikelihoodsProd,channelOrderAPPsNormConstant/*,newChannelOrderAPP*/;
@@ -52,19 +52,19 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
 
     double *newChannelOrderAPPs = new double[_candidateOrders.size()];
 
-    int nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+    uint nSymbolVectors = (uint) pow((double)_alphabet.length(),(double)_nInputs);
 
     // a likelihood is computed for every possible symbol vector
     VectorXd likelihoods(nSymbolVectors);
 
     // for each time instant
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         for(iParticle=0;iParticle<_particleFilter.capacity();iParticle++)
         {
             ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> ( _particleFilter.getParticle(iParticle));
 
-            for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+            for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
             {
 
                 likelihoods(iTestedVector) = 0.0;
@@ -79,7 +79,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
                     // channel order dependent variables
                     Nm = _nInputs*m;
                     d = _maxOrder-1;
-                    nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*d));
+                    nSmoothingVectors = (uint) pow((double)_alphabet.length(),(double)(_nInputs*d));
                     vector<tSymbol> testedSmoothingVector(_nInputs*d);
                     
                     // it includes all symbol vectors involved in the smoothing
@@ -127,7 +127,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
 
                 } // for(iChannelOrder=0;iChannelOrder<_candidateOrders.size())
 
-            } // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+            } // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
             VectorXd probabilities(nSymbolVectors);
             try {

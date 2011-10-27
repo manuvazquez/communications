@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, int N, const MatrixXd &spreadingCodes): KnownChannelChannelMatrixEstimator(channel, iFirstChannelMatrix, N),_spreadingCodes(spreadingCodes)
+CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, uint N, const MatrixXd &spreadingCodes): KnownChannelChannelMatrixEstimator(channel, iFirstChannelMatrix, N),_spreadingCodes(spreadingCodes)
 {
     if(_channel->at(iFirstChannelMatrix).rows()!=1)
         throw RuntimeException("CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator: channel matrices don't have a single row.");
@@ -29,7 +29,6 @@ CDMAKnownChannelChannelMatrixEstimator::CDMAKnownChannelChannelMatrixEstimator(c
     _nOutputs = _spreadingCodes.rows();
 }
 
-// eigen
 double CDMAKnownChannelChannelMatrixEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
     if(symbolsMatrix.cols()!=1)
@@ -37,7 +36,7 @@ double CDMAKnownChannelChannelMatrixEstimator::likelihood(const VectorXd &observ
     
     MatrixXd channelCoefficientsXsymbols = symbolsMatrix;
         
-    for(int i=0;i<_nInputs;i++)
+    for(uint i=0;i<_nInputs;i++)
         channelCoefficientsXsymbols(i,0) *= _lastEstimatedChannelCoefficientsMatrix(0,i);
          
     return StatUtil::normalPdf(observations,_spreadingCodes*channelCoefficientsXsymbols,noiseVariance);

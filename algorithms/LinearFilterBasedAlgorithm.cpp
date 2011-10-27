@@ -22,7 +22,7 @@
 // #define DEBUG
 #include <KnownSymbolsKalmanEstimator.h>
 
-LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_c(backwardsSmoothingLag),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_c(backwardsSmoothingLag),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -73,11 +73,11 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     }
 
     vector<MatrixXd> matricesToStack(_c+_d+1);
-    int iSmoothing,iRow;
+    uint iSmoothing,iRow;
     MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*(_c+_d+1),_nOutputs*(_c+_d+1));
     double ARcoefficientPower;
 
-    for(int iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         // already estimated channel matrices are stored in a vector in order to stack them
         for(iSmoothing=-_c;iSmoothing<0;iSmoothing++)
@@ -130,7 +130,7 @@ vector<MatrixXd> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices()
     vector<MatrixXd> channelMatrices;
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
-    for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
+    for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
         channelMatrices.push_back(_estimatedChannelMatrices[i]);
 
     return channelMatrices;

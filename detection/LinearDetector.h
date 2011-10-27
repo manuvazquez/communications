@@ -29,7 +29,7 @@
 
 class LinearDetector{
 protected:
-    int _channelMatrixRows, _channelMatrixCols;
+    uint _channelMatrixRows, _channelMatrixCols;
     double _alphabetVariance;
 public:
     LinearDetector(int rows,int cols,double alphabetVariance);
@@ -44,10 +44,10 @@ public:
     virtual double nthSymbolVariance(int n,double noiseVariance) = 0;
     virtual double nthSymbolGain(int n) const { return 1.0;}
     virtual ~LinearDetector() {}
-    int channelMatrixcols() { return _channelMatrixCols;}
+    uint channelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
     
-    void stateStepsFromObservationsSequence(const MatrixXd &observations,int smoothingLag,int iFrom,int iTo);
+    void stateStepsFromObservationsSequence(const MatrixXd &observations,uint smoothingLag,int iFrom,int iTo);
 };
 
 #endif

@@ -21,9 +21,9 @@
 
 // #define DEBUG2
 
-EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, int preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
+EstimatedMIMOChannel::EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, uint preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
 {
-	int i;
+	uint i;
 
 	ChannelMatrixEstimator *channelMatrixEstimatorClone = channelMatrixEstimator->clone();
 

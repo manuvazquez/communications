@@ -46,8 +46,8 @@ MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVect
             
     MatrixXd CS = MatrixXd::Zero(_nOutputs,_nInputs);
     
-    for(int i=0;i<_nOutputs;i++)
-        for(int j=0;j<_nInputs;j++)
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=0;j<_nInputs;j++)
             CS(i,j) = _spreadingCodes(i,j)*symbolsVector(j);            
             
 #ifdef PRINT_INFO
@@ -65,8 +65,8 @@ MatrixXd CDMAKalmanEstimator::sampleFromPredictive() const
         throw RuntimeException("CDMAKalmanEstimator::sampleFromPredictive_eigen: sampled channel matrix is not a row vector.");
     
     MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
-    for(int i=0;i<_nOutputs;i++)
-        for(int j=0;j<_nInputs;j++)
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=0;j<_nInputs;j++)
             spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
             
     return spreadingCodesXsampledChannelMatrix;
@@ -80,8 +80,8 @@ MatrixXd CDMAKalmanEstimator::lastEstimatedChannelMatrix() const
         throw RuntimeException("CDMAKalmanEstimator::lastEstimatedChannelMatrix_eigen: sampled channel matrix is not a row vector.");
     
     MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
-    for(int i=0;i<_nOutputs;i++)
-        for(int j=0;j<_nInputs;j++)
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=0;j<_nInputs;j++)
             spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
             
     return spreadingCodesXsampledChannelMatrix;
@@ -95,8 +95,8 @@ MatrixXd CDMAKalmanEstimator::getPredictive() const
         throw RuntimeException("CDMAKalmanEstimator::getPredictive: sampled channel matrix is not a row vector.");
     
     MatrixXd spreadingCodesXsampledChannelMatrix = _spreadingCodes;
-    for(int i=0;i<_nOutputs;i++)
-        for(int j=0;j<_nInputs;j++)
+    for(uint i=0;i<_nOutputs;i++)
+        for(uint j=0;j<_nInputs;j++)
             spreadingCodesXsampledChannelMatrix(i,j) *= sampledChannelMatrix(0,j);
             
     return spreadingCodesXsampledChannelMatrix;

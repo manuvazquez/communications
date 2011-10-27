@@ -41,7 +41,7 @@ protected:
 	std::vector<std::vector<bool> > imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates, uint nCandidates);
 
 public:
-    PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*,double ARcoefficient*/);
+    PSPBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*,double ARcoefficient*/);
 
     virtual void initializeParticles();
     virtual void process(const MatrixXd& observations, vector< double > noiseVariances);

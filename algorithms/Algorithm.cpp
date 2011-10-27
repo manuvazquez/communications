@@ -18,19 +18,20 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 #include "Algorithm.h"
+#include <assert.h>
 
 // #define DEBUG
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N,int iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
+Algorithm::Algorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N,uint iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
 }
 
 double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 {
-    int windowSize = channelMatrices.size();
+    uint windowSize = channelMatrices.size();
 
     vector<MatrixXd> estimatedChannelMatrices = getEstimatedChannelMatrices();
-    int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
+    uint nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
     // if the algorithm didn't make channel estimation
     if(nEstimatedChannelMatrices==0)
@@ -40,7 +41,9 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
         throw RuntimeException("Algorithm::MSE: more channel matrices passed than detected.");
 
     double mse = 0;
-    int windowStart = nEstimatedChannelMatrices - windowSize;
+	
+	assert(nEstimatedChannelMatrices>=windowSize);
+    uint windowStart = nEstimatedChannelMatrices - windowSize;
 
 #ifdef DEBUG
 	cout << "computing MSE..." << endl;
@@ -48,7 +51,7 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 #endif
 	
     // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-	for(int i=windowStart;i<nEstimatedChannelMatrices;i++)
+	for(uint i=windowStart;i<nEstimatedChannelMatrices;i++)
 	{
 		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
 		// (i.e. the sum of all the elements squared) of the real channel matrix
@@ -79,7 +82,7 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices,const vector<uint>
 }
 
 
-MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d)
+MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector< MatrixXd > matrices, uint m, uint start, uint d)
 {
     if((matrices[0].cols() % m)!=0)
         throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: incorrect number of columns in the matrices.");
@@ -91,8 +94,8 @@ MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector<MatrixXd> matric
 
     MatrixXd res = MatrixXd::Zero(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
 
-    int iStartingFromZero;
-    for(int i=start;i<=d;i++)
+    uint iStartingFromZero;
+    for(uint i=start;i<=d;i++)
     {
         iStartingFromZero = i - start;
         res.block(iStartingFromZero*_nOutputs,iStartingFromZero*_nInputs,_nOutputs,_nInputs*m) = matrices[i];
@@ -101,18 +104,19 @@ MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector<MatrixXd> matric
     return res;
 }
 
-VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
+VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint c,uint e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
 {
-    if(matrices.size()!=static_cast<uint> (c+e+1))
+    if(matrices.size()!=c+e+1)
       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
 
     if(observations.size()!=(_nOutputs*(c+e+1)))
        throw RuntimeException("Algorithm::substractKnownSymbolsContribution: size of observations vector is wrong.");
 
+	assert(c+m>0);
     if(involvedSymbolVectors.cols()!=c+m-1)
          throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
 
-    int i;
+    uint i;
     MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(c+e+1),_nInputs*(m-1+c));
 
     for(i=0;i<c;i++)

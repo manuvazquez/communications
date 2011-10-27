@@ -33,7 +33,7 @@ protected:
 
 public:
 
-  PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs);
+  PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs);
   
   virtual void run(MatrixXd observations, vector< double > noiseVariances);
   virtual void run(MatrixXd observations, vector< double > noiseVariances, MatrixXd trainingSequence);

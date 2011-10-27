@@ -39,13 +39,13 @@ protected:
     Particle **_particles;
 public:
 
-    ParticleFilter(int nParticles);
+    ParticleFilter(uint nParticles);
     virtual ~ParticleFilter();
 
     void clear();
 
     Particle *getParticle(int n) const { return _particles[n];}
-    virtual void keepParticles(std::vector<int> resamplingIndexes,std::vector<int> indexes);
+    virtual void keepParticles(std::vector<uint> resamplingIndexes,std::vector<uint> indexes);
     /**
      *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
      * @param resamplingIndexes
@@ -89,8 +89,8 @@ public:
             _particles[indexes[i]]->setWeight(_particles[indexes[i]]->getWeight()/sum);
     }
 
-    int capacity() const { return _capacity;}
-    int nParticles() const { return _nParticles;}
+    uint capacity() const { return _capacity;}
+    uint nParticles() const { return _nParticles;}
     Particle *getBestParticle() const { return _particles[iBestParticle()]; }
     int iBestParticle() const;
     void printWeights() const;

@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
+MLSDmAlgorithm::MLSDmAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm,double ARcoefficient,double samplingVariance,double ARprocessVariance): MultipleChannelEstimatorsPerParticleSMCAlgorithm (name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation, smoothingLag, nParticles, resamplingAlgorithm),_particleFilter(new ParticleFilter(nParticles)),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_particlesBestChannelOrders(nParticles)
 {
 }
 
@@ -54,7 +54,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
     uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
     vector<tSymbol> testedVector(_nInputs);
     VectorXd computedObservations(_nOutputs);
-    int iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
+    uint iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
     uint iChannelOrder,iTestedVector;
     ParticleWithChannelEstimationAndChannelOrderAPP *processedParticle;
 	
@@ -83,7 +83,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
     vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
     int iBestChannelOrder = 0,timesBestChannelOrder = 0;
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
         // it keeps track of the place where a new tParticleCandidate will be stored within the array
         iCandidate = 0;
@@ -148,7 +148,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
         if(iCandidate==0)
         {
             VectorXd uniformDistribution(_alphabet.length());
-            for(int iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+            for(uint iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 uniformDistribution(iAlphabet) = 1.0/_alphabet.length();
 
             for(iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
@@ -176,7 +176,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
         VectorXd weights(iCandidate);
 
         // ...to store their weights
-        for(int i=0;i<iCandidate;i++)
+        for(uint i=0;i<iCandidate;i++)
             weights(i) = particleCandidates[i].weight/normConst;
 
         // the candidates that are going to give rise to particles are selected
@@ -194,7 +194,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
         _particleFilter->keepParticles(indexesParticles);
 
         // every surviving particle is modified according to what it says its corresponding candidate
-        for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
         {
             processedParticle = dynamic_cast<ParticleWithChannelEstimationAndChannelOrderAPP *> (_particleFilter->getParticle(iParticle));
 

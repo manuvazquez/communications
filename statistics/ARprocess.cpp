@@ -83,7 +83,7 @@ MatrixXd ARprocess::nextMatrix()
     return _buffer[_iNextMatrix++ % _nCoefficients];
 }
 
-vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance)
+vector<double> ARprocess::parametersFromYuleWalker(uint order,double velocity,double carrierFrequency,double T,double &noiseVariance)
 {
     const double c = 3e8;
 
@@ -97,12 +97,12 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
 
 	// for efficiency's sake, all needed correlations are computed here
     vector<double> autocorrelations(order+1);
-    for(int i=0;i<=order;i++)
+    for(uint i=0;i<=order;i++)
         autocorrelations[i] = j0(2.0*M_PI*normDopplerFrequency*double(i));
 
-    for(int m=0;m<order;m++)
+    for(uint m=0;m<order;m++)
     {
-        for(int k=0;k<order;k++)
+        for(uint k=0;k<order;k++)
             autocorrelationsMatrix(m,k) = autocorrelations[abs(m-k)];
 
         autocorrelationsVector(m) = autocorrelations[m+1];
@@ -119,7 +119,7 @@ vector<double> ARprocess::parametersFromYuleWalker(int order,double velocity,dou
 
     // ...besides, the eigen vector will be copied to a standard c++ vector
     vector<double> coefficientsCppVector(order);
-    for(int i=0;i<order;i++)
+    for(uint i=0;i<order;i++)
     {
         noiseVariance -= coefficients(i)*autocorrelations[i+1];
         coefficientsCppVector[i] = coefficients(i);

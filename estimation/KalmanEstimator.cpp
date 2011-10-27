@@ -21,7 +21,7 @@
 
 // #define PRINT_INFO
 
-KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,int N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
+KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
 {
     // stateTransitionMatrix is a blockwise matrix that represents the state transition matrix
     MatrixXd stateTransitionMatrix = MatrixXd::Zero(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);    
@@ -100,7 +100,7 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
 
 MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)
 {
-    int i,j;
+    uint i,j;
     MatrixXd res = MatrixXd::Zero(_nOutputs,_nChannelCoeffs);
 
     if(symbolsVector.size()!=_nInputsXchannelOrder)
@@ -173,7 +173,7 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const MatrixXd &matrix)
 
     VectorXd extState(_nExtStateVectorCoeffs);
     
-    int i=0;
+    uint i=0;
     
     while(i<_nExtStateVectorCoeffs)
     {

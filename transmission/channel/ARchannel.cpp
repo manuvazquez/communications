@@ -19,12 +19,15 @@
  ***************************************************************************/
 #include "ARchannel.h"
 
+#include <assert.h>
+
 ARchannel::ARchannel(int nInputs, int nOutputs, int memory, int length, ARprocess ARproc): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length),_ARproc(ARproc)
 {
 	if(ARproc.rows()!=nOutputs || ARproc.cols()!=(nInputs*memory))
 		throw RuntimeException("ARchannel::ARchannel: the passed AR process is not compatible with the dimensions of the channel.");
 
 	//initialization
-	for(int i=_memory-1;i<_length;i++)
+	assert(memory>0);
+	for(uint i=_memory-1;i<_length;i++)
 			_channelMatrices[i] = _ARproc.nextMatrix();
 }

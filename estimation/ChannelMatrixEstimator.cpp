@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
-ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,int N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelCoefficientsMatrix(initialEstimation)
+ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,uint N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelCoefficientsMatrix(initialEstimation)
 {
     if(_nInputsXchannelOrder < _nInputs)
         throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
@@ -34,12 +34,12 @@ ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,int N)
         _channelOrder = _nInputsXchannelOrder/_nInputs;
     // _channelOrder=-1 accounts for the case of a "OneChannelOrderPerTransmitAtennaWrapperEstimator" being used, whose internal ChannelMatrixEstimator does not need to have a number of columns multiple of _nInputs
     else
-        _channelOrder = -1;
+        _channelOrder = 0;
 }
 
 int ChannelMatrixEstimator::memory() const
 {
-    if(_channelOrder!=-1)
+    if(_channelOrder!=0)
         return _channelOrder;
     else
         throw RuntimeException("ChannelMatrixEstimator::Memory: this may not be a real channel matrix estimator: its number of columns is not a multiple of the number of transmitting antennas.");

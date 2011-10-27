@@ -19,12 +19,14 @@
  ***************************************************************************/
 #include "KnownFlatChannelOptimalAlgorithm.h"
 
-KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
+#include <assert.h>
+
+KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
 {
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
     
-    for(int i=0;i<_alphabet.length();i++)
+    for(uint i=0;i<_alphabet.length();i++)
         extendedAlphabetSymbols[i] = _alphabet[i];
     extendedAlphabetSymbols[_alphabet.length()] = 0.0;
     
@@ -38,12 +40,13 @@ KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()
 
 void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double > noiseVariances)
 {
-    int iAlphabet,iCurrentNode,i,childrenHeight;
+    uint iAlphabet,iCurrentNode,i;
+	uint childrenHeight;
     double UxS;
         
     vector<tTreeNode> nodes;
     
-    for(int iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
+    for(uint iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
     {
         // root node is initialized
         tTreeNode rootNode;
@@ -61,21 +64,14 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         // the Cholesky decomposition of HtH
         Eigen::LLT<MatrixXd> lltOfHTH(H.transpose()*H);
         
-// 		// the lower triangualr matrix of the Cholesky decomposition of HtH
-// 		MatrixXd L = (H.transpose()*H).llt().matrixL();
-		
 		VectorXd transformedObs = lltOfHTH.matrixL().solve(H.transpose()*observations.col(iProcessedObservation));
-// 		VectorXd transformedObs = lltOfHTH.matrixL().inverse()*H.transpose()*observations.col(iProcessedObservation);
-// 		VectorXd transformedObs = L.inverse()*H.transpose()*observations.col(iProcessedObservation);
         
-//         MatrixXd U = L.transpose();
-		 MatrixXd U = lltOfHTH.matrixL().transpose();
+		MatrixXd U = lltOfHTH.matrixL().transpose();
         
         // we start by the root node
         iCurrentNode = 0;    
         
-		//FIXME: _nInputs should be an uint
-        while(nodes[iCurrentNode].height<static_cast<uint>(_nInputs))
+        while(nodes[iCurrentNode].height<_nInputs)
         {
             childrenHeight = nodes[iCurrentNode].height+1;
             for(iAlphabet=0;iAlphabet<getAlphabetAt(iProcessedObservation,childrenHeight)->length();iAlphabet++)
@@ -84,18 +80,16 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
                 tTreeNode child = nodes[iCurrentNode];
                 
                 child.height = childrenHeight;
-                child.symbolsVector(_nInputs-child.height) = (*getAlphabetAt(iProcessedObservation,childrenHeight))[iAlphabet];
+                child.symbolsVector(_nInputs-child.height) = getAlphabetAt(iProcessedObservation,childrenHeight)->operator[](iAlphabet);
                 
                 UxS = 0.0;
             
-				// FIXME: it shouldn't be necessary to convert child.height to int
-                for(i=0;i<static_cast<int>(child.height);i++)
+                for(i=0;i<child.height;i++)
                     UxS += U(_nInputs-child.height,_nInputs-1-i)*child.symbolsVector(_nInputs-1-i);
                                     
                 child.cost = child.cost + (transformedObs(_nInputs-child.height)-UxS)*(transformedObs(_nInputs-child.height)-UxS);
                 
-                // the children vector of this node is cleared (the one inherited from the father because of the copy may not be empty if this is not the
-                // the first child
+                // the children vector of this node is cleared (the one inherited from the father because of the copy may not be empty if this is not the the first child
                 child.children.clear();
                 
                 // child will be in this position of the vector
@@ -121,11 +115,12 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
     } //for(int iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
 }
 
-int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
+uint KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
 {
     int iBest = -1;
     double bestCost = 0.0;
 
+	assert(nodes.size()>0);
     for(uint i=0;i<nodes.size();i++)
     {
         // if it isn't a leaf node
@@ -139,7 +134,7 @@ int KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
         }
     }
     
-    return iBest;
+    return static_cast<uint>(iBest);
 }
 
 MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()

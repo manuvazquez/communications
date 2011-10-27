@@ -26,7 +26,7 @@
 	extern int realChannelOrder;
 #endif
 
-OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, std::vector< ChannelMatrixEstimator* > channelEstimators, MatrixXd preamble, int iFirstObservation, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm)
+OneChannelOrderPerOutputSMCAlgorithm::OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, std::vector< ChannelMatrixEstimator* > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm)
 :UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
 ,_resamplingAlgorithm(resamplingAlgorithm),_smoothingLag(smoothingLag),_randomParticlesInitilization(false)
 ,_channelMatrixEstimators(_nOutputs,std::vector<ChannelMatrixEstimator*>(_candidateOrders.size())),_particleFilter(new ParticleFilter(nParticles))
@@ -61,7 +61,7 @@ vector<MatrixXd> OneChannelOrderPerOutputSMCAlgorithm::getEstimatedChannelMatric
     // best particle is chosen
 	ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp * particle = dynamic_cast<ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *> (_particleFilter->getBestParticle());
 
-    for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
+    for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
 	{
 	  MatrixXd channelMatrix = MatrixXd::Zero(_nOutputs,_nInputsXmaxChannelOrder);
 	  for (uint iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
@@ -221,7 +221,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
     uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
     vector<tSymbol> testedVector(_nInputs);
     VectorXd computedObservations(_nOutputs);
-    int iCandidate,m,k,iParticle;
+    uint iCandidate,m,k,iParticle;
     uint iChannelOrder,iTestedVector;
     ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *processedParticle;
 	
@@ -247,7 +247,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 	// when all the symbols involved in an observation are stacked row-wise, this indicates where the last symbol vector starts
     int iLastSymbolVectorStartWithinVector = _nInputsXmaxChannelOrder - _nInputs;
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_smoothingLag;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_smoothingLag;iObservationToBeProcessed++)
     {
 #ifdef DEBUG
 		cout << "============= iObservationToBeProcessed = " << iObservationToBeProcessed << " ==============" << endl;
@@ -332,7 +332,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
         if(iCandidate==0)
         {
             VectorXd uniformDistribution(_alphabet.length());
-            for(int iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
+            for(uint iAlphabet=0;iAlphabet<_alphabet.length();iAlphabet++)
                 uniformDistribution(iAlphabet) = 1.0/_alphabet.length();
 
             for(iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
@@ -364,7 +364,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
         VectorXd weights(iCandidate);
 
         // ...to store their weights
-        for(int i=0;i<iCandidate;i++)
+        for(uint i=0;i<iCandidate;i++)
             weights(i) = particleCandidates[i].weight/normConst;
 
 		// an overall number of survivors is considered
@@ -397,7 +397,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
         _particleFilter->keepParticles(indexesParticles);
 
         // every surviving particle is modified according to what it says its corresponding candidate
-        for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
         {
             processedParticle = dynamic_cast<ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp *> (_particleFilter->getParticle(iParticle));
 

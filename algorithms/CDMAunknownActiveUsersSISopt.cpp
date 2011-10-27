@@ -20,7 +20,7 @@
 
 // #define DEBUG2
 
-CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdfs(usersActivityPdfs)
+CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdfs(usersActivityPdfs)
 {    
   _randomParticlesInitilization = true;    
 }
@@ -30,13 +30,9 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
   // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
   Alphabet extendedAlphabet = _alphabet.buildNewAlphabetByAddingSymbol(0.0);
 	  
-//   extendedAlphabet = _alphabet; // <-----------------------------------------------------------
+  uint nCombinations = (uint) pow((double)(extendedAlphabet.length()),(double)_nInputs);
 
-  uint nCombinations = (int) pow((double)(extendedAlphabet.length()),(double)_nInputs);
-
-  vector<tSymbol> combination(_nInputs,extendedAlphabet[0]);
-
-  int k,iParticle,iSampledVector;
+  uint k,iParticle,iSampledVector;
   vector<tSymbol> sampledVector(_nInputs);
 
   // tVector containing the symbols
@@ -48,7 +44,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
   double likelihoodsSum;
 
   // for each time instant
-  for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+  for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
   {
 	  for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 	  {
@@ -142,7 +138,7 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 	  if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
 		  _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);        
 
-  } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+  } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
 void CDMAunknownActiveUsersSISopt::initializeParticles()
@@ -150,7 +146,7 @@ void CDMAunknownActiveUsersSISopt::initializeParticles()
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         

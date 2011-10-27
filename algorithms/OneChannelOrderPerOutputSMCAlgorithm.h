@@ -33,7 +33,7 @@ protected:
     }tParticleCandidate;
 
     ResamplingAlgorithm *_resamplingAlgorithm;
-    int _smoothingLag;
+    uint _smoothingLag;
     
     // indicates whether the particles will be initialized randomly or all the same
     bool _randomParticlesInitilization;
@@ -60,7 +60,7 @@ protected:
 
 public:
   
-	OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+	OneChannelOrderPerOutputSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 	~OneChannelOrderPerOutputSMCAlgorithm();
 
 	virtual bool estimatesOneChannelOrderPerOutput() const { return true;}

@@ -19,6 +19,8 @@
  ***************************************************************************/
 #include "StillMemoryMIMOChannel.h"
 
+#include <assert.h>
+
 StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory, int length): MIMOChannel(nInputs, nOutputs, length),_memory(memory),_nInputsnOutputsMemory(_nInputs*_nOutputs*_memory),_nInputsMemory(_nInputs*_memory)
 {
 }
@@ -47,7 +49,8 @@ void StillMemoryMIMOChannel::setSubchannelOrders(std::vector<uint> subchannelOrd
   
   // FIXME: this implementation is inefficient when the channel is "TimeInvariantChannel"
   
-  for(int iMat=_memory-1;iMat<_length;iMat++)
+  assert(_memory>0);
+  for(uint iMat=_memory-1;iMat<_length;iMat++)
   {
 	matrix = at(iMat);
 	for(uint iRow=0;iRow<static_cast<uint>(_nOutputs);iRow++)

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "FlatPowerProfile.h"
 
-FlatPowerProfile::FlatPowerProfile(int nOutputs, int nInputs, int m, double variance): DelayPowerProfile(nOutputs, nInputs)
+FlatPowerProfile::FlatPowerProfile(int nOutputs, int nInputs, uint m, double variance): DelayPowerProfile(nOutputs, nInputs)
 {
 	for(int i=0;i<m;i++)
 		_tapsPowers.push_back(variance);

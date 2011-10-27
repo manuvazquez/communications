@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "NLMSEstimator.h"
 
-NLMSEstimator::NLMSEstimator(const MatrixXd& initialEstimation, int N, double mu): LMSEstimator(initialEstimation, N, mu)
+NLMSEstimator::NLMSEstimator(const MatrixXd& initialEstimation, uint N, double mu): LMSEstimator(initialEstimation, N, mu)
 {
 }
 

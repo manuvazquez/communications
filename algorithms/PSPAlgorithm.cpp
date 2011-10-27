@@ -19,10 +19,11 @@
  ***************************************************************************/
 #include "PSPAlgorithm.h"
 
+#include <assert.h>
 // #define DEBUG
 // #define DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");
@@ -33,7 +34,7 @@ PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, 
 
 PSPAlgorithm::~PSPAlgorithm()
 {
-    for(int i=0;i<_trellis->nStates();i++)
+    for(uint i=0;i<_trellis->nStates();i++)
     {
     	delete[] _exitStage[i];
     	delete[] _arrivalStage[i];
@@ -48,7 +49,7 @@ PSPAlgorithm::~PSPAlgorithm()
 
 void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noiseVariance)
 {
-	int iState,iSurvivor;
+	uint iState,iSurvivor;
 
 	for(iState=0;iState<_trellis->nStates();iState++)
 	{
@@ -98,7 +99,7 @@ void PSPAlgorithm::processOneObservation(const VectorXd &observations,double noi
 
 void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVariances)
 {
-	int iProcessedObservation,iBestState,iBestSurvivor;
+	uint iProcessedObservation,iBestState,iBestSurvivor;
 
 //     for(iProcessedObservation=_startDetectionTime;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
     for(iProcessedObservation=_iFirstInLoopProcessedObservation;iProcessedObservation<_firstSymbolVectorDetectedAt;iProcessedObservation++)
@@ -118,7 +119,7 @@ void PSPAlgorithm::process(const MatrixXd &observations,vector<double> noiseVari
     // ... and the first estimated channel matrix into _estimatedChannelMatrices
     _estimatedChannelMatrices.push_back(_exitStage[iBestState][iBestSurvivor].getChannelMatrix(_startDetectionTime));
 
-    for( iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
+    for(iProcessedObservation=_firstSymbolVectorDetectedAt;iProcessedObservation<_iLastSymbolVectorToBeDetected+_d;iProcessedObservation++)
     {
 		processOneObservation(observations.col(iProcessedObservation),noiseVariances[iProcessedObservation]);
 
@@ -151,12 +152,13 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 	initializeTrellis();
 
     // the last N*(m-1) symbols of the preamble are copied into a c++ vector...
-    int preambleLength = _preamble.rows()*_preamble.cols();
+    uint preambleLength = _preamble.rows()*_preamble.cols();
     vector<tSymbol> initialStateVector(_nInputs*(_channelOrder-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(_channelOrder-1))*_nInputs;
-    for(int i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
+	assert(_preamble.cols()-(_channelOrder-1)>=0);
+    uint iFirstPreambleSymbolNeeded = (_preamble.cols()-(_channelOrder-1))*_nInputs;
+    for(uint i=iFirstPreambleSymbolNeeded;i<preambleLength;i++)
         initialStateVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _nInputs,i / _nInputs);
 
     // ...in order to use the method "SymbolsVectorToInt" from "Alphabet" to obtain the initial state
@@ -221,11 +223,11 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
 
 	// the state determines the first "_channelOrder"-1 symbol vectors involved in the "observations"
 	_alphabet.int2symbolsArray(iState,_stateVector);
-	for(int i=0;i<_nInputs*(_channelOrder-1);i++)
+	for(uint i=0;i<_nInputs*(_channelOrder-1);i++)
 		symbolVectors(i % _nInputs,i / _nInputs) = _stateVector[i];
 
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
         arrivalState = (*_trellis)(iState,iInput);
 
@@ -233,10 +235,10 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
         _alphabet.int2symbolsArray(iInput,_inputVector);
 
         // it's copied into "symbolVectors"
-        for(int i=0;i<_nInputs;i++)
+        for(uint i=0;i<_nInputs;i++)
             symbolVectors(i,_channelOrder-1) = _inputVector[i];
 
-		for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
+		for(uint iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
 		{
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
@@ -284,23 +286,23 @@ vector<MatrixXd> PSPAlgorithm::getEstimatedChannelMatrices()
     vector<MatrixXd>::iterator tempIterator;
     tempIterator = res.end();
     tempIterator--;
-    for(int i=0;i<_d;i++)
+    for(uint i=0;i<_d;i++)
         res.erase(tempIterator);
 
     return res;
 }
 
-void PSPAlgorithm::bestPairStateSurvivor(int &bestState,int &bestSurvivor)
+void PSPAlgorithm::bestPairStateSurvivor(uint& bestState, uint& bestSurvivor)
 {
 	if(_exitStage[0][0].isEmpty())
 		throw RuntimeException("PSPAlgorithm::bestState: [first state,first survivor] is empty.");
 
-	int iSurvivor;
+	uint iSurvivor;
 	bestState = 0;
 	bestSurvivor = 0;
 	double bestCost = _exitStage[bestState][bestSurvivor].getCost();
 
-	for(int iState=1;iState<_trellis->nStates();iState++)
+	for(uint iState=1;iState<_trellis->nStates();iState++)
 		for(iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
 		{
 			if(_exitStage[iState][iSurvivor].getCost() < bestCost)
@@ -325,7 +327,7 @@ int PSPAlgorithm::disposableSurvivor(int iState)
     iWorstCost = 0;
     worstCost = _bestArrivingPaths[iState][0]._cost;
 
-    for(int iSurvivor=1;iSurvivor<_nSurvivors;iSurvivor++)
+    for(uint iSurvivor=1;iSurvivor<_nSurvivors;iSurvivor++)
     {
         if(_bestArrivingPaths[iState][iSurvivor].noPathArrived())
             return iSurvivor;
@@ -343,7 +345,7 @@ int PSPAlgorithm::disposableSurvivor(int iState)
 void PSPAlgorithm::printState(int iState)
 {
     cout << "--------------- State " << iState << " ---------------" << endl;
-    for(int iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
+    for(uint iSurvivor=0;iSurvivor<_nSurvivors;iSurvivor++)
         if(!_exitStage[iState][iSurvivor].isEmpty())
             _exitStage[iState][iSurvivor].print();
 }
@@ -356,7 +358,7 @@ void PSPAlgorithm::initializeTrellis()
   _arrivalStage = new PSPPath*[_trellis->nStates()];
   _bestArrivingPaths = new PSPPathCandidate*[_trellis->nStates()];
 
-  for(int i=0;i<_trellis->nStates();i++)
+  for(uint i=0;i<_trellis->nStates();i++)
   {
 	  _exitStage[i] = new PSPPath[_nSurvivors];
 	  _arrivalStage[i] = new PSPPath[_nSurvivors];

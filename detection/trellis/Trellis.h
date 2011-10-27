@@ -29,16 +29,16 @@
 
 class Trellis{
 protected:
-    int _nStates,_nPossibleInputs;
-    int **_stateTransitionMatrix;
+    uint _nStates,_nPossibleInputs;
+    uint **_stateTransitionMatrix;
 public:
-    Trellis(const Alphabet &alphabet, int N, int m);
+    Trellis(const Alphabet &alphabet, uint N, uint m);
 
     ~Trellis();
 
-    int nStates() const { return _nStates;}
-    int nPossibleInputs() const {return _nPossibleInputs;}
-    int operator ()(int state, int input) const { return _stateTransitionMatrix[state][input];}
+    uint nStates() const { return _nStates;}
+    uint nPossibleInputs() const {return _nPossibleInputs;}
+    uint operator ()(int state, int input) const { return _stateTransitionMatrix[state][input];}
 
 };
 

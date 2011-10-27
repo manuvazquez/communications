@@ -32,8 +32,8 @@ class MultipleChannelEstimatorsPerParticleSMCAlgorithm : public UnknownChannelOr
 {
 protected:
     ResamplingAlgorithm *_resamplingAlgorithm;
-    int _d;
-    int _startDetectionTime;
+    uint _d;
+    uint _startDetectionTime;
 
 	// mean and variance which will server to initialize the first channel matrix estimations
     double _channelUniqueMean, _channelUniqueVariance;
@@ -54,7 +54,7 @@ protected:
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
     virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {}
 public:
-    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);

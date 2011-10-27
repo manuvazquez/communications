@@ -37,11 +37,11 @@ class KalmanEstimator : public ChannelMatrixEstimator
 {
 protected:
     KalmanFilter *_kalmanFilter;
-    int _nExtStateVectorCoeffs;
+    uint _nExtStateVectorCoeffs;
     
     virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
 public:
-    KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,int N,vector<double> ARcoefficients,double ARvariance);
+    KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
     

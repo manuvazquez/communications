@@ -19,14 +19,14 @@
  ***************************************************************************/
 #include "SISoptAlgorithm.h"
 
-SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, 0, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+SISoptAlgorithm::SISoptAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, 0, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 {
 }
 
 // eigen
 void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-    int k,iParticle,iSampledVector;
+    uint k,iParticle,iSampledVector;
     vector<tSymbol> testedVector(_nInputs),sampledVector(_nInputs);
 
     // it includes all symbol vectors involved in the smoothing
@@ -38,7 +38,7 @@ void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noise
     VectorXd likelihoods(nSymbolVectors);
 
     // for each time instant
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {

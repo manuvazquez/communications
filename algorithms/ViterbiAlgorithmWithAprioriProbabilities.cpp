@@ -16,7 +16,7 @@
 
 #include "ViterbiAlgorithmWithAprioriProbabilities.h"
 
-ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, int smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs)
+ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, uint smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs)
 :ViterbiAlgorithm(name, alphabet,L,Nr,N, iLastSymbolVectorToBeDetected, channel,preamble,smoothingLag),
 _usersActivityPdfs(usersActivityPdfs),
 _extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
@@ -35,7 +35,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
 	VectorXd previousSymbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
 		// "symbolVectors" will contain the symbols involved in the current observation
 		VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iInput,_nInputs);
@@ -57,7 +57,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
     } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
-void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,int firstSymbolVectorDetectedAt)
+void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt)
 {
     // the Trellis object is initialized (we instruct it to build a trellis assuming the memory is 2)
   _trellis = new Trellis(_extendedAlphabet,_nInputs,2);
@@ -70,7 +70,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<
   double initialCost;
   
   // at the first time instant, a priori probabilities of the active users must be employed (instead of conditioned)
-  for(int iState=0;iState<_trellis->nStates();iState++)
+  for(uint iState=0;iState<_trellis->nStates();iState++)
   {
 	VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	

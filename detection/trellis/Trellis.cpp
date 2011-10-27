@@ -19,19 +19,19 @@
  ***************************************************************************/
 #include "Trellis.h"
 
-Trellis::Trellis(const Alphabet &alphabet, int N, int m)
+Trellis::Trellis(const Alphabet &alphabet, uint N, uint m)
 {
     _nStates = (int)pow((double)alphabet.length(),N*(m-1));
     _nPossibleInputs = (int)pow((double)alphabet.length(),N);
 
-    _stateTransitionMatrix = new int*[_nStates];
+    _stateTransitionMatrix = new uint*[_nStates];
 
-    int alphabetLengthToTheNmMinus2 = _nStates/_nPossibleInputs;
+    uint alphabetLengthToTheNmMinus2 = _nStates/_nPossibleInputs;
 
-    int iInput;
-    for(int iState=0;iState<_nStates;iState++)
+    uint iInput;
+    for(uint iState=0;iState<_nStates;iState++)
     {
-        _stateTransitionMatrix[iState] = new int[_nPossibleInputs];
+        _stateTransitionMatrix[iState] = new uint[_nPossibleInputs];
         for(iInput=0;iInput<_nPossibleInputs;iInput++)
         {
             // computes de next state give the current one and the input (both in decimal)
@@ -42,7 +42,7 @@ Trellis::Trellis(const Alphabet &alphabet, int N, int m)
 
 Trellis::~Trellis()
 {
-    for(int iState=0;iState<_nStates;iState++)
+    for(uint iState=0;iState<_nStates;iState++)
         delete[] _stateTransitionMatrix[iState];
 
     delete[] _stateTransitionMatrix;

@@ -32,7 +32,7 @@
 class MIMOChannel{
   
 protected:
-    int _nInputs, _nOutputs,_length,_nInputsnOutputs;
+    uint _nInputs, _nOutputs,_length,_nInputsnOutputs;
 public:
 	MIMOChannel();
     MIMOChannel(int nInputs,int nOutputs,int length);

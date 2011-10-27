@@ -258,16 +258,16 @@ void CDMASystem::buildChannel()
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
 {
-	int L = spreadingCodes.rows();
-	int nCodes = spreadingCodes.cols();
+	uint L = spreadingCodes.rows();
+	uint nCodes = spreadingCodes.cols();
 
-	for (int iOneCode=0;iOneCode<nCodes;iOneCode++)
-		for (int iOtherCode=iOneCode+1;iOtherCode<nCodes;iOtherCode++)
+	for (uint iOneCode=0;iOneCode<nCodes;iOneCode++)
+		for (uint iOtherCode=iOneCode+1;iOtherCode<nCodes;iOtherCode++)
 		{
 			int sum = 0;
 			
-			for (int i=0;i<L;i++)
-				for (int j=0;j<L;j++)
+			for (uint i=0;i<L;i++)
+				for (uint j=0;j<L;j++)
 					sum += spreadingCodes(i,iOneCode)*spreadingCodes(j,iOtherCode);
 			
 			if (sum!=0)
@@ -312,9 +312,9 @@ double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, Mat
 		for (int j=0;j<sourceSymbols.cols();j++)
 		{
 			if (_alphabet->doesItBelong(sourceSymbols(i,j)))
-				sourceSymbols(i,j) = _alphabet->operator[](0);
+				sourceSymbols(i,j) = _alphabet->operator[](0u);
 			if (_alphabet->doesItBelong(detectedSymbols(i,j)))
-				detectedSymbols(i,j) = _alphabet->operator[](0);
+				detectedSymbols(i,j) = _alphabet->operator[](0u);
 		}
 
 	double res = 0.0;

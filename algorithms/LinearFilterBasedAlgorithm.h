@@ -34,7 +34,7 @@ class LinearFilterBasedAlgorithm : public KnownChannelOrderAlgorithm
 private:
     void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 protected:
-	int _c,_d;
+	uint _c,_d;
 	LinearDetector *_linearDetector;
     MatrixXd _detectedSymbolVectors;
     std::vector<MatrixXd> _estimatedChannelMatrices;
@@ -43,7 +43,7 @@ protected:
     bool _substractContributionFromKnownSymbols;
 
 public:
-    LinearFilterBasedAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int backwardsSmoothingLag, int smoothingLag, LinearDetector *linearDetector, double ARcoefficient, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, LinearDetector *linearDetector, double ARcoefficient, bool substractContributionFromKnownSymbols=false);
 
     ~LinearFilterBasedAlgorithm();
 

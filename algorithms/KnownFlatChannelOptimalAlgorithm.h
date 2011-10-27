@@ -36,20 +36,20 @@ class KnownFlatChannelOptimalAlgorithm : public KnownChannelAlgorithm
 private:
     typedef struct{
         double cost;
-        std::vector<int> children;
+        std::vector<uint> children;
         uint height,id;
         VectorXd symbolsVector;
     } tTreeNode;
     
-    int iBestLeaf(const std::vector<tTreeNode> &nodes);
+    uint iBestLeaf(const std::vector< KnownFlatChannelOptimalAlgorithm::tTreeNode >& nodes);
 protected:
-    const int _preambleLength;
+    const uint _preambleLength;
     MatrixXd _detectedSymbols;
     Alphabet *_extendedAlphabet;
     
-    virtual const Alphabet *getAlphabetAt(int time, int leafHeight) const { return _extendedAlphabet;}
+    virtual const Alphabet *getAlphabetAt(uint time, int leafHeight) const { return _extendedAlphabet;}
 public:
-    KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, int L, int Nr, int N, int iLastSymbolVectorToBeDetected, const MIMOChannel& channel, int preambleLength);
+    KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength);
 
     ~KnownFlatChannelOptimalAlgorithm();
 

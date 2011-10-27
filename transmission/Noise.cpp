@@ -19,14 +19,14 @@
  ***************************************************************************/
 #include "Noise.h"
 
-Noise::Noise(int nOutputs,int length): _nOutputs(nOutputs),_length(length)
+Noise::Noise(uint nOutputs,uint length): _nOutputs(nOutputs),_length(length)
 {
 }
 
 vector<double> Noise::variances() const
 {
 	vector<double> res(_length);
-	for(int i=0;i<_length;i++)
+	for(uint i=0;i<_length;i++)
 		res[i] = VarianceAt(i);
 	return res;
 }

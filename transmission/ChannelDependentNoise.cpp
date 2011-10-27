@@ -19,21 +19,23 @@
  ***************************************************************************/
 #include "ChannelDependentNoise.h"
 
+#include <assert.h>
 // #define PRINT_INFO
 
 ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
  : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length)
 {
-    for(int i=0;i<_length;i++)
+    for(uint i=0;i<_length;i++)
         _stdDevs[i] = 1.0;
 }
 
 void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
 {
-    int i,j,k;
+    uint i,j,k;
     double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nOutputs;
     double stdDev,variance;
 
+	assert(_channel->effectiveMemory()>0);
     for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
         MatrixXd channelMatrix = _channel->getTransmissionMatrix(j);

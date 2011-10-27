@@ -51,7 +51,7 @@ public:
 
     MatrixXd nextMatrix();
     
-    static vector<double> parametersFromYuleWalker(int order,double velocity,double carrierFrequency,double T,double &noiseVariance);
+    static vector<double> parametersFromYuleWalker(uint order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 
     int rows() {return _rows;}
     int cols() {return _columns;}

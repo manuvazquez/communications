@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, int iFirstObservation,int smoothingLag,int nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
+MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm): UnknownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble, iFirstObservation)
 //variables initialization
 ,_resamplingAlgorithm(resamplingAlgorithm),_d(smoothingLag),_randomParticlesInitilization(false)
 {
@@ -42,7 +42,7 @@ MultipleChannelEstimatorsPerParticleSMCAlgorithm::MultipleChannelEstimatorsPerPa
 
 void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    int nObservations = observations.cols();
+    uint nObservations = observations.cols();
 
     if(nObservations<_startDetectionTime+_maxOrder)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::run: not enough observations.");
@@ -57,7 +57,7 @@ void MultipleChannelEstimatorsPerParticleSMCAlgorithm::run(MatrixXd observations
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("MultipleChannelEstimatorsPerParticleSMCAlgorithm::run: observations matrix or training sequence dimensions are wrong.");
 
-    int iParticle;
+    uint iParticle;
     uint j;
     uint iChannelOrder;
 
@@ -113,7 +113,7 @@ vector<MatrixXd> MultipleChannelEstimatorsPerParticleSMCAlgorithm::getEstimatedC
 
     int indexBestChannelOrder = iBestChannelOrder(iBestParticle);
 
-    for(int i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
+    for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
         channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(getParticleFilterPointer()->getParticle(iBestParticle))->getChannelMatrix(indexBestChannelOrder,i));
 
     return channelMatrices;

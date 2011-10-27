@@ -33,7 +33,7 @@ class LMSEstimator : public ChannelMatrixEstimator
 protected:
 	double _mu;
 public:
-    LMSEstimator(const MatrixXd &initialEstimation,int N,double mu);
+    LMSEstimator(const MatrixXd &initialEstimation,uint N,double mu);
 
     virtual LMSEstimator* clone() const;
 

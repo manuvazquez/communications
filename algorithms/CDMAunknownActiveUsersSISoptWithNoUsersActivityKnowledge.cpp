@@ -27,7 +27,7 @@
     extern Noise *realNoise;
 #endif
 
-CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 {    
     _randomParticlesInitilization = true;    
 }
@@ -38,7 +38,7 @@ void CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::initializeParticl
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
 
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         
@@ -58,7 +58,7 @@ void CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::process(const Mat
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);
     
-    for(int i=0;i<_alphabet.length();i++)
+    for(uint i=0;i<_alphabet.length();i++)
         extendedAlphabetSymbols[i] = _alphabet[i];
     extendedAlphabetSymbols[_alphabet.length()] = 0.0;
     
@@ -66,11 +66,11 @@ void CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::process(const Mat
         
 //     extendedAlphabet = _alphabet; // <-----------------------------------------------------------
     
-    uint nCombinations = (int) pow((double)(extendedAlphabet.length()),(double)_nInputs);
+    uint nCombinations = (uint) pow((double)(extendedAlphabet.length()),(double)_nInputs);
     
-    vector<tSymbol> combination(_nInputs,_alphabet[0]);
+    vector<tSymbol> combination(_nInputs,_alphabet[0u]);
 
-    int k,iParticle,iSampledVector;
+    uint k,iParticle,iSampledVector;
     vector<tSymbol> sampledVector(_nInputs);
 
     // tVector containing the symbols
@@ -82,7 +82,7 @@ void CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::process(const Mat
     double likelihoodsSum;
 
     // for each time instant
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
@@ -133,5 +133,5 @@ void CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge::process(const Mat
         if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);        
 
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

@@ -20,7 +20,7 @@
 
 // #define DEBUG
 
-PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs):PSPAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, firstSymbolVectorDetectedAt, nSurvivors),_usersActivityPdfs(usersActivityPdfs),_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
+PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs):PSPAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, firstSymbolVectorDetectedAt, nSurvivors),_usersActivityPdfs(usersActivityPdfs),_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
 {
   if(m!=1)
 	throw RuntimeException("PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities: this algorithm is only implemented for flat channels.");
@@ -38,14 +38,14 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 #endif
 	
     // now we compute the cost for each possible input
-    for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
     {
         arrivalState = (*_trellis)(iState,iInput);
 
 		// "symbolsVector" will contain the symbols involved in the current observation
 		VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iInput,_nInputs);
 
-		for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
+		for(uint iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
 		{
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
@@ -92,7 +92,7 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
   _arrivalStage = new PSPPath*[_trellis->nStates()];
   _bestArrivingPaths = new PSPPathCandidate*[_trellis->nStates()];
 
-  for(int i=0;i<_trellis->nStates();i++)
+  for(uint i=0;i<_trellis->nStates();i++)
   {
 	  _exitStage[i] = new PSPPath[_nSurvivors];
 	  _arrivalStage[i] = new PSPPath[_nSurvivors];
@@ -102,7 +102,7 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
   double initialCost;
   
   // at the first time instant, a priori probabilities of the active users must be employed (instead of conditioned)
-  for(int iState=0;iState<_trellis->nStates();iState++)
+  for(uint iState=0;iState<_trellis->nStates();iState++)
   {
 	VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	

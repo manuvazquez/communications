@@ -45,19 +45,19 @@ private:
 	  \param bestState returned
 	  \param bestSurvivor returned
 	*/
-	void bestPairStateSurvivor(int &bestState,int &bestSurvivor);
+	void bestPairStateSurvivor(uint &bestState,uint &bestSurvivor);
 	
 	/*!
 	  It contains code shared by the two \ref run methods
 	*/
 	void initializeTrellis();
 protected:
-    int _nSurvivors,_d,_startDetectionTime;
+    uint _nSurvivors,_d,_startDetectionTime;
 	Trellis *_trellis;
     PSPPath **_exitStage, **_arrivalStage;
     MatrixXd *_detectedSymbolVectors;
     std::vector<MatrixXd> _estimatedChannelMatrices;
-	int _firstSymbolVectorDetectedAt;
+	uint _firstSymbolVectorDetectedAt;
 	PSPPathCandidate **_bestArrivingPaths;
 
 	//! this variable will always be equal to \ref _startDetectionTime in this algorithm but not in \ref PSPAlgorithmWithAprioriProbabilities
@@ -74,7 +74,7 @@ protected:
     void process(const MatrixXd &observations,vector<double> noiseVariances);
     virtual void deployState(int iState,const VectorXd &observations, double noiseVariance);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int firstSymbolVectorDetectedAt, int nSurvivors);
+    PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors);
 
     ~PSPAlgorithm();
 

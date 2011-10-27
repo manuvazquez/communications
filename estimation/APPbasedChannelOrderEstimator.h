@@ -38,7 +38,7 @@ protected:
     vector<int> _channelOrder2index;
     VectorXd _symbolVector;
 public:
-    APPbasedChannelOrderEstimator(int N,std::vector<int> candidateOrders);
+    APPbasedChannelOrderEstimator(uint N,std::vector<int> candidateOrders);
 
     virtual APPbasedChannelOrderEstimator *clone();
 

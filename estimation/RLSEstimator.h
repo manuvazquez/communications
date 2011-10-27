@@ -37,7 +37,7 @@ protected:
     MatrixXd _invRtilde_eigen;   
 
 public:
-    RLSEstimator(const MatrixXd &initialEstimation,int N,double forgettingFactor);
+    RLSEstimator(const MatrixXd &initialEstimation,uint N,double forgettingFactor);
 
     virtual ChannelMatrixEstimator* clone() const;
 

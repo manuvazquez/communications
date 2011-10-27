@@ -38,7 +38,7 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, doub
 	GenerateMatrices();
 }
 
-ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, int m, double tRMS, double T): DelayPowerProfile(nOutputs, nInputs)
+ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, uint m, double tRMS, double T): DelayPowerProfile(nOutputs, nInputs)
 {
 	double power,delay = 0.0;
 	double normConst = 0.0;

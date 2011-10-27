@@ -21,12 +21,12 @@
 #include <MMSEDetector.h>
 #include <DecorrelatorDetector.h>
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, int backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, uint nParticles,ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 ,_linearDetector(linearDetector->clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(backwardsSmoothingLag),_e(forwardSmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
-LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m,MatrixXd preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
+LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
 ,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_c(0),_e(SMCsmoothingLag),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
@@ -41,7 +41,7 @@ void LinearFilterBasedSMCAlgorithm::initializeParticles()
     ChannelMatrixEstimator *channelMatrixEstimatorClone;
     
     // memory is reserved
-    for(int iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
+    for(uint iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
     {
         channelMatrixEstimatorClone = _channelEstimator->clone();
         if(_randomParticlesInitilization)
@@ -55,7 +55,7 @@ void LinearFilterBasedSMCAlgorithm::initializeParticles()
 // eigen
 void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector<double> noiseVariances)
 {
-    int iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
+    uint iParticle,iSmoothing,iRow,iSampledSymbol,iAlphabet,iSampled;
     vector<MatrixXd> matricesToStack(_c+_e+1,MatrixXd(_nOutputs,_nInputsXchannelOrder));
     VectorXd sampledVector(_nInputs),sampledSmoothingVector(_nInputs*(_d+1));
     double proposal,s2q,sumProb,likelihoodsProd;
@@ -68,7 +68,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
        if(_linearDetector->channelMatrixcols() != _nInputs*(_e+1))
           throw RuntimeException("LinearFilterBasedSMCAlgorithm::process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
 
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
         // the stacked observations vector
         VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed-_c,_nOutputs,_c+_e+1),columnwise);

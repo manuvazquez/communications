@@ -22,7 +22,7 @@
 // #define DEBUG
 // #define PRINT_INFO
 
-DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected,int m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
+DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
 {
 //     _randomParticlesInitilization = true;
 }
@@ -31,7 +31,7 @@ DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,int L,int Nr,i
 void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > noiseVariances)
 {
 	uint k,iSmoothingVector;
-	int iSmoothingLag,iParticle,iSampledVector;
+	uint iSmoothingLag,iParticle,iSampledVector;
 	vector<tSymbol> testedVector(_nInputs),testedSmoothingVector(_nInputs*_d),sampledVector(_nInputs);
 	double auxLikelihoodsProd;
 	ChannelMatrixEstimator *channelEstimatorClone;
@@ -39,14 +39,14 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 	// it includes all symbol vectors involved in the smoothing
     MatrixXd smoothingSymbolVectors(_nInputs,_channelOrder+_d);
 
-	uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
-	uint nSmoothingVectors = (int) pow((double)_alphabet.length(),(double)(_nInputs*_d));
+	uint nSymbolVectors = (uint) pow((double)_alphabet.length(),(double)_nInputs);
+	uint nSmoothingVectors = (uint) pow((double)_alphabet.length(),(double)(_nInputs*_d));
 
 	// a likelihood is computed for every possible symbol vector
     VectorXd likelihoods(nSymbolVectors);
 
 	// for each time instant
-	for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+	for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
 		for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 		{
@@ -102,7 +102,7 @@ void DSISoptAlgorithm::process(const MatrixXd &observations, vector< double > no
 					likelihoods(iTestedVector) += auxLikelihoodsProd;
 				} // for(iSmoothingVector=0;iSmoothingVector<nSmoothingVectors;iSmoothingVector++)
 
-			} // for(int iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
+			} // for(uint iTestedVector=0;iTestedVector<nSymbolVectors;iTestedVector++)
 
 			VectorXd probabilities(nSymbolVectors);
 			try {

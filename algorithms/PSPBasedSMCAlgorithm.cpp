@@ -33,7 +33,7 @@
 	extern Noise *realNoise;
 #endif
 
-PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, int L, int Nr,int N, int iLastSymbolVectorToBeDetected, int m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, int smoothingLag, int nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*, double ARcoefficient*/): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
+PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*, double ARcoefficient*/): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 // ,_ARcoefficient(ARcoefficient)
 {
 }
@@ -68,7 +68,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     int iLastSymbolVectorStartWithinStackedVector = _nInputsXchannelOrder - _nInputs;
 
     // at first, there is only one particle
-    for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
+    for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
 	  
 #ifdef DEBUG
@@ -80,7 +80,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
         normConst = 0.0;
 
         // the candidates from all the particles are generated
-        for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
         {
 #ifdef DEBUG
 			cout << "***** Particle = " << iParticle << " *****" << endl;
@@ -107,7 +107,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
                 _alphabet.int2symbolsArray(iTestedVector,testedVector);
 
                 // current tested vector is copied in the m-th position
-                for(int k=0;k<_nInputs;k++)
+                for(uint k=0;k<_nInputs;k++)
                     symbolVectorsMatrix(k,_channelOrder-1) = symbolsVector(iLastSymbolVectorStartWithinStackedVector+k) = testedVector[k];
 
                 particleCandidates[iCandidate].fromParticle = iParticle;
@@ -167,7 +167,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
         _particleFilter->keepParticles(indexesParticles);
 
         // every surviving particle is modified according to what it says its corresponding candidate
-        for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
         {
             ParticleWithChannelEstimation *processedParticle = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getParticle(iParticle));
 

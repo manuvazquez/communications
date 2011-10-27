@@ -36,12 +36,12 @@ class Algorithm{
 protected:
     const string _name;
     const Alphabet _alphabet;
-    const int _nOutputs; /// number of outputs (observations) of the system at each time instant
-    const int _Nr; /// number of receiving antennas of the system
-    const int _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
-    const int _iLastSymbolVectorToBeDetected;
+    const uint _nOutputs; /// number of outputs (observations) of the system at each time instant
+    const uint _Nr; /// number of receiving antennas of the system
+    const uint _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
+    const uint _iLastSymbolVectorToBeDetected;
 public:
-    Algorithm(string name, Alphabet  alphabet,int L,int Nr,int N, int iLastSymbolVectorToBeDetected);
+    Algorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
 
     string getName() const {return _name;}
@@ -70,14 +70,14 @@ public:
     double MSE(const vector<MatrixXd> &channelMatrices);
 	double MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns);
 
-    VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,int m,int c,int d,const VectorXd &observations,const MatrixXd &symbolVectors);
+    VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint c,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
 
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int start,int d);
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m)
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m,uint start,uint d);
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m)
     {
         return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
     }
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,int m,int d)
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m,uint d)
     {
         return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
     }    
