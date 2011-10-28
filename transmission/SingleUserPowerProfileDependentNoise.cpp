@@ -20,18 +20,26 @@
 #include "SingleUserPowerProfileDependentNoise.h"
 
 // #define DEBUG
+#include <Eigen/Dense>
 
 SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
 {
-	MatrixXd variancesMatrix = powerProfile.variances();
-	int i;
-	double variancesSum = 0.0;
-	for(i=0;i<variancesMatrix.rows();i++)
-		variancesSum += variancesMatrix(i,_iUser);
+// 	MatrixXd variancesMatrix = powerProfile.variances();
+// 
+// 	int i;
+// 	double variancesSum = 0.0;
+// 	for(i=0;i<variancesMatrix.rows();i++)
+// 		variancesSum += variancesMatrix(i,_iUser);
+// 
+// 	_varianceConstant = variancesSum/double(_nOutputs);
+// 	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
 
-	_varianceConstant = variancesSum/double(_nOutputs);
+	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
+// 	_varianceConstant = powerProfile.variances().col(_iUser).sum();
+
 #ifdef DEBUG
-	cout << "variancesSum = " << variancesSum << endl;
+// 	cout << "variancesSum = " << variancesSum << endl;
+	cout << "variancesSum = " << powerProfile.variances().col(_iUser).sum() << endl;
 #endif
 }
 

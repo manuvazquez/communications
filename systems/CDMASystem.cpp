@@ -51,7 +51,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 // ,maximumRatioThresholdInDBs(15)
 ,_maximumRatioThresholdInDBs(20)
 {
-    if(_m!=1)
+    if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
 
 	// first user starts transmitting something
@@ -82,7 +82,6 @@ CDMASystem::CDMASystem(): SMCSystem()
 	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
 #endif
 
-//   _nSurvivors = 1;
   _nSurvivors = 2;
 //   _nSurvivors = 8;
 //   _nSurvivors = 10;

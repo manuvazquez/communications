@@ -176,7 +176,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
-double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution)
+double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution) const
 {
 	if(Util::isUserActive(symbol))
 		return 1.0/double(_alphabet.length())*userActivityDistribution.probApriori(true);
@@ -184,7 +184,7 @@ double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbo
 		return userActivityDistribution.probApriori(false);
 }
 
-double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution)
+double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution) const
 {
 	if(Util::isUserActive(symbol))
 		return userActivityDistribution.probXgivenY(true,previousActivity)*1.0/double(_alphabet.length());

@@ -63,6 +63,10 @@ protected:
     double _pe,_mse;
     uint _iSNR;
 	uint _iFrame,_iAlgorithm;
+	
+	/**
+	 * @brief the algorithms will stop the processing (and hence, the detection of the symbols transmitted) here (this is usually the last time instant for which enough observations are available to perform smoothing)
+	 **/
     int _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS

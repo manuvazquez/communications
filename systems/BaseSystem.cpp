@@ -100,7 +100,7 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 10000;
+// 	_nFrames = 1000;
 	_nFrames = 2;
 	_L=8,_N=3,_frameLength=1000;
 	_m = 1;
@@ -115,11 +115,13 @@ BaseSystem::BaseSystem()
 // ----------------------------------------------------------
 
 // 	_SNRs.push_back(0);
+	
 	_SNRs.push_back(3);
 	_SNRs.push_back(6);
 	_SNRs.push_back(9);
 	_SNRs.push_back(12);
 	_SNRs.push_back(15);
+	
 // 	_SNRs.push_back(18);
 // 	_SNRs.push_back(21);
 // 	_SNRs.push_back(24);
