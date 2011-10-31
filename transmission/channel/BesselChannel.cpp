@@ -65,6 +65,7 @@ BesselChannel::BesselChannel(uint nInputs, uint nOutputs, int memory, uint lengt
             VectorXd sample = Ls[iCol/nInputs]*StatUtil::randnMatrix(length,1,0.0,1.0);
 
 			for(iTime=0;iTime<length;iTime++)
-				_channelMatrices[iTime](iRow,iCol) = sample(iTime);
+// 				_channelMatrices[iTime](iRow,iCol) = sample(iTime);
+				_channelMatrices[iTime](iRow,iCol) = sample(iTime) + DelayPowerProfile::getCoefficientsMean();
 		}
 }

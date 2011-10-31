@@ -76,6 +76,7 @@ BaseSystem::BaseSystem()
     // comment/uncomment to set to false/true
 // 	_saveAtEveryFrame = !_saveAtEveryFrame;
 
+
 // ------------------------ iswcs 2010 ----------------------
 
 // 	_nFrames = 20;
@@ -105,6 +106,7 @@ BaseSystem::BaseSystem()
 // --------------------------- CDMA -------------------------
 
 // 	_nFrames = 1000;
+// 	_nFrames = 1;
 	_nFrames = 2;
 	_L=8,_N=3,_frameLength=1000;
 	_m = 1;

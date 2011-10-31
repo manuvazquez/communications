@@ -19,7 +19,10 @@
  ***************************************************************************/
 #include "DelayPowerProfile.h"
 
-DelayPowerProfile::DelayPowerProfile(uint nOutputs,uint nInputs):_nOutputs(nOutputs),_nInputs(nInputs),_generatedCoefficientsMean(0.0)
+// by default the mean of the generated coefficients is zero
+double DelayPowerProfile::_generatedCoefficientsMean = 0.0;
+
+DelayPowerProfile::DelayPowerProfile(uint nOutputs,uint nInputs):_nOutputs(nOutputs),_nInputs(nInputs)//,_generatedCoefficientsMean(0.0)
 {
 }
 

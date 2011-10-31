@@ -30,13 +30,15 @@
 #include <Util.h>
 
 class DelayPowerProfile{
+private:
+    static double _generatedCoefficientsMean;
 protected:
     int _nOutputs,_nInputs;
 	
 	//! it keeps the power (variance) of each one of the channel taps
     std::vector<double> _tapsPowers;
     
-	double _generatedCoefficientsMean;
+// 	double _generatedCoefficientsMean;
     MatrixXd _means,_variances;
 
     void GenerateMatrices();
@@ -57,6 +59,21 @@ public:
     uint nOutputs() { return _nOutputs;}
     int memory() const { return _tapsPowers.size();}
     std::vector<double> tapsPowers() const { return _tapsPowers;}
+    
+    /**
+	 * @brief It allows to set the mean of the coefficients that will be generated using this delay power profile
+	 *
+	 * @param mean new mean
+	 * @return void
+	 **/
+	static void setCoefficientsMean(double mean) { _generatedCoefficientsMean = mean;}
+	
+	/**
+	 * @brief It returns the mean of the coefficients that will be generated using this delay power profile
+	 *
+	 * @return double
+	 **/
+	static double getCoefficientsMean() { return _generatedCoefficientsMean;}
 };
 
 #endif

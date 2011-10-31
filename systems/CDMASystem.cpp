@@ -102,6 +102,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     // a flat power profile is generated. Notice:
     //      i) that m should be 1, otherwise an exception would have been thrown
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
+	FlatPowerProfile::setCoefficientsMean(5.0);
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
     
     _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
@@ -195,6 +196,11 @@ void CDMASystem::beforeEndingFrame()
 	Util::scalarToOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
 	Util::scalarToOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
 	Util::scalarToOctaveFileStream(_userPriorProb,"userPriorProb",_f);
+	
+	if(!_piecesInfoAvailable)
+		throw RuntimeException("CDMASystem::computeMSE: pieces information is not available.");
+	
+	Util::scalarsVectorToOctaveFileStream(_signChanges,"signChanges",_f);
 }
 
 void CDMASystem::buildChannel()

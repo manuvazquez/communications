@@ -33,9 +33,13 @@ SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint 
 // 
 // 	_varianceConstant = variancesSum/double(_nOutputs);
 // 	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
-
-	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
+	
+// 	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
 // 	_varianceConstant = powerProfile.variances().col(_iUser).sum();
+
+	// we need the autocorrelation of the channel coefficients (rather than the variance)
+// 	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum()/double(_nOutputs);
+	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum();
 
 #ifdef DEBUG
 // 	cout << "variancesSum = " << variancesSum << endl;
@@ -51,6 +55,7 @@ VectorXd SingleUserPowerProfileDependentNoise::at(uint n) const
 void SingleUserPowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)
 {
 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
+	cout << "SingleUserPowerProfileDependentNoise::setSNR: new std is " << newStdDev << endl;
 
 	_matrix *= (newStdDev/_stdDev);
 	_stdDev = newStdDev;
