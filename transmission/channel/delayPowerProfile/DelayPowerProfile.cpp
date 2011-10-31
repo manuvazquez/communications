@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "DelayPowerProfile.h"
 
-DelayPowerProfile::DelayPowerProfile(int nOutputs,int nInputs):_nOutputs(nOutputs),_nInputs(nInputs),_generatedCoefficientsMean(0.0)
+DelayPowerProfile::DelayPowerProfile(uint nOutputs,uint nInputs):_nOutputs(nOutputs),_nInputs(nInputs),_generatedCoefficientsMean(0.0)
 {
 }
 

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "NullNoise.h"
 
-NullNoise::NullNoise(int nOutputs, int length): Noise(nOutputs, length)
+NullNoise::NullNoise(uint nOutputs, uint length): Noise(nOutputs, length)
 {
 }
 

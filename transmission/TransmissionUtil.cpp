@@ -50,7 +50,7 @@ double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bi
 
     BERComputingChecks(bits1,from1,to1,bits2,from2,to2);
 
-    int length = to1-from1;
+    uint length = to1-from1;
     int errors = 0;
 
     for(int iBits1=from1,iBits2=from2;iBits1<to1;iBits1++,iBits2++)
@@ -68,7 +68,7 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
 
     BERComputingChecks(sourceBits,from1,to1,detectedBits,from2,to2);
 
-    int length = to1-from1;
+    uint length = to1-from1;
 
     uint iBestPermutation = 0;
     vector<int> bestPermutationSigns(sourceBits.nStreams(),1);

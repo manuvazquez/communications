@@ -67,7 +67,7 @@ protected:
 	/**
 	 * @brief the algorithms will stop the processing (and hence, the detection of the symbols transmitted) here (this is usually the last time instant for which enough observations are available to perform smoothing)
 	 **/
-    int _iLastSymbolVectorToBeDetected;
+    uint _iLastSymbolVectorToBeDetected;
 
     // GLOBAL PARAMETERS
 

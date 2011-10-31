@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ContinuousPowerProfile.h"
 
-ContinuousPowerProfile::ContinuousPowerProfile(int nOutputs, int nInputs, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nOutputs, nInputs),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
+ContinuousPowerProfile::ContinuousPowerProfile(uint nOutputs, uint nInputs, vector<double> differentialDelays, vector<double> powers): DelayPowerProfile(nOutputs, nInputs),_continuousDelays(differentialDelays.size()),_continuousPowers(powers.size())
 {
 	if(differentialDelays.size()!=powers.size())
 		throw RuntimeException("ContinuousPowerProfile::ContinuousPowerProfile: numbers of delays and powers differ.");

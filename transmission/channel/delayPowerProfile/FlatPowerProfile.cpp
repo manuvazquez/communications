@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "FlatPowerProfile.h"
 
-FlatPowerProfile::FlatPowerProfile(int nOutputs, int nInputs, uint m, double variance): DelayPowerProfile(nOutputs, nInputs)
+FlatPowerProfile::FlatPowerProfile(uint nOutputs, uint nInputs, uint m, double variance): DelayPowerProfile(nOutputs, nInputs)
 {
-	for(int i=0;i<m;i++)
+	for(uint i=0;i<m;i++)
 		_tapsPowers.push_back(variance);
 
 	GenerateMatrices();

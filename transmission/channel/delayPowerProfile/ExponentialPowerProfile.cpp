@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ExponentialPowerProfile.h"
 
-ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, double T, double threshold): DelayPowerProfile(nOutputs, nInputs)
+ExponentialPowerProfile::ExponentialPowerProfile(uint nOutputs, uint nInputs, double T, double threshold): DelayPowerProfile(nOutputs, nInputs)
 {
 	double power,delay = 0.0;
 	double normConst = 0.0;
@@ -38,12 +38,12 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, doub
 	GenerateMatrices();
 }
 
-ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, uint m, double tRMS, double T): DelayPowerProfile(nOutputs, nInputs)
+ExponentialPowerProfile::ExponentialPowerProfile(uint nOutputs, uint nInputs, uint m, double tRMS, double T): DelayPowerProfile(nOutputs, nInputs)
 {
 	double power,delay = 0.0;
 	double normConst = 0.0;
 
-	int i;
+	uint i;
 	for(i=0;i<m;i++)
 	{
 		power = (1.0/tRMS)*exp(-(1.0/tRMS)*delay);
@@ -57,7 +57,7 @@ ExponentialPowerProfile::ExponentialPowerProfile(int nOutputs, int nInputs, uint
 		_tapsPowers[i] /= normConst;
 
 	std::vector<double> _amplitudesBak = _tapsPowers;
-	for(uint i=0;i<_amplitudesBak.size();i++)
+	for(i=0;i<_amplitudesBak.size();i++)
 		_tapsPowers[_tapsPowers.size()-1-i] = _amplitudesBak[i];
 
 	GenerateMatrices();

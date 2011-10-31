@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-StillMemoryMIMOChannel::StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory, int length): MIMOChannel(nInputs, nOutputs, length),_memory(memory),_nInputsnOutputsMemory(_nInputs*_nOutputs*_memory),_nInputsMemory(_nInputs*_memory)
+StillMemoryMIMOChannel::StillMemoryMIMOChannel(uint nInputs, uint nOutputs, int memory, uint length): MIMOChannel(nInputs, nOutputs, length),_memory(memory),_nInputsnOutputsMemory(_nInputs*_nOutputs*_memory),_nInputsMemory(_nInputs*_memory)
 {
 }
 

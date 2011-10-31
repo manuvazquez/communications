@@ -36,7 +36,7 @@ protected:
 	double _varianceConstant,_stdDev;
 	uint _iUser;
 public:
-    SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
+    SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
 
 	virtual double stdDevAt(int n) const {return _stdDev;}
     virtual VectorXd at(uint n) const;

@@ -22,7 +22,7 @@
 // #define DEBUG
 #include <Eigen/Dense>
 
-SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
+SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
 {
 // 	MatrixXd variancesMatrix = powerProfile.variances();
 // 

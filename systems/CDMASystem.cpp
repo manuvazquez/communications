@@ -353,7 +353,7 @@ void CDMASystem::onlyOnce()
 bool CDMASystem::isChannelOk(const MIMOChannel * const channel)
 {
 	double thisChannelMatrixMaximumRatio;
-	int iChannelMatrix;
+	uint iChannelMatrix;
 
 	// we check if the channel is really bad (severe near-far issues)...
 	_maximumRatio = 20*log10(Util::maxCoefficientsRatio(channel->at(_preambleLength)));

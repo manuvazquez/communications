@@ -22,12 +22,12 @@
 
 // #define DEBUG
 
-BesselChannel::BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
+BesselChannel::BesselChannel(uint nInputs, uint nOutputs, int memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
 {
 	if(powerProfile.memory()!=memory)
 		throw RuntimeException("BesselChannel::BesselChannel: memory is wrong.");
 
-	int iRow,iCol,iTime;
+	uint iRow,iCol,iTime;
 	const double c = 3e8;
 
 	double dopplerFrequency = velocity/(c/carrierFrequency);

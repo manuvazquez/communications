@@ -31,7 +31,7 @@ class TimeInvariantChannel : public StillMemoryMIMOChannel
 protected:
     MatrixXd _channelMatrix;   
 public:
-    TimeInvariantChannel(int nInputs, int nOutputs, int memory, int length, MatrixXd channelMatrix);
+    TimeInvariantChannel(uint nInputs, uint nOutputs, int memory, uint length, MatrixXd channelMatrix);
 
     MatrixXd at(int n) const { return _channelMatrix;};
 	

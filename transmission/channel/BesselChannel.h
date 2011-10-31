@@ -37,7 +37,7 @@ class BesselChannel : public StillMemoryMIMOChannel
 protected:
     std::vector<MatrixXd> _channelMatrices;   
 public:
-    BesselChannel(int nInputs, int nOutputs, int memory, int length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
+    BesselChannel(uint nInputs, uint nOutputs, int memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
 
     MatrixXd at(int n) const { return _channelMatrices[n];}
     

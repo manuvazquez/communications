@@ -34,7 +34,7 @@ protected:
     std::vector<MatrixXd> _channelMatrices;   
 	ARprocess _ARproc;
 public:
-	ARchannel(int nInputs, int nOutputs, int memory, int length,ARprocess ARproc);
+	ARchannel(uint nInputs, uint nOutputs, int memory, uint length,ARprocess ARproc);
 
 	MatrixXd at(int n) const { return _channelMatrices[n];}
 	

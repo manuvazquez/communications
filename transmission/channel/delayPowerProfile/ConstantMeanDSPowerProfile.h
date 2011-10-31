@@ -28,7 +28,7 @@
 class ConstantMeanDSPowerProfile : public ContinuousPowerProfile
 {
 public:
-    ConstantMeanDSPowerProfile(int nOutputs, int nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T);
+    ConstantMeanDSPowerProfile(uint nOutputs, uint nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T);
 
 };
 

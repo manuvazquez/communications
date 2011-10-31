@@ -21,11 +21,6 @@
 
 // #define DEBUG5
 
-// #include <Eigen/Dense>
-// #include <Eigen/LU>
-
-// using namespace Eigen;
-
 ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
     CommonConstructorsCode(seed);
@@ -42,7 +37,7 @@ ARprocess::ARprocess(MatrixXd seed,int order,double velocity,double carrierFrequ
 
 void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
 {
-    int i,j;
+    uint i,j;
 
     _iterationsForConvergence = 200;
     _noiseMean = 0.0;
@@ -73,7 +68,7 @@ void ARprocess::CommonConstructorsCode(const MatrixXd &seed)
 MatrixXd ARprocess::nextMatrix()
 {
     MatrixXd aux = MatrixXd::Zero(_rows,_columns);
-    for(int j=0;j<_nCoefficients;j++)
+    for(uint j=0;j<_nCoefficients;j++)
         // aux = aux + _coefficients[j]*_buffer[(i+nCoefficientes-1-j) % nCoefficientes];
         aux += _coefficients[j]*_buffer[(_iNextMatrix+_nCoefficients-1-j) % _nCoefficients];
     

@@ -35,7 +35,7 @@ protected:
 	MatrixXd _matrix;
 	double _varianceConstant,_stdDev;
 public:
-    PowerProfileDependentNoise(int nOutputs, int length, const DelayPowerProfile &powerProfile);
+    PowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
 
 	virtual double stdDevAt(int n) const {return _stdDev;}
     virtual VectorXd at(uint n) const;

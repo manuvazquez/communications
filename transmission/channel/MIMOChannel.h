@@ -35,11 +35,11 @@ protected:
     uint _nInputs, _nOutputs,_length,_nInputsnOutputs;
 public:
 	MIMOChannel();
-    MIMOChannel(int nInputs,int nOutputs,int length);
+    MIMOChannel(uint nInputs,uint nOutputs,uint length);
     virtual ~MIMOChannel() {};
     
-    virtual int nInputs() const { return _nInputs;}
-    virtual int nOutputs() const { return _nOutputs;}
+    virtual uint nInputs() const { return _nInputs;}
+    virtual uint nOutputs() const { return _nOutputs;}
 
 	/*!
 	  It returns the number of rows of the REAL channel matrix that represents the channel (it is usually the number of outputs)
@@ -54,7 +54,7 @@ public:
 // 	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
 	virtual int channelCoefficientsMatrixCols() const { return _nInputs*effectiveMemory();}
 
-	virtual int length() const {return _length;};
+	virtual uint length() const {return _length;};
     virtual int nInputsnOutputs() const {return _nInputsnOutputs;};
     virtual int nInputsnOutputsMemory(int n) const {return _nInputs*_nOutputs*memory(n);};
     virtual int nInputsMemory(int n) const {return _nInputs*memory(n);}

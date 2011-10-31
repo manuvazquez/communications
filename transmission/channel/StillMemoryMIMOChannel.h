@@ -30,7 +30,7 @@ class StillMemoryMIMOChannel : public MIMOChannel
 protected:
 	int _memory,_nInputsnOutputsMemory,_nInputsMemory;
 public:
-    StillMemoryMIMOChannel(int nInputs, int nOutputs, int memory,int length);
+    StillMemoryMIMOChannel(uint nInputs, uint nOutputs, int memory,uint length);
 
 	int memory() const {return _memory;};
 	int memory(int n) const {return _memory;}

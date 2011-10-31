@@ -39,8 +39,8 @@ private:
     vector<double> _coefficients;
     double _noiseVariance;
     double _noiseMean;
-    int _nCoefficients, _rows, _columns, _iNextMatrix;
-    int _iterationsForConvergence;
+    uint _nCoefficients, _rows, _columns, _iNextMatrix;
+    uint _iterationsForConvergence;
     std::vector<MatrixXd> _buffer;   
 
     void CommonConstructorsCode(const MatrixXd &seed);   
@@ -53,8 +53,8 @@ public:
     
     static vector<double> parametersFromYuleWalker(uint order,double velocity,double carrierFrequency,double T,double &noiseVariance);
 
-    int rows() {return _rows;}
-    int cols() {return _columns;}
+    uint rows() {return _rows;}
+    uint cols() {return _columns;}
 };
 
 #endif

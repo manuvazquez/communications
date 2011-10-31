@@ -31,8 +31,8 @@
 class ExponentialPowerProfile : public DelayPowerProfile
 {
 public:
-    ExponentialPowerProfile(int nOutputs, int nInputs, double T, double threshold);
-    ExponentialPowerProfile(int nOutputs, int nInputs, uint m, double tRMS, double T);
+    ExponentialPowerProfile(uint nOutputs, uint nInputs, double T, double threshold);
+    ExponentialPowerProfile(uint nOutputs, uint nInputs, uint m, double tRMS, double T);
 };
 
 #endif

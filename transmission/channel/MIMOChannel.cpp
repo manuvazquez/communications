@@ -25,7 +25,7 @@
 #include<Eigen/Core>
 // #include<Eigen/Array>
 
-MIMOChannel::MIMOChannel(int nInputs,int nOutputs,int length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
+MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {
 }
 

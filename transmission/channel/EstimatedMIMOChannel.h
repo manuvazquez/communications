@@ -31,7 +31,7 @@ class EstimatedMIMOChannel : public StillMemoryMIMOChannel
 protected:
     std::vector<MatrixXd> _channelMatrices;
 public:
-    EstimatedMIMOChannel(int nInputs, int nOutputs, int memory, int length, uint preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances);
+    EstimatedMIMOChannel(uint nInputs, uint nOutputs, int memory, uint length, uint preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances);
 
     MatrixXd at(int n) const { return _channelMatrices[n];}
 };

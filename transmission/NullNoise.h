@@ -28,7 +28,7 @@
 class NullNoise : public Noise
 {
 public:
-    NullNoise(int nOutputs, int length);
+    NullNoise(uint nOutputs, uint length);
 
     virtual double stdDevAt(int n) const {return 0.0;}
     virtual VectorXd at(uint n) const;

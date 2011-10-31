@@ -41,7 +41,7 @@ protected:
 
     void GenerateMatrices();
 public:
-    DelayPowerProfile(int nOutputs,int nInputs);
+    DelayPowerProfile(uint nOutputs,uint nInputs);
 
     virtual ~DelayPowerProfile();
 
@@ -53,8 +53,8 @@ public:
     
     MatrixXd variances() const {return _variances;}
    
-    int nInputs() { return _nInputs;}
-    int nOutputs() { return _nOutputs;}
+    uint nInputs() { return _nInputs;}
+    uint nOutputs() { return _nOutputs;}
     int memory() const { return _tapsPowers.size();}
     std::vector<double> tapsPowers() const { return _tapsPowers;}
 };

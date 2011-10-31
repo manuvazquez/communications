@@ -27,14 +27,14 @@ MatrixXd Modulator::modulate(const Bits &bits, Alphabet alphabet)
 {
 	if((bits.nBitsPerStream()% alphabet.nBitsPerSymbol())!=0)
 		cout << "Too many bits." << endl;
-	int nSymbolsByStream = bits.nBitsPerStream()/ alphabet.nBitsPerSymbol();
+	uint nSymbolsByStream = bits.nBitsPerStream()/ alphabet.nBitsPerSymbol();
 
     MatrixXd res(bits.nStreams(),nSymbolsByStream);   
 
 	// once filled, it will converted to a symbol by alphabet
 	vector<tBit> currentBitSequence(alphabet.nBitsPerSymbol());
 
-	int processedBits,j,iSymbol;
+	uint processedBits,j,iSymbol;
 	for(int i=0;i<bits.nStreams();i++)
 	{
 		processedBits = 0;
