@@ -32,7 +32,7 @@ public:
 
 	virtual ResidualResamplingAlgorithm* clone() const;
 
-	std::vector<int> obtainIndexes(int n,const VectorXd &weights) const;
+	std::vector<uint> obtainIndexes(uint n,const VectorXd &weights) const;
 
 };
 

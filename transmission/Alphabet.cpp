@@ -88,7 +88,7 @@ uint Alphabet::symbolsArray2int(vector<tSymbol> symbolsVector) const
 
 	uint res = 0, base = 1;
 	vector<tSymbol>::const_iterator iterator;
-	for(uint i=size-1;i>=0;i--)
+	for(int i=size-1;i>=0;i--)
 	{
 		iterator = find(_symbols.begin(),_symbols.end(),symbolsVector.at(i));
 		if(iterator==_symbols.end())

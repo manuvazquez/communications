@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(-1),_iFirstObservation(iFirstObservation),_preamble(preamble)
+UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation): UnknownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected),_channelEstimators(channelEstimators.size()),_candidateOrders( channelEstimators.size()),_maxOrder(0),_iFirstObservation(iFirstObservation),_preamble(preamble)
 {
     for(uint i=0;i<channelEstimators.size();i++)
     {
@@ -41,7 +41,10 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
     }
 
     if(_preamble.cols()<(_maxOrder-1))
+	{
+		std::cout << "_preamble.cols() = " << _preamble.cols() << ", _maxOrder = " << _maxOrder << endl;
         throw RuntimeException("UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm: the number of vectors contained in the preamble are not enough for the maximun channel order of all the channel matrix estimators.");
+	}
 
     // a vector that associate a channel order with its corresponding index is generated
     _channelOrder2index = new int[_maxOrder+1];

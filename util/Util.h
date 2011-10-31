@@ -73,8 +73,18 @@ public:
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
     template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
-    static std::vector<int> nMax(int n,const VectorXd &v);
-    static MatrixXd flipLR(const MatrixXd &A);
+    
+	
+	/**
+	 * @brief it returns the indexes of the \ref n maximum elements in \ref v
+	 *
+	 * @param n number of "maximum"'s
+	 * @param v vector in which to look for them
+	 * @return :vector< uint, std::allocator< uint > >
+	 **/
+	static vector<uint> nMax(uint n, const VectorXd& v);
+    
+	static MatrixXd flipLR(const MatrixXd &A);
     static MatrixXd sign(const MatrixXd &A);
 	static std::vector<uint> computeInversePermutation(const std::vector<uint> &permutation);
 	

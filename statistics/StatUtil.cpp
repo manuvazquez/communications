@@ -55,21 +55,20 @@ uint StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerato
     return res;
 }
 
-int StatUtil::discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator)
+uint StatUtil::discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator)
 {
-    int i;
     double uniform;
 
-    int nProbabilities = probabilities.size();
+    uint nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
     distributionFunction[0] = probabilities[0];
-    for(i=1;i<nProbabilities;i++)
+    for(uint i=1;i<nProbabilities;i++)
            distributionFunction[i] = distributionFunction[i-1]+probabilities[i];
 
     uniform = randomGenerator.rand();
 
-    int res = 0;
+    uint res = 0;
     while(uniform>distributionFunction[res])
         res++;
 
@@ -79,20 +78,20 @@ int StatUtil::discrete_rnd(const std::vector<double> &probabilities,Random &rand
     return res;
 }
 
-vector<int> StatUtil::discrete_rnd(int nSamples,const VectorXd &probabilities,Random &randomGenerator)
+vector<uint> StatUtil::discrete_rnd(uint nSamples,const VectorXd &probabilities,Random &randomGenerator)
 {
-    int i,j;
+    uint i,j;
     double uniform;
 
     VectorXd normalizedProbabilities = Util::normalize(probabilities);
-    int nProbabilities = probabilities.size();
+    uint nProbabilities = probabilities.size();
 
     double *distributionFunction = new double[nProbabilities];
     distributionFunction[0] = normalizedProbabilities(0);
     for(i=1;i<nProbabilities;i++)
            distributionFunction[i] = distributionFunction[i-1]+normalizedProbabilities(i);
 
-    vector<int> res(nSamples);
+    vector<uint> res(nSamples);
 
     for(i=0;i<nSamples;i++)
     {
@@ -190,16 +189,16 @@ double StatUtil::mean(const MatrixXd &A)
     return sum/(double)(A.rows()*A.cols());
 }
 
-vector<int> StatUtil::withoutReplacementSampling(int nSamples,const VectorXd &probabilities,Random &randomGenerator)
+vector<uint> StatUtil::withoutReplacementSampling(uint nSamples, const VectorXd& probabilities, Random& randomGenerator)
 {
     double uniform;
 
-    int nProbabilities = probabilities.size();
+    uint nProbabilities = probabilities.size();
 
     if(nSamples>=nProbabilities)
     {
-        vector<int> res(nProbabilities);
-        for(int i=0;i<nProbabilities;i++)
+        vector<uint> res(nProbabilities);
+        for(uint i=0;i<nProbabilities;i++)
             res[i] = i;
         return res;
     }
@@ -211,24 +210,24 @@ vector<int> StatUtil::withoutReplacementSampling(int nSamples,const VectorXd &pr
 
     bool *remainingProbabilityActiveOperands;
     remainingProbabilityActiveOperands = new bool[nProbabilities];
-    for(int i=0;i<nProbabilities;i++)
+    for(uint i=0;i<nProbabilities;i++)
     {
         distributionFunctionActiveOperands[i] = new bool[nProbabilities];
-        for(int j=0;j<=i;j++)
+        for(uint j=0;j<=i;j++)
         {
             distributionFunctionActiveOperands[i][j] = true;
             remainingProbabilityActiveOperands[j] = true;
         }
-        for(int j=i+1;j<nProbabilities;j++)
+        for(uint j=i+1;j<nProbabilities;j++)
         {
             distributionFunctionActiveOperands[i][j] = false;
             remainingProbabilityActiveOperands[j] = true;
         }
     }
 
-    int j;
-    vector<int> res(nSamples);
-    for(int i=0;i<nSamples;i++)
+    uint j;
+    vector<uint> res(nSamples);
+    for(uint i=0;i<nSamples;i++)
     {
         uniform = randomGenerator.rand()*computeFromActiveOperands(normalizedProbabilities,remainingProbabilityActiveOperands);
 
@@ -238,11 +237,11 @@ vector<int> StatUtil::withoutReplacementSampling(int nSamples,const VectorXd &pr
         res[i] = j;
 
         remainingProbabilityActiveOperands[j] = false;
-        for(int k=j;k<nProbabilities;k++)
+        for(uint k=j;k<nProbabilities;k++)
             distributionFunctionActiveOperands[k][j] = false;
     }
 
-    for(int i=0;i<nProbabilities;i++)
+    for(uint i=0;i<nProbabilities;i++)
         delete[] distributionFunctionActiveOperands[i];
     delete[] distributionFunctionActiveOperands;
     delete[] remainingProbabilityActiveOperands;

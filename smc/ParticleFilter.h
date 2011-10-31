@@ -50,7 +50,7 @@ public:
      *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
      * @param resamplingIndexes
      */
-    virtual void keepParticles(std::vector<int> resamplingIndexes);
+    virtual void keepParticles(std::vector<uint> resamplingIndexes);
 
     virtual void addParticle(Particle *particle)
     {

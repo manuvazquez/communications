@@ -28,7 +28,7 @@ bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
 
     if(_resamplingCriterion.resamplingNeeded(weigths))
     {
-        vector<int> indexes = obtainIndexes(particleFilter->capacity(),weigths);
+        vector<uint> indexes = obtainIndexes(particleFilter->capacity(),weigths);
         particleFilter->keepParticles(indexes);
 
 #ifdef PRINT_RESAMPLED_INFO
@@ -47,7 +47,7 @@ bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
     return false;
 }
 
-std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weights, const std::vector<bool> &mask)
+std::vector<uint> ResamplingAlgorithm::obtainIndexes(uint n,const VectorXd &weights, const std::vector<bool> &mask)
 {
 	if(static_cast<uint>(weights.size())!=mask.size())
 	  throw RuntimeException("ResamplingAlgorithm::obtainIndexes: mask has not the same dimensions as the weights vector");
@@ -59,7 +59,7 @@ std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weight
 	// if no element is to be taken into account...
 	if(nActiveElements==0)
 		//...we directly return an empty vector
-		return std::vector<int>(0);
+		return std::vector<uint>(0u);
 	
 	VectorXd filteredWeights(nActiveElements);
 	std::vector<uint> mapping;
@@ -78,7 +78,7 @@ std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weight
 	  
 	filteredWeights /= normConst;
 
-	std::vector<int> relativeIndexes = obtainIndexes(n,filteredWeights);
+	std::vector<uint> relativeIndexes = obtainIndexes(n,filteredWeights);
 	
 // 	cout << "relative indexes" << endl;
 // 	Util::print(relativeIndexes);
@@ -88,7 +88,7 @@ std::vector<int> ResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weight
 // 	Util::print(mapping);
 // 	cout << endl;
 
-	std::vector<int> res(relativeIndexes.size());
+	std::vector<uint> res(relativeIndexes.size());
 	for(uint i=0;i<relativeIndexes.size();i++)
 		res[i] = mapping[relativeIndexes[i]];
 	

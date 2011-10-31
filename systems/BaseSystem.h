@@ -59,6 +59,8 @@
 extern bool __done;
 
 class BaseSystem{
+private:
+	static bool _saveAtEveryFrame;
 protected:
     double _pe,_mse;
     uint _iSNR;
@@ -211,7 +213,6 @@ public:
     virtual ~BaseSystem();
 
     void simulate();
-
 };
 
 #endif

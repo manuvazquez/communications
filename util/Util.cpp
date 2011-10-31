@@ -484,20 +484,20 @@ template<class T> void Util::howManyTimes(const vector<T> &v,vector<int> &firstO
 }
 template void Util::howManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
 
-vector<int> Util::nMax(int n,const VectorXd &v)
+vector<uint> Util::nMax(uint n,const VectorXd &v)
 {
     // a vector of length the minimum between the size of the vector and n is created
-    vector<int> res(n>v.size()?v.size():n);
+    vector<uint> res(n>v.size()?v.size():n);
 
     vector<bool> alreadySelected(v.size(),false);
 
     for(uint iRes=0;iRes<res.size();iRes++)
     {
-        int index = 0;
+        uint index = 0;
         while(alreadySelected[index])
             index++;
         double max = v(index);
-        for(int i=index+1;i<v.size();i++)
+        for(uint i=index+1;i<v.size();i++)
             if(!alreadySelected[i] && v(i)>max)
             {
                 max = v(i);

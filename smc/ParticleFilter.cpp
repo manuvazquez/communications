@@ -90,7 +90,7 @@ void ParticleFilter::keepParticles(std::vector<uint> resamplingIndexes,std::vect
     _particles = resParticles;
 }
 
-void ParticleFilter::keepParticles(vector<int> indexes)
+void ParticleFilter::keepParticles(vector<uint> indexes)
 {
     if(indexes.size()>_capacity)
         throw RuntimeException("ParticleFilter::KeepParticles: the number of selected particles is bigger than the number of particles in the filter.");

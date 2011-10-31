@@ -67,13 +67,17 @@ extern bool __nFramesHasBeenPassed;
 	int realChannelOrder;
 #endif
 
-// #define TYPEID(x) strpbrk(typeid(x).name(),"_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+bool BaseSystem::_saveAtEveryFrame = false;
 
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
+    
+    // comment/uncomment to set to false/true
+// 	_saveAtEveryFrame = !_saveAtEveryFrame;
 
 // ------------------------ iswcs 2010 ----------------------
+
 // 	_nFrames = 20;
 // 	_L=3,_N=3,_frameLength=300;
 // 	_m = 4;
@@ -276,8 +280,11 @@ if(__nFramesHasBeenPassed)
 		StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
 	}else
 	{
-		_randomGenerator.setSeed(825535300);
-		StatUtil::getRandomGenerator().setSeed(500436508);
+// 		_randomGenerator.setSeed(825535300);
+// 		StatUtil::getRandomGenerator().setSeed(500436508);
+		
+		_randomGenerator.setSeed(295557636);
+		StatUtil::getRandomGenerator().setSeed(727092075);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -385,24 +392,36 @@ if(__nFramesHasBeenPassed)
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
-// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
-#ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
-	_f.open(_tempOutputFileName,ofstream::trunc);
-// otherwise the file pointer only gets initialized for the end frame
-#else
-	if(_iFrame==_nFrames-1)
-		_f.open(_tempOutputFileName,ofstream::trunc);
-#endif
+// // only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
+// // FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
+// #ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
+// 	_f.open(_tempOutputFileName,ofstream::trunc);
+// // otherwise the file pointer only gets initialized for the end frame
+// #else
+// 	if(_iFrame==_nFrames-1)
+// 		_f.open(_tempOutputFileName,ofstream::trunc);
+// #endif
+
+		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
+		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
+		if(_saveAtEveryFrame)
+			_f.open(_tempOutputFileName,ofstream::trunc);
+		else if(_iFrame==_nFrames-1)
+			_f.open(_tempOutputFileName,ofstream::trunc);
 
         beforeEndingFrame();
         
-#ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
-		_f.close();
-#else
-	if(_iFrame==_nFrames-1)
-		_f.close();
-#endif
+// #ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
+// 		_f.close();
+// #else
+// 	if(_iFrame==_nFrames-1)
+// 		_f.close();
+// #endif
+		
+		if(_saveAtEveryFrame)
+			_f.close();
+		else if(_iFrame==_nFrames-1)
+			_f.close();
 
 		// the temporal file is renamed as the final
 		std::string mvCommand = string(MV_COMMAND) + string(" ") + string(_tempOutputFileName) + string(" ") + string(_outputFileName);

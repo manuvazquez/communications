@@ -369,7 +369,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 
 		// an overall number of survivors is considered
 		// the candidates that are going to give rise to particles are selected
-        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
+        vector<uint> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
 
 		// ------------------------------ fixed number of survivors per state -----------------------------------------------------------
 		
@@ -389,7 +389,7 @@ void OneChannelOrderPerOutputSMCAlgorithm::process(const MatrixXd &observations,
 		// ------------------------------ fixed number of survivors per state -----------------------------------------------------------
 
         // every survivor candidate is associated with an old particle
-        vector<int> indexesParticles(indexesSelectedCandidates.size());
+        vector<uint> indexesParticles(indexesSelectedCandidates.size());
         for(uint i=0;i<indexesSelectedCandidates.size();i++)
             indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
 

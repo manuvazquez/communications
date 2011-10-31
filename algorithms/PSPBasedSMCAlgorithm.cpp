@@ -75,7 +75,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 		cout << "================== iObservationToBeProcessed = " << iObservationToBeProcessed << " ===================" << endl;
 #endif
         // it keeps track of the place where a new tParticleCandidate will be stored within the vector
-        int iCandidate = 0;
+        uint iCandidate = 0;
 
         normConst = 0.0;
 
@@ -134,11 +134,11 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
         VectorXd weights(iCandidate);
 
         // ...to store their weights
-        for(int i=0;i<iCandidate;i++)
+        for(uint i=0;i<iCandidate;i++)
             weights(i) = particleCandidates[i].weight/normConst;
 
         // the candidates that are going to give particles are selected
-        vector<int> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
+        vector<uint> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
 		
 		
 		// -----------------------------------------------
@@ -159,7 +159,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 		// -------------------------------
 
         // every survivor candidate is associated with an old particle
-        vector<int> indexesParticles(indexesSelectedCandidates.size());
+        vector<uint> indexesParticles(indexesSelectedCandidates.size());
         for(uint i=0;i<indexesSelectedCandidates.size();i++)
             indexesParticles[i] = particleCandidates[indexesSelectedCandidates[i]].fromParticle;
 

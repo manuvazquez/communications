@@ -41,7 +41,7 @@ public:
 
     WithThresholdResamplingAlgorithmWrapper(const WithThresholdResamplingAlgorithmWrapper& withThresholdResamplingAlgorithmWrapper);
 
-	std::vector<int> obtainIndexes(int n,const VectorXd &weights) const
+	std::vector<uint> obtainIndexes(uint n,const VectorXd &weights) const
 	{
 		return _realResamplingAlgorithm->obtainIndexes(n,FlattenWeights(weights,_threshold));
 	}

@@ -30,7 +30,7 @@ ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::clone() const
 	return new ResidualResamplingAlgorithm(*this);
 }
 
-std::vector<int> ResidualResamplingAlgorithm::obtainIndexes(int n,const VectorXd &weights) const
+std::vector<uint> ResidualResamplingAlgorithm::obtainIndexes(uint n,const VectorXd &weights) const
 {
 	VectorXd residues(weights.size());
 	int *timesToBeResampled = new int[weights.size()];
@@ -45,7 +45,7 @@ std::vector<int> ResidualResamplingAlgorithm::obtainIndexes(int n,const VectorXd
 	int nParticlesFromResidues = n - nDeterministicParticles;
 	residues /= double(nParticlesFromResidues);
 
-	vector<int> indexes = StatUtil::discrete_rnd(nParticlesFromResidues,residues);
+	vector<uint> indexes = StatUtil::discrete_rnd(nParticlesFromResidues,residues);
 
 	indexes.reserve(n);
 

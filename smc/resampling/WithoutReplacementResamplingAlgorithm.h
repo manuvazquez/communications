@@ -32,7 +32,7 @@ public:
 
     virtual WithoutReplacementResamplingAlgorithm* clone() const;
 
-    virtual std::vector< int > obtainIndexes(int n, const VectorXd& weights) const
+    virtual std::vector<uint> obtainIndexes(uint n, const VectorXd& weights) const
     {
     	return StatUtil::withoutReplacementSampling(n,weights);
     }
