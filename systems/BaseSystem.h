@@ -77,9 +77,9 @@ protected:
 	/**
 	 * @brief number of outputs
 	 **/
-    int _L;
+    uint _L;
 
-	int _frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
+	uint _frameLength,_nBitsGenerated,_m,_d,_trainSeqLength,_preambleLength;
 	
 	/**
 	 * @brief number of frames to be simulated
@@ -105,7 +105,7 @@ protected:
 	/**
 	 * @brief when SER computing starts (with respect to the beginning of the frame length)
 	 **/
-	int _symbolsDetectionWindowStart;
+	uint _symbolsDetectionWindowStart;
 	
 	// when MSE computing starts (with respect to the beginning of the frame length)
 	int _MSEwindowStart;
@@ -116,7 +116,7 @@ protected:
     MatrixXd _preamble;
 
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
-    int _nSmoothingSymbolsVectors;
+    uint _nSmoothingSymbolsVectors;
     
 	/*
 	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol

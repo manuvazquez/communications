@@ -34,9 +34,9 @@ private:
 	int _iAlgorithmPerformingChannelOrderAPPestimation;
 	int _iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation;
 protected:
-	vector<int> _candidateChannelOrders;
-	int _iTrueChannelOrder;
-	int _iMaxChannelOrder;
+	vector<uint> _candidateChannelOrders;
+	uint _iTrueChannelOrder;
+	uint _iMaxChannelOrder;
 
 	vector<MatrixXd> _channelOrderCoefficientsMeans;
 	vector<MatrixXd> _channelOrderCoefficientsVariances;

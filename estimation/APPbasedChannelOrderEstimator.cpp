@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<int> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1)/*,_symbolVector(_nInputs_maxChannelOrder)*/
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1)/*,_symbolVector(_nInputs_maxChannelOrder)*/
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
@@ -81,7 +81,7 @@ void APPbasedChannelOrderEstimator::update(const VectorXd &observations,const st
     Util::shiftUp(_symbolVector,_nInputs);
 
     // the just detected vector is stored at the end
-    for(int i=0;i<_nInputs;i++)
+    for(uint i=0;i<_nInputs;i++)
         _symbolVector(_nInputs_maxChannelOrder-_nInputs+i) = symbolVector(i);
 
     double normalizationCt = 0.0;

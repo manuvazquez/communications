@@ -19,11 +19,11 @@
  ***************************************************************************/
 #include "ChannelOrderEstimator.h"
 
-ChannelOrderEstimator::ChannelOrderEstimator(uint N, std::vector<int> candidateOrders):_nInputs(N),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
+ChannelOrderEstimator::ChannelOrderEstimator(uint N, std::vector<uint> candidateOrders):_nInputs(N),_candidateOrders(candidateOrders),_channelOrderAPPs(candidateOrders.size(),1.0/(double)candidateOrders.size())
 {
 }
 
-ChannelOrderEstimator::ChannelOrderEstimator(std::vector<int> candidateOrders, vector<double> channelOrderAPPs):_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
+ChannelOrderEstimator::ChannelOrderEstimator(std::vector<uint> candidateOrders, vector<double> channelOrderAPPs):_candidateOrders(candidateOrders),_channelOrderAPPs(channelOrderAPPs)
 {
 }
 

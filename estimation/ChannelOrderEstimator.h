@@ -30,13 +30,13 @@
 
 class ChannelOrderEstimator{
 protected:
-    int _nInputs;
-    std::vector<int> _candidateOrders;
+    uint _nInputs;
+    std::vector<uint> _candidateOrders;
     std::vector<double> _channelOrderAPPs;
 public:
-    ChannelOrderEstimator(uint N, std::vector<int> candidateOrders);
+    ChannelOrderEstimator(uint N, std::vector<uint> candidateOrders);
 
-    ChannelOrderEstimator(std::vector<int> candidateOrders, std::vector<double> channelOrderAPPs);
+    ChannelOrderEstimator(std::vector<uint> candidateOrders, std::vector<double> channelOrderAPPs);
 
     virtual ~ChannelOrderEstimator() {}
 

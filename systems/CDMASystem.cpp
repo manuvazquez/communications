@@ -224,8 +224,8 @@ void CDMASystem::buildChannel()
     }
       
     // set of active users evolves according to the given probabilities
-	for(int iTime=_trainSeqLength+1;iTime<_frameLength;iTime++)
-		for(int iUser=0;iUser<_symbols.rows();iUser++)
+	for(uint iTime=_trainSeqLength+1;iTime<_frameLength;iTime++)
+		for(uint iUser=0;iUser<_symbols.rows();iUser++)
 		{   
 			_usersActivity[iUser][iTime] = _usersActivityPdfs[iUser].sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
 			_symbols(iUser,_preambleLength+iTime) = _symbols(iUser,_preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
@@ -256,7 +256,8 @@ void CDMASystem::buildChannel()
 // 			getchar();
 		}
 
-	} while(!isChannelOk(_channel));
+// 	} while(!isChannelOk(_channel));
+	} while(false);
 // 	} while(!isChannelOk(_channel) || !coefficientsSignChangeHappened); // los coeficientes del canal cambian de signo
 // 	} while(!isChannelOk(_channel) || coefficientsSignChangeHappened); // los coeficientes del canal NO cambian de signo
 }
@@ -307,7 +308,7 @@ double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, Mat
 
 	vector<vector<bool> > mask(_N,vector<bool>(_frameLength,true));
 
-	for (int iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
+	for (uint iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
 		for (uint iInput=0;iInput<_N;iInput++)
 			mask[iInput][iTime] = false;
 

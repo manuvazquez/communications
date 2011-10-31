@@ -89,7 +89,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
             cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
 #endif    
         // noise covariance needs to be constructed
-        for(iOutput=0;iOutput<static_cast<uint>(_nOutputs);iOutput++)
+        for(iOutput=0;iOutput<_nOutputs;iOutput++)
             noiseCovariance(iOutput,iOutput) = noiseVariances[iObservationToBeProcessed];
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)

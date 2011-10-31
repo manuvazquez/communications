@@ -39,7 +39,7 @@ SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint 
 
 	// we need the autocorrelation of the channel coefficients (rather than the variance)
 // 	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum()/double(_nOutputs);
-	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum();
+	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum(); // <- more fair implementation
 
 #ifdef DEBUG
 // 	cout << "variancesSum = " << variancesSum << endl;

@@ -90,7 +90,7 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
                         smoothingSymbolVectors.block(0,0,_nInputs,m-1) = processedParticle->getSymbolVectors(iObservationToBeProcessed-m+1,iObservationToBeProcessed-1);
 
                     // current tested vector is copied in the m-th position
-                    for(k=0;k<static_cast<uint>(_nInputs);k++)
+                    for(k=0;k<_nInputs;k++)
                         smoothingSymbolVectors(k,m-1) = testedVector[k];
 
                     // every possible smoothing sequence is tested

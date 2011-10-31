@@ -191,11 +191,11 @@ BaseSystem::BaseSystem()
     _isSymbolAccountedForDetection = vector<vector<bool> >(_N,vector<bool>(_frameLength));
 
     // the preamble symbols before symbolsDetectionWindowStart are ignored for detection
-    for(int iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
+    for(uint iTime=0;iTime<_symbolsDetectionWindowStart;iTime++)
         for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = false;        
   
-    for(int iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
+    for(uint iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
         for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = true;   
     
@@ -546,7 +546,7 @@ void BaseSystem::beforeEndingAlgorithm()
 
     if(_detectedSymbols.rows()!=0)
     {
-        for(int k=0;k<_frameLength;k++)
+        for(uint k=0;k<_frameLength;k++)
             for(uint iUser=0;iUser<_N;iUser++)
                 if(_detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
                     _overallErrorsNumberTimeEvolution[_iSNR](_iAlgorithm,k)++;

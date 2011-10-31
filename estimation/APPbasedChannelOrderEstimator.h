@@ -34,11 +34,11 @@ class APPbasedChannelOrderEstimator : public ChannelOrderEstimator
 {
 protected:
     vector<double> _unnormalizedChannelOrderAPPs;
-    int _maxChannelOrder,_nInputs_maxChannelOrder;
-    vector<int> _channelOrder2index;
+    uint _maxChannelOrder,_nInputs_maxChannelOrder;
+    vector<uint> _channelOrder2index;
     VectorXd _symbolVector;
 public:
-    APPbasedChannelOrderEstimator(uint N,std::vector<int> candidateOrders);
+    APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders);
 
     virtual APPbasedChannelOrderEstimator *clone();
 
