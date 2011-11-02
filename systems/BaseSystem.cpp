@@ -337,7 +337,7 @@ if(__nFramesHasBeenPassed)
         // noise is generated according to the channel
 //         noise = new NullNoise(L,channel->length());
 //         noise = new ChannelDependentNoise(channel);
-//         noise = new PowerProfileDependentNoise(L,channel->length(),*powerProfile);
+//         _noise = new PowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
 		_noise = new SingleUserPowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
 
 #ifdef EXPORT_REAL_DATA

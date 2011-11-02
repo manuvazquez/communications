@@ -20,7 +20,7 @@
 #ifndef SINGLEUSERPOWERPROFILEDEPENDENTNOISE_H
 #define SINGLEUSERPOWERPROFILEDEPENDENTNOISE_H
 
-#include <Noise.h>
+#include <PowerProfileDependentNoise.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -29,20 +29,12 @@
 #include <math.h>
 #include <DelayPowerProfile.h>
 
-class SingleUserPowerProfileDependentNoise : public Noise
+class SingleUserPowerProfileDependentNoise : public PowerProfileDependentNoise
 {
 protected:
-	MatrixXd _matrix;
-	double _varianceConstant,_stdDev;
 	uint _iUser;
 public:
     SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
-
-	virtual double stdDevAt(int n) const {return _stdDev;}
-    virtual VectorXd at(uint n) const;
-    virtual void setSNR(int SNR, double alphabetVariance);
-	virtual void print() const { cout << _matrix;}
-
 };
 
 #endif

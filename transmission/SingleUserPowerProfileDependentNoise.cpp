@@ -19,44 +19,11 @@
  ***************************************************************************/
 #include "SingleUserPowerProfileDependentNoise.h"
 
-// #define DEBUG
 #include <Eigen/Dense>
 
-SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_iUser(0)
+SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile): PowerProfileDependentNoise(nOutputs, length,powerProfile),_iUser(0)
 {
-// 	MatrixXd variancesMatrix = powerProfile.variances();
-// 
-// 	int i;
-// 	double variancesSum = 0.0;
-// 	for(i=0;i<variancesMatrix.rows();i++)
-// 		variancesSum += variancesMatrix(i,_iUser);
-// 
-// 	_varianceConstant = variancesSum/double(_nOutputs);
-// 	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
-	
-// 	_varianceConstant = powerProfile.variances().col(_iUser).sum()/double(_nOutputs);
-// 	_varianceConstant = powerProfile.variances().col(_iUser).sum();
-
 	// we need the autocorrelation of the channel coefficients (rather than the variance)
-// 	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum()/double(_nOutputs);
-	_varianceConstant = (powerProfile.variances().col(_iUser).array()*powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum(); // <- more fair implementation
-
-#ifdef DEBUG
-// 	cout << "variancesSum = " << variancesSum << endl;
-	cout << "variancesSum = " << powerProfile.variances().col(_iUser).sum() << endl;
-#endif
-}
-
-VectorXd SingleUserPowerProfileDependentNoise::at(uint n) const
-{
-    return _matrix.col(n);
-}
-
-void SingleUserPowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)
-{
-	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
-	cout << "SingleUserPowerProfileDependentNoise::setSNR: new std is " << newStdDev << endl;
-
-	_matrix *= (newStdDev/_stdDev);
-	_stdDev = newStdDev;
+// 	_varianceConstant = (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum()/double(_nOutputs);
+	_varianceConstant = (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum(); // <- more fair implementation
 }

@@ -38,7 +38,6 @@ protected:
 	//! it keeps the power (variance) of each one of the channel taps
     std::vector<double> _tapsPowers;
     
-// 	double _generatedCoefficientsMean;
     MatrixXd _means,_variances;
 
     void GenerateMatrices();

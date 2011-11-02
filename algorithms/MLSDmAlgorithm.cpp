@@ -51,7 +51,7 @@ void MLSDmAlgorithm::initializeParticles()
 
 void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseVariances)
 {
-    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+    uint nSymbolVectors = (uint) pow((double)_alphabet.length(),(double)_nInputs);
     vector<tSymbol> testedVector(_nInputs);
     VectorXd computedObservations(_nOutputs);
     uint iCandidate,m,iBestUnnormalizedChannelOrderAPP,k,iParticle;
