@@ -47,7 +47,7 @@ public:
     
 	double VarianceAt(int n) const { double stdDev = stdDevAt(n); return stdDev*stdDev;};
 	vector<double> variances() const;
-	virtual void setSNR(int SNR,double alphabetVariance) = 0;
+	virtual void setSNR(int SNR) = 0;
 };
 
 #endif

@@ -33,10 +33,11 @@ protected:
     MatrixXd _matrix;
     MIMOChannel *_channel;
     std::vector<double> _stdDevs;
+	double _alphabetVariance;
 public:
-    ChannelDependentNoise(MIMOChannel *channel);
+    ChannelDependentNoise(double alphabetVariance,MIMOChannel *channel);
 
-    virtual void setSNR(int SNR,double alphabetVariance);
+    virtual void setSNR(int SNR);
     virtual void print() const { cout << _matrix;}
     double stdDevAt(int n) const;
     VectorXd at(uint n) const;

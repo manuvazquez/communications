@@ -32,7 +32,7 @@ public:
 
     virtual double stdDevAt(int n) const {return 0.0;}
     virtual VectorXd at(uint n) const;
-	virtual void setSNR(int SNR,double alphabetVariance) {}
+	virtual void setSNR(int SNR) {}
 	virtual void print() const {std::cout << "Null Noise" << std::endl;}
 };
 

@@ -19,21 +19,9 @@
  ***************************************************************************/
 #include "PowerProfileDependentNoise.h"
 
-PowerProfileDependentNoise::PowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0)
-{
-// 	MatrixXd variancesMatrix = powerProfile.variances();
-// 	int i,j;
-// 	double variancesSum = 0.0;
-// 	for(i=0;i<variancesMatrix.rows();i++)
-// 		for(j=0;j<variancesMatrix.cols();j++)
-// 			variancesSum += variancesMatrix(i,j);
-
-// 	_varianceConstant = variancesSum/double(_nOutputs);
-	
-	_varianceConstant = (powerProfile.variances().array() + powerProfile.means().array()*powerProfile.means().array()).sum()/double(_nOutputs);
-
-// 	double _varianceConstantViejo = variancesSum/double(_nOutputs);
-// 	cout << "_varianceConstantViejo = " << _varianceConstantViejo << " _varianceConstant " << _varianceConstant << endl;
+PowerProfileDependentNoise::PowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_alphabetVariance(alphabetVariance)
+{	
+	_varianceConstant = _alphabetVariance * ( (powerProfile.variances().array() + powerProfile.means().array()*powerProfile.means().array()).sum()/double(_nOutputs) );
 }
 
 VectorXd PowerProfileDependentNoise::at(uint n) const
@@ -41,9 +29,9 @@ VectorXd PowerProfileDependentNoise::at(uint n) const
     return _matrix.col(n);
 }
 
-void PowerProfileDependentNoise::setSNR(int SNR, double alphabetVariance)
+void PowerProfileDependentNoise::setSNR(int SNR)
 {
-	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*alphabetVariance*_varianceConstant);
+	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_varianceConstant);
 	
 	std::cout << "PowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;
 

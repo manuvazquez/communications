@@ -21,9 +21,22 @@
 
 #include <Eigen/Dense>
 
-SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile): PowerProfileDependentNoise(nOutputs, length,powerProfile),_iUser(0)
+SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(double alphabetVariance,uint nOutputs, uint length, const DelayPowerProfile &powerProfile): PowerProfileDependentNoise(alphabetVariance,nOutputs, length,powerProfile),_iUser(0)
 {
 	// we need the autocorrelation of the channel coefficients (rather than the variance)
 // 	_varianceConstant = (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum()/double(_nOutputs);
 	_varianceConstant = (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum(); // <- more fair implementation
+	
+// 	_iUserSNRcontribution = _alphabetVariance * ( (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum());
+// 	_varianceConstant -= _iUserSNRcontribution;
 }
+
+// void SingleUserPowerProfileDependentNoise::setSNR(int SNR)
+// {
+// 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_iUserSNRcontribution - _varianceConstant);
+// 	
+// 	std::cout << "SingleUserPowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;
+// 
+// 	_matrix *= (newStdDev/_stdDev);
+// 	_stdDev = newStdDev;
+// }

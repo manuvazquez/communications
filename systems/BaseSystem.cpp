@@ -334,11 +334,13 @@ if(__nFramesHasBeenPassed)
     Util::print(isSymbolAccountedForDetection);
 #endif    
         
-        // noise is generated according to the channel
 //         noise = new NullNoise(L,channel->length());
-//         noise = new ChannelDependentNoise(channel);
-//         _noise = new PowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
-		_noise = new SingleUserPowerProfileDependentNoise(_L,_channel->length(),*_powerProfile);
+	
+		// noise is generated according to the channel
+//         _noise = new ChannelDependentNoise(_alphabet->variance(),_channel);
+
+		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+// 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &_symbols;
@@ -351,7 +353,8 @@ if(__nFramesHasBeenPassed)
             cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << _iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
 
             // noise SNR is set
-            _noise->setSNR(_SNRs[_iSNR],_alphabet->variance());
+//             _noise->setSNR(_SNRs[_iSNR],_alphabet->variance());
+			_noise->setSNR(_SNRs[_iSNR]);
 
 #ifdef PRINT_NOISE
 			cout << "noise is" << endl;
@@ -394,16 +397,6 @@ if(__nFramesHasBeenPassed)
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-// // only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
-// // FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
-// #ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
-// 	_f.open(_tempOutputFileName,ofstream::trunc);
-// // otherwise the file pointer only gets initialized for the end frame
-// #else
-// 	if(_iFrame==_nFrames-1)
-// 		_f.open(_tempOutputFileName,ofstream::trunc);
-// #endif
-
 		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
 		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
 		if(_saveAtEveryFrame)
@@ -412,13 +405,6 @@ if(__nFramesHasBeenPassed)
 			_f.open(_tempOutputFileName,ofstream::trunc);
 
         beforeEndingFrame();
-        
-// #ifdef SAVE_ALL_DATA_AFTER_PROCESSING_EACH_FRAME
-// 		_f.close();
-// #else
-// 	if(_iFrame==_nFrames-1)
-// 		_f.close();
-// #endif
 		
 		if(_saveAtEveryFrame)
 			_f.close();

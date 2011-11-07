@@ -33,8 +33,10 @@ class SingleUserPowerProfileDependentNoise : public PowerProfileDependentNoise
 {
 protected:
 	uint _iUser;
+	double _iUserSNRcontribution;
 public:
-    SingleUserPowerProfileDependentNoise(uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
+    SingleUserPowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
+	virtual void setSNR(int SNR);
 };
 
 #endif

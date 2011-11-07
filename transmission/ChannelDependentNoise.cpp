@@ -22,31 +22,36 @@
 #include <assert.h>
 // #define PRINT_INFO
 
-ChannelDependentNoise::ChannelDependentNoise(MIMOChannel *channel)
- : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length)
+ChannelDependentNoise::ChannelDependentNoise(double alphabetVariance,MIMOChannel *channel)
+ : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length),_alphabetVariance(alphabetVariance)
 {
     for(uint i=0;i<_length;i++)
         _stdDevs[i] = 1.0;
 }
 
-void ChannelDependentNoise::setSNR(int SNR,double alphabetVariance)
+void ChannelDependentNoise::setSNR(int SNR)
 {
-    uint i,j,k;
-    double varianceConstant = pow(10.0,((double)-SNR)/10.0)*alphabetVariance/_nOutputs;
-    double stdDev,variance;
+    uint i,j;
+    double varianceConstant = pow(10.0,((double)-SNR)/10.0)*_alphabetVariance/_nOutputs;
+    double stdDev;
 
 	assert(_channel->effectiveMemory()>0);
     for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
         MatrixXd channelMatrix = _channel->getTransmissionMatrix(j);
         
-        variance = 0.0;
-        for(i=0;i<channelMatrix.rows();i++)
-            for(k=0;k<channelMatrix.cols();k++)
-                variance += channelMatrix(i,k)*channelMatrix(i,k);
+//         variance = 0.0;
+//         for(i=0;i<channelMatrix.rows();i++)
+//             for(k=0;k<channelMatrix.cols();k++)
+//                 variance += channelMatrix(i,k)*channelMatrix(i,k);
+// 		
+// 		cout << "variance tradicional = " << variance << endl;
+// 		cout << "variance chachi = " << (channelMatrix.array()*channelMatrix.array()).sum() << endl;
 
-        variance *= varianceConstant;
-        stdDev = sqrt(variance);
+//         variance *= varianceConstant;
+//         stdDev = sqrt(variance);
+		
+		stdDev  = sqrt(varianceConstant * (channelMatrix.array()*channelMatrix.array()).sum());
 
 #ifdef PRINT_INFO
         cout << "_nOutputs = " << _nOutputs << endl;
