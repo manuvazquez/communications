@@ -644,3 +644,14 @@ std::vector<bool> Util::getUsersActivityFromSymbolsVector(const VectorXd &symbol
   
   return res;
 }
+
+template<class T> std::vector <std::vector <T > > Util::row(const std::vector <std::vector <T > > &matrix,const uint iRow)
+{
+	std::vector <std::vector <T > > res(1,std::vector<T>(matrix[0].size()));
+	
+	for(uint i=0;i<matrix[0].size();i++)
+		res[0][i] = matrix[0][i];
+	
+	return res;
+}
+template std::vector <std::vector <bool> > Util::row(const std::vector <std::vector <bool> > &matrix,const uint iRow);

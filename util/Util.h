@@ -119,6 +119,9 @@ public:
 	  \return a vector of bools
 	*/
 	static std::vector<bool> getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector);
+	
+	
+	template<class T> static std::vector <std::vector <T > > row(const std::vector <std::vector <T > > &matrix,const uint iRow);
 };
 
 #endif

@@ -63,7 +63,7 @@ void PSPvsPSPBasedSMCSystem::addAlgorithms()
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void PSPvsPSPBasedSMCSystem::buildChannel()
+void PSPvsPSPBasedSMCSystem::buildSystemSpecificVariables()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),50,2e9,1.0/500.0e3,*_powerProfile);

@@ -197,7 +197,16 @@ BaseSystem::BaseSystem()
   
     for(uint iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
         for(uint iInput=0;iInput<_N;iInput++)
-            _isSymbolAccountedForDetection[iInput][iTime] = true;   
+            _isSymbolAccountedForDetection[iInput][iTime] = true;
+
+// 	vector<vector<bool> > prueba(3,vector<bool>(3,false));
+// 	prueba[0][1] = true;
+// 	prueba[1][2] = true;
+// 	
+// 	cout << "before" << endl;
+// 	Util::print(prueba);
+// 	cout << "after" << endl;
+// 	Util::print(Util::row(prueba,0u));
     
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
     cout << "isSymbolAccountedForDetection" << endl;
@@ -323,7 +332,7 @@ if(__nFramesHasBeenPassed)
         // all the above symbols must be processed except those generated due to the smoothing
         _iLastSymbolVectorToBeDetected = _symbols.cols() - _nSmoothingSymbolsVectors;
 
-        buildChannel();
+        buildSystemSpecificVariables();
 
 #ifdef PRINT_PARAMETERS
         std::cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
@@ -339,7 +348,7 @@ if(__nFramesHasBeenPassed)
 		// noise is generated according to the channel
 //         _noise = new ChannelDependentNoise(_alphabet->variance(),_channel);
 
-		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+// 		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 // 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 
 #ifdef EXPORT_REAL_DATA
@@ -353,7 +362,6 @@ if(__nFramesHasBeenPassed)
             cout << COLOR_FRAME_NUMBER_SNR << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << COLOR_FRAME_NUMBER_SNR << " [Frame " << COLOR_NORMAL << _iFrame << COLOR_FRAME_NUMBER_SNR << "]..." << COLOR_NORMAL << endl;
 
             // noise SNR is set
-//             _noise->setSNR(_SNRs[_iSNR],_alphabet->variance());
 			_noise->setSNR(_SNRs[_iSNR]);
 
 #ifdef PRINT_NOISE
@@ -477,9 +485,6 @@ void BaseSystem::onlyOnce()
 
 void BaseSystem::beforeEndingAlgorithm()
 {
-//     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1),permutations[_iBestPermutation],_bestPermutationSigns);
-//     mse = algorithms[iAlgorithm]->MSE(channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1));
-	
 	// the channel matrices estimated by the algorithm are stored
 	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 	

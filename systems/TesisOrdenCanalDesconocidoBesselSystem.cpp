@@ -28,7 +28,7 @@ TesisOrdenCanalDesconocidoBesselSystem::TesisOrdenCanalDesconocidoBesselSystem()
     T = 1.0/symbolRate; // (s)
 }
 
-void TesisOrdenCanalDesconocidoBesselSystem::buildChannel()
+void TesisOrdenCanalDesconocidoBesselSystem::buildSystemSpecificVariables()
 {
     _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }

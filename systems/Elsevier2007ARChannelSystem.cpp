@@ -38,7 +38,7 @@ Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
   delete knownSymbolsKalmanEstimator;
 }
 
-void Elsevier2007ARChannelSystem::buildChannel()
+void Elsevier2007ARChannelSystem::buildSystemSpecificVariables()
 {
     _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }

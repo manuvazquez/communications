@@ -173,7 +173,7 @@ protected:
     DelayPowerProfile *_powerProfile;
 
     virtual void addAlgorithms() = 0;
-    virtual void buildChannel() = 0;
+    virtual void buildSystemSpecificVariables() = 0;
     virtual void beforeEndingFrame();
     virtual void beforeEndingAlgorithm();
 	

@@ -88,7 +88,7 @@ TVT2007System::~TVT2007System()
 	delete kalmanEstimator;
 }
 
-void TVT2007System::buildChannel()
+void TVT2007System::buildSystemSpecificVariables()
 {
 //   channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
   _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);

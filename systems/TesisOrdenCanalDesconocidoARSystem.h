@@ -54,7 +54,7 @@ protected:
     double channelVariance;
 
 //     virtual void AddAlgorithms();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
 public:
     TesisOrdenCanalDesconocidoARSystem();

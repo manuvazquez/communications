@@ -32,6 +32,7 @@
 #include <math.h>
 
 #include <bashcolors.h>
+#include <SingleUserChannelDependentNoise.h>
 
 #define PRINT_CODES_INFO
 // #define PRINT_ACTIVITY_SAMPLING
@@ -50,6 +51,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
 ,_maximumRatioThresholdInDBs(20)
+,_iInterestingUser(0u)
 {
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -203,7 +205,7 @@ void CDMASystem::beforeEndingFrame()
 	Util::scalarsVectorToOctaveFileStream(_signChanges,"signChanges",_f);
 }
 
-void CDMASystem::buildChannel()
+void CDMASystem::buildSystemSpecificVariables()
 {
 	// when users are not transmitting, their symbols are zero
 	_usersActivity = vector<vector<bool> >(_symbols.rows(),vector<bool>(_frameLength));
@@ -260,6 +262,11 @@ void CDMASystem::buildChannel()
 	} while(false);
 // 	} while(!isChannelOk(_channel) || !coefficientsSignChangeHappened); // los coeficientes del canal cambian de signo
 // 	} while(!isChannelOk(_channel) || coefficientsSignChangeHappened); // los coeficientes del canal NO cambian de signo
+	
+	
+	// the noise is generated
+	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+// 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iInterestingUser);
 }
 
 bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)

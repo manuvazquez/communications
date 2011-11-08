@@ -39,7 +39,7 @@ protected:
     double T; // (s)
 
     virtual void beforeEndingFrame();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
 
 };
 

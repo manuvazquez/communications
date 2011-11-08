@@ -74,7 +74,7 @@ protected:
 // 	std::vector<uint> _signChanges;
 
     virtual void addAlgorithms();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
 public:
     ISWCS10System();

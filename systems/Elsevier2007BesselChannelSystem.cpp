@@ -76,7 +76,7 @@ Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
   delete knownSymbolsKalmanEstimator;
 }
 
-void Elsevier2007BesselChannelSystem::buildChannel()
+void Elsevier2007BesselChannelSystem::buildSystemSpecificVariables()
 {
 // 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);

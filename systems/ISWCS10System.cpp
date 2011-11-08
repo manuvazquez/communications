@@ -182,7 +182,7 @@ ISWCS10System::~ISWCS10System()
 	delete _kalmanEstimatorForMaximumChannelOrder;
 }
 
-void ISWCS10System::buildChannel()
+void ISWCS10System::buildSystemSpecificVariables()
 {
 // 	channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
 // 	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));

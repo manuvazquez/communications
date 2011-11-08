@@ -81,17 +81,22 @@ protected:
 	// a vector that stores the indexes within the frame (from 0 to "frameLength") where a sign change takes place. It ALWAYS includes the first index (0) and the last ("frameLength")
 	std::vector<uint> _signChanges;
 	
+	/**
+	 * @brief the user of interest, for which is computed the BER and whose SNR is fixed.
+	 **/
+	uint _iInterestingUser;
+	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
     virtual void beforeEndingFrame();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
 	virtual void onlyOnce();
 public:
     CDMASystem();
 
     ~CDMASystem();
 
-	bool areSequencesOrthogonal(const MatrixXd &spreadingCodes);
+	static bool areSequencesOrthogonal(const MatrixXd &spreadingCodes);
 	
 	/*!
 	  It computes the probability of detecting that a user is transmitting when it's not or the other way around. It relies in \ref computeSER
@@ -104,7 +109,7 @@ public:
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 
-  private:
+private:
 	  
 	//! It checks the channel for high differences in the coefficients power (near-far problem)
 	/*!

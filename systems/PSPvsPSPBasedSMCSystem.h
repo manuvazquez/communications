@@ -50,7 +50,7 @@ protected:
 
     virtual void beforeEndingFrame();
     virtual void addAlgorithms();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
 };
 
 #endif

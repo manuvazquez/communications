@@ -37,7 +37,7 @@ protected:
     double symbolRate; // (Hz)
     double T; // (s)
 
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
 public:
     Elsevier2007BesselChannelSystem();

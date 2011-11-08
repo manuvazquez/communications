@@ -96,7 +96,7 @@ void PSPvsSMCSystem::addAlgorithms()
     _algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances()));
 }
 
-void PSPvsSMCSystem::buildChannel()
+void PSPvsSMCSystem::buildSystemSpecificVariables()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
     _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);

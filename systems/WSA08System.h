@@ -63,7 +63,7 @@ protected:
     KalmanEstimator *kalmanEstimator;
 
     virtual void addAlgorithms();
-    virtual void buildChannel();
+    virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
 public:
     WSA08System();
