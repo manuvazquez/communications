@@ -34,6 +34,11 @@ protected:
     MIMOChannel *_channel;
     std::vector<double> _stdDevs;
 	double _alphabetVariance;
+	
+	virtual double computeStd(const double &SNRdependentVarianceFactor,const MatrixXd &channelMatrix) const
+	{
+		return sqrt(SNRdependentVarianceFactor * (channelMatrix.array()*channelMatrix.array()).sum());
+	}
 public:
     ChannelDependentNoise(double alphabetVariance,MIMOChannel *channel);
 

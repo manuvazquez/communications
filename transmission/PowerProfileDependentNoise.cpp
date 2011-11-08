@@ -21,7 +21,7 @@
 
 PowerProfileDependentNoise::PowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile): Noise(nOutputs, length),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_stdDev(1.0),_alphabetVariance(alphabetVariance)
 {	
-	_varianceConstant = _alphabetVariance * ( (powerProfile.variances().array() + powerProfile.means().array()*powerProfile.means().array()).sum()/double(_nOutputs) );
+	_powerProfileDependentVarianceFactor = _alphabetVariance * ( (powerProfile.variances().array() + powerProfile.means().array()*powerProfile.means().array()).sum()/double(_nOutputs) );
 }
 
 VectorXd PowerProfileDependentNoise::at(uint n) const
@@ -31,7 +31,8 @@ VectorXd PowerProfileDependentNoise::at(uint n) const
 
 void PowerProfileDependentNoise::setSNR(int SNR)
 {
-	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_varianceConstant);
+// 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_powerProfileDependentVarianceFactor);
+	double newStdDev = computeStd(SNR);
 	
 	std::cout << "PowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;
 

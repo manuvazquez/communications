@@ -32,26 +32,15 @@ ChannelDependentNoise::ChannelDependentNoise(double alphabetVariance,MIMOChannel
 void ChannelDependentNoise::setSNR(int SNR)
 {
     uint i,j;
-    double varianceConstant = pow(10.0,((double)-SNR)/10.0)*_alphabetVariance/_nOutputs;
+    double SNRdependentVarianceFactor = pow(10.0,((double)-SNR)/10.0)*_alphabetVariance/_nOutputs;
     double stdDev;
 
 	assert(_channel->effectiveMemory()>0);
     for(j=_channel->effectiveMemory()-1;j<_length;j++)
     {
         MatrixXd channelMatrix = _channel->getTransmissionMatrix(j);
-        
-//         variance = 0.0;
-//         for(i=0;i<channelMatrix.rows();i++)
-//             for(k=0;k<channelMatrix.cols();k++)
-//                 variance += channelMatrix(i,k)*channelMatrix(i,k);
-// 		
-// 		cout << "variance tradicional = " << variance << endl;
-// 		cout << "variance chachi = " << (channelMatrix.array()*channelMatrix.array()).sum() << endl;
-
-//         variance *= varianceConstant;
-//         stdDev = sqrt(variance);
 		
-		stdDev  = sqrt(varianceConstant * (channelMatrix.array()*channelMatrix.array()).sum());
+		stdDev = computeStd(SNRdependentVarianceFactor,channelMatrix);
 
 #ifdef PRINT_INFO
         cout << "_nOutputs = " << _nOutputs << endl;

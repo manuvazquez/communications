@@ -8,6 +8,7 @@ ADD_LIBRARY (transmission STATIC
 			  Alphabet
 			  Bits
 			  ChannelDependentNoise
+			  SingleUserChannelDependentNoise
 			  Demodulator
 			  Modulator
 			  Noise

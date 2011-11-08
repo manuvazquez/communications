@@ -33,8 +33,19 @@ class PowerProfileDependentNoise : public Noise
 {
 protected:
 	MatrixXd _matrix;
-	double _varianceConstant,_stdDev;
+	
+	/**
+	 * @brief it stores those computations involved in the calculus of the variance/std that don't depend on the SNR
+	 **/
+	double _powerProfileDependentVarianceFactor;
+	
+	double _stdDev;
 	double _alphabetVariance;
+	
+	virtual double computeStd(const int &SNR) const
+	{
+		return sqrt(pow(10.0,((double)-SNR)/10.0)*_powerProfileDependentVarianceFactor);
+	}
 public:
     PowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
 
