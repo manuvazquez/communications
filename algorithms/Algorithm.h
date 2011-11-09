@@ -65,6 +65,7 @@ public:
 
     virtual bool estimatesOneSingleChannelOrder() const { return false;}
     virtual bool performsSymbolsDetection() const { return true; }
+    virtual bool performsChannelEstimation() const { return true; }
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
 
     double MSE(const vector<MatrixXd> &channelMatrices);

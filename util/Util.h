@@ -121,7 +121,16 @@ public:
 	static std::vector<bool> getUsersActivityFromSymbolsVector(const VectorXd &symbolsVector);
 	
 	
+	/**
+	 * @brief it returns a row of matrix defined as a C++ vector of vectors
+	 *
+	 * @param matrix the matrix whose row is returned
+	 * @param iRow the index of the row to be returned
+	 * @return :vector< std::vector< T > >
+	 **/
 	template<class T> static std::vector <std::vector <T > > row(const std::vector <std::vector <T > > &matrix,const uint iRow);
+	
+	static std::vector<MatrixXd> keepCol(const std::vector<MatrixXd> &matricesVector,const uint iCol);
 };
 
 #endif

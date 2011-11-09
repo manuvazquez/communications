@@ -320,6 +320,7 @@ template void Util::print(const std::vector<int> &vector);
 template void Util::print(const std::vector<uint> &vector);
 template void Util::print(const std::vector<double> &vector);
 template void Util::print(const std::vector<bool> &vector);
+template void Util::print(const std::vector<MatrixXd> &vector);
 
 template<class T> void Util::print(const std::vector<std::vector<T> > &matrix)
 {
@@ -655,3 +656,16 @@ template<class T> std::vector <std::vector <T > > Util::row(const std::vector <s
 	return res;
 }
 template std::vector <std::vector <bool> > Util::row(const std::vector <std::vector <bool> > &matrix,const uint iRow);
+
+std::vector<MatrixXd> Util::keepCol(const std::vector<MatrixXd> &matricesVector,const uint iCol)
+{
+	std::vector<MatrixXd> res(matricesVector.size());
+	
+	for(uint i=0;i<matricesVector.size();i++)
+	{
+		res[i] = MatrixXd(matricesVector[i].rows(),1);
+		res[i] = matricesVector[i].col(iCol);
+	}
+	
+	return res;
+}

@@ -389,9 +389,15 @@ if(__nFramesHasBeenPassed)
                 else
                     _algorithms[_iAlgorithm]->run(_observations,_noise->variances());
 
-                _detectedSymbols = _algorithms[_iAlgorithm]->getDetectedSymbolVectors();
-
-                _pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+				if(_algorithms[_iAlgorithm]->performsSymbolsDetection())
+				{
+					_detectedSymbols = _algorithms[_iAlgorithm]->getDetectedSymbolVectors();
+					_pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+				}
+				// if the algorithm doesn't perform symbols detection...
+				else
+					// we assign a meaningless (flag) value to the probability of error
+					_pe = -3.14;
 
                 beforeEndingAlgorithm();
 
@@ -485,22 +491,39 @@ void BaseSystem::onlyOnce()
 
 void BaseSystem::beforeEndingAlgorithm()
 {
+// 	// the channel matrices estimated by the algorithm are stored
+// 	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
+// 	
+// 	if(estimatedChannelMatrices.size()!=0)
+// 	{
+// 	  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
+// // 	  cout << "estimatedChannelMatrices.size() = " << estimatedChannelMatrices.size() << " toCheckEstimatedChannelMatrices.size() = " << toCheckEstimatedChannelMatrices.size() << endl;
+// // 	  cout << "channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() = " << channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() << endl;
+// 
+// 	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
+// 	}else
+// 	{
+// 	  // it should be zero
+// 	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
+// 	}
+
+
 	// the channel matrices estimated by the algorithm are stored
 	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 	
-	if(estimatedChannelMatrices.size()!=0)
+	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
 	{
-	  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
-// 	  cout << "estimatedChannelMatrices.size() = " << estimatedChannelMatrices.size() << " toCheckEstimatedChannelMatrices.size() = " << toCheckEstimatedChannelMatrices.size() << endl;
-// 	  cout << "channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() = " << channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() << endl;
+		// the channel matrices estimated by the algorithm are stored
+		std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
+		std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
 
-	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
+		_mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
 	}else
 	{
-	  // it should be zero
-	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
+	  _mse = -3.14;
 	}
-	
+
+
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
     for(int ik=0;ik<frameLength;ik++)

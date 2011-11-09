@@ -29,7 +29,7 @@ class KnownSymbolsCMEapplyingAlgorithm : public CMEapplyingAlgorithm
 {
 public:
     KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, const MatrixXd &symbolVectors);
-
+	virtual bool performsSymbolsDetection() const { return false; }
 protected:
     MatrixXd _symbolVectors;
 

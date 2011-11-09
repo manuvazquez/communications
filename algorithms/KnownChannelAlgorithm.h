@@ -33,6 +33,7 @@ protected:
 	const MIMOChannel &_channel;
 public:
     KnownChannelAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel &channel);
+	virtual bool performsChannelEstimation() const { return false; }
     
     using Algorithm::run;
 
