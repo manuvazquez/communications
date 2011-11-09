@@ -106,8 +106,12 @@ public:
 	*/
 	double computeActivityDetectionErrorRate(MatrixXd sourceSymbols,MatrixXd detectedSymbols) const;
 	
+	double computeSelectedUsersActivityDetectionErrorRate(MatrixXd sourceSymbols,MatrixXd detectedSymbols) const;
+	
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
+	virtual double computeSelectedUsersSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
+	virtual double computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 
 private:
 	  

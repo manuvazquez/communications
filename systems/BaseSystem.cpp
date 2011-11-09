@@ -55,7 +55,6 @@ extern bool __nFramesHasBeenPassed;
 
 // #define DEBUG
 // #define DEBUG2
-// #define DEBUG_SER_WITHOUT_SOLVING_AMBIGUITY
 
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
@@ -639,9 +638,9 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     iBestPermutation = 0;
 	bestPermutationSigns = vector<int>(sourceSymbols.rows(),1);
 	
-	//...even if there are no symbols detected
-    if(detectedSymbols.rows() == 0)
-        return 0.0;
+// 	//...even if there are no symbols detected
+//     if(detectedSymbols.rows() == 0)
+//         return 0.0;
 
     if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
     {
@@ -660,9 +659,7 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     Util::print(mask);
 #endif
 
-//     iBestPermutation = 0;
     vector<int> thisPermutationSigns(sourceSymbols.rows());
-// 	bestPermutationSigns = vector<int>(sourceSymbols.rows());
 
     // max number of errors
     int minErrors = sourceSymbols.rows()*sourceSymbols.cols();
@@ -749,9 +746,9 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
     int nRealChannelMatrices = realChannelMatrices.size();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
-    // if the algorithm didn't perform channel estimation
-    if(nEstimatedChannelMatrices==0)
-        return -1.0;
+//     // if the algorithm didn't perform channel estimation
+//     if(nEstimatedChannelMatrices==0)
+//         return -1.0;
 
     if(nRealChannelMatrices!=nEstimatedChannelMatrices)
         throw RuntimeException("BaseSystem::computeMSE: number of real channel matrices doesn't match that of the estimated.");
@@ -791,12 +788,8 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
 {
-#ifdef DEBUG
-  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask[0].size() = " << mask[0].size() << endl;
-#endif
-  
-  if(detectedSymbols.rows() == 0)
-	  return -1.0;
+//   if(detectedSymbols.rows() == 0)
+// 	  return -1.0;
 
   if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
   {
@@ -810,22 +803,14 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
   }
 
-#ifdef DEBUG_SER_WITHOUT_SOLVING_AMBIGUITY
-  if(iAlgorithm==3 && iSNR==4)
-  {
-	cout << "sourceSymbols" << endl << sourceSymbols << endl;
-	cout << "detectedSymbols" << endl << detectedSymbols << endl;
-	Util::print(mask);
-	cout << endl;
-  }
-#endif
+	uint nSymbolsRows = detectedSymbols.rows();
 
   // max number of errors
   uint errors = 0;
 
   uint nAccountedSymbols = 0;
 
-  for(uint iStream=0;iStream<_N;iStream++)
+  for(uint iStream=0;iStream<nSymbolsRows;iStream++)
   {
 	  for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
 	  {
