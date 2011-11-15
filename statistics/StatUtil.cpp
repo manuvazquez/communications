@@ -108,13 +108,13 @@ vector<uint> StatUtil::discrete_rnd(uint nSamples,const VectorXd &probabilities,
     return res;
 }
 
-MatrixXd StatUtil::randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator)
+MatrixXd StatUtil::randnMatrix(uint rows,uint cols,double mean,double variance,Random &randomGenerator)
 {
     MatrixXd res(rows,cols);
     double stdDv = sqrt(variance);
 
-    int j;
-    for(int i=0;i<rows;i++)
+    uint j;
+    for(uint i=0;i<rows;i++)
         for(j=0;j<cols;j++)
             res(i,j) =  randomGenerator.randn()*stdDv + mean;
 

@@ -66,7 +66,7 @@ VectorXd ChannelDependentNoise::at(uint n) const
     return _matrix.col(n);
 }
 
-MatrixXd ChannelDependentNoise::range_eigen(int start,int end) const
+MatrixXd ChannelDependentNoise::range(int start,int end) const
 {
     return _matrix.block(0,start,_nOutputs,end-start+1);
 }

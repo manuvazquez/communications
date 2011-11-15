@@ -66,14 +66,12 @@ extern bool __nFramesHasBeenPassed;
 	int realChannelOrder;
 #endif
 
-bool BaseSystem::_saveAtEveryFrame = false;
-
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
-    
+	_saveAtEveryFrame = false;
     // comment/uncomment to set to false/true
-// 	_saveAtEveryFrame = !_saveAtEveryFrame;
+// 	_saveAtEveryFrame = true;
 
 
 // ------------------------ iswcs 2010 ----------------------
@@ -104,10 +102,14 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 1000;
+// 	_nFrames = 10000;
 // 	_nFrames = 1;
 	_nFrames = 2;
+	
 	_L=8,_N=3,_frameLength=1000;
+// 	_L=3,_N=3,_frameLength=1000;
+// 	_L=8,_N=3,_frameLength=5;
+
 	_m = 1;
 	_d = _m - 1;
 	_trainSeqLength = 0;
@@ -490,23 +492,6 @@ void BaseSystem::onlyOnce()
 
 void BaseSystem::beforeEndingAlgorithm()
 {
-// 	// the channel matrices estimated by the algorithm are stored
-// 	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
-// 	
-// 	if(estimatedChannelMatrices.size()!=0)
-// 	{
-// 	  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
-// // 	  cout << "estimatedChannelMatrices.size() = " << estimatedChannelMatrices.size() << " toCheckEstimatedChannelMatrices.size() = " << toCheckEstimatedChannelMatrices.size() << endl;
-// // 	  cout << "channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() = " << channel->range(preambleLength+MSEwindowStart,iLastSymbolVectorToBeDetected-1).size() << endl;
-// 
-// 	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
-// 	}else
-// 	{
-// 	  // it should be zero
-// 	  _mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),estimatedChannelMatrices);
-// 	}
-
-
 	// the channel matrices estimated by the algorithm are stored
 	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 	
@@ -581,9 +566,9 @@ void BaseSystem::beforeEndingFrame()
     Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
-#ifdef KEEP_ALL_CHANNEL_MATRICES
-	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
-#endif
+// #ifdef KEEP_ALL_CHANNEL_MATRICES
+// 	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
+// #endif
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 //         for(uint i=0;i<algorithmsNames.size();i++)
@@ -592,7 +577,6 @@ void BaseSystem::beforeEndingFrame()
 //     Util::matricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
 
     Util::scalarToOctaveFileStream(_iFrame+1,"nFrames",_f);
-
     Util::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
     Util::scalarToOctaveFileStream(_L,"L",_f);
     Util::scalarToOctaveFileStream(_N,"N",_f);
@@ -609,7 +593,13 @@ void BaseSystem::beforeEndingFrame()
     Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
     Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
 	
+	// NOTE: this is only saved for the last frame!!
+	Util::matrixToOctaveFileStream(_observations,"observations",_f);
+	Util::matrixToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected),"noise",_f);
+	Util::matrixToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
+	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
+	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
 	Util::matricesVectorsVectorToOctaveFileStream(_channelMatrices,"channels",_f);
 #else
 	// only last channel is saved
@@ -637,10 +627,6 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
 	// best permutation and its signs are initialized...
     iBestPermutation = 0;
 	bestPermutationSigns = vector<int>(sourceSymbols.rows(),1);
-	
-// 	//...even if there are no symbols detected
-//     if(detectedSymbols.rows() == 0)
-//         return 0.0;
 
     if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
     {
@@ -661,7 +647,7 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
 
     vector<int> thisPermutationSigns(sourceSymbols.rows());
 
-    // max number of errors
+    // min number of errors
     int minErrors = sourceSymbols.rows()*sourceSymbols.cols();
     
     uint nAccountedSymbols = 0;
@@ -745,10 +731,6 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 {
     int nRealChannelMatrices = realChannelMatrices.size();
     int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
-
-//     // if the algorithm didn't perform channel estimation
-//     if(nEstimatedChannelMatrices==0)
-//         return -1.0;
 
     if(nRealChannelMatrices!=nEstimatedChannelMatrices)
         throw RuntimeException("BaseSystem::computeMSE: number of real channel matrices doesn't match that of the estimated.");

@@ -19,6 +19,9 @@
  ***************************************************************************/
 #include "UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
 
+// it defines the smaller double
+#include <float.h>
+
 // #define IMPORT_REAL_DATA
 
 #ifdef IMPORT_REAL_DATA
@@ -115,6 +118,10 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
                 for(iExtendedAlphabet=0;iExtendedAlphabet<extendedAlphabet.length();iExtendedAlphabet++)
                 {
                     probSoftEstGivenSymbol(iExtendedAlphabet) = StatUtil::normalPdf(softEstimations(iInput),processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iInput)*extendedAlphabet[iExtendedAlphabet],s2q);
+					
+					// the probability of a gaussian should never be zero (assuming the variance, "s2q", is not)
+					if(probSoftEstGivenSymbol(iExtendedAlphabet)==0.0)
+						probSoftEstGivenSymbol(iExtendedAlphabet) = DBL_MIN;
 					
 					symbolProb(iInput,iExtendedAlphabet) = probSoftEstGivenSymbol(iExtendedAlphabet);
 					

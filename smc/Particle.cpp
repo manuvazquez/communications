@@ -35,3 +35,14 @@ void Particle::operator=(const Particle &particle)
 		_symbolVectors = particle._symbolVectors;
 	}
 }
+
+std::ostream& operator<< (std::ostream &out, Particle &particle)
+{
+	out << "////////////" << " Particle " << "////////////" << std::endl;
+	out << "Sequence of symbol vectors:" << std::endl;
+	out << particle._symbolVectors << std::endl;
+	out << "weight = " << particle._weight << std::endl;
+	out << "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\" << std::endl;
+
+	return out;
+}

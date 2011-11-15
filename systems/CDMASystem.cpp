@@ -45,9 +45,9 @@
 
 CDMASystem::CDMASystem(): SMCSystem()
 ,_piecesInfoAvailable(false)
-,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)
+,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)	// <- a reasonable model
 // ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
-// ,userPersistenceProb(1.0),newActiveUserProb(0.2),userPriorProb(1.0)
+// ,_userPersistenceProb(1.0),_newActiveUserProb(0.2),_userPriorProb(1.0)		// all the users are active all the time
 ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
 ,_maximumRatioThresholdInDBs(20)
@@ -59,9 +59,11 @@ CDMASystem::CDMASystem(): SMCSystem()
 	// first user starts transmitting something
 	_usersActivityPdfs[0].setApriori(1.0);
 	
-    // spreading spreadingCodes for the users are generated randomly
-//     _spreadingCodes = StatUtil::randnMatrix(L,N,0.0,1.0);
-//     _spreadingCodes = Util::sign(_spreadingCodes);
+// 	// spreading spreadingCodes for the users are generated randomly
+// 	_spreadingCodes = Util::sign(StatUtil::randnMatrix(_L,_N,0.0,1.0));
+// 	
+// 	// the spreading codes are normalized
+// 	_spreadingCodes /= sqrt(_L);
 
 	MatrixXd kasamiCodes (_L,_N);
 	
@@ -75,9 +77,6 @@ CDMASystem::CDMASystem(): SMCSystem()
 					-1,   1,  -1;
 
 	_spreadingCodes = kasamiCodes;
-	
-	// the spreading codes are normalized
-// 	_spreadingCodes /= sqrt(L);
     
 #ifdef PRINT_CODES_INFO
     cout << "generated spreadingCodes..." << endl << _spreadingCodes << endl;
@@ -185,8 +184,6 @@ void CDMASystem::addAlgorithms()
     delete _cdmaKnownChannelChannelMatrixEstimator;
     _cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N,_spreadingCodes);
      
-//     algorithms.push_back(new CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge ("CDMA SIS-opt with no knowledge of users activity pdf",*alphabet,L,1,N,iLastSymbolVectorToBeDetected,m,cdmaKalmanEstimator,preamble,d,nParticles,algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
-
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
     _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));

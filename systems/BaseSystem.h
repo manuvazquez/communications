@@ -59,8 +59,6 @@
 extern bool __done;
 
 class BaseSystem{
-private:
-	static bool _saveAtEveryFrame;
 protected:
     double _pe,_mse;
     uint _iSNR;
@@ -171,6 +169,8 @@ protected:
     ofstream _f,_xmlFile;
 
     DelayPowerProfile *_powerProfile;
+	
+	bool _saveAtEveryFrame;
 
     virtual void addAlgorithms() = 0;
     virtual void buildSystemSpecificVariables() = 0;

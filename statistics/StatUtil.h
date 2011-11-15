@@ -35,7 +35,7 @@
 
 class StatUtil{
 private:
-    static double computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands); // eigen
+    static double computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands);
     static Random _randomGenerator;
 public:
 	// this is only used in USIS =>
@@ -54,7 +54,7 @@ public:
     // same functions as above but receiving c++ vectors instead of "eigen" vectors
     static uint discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
-    static MatrixXd randnMatrix(int rows,int cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
+    static MatrixXd randnMatrix(uint rows,uint cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
     static VectorXd randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator = _randomGenerator); // eigen
     static double normalPdf(double x,double mean,double variance);
     static double normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance); // eigen

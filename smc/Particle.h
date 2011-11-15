@@ -24,6 +24,8 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include<iostream>
+
 #include <vector>
 #include <Util.h>
 #include <types.h>
@@ -70,6 +72,9 @@ public:
     }
 
     void operator=(const Particle &particle);
+	
+	friend std::ostream& operator<< (std::ostream &out, Particle &particle);
+
 };
 
 #endif
