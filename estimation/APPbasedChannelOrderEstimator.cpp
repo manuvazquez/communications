@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1)/*,_symbolVector(_nInputs_maxChannelOrder)*/
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1)
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;

@@ -50,7 +50,8 @@ MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInput
     if(nObservations<1)
         throw RuntimeException("MIMOChannel::transmit: not enough symbol vectors for this channel _memory.");
 
-    MatrixXd observations(_nOutputs,symbols.cols());
+//     MatrixXd observations(_nOutputs,symbols.cols());
+	MatrixXd observations = MatrixXd::Ones(_nOutputs,symbols.cols());
 
     int j;
     

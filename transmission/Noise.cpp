@@ -30,3 +30,13 @@ vector<double> Noise::variances() const
 		res[i] = VarianceAt(i);
 	return res;
 }
+
+MatrixXd Noise::range(uint start,uint end) const
+{
+	MatrixXd res(_nOutputs,end-start+1);
+	
+	for(uint i=start;i<=end;i++)
+		res.col(i-start) = at(i);
+	
+	return res;
+}

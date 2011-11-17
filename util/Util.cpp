@@ -116,7 +116,8 @@ double Util::squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B)
 	}
 
     double res = 0.0;
-    int i,j1,j2;
+    int i;
+	int j1=-1,j2=-1; // "j1" and "j2" are initialized to -1 in case the matrices A and B have zero rows
     for(i=0;i<A.rows();i++)
         for(j1=A.cols()-1,j2=B.cols()-1;(j1>=0 && j2>=0);j1--,j2--)
             res += (A(i,j1)-B(i,j2))*(A(i,j1)-B(i,j2));
@@ -282,6 +283,7 @@ template<class T> int Util::max(const std::vector<T> &vector)
     return iMax;
 }
 template int Util::max(const std::vector<int> &vector);
+template int Util::max(const std::vector<uint> &vector);
 template int Util::max(const std::vector<double> &vector);
 
 template<class T> void Util::min(const std::vector<T> &vector,int &iMin)

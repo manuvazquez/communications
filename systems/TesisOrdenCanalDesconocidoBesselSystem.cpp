@@ -31,6 +31,9 @@ TesisOrdenCanalDesconocidoBesselSystem::TesisOrdenCanalDesconocidoBesselSystem()
 void TesisOrdenCanalDesconocidoBesselSystem::buildSystemSpecificVariables()
 {
     _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
+	
+	// the noise is built here...and it might depend on the channel
+	TesisOrdenCanalDesconocidoSystem::buildSystemSpecificVariables();
 }
 
 void TesisOrdenCanalDesconocidoBesselSystem::beforeEndingFrame()

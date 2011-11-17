@@ -27,20 +27,16 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
  : SMCSystem()
 {
 	_candidateChannelOrders.push_back(1);
-	_candidateChannelOrders.push_back(2);_candidateChannelOrders.push_back(3);
+	_candidateChannelOrders.push_back(2);
+	_candidateChannelOrders.push_back(3);
 	_candidateChannelOrders.push_back(4);
-//	_candidateChannelOrders.push_back(5);
-// 	candidateChannelOrders.push_back(6);candidateChannelOrders.push_back(7);
+	
+// 	_candidateChannelOrders.push_back(5);
+// 	_candidateChannelOrders.push_back(6);
+// 	_candidateChannelOrders.push_back(7);
 
 	_channelOrderCoefficientsMeans.resize(_candidateChannelOrders.size());
 	_channelOrderCoefficientsVariances.resize(_candidateChannelOrders.size());
-
-// 	// to locate the true channel order
-// 	_iTrueChannelOrder = -1;
-// 	
-// 	// to locate the maximum channel order
-// 	_iMaxChannelOrder = -1;
-// 	int maxChannelOrder = -1;
 
 	_iMaxChannelOrder = std::max_element(_candidateChannelOrders.begin(),_candidateChannelOrders.end())-_candidateChannelOrders.begin();
 	
@@ -51,34 +47,14 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 	
 	_iTrueChannelOrder = trueChanelOrderIterator - _candidateChannelOrders.begin();
 	
-// 	cout << "c++: max element is: " << _candidateChannelOrders[_iMaxChannelOrder] << " and pos of the true: " << _iTrueChannelOrder << endl;
-	
 	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
 	{
 		_channelOrderCoefficientsMeans[iChannelOrder] = MatrixXd::Zero(_L,_N*_candidateChannelOrders[iChannelOrder]);
 		_channelOrderCoefficientsVariances[iChannelOrder] = MatrixXd::Ones(_L,_N*_candidateChannelOrders[iChannelOrder]);
-// 		if(_candidateChannelOrders[iChannelOrder] == static_cast<int>(_m))
-// 			_iTrueChannelOrder = iChannelOrder;
-// 		if(_candidateChannelOrders[iChannelOrder] > maxChannelOrder)
-// 		{
-// 		  _iMaxChannelOrder = iChannelOrder;
-// 		  maxChannelOrder = _candidateChannelOrders[iChannelOrder];
-// 		}
 	}
-
-// 	if(_iTrueChannelOrder==-1)
-// 		throw RuntimeException("ChannelOrderEstimationSystem::ChannelOrderEstimationSystem: the memory of the channel is not one of the possible candidates.");
 
 	// channel order APP evolution
     _channelOrderAPPsAlongTime.reserve(_nFrames);
-	
-// 	cout << "el maximo según c++ es " << *(std::max_element(_candidateChannelOrders.begin(),_candidateChannelOrders.end())) << endl;
-// 	std::vector<int>::iterator encontrado = std::find(_candidateChannelOrders.begin(),_candidateChannelOrders.end(),_m);
-// 	cout << "encontré el verdadero canal: " << (encontrado!= _candidateChannelOrders.end()) << std::endl;
-// 	cout << "está en: " << encontrado-_candidateChannelOrders.begin() << endl;
-// 	cout << "_iTrueChannelOrder = " << _iTrueChannelOrder << endl;
-	
-// 	cout << "max element is: " << _candidateChannelOrders[_iMaxChannelOrder] << " and pos of the true: " << _iTrueChannelOrder << endl;
 }
 
 void ChannelOrderEstimationSystem::beforeEndingFrame()

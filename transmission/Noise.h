@@ -42,7 +42,7 @@ public:
     
     virtual VectorXd at(uint n) const = 0;
     
-    virtual MatrixXd range(int start,int end) const {throw RuntimeException("Noise::range: not implemented.");}   
+    virtual MatrixXd range(uint start,uint end) const;
     
     
 	double VarianceAt(int n) const { double stdDev = stdDevAt(n); return stdDev*stdDev;};

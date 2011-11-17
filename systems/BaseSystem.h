@@ -208,8 +208,9 @@ protected:
 	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
 
 public:
+	static double _FUNNY_VALUE;
+	
     BaseSystem();
-
     virtual ~BaseSystem();
 
     void simulate();

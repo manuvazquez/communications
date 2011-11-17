@@ -95,13 +95,15 @@ void CMEBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,
 
 MatrixXd CMEBasedAlgorithm::getDetectedSymbolVectors()
 {
-    MatrixXd aux(1,1);
-    aux.resize(0,0);
-    return aux;
+//     MatrixXd aux(1,1);
+//     aux.resize(0,0);
+//     return aux;
+	throw RuntimeException("CMEBasedAlgorithm::getDetectedSymbolVectors: this method is not implemented.");
 }
 
 vector<MatrixXd> CMEBasedAlgorithm::getEstimatedChannelMatrices()
 {
-    return vector<MatrixXd>(0);
+//     return vector<MatrixXd>(0);
+	throw RuntimeException("CMEBasedAlgorithm::getEstimatedChannelMatrices: this method is not implemented.");
 }
 

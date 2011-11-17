@@ -94,13 +94,16 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
 
 MatrixXd TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors()
 {
-    MatrixXd aux(1,1);
-    aux.resize(0,0);
-    
-    return aux;
+//     MatrixXd aux(1,1);
+//     aux.resize(0,0);
+//     
+//     return aux;
+
+	throw RuntimeException("TimeVaryingChannelCMEbasedAlgorithm::getDetectedSymbolVectors: this method is not implemented.");
 }
 
 vector<MatrixXd> TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices()
 {
-    return vector<MatrixXd>(0);
+//     return vector<MatrixXd>(0);
+	throw RuntimeException("TimeVaryingChannelCMEbasedAlgorithm::getEstimatedChannelMatrices: this method is not implemented.");
 }

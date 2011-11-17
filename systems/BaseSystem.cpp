@@ -66,6 +66,8 @@ extern bool __nFramesHasBeenPassed;
 	int realChannelOrder;
 #endif
 
+double BaseSystem::_FUNNY_VALUE = -3.14;
+
 BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
@@ -90,15 +92,15 @@ BaseSystem::BaseSystem()
 
 // ---------------------------- tesis ------------------------
 
-//     nFrames = 10;
-//     L=3,N=2,frameLength=300;
-//     m = 3;
-//     d = m - 1;
-//     trainSeqLength = 10;
-//     preambleLength = 10;
-//
+//     _nFrames = 1000;
+//     _L=3,_N=2,_frameLength=300;
+//     _m = 3;
+//     _d = _m - 1;
+//     _trainSeqLength = 10;
+//     _preambleLength = 10;
+// 
 //     // the algorithms with the higher smoothing lag require
-//     nSmoothingSymbolsVectors = 10;
+//     _nSmoothingSymbolsVectors = 10;
 
 // --------------------------- CDMA -------------------------
 
@@ -398,7 +400,7 @@ if(__nFramesHasBeenPassed)
 				// if the algorithm doesn't perform symbols detection...
 				else
 					// we assign a meaningless (flag) value to the probability of error
-					_pe = -3.14;
+					_pe = _FUNNY_VALUE;
 
                 beforeEndingAlgorithm();
 
@@ -491,10 +493,7 @@ void BaseSystem::onlyOnce()
 }
 
 void BaseSystem::beforeEndingAlgorithm()
-{
-	// the channel matrices estimated by the algorithm are stored
-	std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
-	
+{	
 	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
 	{
 		// the channel matrices estimated by the algorithm are stored
@@ -504,7 +503,7 @@ void BaseSystem::beforeEndingAlgorithm()
 		_mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
 	}else
 	{
-	  _mse = -3.14;
+	  _mse = _FUNNY_VALUE;
 	}
 
 

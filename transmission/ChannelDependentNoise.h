@@ -46,7 +46,6 @@ public:
     virtual void print() const { cout << _matrix;}
     double stdDevAt(int n) const;
     VectorXd at(uint n) const;
-    virtual MatrixXd range(int start,int end) const;
 };
 
 #endif
