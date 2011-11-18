@@ -231,7 +231,10 @@ template void Util::scalarToOctaveFileStream(uint scalar,string name,ofstream &f
 void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
 {
     if(strings.size()==0)
+	{
+		std::cout << "Util::stringsVectorToOctaveFileStream: the vector is empty, nothing is written." << std::endl;
         return;
+	}
 
     int j;
 

@@ -19,11 +19,10 @@
  ***************************************************************************/
 #include "MIMOChannel.h"
 
-// #define DEBUG
-
 // so that eigen doesn't complain about A!=B matrix operations (it's been told that it's a bug...)
 #include<Eigen/Core>
-// #include<Eigen/Array>
+
+#include<defines.h>
 
 MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInputs),_nOutputs(nOutputs),_length(length),_nInputsnOutputs(_nInputs*_nOutputs)
 {
@@ -50,8 +49,7 @@ MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInput
     if(nObservations<1)
         throw RuntimeException("MIMOChannel::transmit: not enough symbol vectors for this channel _memory.");
 
-//     MatrixXd observations(_nOutputs,symbols.cols());
-	MatrixXd observations = MatrixXd::Ones(_nOutputs,symbols.cols());
+	MatrixXd observations = FUNNY_VALUE * MatrixXd::Ones(_nOutputs,symbols.cols()).array();
 
     int j;
     

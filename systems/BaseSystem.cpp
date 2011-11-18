@@ -53,9 +53,6 @@ extern bool __nFramesHasBeenPassed;
 #define SAVE_SEEDS
 // #define LOAD_SEEDS
 
-// #define DEBUG
-// #define DEBUG2
-
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
     MatrixXd *realSymbols;
@@ -65,8 +62,6 @@ extern bool __nFramesHasBeenPassed;
 #ifdef EXPORT_REAL_CHANNEL_ORDER
 	int realChannelOrder;
 #endif
-
-double BaseSystem::_FUNNY_VALUE = -3.14;
 
 BaseSystem::BaseSystem()
 {
@@ -201,15 +196,6 @@ BaseSystem::BaseSystem()
     for(uint iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
         for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = true;
-
-// 	vector<vector<bool> > prueba(3,vector<bool>(3,false));
-// 	prueba[0][1] = true;
-// 	prueba[1][2] = true;
-// 	
-// 	cout << "before" << endl;
-// 	Util::print(prueba);
-// 	cout << "after" << endl;
-// 	Util::print(Util::row(prueba,0u));
     
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
     cout << "isSymbolAccountedForDetection" << endl;
@@ -252,6 +238,7 @@ BaseSystem::BaseSystem()
 
     _channel = NULL;
     _powerProfile = NULL;
+	_noise = NULL;
     
 // #define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
 //     
@@ -297,8 +284,11 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(825535300);
 // 		StatUtil::getRandomGenerator().setSeed(500436508);
 		
-		_randomGenerator.setSeed(295557636);
-		StatUtil::getRandomGenerator().setSeed(727092075);
+// 		_randomGenerator.setSeed(295557636);
+// 		StatUtil::getRandomGenerator().setSeed(727092075);
+		
+		_randomGenerator.setSeed(2513862799);
+		StatUtil::getRandomGenerator().setSeed(3980701874);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -353,6 +343,8 @@ if(__nFramesHasBeenPassed)
 
 // 		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 // 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+	
+	assert(_noise!=NULL);
 
 #ifdef EXPORT_REAL_DATA
             realSymbols = &_symbols;
@@ -400,7 +392,7 @@ if(__nFramesHasBeenPassed)
 				// if the algorithm doesn't perform symbols detection...
 				else
 					// we assign a meaningless (flag) value to the probability of error
-					_pe = _FUNNY_VALUE;
+					_pe = FUNNY_VALUE;
 
                 beforeEndingAlgorithm();
 
@@ -503,7 +495,7 @@ void BaseSystem::beforeEndingAlgorithm()
 		_mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
 	}else
 	{
-	  _mse = _FUNNY_VALUE;
+	  _mse = FUNNY_VALUE;
 	}
 
 

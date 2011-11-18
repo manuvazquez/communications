@@ -32,6 +32,7 @@
 #include <math.h>
 
 #include <bashcolors.h>
+#include <defines.h>
 #include <SingleUserChannelDependentNoise.h>
 
 #define PRINT_CODES_INFO
@@ -50,6 +51,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 // ,_userPersistenceProb(1.0),_newActiveUserProb(0.2),_userPriorProb(1.0)		// all the users are active all the time
 ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
 // ,maximumRatioThresholdInDBs(15)
+,_maximumRatio(FUNNY_VALUE)
 ,_maximumRatioThresholdInDBs(20)
 ,_iInterestingUser(0u)
 {
