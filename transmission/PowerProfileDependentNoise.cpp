@@ -31,7 +31,6 @@ VectorXd PowerProfileDependentNoise::at(uint n) const
 
 void PowerProfileDependentNoise::setSNR(int SNR)
 {
-// 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_powerProfileDependentVarianceFactor);
 	double newStdDev = computeStd(SNR);
 	
 	std::cout << "PowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;

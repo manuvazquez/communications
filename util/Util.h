@@ -73,6 +73,7 @@ public:
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
     template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
+	template<class T> static void scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,ofstream &f);
     
 	
 	/**

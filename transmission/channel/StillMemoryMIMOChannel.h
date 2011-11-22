@@ -34,7 +34,7 @@ public:
 
 	int memory() const {return _memory;};
 	int memory(int n) const {return _memory;}
-	int effectiveMemory() const {return _memory;}
+	uint effectiveMemory() const {return _memory;}
 	int nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};
 	int nInputsmemory() const {return _nInputsMemory;};
 	

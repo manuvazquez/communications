@@ -127,7 +127,10 @@ protected:
 	std::vector<int> _bestPermutationSigns;
 
     // matrices for results
-    vector<MatrixXd> _peMatrices, _MSEMatrices;
+    std::vector<MatrixXd> _peMatrices, _MSEMatrices;
+	
+	// noise variances for EVERY frame
+	std::vector<std::vector<double> > _noiseVariances;
 
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
     // ...so that they can be printed when the program finishes (they are not saved)

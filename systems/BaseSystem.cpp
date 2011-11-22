@@ -104,7 +104,6 @@ BaseSystem::BaseSystem()
 	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
-// 	_L=3,_N=3,_frameLength=1000;
 // 	_L=8,_N=3,_frameLength=5;
 
 	_m = 1;
@@ -114,6 +113,7 @@ BaseSystem::BaseSystem()
 
 	// the algorithms with the higher smoothing lag require
 	_nSmoothingSymbolsVectors = 6;
+// 	_nSmoothingSymbolsVectors = _d;
 
 
 // ----------------------------------------------------------
@@ -210,13 +210,14 @@ BaseSystem::BaseSystem()
 
     _peMatrices.reserve(_nFrames);
     _MSEMatrices.reserve(_nFrames);
+	
+	_noiseVariances.reserve(_nFrames);
 
     _overallPeTimeEvolution.resize(_SNRs.size());
     _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
 
     _mainSeeds.reserve(_nFrames);
     _statUtilSeeds.reserve(_nFrames);
-//     beforeRunStatUtilSeeds.reserve(nFrames);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     presentFrameMSEtimeEvolution.resize(SNRs.size());
@@ -328,7 +329,8 @@ if(__nFramesHasBeenPassed)
         buildSystemSpecificVariables();
 
 #ifdef PRINT_PARAMETERS
-        std::cout << "iLastSymbolVectorToBeDetected = " << iLastSymbolVectorToBeDetected << endl;
+		std::cout << "the true symbols:" << std::endl << _symbols << std::endl;
+        std::cout << "iLastSymbolVectorToBeDetected = " << _iLastSymbolVectorToBeDetected << std::endl;
 #endif
 
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
@@ -556,6 +558,9 @@ void BaseSystem::beforeEndingFrame()
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
     Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
+	
+	_noiseVariances.push_back(_noise->variances());
+	Util::scalarsVectorsVectorToOctaveFileStream(_noiseVariances,"noiseVariances",_f);
 
 // #ifdef KEEP_ALL_CHANNEL_MATRICES
 // 	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
@@ -586,7 +591,7 @@ void BaseSystem::beforeEndingFrame()
 	
 	// NOTE: this is only saved for the last frame!!
 	Util::matrixToOctaveFileStream(_observations,"observations",_f);
-	Util::matrixToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected),"noise",_f);
+	Util::matrixToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
 	Util::matrixToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
 	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
@@ -761,9 +766,6 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
 {
-//   if(detectedSymbols.rows() == 0)
-// 	  return -1.0;
-
   if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
   {
 	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;

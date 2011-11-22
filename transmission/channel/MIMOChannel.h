@@ -67,7 +67,7 @@ public:
     virtual int memory(int n) const = 0;
 	
 	//! It returns the maximum memory of the channel
-    virtual int effectiveMemory() const = 0;
+    virtual uint effectiveMemory() const = 0;
 
 	//! It returns a matrix representing the channel at a given time instant
 	/*!

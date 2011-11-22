@@ -20,12 +20,23 @@
 #include "ChannelDependentNoise.h"
 
 #include <assert.h>
+
+#include <defines.h>
+
+
 // #define PRINT_INFO
 
 ChannelDependentNoise::ChannelDependentNoise(double alphabetVariance,MIMOChannel *channel)
  : Noise(channel->nOutputs(),channel->length()),_matrix(StatUtil::randnMatrix(_nOutputs,_length,0.0,1.0)),_channel(channel),_stdDevs(_length),_alphabetVariance(alphabetVariance)
 {
-    for(uint i=0;i<_length;i++)
+	assert(_channel->effectiveMemory()>0);
+	
+	uint i;
+	
+    for(i=0;i<_channel->effectiveMemory()-1;i++)
+        _stdDevs[i] = FUNNY_VALUE;
+	
+    for(i=_channel->effectiveMemory()-1;i<_length;i++)
         _stdDevs[i] = 1.0;
 }
 

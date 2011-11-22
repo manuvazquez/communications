@@ -45,8 +45,8 @@ public:
     virtual MatrixXd range(uint start,uint end) const;
     
     
-	double VarianceAt(int n) const { double stdDev = stdDevAt(n); return stdDev*stdDev;};
-	vector<double> variances() const;
+	double varianceAt(uint n) const { double stdDev = stdDevAt(n); return stdDev*stdDev;};
+	std::vector<double> variances() const;
 	virtual void setSNR(int SNR) = 0;
 };
 

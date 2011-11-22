@@ -27,7 +27,7 @@ vector<double> Noise::variances() const
 {
 	vector<double> res(_length);
 	for(uint i=0;i<_length;i++)
-		res[i] = VarianceAt(i);
+		res[i] = varianceAt(i);
 	return res;
 }
 

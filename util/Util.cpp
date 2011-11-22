@@ -177,7 +177,6 @@ template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << endl;
 }
-// template void Util::matricesVectorToOctaveFileStream(vector<LaGenMatLongInt> matrices,string name,ofstream &f);
 template void Util::matricesVectorToOctaveFileStream(vector<MatrixXd> matrices,string name,ofstream &f);
 
 void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f)
@@ -674,3 +673,22 @@ std::vector<MatrixXd> Util::keepCol(const std::vector<MatrixXd> &matricesVector,
 	
 	return res;
 }
+
+template<class T> void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,ofstream &f)
+{
+	uint nRows = matrix.size();
+	assert(nRows!=0);
+	
+	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << matrix.size() << endl << "# columns: " << matrix[0].size() << endl;
+	
+	uint nCols = matrix[0].size();
+	
+	for(uint iRow=0;iRow<nRows;iRow++)
+	{
+		assert(matrix[iRow].size()==nCols);
+		for(uint iCol=0;iCol<nCols;iCol++)
+			f << matrix[iRow][iCol] << " ";
+		f << endl;
+	}
+}
+template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <double> > &matrix,string name,ofstream &f);
