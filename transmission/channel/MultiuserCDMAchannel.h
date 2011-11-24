@@ -32,6 +32,7 @@ class MultiuserCDMAchannel : public StillMemoryMIMOChannel
 protected:
     MatrixXd _spreadingCodes;
 	const MIMOChannel * const _channel;
+	MatrixXd _spreadingCodesAutocorrelationMatrix;
     
 public:
 	MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes);
@@ -50,6 +51,9 @@ public:
 
 	virtual int channelCoefficientsMatrixRows() const { return _channel->nOutputs();}
 	virtual int channelCoefficientsMatrixCols() const { return _channel->nInputs();}
+	
+	double signalToInterferenceRatio(uint iUserOfInterest,uint t) const;
+	std::vector<double> signalToInterferenceRatio(uint iUserOfInterest) const;
 };
 
 #endif

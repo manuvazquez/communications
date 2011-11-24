@@ -56,6 +56,9 @@
 
 // #define KEEP_ALL_CHANNEL_ESTIMATIONS
 
+#define SAVE_SEEDS
+#define SAVE_ALL_SEEDS
+
 extern bool __done;
 
 class BaseSystem{
@@ -128,9 +131,6 @@ protected:
 
     // matrices for results
     std::vector<MatrixXd> _peMatrices, _MSEMatrices;
-	
-	// noise variances for EVERY frame
-	std::vector<std::vector<double> > _noiseVariances;
 
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
     // ...so that they can be printed when the program finishes (they are not saved)
@@ -144,7 +144,14 @@ protected:
     std::vector<MatrixXi> _overallErrorsNumberTimeEvolution;
 
     // seeds
+#ifdef SAVE_SEEDS
     std::vector<uint32_t> _mainSeeds,_statUtilSeeds;
+#endif
+
+#ifdef SAVE_ALL_SEEDS
+	std::vector<std::vector<std::vector<uint32_t> > > /*_perAlgorithmAndSNRmainSeeds,*/_perAlgorithmAndSNRstatUtilSeeds;
+	std::vector<std::vector<uint32_t> > /*_thisFramePerAlgorithmAndSNRmainSeeds,*/_thisFramePerAlgorithmAndSNRstatUtilSeeds;
+#endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > channelEstimations;

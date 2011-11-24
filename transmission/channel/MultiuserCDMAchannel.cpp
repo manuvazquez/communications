@@ -19,8 +19,12 @@
  ***************************************************************************/
 #include "MultiuserCDMAchannel.h"
 
-MultiuserCDMAchannel::MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, channel->length()),_spreadingCodes(spreadingCodes),_channel(channel)
+#include <defines.h>
+
+MultiuserCDMAchannel::MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes): StillMemoryMIMOChannel(spreadingCodes.cols(), spreadingCodes.rows(), 1, channel->length()),_spreadingCodes(spreadingCodes),_channel(channel),_spreadingCodesAutocorrelationMatrix(spreadingCodes.transpose()*spreadingCodes)
 {
+	assert(channel->nOutputs()==1);
+	assert(channel->nInputs()==spreadingCodes.cols());
 }
 
 MultiuserCDMAchannel::~MultiuserCDMAchannel()
@@ -31,4 +35,30 @@ MultiuserCDMAchannel::~MultiuserCDMAchannel()
 MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
 {
     return _spreadingCodes*Util::toVector(_channel->at(n),rowwise).asDiagonal();
+}
+
+double MultiuserCDMAchannel::signalToInterferenceRatio(uint iUserOfInterest, uint t) const
+{
+	double otherUsersPower = 0.0;
+	double userOfInterestPower = 0.0;
+	
+	for(uint i=0;i<_nInputs;i++)
+	{
+		if(i==iUserOfInterest)
+			userOfInterestPower = _spreadingCodesAutocorrelationMatrix(i,i)*(_channel->at(t)(0,i)*_channel->at(t)(0,i));
+		else
+			otherUsersPower += _spreadingCodesAutocorrelationMatrix(i,i)*(_channel->at(t)(0,i)*_channel->at(t)(0,i));
+	}
+	
+	return userOfInterestPower/otherUsersPower;
+}
+
+std::vector<double> MultiuserCDMAchannel::signalToInterferenceRatio(uint iUserOfInterest) const
+{
+	std::vector<double> res(_length-effectiveMemory()+1,FUNNY_VALUE);
+	
+	for(uint i=effectiveMemory()-1;i<_length;i++)
+		res[i] = signalToInterferenceRatio(iUserOfInterest,i);
+	
+	return res;
 }

@@ -18,7 +18,7 @@
 
 #include <ParticleWithChannelEstimation.h>
 
-// #define DEBUG2
+// #define DEBUG3
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdfs(usersActivityPdfs)
 {    
@@ -130,13 +130,24 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 // 		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
 		  processedParticle->setWeight(processedParticle->getWeight()* likelihoodsSum);
+		  
+#ifdef DEBUG3
+		  cout << *processedParticle << endl;
+#endif
+
 	  } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
 	  _particleFilter->normalizeWeights();
 
 	  // if it's not the last time instant
 	  if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
-		  _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);        
+		  _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
+	  
+#ifdef DEBUG3
+		  cout << "end of processing of observation " << iObservationToBeProcessed << endl;
+		  cout << "pesos" << endl << _particleFilter->getWeightsVector() << endl;
+		  getchar();
+#endif
 
   } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

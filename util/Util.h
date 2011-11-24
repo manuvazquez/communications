@@ -74,6 +74,7 @@ public:
     template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
 	template<class T> static void scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,ofstream &f);
+	template<class T> static void scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,ofstream &f);
     
 	
 	/**
@@ -133,5 +134,7 @@ public:
 	
 	static std::vector<MatrixXd> keepCol(const std::vector<MatrixXd> &matricesVector,const uint iCol);
 };
+
+template<class T> std::ostream& operator<<(std::ostream &out,std::vector<T> &vector);
 
 #endif

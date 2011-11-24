@@ -39,6 +39,7 @@ ADD_LIBRARY (algorithms STATIC
 			TimeVaryingChannelCMEbasedAlgorithm
 			TriangularizationBasedSMCAlgorithm
 			UnknownActiveUsersLinearFilterBasedSMCAlgorithm
+			OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm
 			UnknownChannelAlgorithm
 			UnknownChannelOrderAlgorithm
 			USIS

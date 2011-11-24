@@ -84,7 +84,7 @@ protected:
 	/**
 	 * @brief the user of interest, for which is computed the BER and whose SNR is fixed.
 	 **/
-	uint _iInterestingUser;
+	uint _iUserOfInterest;
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
@@ -112,15 +112,6 @@ public:
 	virtual double computeSelectedUsersSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 	virtual double computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
-
-private:
-	  
-	//! It checks the channel for high differences in the coefficients power (near-far problem)
-	/*!
-	  \param channel a pointer to the channel to check
-	  \return true if maximum difference among coefficients (in dBs) is higher than the threshold \ref _maximumRatioThresholdInDBs
-	*/
-	bool isChannelOk(const MIMOChannel * const channel);
 };
 
 #endif

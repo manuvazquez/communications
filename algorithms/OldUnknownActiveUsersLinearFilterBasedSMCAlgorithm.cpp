@@ -17,7 +17,7 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#include "UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
+#include "OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm.h"
 
 // it defines the smaller double
 #include <float.h>
@@ -30,19 +30,19 @@
     extern Noise *realNoise;
 #endif
 
-UnknownActiveUsersLinearFilterBasedSMCAlgorithm::UnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdfs(usersActivityPdfs)
+OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_linearDetector(linearDetector->clone()),_usersActivityPdfs(usersActivityPdfs)
 {
     _randomParticlesInitilization = true; 
 }
 
 
-UnknownActiveUsersLinearFilterBasedSMCAlgorithm::~UnknownActiveUsersLinearFilterBasedSMCAlgorithm()
+OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::~OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm()
 {
     delete _linearDetector;
 }
 
 
-void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
+void OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
 {
       ChannelMatrixEstimator *channelMatrixEstimatorClone;
 
@@ -62,7 +62,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::initializeParticles()
     }    
 }
 
-void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
+void OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
     uint iParticle,iExtendedAlphabet,iSampled;
     double s2q,sumProb,likelihood;
@@ -156,52 +156,45 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
 				
 				// we obtain whether the user is active or not according to the sampled symbol
 				processedParticle->setUserActivity(iInput,iObservationToBeProcessed,Util::isUserActive(sampledVector(iInput)));
-            } // for(iInput=0;iInput<_nInputs;iInput++)
+            }
 
             // sampled symbol vector is stored for the corresponding particle
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),channelMatrixSample*sampledVector,noiseVariances[iObservationToBeProcessed]);
 
-			// ********************************************* new weight computation ***********************************
-			uint nCombinations = (uint) pow((double)(extendedAlphabet.length()),(double)_nInputs);
-
-			// a likelihood is computed for every possible symbol vector
-			vector<double> testedCombination(_nInputs);
+// 			// ********************************************* new weight computation ***********************************
+// 			uint nCombinations = (uint) pow((double)(extendedAlphabet.length()),(double)_nInputs);
+// 
+// 			// a likelihood is computed for every possible symbol vector
+// 			vector<double> testedCombination(_nInputs),likelihoods(nCombinations);
+// 			
+// 			double symbolVectorTerm = 0.0;
+// 			
+// 			for(uint iTestedCombination=0;iTestedCombination<nCombinations;iTestedCombination++)
+// 			{
+// 				extendedAlphabet.int2symbolsArray(iTestedCombination,testedCombination);
+// 				
+// 				double exponent = 0.0;
+// 				double aPriori = 1.0;
+// 				
+// 				for(uint i=0;i<_nInputs;i++)
+// 				{
+// 					exponent += pow(sampledVector(i),2.0) - pow(testedCombination[i],2.0) + 2*softEstimations(i)*(testedCombination[i]-sampledVector(i));
+// 					
+// 					if(iObservationToBeProcessed==_startDetectionTime)
+// 						aPriori *= probSymbol(testedCombination[i],_usersActivityPdfs[i]);
+// 					// after first time instant
+// 					else
+// 						aPriori *= probSymbolGivenPreviousActivity(testedCombination[i],processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1),_usersActivityPdfs[i]);
+// 				}
+// 				
+// 				symbolVectorTerm += exp(exponent)*aPriori;
+// 			}
 			
-			double combinationProb = 0.0;
-			
-			for(uint iTestedCombination=0;iTestedCombination<nCombinations;iTestedCombination++)
-			{
-				extendedAlphabet.int2symbolsArray(iTestedCombination,testedCombination);
-				
-// 				cout << "tested combination" << endl << testedCombination << endl;
-				
-				double exponent = 0.0;
-				double testedCombinationPriorProb = 1.0;
-				
-				for(iInput=0;iInput<_nInputs;iInput++)
-				{
-					double mu = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolGain(iInput);
-					double s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iInput,noiseVariances[iObservationToBeProcessed]);
-					
-// 					exponent += (pow(sampledVector(iInput),2.0) - pow(testedCombination[iInput],2.0) + 2*softEstimations(iInput)*(testedCombination[iInput]-sampledVector(iInput))) / s2q;
-					exponent += mu/(2*s2q)*( mu*(pow(sampledVector(iInput),2.0) - pow(testedCombination[iInput],2.0)) + 2*softEstimations(iInput)*(testedCombination[iInput]-sampledVector(iInput)));
-					
-					if(iObservationToBeProcessed==_startDetectionTime)
-						testedCombinationPriorProb *= probSymbol(testedCombination[iInput],_usersActivityPdfs[iInput]);
-					else
-						testedCombinationPriorProb *= probSymbolGivenPreviousActivity(testedCombination[iInput],processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1),_usersActivityPdfs[iInput]);
-				}
-				
-				combinationProb += exp(exponent)*testedCombinationPriorProb;
-			}
-
-			// *****************************************************************************************************
-
             // the weight is updated...
-// 			processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
-			processedParticle->setWeight(likelihood*combinationProb*processedParticle->getWeight());
+			processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
+// 			processedParticle->setWeight(likelihood*symbolVectorTerm*processedParticle->getWeight());
 
 			// ...the estimation of the channel matrix is updated
 			processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]);
@@ -220,7 +213,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
-double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution) const
+double OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbol,UsersActivityDistribution userActivityDistribution) const
 {
 	if(Util::isUserActive(symbol))
 		return 1.0/double(_alphabet.length())*userActivityDistribution.probApriori(true);
@@ -228,7 +221,7 @@ double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbol(tSymbol symbo
 		return userActivityDistribution.probApriori(false);
 }
 
-double UnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution) const
+double OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::probSymbolGivenPreviousActivity(tSymbol symbol,bool previousActivity,UsersActivityDistribution userActivityDistribution) const
 {
 	if(Util::isUserActive(symbol))
 		return userActivityDistribution.probXgivenY(true,previousActivity)*1.0/double(_alphabet.length());

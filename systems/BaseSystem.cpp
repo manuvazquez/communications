@@ -50,8 +50,8 @@ extern bool __nFramesHasBeenPassed;
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
 
-#define SAVE_SEEDS
 // #define LOAD_SEEDS
+// #define LOAD_PER_ALGORITHM_AND_SNR_SEEDS
 
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
@@ -68,7 +68,7 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
     // comment/uncomment to set to false/true
-// 	_saveAtEveryFrame = true;
+	_saveAtEveryFrame = true;
 
 
 // ------------------------ iswcs 2010 ----------------------
@@ -99,7 +99,7 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 10000;
+// 	_nFrames = 1000;
 // 	_nFrames = 1;
 	_nFrames = 2;
 	
@@ -112,8 +112,8 @@ BaseSystem::BaseSystem()
 	_preambleLength = 0;
 
 	// the algorithms with the higher smoothing lag require
-	_nSmoothingSymbolsVectors = 6;
-// 	_nSmoothingSymbolsVectors = _d;
+// 	_nSmoothingSymbolsVectors = 6;
+	_nSmoothingSymbolsVectors = _d;
 
 
 // ----------------------------------------------------------
@@ -211,13 +211,18 @@ BaseSystem::BaseSystem()
     _peMatrices.reserve(_nFrames);
     _MSEMatrices.reserve(_nFrames);
 	
-	_noiseVariances.reserve(_nFrames);
-
     _overallPeTimeEvolution.resize(_SNRs.size());
     _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
 
+#ifdef SAVE_SEEDS
     _mainSeeds.reserve(_nFrames);
     _statUtilSeeds.reserve(_nFrames);
+#endif
+	
+#ifdef SAVE_ALL_SEEDS
+// 	_perAlgorithmAndSNRmainSeeds.reserve(_nFrames);
+	_perAlgorithmAndSNRstatUtilSeeds.reserve(_nFrames);
+#endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     presentFrameMSEtimeEvolution.resize(SNRs.size());
@@ -288,8 +293,10 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(295557636);
 // 		StatUtil::getRandomGenerator().setSeed(727092075);
 		
-		_randomGenerator.setSeed(2513862799);
-		StatUtil::getRandomGenerator().setSeed(3980701874);
+// 		_randomGenerator.setSeed(4091652794);
+		_randomGenerator.setSeed(1159121696);
+// 		StatUtil::getRandomGenerator().setSeed(2438357304);
+		StatUtil::getRandomGenerator().setSeed(3232261883);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -326,6 +333,7 @@ if(__nFramesHasBeenPassed)
         // all the above symbols must be processed except those generated due to the smoothing
         _iLastSymbolVectorToBeDetected = _symbols.cols() - _nSmoothingSymbolsVectors;
 
+		// this method should generate the channel and the noise
         buildSystemSpecificVariables();
 
 #ifdef PRINT_PARAMETERS
@@ -338,10 +346,10 @@ if(__nFramesHasBeenPassed)
     Util::print(isSymbolAccountedForDetection);
 #endif    
         
-//         noise = new NullNoise(L,channel->length());
+// 	_noise = new NullNoise(_L,_channel->length());
 	
-		// noise is generated according to the channel
-//         _noise = new ChannelDependentNoise(_alphabet->variance(),_channel);
+	// noise is generated according to the channel
+// 	_noise = new ChannelDependentNoise(_alphabet->variance(),_channel);
 
 // 		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 // 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
@@ -379,6 +387,20 @@ if(__nFramesHasBeenPassed)
             // algorithms are executed
             for(_iAlgorithm=0;_iAlgorithm<_algorithms.size();_iAlgorithm++)
             {
+#ifdef LOAD_PER_ALGORITHM_AND_SNR_SEEDS
+// 				_randomGenerator.setSeed(4091652794);
+// 				StatUtil::getRandomGenerator().setSeed(3715014788);
+				StatUtil::getRandomGenerator().setSeed(3232261883);
+// 				StatUtil::getRandomGenerator().setSeed(2627962102);
+
+				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
+				cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
+#endif
+				
+#ifdef SAVE_ALL_SEEDS
+// 				_thisFramePerAlgorithmAndSNRmainSeeds[_iSNR][_iAlgorithm] = _randomGenerator.getSeed();
+				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
+#endif
                 // if there is training sequence
                 if(_trainSeqLength!=0)
                     _algorithms[_iAlgorithm]->run(_observations,_noise->variances(),_symbols.block(0,_preambleLength,_N,_trainSeqLength));
@@ -475,6 +497,11 @@ void BaseSystem::onlyOnce()
     for(uint iAlgorithm=0;iAlgorithm<_algorithms.size();iAlgorithm++)
         _algorithmsNames.push_back(_algorithms[iAlgorithm]->getName());
 
+#ifdef SAVE_ALL_SEEDS
+// 		_thisFramePerAlgorithmAndSNRmainSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
+		_thisFramePerAlgorithmAndSNRstatUtilSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
+#endif
+
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     for(uint i=0;i<SNRs.size();i++)
         presentFrameMSEtimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
@@ -558,13 +585,6 @@ void BaseSystem::beforeEndingFrame()
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
     Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
-	
-	_noiseVariances.push_back(_noise->variances());
-	Util::scalarsVectorsVectorToOctaveFileStream(_noiseVariances,"noiseVariances",_f);
-
-// #ifdef KEEP_ALL_CHANNEL_MATRICES
-// 	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
-// #endif
 
 //     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 //         for(uint i=0;i<algorithmsNames.size();i++)
@@ -586,8 +606,19 @@ void BaseSystem::beforeEndingFrame()
     Util::matrixToOctaveFileStream(_preamble,"preamble",_f);
     Util::scalarToOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
     Util::scalarToOctaveFileStream(_preambleLength,"preambleLength",_f);
+	
+#ifdef SAVE_SEEDS
     Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
     Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
+#endif
+	
+#ifdef SAVE_ALL_SEEDS
+// 	_perAlgorithmAndSNRmainSeeds.push_back(_thisFramePerAlgorithmAndSNRmainSeeds);
+// 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRmainSeeds,"perAlgorithmAndSNRmainSeeds",_f);
+	
+	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);
+	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
+#endif
 	
 	// NOTE: this is only saved for the last frame!!
 	Util::matrixToOctaveFileStream(_observations,"observations",_f);
@@ -616,6 +647,7 @@ void BaseSystem::beforeEndingFrame()
 	channelEstimations.push_back(presentFrameChannelMatrixEstimations);
 	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelEstimations",_f);
 #endif
+	
 }
 
 double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask, uint &iBestPermutation, std::vector< int > &bestPermutationSigns)

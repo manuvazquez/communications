@@ -692,3 +692,32 @@ template<class T> void Util::scalarsVectorsVectorToOctaveFileStream(const std::v
 	}
 }
 template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <double> > &matrix,string name,ofstream &f);
+
+template<class T> void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,ofstream &f)
+{
+    if(matrix.size()==0 || matrix[0].size()==0 || matrix[0][0].size()==0)
+    {
+        cout << "Util::scalarsVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
+        return;
+    }
+
+    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << matrix[0].size() << " " << matrix[0][0].size() << " " << matrix.size() << endl;
+
+    uint i,j;
+    for(uint iMatrix=0;iMatrix<matrix.size();iMatrix++)
+        for(j=0;j<matrix[iMatrix][0].size();j++)
+            for(i=0;i<matrix[iMatrix].size();i++)
+                f << " " << matrix[iMatrix][i][j] << endl;
+}
+template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,string name,ofstream &f);
+
+template<class T> std::ostream& operator<<(std::ostream &out,std::vector<T> &vector)
+{
+    out << "[";
+    for(uint i=0;i<vector.size()-1;i++)
+        out << vector[i] << ",";
+    out << vector[vector.size()-1] << "]";
+	
+	return out;
+}
+template std::ostream& operator<<(std::ostream &out,std::vector<double> &vector);
