@@ -42,6 +42,7 @@ protected:
     
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
     vector<vector<bool> > _usersActivity;
+	std::vector<std::vector<std::vector<bool> > > _everyFrameUsersActivity;
     
     double _userPersistenceProb,_newActiveUserProb,_userPriorProb;
 	

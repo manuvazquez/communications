@@ -63,9 +63,9 @@ public:
     template<class T> static int max(const std::vector<T> &vector);
     template<class T> static void min(const std::vector<T> &vector,int &iMin);
     template<class T> static T sum(const std::vector<T> &vector);
-    template<class T> static void print(const std::vector<T> &vector);
-    template<class T> static void print(const std::vector<std::vector<T> > &matrix);
-    template<class T> static void print(const T* array,int nElements);
+//     template<class T> static void print(const std::vector<T> &vector);
+//     template<class T> static void print(const std::vector<std::vector<T> > &matrix);
+//     template<class T> static void print(const T* array,int nElements);
     static void shiftUp(VectorXd &v,int n);
     template<class T> static vector<vector<T> > permutations(T *array, int nElements);
     static MatrixXd applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
@@ -135,6 +135,7 @@ public:
 	static std::vector<MatrixXd> keepCol(const std::vector<MatrixXd> &matricesVector,const uint iCol);
 };
 
-template<class T> std::ostream& operator<<(std::ostream &out,std::vector<T> &vector);
+template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);
+template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<T> > &matrix);
 
 #endif

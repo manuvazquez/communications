@@ -24,6 +24,8 @@
 
 // #define IMPORT_REAL_DATA
 
+// #define DEBUG
+
 #ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
     extern MatrixXd *realSymbols;
@@ -89,7 +91,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
     for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
 #ifdef DEBUG
-            cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " iParticle = " << iParticle << " -----------" << endl;
+            cout << "------ iObservationToBeProcessed = " << iObservationToBeProcessed << " -----------" << endl;
 #endif    
         // noise covariance needs to be constructed
         for(iOutput=0;iOutput<_nOutputs;iOutput++)
@@ -97,6 +99,9 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
 
         for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
         {
+#ifdef DEBUG
+			cout << "iParticle = " << iParticle << endl;
+#endif
             ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *processedParticle = dynamic_cast<ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers *> (_particleFilter->getParticle(iParticle));            
             
             channelMatrixSample = (dynamic_cast<KalmanEstimator *> (processedParticle->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();            
@@ -186,7 +191,7 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
 					double s2q = processedParticle->getLinearDetector(_estimatorIndex)->nthSymbolVariance(iInput,noiseVariances[iObservationToBeProcessed]);
 					
 // 					exponent += (pow(sampledVector(iInput),2.0) - pow(testedCombination[iInput],2.0) + 2*softEstimations(iInput)*(testedCombination[iInput]-sampledVector(iInput))) / s2q;
-					exponent += mu/(2*s2q)*( mu*(pow(sampledVector(iInput),2.0) - pow(testedCombination[iInput],2.0)) + 2*softEstimations(iInput)*(testedCombination[iInput]-sampledVector(iInput)));
+					exponent += mu/(2*s2q)*( mu*(pow(sampledVector(iInput),2.0) - pow(testedCombination[iInput],2.0)) + 2*softEstimations(iInput)*(testedCombination[iInput]-sampledVector(iInput)) );
 					
 					if(iObservationToBeProcessed==_startDetectionTime)
 						testedCombinationPriorProb *= probSymbol(testedCombination[iInput],_usersActivityPdfs[iInput]);
@@ -208,14 +213,30 @@ void UnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd& ob
 
 			// ...and the channel matrix coefficients (NOT the channel matrix) stored
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelCoefficientsMatrix());
+			
+#ifdef DEBUG
+			cout << "sampled symbols vector" << endl << sampledVector << endl << "updated weight = " << processedParticle->getWeight() << endl;
+			cout << "the updated channel is" << endl << processedParticle->getChannelMatrix(_estimatorIndex,iObservationToBeProcessed) << endl;
+#endif
 
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();
 
+		bool resamplingOccurred = false;
+		
         // if it's not the last time instant
         if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
-            _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
+            resamplingOccurred = _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
+		
+#ifdef DEBUG
+		cout << "--------------- end of observation " << iObservationToBeProcessed << " ------------" << endl;
+		if(!resamplingOccurred)
+			cout << "NO resampling occurred: the weights after normalization:" << endl << _particleFilter->getWeightsVector() << endl;
+		
+		if(iObservationToBeProcessed>100)
+			getchar();
+#endif
 
     } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

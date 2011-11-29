@@ -46,6 +46,11 @@ BesselChannel::BesselChannel(uint nInputs, uint nOutputs, int memory, uint lengt
 	{
 		for(iTime=0;iTime<length;iTime++)
 			autocorrelations[iTime] = tapsVariances[iTap]*jn(0,2.0*M_PI*normDopplerFrequency*double(iTime));
+		
+#ifdef DEBUG
+		for(iTime=0;iTime<3;iTime++)
+			cout << "autocorrelations[" << iTime << "] = " << autocorrelations[iTime] << endl;
+#endif
 
 		for(iRow=0;iRow<length;iRow++)
 			for(iCol=iRow+1;iCol<length;iCol++)

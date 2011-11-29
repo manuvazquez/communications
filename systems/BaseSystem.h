@@ -48,13 +48,14 @@
 
 #define HOSTNAME_LENGTH 50
 #define MV_COMMAND "mv"
+#define LN_COMMAND "ln"
 
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
 // to save all the generated channels (each one being a collection of channel matrices)
 #define KEEP_ALL_CHANNEL_MATRICES
 
-// #define KEEP_ALL_CHANNEL_ESTIMATIONS
+#define KEEP_ALL_CHANNEL_ESTIMATIONS
 
 #define SAVE_SEEDS
 #define SAVE_ALL_SEEDS
@@ -154,8 +155,8 @@ protected:
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > channelEstimations;
-	std::vector<std::vector<std::vector<MatrixXd> > >  presentFrameChannelMatrixEstimations;
+	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimations;
+	std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
 #endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING

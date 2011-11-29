@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "ARprocess.h"
 
-// #define DEBUG5
+// #define DEBUG
 
 ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVariance):_coefficients(coefficients),_noiseVariance(noiseVariance),_nCoefficients(coefficients.size()),_rows(seed.rows()),_columns(seed.cols())
 {
@@ -83,9 +83,9 @@ vector<double> ARprocess::parametersFromYuleWalker(uint order,double velocity,do
     const double c = 3e8;
 
 	// (c/carrierFrequency) is the wavelength
-    double dopplerFrequency = velocity/(c/carrierFrequency);
+    double maximumDopplerFrequency = velocity/c*carrierFrequency;
 
-    double normDopplerFrequency = T*dopplerFrequency;
+    double normalizedMaximumDopplerFrequency = T*maximumDopplerFrequency;
 
     MatrixXd autocorrelationsMatrix(order,order);
     VectorXd autocorrelationsVector(order);
@@ -93,7 +93,11 @@ vector<double> ARprocess::parametersFromYuleWalker(uint order,double velocity,do
 	// for efficiency's sake, all needed correlations are computed here
     vector<double> autocorrelations(order+1);
     for(uint i=0;i<=order;i++)
-        autocorrelations[i] = j0(2.0*M_PI*normDopplerFrequency*double(i));
+        autocorrelations[i] = j0(2.0*M_PI*normalizedMaximumDopplerFrequency*double(i));
+
+#ifdef DEBUG
+	cout << "autocorrelations" << endl << autocorrelations << endl;
+#endif
 
     for(uint m=0;m<order;m++)
     {
@@ -103,9 +107,6 @@ vector<double> ARprocess::parametersFromYuleWalker(uint order,double velocity,do
         autocorrelationsVector(m) = autocorrelations[m+1];
     }
 
-//     VectorXd coefficients;
-//     autocorrelationsMatrix.lu().solve(autocorrelationsVector,&coefficients);
-	
 	PartialPivLU<MatrixXd> luDecomp(autocorrelationsMatrix);
 	VectorXd coefficients = luDecomp.solve(autocorrelationsVector);
 

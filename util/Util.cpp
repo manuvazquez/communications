@@ -313,42 +313,42 @@ template<class T> T Util::sum(const std::vector<T> &vector)
 template int Util::sum(const std::vector<int> &vector);
 template double Util::sum(const std::vector<double> &vector);
 
-template<class T> void Util::print(const std::vector<T> &vector)
-{
-    cout << "[";
-    for(uint i=0;i<vector.size()-1;i++)
-        cout << vector[i] << ",";
-    cout << vector[vector.size()-1] << "]";
-}
-template void Util::print(const std::vector<int> &vector);
-template void Util::print(const std::vector<uint> &vector);
-template void Util::print(const std::vector<double> &vector);
-template void Util::print(const std::vector<bool> &vector);
-template void Util::print(const std::vector<MatrixXd> &vector);
-
-template<class T> void Util::print(const std::vector<std::vector<T> > &matrix)
-{
-    cout << "[\n";
-    for(uint i=0;i<matrix.size();i++)
-    {
-        for(uint j=0;j<matrix[i].size()-1;j++)
-            cout << matrix[i][j] << ",";
-        cout << matrix[i][matrix[i].size()-1] << "\n" << endl;
-    }
-   cout << "]\n";
-}
-
-template void Util::print(const std::vector<std::vector<bool> > &matrix);
-template void Util::print(const std::vector<std::vector<uint> > &matrix);
-
-template<class T> void Util::print(const T* array,int nElements)
-{
-    cout << "[";
-    for(int i=0;i<nElements-1;i++)
-        cout << array[i] << ",";
-    cout << array[nElements-1] << "]" << endl;
-}
-template void Util::print(const int* array,int nElements);
+// template<class T> void Util::print(const std::vector<T> &vector)
+// {
+//     cout << "[";
+//     for(uint i=0;i<vector.size()-1;i++)
+//         cout << vector[i] << ",";
+//     cout << vector[vector.size()-1] << "]";
+// }
+// template void Util::print(const std::vector<int> &vector);
+// template void Util::print(const std::vector<uint> &vector);
+// template void Util::print(const std::vector<double> &vector);
+// template void Util::print(const std::vector<bool> &vector);
+// template void Util::print(const std::vector<MatrixXd> &vector);
+// 
+// template<class T> void Util::print(const std::vector<std::vector<T> > &matrix)
+// {
+//     cout << "[\n";
+//     for(uint i=0;i<matrix.size();i++)
+//     {
+//         for(uint j=0;j<matrix[i].size()-1;j++)
+//             cout << matrix[i][j] << ",";
+//         cout << matrix[i][matrix[i].size()-1] << "\n" << endl;
+//     }
+//    cout << "]\n";
+// }
+// 
+// template void Util::print(const std::vector<std::vector<bool> > &matrix);
+// template void Util::print(const std::vector<std::vector<uint> > &matrix);
+// 
+// template<class T> void Util::print(const T* array,int nElements)
+// {
+//     cout << "[";
+//     for(int i=0;i<nElements-1;i++)
+//         cout << array[i] << ",";
+//     cout << array[nElements-1] << "]" << endl;
+// }
+// template void Util::print(const int* array,int nElements);
 
 void Util::shiftUp(VectorXd &v,int n)
 {
@@ -382,10 +382,11 @@ MatrixXd Util::applyPermutationOnRows(const MatrixXd &symbols,const vector<uint>
     if(permutation.size()!=N || signs.size()!=N)
 	{
 	  cout << "permutation.size() = " << permutation.size() << " signs.size() = " << signs.size() << endl;
-	  Util::print(permutation);
-	  cout << endl;
-	  Util::print(signs);
-	  cout << endl;
+// 	  Util::print(permutation);
+// 	  cout << endl;
+// 	  Util::print(signs);
+// 	  cout << endl;
+	  std::cout << permutation << std::endl << signs << std::endl;
 	  throw RuntimeException("Util::applyPermutationOnRows: length of the received permutation is not N.");
 	}
 
@@ -692,6 +693,7 @@ template<class T> void Util::scalarsVectorsVectorToOctaveFileStream(const std::v
 	}
 }
 template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <double> > &matrix,string name,ofstream &f);
+template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <bool> > &matrix,string name,ofstream &f);
 
 template<class T> void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,ofstream &f)
 {
@@ -710,8 +712,9 @@ template<class T> void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const
                 f << " " << matrix[iMatrix][i][j] << endl;
 }
 template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,string name,ofstream &f);
+template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <bool> > >&matrix,string name,ofstream &f);
 
-template<class T> std::ostream& operator<<(std::ostream &out,std::vector<T> &vector)
+template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector)
 {
     out << "[";
     for(uint i=0;i<vector.size()-1;i++)
@@ -720,4 +723,26 @@ template<class T> std::ostream& operator<<(std::ostream &out,std::vector<T> &vec
 	
 	return out;
 }
-template std::ostream& operator<<(std::ostream &out,std::vector<double> &vector);
+template std::ostream& operator<<(std::ostream &out,const std::vector<double> &vector);
+template std::ostream& operator<<(std::ostream &out,const std::vector<int> &vector);
+template std::ostream& operator<<(std::ostream &out,const std::vector<uint> &vector);
+template std::ostream& operator<<(std::ostream &out,const std::vector<bool> &vector);
+template std::ostream& operator<<(std::ostream &out,const std::vector<MatrixXd> &vector);
+
+
+template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<T> > &matrix)
+{
+    out << "[\n";
+    for(uint i=0;i<matrix.size();i++)
+    {
+        for(uint j=0;j<matrix[i].size()-1;j++)
+            out << matrix[i][j] << ",";
+        out << matrix[i][matrix[i].size()-1] << "\n" << endl;
+    }
+   out << "]\n";
+   
+   return out;
+}
+template std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<bool> > &matrix);
+template std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<uint> > &matrix);
+template std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<int> > &matrix);

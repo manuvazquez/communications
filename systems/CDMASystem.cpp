@@ -108,11 +108,6 @@ CDMASystem::CDMASystem(): SMCSystem()
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
 // 	FlatPowerProfile::setCoefficientsMean(5.0);
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
-    
-    _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
-    _cdmaKnownChannelChannelMatrixEstimator = NULL;
-	
-    _mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 
 	// bessel channel parameters
     _velocity = 180/3.6; // (m/s)
@@ -120,6 +115,15 @@ CDMASystem::CDMASystem(): SMCSystem()
     _symbolRate = 500e3; // (Hz)
 
     _T = 1.0/_symbolRate; // (s)
+    
+    
+//     ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
+// 	cout << "ARcoeffs:" << endl << ARcoefficients << endl << "AR variance = " << ARvariance << endl;
+    
+    _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+    _cdmaKnownChannelChannelMatrixEstimator = NULL;
+	
+    _mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 	
 	_maxCoefficientsRatiosInDBs.reserve(_nFrames);
 	
@@ -160,10 +164,10 @@ CDMASystem::CDMASystem(): SMCSystem()
 	// ...the best permutation is the first one...
 	_piecesBestPermuationIndexes = std::vector<uint>(1,0);
 	
-	// ...and its corresponding signs are all +1
+	// ...and its corresponding signs are all +1. Notice than an algorithm is only used (its methods called) once => initializing this once is enough
 	_piecesBestPermutationSigns = std::vector<std::vector<int> >(1,std::vector<int>(_permutations[0].size(),+1));
-	
-	// NOTE than an algorithm is only used (its methods called) once => initializing this once is enough
+		
+	_everyFrameUsersActivity.reserve(_nFrames);
 }
 
 
@@ -178,7 +182,7 @@ CDMASystem::~CDMASystem()
 void CDMASystem::addAlgorithms()
 {
     _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
-
+// 
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
        
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
@@ -216,10 +220,22 @@ void CDMASystem::beforeEndingFrame()
 	Util::scalarToOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
 	Util::scalarToOctaveFileStream(_userPriorProb,"userPriorProb",_f);
 	
+	_everyFrameUsersActivity.push_back(_usersActivity);
+	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
+// 	Util::scalarsVectorsVectorToOctaveFileStream(_usersActivity,"usersActivity",_f);
+	
 	if(!_piecesInfoAvailable)
 		throw RuntimeException("CDMASystem::computeMSE: pieces information is not available.");
 	
 	Util::scalarsVectorToOctaveFileStream(_signChanges,"signChanges",_f);
+	
+// 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
+// 	std::vector<MatrixXd> m;
+// 	
+// 	for(uint i=0;i<1000;i++)
+// 		m.push_back(miar.nextMatrix());
+// 	
+// 	Util::matricesVectorToOctaveFileStream(m,"matrices",_f);
 }
 
 void CDMASystem::buildSystemSpecificVariables()
@@ -274,6 +290,7 @@ void CDMASystem::buildSystemSpecificVariables()
 
 	} while(false);
 // 	} while(minSIR<-30);
+// 	} while(minSIR<-20);
 // 	} while(minSIR >-20 || minSIR<-30);
 // 	} while(minSIR >-1 || minSIR<-10);
 	
@@ -426,6 +443,9 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 										detectedSymbols.block(0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										Util::block(mask,0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										iBestPermutation,bestPermutationSigns);
+		
+		
+		assert(iBestPermutation==0);
 		
 		// we need to store which the best permutations were along with their corresponding signs since it will be needed later by "computeActivityDetectionErrorRate" and "computeMSE"
 		_piecesBestPermuationIndexes.push_back(iBestPermutation);

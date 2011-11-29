@@ -172,6 +172,11 @@ BaseSystem::BaseSystem()
     strcat(_outputFileName,"_");
     strcat(_outputFileName,presentTimeString);
 	
+	// a symbolic link pointing to the results file is created
+	std::string lnCommand = string(LN_COMMAND) + string(" -sf ") + string(_outputFileName) + string(" ") + string("res_last");
+// 	system(lnCommand.c_str());
+	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _outputFileName << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
+	
 	// the name for the temporal file is obtained from the final one
 	 strcpy(_tempOutputFileName,_outputFileName);
 	 strcat(_tempOutputFileName,"_tmp");
@@ -234,7 +239,7 @@ BaseSystem::BaseSystem()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	channelEstimations.reserve(_nFrames);
+	_channelEstimations.reserve(_nFrames);
 #endif
 
 #ifndef RANDOM_SEED
@@ -293,10 +298,8 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(295557636);
 // 		StatUtil::getRandomGenerator().setSeed(727092075);
 		
-// 		_randomGenerator.setSeed(4091652794);
-		_randomGenerator.setSeed(1159121696);
-// 		StatUtil::getRandomGenerator().setSeed(2438357304);
-		StatUtil::getRandomGenerator().setSeed(3232261883);
+		_randomGenerator.setSeed(3555280860);
+		StatUtil::getRandomGenerator().setSeed(3347172980);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -390,7 +393,7 @@ if(__nFramesHasBeenPassed)
 #ifdef LOAD_PER_ALGORITHM_AND_SNR_SEEDS
 // 				_randomGenerator.setSeed(4091652794);
 // 				StatUtil::getRandomGenerator().setSeed(3715014788);
-				StatUtil::getRandomGenerator().setSeed(3232261883);
+				StatUtil::getRandomGenerator().setSeed(2468980981);
 // 				StatUtil::getRandomGenerator().setSeed(2627962102);
 
 				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -508,8 +511,8 @@ void BaseSystem::onlyOnce()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-  // channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iAlgorithm,iSNR)
-  presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
+  // channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
+  _presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
 #endif
 }
 
@@ -535,18 +538,16 @@ void BaseSystem::beforeEndingAlgorithm()
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-  // we get the channel matrices estimated by this algorithm
-  vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
+	vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices;
+	
+	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
+		// we get the channel matrices estimated by this algorithm
+		thisAlgorithmEstimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
+	else
+		// we generate a sequence of matrices initialized to a "funny" value
+		thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Constant(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols(),FUNNY_VALUE));
 
-  // if none, that meaning the algorithm does not performa channel matrix estimation,...
-  if(thisAlgorithmEstimatedChannelMatrices.size()==0)
-	// we generate a sequence of matrices
-	thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Zero(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols()));
-  else
-	if(thisAlgorithmEstimatedChannelMatrices.size()!=static_cast<uint>(_iLastSymbolVectorToBeDetected-_preambleLength))
-	  throw RuntimeException("BaseSystem::BeforeEndingAlgorithm: the number of channel matrices estimated by the algorithm is not the expected.");
-
-  presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
+	_presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 #endif
 
     cout << COLOR_GREEN << _algorithms[_iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << _pe << " , MSE = " << _mse << endl;
@@ -644,10 +645,9 @@ void BaseSystem::beforeEndingFrame()
     }
     
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	channelEstimations.push_back(presentFrameChannelMatrixEstimations);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(channelEstimations,"channelEstimations",_f);
+	_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
+	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
 #endif
-	
 }
 
 double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask, uint &iBestPermutation, std::vector< int > &bestPermutationSigns)
