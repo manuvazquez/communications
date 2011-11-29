@@ -28,7 +28,7 @@
 #include <iostream>
 #include <string>
 #include <unistd.h>
-#include <sys/time.h>
+#include <ctime>
 #include <vector>
 
 #include <Alphabet.h>
@@ -49,6 +49,8 @@
 #define HOSTNAME_LENGTH 50
 #define MV_COMMAND "mv"
 #define LN_COMMAND "ln"
+
+#define SYMBOLIC_LINK_NAME "last_res"
 
 // #define MSE_TIME_EVOLUTION_COMPUTING
 
@@ -93,8 +95,7 @@ protected:
 	 **/
 	uint _N;
 	
-    char _outputFileName[HOSTNAME_LENGTH+4];
-	char _tempOutputFileName[HOSTNAME_LENGTH+4+4];
+	std::string _tmpResultsFile,_resultsFile;
 
     Alphabet *_alphabet;
 

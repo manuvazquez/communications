@@ -111,14 +111,15 @@ CDMASystem::CDMASystem(): SMCSystem()
 
 	// bessel channel parameters
     _velocity = 180/3.6; // (m/s)
+//     _velocity = 50/3.6; // (m/s)
     _carrierFrequency = 2e9; // (Hz)
     _symbolRate = 500e3; // (Hz)
 
     _T = 1.0/_symbolRate; // (s)
     
     
-//     ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
-// 	cout << "ARcoeffs:" << endl << ARcoefficients << endl << "AR variance = " << ARvariance << endl;
+// 	ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
+// 	std::cout << "ARcoeffs:" << std::endl << ARcoefficients << std::endl << "AR variance = " << ARvariance << std::endl;
     
     _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
     _cdmaKnownChannelChannelMatrixEstimator = NULL;

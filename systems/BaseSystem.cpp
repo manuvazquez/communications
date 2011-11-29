@@ -34,8 +34,6 @@ extern uint __nFramesPassed;
 extern bool __randomSeedHasBeenPassed;
 extern bool __nFramesHasBeenPassed;
 
-#define DATE_LENGTH 100
-
 // #define EXPORT_REAL_DATA
 // #define EXPORT_REAL_CHANNEL_ORDER
 
@@ -112,7 +110,6 @@ BaseSystem::BaseSystem()
 	_preambleLength = 0;
 
 	// the algorithms with the higher smoothing lag require
-// 	_nSmoothingSymbolsVectors = 6;
 	_nSmoothingSymbolsVectors = _d;
 
 
@@ -143,8 +140,6 @@ BaseSystem::BaseSystem()
 #ifdef EXPORT_REAL_CHANNEL_ORDER
 	realChannelOrder = _m;
 #endif
-    // results file name prefix
-    sprintf(_outputFileName,"res_");
 
     // alphabet is defined
     vector<vector<tBit> > alphabetBitSequences(2,vector<tBit>(1));
@@ -156,30 +151,25 @@ BaseSystem::BaseSystem()
     // host name is concatenated into the file name
     char hostname[HOSTNAME_LENGTH];
     gethostname(hostname,HOSTNAME_LENGTH);
-    strcat(_outputFileName,hostname);
 
     // get present time of the system
     time_t presentTime;
     time(&presentTime);
-    char presentTimeString[DATE_LENGTH];
-    ctime_r(&presentTime,presentTimeString);
+	char *presentTimeString = ctime(&presentTime);
     presentTimeString[strlen(presentTimeString)-1] = '\0';
     for(int i=strlen(presentTimeString)-1;i>=0;i--)
         if(presentTimeString[i]==' ')
             presentTimeString[i]='_';
-
-    // it is concatenated into the file name
-    strcat(_outputFileName,"_");
-    strcat(_outputFileName,presentTimeString);
+		
+	// the name of the results file is built
+	_resultsFile = string("res_") + string(hostname) + string("_") + string(presentTimeString);
 	
 	// a symbolic link pointing to the results file is created
-	std::string lnCommand = string(LN_COMMAND) + string(" -sf ") + string(_outputFileName) + string(" ") + string("res_last");
-// 	system(lnCommand.c_str());
-	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _outputFileName << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
+	std::string lnCommand = string(LN_COMMAND) + string(" -sf ") + _resultsFile + string(" ") + string(SYMBOLIC_LINK_NAME);
+	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _resultsFile << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
 	
-	// the name for the temporal file is obtained from the final one
-	 strcpy(_tempOutputFileName,_outputFileName);
-	 strcat(_tempOutputFileName,"_tmp");
+	// the name for the temporal file is obtained from the final one	
+	_tmpResultsFile = string("tmp_") + _resultsFile;
 
     // a specific preamble is generated...
     _preamble = MatrixXd::Zero(1,1);
@@ -436,9 +426,9 @@ if(__nFramesHasBeenPassed)
 		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
 		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
 		if(_saveAtEveryFrame)
-			_f.open(_tempOutputFileName,ofstream::trunc);
+			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
 		else if(_iFrame==_nFrames-1)
-			_f.open(_tempOutputFileName,ofstream::trunc);
+			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
 
         beforeEndingFrame();
 		
@@ -448,7 +438,7 @@ if(__nFramesHasBeenPassed)
 			_f.close();
 
 		// the temporal file is renamed as the final
-		std::string mvCommand = string(MV_COMMAND) + string(" ") + string(_tempOutputFileName) + string(" ") + string(_outputFileName);
+		std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
 		int systemCommandReturn = system(mvCommand.c_str());
 		cout << "moving operation returned " << systemCommandReturn << endl;
 
