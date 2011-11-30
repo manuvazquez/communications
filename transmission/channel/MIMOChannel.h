@@ -51,7 +51,6 @@ public:
 	  It returns the number of columns of the REAL channel matrix that represents the channel (it is usually the number of inputs times the channel order)
 	  \return number of columns of the internal channel coefficients matrix
 	*/
-// 	virtual int channelCoefficientsMatrixCols() const { return _nInputs;}
 	virtual int channelCoefficientsMatrixCols() const { return _nInputs*effectiveMemory();}
 
 	virtual uint length() const {return _length;};
@@ -85,14 +84,16 @@ public:
     
     virtual MatrixXd transmit(const MatrixXd &symbols,const Noise &noise) const;
     
-    virtual vector<MatrixXd> range(int a,int b);
+    virtual std::vector<MatrixXd> range(int a,int b);
+	
+	std::vector<MatrixXd> getChannelMatrices();
     
-	//! It returns the instants where the coefficients corresponding to any of the inputs cross zero (i.e., its column changes sign)
-	/*!
-		\return a vector with the time instants where the sign of the coefficients corresponding to an input changes.
-		It always includes the initial and final instants, so that the instants define a partition of the total length.
-	*/
-    virtual std::vector<uint> getInputsZeroCrossings(uint iFrom, uint length) const;
+// 	//! It returns the instants where the coefficients corresponding to any of the inputs cross zero (i.e., its column changes sign)
+// 	/*!
+// 		\return a vector with the time instants where the sign of the coefficients corresponding to an input changes.
+// 		It always includes the initial and final instants, so that the instants define a partition of the total length.
+// 	*/
+//     virtual std::vector<uint> getInputsZeroCrossings(uint iFrom, uint length) const;
 	
 	//! It sets the matrix representing the channel at the given time instant
 	/*!

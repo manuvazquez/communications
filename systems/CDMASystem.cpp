@@ -45,6 +45,8 @@
 // #define DEBUG_MSE
 // #define DEBUG_ACTIVITY_DETECTION_ERROR_RATE
 
+// #define DEBUG
+
 CDMASystem::CDMASystem(): SMCSystem()
 ,_piecesInfoAvailable(false)
 ,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)	// <- a reasonable model
@@ -183,7 +185,7 @@ CDMASystem::~CDMASystem()
 void CDMASystem::addAlgorithms()
 {
     _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
-// 
+
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
        
     // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
@@ -192,7 +194,7 @@ void CDMASystem::addAlgorithms()
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-//     _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+    _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
 	_algorithms.push_back(new OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("Old CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
@@ -278,9 +280,9 @@ void CDMASystem::buildSystemSpecificVariables()
 	{
 		delete _channel;
 
-// 		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
+		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
 // 		channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
-		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+// 		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
 		
 		// Signal to Interference Ratio's
 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
@@ -289,8 +291,8 @@ void CDMASystem::buildSystemSpecificVariables()
 		minSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
 		std::cout << "minimum SIR = " << minSIR << std::endl;
 
-	} while(false);
-// 	} while(minSIR<-30);
+// 	} while(false);
+	} while(minSIR<-30);
 // 	} while(minSIR<-20);
 // 	} while(minSIR >-20 || minSIR<-30);
 // 	} while(minSIR >-1 || minSIR<-10);
@@ -419,13 +421,24 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 
 	double res = 0.0;
 
-// 	_signChanges = channel->getInputsZeroCrossings(preambleLength+symbolsDetectionWindowStart,frameLength-symbolsDetectionWindowStart);
-	//								^
-	//								|
-	// even though ultimately only symbol vectors from "symbolsDetectionWindowStart" will be taken into account for detection, we don't
-	// have to worry about it here, since the mask will take care of that. That being so, "_signChanges" actually contains all the sign changes
-	// that occur within the frame
-	_signChanges = _channel->getInputsZeroCrossings(_preambleLength,_frameLength);
+	// NOTE: even though ultimately only symbol vectors from "_symbolsDetectionWindowStart" will be taken into account for detection, we don't have to worry about it here, since the mask will take care of that. That being so, 
+	// "_signChanges" actually contains all the sign changes that occur within the frame
+// 	_signChanges = _channel->getInputsZeroCrossings(_preambleLength,_frameLength);
+// 	_signChanges = Util::getZeroCrossings(_channel->getChannelMatrices(),_preambleLength,_frameLength);
+	
+	// if the algorithm performs channel estimation we use ITS channel estimations to split the frame and tackle the ambiguity problem
+	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
+		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_preambleLength,_frameLength);
+	//...if it doesn't perform channel estimation, the ambiguity problem is gone
+	else
+	{
+		_signChanges = std::vector<uint>(2);
+		_signChanges[0] = 0; _signChanges[1] = _frameLength;
+	}
+	
+// 	std::vector<uint> oldSignChanges = _channel->getInputsZeroCrossings(_preambleLength,_frameLength);
+// 	cout << "_signChanges: " << endl << _signChanges << endl << "oldSignChanges:" << endl << oldSignChanges << endl;
+	
 
 	uint overallNumberAccountedSymbols = 0;
 
@@ -445,7 +458,10 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 										Util::block(mask,0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										iBestPermutation,bestPermutationSigns);
 		
-		
+#ifdef DEBUG
+		cout << "iBestPermutation = " << iBestPermutation << endl << "bestPermutationSigns:" << endl << bestPermutationSigns << endl;
+		cout << detectedSymbols.block(0,_frameLength-50,nSymbolsRows,50);
+#endif
 		assert(iBestPermutation==0);
 		
 		// we need to store which the best permutations were along with their corresponding signs since it will be needed later by "computeActivityDetectionErrorRate" and "computeMSE"

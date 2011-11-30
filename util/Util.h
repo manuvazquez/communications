@@ -133,6 +133,16 @@ public:
 	template<class T> static std::vector <std::vector <T > > row(const std::vector <std::vector <T > > &matrix,const uint iRow);
 	
 	static std::vector<MatrixXd> keepCol(const std::vector<MatrixXd> &matricesVector,const uint iCol);
+	
+	/**
+	 * @brief it returns the indexes where ANY of the columns (the whole column) changes sign
+	 *
+	 * @param matricesVector a vector of matrices
+	 * @param iFrom the starting index
+	 * @param length the number of matrices that must be checked starting from @ref iFrom
+	 * @return a vector with the corresponding indexes. It always includes @ref iFrom as well as the last index (so that the instants define a partition of the total length)
+	 **/
+    static std::vector<uint> getZeroCrossings(const std::vector<MatrixXd> &matricesVector,uint iFrom, uint length);
 };
 
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);

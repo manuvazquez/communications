@@ -84,25 +84,35 @@ vector<MatrixXd> MIMOChannel::range(int a,int b)
     return res;
 }
 
-std::vector<uint> MIMOChannel::getInputsZeroCrossings(uint iFrom, uint length) const
+// std::vector<uint> MIMOChannel::getInputsZeroCrossings(uint iFrom, uint length) const
+// {
+//   MatrixXd lastSignsMatrix = Util::sign(at(iFrom));
+//   
+//   std::vector<uint> res;
+//   res.push_back(iFrom);
+//   
+//   uint iChannelMatrix;
+//   
+//   for(iChannelMatrix=iFrom+1;iChannelMatrix<iFrom+length;iChannelMatrix++)
+//   {
+// 	if(Util::sign(at(iChannelMatrix))!=lastSignsMatrix)
+// 	{
+// 	  lastSignsMatrix = Util::sign(at(iChannelMatrix));
+// 	  res.push_back(iChannelMatrix);
+// 	}
+//   }
+// 
+//   res.push_back(iChannelMatrix);
+// 
+//   return res;
+// }
+
+std::vector<MatrixXd> MIMOChannel::getChannelMatrices()
 {
-  MatrixXd lastSignsMatrix = Util::sign(at(iFrom));
-  
-  std::vector<uint> res;
-  res.push_back(iFrom);
-  
-  uint iChannelMatrix;
-  
-  for(iChannelMatrix=iFrom+1;iChannelMatrix<iFrom+length;iChannelMatrix++)
-  {
-	if(Util::sign(at(iChannelMatrix))!=lastSignsMatrix)
-	{
-	  lastSignsMatrix = Util::sign(at(iChannelMatrix));
-	  res.push_back(iChannelMatrix);
-	}
-  }
-
-  res.push_back(iChannelMatrix);
-
-  return res;
+	std::vector<MatrixXd> res;
+	
+	for(uint i=0;i<_length;i++)
+		res.push_back(at(i));
+	
+	return res;
 }

@@ -288,8 +288,11 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(295557636);
 // 		StatUtil::getRandomGenerator().setSeed(727092075);
 		
-		_randomGenerator.setSeed(3555280860);
-		StatUtil::getRandomGenerator().setSeed(3347172980);
+// 		_randomGenerator.setSeed(3555280860);
+// 		StatUtil::getRandomGenerator().setSeed(3347172980);
+		
+		_randomGenerator.setSeed(3634179949);					// middle of the frame ambiguity problem
+		StatUtil::getRandomGenerator().setSeed(3781697018);		// middle of the frame ambiguity problem
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -383,8 +386,9 @@ if(__nFramesHasBeenPassed)
 #ifdef LOAD_PER_ALGORITHM_AND_SNR_SEEDS
 // 				_randomGenerator.setSeed(4091652794);
 // 				StatUtil::getRandomGenerator().setSeed(3715014788);
-				StatUtil::getRandomGenerator().setSeed(2468980981);
 // 				StatUtil::getRandomGenerator().setSeed(2627962102);
+// 				StatUtil::getRandomGenerator().setSeed(2468980981);
+				StatUtil::getRandomGenerator().setSeed(4094155604);	// middle of the frame ambiguity problem
 
 				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
 				cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
