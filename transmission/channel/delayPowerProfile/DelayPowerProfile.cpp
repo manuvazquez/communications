@@ -34,8 +34,8 @@ MatrixXd DelayPowerProfile::generateChannelMatrix(Random &random)
 {
 	MatrixXd res = MatrixXd::Zero(_nOutputs,_nInputs*_tapsPowers.size());
 
-	for(int i=0;i<res.rows();i++)
-		for(int j=0;j<res.cols();j++)
+	for(uint i=0;i<res.rows();i++)
+		for(uint j=0;j<res.cols();j++)
 			res(i,j) = random.randn()*sqrt(_variances(i,j)) + _means(i,j);
 
 	return res;

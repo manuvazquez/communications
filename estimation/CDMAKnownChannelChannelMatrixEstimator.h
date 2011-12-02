@@ -32,7 +32,7 @@ protected:
     
     virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen
 public:
-    CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, uint N, const MatrixXd &spreadingCodes);
+    CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, uint iFirstChannelMatrix, uint N, const MatrixXd &spreadingCodes);
 
     virtual CDMAKnownChannelChannelMatrixEstimator *clone() const;
 };

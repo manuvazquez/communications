@@ -47,7 +47,7 @@ protected:
     uint _d,_startDetectionTime;
 
     // a particle contains a vector of channel estimators (and possibly linear detectors)
-    int _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
+    uint _estimatorIndex; //! it indicates which of the all the estimator that each particle contain is interesting at every moment
 
     VectorXd _channelMean;
     MatrixXd _channelCovariance;
@@ -92,10 +92,10 @@ public:
 
     ~SMCAlgorithm();
 
-    void setEstimatorIndex(int n);
+    void setEstimatorIndex(uint n);
     
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
-    virtual void runFrom(int n,MatrixXd observations,vector<double> noiseVariances);    
+    virtual void runFrom(uint n,MatrixXd observations,vector<double> noiseVariances);    
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
     virtual MatrixXd getDetectedSymbolVectors();

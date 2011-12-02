@@ -29,9 +29,9 @@
 class ParticleWithChannelEstimation : public Particle, public WithChannelEstimationParticleAddon
 {
 public:
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
+    ParticleWithChannelEstimation(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
     
-    ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
+    ParticleWithChannelEstimation(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
     
     ParticleWithChannelEstimation *clone();
 

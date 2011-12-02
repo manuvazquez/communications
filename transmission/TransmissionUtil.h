@@ -32,10 +32,10 @@
 
 class TransmissionUtil{
 private:
-    static void BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
+    static void BERComputingChecks(const Bits &bits1,uint from1,uint to1,const Bits &bits2,uint from2,uint to2);
 public:
-    static double computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2);
-    static double computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations);
+    static double computeBER(const Bits &bits1,uint from1,uint to1,const Bits &bits2,uint from2,uint to2);
+    static double computeBERsolvingAmbiguity(const Bits &sourceBits,uint from1,uint to1,const Bits &detectedBits,uint from2,uint to2,vector<vector<uint> > permutations);
     static VectorXd MSEalongTime(const std::vector<MatrixXd> &estimatedChannelMatrices,uint from1,uint to1,const std::vector<MatrixXd> &trueChannelMatrices,uint from2,uint to2);
     static MatrixXd generateTrainingSequence(const Alphabet &alphabet,uint nInputs,uint length);
 };

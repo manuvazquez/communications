@@ -16,7 +16,7 @@
 
 #include "ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp.h"
 
-ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp::ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp(double weight, int symbolVectorLength, int nTimeInstants, std::vector<std::vector <ChannelMatrixEstimator *> > channelMatrixEstimators)
+ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp::ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector<std::vector <ChannelMatrixEstimator *> > channelMatrixEstimators)
 :Particle(weight, symbolVectorLength, nTimeInstants),WithMultipleChannelsEstimationParticleAddon(channelMatrixEstimators,nTimeInstants),WithMultipleChannelOrderAppParticleAddon(channelMatrixEstimators.size(),channelMatrixEstimators[0].size())
 {
 }

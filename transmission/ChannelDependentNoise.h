@@ -44,7 +44,7 @@ public:
 
     virtual void setSNR(int SNR);
     virtual void print() const { cout << _matrix;}
-    double stdDevAt(int n) const;
+    double stdDevAt(uint n) const;
     VectorXd at(uint n) const;
 };
 

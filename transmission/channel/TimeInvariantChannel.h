@@ -31,11 +31,11 @@ class TimeInvariantChannel : public StillMemoryMIMOChannel
 protected:
     MatrixXd _channelMatrix;   
 public:
-    TimeInvariantChannel(uint nInputs, uint nOutputs, int memory, uint length, MatrixXd channelMatrix);
+    TimeInvariantChannel(uint nInputs, uint nOutputs, uint memory, uint length, MatrixXd channelMatrix);
 
-    MatrixXd at(int n) const { return _channelMatrix;};
+    MatrixXd at(uint n) const { return _channelMatrix;};
 	
-    virtual void set(int n, MatrixXd mat)
+    virtual void set(uint n, MatrixXd mat)
     {
 	  if(mat.rows()!=_nOutputs || mat.cols()!=_nInputsMemory)
 		throw RuntimeException("ARchannel:set: matrix dimensions are wrong.");

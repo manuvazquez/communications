@@ -41,7 +41,7 @@ protected:
 public:
     PSPPath();
 
-    PSPPath(int nTimeInstants,double cost, MatrixXd initialSequence, std::vector<std::vector<MatrixXd> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators); // eigen
+    PSPPath(uint nTimeInstants,double cost, MatrixXd initialSequence, std::vector<std::vector<MatrixXd> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators); // eigen
 
     PSPPath(const PSPPath &path);
 

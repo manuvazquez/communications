@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, int iFirstChannelMatrix, uint N): ChannelMatrixEstimator(channel->at(iFirstChannelMatrix), N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
+KnownChannelChannelMatrixEstimator::KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, uint iFirstChannelMatrix, uint N): ChannelMatrixEstimator(channel->at(iFirstChannelMatrix), N),_channel(channel),_iNextMatrix(iFirstChannelMatrix)
 {
 }
 

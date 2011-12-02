@@ -55,7 +55,7 @@ SMCAlgorithm::~SMCAlgorithm()
         delete _particleFilter;
 }
 
-void SMCAlgorithm::setEstimatorIndex(int n)
+void SMCAlgorithm::setEstimatorIndex(uint n)
 {
     if(_particleFilter==NULL)
         throw RuntimeException("SMCAlgorithm::SetEstimatorIndex: the particle filter is not set.");
@@ -86,9 +86,9 @@ void SMCAlgorithm::initializeParticles()
 
 void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
-    int nObservations = observations.cols();
+    uint nObservations = observations.cols();
 
-    if(nObservations<(_startDetectionTime+1+_d))
+    if(nObservations<(_startDetectionTime+1u+_d))
         throw RuntimeException("SMCAlgorithm::run: not enough observations.");
 
     initializeParticles();
@@ -96,12 +96,12 @@ void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
     process(observations,noiseVariances);
 }
 
-void SMCAlgorithm::runFrom(int n,MatrixXd observations,vector<double> noiseVariances)
+void SMCAlgorithm::runFrom(uint n,MatrixXd observations,vector<double> noiseVariances)
 {
-    int nObservations = observations.cols();
+    uint nObservations = observations.cols();
     _startDetectionTime = n;
 
-    if(nObservations<(_startDetectionTime+1+_d))
+    if(nObservations<(_startDetectionTime+1u+_d))
         throw RuntimeException("SMCAlgorithm::runFrom: Not enough observations.");
 
     process(observations,noiseVariances);

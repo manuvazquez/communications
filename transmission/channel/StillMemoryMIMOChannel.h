@@ -28,15 +28,15 @@
 class StillMemoryMIMOChannel : public MIMOChannel
 {
 protected:
-	int _memory,_nInputsnOutputsMemory,_nInputsMemory;
+	uint _memory,_nInputsnOutputsMemory,_nInputsMemory;
 public:
-    StillMemoryMIMOChannel(uint nInputs, uint nOutputs, int memory,uint length);
+    StillMemoryMIMOChannel(uint nInputs, uint nOutputs, uint memory,uint length);
 
-	int memory() const {return _memory;};
-	int memory(int n) const {return _memory;}
+	uint memory() const {return _memory;};
+	uint memory(uint n) const {return _memory;}
 	uint effectiveMemory() const {return _memory;}
-	int nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};
-	int nInputsmemory() const {return _nInputsMemory;};
+	uint nInputsnOutputsmemory() const {return _nInputsnOutputsMemory;};
+	uint nInputsmemory() const {return _nInputsMemory;};
 	
 	//! it shapes the channel matrices of the channel so that the outputs have the specified channel orders (introducing zeros whenever necessary)
 	/*!

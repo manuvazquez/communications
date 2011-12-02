@@ -37,7 +37,7 @@ VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
     return vector;
 }
 
-MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,int rows,int cols)
+MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,uint rows,uint cols)
 {
     if(vector.size()> (rows*cols))
         throw RuntimeException("Util::toMatrix: The length of the vector is greater than rows by cols.");
@@ -58,7 +58,7 @@ MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,uint rows)
     int remainder = vector.size() % rows;
     if(remainder!=0)
         throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
-    int cols = vector.size()/rows;
+    uint cols = vector.size()/rows;
     return toMatrix(vector,order,rows,cols);
 }
 
@@ -252,7 +252,7 @@ void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string na
         f << "# length: " << max << endl;
         f << strings[i];
 
-        // paddling with spaces
+        // padding with spaces
         for(j=max-strings[i].length();j>0;j--)
             f << " ";
         f << endl;
@@ -271,37 +271,6 @@ template void Util::scalarsVectorToOctaveFileStream(std::vector<double> vector,s
 template void Util::scalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
 template void Util::scalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
-template<class T> int Util::max(const std::vector<T> &vector)
-{
-    int iMax = 0;
-    T max = vector[0];
-
-    for(uint i=1;i<vector.size();i++)
-        if(vector[i]>max)
-        {
-            iMax = i;
-            max = vector[i];
-        }
-    return iMax;
-}
-template int Util::max(const std::vector<int> &vector);
-template int Util::max(const std::vector<uint> &vector);
-template int Util::max(const std::vector<double> &vector);
-
-template<class T> void Util::min(const std::vector<T> &vector,int &iMin)
-{
-    iMin = 0;
-    T min = vector[0];
-
-    for(uint i=1;i<vector.size();i++)
-        if(vector[i]<min)
-        {
-            iMin = i;
-            min = vector[i];
-        }
-}
-template void Util::min(const std::vector<double> &vector,int &iMin);
-
 template<class T> T Util::sum(const std::vector<T> &vector)
 {
     T sum = vector[0];
@@ -313,31 +282,33 @@ template<class T> T Util::sum(const std::vector<T> &vector)
 template int Util::sum(const std::vector<int> &vector);
 template double Util::sum(const std::vector<double> &vector);
 
-void Util::shiftUp(VectorXd &v,int n)
+void Util::shiftUp(VectorXd &v,uint n)
 {
-    if(n>=v.size())
-        throw RuntimeException("Util::shiftUp: vector is too short for this shift.");
+//     if(n>=v.size())
+//         throw RuntimeException("Util::shiftUp: vector is too short for this shift.");
+	
+	assert(n<v.size());
 
-    for(int i=0;i<v.size()-n;i++)
+    for(uint i=0;i<v.size()-n;i++)
         v(i) = v(i+n);
 }
 
-template<class T> vector<vector<T> > Util::permutations(T *array, int nElements)
+template<class T> std::vector<std::vector<T> > Util::permutations(T *array, uint nElements)
 {
     vector<vector<T> > res;
 
-    int iPermut = 0;
+    uint iPermut = 0;
     do{
         res.push_back(vector<T>(nElements));
-        for(int j=0;j<nElements;j++)
+        for(uint j=0;j<nElements;j++)
             res[iPermut][j] = array[j];
         iPermut++;
     } while(std::next_permutation(array,array+nElements));
 
     return res;
 }
-template vector<vector<int> > Util::permutations(int *array, int nElements);
-template vector<vector<uint> > Util::permutations(uint *array, int nElements);
+template std::vector<std::vector<int> > Util::permutations(int *array, uint nElements);
+template std::vector<std::vector<uint> > Util::permutations(uint *array, uint nElements);
 
 MatrixXd Util::applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs)
 {

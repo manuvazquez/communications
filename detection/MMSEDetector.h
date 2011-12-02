@@ -38,15 +38,15 @@ protected:
 	// required for nthSymbolVariance computing
     MatrixXd _channelMatrix_eigen,_Rx_eigen;   
 public:
-    MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected);
-    MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom);
+    MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected);
+    MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom);
 
     virtual MMSEDetector * clone();
     virtual MatrixXd computedFilter_eigen();
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance); // eigen
     virtual void stateStep(VectorXd observations) {}
-	virtual double nthSymbolVariance(int n,double noiseVariance);
-	virtual double nthSymbolGain(int n) const;
+	virtual double nthSymbolVariance(uint n,double noiseVariance);
+	virtual double nthSymbolGain(uint n) const;
 
 };
 

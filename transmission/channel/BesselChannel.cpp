@@ -22,7 +22,7 @@
 
 // #define DEBUG
 
-BesselChannel::BesselChannel(uint nInputs, uint nOutputs, int memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
+BesselChannel::BesselChannel(uint nInputs, uint nOutputs, uint memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile): StillMemoryMIMOChannel(nInputs, nOutputs, memory, length),_channelMatrices(length)
 {
 	if(powerProfile.memory()!=memory)
 		throw RuntimeException("BesselChannel::BesselChannel: memory is wrong.");

@@ -19,13 +19,11 @@
  ***************************************************************************/
 #include "ConstantMeanDSPowerProfile.h"
 
-// #define DEBUG
-
 ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(uint nOutputs, uint nInputs, std::vector< double > differentialDelays, std::vector< double > powers, double T): ContinuousPowerProfile(nOutputs, nInputs, differentialDelays, powers)
 {
 	double quotient;
-	int k;
-	int nDelays = int(ceil(_continuousDelays[_continuousDelays.size()-1]/T))+1;
+	uint k;
+	uint nDelays = uint(ceil(_continuousDelays[_continuousDelays.size()-1]/T))+1u;
 	_tapsPowers.resize(nDelays,0.0);
 
 	for(uint i=0;i<_continuousDelays.size();i++)
@@ -33,15 +31,15 @@ ConstantMeanDSPowerProfile::ConstantMeanDSPowerProfile(uint nOutputs, uint nInpu
 		quotient = _continuousDelays[i] / T;
 		if(quotient == floor(quotient))
 		{
-			_tapsPowers[int(quotient)] += _continuousPowers[i];
+			_tapsPowers[uint(quotient)] += _continuousPowers[i];
 			continue;
 		}
-		k = int(_continuousDelays[i] / T);
-		_tapsPowers[k] += ((k+1)- _continuousDelays[i]/T)*_continuousPowers[i];
-		_tapsPowers[k+1] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
+		k = uint(_continuousDelays[i] / T);
+		_tapsPowers[k] += ((k+1u)- _continuousDelays[i]/T)*_continuousPowers[i];
+		_tapsPowers[k+1u] += (_continuousDelays[i]/T - k)*_continuousPowers[i];
 	}
 
-	vector<double> _amplitudesBak = _tapsPowers;
+	std::vector<double> _amplitudesBak = _tapsPowers;
 	for(uint i=0;i<_amplitudesBak.size();i++)
 		_tapsPowers[_tapsPowers.size()-1-i] = _amplitudesBak[i];
 

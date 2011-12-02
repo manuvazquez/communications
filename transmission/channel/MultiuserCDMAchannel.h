@@ -44,13 +44,13 @@ public:
 	  \param n time instant
 	  \return the channel matrix
 	*/
-    virtual MatrixXd getTransmissionMatrix(const int n) const;
+    virtual MatrixXd getTransmissionMatrix(const uint n) const;
 	
 	// it delegates on the channel within
-	virtual MatrixXd at(int n) const { return _channel->at(n);}
+	virtual MatrixXd at(uint n) const { return _channel->at(n);}
 
-	virtual int channelCoefficientsMatrixRows() const { return _channel->nOutputs();}
-	virtual int channelCoefficientsMatrixCols() const { return _channel->nInputs();}
+	virtual uint channelCoefficientsMatrixRows() const { return _channel->nOutputs();}
+	virtual uint channelCoefficientsMatrixCols() const { return _channel->nInputs();}
 	
 	double signalToInterferenceRatio(uint iUserOfInterest,uint t) const;
 	std::vector<double> signalToInterferenceRatio(uint iUserOfInterest) const;

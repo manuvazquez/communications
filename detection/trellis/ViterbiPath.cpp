@@ -28,11 +28,11 @@ ViterbiPath::ViterbiPath():_nTimeInstants(0),_cost(0.0),_detectedSequence(NULL)
 {
 }
 
-ViterbiPath::ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(new MatrixXd(initialSequence))
+ViterbiPath::ViterbiPath(uint nTimeInstants,double cost,MatrixXd initialSequence):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(new MatrixXd(initialSequence))
 {
 }
 
-ViterbiPath::ViterbiPath(int nTimeInstants,double cost):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(NULL)
+ViterbiPath::ViterbiPath(uint nTimeInstants,double cost):_nTimeInstants(nTimeInstants),_cost(cost),_detectedSequence(NULL)
 {
 }
 

@@ -19,11 +19,11 @@
  ***************************************************************************/
 #include "DecorrelatorDetector.h"
 
-DecorrelatorDetector::DecorrelatorDetector(int rows, int cols, double alphabetVariance): LinearDetector(rows, cols, alphabetVariance)
+DecorrelatorDetector::DecorrelatorDetector(uint rows, uint cols, double alphabetVariance): LinearDetector(rows, cols, alphabetVariance)
 {
 }
 
-double DecorrelatorDetector::nthSymbolVariance(int n,double noiseVariance)
+double DecorrelatorDetector::nthSymbolVariance(uint n,double noiseVariance)
 {
 //     return _filter_eigen.row(n).dot(_filter_eigen.row(n));
     return noiseVariance*_filter_eigen.row(n).dot(_filter_eigen.row(n));    

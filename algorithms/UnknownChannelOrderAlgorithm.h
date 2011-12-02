@@ -35,7 +35,7 @@ protected:
     vector<ChannelMatrixEstimator *> _channelEstimators;
     vector<uint> _candidateOrders;
     uint _maxOrder,_iFirstObservation,_nInputsXmaxChannelOrder;
-    int *_channelOrder2index;
+    uint *_channelOrder2index;
     MatrixXd _preamble;   
 
 	// a vector of matrices with the channel order a posteriori probabilities. Each matrix corresponds to a different output (or receiving antenna)

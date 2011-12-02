@@ -49,7 +49,7 @@ protected:
 public:
     PowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
 
-	virtual double stdDevAt(int n) const {return _stdDev;}
+	virtual double stdDevAt(uint n) const {return _stdDev;}
     virtual VectorXd at(uint n) const;
     virtual void setSNR(int SNR);
 	virtual void print() const { cout << _matrix;}

@@ -44,16 +44,16 @@ MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInput
         throw RuntimeException("MIMOChannel::transmit: missmatched noise dimensions.");
 
     // the number of resulting observations depends on the channel _memory
-    int nObservations = symbols.cols() - (effectiveMemory() - 1);
+    uint nObservations = symbols.cols() - (effectiveMemory() - 1);
 
     if(nObservations<1)
         throw RuntimeException("MIMOChannel::transmit: not enough symbol vectors for this channel _memory.");
 
 	MatrixXd observations = FUNNY_VALUE * MatrixXd::Ones(_nOutputs,symbols.cols()).array();
 
-    int j;
+    uint j;
     
-    for(int iSymbolVector=effectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
+    for(uint iSymbolVector=effectiveMemory()-1;iSymbolVector<symbols.cols();iSymbolVector++)
     {
         // just for the sake of clarity
         MatrixXd currentChannelMatrix = getTransmissionMatrix(iSymbolVector);
@@ -69,16 +69,16 @@ MIMOChannel::MIMOChannel(uint nInputs,uint nOutputs,uint length):_nInputs(nInput
     return observations;
 }
 
-vector<MatrixXd> MIMOChannel::range(int a,int b)
+vector<MatrixXd> MIMOChannel::range(uint a,uint b)
 {
-    int nMatrices = b - a + 1;
+    uint nMatrices = b - a + 1;
 
-    if(nMatrices<1)
+    if(nMatrices<1u)
         throw RuntimeException("MIMOChannel::range: selected range of time is invalid.");
 
     vector<MatrixXd> res(nMatrices);
 
-    for(int i=0;i<nMatrices;i++)
+    for(uint i=0;i<nMatrices;i++)
         res[i] = at(a+i);
 
     return res;

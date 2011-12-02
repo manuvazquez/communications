@@ -21,11 +21,11 @@
 
 // #define DEBUG
 
-MMSEDetector::MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_detectionStart(cols-nSymbolsToBeDetected)
+MMSEDetector::MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_detectionStart(cols-nSymbolsToBeDetected)
 {
 }
 
-MMSEDetector::MMSEDetector(int rows, int cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_detectionStart(startingFrom)
+MMSEDetector::MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_detectionStart(startingFrom)
 {
 	if(_detectionStart+_nSymbolsToBeDetected>_channelMatrixCols)
 		throw RuntimeException("MMSEDetector::MMSEDetector: nSymbolsToBeDetected, startingFrom or both parameters are wrong.");
@@ -55,12 +55,12 @@ VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, con
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-double MMSEDetector::nthSymbolVariance(int n,double noiseVariance)
+double MMSEDetector::nthSymbolVariance(uint n,double noiseVariance)
 {
     return nthSymbolGain(n)*(1.0-nthSymbolGain(n));
 }
 
-double MMSEDetector::nthSymbolGain(int n) const
+double MMSEDetector::nthSymbolGain(uint n) const
 {
     return _filter_eigen.col(_detectionStart+n).dot(_channelMatrix_eigen.col(_detectionStart+n));   
 }

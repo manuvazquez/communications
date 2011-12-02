@@ -45,7 +45,7 @@ class Util{
   
 public:
     static VectorXd toVector(const MatrixXd &matrix,tOrder order);
-    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,int rows,int cols);
+    static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows,uint cols);
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
     static VectorXd normalize(const VectorXd &v);
     static void normalize(std::vector<double> &v);    
@@ -60,14 +60,9 @@ public:
     template<class T> static void scalarToOctaveFileStream(T scalar,string name,ofstream &f);
     static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
     template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
-    template<class T> static int max(const std::vector<T> &vector);
-    template<class T> static void min(const std::vector<T> &vector,int &iMin);
     template<class T> static T sum(const std::vector<T> &vector);
-//     template<class T> static void print(const std::vector<T> &vector);
-//     template<class T> static void print(const std::vector<std::vector<T> > &matrix);
-//     template<class T> static void print(const T* array,int nElements);
-    static void shiftUp(VectorXd &v,int n);
-    template<class T> static vector<vector<T> > permutations(T *array, int nElements);
+    static void shiftUp(VectorXd &v,uint n);
+    template<class T> static std::vector<std::vector<T> > permutations(T *array, uint nElements);
     static MatrixXd applyPermutationOnRows(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
 	static MatrixXd applyPermutationOnColumns(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//

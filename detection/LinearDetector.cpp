@@ -19,12 +19,12 @@
  ***************************************************************************/
 #include "LinearDetector.h"
 
-LinearDetector::LinearDetector(int rows,int cols,double alphabetVariance):_channelMatrixRows(rows),_channelMatrixCols(cols),_alphabetVariance(alphabetVariance)
+LinearDetector::LinearDetector(uint rows,uint cols,double alphabetVariance):_channelMatrixRows(rows),_channelMatrixCols(cols),_alphabetVariance(alphabetVariance)
 {
 }
 
-void LinearDetector::stateStepsFromObservationsSequence(const MatrixXd &observations,uint smoothingLag,int iFrom,int iTo)
+void LinearDetector::stateStepsFromObservationsSequence(const MatrixXd &observations,uint smoothingLag,uint iFrom,uint iTo)
 {
-    for(int i=iFrom;i<iTo;i++)
+    for(uint i=iFrom;i<iTo;i++)
         stateStep(Util::toVector(observations.block(0,i,observations.rows(),smoothingLag+1),columnwise));
 }

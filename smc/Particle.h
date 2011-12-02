@@ -35,36 +35,34 @@ protected:
     double _weight;
     MatrixXd _symbolVectors;
 public:
-    Particle(double weight,int symbolVectorLength,int nTimeInstants);
+    Particle(double weight,uint symbolVectorLength,uint nTimeInstants);
     virtual ~Particle();
 
     /**
      *
      * @return the number of time instants
      */
-    int trajectorylength() const { return _symbolVectors.cols();}
+    uint trajectorylength() const { return _symbolVectors.cols();}
 
     double getWeight() const { return _weight;}
     void setWeight(double weight) { _weight = weight;}
 
-    VectorXd getSymbolVector(int n) const { return _symbolVectors.col(n);}
+    VectorXd getSymbolVector(uint n) const { return _symbolVectors.col(n);}
     
-    void setSymbolVector(int n,const VectorXd &v) { _symbolVectors.col(n) = v;}
-    void setSymbolVector(int n,const std::vector<tSymbol> &v)
+    void setSymbolVector(uint n,const VectorXd &v) { _symbolVectors.col(n) = v;}
+    void setSymbolVector(uint n,const std::vector<tSymbol> &v)
     {
-        for(int i=0;i<_symbolVectors.rows();i++)
+        for(uint i=0;i<_symbolVectors.rows();i++)
             _symbolVectors(i,n) = v[i];
     }
 
-    MatrixXd getSymbolVectors(int a,int b) const { return _symbolVectors.block(0,a,_symbolVectors.rows(),b-a+1);}
+    MatrixXd getSymbolVectors(uint a,uint b) const { return _symbolVectors.block(0,a,_symbolVectors.rows(),b-a+1);}
     MatrixXd getSymbolVectors() { return _symbolVectors;}
 
-    void setSymbolVectors(int a,int b,const MatrixXd &symbolVectors)
+    void setSymbolVectors(uint a,uint b,const MatrixXd &symbolVectors)
     {
         _symbolVectors.block(0,a,_symbolVectors.rows(),b-a) = symbolVectors;
     }
-
-    void print() const { std::cout << _symbolVectors << std::endl << "peso = " << _weight << std::endl;}
 
     virtual Particle *clone()
     {

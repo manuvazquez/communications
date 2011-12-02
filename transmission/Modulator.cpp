@@ -35,7 +35,7 @@ MatrixXd Modulator::modulate(const Bits &bits, Alphabet alphabet)
 	vector<tBit> currentBitSequence(alphabet.nBitsPerSymbol());
 
 	uint processedBits,j,iSymbol;
-	for(int i=0;i<bits.nStreams();i++)
+	for(uint i=0;i<bits.nStreams();i++)
 	{
 		processedBits = 0;
 		iSymbol = 0;
@@ -46,7 +46,7 @@ MatrixXd Modulator::modulate(const Bits &bits, Alphabet alphabet)
 
 			processedBits += alphabet.nBitsPerSymbol();
 
-			res(i,iSymbol++) = (double) alphabet[currentBitSequence];
+			res(i,iSymbol++) = double(alphabet[currentBitSequence]);
 		}
 	}
 	return res;

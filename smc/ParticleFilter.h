@@ -92,7 +92,7 @@ public:
     uint capacity() const { return _capacity;}
     uint nParticles() const { return _nParticles;}
     Particle *getBestParticle() const { return _particles[iBestParticle()]; }
-    int iBestParticle() const;
+    uint iBestParticle() const;
     void printWeights() const;
 };
 

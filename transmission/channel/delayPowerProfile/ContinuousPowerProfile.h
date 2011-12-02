@@ -39,7 +39,7 @@ public:
     ContinuousPowerProfile(uint nOutputs, uint nInputs, std::vector<double> differentialDelays, std::vector<double> powers);
     vector<double> powers() const { return _continuousPowers;}
     vector <double> delays() const { return _continuousDelays;}
-    int nDelays() const {return _continuousDelays.size();}
+    uint nDelays() const {return _continuousDelays.size();}
 
 };
 

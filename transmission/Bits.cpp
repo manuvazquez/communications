@@ -30,13 +30,13 @@ Bits::Bits():_nStreams(0),_nBitsPerStream(0),_nBits(0),_matrix(NULL)
 {
 }
 
-Bits::Bits(int nStreams, int nBitsByStream,Random &randomGenerator):_nStreams(nStreams),_nBitsPerStream(nBitsByStream),_nBits(nStreams*nBitsByStream),_matrix(new tBit[_nBits])
+Bits::Bits(uint nStreams, uint nBitsByStream,Random &randomGenerator):_nStreams(nStreams),_nBitsPerStream(nBitsByStream),_nBits(nStreams*nBitsByStream),_matrix(new tBit[_nBits])
 {
 	for(int i=_nBits;i--;)
 	  _matrix[i] = randomGenerator.randn() > 0 ? 1 : 0;
 }
 
-Bits::Bits(tBit *matrix,int nStreams,int nBitsByStream): _nStreams(nStreams),_nBitsPerStream(nBitsByStream),_nBits(nStreams*nBitsByStream),_matrix(matrix)
+Bits::Bits(tBit *matrix,uint nStreams,uint nBitsByStream): _nStreams(nStreams),_nBitsPerStream(nBitsByStream),_nBits(nStreams*nBitsByStream),_matrix(matrix)
 {
 }
 
@@ -128,16 +128,16 @@ bool Bits::operator==(const Bits &bits) const
 	return true;
 }
 
-int Bits::operator-(const Bits &bits) const
+uint Bits::operator-(const Bits &bits) const
 {
-	int res = 0;
+	uint res = 0;
 	for(int i=_nStreams*_nBitsPerStream;i--;)
 		if(_matrix[i]!=bits._matrix[i])
 			res++;
 	return res;
 }
 
-std::vector<tBit> Bits::GetStream(int index) const
+std::vector<tBit> Bits::GetStream(uint index) const
 {
 	std::vector<tBit> res(_nBitsPerStream);
 
@@ -147,16 +147,18 @@ std::vector<tBit> Bits::GetStream(int index) const
 	return res;
 }
 
-void Bits::inject(int index,const std::vector<tBit> &stream)
+void Bits::inject(uint index,const std::vector<tBit> &stream)
 {
-	if(stream.size()!=_nBitsPerStream)
-		throw RuntimeException("Bits::inject: the stream has not the correct number of bits.");
+// 	if(stream.size()!=_nBitsPerStream)
+// 		throw RuntimeException("Bits::inject: the stream has not the correct number of bits.");
+	
+	assert(stream.size()==_nBitsPerStream);
 
 	for(uint i=index*_nBitsPerStream,j=0;j<_nBitsPerStream;i++,j++)
 		_matrix[i] = stream[j];
 }
 
-void Bits::invertStream(int index)
+void Bits::invertStream(uint index)
 {
 	for(uint i=index*_nBitsPerStream,j=0;j<_nBitsPerStream;i++,j++)
 		_matrix[i] = _matrix[i]^1;

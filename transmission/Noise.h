@@ -38,7 +38,7 @@ public:
 	uint length() const { return _length;}
 	uint nOutputs() const { return _nOutputs;}
 	virtual void print() const = 0;
-	virtual double stdDevAt(int n) const = 0;
+	virtual double stdDevAt(uint n) const = 0;
     
     virtual VectorXd at(uint n) const = 0;
     

@@ -47,10 +47,10 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     if(observations.rows()!=_nOutputs || trainingSequence.rows()!=_nInputs)
         throw RuntimeException("LinearFilterBasedAlgorithm::process: Observations matrix or training sequence dimensions are wrong.");
 
-    int startDetectionTime = _preamble.cols() + trainingSequence.cols();
-    int nObservations = observations.cols();
+    uint startDetectionTime = _preamble.cols() + trainingSequence.cols();
+    uint nObservations = observations.cols();
 
-    if(nObservations<(startDetectionTime+1+_d))
+    if(nObservations<(startDetectionTime+1u+_d))
         throw RuntimeException("LinearFilterBasedAlgorithm::process: Not enough observations.");
 
     MatrixXd preambleTrainingSequence(_preamble.rows(),_preamble.cols()+trainingSequence.cols());
@@ -60,7 +60,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 
     _linearDetector->stateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);
 
-    for(int j=_preamble.cols();j<startDetectionTime;j++)
+    for(uint j=_preamble.cols();j<startDetectionTime;j++)
     {
         _detectedSymbolVectors.col(j) = trainingSequence.col(j-_preamble.cols());
         _estimatedChannelMatrices[j] = trainingSequenceChannelMatrices[j-_preamble.cols()];

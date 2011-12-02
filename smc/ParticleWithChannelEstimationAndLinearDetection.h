@@ -30,9 +30,9 @@
 class ParticleWithChannelEstimationAndLinearDetection : public Particle, public WithChannelEstimationParticleAddon, public WithLinearDetectionParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
+    ParticleWithChannelEstimationAndLinearDetection(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
     
-    ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
+    ParticleWithChannelEstimationAndLinearDetection(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors);
     
     ParticleWithChannelEstimationAndLinearDetection *clone();
 };

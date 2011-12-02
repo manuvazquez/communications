@@ -25,7 +25,7 @@
 class ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp : public Particle, public WithMultipleChannelsEstimationParticleAddon, public WithMultipleChannelOrderAppParticleAddon
 {
 public:
-  ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp(double weight, int symbolVectorLength, int nTimeInstants, std::vector<std::vector <ChannelMatrixEstimator *> > channelMatrixEstimators);
+  ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector<std::vector <ChannelMatrixEstimator *> > channelMatrixEstimators);
   
   ParticleWithMultipleChannelsEstimationAndMultipleChannelOrderApp* clone()
   {

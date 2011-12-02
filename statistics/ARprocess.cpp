@@ -26,7 +26,7 @@ ARprocess::ARprocess(MatrixXd seed,vector<double> coefficients,double noiseVaria
     CommonConstructorsCode(seed);
 }
 
-ARprocess::ARprocess(MatrixXd seed,int order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
+ARprocess::ARprocess(MatrixXd seed,uint order,double velocity,double carrierFrequency,double T):_rows(seed.rows()),_columns(seed.cols())
 {
     _coefficients = parametersFromYuleWalker(order,velocity,carrierFrequency,T,_noiseVariance);
 

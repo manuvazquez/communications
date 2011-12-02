@@ -35,8 +35,8 @@ protected:
     MatrixXd *_detectedSequence;
 public:
     ViterbiPath();
-    ViterbiPath(int nTimeInstants,double cost,MatrixXd initialSequence);
-	ViterbiPath(int nTimeInstants,double cost);
+    ViterbiPath(uint nTimeInstants,double cost,MatrixXd initialSequence);
+	ViterbiPath(uint nTimeInstants,double cost);
     ViterbiPath(const ViterbiPath &path);
     virtual ~ViterbiPath();
 

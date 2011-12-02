@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "Particle.h"
 
-Particle::Particle(double weight,int symbolVectorLength,int nTimeInstants):_weight(weight),_symbolVectors(MatrixXd::Zero(symbolVectorLength,nTimeInstants))
+Particle::Particle(double weight,uint symbolVectorLength,uint nTimeInstants):_weight(weight),_symbolVectors(MatrixXd::Zero(symbolVectorLength,nTimeInstants))
 {
 }
 

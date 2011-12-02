@@ -33,7 +33,7 @@ It
 class ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation : public Particle, public WithChannelEstimationParticleAddon, public WithLinearDetectionParticleAddon, public WithChannelOrderEstimationParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator);
+    ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors, ChannelOrderEstimator* channelOrderEstimator);
 
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation* clone()
     {

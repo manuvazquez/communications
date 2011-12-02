@@ -47,7 +47,7 @@ UnknownChannelOrderAlgorithm::UnknownChannelOrderAlgorithm(string name, Alphabet
 	}
 
     // a vector that associate a channel order with its corresponding index is generated
-    _channelOrder2index = new int[_maxOrder+1];
+    _channelOrder2index = new uint[_maxOrder+1];
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
 

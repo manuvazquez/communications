@@ -125,7 +125,7 @@ double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd s
     
     
     double invPredictiveCovarianceDeterminant = 1.0;    
-    for(int i=0;i<ldltOfPredictiveCovariance.vectorD().rows();i++)
+    for(uint i=0;i<ldltOfPredictiveCovariance.vectorD().rows();i++)
         invPredictiveCovarianceDeterminant *= ldltOfPredictiveCovariance.vectorD().coeff(i);        
         
         

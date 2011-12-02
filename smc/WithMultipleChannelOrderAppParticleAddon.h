@@ -27,10 +27,10 @@ protected:
 public: 
   WithMultipleChannelOrderAppParticleAddon(uint nChannels,uint nChannelOrderAPP);
   
-  void setChannelOrderAPP(uint iChannel,double channelOrderAPP,int n) { _channelOrderAppParticleAddons[iChannel].setChannelOrderAPP(channelOrderAPP,n); }
-  double getChannelOrderAPP(uint iChannel,int n) { return _channelOrderAppParticleAddons[iChannel].getChannelOrderAPP(n); }
+  void setChannelOrderAPP(uint iChannel,double channelOrderAPP,uint n) { _channelOrderAppParticleAddons[iChannel].setChannelOrderAPP(channelOrderAPP,n); }
+  double getChannelOrderAPP(uint iChannel,uint n) { return _channelOrderAppParticleAddons[iChannel].getChannelOrderAPP(n); }
   
-  int iMaxChannelOrderAPP(uint iChannel) {return _channelOrderAppParticleAddons[iChannel].iMaxChannelOrderAPP(); }
+  uint iMaxChannelOrderAPP(uint iChannel) {return _channelOrderAppParticleAddons[iChannel].iMaxChannelOrderAPP(); }
 };
 
 #endif // WITHMULTIPLECHANNELORDERAPPPARTICLEADDON_H

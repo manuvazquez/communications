@@ -19,6 +19,6 @@
  ***************************************************************************/
 #include "WithActiveUsersParticleAddon.h"
 
-WithActiveUsersParticleAddon::WithActiveUsersParticleAddon(int symbolVectorLength,int nTimeInstants):_activeUsers(nTimeInstants,std::vector<bool>(symbolVectorLength,false)),_symbolVectorLength(symbolVectorLength)
+WithActiveUsersParticleAddon::WithActiveUsersParticleAddon(uint symbolVectorLength,uint nTimeInstants):_activeUsers(nTimeInstants,std::vector<bool>(symbolVectorLength,false)),_symbolVectorLength(symbolVectorLength)
 {
 }

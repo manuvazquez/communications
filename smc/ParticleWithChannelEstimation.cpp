@@ -19,12 +19,12 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimation.h"
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants)
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants)
 {
 }
 
 
-ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants)
+ParticleWithChannelEstimation::ParticleWithChannelEstimation(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants)
 {
 }
 

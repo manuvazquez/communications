@@ -33,26 +33,26 @@ class RMMSEDetector : public LinearDetector
 {
 protected:
     double _forgettingFactor,_invForgettingFactor;
-    int _nSymbolsToBeDetected;
+    uint _nSymbolsToBeDetected;
     double _alphaPowerSumNow,_alphaPowerSumPrevious;
     double _alphaPower,_alphaPowerSumFactor;
 
     VectorXd _g_eigen;
     MatrixXd _invRtilde_eigen,_filter_eigen;
 
-    MatrixXd _E_eigen;
+    MatrixXd _E;
 
     // required for nthSymbolVariance computing
     MatrixXd _channelMatrix_eigen,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen;
 public:
-    RMMSEDetector(int rows, int cols,double alphabetVariance,double forgettingFactor,int nSymbolsToBeDetected);
+    RMMSEDetector(uint rows, uint cols,double alphabetVariance,double forgettingFactor,uint nSymbolsToBeDetected);
 
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
 
     RMMSEDetector *clone();
     void stateStep(VectorXd observations);
 
-    double nthSymbolVariance(int n,double noiseVariance);
+    double nthSymbolVariance(uint n,double noiseVariance);
     MatrixXd computedFilter_eigen() { return _filter_eigen;}
 
 };

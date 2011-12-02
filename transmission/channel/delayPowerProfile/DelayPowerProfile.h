@@ -33,7 +33,7 @@ class DelayPowerProfile{
 private:
     static double _generatedCoefficientsMean;
 protected:
-    int _nOutputs,_nInputs;
+    uint _nOutputs,_nInputs;
 	
 	//! it keeps the power (variance) of each one of the channel taps
     std::vector<double> _tapsPowers;
@@ -56,7 +56,7 @@ public:
    
     uint nInputs() { return _nInputs;}
     uint nOutputs() { return _nOutputs;}
-    int memory() const { return _tapsPowers.size();}
+    uint memory() const { return _tapsPowers.size();}
     std::vector<double> tapsPowers() const { return _tapsPowers;}
     
     /**

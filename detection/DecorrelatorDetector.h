@@ -33,9 +33,9 @@ class DecorrelatorDetector : public LinearDetector
 protected:
     MatrixXd _filter_eigen;   
 public:
-    DecorrelatorDetector(int rows, int cols, double alphabetVariance);
+    DecorrelatorDetector(uint rows, uint cols, double alphabetVariance);
 
-    virtual double nthSymbolVariance(int n,double noiseVariance);
+    virtual double nthSymbolVariance(uint n,double noiseVariance);
     virtual LinearDetector* clone();
     virtual MatrixXd computedFilter_eigen() { return _filter_eigen;}
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);

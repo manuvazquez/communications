@@ -32,7 +32,7 @@ It
 class ParticleWithChannelEstimationAndChannelOrderAPP : public Particle, public WithChannelEstimationParticleAddon, public WithChannelOrderAppParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
+    ParticleWithChannelEstimationAndChannelOrderAPP(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators);
 
     ParticleWithChannelEstimationAndChannelOrderAPP* clone()
     {

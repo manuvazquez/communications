@@ -21,7 +21,7 @@
 
 // #define PRINT_INFO
 
-void TransmissionUtil::BERComputingChecks(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
+void TransmissionUtil::BERComputingChecks(const Bits &bits1,uint from1,uint to1,const Bits &bits2,uint from2,uint to2)
 {
     if((to1-from1)!=(to2-from2))
     {
@@ -43,7 +43,7 @@ void TransmissionUtil::BERComputingChecks(const Bits &bits1,int from1,int to1,co
         throw RuntimeException("BERComputingChecks: bits objects have different number of streams.");
 }
 
-double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bits &bits2,int from2,int to2)
+double TransmissionUtil::computeBER(const Bits &bits1,uint from1,uint to1,const Bits &bits2,uint from2,uint to2)
 {
     if(bits2.nBitsPerStream()==0 || bits2.nStreams()==0)
         return 0.0;
@@ -51,17 +51,17 @@ double TransmissionUtil::computeBER(const Bits &bits1,int from1,int to1,const Bi
     BERComputingChecks(bits1,from1,to1,bits2,from2,to2);
 
     uint length = to1-from1;
-    int errors = 0;
+    uint errors = 0;
 
-    for(int iBits1=from1,iBits2=from2;iBits1<to1;iBits1++,iBits2++)
-        for(int iStream=0;iStream<bits1.nStreams();iStream++)
+    for(uint iBits1=from1,iBits2=from2;iBits1<to1;iBits1++,iBits2++)
+        for(uint iStream=0;iStream<bits1.nStreams();iStream++)
             if(bits1(iStream,iBits1)!=bits2(iStream,iBits2))
                 errors++;
 
     return (double)errors/(double)(length*bits1.nStreams());
 }
 
-double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int from1,int to1,const Bits &detectedBits,int from2,int to2,vector<vector<uint> > permutations)
+double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,uint from1,uint to1,const Bits &detectedBits,uint from2,uint to2,vector<vector<uint> > permutations)
 {
     if(detectedBits.nBitsPerStream()==0 || detectedBits.nStreams()==0)
         return 0.0;
@@ -74,19 +74,19 @@ double TransmissionUtil::computeBERsolvingAmbiguity(const Bits &sourceBits,int f
     vector<int> bestPermutationSigns(sourceBits.nStreams(),1);
 
     // max number of errors is length*sourceBits.nStreams()
-    int minErrors = length*sourceBits.nStreams()+1;
+    uint minErrors = length*sourceBits.nStreams()+1;
 
     bool bitsDiffer;
     
     for(uint iPermut=0;iPermut<permutations.size();iPermut++)
     {
-        int errorsPermutation = 0;
+        uint errorsPermutation = 0;
 
         for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
         {
-            int errorsInverting=0,errorsWithoutInverting=0;
+            uint errorsInverting=0,errorsWithoutInverting=0;
 
-            for(int iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
+            for(uint iSourceStream=from1,iDetectedStream=from2;iSourceStream<to1;iSourceStream++,iDetectedStream++)
             {
                 // do bits differ?
                 bitsDiffer = (sourceBits(iStream,iSourceStream) != detectedBits(permutations[iPermut][iStream],iDetectedStream));

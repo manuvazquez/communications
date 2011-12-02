@@ -32,14 +32,14 @@ protected:
     std::vector<double> _channelOrderAPP;
 public:
     WithChannelOrderAppParticleAddon(std::vector<double> channelOrderAPP);
-    WithChannelOrderAppParticleAddon(int nChannelOrderAPP);
+    WithChannelOrderAppParticleAddon(uint nChannelOrderAPP);
 
     WithChannelOrderAppParticleAddon(const WithChannelOrderAppParticleAddon& withChannelOrderAppParticleAddon);
 
-    void setChannelOrderAPP(double channelOrderAPP,int n) { _channelOrderAPP[n] = channelOrderAPP;}
-    double getChannelOrderAPP(int n) { return _channelOrderAPP[n];}
+    void setChannelOrderAPP(double channelOrderAPP,uint n) { _channelOrderAPP[n] = channelOrderAPP;}
+    double getChannelOrderAPP(uint n) { return _channelOrderAPP[n];}
 
-    int iMaxChannelOrderAPP();
+    uint iMaxChannelOrderAPP() { return std::max_element(_channelOrderAPP.begin(),_channelOrderAPP.end())-_channelOrderAPP.begin(); }
 };
 
 #endif

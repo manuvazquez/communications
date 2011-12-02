@@ -19,6 +19,6 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers.h"
 
-ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers::ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants), WithLinearDetectionParticleAddon(linearDetector), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
+ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers::ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants), WithLinearDetectionParticleAddon(linearDetector), WithActiveUsersParticleAddon(symbolVectorLength, nTimeInstants)
 {
 }

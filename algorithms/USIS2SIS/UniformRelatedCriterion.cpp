@@ -27,7 +27,7 @@ bool UniformRelatedCriterion::makeTransition(VectorXd channelOrderAPPs)
 {
     double uniformProbability = 1.0/(double)(channelOrderAPPs.size());
 
-    int iMax;
+    uint iMax;
     channelOrderAPPs.maxCoeff(&iMax);
 
     return (channelOrderAPPs(iMax)>(_ratio*uniformProbability));

@@ -39,7 +39,7 @@ public:
 
     ~WithLinearDetectionParticleAddon();
 
-    LinearDetector *getLinearDetector(int n) { return _linearDetectors[n];}
+    LinearDetector *getLinearDetector(uint n) { return _linearDetectors[n];}
 };
 
 #endif

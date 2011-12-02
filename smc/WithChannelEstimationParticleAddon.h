@@ -41,17 +41,17 @@ public:
     
     WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon);
 
-    MatrixXd getChannelMatrix(int iChannelOrder,int n) const
+    MatrixXd getChannelMatrix(uint iChannelOrder,uint n) const
     {
         return _estimatedChannelMatrices[iChannelOrder][n];
     }
 
-    void setChannelMatrix(int iChannelOrder,int n,const MatrixXd &matrix)
+    void setChannelMatrix(uint iChannelOrder,uint n,const MatrixXd &matrix)
     {
             _estimatedChannelMatrices[iChannelOrder][n] = matrix;
     }
 
-    ChannelMatrixEstimator *getChannelMatrixEstimator(int iChannelOrder) const
+    ChannelMatrixEstimator *getChannelMatrixEstimator(uint iChannelOrder) const
     { 
         return _channelMatrixEstimators[iChannelOrder];
     }
@@ -65,7 +65,7 @@ public:
         return _channelMatrixEstimators[0];
     }
 
-    int nChannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
+    uint nChannelMatrixEstimators() const {return _channelMatrixEstimators.size();}
 
 };
 

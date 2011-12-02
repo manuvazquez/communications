@@ -19,12 +19,12 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndLinearDetection.h"
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants), WithLinearDetectionParticleAddon(linearDetector)
+ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimator, nTimeInstants), WithLinearDetectionParticleAddon(linearDetector)
 {
 }
 
 
-ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants), WithLinearDetectionParticleAddon(linearDetectors)
+ParticleWithChannelEstimationAndLinearDetection::ParticleWithChannelEstimationAndLinearDetection(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators, std::vector< LinearDetector * > linearDetectors): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants), WithLinearDetectionParticleAddon(linearDetectors)
 {
 }
 

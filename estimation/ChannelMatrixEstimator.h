@@ -63,9 +63,9 @@ public:
         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
     }
     
-    int cols() const { return _nInputsXchannelOrder;}
-    int rows() const { return _nOutputs;}
-    int memory() const;
+    uint cols() const { return _nInputsXchannelOrder;}
+    uint rows() const { return _nOutputs;}
+    uint memory() const;
 
 	/*!
 	  It returns the last estimated channel matrix, that is, the one that multiplied by the symbols vector gives rise to the observations. This doesnt' necessarily coincide with the matrix ONLY containing channel coefficients (though usually, it does), which is returned by \ref lastEstimatedChannelCoefficientsMatrix
@@ -75,7 +75,7 @@ public:
 
     virtual MatrixXd lastEstimatedChannelCoefficientsMatrix() const { return _lastEstimatedChannelCoefficientsMatrix;}
     
-    vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,int iFrom,int iTo);
+    vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
 };
 
 #endif

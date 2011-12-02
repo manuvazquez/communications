@@ -33,7 +33,7 @@ It implements a...
 class ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers : public Particle, public WithChannelEstimationParticleAddon, public WithLinearDetectionParticleAddon, public WithActiveUsersParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
+    ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator, LinearDetector* linearDetector);
 
     ParticleWithChannelEstimationAndLinearDetectionAndActiveUsers* clone()
     {

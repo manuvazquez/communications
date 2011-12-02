@@ -30,13 +30,3 @@ SingleUserPowerProfileDependentNoise::SingleUserPowerProfileDependentNoise(doubl
 // 	_iUserSNRcontribution = _alphabetVariance * ( (powerProfile.variances().col(_iUser).array() + powerProfile.means().col(_iUser).array()*powerProfile.means().col(_iUser).array()).sum());
 // 	_powerProfileDependentVarianceFactor -= _iUserSNRcontribution;
 }
-
-// void SingleUserPowerProfileDependentNoise::setSNR(int SNR)
-// {
-// 	double newStdDev = sqrt(pow(10.0,((double)-SNR)/10.0)*_iUserSNRcontribution - _powerProfileDependentVarianceFactor);
-// 	
-// 	std::cout << "SingleUserPowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;
-// 
-// 	_matrix *= (newStdDev/_stdDev);
-// 	_stdDev = newStdDev;
-// }

@@ -32,7 +32,7 @@ MultiuserCDMAchannel::~MultiuserCDMAchannel()
   delete _channel;
 }
 
-MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const int n) const
+MatrixXd MultiuserCDMAchannel::getTransmissionMatrix(const uint n) const
 {
     return _spreadingCodes*Util::toVector(_channel->at(n),rowwise).asDiagonal();
 }

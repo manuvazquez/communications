@@ -37,11 +37,11 @@ class BesselChannel : public StillMemoryMIMOChannel
 protected:
     std::vector<MatrixXd> _channelMatrices;   
 public:
-    BesselChannel(uint nInputs, uint nOutputs, int memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
+    BesselChannel(uint nInputs, uint nOutputs, uint memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
 
-    MatrixXd at(int n) const { return _channelMatrices[n];}
+    MatrixXd at(uint n) const { return _channelMatrices[n];}
     
-    virtual void set(int n, MatrixXd mat)
+    virtual void set(uint n, MatrixXd mat)
     {
 	  if(mat.rows()!=_nOutputs || mat.cols()!=_nInputsMemory)
 		throw RuntimeException("BesselChannel:set: matrix dimensions are wrong.");

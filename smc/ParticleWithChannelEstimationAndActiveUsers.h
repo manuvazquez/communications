@@ -32,7 +32,7 @@ It
 class ParticleWithChannelEstimationAndActiveUsers : public Particle, public WithChannelEstimationParticleAddon, public WithActiveUsersParticleAddon
 {
 public:
-    ParticleWithChannelEstimationAndActiveUsers(double weight, int symbolVectorLength, int nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
+    ParticleWithChannelEstimationAndActiveUsers(double weight, uint symbolVectorLength, uint nTimeInstants, ChannelMatrixEstimator* channelMatrixEstimator);
 
     ParticleWithChannelEstimationAndActiveUsers *clone()
     {

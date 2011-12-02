@@ -48,7 +48,7 @@ public:
 
     virtual void update(const VectorXd &observations,const std::vector<MatrixXd> &channelMatrix,const VectorXd &symbolVector,double noiseVariance) = 0;
 
-    virtual MatrixXd computeProbabilities(const MatrixXd& observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,const std::vector< double > &noiseVariances,const MatrixXd &sequenceToProcess, int iFrom) = 0;
+    virtual MatrixXd computeProbabilities(const MatrixXd& observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,const std::vector< double > &noiseVariances,const MatrixXd &sequenceToProcess, uint iFrom) = 0;
 
 };
 

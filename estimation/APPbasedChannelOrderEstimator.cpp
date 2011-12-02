@@ -21,7 +21,12 @@
 
 // #define DEBUG
 
-APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders): ChannelOrderEstimator(N,candidateOrders),_unnormalizedChannelOrderAPPs(candidateOrders.size()),_maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),_channelOrder2index(_maxChannelOrder+1,-1)
+APPbasedChannelOrderEstimator::APPbasedChannelOrderEstimator(uint N,std::vector<uint> candidateOrders): ChannelOrderEstimator(N,candidateOrders),
+_unnormalizedChannelOrderAPPs(candidateOrders.size()),
+// _maxChannelOrder(candidateOrders[Util::max(candidateOrders)]),
+_maxChannelOrder(*(std::max_element(candidateOrders.begin(),candidateOrders.end()))),
+_nInputs_maxChannelOrder(_nInputs*_maxChannelOrder),
+_channelOrder2index(_maxChannelOrder+1,-1)
 {
     for(uint iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
         _channelOrder2index[_candidateOrders[iChannelOrder]] = iChannelOrder;
@@ -32,7 +37,7 @@ APPbasedChannelOrderEstimator* APPbasedChannelOrderEstimator::clone()
     return new APPbasedChannelOrderEstimator(*this);
 }
 
-MatrixXd APPbasedChannelOrderEstimator::computeProbabilities(const MatrixXd& observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,const std::vector< double > &noiseVariances,const MatrixXd &sequenceToProcess, int iFrom)
+MatrixXd APPbasedChannelOrderEstimator::computeProbabilities(const MatrixXd& observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,const std::vector< double > &noiseVariances,const MatrixXd &sequenceToProcess, uint iFrom)
 {
     uint nProbabilitiesToCompute = sequenceToProcess.cols() - iFrom;
     double normalizationCt;
@@ -45,7 +50,7 @@ MatrixXd APPbasedChannelOrderEstimator::computeProbabilities(const MatrixXd& obs
         throw RuntimeException("APPbasedChannelOrderEstimator::computeProbabilities: insufficient number of channel matrices per channel order.");
 
     uint iChannelOrder;
-    for(int i=iFrom;i<sequenceToProcess.cols();i++)
+    for(uint i=iFrom;i<sequenceToProcess.cols();i++)
     {
         normalizationCt = 0.0;
 

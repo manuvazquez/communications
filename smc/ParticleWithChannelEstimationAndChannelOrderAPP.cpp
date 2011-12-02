@@ -19,6 +19,6 @@
  ***************************************************************************/
 #include "ParticleWithChannelEstimationAndChannelOrderAPP.h"
 
-ParticleWithChannelEstimationAndChannelOrderAPP::ParticleWithChannelEstimationAndChannelOrderAPP(double weight, int symbolVectorLength, int nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants), WithChannelOrderAppParticleAddon(channelMatrixEstimators.size())
+ParticleWithChannelEstimationAndChannelOrderAPP::ParticleWithChannelEstimationAndChannelOrderAPP(double weight, uint symbolVectorLength, uint nTimeInstants, std::vector< ChannelMatrixEstimator * > channelMatrixEstimators): Particle(weight, symbolVectorLength, nTimeInstants), WithChannelEstimationParticleAddon(channelMatrixEstimators, nTimeInstants), WithChannelOrderAppParticleAddon(channelMatrixEstimators.size())
 {
 }

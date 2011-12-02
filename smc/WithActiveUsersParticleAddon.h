@@ -34,7 +34,7 @@ protected:
     std::vector<std::vector<bool> > _activeUsers;
     uint _symbolVectorLength;
 public:
-    WithActiveUsersParticleAddon(int symbolVectorLength,int nTimeInstants);
+    WithActiveUsersParticleAddon(uint symbolVectorLength,uint nTimeInstants);
 
     void setUserActivity(uint iUser,uint time,bool value) { _activeUsers[time][iUser] = value;}
     bool getUserActivity(uint iUser,uint time) const { return _activeUsers[time][iUser];}

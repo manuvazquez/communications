@@ -36,8 +36,8 @@ private:
     tBit *_matrix;
 public:
     Bits();
-    Bits(int nStreams, int nBitsByStream,Random &randomGenerator);
-    Bits(tBit *matrix,int nStreams,int nBitsByStream);
+    Bits(uint nStreams, uint nBitsByStreamint,Random &randomGenerator);
+    Bits(tBit *matrix,uint nStreams,uint nBitsByStream);
     Bits& operator=(const Bits& bits);
     Bits(const Bits& bits);
     ~Bits();
@@ -45,16 +45,16 @@ public:
     void print() const;
     Bits differentialEncoding();
     Bits differentialDecoding();
-    tBit operator()(int i,int j) const {return _matrix[i*_nBitsPerStream+j];}
-    int nStreams() const { return _nStreams;}
-    int nBitsPerStream() const {return _nBitsPerStream;}
+    tBit operator()(uint i,uint j) const {return _matrix[i*_nBitsPerStream+j];}
+    uint nStreams() const { return _nStreams;}
+    uint nBitsPerStream() const {return _nBitsPerStream;}
     bool operator==(const Bits &bits) const;
-    std::vector<tBit> GetStream(int index) const;
-    void inject(int index,const std::vector<tBit> &stream);
-    void invertStream(int index);
+    std::vector<tBit> GetStream(uint index) const;
+    void inject(uint index,const std::vector<tBit> &stream);
+    void invertStream(uint index);
 
     // returns the number of non coincident bits
-    int operator-(const Bits &bits) const;
+    uint operator-(const Bits &bits) const;
 
 	static tBit noDataBitValue() { return 2;}
 	static tBit oppositeBit(tBit bit) { if (bit == noDataBitValue()) return noDataBitValue(); else return (bit + 1) % 2;}

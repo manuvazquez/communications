@@ -36,7 +36,6 @@ protected:
 	double _iUserSNRcontribution;
 public:
     SingleUserPowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
-// 	virtual void setSNR(int SNR);
 };
 
 #endif
