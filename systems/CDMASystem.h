@@ -87,6 +87,10 @@ protected:
 	 **/
 	uint _iUserOfInterest;
 	
+	int _minSignalToInterferenceRatio;
+	
+	std::vector<MatrixXd> _everyFrameSpreadingCodes;
+	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
     virtual void beforeEndingFrame();
@@ -97,8 +101,6 @@ public:
 
     ~CDMASystem();
 
-	static bool areSequencesOrthogonal(const MatrixXd &spreadingCodes);
-	
 	/*!
 	  It computes the probability of detecting that a user is transmitting when it's not or the other way around. It relies in \ref computeSER
 	  \param sourceSymbols are the actual transmitted symbols

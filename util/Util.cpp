@@ -644,6 +644,38 @@ template<class T> void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const
 template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,string name,ofstream &f);
 template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <bool> > >&matrix,string name,ofstream &f);
 
+bool Util::areColsOrthogonal(const MatrixXd &matrix)
+{
+	uint nRows = matrix.rows();
+	uint nCols = matrix.cols();
+
+	for (uint iOneCol=0;iOneCol<nCols;iOneCol++)
+		for (uint iAnotherCol=iOneCol+1;iAnotherCol<nCols;iAnotherCol++)
+		{
+			int sum = 0;
+			
+			for (uint i=0;i<nRows;i++)
+				for (uint j=0;j<nRows;j++)
+					sum += matrix(i,iOneCol)*matrix(j,iAnotherCol);
+			
+			if (sum!=0)
+				return false;
+		}
+
+	return true;
+}
+
+bool Util::areColsDifferentAndNotOpposite(const MatrixXd &matrix)
+{
+	uint nCols = matrix.cols();
+	
+	for(uint iCol=0;iCol<nCols;iCol++)
+		for(uint iAnotherCol=iCol+1;iAnotherCol<nCols;iAnotherCol++)
+			if( (matrix.col(iCol)==matrix.col(iAnotherCol)) || (matrix.col(iCol)==-1.0*matrix.col(iAnotherCol)))
+				return false;
+	return true;
+}
+
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector)
 {
     out << "[";

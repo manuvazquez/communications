@@ -60,6 +60,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 {
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
+	
+	_minSignalToInterferenceRatio = -30;
 
 	// first user starts transmitting something
 	_usersActivityPdfs[0].setApriori(1.0);
@@ -69,30 +71,26 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	
 // 	// the spreading codes are normalized
 // 	_spreadingCodes /= sqrt(_L);
-
-	MatrixXd kasamiCodes (_L,_N);
-	
-	kasamiCodes <<	 1,  -1,  -1,
-					-1,   1,   1,
-					 1,   1,   1,
-					-1,  -1,   1,
-					 1,   1,  -1,
-					 1,  -1,   1,
-					-1,  -1,  -1,
-					-1,   1,  -1;
-
-	_spreadingCodes = kasamiCodes;
-    
-#ifdef PRINT_CODES_INFO
-    cout << "generated spreadingCodes..." << endl << _spreadingCodes << endl;
-	cout << "are codes are ok? " << areSequencesOrthogonal(_spreadingCodes) << endl;
-#endif
+// 
+// 	MatrixXd kasamiCodes (_L,_N);
+// 	
+// 	kasamiCodes <<	 1,  -1,  -1,
+// 					-1,   1,   1,
+// 					 1,   1,   1,
+// 					-1,  -1,   1,
+// 					 1,   1,  -1,
+// 					 1,  -1,   1,
+// 					-1,  -1,  -1,
+// 					-1,   1,  -1;
+// 
+// 	_spreadingCodes = kasamiCodes;
+//     
+// #ifdef PRINT_CODES_INFO
+//     cout << "generated spreadingCodes..." << endl << _spreadingCodes << endl;
+// 	cout << "are codes are orthogonal? " << Util::areColsOrthogonal(_spreadingCodes) << endl;
+// #endif
 
   _nSurvivors = 2;
-//   _nSurvivors = 8;
-//   _nSurvivors = 10;
-//   _nSurvivors = 20;
-//   _nSurvivors = 40;
 
     // AR process parameters
     ARcoefficients = vector<double>(2);
@@ -112,8 +110,8 @@ CDMASystem::CDMASystem(): SMCSystem()
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
 
 	// bessel channel parameters
-    _velocity = 180/3.6; // (m/s)
-//     _velocity = 50/3.6; // (m/s)
+//     _velocity = 180/3.6; // (m/s)
+    _velocity = 50/3.6; // (m/s)
     _carrierFrequency = 2e9; // (Hz)
     _symbolRate = 500e3; // (Hz)
 
@@ -123,7 +121,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
 // 	std::cout << "ARcoeffs:" << std::endl << ARcoefficients << std::endl << "AR variance = " << ARvariance << std::endl;
     
-    _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+//     _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+	_cdmaKalmanEstimator = NULL;
     _cdmaKnownChannelChannelMatrixEstimator = NULL;
 	
     _mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
@@ -171,6 +170,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_piecesBestPermutationSigns = std::vector<std::vector<int> >(1,std::vector<int>(_permutations[0].size(),+1));
 		
 	_everyFrameUsersActivity.reserve(_nFrames);
+	_everyFrameSpreadingCodes.reserve(_nFrames);
 }
 
 
@@ -188,9 +188,13 @@ void CDMASystem::addAlgorithms()
 
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
        
-    // the channel is different in each frame, so the estimator that knows the channel must be rebuilt every frame
+    // the channel is different at each frame, so the estimator that knows the channel must be rebuilt every frame
     delete _cdmaKnownChannelChannelMatrixEstimator;
     _cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N,_spreadingCodes);
+	
+	// ...the same for an estimator that knows the codes if these also change across frames
+	delete _cdmaKalmanEstimator;
+	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
@@ -231,6 +235,10 @@ void CDMASystem::beforeEndingFrame()
 		throw RuntimeException("CDMASystem::computeMSE: pieces information is not available.");
 	
 	Util::scalarsVectorToOctaveFileStream(_signChanges,"signChanges",_f);
+	Util::scalarToOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
+	
+	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
+	Util::matricesVectorToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 	
 // 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
 // 	std::vector<MatrixXd> m;
@@ -272,9 +280,29 @@ void CDMASystem::buildSystemSpecificVariables()
             
 #ifdef PRINT_INFO
     cout << "symbols after generating users activity" << endl << symbols << endl;
-#endif    
+#endif
 	
-	double minSIR;
+	do
+	{	
+		// spreading codes for the users are generated randomly
+		_spreadingCodes = Util::sign(StatUtil::randnMatrix(_L,_N,0.0,1.0));
+
+// 		// the spreading codes are normalized
+// 		_spreadingCodes /= sqrt(_L);
+
+// 		MatrixXd kasamiCodes (_L,_N);
+// 		kasamiCodes <<	1,  -1,  -1, -1,   1,   1, 1,   1,   1, -1,  -1,   1, 1,   1,  -1, 1,  -1,   1, -1,  -1,  -1, -1,   1,  -1;
+// 		_spreadingCodes = kasamiCodes;
+
+#ifdef PRINT_CODES_INFO
+		std::cout << "generated spreadingCodes..." << std::endl << _spreadingCodes << std::endl;
+		std::cout << "are codes are orthogonal? " << Util::areColsOrthogonal(_spreadingCodes) << std::endl;
+		std::cout << "are codes different and NOT opposite? " << Util::areColsDifferentAndNotOpposite(_spreadingCodes) << std::endl;
+#endif
+// 	} while(false);
+	} while(!Util::areColsDifferentAndNotOpposite(_spreadingCodes));
+	
+	double thisChannelMinimumSIR;
 	
 	do
 	{
@@ -288,40 +316,17 @@ void CDMASystem::buildSystemSpecificVariables()
 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
 		
 		// the minimum is obtained
-		minSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
-		std::cout << "minimum SIR = " << minSIR << std::endl;
+		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
+		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
 
 // 	} while(false);
-	} while(minSIR<-30);
-// 	} while(minSIR<-20);
-// 	} while(minSIR >-20 || minSIR<-30);
-// 	} while(minSIR >-1 || minSIR<-10);
+	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);
+// 	} while(thisChannelMinimumSIR<-50);
 	
 	
 	// the noise is generated
 // 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
-}
-
-bool CDMASystem::areSequencesOrthogonal(const MatrixXd &spreadingCodes)
-{
-	uint L = spreadingCodes.rows();
-	uint nCodes = spreadingCodes.cols();
-
-	for (uint iOneCode=0;iOneCode<nCodes;iOneCode++)
-		for (uint iOtherCode=iOneCode+1;iOtherCode<nCodes;iOtherCode++)
-		{
-			int sum = 0;
-			
-			for (uint i=0;i<L;i++)
-				for (uint j=0;j<L;j++)
-					sum += spreadingCodes(i,iOneCode)*spreadingCodes(j,iOtherCode);
-			
-			if (sum!=0)
-				return false;
-		}
-
-	return true;
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const

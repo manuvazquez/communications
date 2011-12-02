@@ -291,8 +291,11 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(3555280860);
 // 		StatUtil::getRandomGenerator().setSeed(3347172980);
 		
-		_randomGenerator.setSeed(3634179949);					// middle of the frame ambiguity problem
-		StatUtil::getRandomGenerator().setSeed(3781697018);		// middle of the frame ambiguity problem
+// 		_randomGenerator.setSeed(3634179949);					// middle of the frame ambiguity problem
+// 		StatUtil::getRandomGenerator().setSeed(3781697018);		// middle of the frame ambiguity problem
+		
+		_randomGenerator.setSeed(2676010796);					// 
+		StatUtil::getRandomGenerator().setSeed(2651759667);		// 
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -388,7 +391,10 @@ if(__nFramesHasBeenPassed)
 // 				StatUtil::getRandomGenerator().setSeed(3715014788);
 // 				StatUtil::getRandomGenerator().setSeed(2627962102);
 // 				StatUtil::getRandomGenerator().setSeed(2468980981);
-				StatUtil::getRandomGenerator().setSeed(4094155604);	// middle of the frame ambiguity problem
+
+// 				StatUtil::getRandomGenerator().setSeed(4094155604);	// middle of the frame ambiguity problem
+
+				StatUtil::getRandomGenerator().setSeed(596381295);	//
 
 				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
 				cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
@@ -444,7 +450,7 @@ if(__nFramesHasBeenPassed)
 		// the temporal file is renamed as the final
 		std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
 		int systemCommandReturn = system(mvCommand.c_str());
-		cout << "moving operation returned " << systemCommandReturn << endl;
+		cout << COLOR_INFO << "moving operation returned " << COLOR_NORMAL << systemCommandReturn << endl;
 
         // ---------------------------------------------------------
 
