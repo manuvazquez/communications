@@ -21,8 +21,8 @@
 
 Trellis::Trellis(const Alphabet &alphabet, uint N, uint m)
 {
-    _nStates = (int)pow((double)alphabet.length(),N*(m-1));
-    _nPossibleInputs = (int)pow((double)alphabet.length(),N);
+    _nStates = uint(pow((double)alphabet.length(),N*(m-1)));
+    _nPossibleInputs = uint(pow((double)alphabet.length(),N));
 
     _stateTransitionMatrix = new uint*[_nStates];
 

@@ -216,7 +216,7 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
 void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double noiseVariance)
 {
     double newCost;
-    int arrivalState,iDisposableSurvivor;
+    uint arrivalState,iDisposableSurvivor;
 
     // "symbolVectors" will contain all the symbols involved in the current observation
     MatrixXd symbolVectors(_nInputs,_channelOrder);
@@ -314,9 +314,9 @@ void PSPAlgorithm::bestPairStateSurvivor(uint& bestState, uint& bestSurvivor)
 		}
 }
 
-int PSPAlgorithm::disposableSurvivor(int iState)
+uint PSPAlgorithm::disposableSurvivor(int iState)
 {
-    int iWorstCost;
+    uint iWorstCost;
     double worstCost;
 
 	// if there are no survivors yet

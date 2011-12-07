@@ -32,11 +32,6 @@
 */
 class CDMASystem : public SMCSystem
 {
-private:
-	/**
-	 * @brief this variable is set to true when the information regarding the pieces into which the data frame must be cut (according to the changes in the sign of the channel coefficients) to measure performance (ambiguity issues) is available
-	 **/
-	bool _piecesInfoAvailable;
 protected:
     MatrixXd _spreadingCodes;
     
@@ -60,8 +55,6 @@ protected:
 	
 	// this is used in two different methods (though only computed in one of them...)
 	double _maximumRatio;
-	
-	double _maximumRatioThresholdInDBs;
 	
 	MatrixXd _presentFramePeActivityDetection;
 	vector<MatrixXd> _peActivityDetectionFrames;
@@ -87,6 +80,9 @@ protected:
 	 **/
 	uint _iUserOfInterest;
 	
+	/**
+	 * @brief if the signal to interference ratio is below this threshold the channel is discarded
+	 **/
 	int _minSignalToInterferenceRatio;
 	
 	std::vector<MatrixXd> _everyFrameSpreadingCodes;
@@ -96,6 +92,13 @@ protected:
     virtual void beforeEndingFrame();
     virtual void buildSystemSpecificVariables();
 	virtual void onlyOnce();
+	
+	/**
+	 * @brief it initializes the variables that account for the splitting of the frame so that: i) the frame is not split ii) the best permutation is the first and its associated sign is +1
+	 *
+	 * @return void
+	 **/
+	void resetFramePieces();
 public:
     CDMASystem();
 

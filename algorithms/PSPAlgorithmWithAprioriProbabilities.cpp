@@ -29,13 +29,9 @@ PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(strin
 void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorXd& observations, double noiseVariance)
 {    
     double newCost;
-    int arrivalState,iDisposableSurvivor;
+    uint arrivalState,iDisposableSurvivor;
 	
 	VectorXd previousSymbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
-
-#ifdef DEBUG
-	cout << "iState = " << iState << " noiseVariance = " << noiseVariance << endl;
-#endif
 	
     // now we compute the cost for each possible input
     for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
@@ -62,7 +58,7 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 			if((_bestArrivingPaths[arrivalState][iDisposableSurvivor].noPathArrived()) ||
 				// or its cost is greater than the computed new cost
 				(_bestArrivingPaths[arrivalState][iDisposableSurvivor].getCost() > newCost))
-					// the ViterbiPath object at the arrival state is updated with that from the exit stage, the
+					// the PSPPathCandidate object at the arrival state is updated with that from the exit stage, the
 					// new symbol vector, and the new cost
 				{
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._fromState = iState;

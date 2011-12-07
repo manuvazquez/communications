@@ -162,39 +162,10 @@ void OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd&
             processedParticle->setSymbolVector(iObservationToBeProcessed,sampledVector);
 
             likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),channelMatrixSample*sampledVector,noiseVariances[iObservationToBeProcessed]);
-
-// 			// ********************************************* new weight computation ***********************************
-// 			uint nCombinations = (uint) pow((double)(extendedAlphabet.length()),(double)_nInputs);
-// 
-// 			// a likelihood is computed for every possible symbol vector
-// 			vector<double> testedCombination(_nInputs),likelihoods(nCombinations);
-// 			
-// 			double symbolVectorTerm = 0.0;
-// 			
-// 			for(uint iTestedCombination=0;iTestedCombination<nCombinations;iTestedCombination++)
-// 			{
-// 				extendedAlphabet.int2symbolsArray(iTestedCombination,testedCombination);
-// 				
-// 				double exponent = 0.0;
-// 				double aPriori = 1.0;
-// 				
-// 				for(uint i=0;i<_nInputs;i++)
-// 				{
-// 					exponent += pow(sampledVector(i),2.0) - pow(testedCombination[i],2.0) + 2*softEstimations(i)*(testedCombination[i]-sampledVector(i));
-// 					
-// 					if(iObservationToBeProcessed==_startDetectionTime)
-// 						aPriori *= probSymbol(testedCombination[i],_usersActivityPdfs[i]);
-// 					// after first time instant
-// 					else
-// 						aPriori *= probSymbolGivenPreviousActivity(testedCombination[i],processedParticle->getUserActivity(iInput,iObservationToBeProcessed-1),_usersActivityPdfs[i]);
-// 				}
-// 				
-// 				symbolVectorTerm += exp(exponent)*aPriori;
-// 			}
 			
-            // the weight is updated...
-			processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
-// 			processedParticle->setWeight(likelihood*symbolVectorTerm*processedParticle->getWeight());
+// 			// in order to avoid dividing by zero...
+// 			if(probSoftEstGivenSampledSymbolsProduct!=0.0)
+				processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
 
 			// ...the estimation of the channel matrix is updated
 			processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]);

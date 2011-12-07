@@ -41,10 +41,6 @@ extern bool __nFramesHasBeenPassed;
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
 
-// #define PRINT_COMPUTE_SER_INFO
-// #define PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
-// #define PRINT_BEST_PERMUATION_ERRORS
-
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
 
@@ -115,7 +111,7 @@ BaseSystem::BaseSystem()
 
 // ----------------------------------------------------------
 
-// 	_SNRs.push_back(0);
+	_SNRs.push_back(0);
 	
 	_SNRs.push_back(3);
 	_SNRs.push_back(6);
@@ -209,10 +205,8 @@ BaseSystem::BaseSystem()
     _overallPeTimeEvolution.resize(_SNRs.size());
     _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
 
-#ifdef SAVE_SEEDS
     _mainSeeds.reserve(_nFrames);
     _statUtilSeeds.reserve(_nFrames);
-#endif
 	
 #ifdef SAVE_ALL_SEEDS
 // 	_perAlgorithmAndSNRmainSeeds.reserve(_nFrames);
@@ -294,8 +288,11 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(3634179949);					// middle of the frame ambiguity problem
 // 		StatUtil::getRandomGenerator().setSeed(3781697018);		// middle of the frame ambiguity problem
 		
-		_randomGenerator.setSeed(2676010796);					// 
-		StatUtil::getRandomGenerator().setSeed(2651759667);		// 
+// 		_randomGenerator.setSeed(2676010796);
+// 		StatUtil::getRandomGenerator().setSeed(2651759667);
+		
+		_randomGenerator.setSeed(2738127084);
+		StatUtil::getRandomGenerator().setSeed(140821699);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -306,11 +303,9 @@ if(__nFramesHasBeenPassed)
     while((_iFrame<_nFrames) && (!__done))
     {
 
-#ifdef SAVE_SEEDS
         // the seeds are kept for saving later
         _mainSeeds.push_back(_randomGenerator.getSeed());
         _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
-#endif
 
         // bits are generated ...
         Bits generatedBits(_N,_nBitsGenerated,_randomGenerator);
@@ -607,19 +602,14 @@ void BaseSystem::beforeEndingFrame()
     Util::matrixToOctaveFileStream(_preamble,"preamble",_f);
     Util::scalarToOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
     Util::scalarToOctaveFileStream(_preambleLength,"preambleLength",_f);
-	
-#ifdef SAVE_SEEDS
     Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
     Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
-#endif
-	
-#ifdef SAVE_ALL_SEEDS
+
 // 	_perAlgorithmAndSNRmainSeeds.push_back(_thisFramePerAlgorithmAndSNRmainSeeds);
 // 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRmainSeeds,"perAlgorithmAndSNRmainSeeds",_f);
 	
 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);
 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
-#endif
 	
 	// NOTE: this is only saved for the last frame!!
 	Util::matrixToOctaveFileStream(_observations,"observations",_f);
@@ -656,40 +646,29 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     iBestPermutation = 0;
 	bestPermutationSigns = vector<int>(sourceSymbols.rows(),1);
 
-    if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
-    {
-        cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-        throw RuntimeException("BaseSystem::computeSER: matrix row numbers differ.");
-    }
-
-    if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
-    {
-        cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl;    
-      throw RuntimeException("BaseSystem::computeSER: matrix column numbers differ.");
-    }
-        
-#ifdef PRINT_COMPUTE_SER_INFO
-    cout << "source symbols" << endl << sourceSymbols << endl << endl << "detected symbols" << endl << detectedSymbols << endl << endl << "mask" << endl;
-    Util::print(mask);
-#endif
+	// the dimensions of "sourceSymbols" are the same as those of "detectedSymbols"
+	assert(sourceSymbols.rows() == detectedSymbols.rows() && sourceSymbols.cols()== detectedSymbols.cols());
+	
+	// ...and the same as those of the mask
+	assert(detectedSymbols.rows() == uint(mask.size()) && detectedSymbols.cols() == uint(mask[0].size()));
 
     vector<int> thisPermutationSigns(sourceSymbols.rows());
 
     // min number of errors
-    int minErrors = sourceSymbols.rows()*sourceSymbols.cols();
+    uint minErrors = sourceSymbols.rows()*sourceSymbols.cols();
     
     uint nAccountedSymbols = 0;
     uint iInput;
 
     for(uint iPermut=0;iPermut<_permutations.size();iPermut++)
     {
-        int permutationErrors = 0;
+        uint permutationErrors = 0;
         
         for(uint iStream=0;iStream<_permutations[iPermut].size();iStream++)
         {
             iInput = _permutations[iPermut][iStream];
           
-            int currentStreamErrorsInverting=0,currentStreamErrorsWithoutInverting=0;
+            uint currentStreamErrorsInverting=0,currentStreamErrorsWithoutInverting=0;
             
             for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
             {
@@ -705,17 +684,6 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
                 
                 nAccountedSymbols++;
             }              
-
-#ifdef PRINT_BEST_PERMUATION_ERRORS
-			if(iPermut==0)
-			{
-			cout << "====================" << endl;
-			cout << "iStream = " << iStream << endl;
-			cout << "errorsWithoutInverting = " << errorsWithoutInverting << endl;
-			cout << "errorsInverting = " << errorsInverting << endl;
-			cout << "====================" << endl;
-			}
-#endif
 
             if(currentStreamErrorsWithoutInverting<currentStreamErrorsInverting)
             {
@@ -735,15 +703,9 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
             iBestPermutation = iPermut;
 			bestPermutationSigns = thisPermutationSigns;
         }
-    }
+    } // for(uint iPermut=0;iPermut<_permutations.size();iPermut++)
     
-#ifdef PRINT_BEST_PERMUATION_WHEN_COMPUTING_SER
-	cout << "best permutation is " << iBestPermutation << endl;
-	cout << "its signs" << endl;
-	Util::print(bestPermutationSigns);
-	cout << endl;
-#endif
-    
+    // every symbols should have been accounted as many times as permutations
 	assert(nAccountedSymbols % _permutations.size() == 0);
     
     nAccountedSymbols /= _permutations.size();
@@ -752,7 +714,7 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
     if(nAccountedSymbols==0)
       return 0.0;
     else
-      return (double)minErrors/(double)(nAccountedSymbols);
+      return double(minErrors)/double(nAccountedSymbols);
 }
 
 double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
@@ -778,22 +740,17 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 
 double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const
 {
-  vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
+	vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
 
-  // the signs permutation is given permuted WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES
-  // we have to permute them according to the best permutation with respect to the real channel matrices
-  vector<int> realChannelMatricesSignsPermutation = Util::applyPermutation(Util::applyPermutation(bestPermutationSigns,realChannelMatricesPermutation),realChannelMatricesPermutation);
+	// the signs permutation is given permuted WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES: we have to permute them according to the best permutation with respect to the real channel matrices
+	vector<int> realChannelMatricesSignsPermutation = Util::applyPermutation(Util::applyPermutation(bestPermutationSigns,realChannelMatricesPermutation),realChannelMatricesPermutation);
 
-  vector<MatrixXd> permutedRealChannelMatrices(realchannelMatrices.size());
-  
-  for(uint i=0;i<realchannelMatrices.size();i++)
-  {
-	permutedRealChannelMatrices[i] = Util::applyPermutationOnColumns(realchannelMatrices[i],realChannelMatricesPermutation,realChannelMatricesSignsPermutation);
-// 	cout << "realchannelMatrices[i] = " << endl << realchannelMatrices[i] << endl;
-// 	cout << "permutedRealChannelMatrices[i] = " << endl << permutedRealChannelMatrices[i] << endl;
-  }
+	vector<MatrixXd> permutedRealChannelMatrices(realchannelMatrices.size());
 
-  return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices);
+	for (uint i=0;i<realchannelMatrices.size();i++)
+		permutedRealChannelMatrices[i] = Util::applyPermutationOnColumns(realchannelMatrices[i],realChannelMatricesPermutation,realChannelMatricesSignsPermutation);
+
+	return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices);
 }
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const

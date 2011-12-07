@@ -41,14 +41,14 @@ protected:
 public:
     PSPPath();
 
-    PSPPath(uint nTimeInstants,double cost, MatrixXd initialSequence, std::vector<std::vector<MatrixXd> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators); // eigen
+    PSPPath(uint nTimeInstants,double cost, MatrixXd initialSequence, std::vector<std::vector<MatrixXd> > initialChannelMatrices, std::vector<ChannelMatrixEstimator *> channelMatrixEstimators);
 
     PSPPath(const PSPPath &path);
 
     ~PSPPath();
 
     ChannelMatrixEstimator * getChannelMatrixEstimator() const { return _channelMatrixEstimators[0];}
-    MatrixXd getChannelMatrix(int n)
+    MatrixXd getChannelMatrix(uint n)
     {
         #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
             return _estimatedChannelMatrices[0][n];
@@ -64,8 +64,7 @@ public:
      * @param newCost
      * @param newChannelMatrixEstimators the estimators are directly stored (they are not cloned)
      */
-//     void update(const PSPPath& path, tVector newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
-    void update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators); // eigen
+    void update(const PSPPath& path, VectorXd newSymbolVector, double newCost, std::vector<ChannelMatrixEstimator *> newChannelMatrixEstimators);
     void operator=(const PSPPath &path);
 
 };

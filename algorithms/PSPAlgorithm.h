@@ -68,7 +68,7 @@ protected:
 	  \param iState the state of \ref _bestArrivingPaths that is to be searched in
 	  \return the index of the survivor with the worst cost
 	*/
-    int disposableSurvivor(int iState);
+    uint disposableSurvivor(int iState);
 
     void processOneObservation(const VectorXd &observations,double noiseVariance);
     void process(const MatrixXd &observations,vector<double> noiseVariances);

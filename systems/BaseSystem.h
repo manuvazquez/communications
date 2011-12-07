@@ -59,7 +59,6 @@
 
 #define KEEP_ALL_CHANNEL_ESTIMATIONS
 
-#define SAVE_SEEDS
 #define SAVE_ALL_SEEDS
 
 extern bool __done;
@@ -146,9 +145,7 @@ protected:
     std::vector<MatrixXi> _overallErrorsNumberTimeEvolution;
 
     // seeds
-#ifdef SAVE_SEEDS
     std::vector<uint32_t> _mainSeeds,_statUtilSeeds;
-#endif
 
 #ifdef SAVE_ALL_SEEDS
 	std::vector<std::vector<std::vector<uint32_t> > > /*_perAlgorithmAndSNRmainSeeds,*/_perAlgorithmAndSNRstatUtilSeeds;
