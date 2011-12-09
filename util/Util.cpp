@@ -732,3 +732,27 @@ std::vector<uint> Util::getZeroCrossings(const std::vector<MatrixXd> &matricesVe
 
 	return res;
 }
+
+std::vector<uint> Util::getZeroCrossings(const std::vector<MatrixXd> &matricesVector,uint iCol, uint iFrom, uint length)
+{
+	VectorXd lastSignsVector = sign(matricesVector[iFrom].col(iCol));
+
+	std::vector<uint> res;
+	res.push_back(iFrom);
+
+	uint iChannelMatrix;
+
+	for (iChannelMatrix=iFrom+1;iChannelMatrix<iFrom+length;iChannelMatrix++)
+	{
+		VectorXd currentVectorSigns = sign(matricesVector[iChannelMatrix].col(iCol));
+		if (currentVectorSigns!=lastSignsVector)
+		{
+			lastSignsVector = currentVectorSigns;
+			res.push_back(iChannelMatrix);
+		}
+	}
+
+	res.push_back(iChannelMatrix);
+
+	return res;
+}

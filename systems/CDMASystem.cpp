@@ -385,7 +385,8 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 	// if the algorithm performs channel estimation we use ITS channel estimations to split the frame and tackle the ambiguity problem
 	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
 // 		_signChanges = Util::getZeroCrossings(_channel->getChannelMatrices(),_preambleLength,_frameLength);
-		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_preambleLength,_frameLength);
+// 		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_preambleLength,_frameLength);
+		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_iUserOfInterest,_preambleLength,_frameLength);
 	//...if it doesn't perform channel estimation, the ambiguity problem is gone
 	else
 	{
@@ -447,33 +448,35 @@ double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMa
   while(_signChanges[iSignChange]<=iChannelMatricesStart && iSignChange<_signChanges.size())
 	iSignChange++;
   
-#ifdef DEBUG_MSE
-  cout << "computing MSE between " << iChannelMatricesStart << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-iChannelMatricesStart) << " matrices)" << endl;
-  cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
-  cout << "and the signs" << endl;
-  Util::print(_piecesBestPermutationSigns[iSignChange-1]);
-  cout << endl;
-#endif
 
   std::vector<MatrixXd> toCheckRealChannelMatrices(realChannelMatrices.begin(),realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
   std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin(),estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
   
   double res = (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
 								_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
+#ifdef DEBUG_MSE
+	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
+	cout << "mse = " << BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]) << endl;
+	cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
+	cout << "and the signs" << endl << _piecesBestPermutationSigns[iSignChange-1] << endl;
+#endif
 
   iSignChange++;
   
   for(;iSignChange<_signChanges.size();iSignChange++)
   {
+#ifdef DEBUG_MSE
+	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
+	cout << "mse = " << BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]) << endl;
+	cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
+	cout << "and the signs" << endl << _piecesBestPermutationSigns[iSignChange-1] << endl;
+#endif
+  
 	toCheckRealChannelMatrices = std::vector<MatrixXd>(realChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
 	toCheckEstimatedChannelMatrices = std::vector<MatrixXd>(estimatedChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
 	
 	res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
 								_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
-
-#ifdef DEBUG_MSE
-	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
-#endif
   }
 
   res /= realChannelMatrices.size();

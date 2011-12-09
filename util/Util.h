@@ -139,6 +139,17 @@ public:
 	 **/
     static std::vector<uint> getZeroCrossings(const std::vector<MatrixXd> &matricesVector,uint iFrom, uint length);
 	
+	/**
+	 * @brief it returns the indexes where a specific column (the whole column) changes sign
+	 *
+	 * @param matricesVector a vector of matrices
+	 * @param iCol the column to track
+	 * @param iFrom the starting index
+	 * @param length the number of matrices that must be checked starting from @ref iFrom
+	 * @return a vector with the corresponding indexes. It always includes @ref iFrom as well as the last index (so that the instants define a partition of the total length)
+	 **/
+	static std::vector<uint> getZeroCrossings(const std::vector<MatrixXd> &matricesVector,uint iCol, uint iFrom, uint length);
+	
 	static bool areColsOrthogonal(const MatrixXd &matrix);
 	static bool areColsDifferentAndNotOpposite(const MatrixXd &matrix);
 };

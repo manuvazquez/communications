@@ -146,10 +146,14 @@ protected:
 
     // seeds
     std::vector<uint32_t> _mainSeeds,_statUtilSeeds;
+	std::vector<Random> _mainRandoms,_statUtilRandoms;
 
 #ifdef SAVE_ALL_SEEDS
 	std::vector<std::vector<std::vector<uint32_t> > > /*_perAlgorithmAndSNRmainSeeds,*/_perAlgorithmAndSNRstatUtilSeeds;
 	std::vector<std::vector<uint32_t> > /*_thisFramePerAlgorithmAndSNRmainSeeds,*/_thisFramePerAlgorithmAndSNRstatUtilSeeds;
+	
+	std::vector<std::vector<std::vector<Random> > > _perAlgorithmAndSNRstatUtilRandoms;
+	std::vector<std::vector<Random> > _thisFramePerAlgorithmAndSNRstatUtilRandoms;
 #endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS

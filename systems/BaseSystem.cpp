@@ -93,9 +93,9 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 1000;
+	_nFrames = 1000;
 // 	_nFrames = 1;
-	_nFrames = 2;
+// 	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
 // 	_L=8,_N=3,_frameLength=5;
@@ -208,9 +208,14 @@ BaseSystem::BaseSystem()
     _mainSeeds.reserve(_nFrames);
     _statUtilSeeds.reserve(_nFrames);
 	
+    _mainRandoms.reserve(_nFrames);
+    _statUtilRandoms.reserve(_nFrames);
+	
 #ifdef SAVE_ALL_SEEDS
 // 	_perAlgorithmAndSNRmainSeeds.reserve(_nFrames);
 	_perAlgorithmAndSNRstatUtilSeeds.reserve(_nFrames);
+	
+	_perAlgorithmAndSNRstatUtilRandoms.reserve(_nFrames);
 #endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
@@ -291,8 +296,8 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(2676010796);
 // 		StatUtil::getRandomGenerator().setSeed(2651759667);
 		
-		_randomGenerator.setSeed(2738127084);
-		StatUtil::getRandomGenerator().setSeed(140821699);
+		_randomGenerator.setSeed(480200525);
+		StatUtil::getRandomGenerator().setSeed(259918536);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -306,6 +311,11 @@ if(__nFramesHasBeenPassed)
         // the seeds are kept for saving later
         _mainSeeds.push_back(_randomGenerator.getSeed());
         _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
+		
+		_mainRandoms.push_back(_randomGenerator.getSeed());
+		_statUtilRandoms.push_back(StatUtil::getRandomGenerator());
+		
+
 
         // bits are generated ...
         Bits generatedBits(_N,_nBitsGenerated,_randomGenerator);
@@ -389,7 +399,10 @@ if(__nFramesHasBeenPassed)
 
 // 				StatUtil::getRandomGenerator().setSeed(4094155604);	// middle of the frame ambiguity problem
 
-				StatUtil::getRandomGenerator().setSeed(596381295);	//
+// 				StatUtil::getRandomGenerator().setSeed(596381295);
+				
+				StatUtil::getRandomGenerator().setSeed(1821685013);
+// 				StatUtil::getRandomGenerator().setStoredSample(596381295);
 
 				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
 				cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
@@ -398,6 +411,7 @@ if(__nFramesHasBeenPassed)
 #ifdef SAVE_ALL_SEEDS
 // 				_thisFramePerAlgorithmAndSNRmainSeeds[_iSNR][_iAlgorithm] = _randomGenerator.getSeed();
 				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
+				_thisFramePerAlgorithmAndSNRstatUtilRandoms[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator();
 #endif
                 // if there is training sequence
                 if(_trainSeqLength!=0)
@@ -498,6 +512,7 @@ void BaseSystem::onlyOnce()
 #ifdef SAVE_ALL_SEEDS
 // 		_thisFramePerAlgorithmAndSNRmainSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
 		_thisFramePerAlgorithmAndSNRstatUtilSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
+		_thisFramePerAlgorithmAndSNRstatUtilRandoms = std::vector<std::vector<Random> > (_SNRs.size(),std::vector<Random>(_algorithms.size()));
 #endif
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
@@ -604,12 +619,20 @@ void BaseSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(_preambleLength,"preambleLength",_f);
     Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
     Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
+	
+	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
+	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
 
 // 	_perAlgorithmAndSNRmainSeeds.push_back(_thisFramePerAlgorithmAndSNRmainSeeds);
 // 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRmainSeeds,"perAlgorithmAndSNRmainSeeds",_f);
-	
+
+#ifdef SAVE_ALL_SEEDS
 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);
 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
+	
+	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
+	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
+#endif
 	
 	// NOTE: this is only saved for the last frame!!
 	Util::matrixToOctaveFileStream(_observations,"observations",_f);

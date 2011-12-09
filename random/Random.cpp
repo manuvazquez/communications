@@ -50,4 +50,73 @@ complex<double> Random::complexRandn()
   return complex<double> (y1, y2);
 }
 
+void Random::toOctaveFileStream(const std::vector <Random> &vector,std::string name,std::ofstream &f)
+{
+    f << "# name: " << name << std::endl <<"# type: struct" << std::endl << "# length: 3" << std::endl;
+	
+	toOctaveFileStreamAux3D(std::vector<std::vector<std::vector<Random> > >(1,std::vector<std::vector<Random> >(1,vector)),name,f);
+	
+// 	toOctaveFileStreamAux(std::vector<std::vector<Random> >(1,vector),name,f);
+}
 
+void Random::toOctaveFileStream(const std::vector<std::vector <Random> >&matrix,std::string name,std::ofstream &f)
+{
+    f << "# name: " << name << std::endl <<"# type: struct" << std::endl << "# length: 3" << std::endl;
+	
+// 	toOctaveFileStreamAux(matrix,name,f);
+	
+	toOctaveFileStreamAux3D(std::vector<std::vector<std::vector<Random> > >(1,matrix),name,f);
+}
+
+void Random::toOctaveFileStream(const std::vector<std::vector<std::vector <Random> > >&matrix,std::string name,std::ofstream &f)
+{
+	f << "# name: " << name << std::endl <<"# type: struct" << std::endl << "# length: 3" << std::endl;
+	
+	toOctaveFileStreamAux3D(matrix,name,f);
+}
+
+// void Random::toOctaveFileStreamAux(const std::vector<std::vector <Random> >&matrix,std::string name,std::ofstream &f)
+// {
+// 	f << "# name: "<< "seed" << std::endl <<"# type: cell" << std::endl << "# rows: " << matrix.size() << std::endl << "# columns: " << matrix[0].size() << std::endl;
+// 	for(uint j=0;j<matrix[0].size();j++)
+// 		for(uint i=0;i<matrix.size();i++)
+// 			f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[i][j]._seed << std::endl;
+// 	
+// 	f << "# name: "<< "havesmpl" << std::endl <<"# type: cell" << std::endl << "# rows: " << matrix.size() << std::endl << "# columns: " << matrix[0].size() << std::endl;
+// 	for(uint j=0;j<matrix[0].size();j++)
+// 		for(uint i=0;i<matrix.size();i++)
+// 			f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[i][j]._havesmpl << std::endl;
+// 	
+// 	f << "# name: "<< "smpl" << std::endl <<"# type: cell" << std::endl << "# rows: " << matrix.size() << std::endl << "# columns: " << matrix[0].size() << std::endl;
+// 	for(uint j=0;j<matrix[0].size();j++)
+// 		for(uint i=0;i<matrix.size();i++)
+// 			f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[i][j]._smpl << std::endl;
+// }
+
+void Random::toOctaveFileStreamAux3D(const std::vector<std::vector<std::vector <Random> > >&matrix,std::string name,std::ofstream &f)
+{
+	std::stringstream dimensionsString;
+	
+	if(matrix.size()==1)
+		dimensionsString << std::string("# rows: ") <<  matrix[0].size() << std::endl << std::string("# columns: ") << matrix[0][0].size() << std::endl;
+	else
+		dimensionsString << std::string("# ndims: 3") << std::endl << matrix[0].size() << " " << matrix[0][0].size() << " " << matrix.size() << std::endl;
+	
+	f << "# name: "<< "seed" << std::endl <<"# type: cell" << std::endl << dimensionsString.str();
+	for(uint k=0;k<matrix.size();k++)
+		for(uint j=0;j<matrix[k][0].size();j++)
+			for(uint i=0;i<matrix[k].size();i++)
+				f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[k][i][j]._seed << std::endl;
+	
+	f << "# name: "<< "havesmpl" << std::endl <<"# type: cell" << std::endl << dimensionsString.str();
+	for(uint k=0;k<matrix.size();k++)
+		for(uint j=0;j<matrix[k][0].size();j++)
+			for(uint i=0;i<matrix[k].size();i++)
+				f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[k][i][j]._havesmpl << std::endl;
+	
+	f << "# name: "<< "smpl" << std::endl <<"# type: cell" << std::endl << dimensionsString.str();
+	for(uint k=0;k<matrix.size();k++)
+		for(uint j=0;j<matrix[k][0].size();j++)
+			for(uint i=0;i<matrix[k].size();i++)
+				f << "# name: <cell-element>" << std::endl << "# type: scalar" << std::endl << matrix[k][i][j]._smpl << std::endl;
+}
