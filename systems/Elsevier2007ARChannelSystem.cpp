@@ -42,12 +42,6 @@ void Elsevier2007ARChannelSystem::buildSystemSpecificVariables()
     _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }
 
-void Elsevier2007ARChannelSystem::beforeEndingFrame()
-{
-    Elsevier2007System::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
-}
-
 void Elsevier2007ARChannelSystem::saveFrameResults()
 {
     Elsevier2007System::saveFrameResults();

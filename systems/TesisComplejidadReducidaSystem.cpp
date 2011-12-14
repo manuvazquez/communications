@@ -153,17 +153,6 @@ void TesisComplejidadReducidaSystem::addAlgorithms()
 //     algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,symbols));
 }
 
-void TesisComplejidadReducidaSystem::beforeEndingFrame()
-{
-    SMCSystem::beforeEndingFrame();
-
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-    Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
-    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
-    Util::scalarToOctaveFileStream(muLMS,"muLMS",_f);
-    Util::scalarToOctaveFileStream(muNLMS,"muNLMS",_f);
-}
-
 void TesisComplejidadReducidaSystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();

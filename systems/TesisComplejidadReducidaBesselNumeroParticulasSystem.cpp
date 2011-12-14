@@ -24,12 +24,6 @@ TesisComplejidadReducidaBesselNumeroParticulasSystem::TesisComplejidadReducidaBe
     particlesNumbers.push_back(30);particlesNumbers.push_back(50);particlesNumbers.push_back(100);particlesNumbers.push_back(500);particlesNumbers.push_back(1000);
 }
 
-void TesisComplejidadReducidaBesselNumeroParticulasSystem::beforeEndingFrame()
-{
-    TesisComplejidadReducidaBesselSystem::beforeEndingFrame();
-    Util::scalarsVectorToOctaveFileStream(particlesNumbers,"particlesNumbers",_f);
-}
-
 void TesisComplejidadReducidaBesselNumeroParticulasSystem::addAlgorithms()
 {
     char algorithmName[ALGORITHM_NAME_MAX_LENGTH];

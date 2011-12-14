@@ -52,7 +52,6 @@ protected:
     vector<ChannelMatrixEstimator *> LMSchannelEstimators;
 
     virtual void buildSystemSpecificVariables();
-    virtual void beforeEndingFrame();
 	virtual void saveFrameResults();
     virtual void addAlgorithms();
 public:

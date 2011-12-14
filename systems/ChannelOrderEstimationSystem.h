@@ -54,7 +54,6 @@ protected:
 	virtual void onlyOnce();
     virtual void beforeEndingAlgorithm();
 	virtual void addAlgorithms();
-    virtual void beforeEndingFrame();
 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
 public:

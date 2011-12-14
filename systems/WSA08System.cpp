@@ -119,15 +119,6 @@ void WSA08System::addAlgorithms()
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
 
-void WSA08System::beforeEndingFrame()
-{
-    ChannelOrderEstimationSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
-	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
-	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-}
-
 void WSA08System::saveFrameResults()
 {
     ChannelOrderEstimationSystem::saveFrameResults();

@@ -62,7 +62,7 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
     // comment/uncomment to set to false/true
- 	_saveAtEveryFrame = true;
+//  	_saveAtEveryFrame = true;
 
 
 // ------------------------ iswcs 2010 ----------------------
@@ -93,9 +93,9 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 1000;
+	_nFrames = 1000;
 // 	_nFrames = 1;
-	_nFrames = 2;
+// 	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
 // 	_L=8,_N=3,_frameLength=2;
@@ -442,34 +442,34 @@ if(__nFramesHasBeenPassed)
 #endif
         } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
 
-		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
-		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
-		if(_saveAtEveryFrame)
-			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
-		else if(_iFrame==_nFrames-1)
-			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
-
-//         beforeEndingFrame();
-		storeFrameResults();
-		saveFrameResults();
-		
-		if(_saveAtEveryFrame)
-			_f.close();
-		else if(_iFrame==_nFrames-1)
-			_f.close();
-		
-// 		storeFrameResults();
-// 		if(_saveAtEveryFrame || _iFrame==_nFrames-1)
-// 		{
+// 		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
+// 		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
+// 		if(_saveAtEveryFrame)
 // 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
-// 			saveFrameResults();
+// 		else if(_iFrame==_nFrames-1)
+// 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
+// 
+// //         beforeEndingFrame();
+// 		storeFrameResults();
+// 		saveFrameResults();
+// 		
+// 		if(_saveAtEveryFrame)
 // 			_f.close();
-// 		}
-
-		// the temporal file is renamed as the final
-		std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
-		int systemCommandReturn = system(mvCommand.c_str());
-		cout << COLOR_INFO << "moving operation returned " << COLOR_NORMAL << systemCommandReturn << endl;
+// 		else if(_iFrame==_nFrames-1)
+// 			_f.close();
+		
+		storeFrameResults();
+		if(_saveAtEveryFrame || _iFrame==_nFrames-1)
+		{
+			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
+			saveFrameResults();
+			_f.close();
+			
+			// the temporal file is renamed as the final
+			std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
+			int systemCommandReturn = system(mvCommand.c_str());
+			cout << COLOR_INFO << "moving operation returned " << COLOR_NORMAL << systemCommandReturn << endl;
+		}
 
         // ---------------------------------------------------------
 
@@ -590,78 +590,6 @@ void BaseSystem::beforeEndingAlgorithm()
                 if(_detectedSymbols(iUser,k)!=transmittedSymbols(iUser,k))
                     _overallErrorsNumberTimeEvolution[_iSNR](_iAlgorithm,k)++;
     }
-}
-
-void BaseSystem::beforeEndingFrame()
-{
-    // pe
-    _peMatrices.push_back(_presentFramePe);
-    Octave::eigenToOctaveFileStream(_peMatrices,"pe",_f);
-
-    // MSE
-    _MSEMatrices.push_back(_presentFrameMSE);
-    Octave::eigenToOctaveFileStream(_MSEMatrices,"mse",_f);
-
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-    Octave::eigenToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
-#endif
-
-    Octave::toOctaveFileStream(_iFrame+1,"nFrames",_f);
-    Octave::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
-    Octave::toOctaveFileStream(_L,"L",_f);
-    Octave::toOctaveFileStream(_N,"N",_f);
-    Octave::toOctaveFileStream(_m,"m",_f);
-    Octave::toOctaveFileStream(_frameLength,"frameLength",_f);
-    Octave::toOctaveFileStream(_trainSeqLength,"trainSeqLength",_f);
-    Octave::toOctaveFileStream(_d,"d",_f);
-    Octave::toOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
-    Octave::toOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
-    Octave::toOctaveFileStream(_SNRs,"SNRs",_f);
-    Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
-    Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
-    Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
-    Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
-    Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
-	
-	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
-	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
-
-#ifdef SAVE_ALL_SEEDS
-	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);
-	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
-	
-	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
-	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
-#endif
-	
-	// NOTE: this is only saved for the last frame!!
-	Octave::eigenToOctaveFileStream(_observations,"observations",_f);
-	Octave::eigenToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
-	Octave::eigenToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
-	
-#ifdef KEEP_ALL_CHANNEL_MATRICES
-	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
-	Octave::eigenToOctaveFileStream(_channelMatrices,"channels",_f);
-#else
-	// only last channel is saved
-    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
-#endif
-
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
-
-    if(_powerProfile!=NULL)
-    {
-        Octave::toOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
-        Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
-    }
-    
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
-	Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
-#endif
 }
 
 double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask, uint &iBestPermutation, std::vector< int > &bestPermutationSigns)

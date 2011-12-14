@@ -35,12 +35,6 @@ void TesisComplejidadReducidaARSystem::buildSystemSpecificVariables()
     _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance));
 }
 
-void TesisComplejidadReducidaARSystem::beforeEndingFrame()
-{
-    TesisComplejidadReducidaSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
-}
-
 void TesisComplejidadReducidaARSystem::saveFrameResults()
 {
     TesisComplejidadReducidaSystem::saveFrameResults();

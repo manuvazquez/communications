@@ -36,14 +36,6 @@ void TesisOrdenCanalDesconocidoBesselSystem::buildSystemSpecificVariables()
 	TesisOrdenCanalDesconocidoSystem::buildSystemSpecificVariables();
 }
 
-void TesisOrdenCanalDesconocidoBesselSystem::beforeEndingFrame()
-{
-    TesisOrdenCanalDesconocidoSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
-}
-
 void TesisOrdenCanalDesconocidoBesselSystem::saveFrameResults()
 {
     TesisOrdenCanalDesconocidoSystem::saveFrameResults();

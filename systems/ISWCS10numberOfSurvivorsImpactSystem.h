@@ -30,8 +30,6 @@ protected:
 	std::vector<int> nParticlesStudied;
 	
 	virtual void addAlgorithms();
-	virtual void beforeEndingFrame();
-// 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
 public:
 	ISWCS10numberOfSurvivorsImpactSystem();

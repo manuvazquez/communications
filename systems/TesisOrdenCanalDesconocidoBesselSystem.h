@@ -57,7 +57,6 @@ protected:
     double T; // (s)
 
     virtual void buildSystemSpecificVariables();
-    virtual void beforeEndingFrame();
 	virtual void saveFrameResults();
 public:
     TesisOrdenCanalDesconocidoBesselSystem();

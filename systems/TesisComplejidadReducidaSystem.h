@@ -58,7 +58,6 @@ protected:
     NLMSEstimator *nlmsEstimator;
     RMMSEDetector *rmmseDetector;
 
-    virtual void beforeEndingFrame();
 	virtual void saveFrameResults();
     virtual void addAlgorithms();
 public:

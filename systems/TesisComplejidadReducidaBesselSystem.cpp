@@ -32,15 +32,6 @@ TesisComplejidadReducidaBesselSystem::~TesisComplejidadReducidaBesselSystem()
 {
 }
 
-
-void TesisComplejidadReducidaBesselSystem::beforeEndingFrame()
-{
-    TesisComplejidadReducidaSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
-}
-
 void TesisComplejidadReducidaBesselSystem::buildSystemSpecificVariables()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));

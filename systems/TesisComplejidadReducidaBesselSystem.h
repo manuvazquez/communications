@@ -38,7 +38,6 @@ protected:
     double symbolRate; // (Hz)
     double T; // (s)
 
-    virtual void beforeEndingFrame();
 	virtual void saveFrameResults();
     virtual void buildSystemSpecificVariables();
 

@@ -153,7 +153,7 @@ void CDMASystem::addAlgorithms()
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-    _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+//     _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
 	_algorithms.push_back(new OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("Old CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
@@ -162,37 +162,6 @@ void CDMASystem::addAlgorithms()
 	_algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,_nSurvivors,_usersActivityPdfs));
 	
 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_symbols));
-}
-
-void CDMASystem::beforeEndingFrame()
-{
-    SMCSystem::beforeEndingFrame();
-
-    _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
-    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",_f);
-	
-    Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
-	Octave::toOctaveFileStream(_nSurvivors,"nSurvivors",_f);
-	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
-	Octave::toOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
-	Octave::toOctaveFileStream(_userPriorProb,"userPriorProb",_f);
-	
-	_everyFrameUsersActivity.push_back(_usersActivity);
-	Octave::toOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
-	
-	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
-	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
-	
-	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
-	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
-	
-// 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
-// 	std::vector<MatrixXd> m;
-// 	
-// 	for(uint i=0;i<1000;i++)
-// 		m.push_back(miar.nextMatrix());
-// 	
-// 	Octave::eigenToOctaveFileStream(m,"matrices",_f);
 }
 
 void CDMASystem::buildSystemSpecificVariables()
@@ -269,8 +238,8 @@ void CDMASystem::buildSystemSpecificVariables()
 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
 	
 	// the noise is generated
-// 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
+	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+// 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
@@ -495,5 +464,13 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
 	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
-	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);	
+	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
+	
+// 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
+// 	std::vector<MatrixXd> m;
+// 	
+// 	for(uint i=0;i<1000;i++)
+// 		m.push_back(miar.nextMatrix());
+// 	
+// 	Octave::eigenToOctaveFileStream(m,"matrices",_f);
 }

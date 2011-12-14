@@ -38,8 +38,6 @@ protected:
     double T; // (s)
 
     virtual void buildSystemSpecificVariables();
-    virtual void beforeEndingFrame();
-// 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
 public:
     Elsevier2007BesselChannelSystem();

@@ -57,22 +57,6 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
     _channelOrderAPPsAlongTime.reserve(_nFrames);
 }
 
-void ChannelOrderEstimationSystem::beforeEndingFrame()
-{
-    SMCSystem::beforeEndingFrame();
-
-	Util::scalarsVectorToOctaveFileStream(_candidateChannelOrders,"candidateOrders",_f);
-	Util::scalarsVectorToOctaveFileStream(_iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
-	
-	Util::scalarsVectorToOctaveFileStream(_iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation,"iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation",_f);
-
-	_channelOrderAPPsAlongTime.push_back(_presentFrameChannelOrderAPPsAlongTime);
-	Util::matricesVectorsVectorsVectorToOctaveFileStream(_channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);
-	
-	_oneChannelOrderPerOutputAPPsAlongTime.push_back(_presentFrameOneChannelOrderPerOutputAPPsAlongTime);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(_oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
-}
-
 void ChannelOrderEstimationSystem::onlyOnce()
 {
 	SMCSystem::onlyOnce();

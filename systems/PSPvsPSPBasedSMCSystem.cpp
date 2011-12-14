@@ -69,12 +69,6 @@ void PSPvsPSPBasedSMCSystem::buildSystemSpecificVariables()
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),50,2e9,1.0/500.0e3,*_powerProfile);
 }
 
-void PSPvsPSPBasedSMCSystem::beforeEndingFrame()
-{
-    SMCSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-}
-
 void PSPvsPSPBasedSMCSystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();

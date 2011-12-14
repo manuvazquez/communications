@@ -112,15 +112,6 @@ void TVT2007System::addAlgorithms()
 //     algorithms.push_back(new ViterbiAlgorithm("Viterbi",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (channel)),preamble,d));
 }
 
-void TVT2007System::beforeEndingFrame()
-{
-    ChannelOrderEstimationSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
-	Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
-	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-}
-
 void TVT2007System::saveFrameResults()
 {
     ChannelOrderEstimationSystem::saveFrameResults();

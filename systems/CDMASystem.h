@@ -85,7 +85,6 @@ protected:
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
-    virtual void beforeEndingFrame();
 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
     virtual void buildSystemSpecificVariables();

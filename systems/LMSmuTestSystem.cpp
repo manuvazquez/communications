@@ -94,18 +94,6 @@ void LMSmuTestSystem::buildSystemSpecificVariables()
     _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
-void LMSmuTestSystem::beforeEndingFrame()
-{
-    SMCSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
-
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-    Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
-    Util::scalarsVectorToOctaveFileStream(musLMS,"musLMS",_f);
-}
-
 void LMSmuTestSystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();

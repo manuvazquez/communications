@@ -82,14 +82,6 @@ void Elsevier2007BesselChannelSystem::buildSystemSpecificVariables()
 	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
-void Elsevier2007BesselChannelSystem::beforeEndingFrame()
-{
-    Elsevier2007System::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(velocity,"velocity",_f);
-    Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
-}
-
 void Elsevier2007BesselChannelSystem::saveFrameResults()
 {
     Elsevier2007System::saveFrameResults();

@@ -209,14 +209,6 @@ void ISWCS10System::addAlgorithms()
 	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 }
 
-void ISWCS10System::beforeEndingFrame()
-{
-    ChannelOrderEstimationSystem::beforeEndingFrame();
-    Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(_velocity,"velocity",_f);
-	Util::scalarsVectorToOctaveFileStream(_subchannelOrders,"subchannelOrders",_f);
-}
-
 // double ISWCS10System::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
 // {
 // //   if(_symbolsDetectionWindowStart!=0)

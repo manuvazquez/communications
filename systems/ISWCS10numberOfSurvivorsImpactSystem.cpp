@@ -85,12 +85,6 @@ void ISWCS10numberOfSurvivorsImpactSystem::addAlgorithms()
 	}
 }
 
-void ISWCS10numberOfSurvivorsImpactSystem::beforeEndingFrame()
-{
-	ISWCS10System::beforeEndingFrame();
-	Util::scalarsVectorToOctaveFileStream(nParticlesStudied,"nParticlesStudied",_f);
-}
-
 void ISWCS10numberOfSurvivorsImpactSystem::saveFrameResults()
 {
 	ISWCS10System::saveFrameResults();

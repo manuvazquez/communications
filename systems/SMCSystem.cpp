@@ -51,17 +51,6 @@ SMCSystem::~SMCSystem()
   delete algoritmoRemuestreo;
 }
 
-void SMCSystem::beforeEndingFrame()
-{
-    BaseSystem::beforeEndingFrame();
-    Octave::toOctaveFileStream(nParticles,"nParticles",_f);
-    Octave::toOctaveFileStream(resamplingRatio,"resamplingRatio",_f);
-    Octave::toOctaveFileStream(ARcoefficients,"ARcoefficients",_f);
-    Octave::toOctaveFileStream(ARvariance,"ARvariance",_f);
-    Octave::toOctaveFileStream(c,"c",_f);
-    Octave::toOctaveFileStream(e,"e",_f);
-}
-
 void SMCSystem::saveFrameResults()
 {
     BaseSystem::saveFrameResults();

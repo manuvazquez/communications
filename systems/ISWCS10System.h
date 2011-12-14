@@ -75,8 +75,6 @@ protected:
 
     virtual void addAlgorithms();
     virtual void buildSystemSpecificVariables();
-    virtual void beforeEndingFrame();
-// 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
 public:
     ISWCS10System();
