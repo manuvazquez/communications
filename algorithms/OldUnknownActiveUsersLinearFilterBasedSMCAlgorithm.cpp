@@ -163,9 +163,12 @@ void OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd&
 
             likelihood = StatUtil::normalPdf(observations.col(iObservationToBeProcessed),channelMatrixSample*sampledVector,noiseVariances[iObservationToBeProcessed]);
 			
-// 			// in order to avoid dividing by zero...
-// 			if(probSoftEstGivenSampledSymbolsProduct!=0.0)
+			// in order to avoid dividing by zero...
+			if(probSoftEstGivenSampledSymbolsProduct!=0.0)
 				processedParticle->setWeight(likelihood*normConstantsProduct/probSoftEstGivenSampledSymbolsProduct *processedParticle->getWeight());
+			else
+				// this particle is "discarded"
+				processedParticle->setWeight(0.0);
 
 			// ...the estimation of the channel matrix is updated
 			processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),sampledVector,noiseVariances[iObservationToBeProcessed]);

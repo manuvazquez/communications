@@ -44,7 +44,6 @@ protected:
     double _velocity,_carrierFrequency,_symbolRate,_T;
     
     CDMAKalmanEstimator *_cdmaKalmanEstimator;
-    CDMAKnownChannelChannelMatrixEstimator *_cdmaKnownChannelChannelMatrixEstimator;
 	
     MMSEDetector *_mmseDetector;
     

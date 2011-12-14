@@ -94,11 +94,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
 // 	std::cout << "ARcoeffs:" << std::endl << ARcoefficients << std::endl << "AR variance = " << ARvariance << std::endl;
     
-//     _cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
 	_cdmaKalmanEstimator = NULL;
-    _cdmaKnownChannelChannelMatrixEstimator = NULL;
-	
-    _mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
+
+	_mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 	
     // adjusting the number of particles from that of the survivors or the other way around
     _adjustSurvivorsFromParticlesNumber = false;
@@ -127,16 +125,6 @@ CDMASystem::CDMASystem(): SMCSystem()
 
 	// in order to compute the BER/MSE/... of the user of interest only, a "dummy" permutation (a permutation for a set of 1 element) is generated
 	_permutations = std::vector<std::vector<uint> >(1,std::vector<uint>(1,0));
-
-// 	// by default (when "computeSER" is not called), we assume that there is no sign changes (the frame is not split)...
-// 	_signChanges = std::vector<uint>(2);
-// 	_signChanges[0] = 0; _signChanges[1] = _frameLength;
-// 	
-// 	// ...the best permutation is the first one...
-// 	_piecesBestPermuationIndexes = std::vector<uint>(1,0);
-// 	
-// 	// ...and its corresponding signs are all +1. Notice than an algorithm is only used (its methods called) once => initializing this once is enough
-// 	_piecesBestPermutationSigns = std::vector<std::vector<int> >(1,std::vector<int>(_permutations[0].size(),+1));
 	
 	resetFramePieces();
 		
@@ -151,23 +139,18 @@ CDMASystem::~CDMASystem()
 {
     delete _powerProfile;
     delete _cdmaKalmanEstimator;
-    delete _cdmaKnownChannelChannelMatrixEstimator;
     delete _mmseDetector;
 }
 
 void CDMASystem::addAlgorithms()
 {
-    _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
-
-    _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
-       
-    // the channel is different at each frame, so the estimator that knows the channel must be rebuilt every frame
-    delete _cdmaKnownChannelChannelMatrixEstimator;
-    _cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N,_spreadingCodes);
-	
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
 	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+	
+    _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
+
+    _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 

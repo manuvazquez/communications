@@ -16,6 +16,7 @@ include_directories(.
 ADD_LIBRARY (systems STATIC
 		    BaseSystem
 		    CDMASystem
+		    ARparametersComparisonCDMASystem
 		    ChannelOrderEstimationSystem
 		    Elsevier2007ARChannelSystem
 		    Elsevier2007BesselChannelSystem
