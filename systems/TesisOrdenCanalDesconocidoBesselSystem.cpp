@@ -44,3 +44,10 @@ void TesisOrdenCanalDesconocidoBesselSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 }
 
+void TesisOrdenCanalDesconocidoBesselSystem::saveFrameResults()
+{
+    TesisOrdenCanalDesconocidoSystem::saveFrameResults();
+    Octave::toOctaveFileStream(velocity,"velocity",_f);
+    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+}

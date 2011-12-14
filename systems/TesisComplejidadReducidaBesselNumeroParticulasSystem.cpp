@@ -67,3 +67,9 @@ void TesisComplejidadReducidaBesselNumeroParticulasSystem::addAlgorithms()
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }
+
+void TesisComplejidadReducidaBesselNumeroParticulasSystem::saveFrameResults()
+{
+    TesisComplejidadReducidaBesselSystem::saveFrameResults();
+    Octave::toOctaveFileStream(particlesNumbers,"particlesNumbers",_f);
+}

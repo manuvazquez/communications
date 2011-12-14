@@ -128,3 +128,11 @@ void WSA08System::beforeEndingFrame()
 	Util::scalarToOctaveFileStream(velocity,"velocity",_f);
 }
 
+void WSA08System::saveFrameResults()
+{
+    ChannelOrderEstimationSystem::saveFrameResults();
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+	Octave::toOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+	Octave::toOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+	Octave::toOctaveFileStream(velocity,"velocity",_f);
+}

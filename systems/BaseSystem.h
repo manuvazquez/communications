@@ -36,6 +36,7 @@
 #include <Modulator.h>
 #include <Demodulator.h>
 #include <Util.h>
+#include <Octave.h>
 #include <StatUtil.h>
 #include <Random.h>
 #include <MIMOChannel.h>
@@ -188,6 +189,8 @@ protected:
     virtual void addAlgorithms() = 0;
     virtual void buildSystemSpecificVariables() = 0;
     virtual void beforeEndingFrame();
+	virtual void storeFrameResults();
+	virtual void saveFrameResults();
     virtual void beforeEndingAlgorithm();
 	
     /*!

@@ -157,3 +157,10 @@ void TesisOrdenCanalDesconocidoSystem::buildSystemSpecificVariables()
 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 }
 
+void TesisOrdenCanalDesconocidoSystem::saveFrameResults()
+{
+    ChannelOrderEstimationSystem::saveFrameResults();
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Octave::toOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+    Octave::toOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+}

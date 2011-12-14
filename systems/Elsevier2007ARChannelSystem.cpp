@@ -33,7 +33,6 @@ Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()
 Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
 {
   delete _powerProfile;
-//   delete channel;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
 }
@@ -47,4 +46,10 @@ void Elsevier2007ARChannelSystem::beforeEndingFrame()
 {
     Elsevier2007System::beforeEndingFrame();
     Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
+}
+
+void Elsevier2007ARChannelSystem::saveFrameResults()
+{
+    Elsevier2007System::saveFrameResults();
+    Octave::toOctaveFileStream(channelVariance,"channelVariance",_f);
 }

@@ -47,3 +47,10 @@ void TesisComplejidadReducidaBesselSystem::buildSystemSpecificVariables()
     _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
 }
 
+void TesisComplejidadReducidaBesselSystem::saveFrameResults()
+{
+    TesisComplejidadReducidaSystem::saveFrameResults();
+    Octave::toOctaveFileStream(velocity,"velocity",_f);
+    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+}

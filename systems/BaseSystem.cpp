@@ -62,7 +62,7 @@ BaseSystem::BaseSystem()
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
     // comment/uncomment to set to false/true
-	_saveAtEveryFrame = true;
+ 	_saveAtEveryFrame = true;
 
 
 // ------------------------ iswcs 2010 ----------------------
@@ -93,12 +93,12 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-	_nFrames = 1000;
+// 	_nFrames = 1000;
 // 	_nFrames = 1;
-// 	_nFrames = 2;
+	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
-// 	_L=8,_N=3,_frameLength=5;
+// 	_L=8,_N=3,_frameLength=2;
 
 	_m = 1;
 	_d = _m - 1;
@@ -449,12 +449,22 @@ if(__nFramesHasBeenPassed)
 		else if(_iFrame==_nFrames-1)
 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
 
-        beforeEndingFrame();
+//         beforeEndingFrame();
+		storeFrameResults();
+		saveFrameResults();
 		
 		if(_saveAtEveryFrame)
 			_f.close();
 		else if(_iFrame==_nFrames-1)
 			_f.close();
+		
+// 		storeFrameResults();
+// 		if(_saveAtEveryFrame || _iFrame==_nFrames-1)
+// 		{
+// 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
+// 			saveFrameResults();
+// 			_f.close();
+// 		}
 
 		// the temporal file is renamed as the final
 		std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
@@ -586,80 +596,71 @@ void BaseSystem::beforeEndingFrame()
 {
     // pe
     _peMatrices.push_back(_presentFramePe);
-    Util::matricesVectorToOctaveFileStream(_peMatrices,"pe",_f);
+    Octave::eigenToOctaveFileStream(_peMatrices,"pe",_f);
 
     // MSE
     _MSEMatrices.push_back(_presentFrameMSE);
-    Util::matricesVectorToOctaveFileStream(_MSEMatrices,"mse",_f);
+    Octave::eigenToOctaveFileStream(_MSEMatrices,"mse",_f);
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-    Util::matricesVectorsVectorToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
+    Octave::eigenToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
 #endif
 
-//     for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
-//         for(uint i=0;i<algorithmsNames.size();i++)
-//             for(int j=0;j<frameLength;j++)
-//                 overallPeTimeEvolution[iSNR](i,j) = (double) overallErrorsNumberTimeEvolution[iSNR](i,j) / (double) (N*(iFrame+1));
-//     Util::matricesVectorToOctaveFileStream(overallPeTimeEvolution,"peTimeEvolution",f);
-
-    Util::scalarToOctaveFileStream(_iFrame+1,"nFrames",_f);
-    Util::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
-    Util::scalarToOctaveFileStream(_L,"L",_f);
-    Util::scalarToOctaveFileStream(_N,"N",_f);
-    Util::scalarToOctaveFileStream(_m,"m",_f);
-    Util::scalarToOctaveFileStream(_frameLength,"frameLength",_f);
-    Util::scalarToOctaveFileStream(_trainSeqLength,"trainSeqLength",_f);
-    Util::scalarToOctaveFileStream(_d,"d",_f);
-    Util::scalarToOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
-    Util::scalarToOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
-    Util::scalarsVectorToOctaveFileStream(_SNRs,"SNRs",_f);
-    Util::matrixToOctaveFileStream(_preamble,"preamble",_f);
-    Util::scalarToOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
-    Util::scalarToOctaveFileStream(_preambleLength,"preambleLength",_f);
-    Util::scalarsVectorToOctaveFileStream(_mainSeeds,"mainSeeds",_f);
-    Util::scalarsVectorToOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
+    Octave::toOctaveFileStream(_iFrame+1,"nFrames",_f);
+    Octave::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
+    Octave::toOctaveFileStream(_L,"L",_f);
+    Octave::toOctaveFileStream(_N,"N",_f);
+    Octave::toOctaveFileStream(_m,"m",_f);
+    Octave::toOctaveFileStream(_frameLength,"frameLength",_f);
+    Octave::toOctaveFileStream(_trainSeqLength,"trainSeqLength",_f);
+    Octave::toOctaveFileStream(_d,"d",_f);
+    Octave::toOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
+    Octave::toOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
+    Octave::toOctaveFileStream(_SNRs,"SNRs",_f);
+    Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
+    Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
+    Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
+    Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
+    Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
 	
 	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
 	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
 
-// 	_perAlgorithmAndSNRmainSeeds.push_back(_thisFramePerAlgorithmAndSNRmainSeeds);
-// 	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRmainSeeds,"perAlgorithmAndSNRmainSeeds",_f);
-
 #ifdef SAVE_ALL_SEEDS
 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);
-	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
+	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);
 	
 	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
 	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
 #endif
 	
 	// NOTE: this is only saved for the last frame!!
-	Util::matrixToOctaveFileStream(_observations,"observations",_f);
-	Util::matrixToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
-	Util::matrixToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
+	Octave::eigenToOctaveFileStream(_observations,"observations",_f);
+	Octave::eigenToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
+	Octave::eigenToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
 	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
-	Util::matricesVectorsVectorToOctaveFileStream(_channelMatrices,"channels",_f);
+	Octave::eigenToOctaveFileStream(_channelMatrices,"channels",_f);
 #else
 	// only last channel is saved
-    Util::matricesVectorToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
+    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
 #endif
 
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
-    Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
 
     if(_powerProfile!=NULL)
     {
-        Util::scalarsVectorToOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
-        Util::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
+        Octave::toOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
+        Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
     }
     
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
-	Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
+	Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
 #endif
 }
 
@@ -817,4 +818,94 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 	return 0.0;
   else
 	return (double)errors/(double)(nAccountedSymbols);
+}
+
+void BaseSystem::storeFrameResults()
+{
+    // pe
+    _peMatrices.push_back(_presentFramePe);
+
+    // MSE
+    _MSEMatrices.push_back(_presentFrameMSE);
+
+#ifdef MSE_TIME_EVOLUTION_COMPUTING
+    MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
+#endif
+
+#ifdef SAVE_ALL_SEEDS
+	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);	
+	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
+#endif
+	
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
+#endif
+
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
+#endif
+}
+
+void BaseSystem::saveFrameResults()
+{
+    // pe
+    Octave::eigenToOctaveFileStream(_peMatrices,"pe",_f);
+
+    // MSE
+    Octave::eigenToOctaveFileStream(_MSEMatrices,"mse",_f);
+
+#ifdef MSE_TIME_EVOLUTION_COMPUTING
+    Octave::eigenToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
+#endif
+
+    Octave::toOctaveFileStream(_iFrame+1,"nFrames",_f);
+    Octave::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
+    Octave::toOctaveFileStream(_L,"L",_f);
+    Octave::toOctaveFileStream(_N,"N",_f);
+    Octave::toOctaveFileStream(_m,"m",_f);
+    Octave::toOctaveFileStream(_frameLength,"frameLength",_f);
+    Octave::toOctaveFileStream(_trainSeqLength,"trainSeqLength",_f);
+    Octave::toOctaveFileStream(_d,"d",_f);
+    Octave::toOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
+    Octave::toOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
+    Octave::toOctaveFileStream(_SNRs,"SNRs",_f);
+    Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
+    Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
+    Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
+    Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
+    Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
+	
+	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
+	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
+
+#ifdef SAVE_ALL_SEEDS
+	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);	
+	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
+#endif
+	
+	// NOTE: this is only saved for the last frame!!
+	Octave::eigenToOctaveFileStream(_observations,"observations",_f);
+	Octave::eigenToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
+	Octave::eigenToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
+	
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+	Octave::eigenToOctaveFileStream(_channelMatrices,"channels",_f);
+#else
+	// only last channel is saved
+    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
+#endif
+
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
+
+    if(_powerProfile!=NULL)
+    {
+        Octave::toOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
+        Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
+    }
+    
+#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
+	Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
+#endif
 }

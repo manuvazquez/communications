@@ -75,3 +75,9 @@ void PSPvsPSPBasedSMCSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
 }
 
+void PSPvsPSPBasedSMCSystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+}
+

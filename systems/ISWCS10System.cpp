@@ -277,3 +277,11 @@ void ISWCS10System::beforeEndingFrame()
 // 
 //   return res;
 // }
+
+void ISWCS10System::saveFrameResults()
+{
+    ChannelOrderEstimationSystem::saveFrameResults();
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+	Octave::toOctaveFileStream(_velocity,"velocity",_f);
+	Octave::toOctaveFileStream(_subchannelOrders,"subchannelOrders",_f);
+}

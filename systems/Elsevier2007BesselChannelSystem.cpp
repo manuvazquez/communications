@@ -89,3 +89,11 @@ void Elsevier2007BesselChannelSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
     Util::scalarToOctaveFileStream(symbolRate,"symbolRate",_f);
 }
+
+void Elsevier2007BesselChannelSystem::saveFrameResults()
+{
+    Elsevier2007System::saveFrameResults();
+    Octave::toOctaveFileStream(velocity,"velocity",_f);
+    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+}

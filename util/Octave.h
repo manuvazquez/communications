@@ -17,47 +17,34 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef LMSMUTESTSYSTEM_H
-#define LMSMUTESTSYSTEM_H
-
-#include <SMCSystem.h>
+#ifndef OCTAVE_H
+#define OCTAVE_H
 
 /**
     @author Manu <manu@rustneversleeps>
 */
 
-#include <PSPAlgorithm.h>
-#include <FlatPowerProfile.h>
-#include <RMMSEDetector.h>
-#include <RLSEstimator.h>
-#include <LMSEstimator.h>
-#include <NLMSEstimator.h>
+#include <iostream>
+#include <fstream>
+#include <stdint.h>
+#include <iomanip>
+#include <vector>
+#include <types.h>
+#include <exceptions.h>
 
-class LMSmuTestSystem : public SMCSystem
-{
-protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
-    int nSurvivors;
-    bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
-
-    // estimacion conjunta del canal y los datos
-    double forgettingFactorDetector;
-    RMMSEDetector *rmmseDetector;
-
-    vector<double> musLMS;
-    vector<ChannelMatrixEstimator *> LMSchannelEstimators;
-
-    virtual void buildSystemSpecificVariables();
-    virtual void beforeEndingFrame();
-	virtual void saveFrameResults();
-    virtual void addAlgorithms();
+class Octave{
+  
 public:
-    LMSmuTestSystem();
-    ~LMSmuTestSystem();
+    static void eigenToOctaveFileStream(const MatrixXd A,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(std::vector<std::vector<MatrixXd> > matrices,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(std::vector<std::vector<std::vector<MatrixXd> > > matrices,string name,std::ofstream &f);
+	static void eigenToOctaveFileStream(std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > matrices,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(std::vector<MatrixXd> matrices,string name,std::ofstream &f);
+    template<class T> static void toOctaveFileStream(T scalar,string name,std::ofstream &f);
+    static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,std::ofstream &f);
+    template<class T> static void toOctaveFileStream(std::vector<T> vector,string name,std::ofstream &f);
+	template<class T> static void toOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,std::ofstream &f);
+	template<class T> static void toOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,std::ofstream &f);
 };
 
 #endif

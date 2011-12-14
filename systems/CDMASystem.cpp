@@ -130,7 +130,6 @@ CDMASystem::CDMASystem(): SMCSystem()
 		
 	_everyFrameUsersActivity.reserve(_nFrames);
 	_everyFrameSpreadingCodes.reserve(_nFrames);
-	_maxCoefficientsRatiosInDBs.reserve(_nFrames);
 	_peActivityDetectionFrames.reserve(_nFrames);
 }
 
@@ -169,28 +168,23 @@ void CDMASystem::beforeEndingFrame()
 {
     SMCSystem::beforeEndingFrame();
 
-	// the maximum ratio of this frame is added to the vector
-	_maxCoefficientsRatiosInDBs.push_back(_maximumRatio);
-	
     _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
-    Util::matricesVectorToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",_f);
+    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",_f);
 	
-	Util::scalarsVectorToOctaveFileStream(_maxCoefficientsRatiosInDBs,"maxCoefficientsRatiosInDBs",_f);
-    Util::matrixToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
-	Util::scalarToOctaveFileStream(_nSurvivors,"nSurvivors",_f);
-	Util::scalarToOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
-	Util::scalarToOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
-	Util::scalarToOctaveFileStream(_userPriorProb,"userPriorProb",_f);
+    Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
+	Octave::toOctaveFileStream(_nSurvivors,"nSurvivors",_f);
+	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
+	Octave::toOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
+	Octave::toOctaveFileStream(_userPriorProb,"userPriorProb",_f);
 	
 	_everyFrameUsersActivity.push_back(_usersActivity);
-	Util::scalarsVectorsVectorsVectorToOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
-// 	Util::scalarsVectorsVectorToOctaveFileStream(_usersActivity,"usersActivity",_f);
+	Octave::toOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
 	
-	Util::scalarsVectorToOctaveFileStream(_signChanges,"signChanges",_f);
-	Util::scalarToOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
+	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
+	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	
 	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
-	Util::matricesVectorToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
+	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 	
 // 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
 // 	std::vector<MatrixXd> m;
@@ -198,7 +192,7 @@ void CDMASystem::beforeEndingFrame()
 // 	for(uint i=0;i<1000;i++)
 // 		m.push_back(miar.nextMatrix());
 // 	
-// 	Util::matricesVectorToOctaveFileStream(m,"matrices",_f);
+// 	Octave::eigenToOctaveFileStream(m,"matrices",_f);
 }
 
 void CDMASystem::buildSystemSpecificVariables()
@@ -478,4 +472,28 @@ void CDMASystem::resetFramePieces()
 	
 	// ...and its corresponding signs are all +1
 	_piecesBestPermutationSigns = std::vector<std::vector<int> >(1,std::vector<int>(_permutations[0].size(),+1));
+}
+
+void CDMASystem::storeFrameResults()
+{
+    SMCSystem::storeFrameResults();
+
+    _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
+	_everyFrameUsersActivity.push_back(_usersActivity);
+	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
+}
+
+void CDMASystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",_f);
+    Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
+	Octave::toOctaveFileStream(_nSurvivors,"nSurvivors",_f);
+	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
+	Octave::toOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
+	Octave::toOctaveFileStream(_userPriorProb,"userPriorProb",_f);
+	Octave::toOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
+	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
+	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
+	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);	
 }

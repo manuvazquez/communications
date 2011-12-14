@@ -40,3 +40,9 @@ void TesisComplejidadReducidaARSystem::beforeEndingFrame()
     TesisComplejidadReducidaSystem::beforeEndingFrame();
     Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
 }
+
+void TesisComplejidadReducidaARSystem::saveFrameResults()
+{
+    TesisComplejidadReducidaSystem::saveFrameResults();
+    Octave::toOctaveFileStream(channelVariance,"channelVariance",_f);
+}

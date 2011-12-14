@@ -49,9 +49,6 @@ protected:
     
 	std::vector<UsersActivityDistribution> _usersActivityPdfs;
 	
-	// it stores the maximum ratio among the coefficients of a channel matrix for every frame
-	vector<double> _maxCoefficientsRatiosInDBs;
-	
 	// this is used in two different methods (though only computed in one of them...)
 	double _maximumRatio;
 	
@@ -89,6 +86,8 @@ protected:
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
     virtual void beforeEndingFrame();
+	virtual void storeFrameResults();
+	virtual void saveFrameResults();
     virtual void buildSystemSpecificVariables();
 	virtual void onlyOnce();
 	

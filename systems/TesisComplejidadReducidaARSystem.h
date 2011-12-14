@@ -31,6 +31,7 @@ protected:
     double channelVariance;
     virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
+	virtual void saveFrameResults();
 public:
     TesisComplejidadReducidaARSystem();
 

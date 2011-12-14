@@ -65,6 +65,7 @@ protected:
     virtual void addAlgorithms();
     virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
+	virtual void saveFrameResults();
 public:
     TVT2007System();
 

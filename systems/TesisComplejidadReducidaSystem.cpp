@@ -163,3 +163,14 @@ void TesisComplejidadReducidaSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(muLMS,"muLMS",_f);
     Util::scalarToOctaveFileStream(muNLMS,"muNLMS",_f);
 }
+
+void TesisComplejidadReducidaSystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Octave::toOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
+    Octave::toOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+    Octave::toOctaveFileStream(muLMS,"muLMS",_f);
+    Octave::toOctaveFileStream(muNLMS,"muNLMS",_f);
+}

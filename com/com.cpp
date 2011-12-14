@@ -34,6 +34,7 @@
 #include <LMSmuTestSystem.h>
 #include <PSPvsSMCSystem.h>
 #include <CDMASystem.h>
+#include <ARparametersComparisonCDMASystem.h>
 #include <ISWCS10System.h>
 #include <ISWCS10numberOfSurvivorsImpactSystem.h>
 
@@ -127,6 +128,7 @@ int main(int argc,char* argv[])
 // 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
 	CDMASystem system;
+// 	ARparametersComparisonCDMASystem system;
 
 // 	ISWCS10System system;
 	

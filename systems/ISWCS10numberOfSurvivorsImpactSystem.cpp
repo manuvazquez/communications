@@ -91,3 +91,8 @@ void ISWCS10numberOfSurvivorsImpactSystem::beforeEndingFrame()
 	Util::scalarsVectorToOctaveFileStream(nParticlesStudied,"nParticlesStudied",_f);
 }
 
+void ISWCS10numberOfSurvivorsImpactSystem::saveFrameResults()
+{
+	ISWCS10System::saveFrameResults();
+	Octave::toOctaveFileStream(nParticlesStudied,"nParticlesStudied",_f);
+}

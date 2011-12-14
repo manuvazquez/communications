@@ -37,3 +37,8 @@ void TesisOrdenCanalDesconocidoARSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(channelVariance,"channelVariance",_f);
 }
 
+void TesisOrdenCanalDesconocidoARSystem::saveFrameResults()
+{
+    TesisOrdenCanalDesconocidoSystem::saveFrameResults();
+    Octave::toOctaveFileStream(channelVariance,"channelVariance",_f);
+}

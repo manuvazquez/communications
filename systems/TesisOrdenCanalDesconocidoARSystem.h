@@ -56,6 +56,7 @@ protected:
 //     virtual void AddAlgorithms();
     virtual void buildSystemSpecificVariables();
     virtual void beforeEndingFrame();
+	virtual void saveFrameResults();
 public:
     TesisOrdenCanalDesconocidoARSystem();
 };

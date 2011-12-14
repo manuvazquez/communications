@@ -111,3 +111,12 @@ void PSPvsSMCSystem::beforeEndingFrame()
 
     Util::scalarToOctaveFileStream(nSurvivors,"nSurvivors",_f);
 }
+
+void PSPvsSMCSystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+    Octave::toOctaveFileStream(velocity,"velocity",_f);
+    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+}

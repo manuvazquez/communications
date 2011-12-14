@@ -105,3 +105,15 @@ void LMSmuTestSystem::beforeEndingFrame()
     Util::scalarToOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
     Util::scalarsVectorToOctaveFileStream(musLMS,"musLMS",_f);
 }
+
+void LMSmuTestSystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+    Octave::toOctaveFileStream(velocity,"velocity",_f);
+    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
+    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+
+    Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
+    Octave::toOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
+    Octave::toOctaveFileStream(musLMS,"musLMS",_f);
+}

@@ -122,3 +122,22 @@ void ChannelOrderEstimationSystem::addAlgorithms()
 	_iAlgorithmPerformingChannelOrderAPPestimation = 0;
 	_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation = 0;
 }
+
+void ChannelOrderEstimationSystem::storeFrameResults()
+{
+    SMCSystem::storeFrameResults();
+
+	_channelOrderAPPsAlongTime.push_back(_presentFrameChannelOrderAPPsAlongTime);
+	_oneChannelOrderPerOutputAPPsAlongTime.push_back(_presentFrameOneChannelOrderPerOutputAPPsAlongTime);
+}
+
+void ChannelOrderEstimationSystem::saveFrameResults()
+{
+    SMCSystem::saveFrameResults();
+
+	Octave::toOctaveFileStream(_candidateChannelOrders,"candidateOrders",_f);
+	Octave::toOctaveFileStream(_iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
+	Octave::toOctaveFileStream(_iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation,"iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation",_f);
+	Octave::eigenToOctaveFileStream(_channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);	
+	Octave::eigenToOctaveFileStream(_oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
+}
