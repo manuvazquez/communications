@@ -67,7 +67,7 @@ std::vector<uint> ResamplingAlgorithm::obtainIndexes(uint n,const VectorXd &weig
 	double normConst = 0.0;
   
 	nActiveElements = 0;
-	for(int i=0;i<weights.size();i++)
+	for(uint i=0;i<weights.size();i++)
 		if(mask[i])
 		{
 			filteredWeights(nActiveElements++) = weights(i);

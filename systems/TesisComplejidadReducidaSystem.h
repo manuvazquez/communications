@@ -37,7 +37,7 @@
 class TesisComplejidadReducidaSystem : public SMCSystem
 {
 protected:
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     KalmanEstimator *kalmanEstimator;

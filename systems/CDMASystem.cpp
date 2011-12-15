@@ -111,7 +111,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 	  cout << "Number of particles adjusted from " << nParticles;
 	  
 	  // the number of particles must be the number of states of the Viterbi/PSP algorithm times that of survivors
-	  nParticles = (int)pow((double)_alphabet->length()+1,_N)*_nSurvivors;
+	  nParticles = (uint)pow((double)_alphabet->length()+1,_N)*_nSurvivors;
 	  
 	  cout << " to " << nParticles << endl;
     }
@@ -119,7 +119,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     if(_adjustSurvivorsFromParticlesNumber)
     {
 	  cout << "Number of survivors adjusted from " << _nSurvivors;
-	  _nSurvivors = int(ceil(double(nParticles)/pow((double)_alphabet->length()+1,double(_N))));
+	  _nSurvivors = uint(ceil(double(nParticles)/pow((double)_alphabet->length()+1,double(_N))));
 	  cout << " to " << _nSurvivors << endl;
     }
 
@@ -262,8 +262,8 @@ double CDMASystem::computeSelectedUsersActivityDetectionErrorRate(MatrixXd sourc
 
 	// in order to compute the probability of activity detection it makes no difference the symbol detected: the only thing that matters is wether a symbol (any) was detected or not
 	// for both the "sourceSymbols" and the "detectedSymbols", every symbol belonging to the alphabet is transformed into the "first" symbol of the alphabet
-	for (int i=0;i<sourceSymbols.rows();i++)
-		for (int j=0;j<sourceSymbols.cols();j++)
+	for (uint i=0;i<sourceSymbols.rows();i++)
+		for (uint j=0;j<sourceSymbols.cols();j++)
 		{
 			if (_alphabet->doesItBelong(sourceSymbols(i,j)))
 				sourceSymbols(i,j) = _alphabet->operator[](0u);

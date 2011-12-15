@@ -23,7 +23,7 @@
 
 VectorXd Util::toVector(const MatrixXd &matrix,tOrder order)
 {
-    int i,nElements;
+    uint i,nElements;
 
     nElements = matrix.rows()*matrix.cols();
     VectorXd vector(nElements);
@@ -55,7 +55,7 @@ MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,uint rows,uint cols)
 
 MatrixXd Util::toMatrix(const VectorXd &vector,tOrder order,uint rows)
 {
-    int remainder = vector.size() % rows;
+    uint remainder = vector.size() % rows;
     if(remainder!=0)
         throw RuntimeException("Util::toMatrix: resultant number of columns is not integer.");
     uint cols = vector.size()/rows;
@@ -97,15 +97,6 @@ void Util::normalize(std::vector<double> &v)
     for(k=0;k<nElements;k++)
         v[k] = v[k]/sum;
 }
-
-// double Util::sum(const VectorXd &v)
-// {
-//     double res = 0.0;
-// 
-//     for(uint i=v.size();i--;)
-//         res += v(i);
-//     return res;
-// }
 
 double Util::squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B)
 {
@@ -271,7 +262,7 @@ template void Util::nextVector(std::vector<double> &vector,const std::vector<std
  * @param firstOccurrence
  * @param times
  */
-template<class T> void Util::howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times)
+template<class T> void Util::howManyTimes(const vector<T> &v,vector<uint> &firstOccurrence,vector<uint> &times)
 {
     firstOccurrence.clear();
     firstOccurrence.reserve(v.size());
@@ -296,7 +287,7 @@ template<class T> void Util::howManyTimes(const vector<T> &v,vector<int> &firstO
         }
     }
 }
-template void Util::howManyTimes(const vector<int> &v,vector<int> &firstOccurrence,vector<int> &times);
+template void Util::howManyTimes(const vector<int> &v,vector<uint> &firstOccurrence,vector<uint> &times);
 
 vector<uint> Util::nMax(uint n,const VectorXd &v)
 {

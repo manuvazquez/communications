@@ -31,7 +31,7 @@ public:
     TesisComplejidadReducidaBesselNumeroParticulasSystem();
 
 protected:
-    vector<int> particlesNumbers;
+    vector<uint> particlesNumbers;
 
 	virtual void saveFrameResults();
     virtual void addAlgorithms();

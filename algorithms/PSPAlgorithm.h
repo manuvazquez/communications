@@ -74,7 +74,7 @@ protected:
     void process(const MatrixXd &observations,vector<double> noiseVariances);
     virtual void deployState(int iState,const VectorXd &observations, double noiseVariance);
 public:
-    PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors);
+    PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, uint nSurvivors);
 
     ~PSPAlgorithm();
 

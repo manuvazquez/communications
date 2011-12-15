@@ -23,7 +23,7 @@
 // #define DEBUG
 // #define DEBUG_PRINT_LAST_CHANNEL_ESTIMATION
 
-PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
+PSPAlgorithm::PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, uint nSurvivors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_inputVector(N),_stateVector(N*(m-1)),_nSurvivors(nSurvivors),_d(smoothingLag),_startDetectionTime(preamble.cols()),_detectedSymbolVectors(new MatrixXd(N,iLastSymbolVectorToBeDetected+smoothingLag)),_firstSymbolVectorDetectedAt(firstSymbolVectorDetectedAt),_iFirstInLoopProcessedObservation(_startDetectionTime)
 {
     if(preamble.cols() < (m-1))
         throw RuntimeException("PSPAlgorithm::PSPAlgorithm: preamble dimensions are wrong.");

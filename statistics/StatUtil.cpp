@@ -147,7 +147,7 @@ double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd
     ldltOfCovariance.solveInPlace(invCovariance);
         
     double invCovarianceDeterminant = 1.0;    
-    for(int i=0;i<ldltOfCovariance.vectorD().rows();i++)
+    for(uint i=0;i<ldltOfCovariance.vectorD().rows();i++)
         invCovarianceDeterminant *= ldltOfCovariance.vectorD().coeff(i); 
 
     return 1.0/(sqrt(fabs(invCovarianceDeterminant))*pow(2.0*M_PI,((double)N)/2.0))*exp((x-mean).dot(-0.5*invCovariance*(x-mean)));
@@ -157,7 +157,7 @@ double StatUtil::normalPdf(const VectorXd &x,const VectorXd &mean,double varianc
 {
     double res = 1.0;
     
-    for(int i=0;i<x.rows();i++)
+    for(uint i=0;i<x.rows();i++)
         res *= 1.0/sqrt(2.0*M_PI*variance)*exp(-((x(i) - mean(i))*(x(i) - mean(i)))/(2.0*variance));
 
     return res;
@@ -167,7 +167,7 @@ double StatUtil::variance(const VectorXd &v)
 {
     double squareMean=0.0,mean=0.0;
 
-    for(int i=0;i<v.size();i++)
+    for(uint i=0;i<v.size();i++)
     {
         mean += v(i);
         squareMean += v(i)*v(i);
@@ -182,8 +182,8 @@ double StatUtil::mean(const MatrixXd &A)
 {
     double sum = 0.0;
 
-    for(int i=0;i<A.rows();i++)
-        for(int j=0;j<A.cols();j++)
+    for(uint i=0;i<A.rows();i++)
+        for(uint j=0;j<A.cols();j++)
             sum += A(i,j);
 
     return sum/(double)(A.rows()*A.cols());
@@ -252,7 +252,7 @@ vector<uint> StatUtil::withoutReplacementSampling(uint nSamples, const VectorXd&
 inline double StatUtil::computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands)
 {
     double res = 0.0;
-    for(int i=0;i<probabilities.size();i++)
+    for(uint i=0;i<probabilities.size();i++)
         if(activeOperands[i])
             res += probabilities(i);
     return res;
@@ -265,7 +265,7 @@ double StatUtil::probApriori(const VectorXd &symbolsVector, const std::vector<Us
   
   double res = 1.0;
   
-  for(int i=0;i<symbolsVector.size();i++)
+  for(uint i=0;i<symbolsVector.size();i++)
 	res *= symbolsDistributions[i].probApriori(Util::isUserActive(symbolsVector(i)));
 // 	res *= symbolsDistributions[i].probApriori(symbolsDistributions[i].isUserActive(symbolsVector(i)));  
   
@@ -282,7 +282,7 @@ double StatUtil::probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersAc
   
   double res = 1.0;
   
-  for(int i=0;i<X.size();i++)
+  for(uint i=0;i<X.size();i++)
 	res *= symbolsDistributions[i].probXgivenY(Util::isUserActive(X(i)),Util::isUserActive(Y(i)));
 // 	res *= symbolsDistributions[i].probXgivenY(symbolsDistributions[i].isUserActive(X(i)),symbolsDistributions[i].isUserActive(Y(i)));  
   
@@ -298,7 +298,7 @@ double StatUtil::probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const Ve
     double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
 	double overallProb = 1.0;
     
-    for(int i=0;i<symbolsVector.size();i++)
+    for(uint i=0;i<symbolsVector.size();i++)
     {
 	  if(Util::isUserActive(symbolsVector(i)))
 	  {
@@ -322,7 +322,7 @@ double StatUtil::probSymbolsVector(const VectorXd &symbolsVector,const std::vect
   double probSymbolWhenUserActive,probSymbolWhenUserNotActive;
   double overallProb = 1.0;
 
-  for(int i=0;i<symbolsVector.size();i++)
+  for(uint i=0;i<symbolsVector.size();i++)
   {
 	if(Util::isUserActive(symbolsVector(i)))
 	{

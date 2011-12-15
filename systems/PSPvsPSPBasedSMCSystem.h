@@ -42,7 +42,7 @@ public:
     ~PSPvsPSPBasedSMCSystem();
 
 protected:
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors;
 
     KalmanEstimator *kalmanEstimator;

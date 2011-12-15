@@ -69,14 +69,14 @@ PSPvsSMCSystem::PSPvsSMCSystem()
 
     if(adjustParticlesNumberFromSurvivors)
     {
-        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
+        nParticles = (uint)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
     if(adjustSurvivorsFromParticlesNumber)
     {
         cout << "Number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
+        nSurvivors = uint(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
         cout << " to " << nSurvivors << endl;
     }
 

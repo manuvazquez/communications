@@ -41,7 +41,7 @@ protected:
     double symbolRate; // (Hz)
     double T; // (s)
 
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     KalmanEstimator *kalmanEstimator;

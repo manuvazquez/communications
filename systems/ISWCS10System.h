@@ -40,7 +40,7 @@
 class ISWCS10System : public ChannelOrderEstimationSystem
 {
 protected:
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
 	double _velocity;

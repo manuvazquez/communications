@@ -52,7 +52,7 @@ protected:
 	MatrixXd _presentFramePeActivityDetection;
 	vector<MatrixXd> _peActivityDetectionFrames;
 	
-	int _nSurvivors;
+	uint _nSurvivors;
 
     bool _adjustSurvivorsFromParticlesNumber;
     bool _adjustParticlesNumberFromSurvivors;

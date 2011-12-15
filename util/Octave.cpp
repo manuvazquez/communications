@@ -25,9 +25,9 @@ void Octave::eigenToOctaveFileStream(const MatrixXd &A,string name,std::ofstream
 {
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# rows: " << A.rows() << std::endl << "# columns: " << A.cols() << std::endl;
 
-    for(int i=0;i<A.rows();i++)
+    for(uint i=0;i<A.rows();i++)
     {
-        for(int j=0;j<A.cols();j++)
+        for(uint j=0;j<A.cols();j++)
             f << A(i,j) << " ";
         f << std::endl;
     }
@@ -43,8 +43,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &
 
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 4" << std::endl << " " << matrices[0][0].rows() << " " << matrices[0][0].cols() << " " << matrices[0].size() << " " << matrices.size() << std::endl;
 
-    int i,j;
-    uint k;
+    uint i,j,k;
     for(uint l=0;l<matrices.size();l++)
         for(k=0;k<matrices[l].size();k++)
             for(j=0;j<matrices[l][k].cols();j++)
@@ -62,8 +61,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<M
 
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 5" << std::endl << " " << matrices[0][0][0].rows() << " " << matrices[0][0][0].cols() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << std::endl;
 
-    int i,j;
-    uint k,l;
+    uint i,j,k,l;
     for(uint m=0;m<matrices.size();m++)
         for(l=0;l<matrices[m].size();l++)
             for(k=0;k<matrices[m][l].size();k++)
@@ -82,8 +80,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<s
 
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 6" << std::endl << " " << matrices[0][0][0][0].rows() << " " << matrices[0][0][0][0].cols() << " " << matrices[0][0][0].size() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << std::endl;
 
-    int i,j;
-    uint k,l,m;
+    uint i,j,k,l,m;
     for(uint n=0;n<matrices.size();n++)
         for(m=0;m<matrices[n].size();m++)
             for(l=0;l<matrices[n][m].size();l++)
@@ -103,8 +100,8 @@ void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,strin
 
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 3" << std::endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << std::endl;
 
-    int i,j;
-    for(uint iMatrix=0;iMatrix<matrices.size();iMatrix++)
+    uint i,j,iMatrix;
+    for(iMatrix=0;iMatrix<matrices.size();iMatrix++)
         for(j=0;j<(matrices.at(iMatrix)).cols();j++)
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << std::endl;
@@ -193,8 +190,8 @@ template<class T> void Octave::toOctaveFileStream(const std::vector<std::vector<
 
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 3" << std::endl << " " << matrix[0].size() << " " << matrix[0][0].size() << " " << matrix.size() << std::endl;
 
-    uint i,j;
-    for(uint iMatrix=0;iMatrix<matrix.size();iMatrix++)
+    uint i,j,iMatrix;
+    for(iMatrix=0;iMatrix<matrix.size();iMatrix++)
         for(j=0;j<matrix[iMatrix][0].size();j++)
             for(i=0;i<matrix[iMatrix].size();i++)
                 f << " " << matrix[iMatrix][i][j] << std::endl;

@@ -439,7 +439,7 @@ if(__nFramesHasBeenPassed)
 #ifdef STOP_AFTER_EACH_SNR
 		getchar();
 #endif
-        } // for(int iSNR=0;iSNR<SNRs.size();iSNR++)
+        } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 
 // 		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
 // 		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
@@ -552,7 +552,7 @@ void BaseSystem::beforeEndingAlgorithm()
 
 #ifdef MSE_TIME_EVOLUTION_COMPUTING
     VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
-    for(int ik=0;ik<frameLength;ik++)
+    for(uint ik=0;ik<frameLength;ik++)
         presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
 #endif
 
@@ -670,15 +670,15 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
 
 double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
 {
-    int nRealChannelMatrices = realChannelMatrices.size();
-    int nEstimatedChannelMatrices = estimatedChannelMatrices.size();
+    uint nRealChannelMatrices = realChannelMatrices.size();
+    uint nEstimatedChannelMatrices = estimatedChannelMatrices.size();
 
     if(nRealChannelMatrices!=nEstimatedChannelMatrices)
         throw RuntimeException("BaseSystem::computeMSE: number of real channel matrices doesn't match that of the estimated.");
 
     double mse = 0;
 	
-	for(int i=0;i<nRealChannelMatrices;i++)
+	for(uint i=0;i<nRealChannelMatrices;i++)
 	{
 		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
 		// (i.e. the sum of all the elements squared) of the real channel matrix

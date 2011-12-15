@@ -51,7 +51,7 @@
 class TesisOrdenCanalDesconocidoSystem : public ChannelOrderEstimationSystem
 {
 protected:
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     double forgettingFactor;

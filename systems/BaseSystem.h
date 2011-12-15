@@ -111,7 +111,7 @@ protected:
 	uint _symbolsDetectionWindowStart;
 	
 	// when MSE computing starts (with respect to the beginning of the frame length)
-	int _MSEwindowStart;
+	uint _MSEwindowStart;
 
     // a vector that will contain the names of the algorithms
     std::vector<std::string> _algorithmsNames;

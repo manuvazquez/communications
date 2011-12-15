@@ -20,7 +20,7 @@
 
 // #define DEBUG
 
-PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, int nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs):PSPAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, firstSymbolVectorDetectedAt, nSurvivors),_usersActivityPdfs(usersActivityPdfs),_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
+PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, uint nSurvivors, const std::vector<UsersActivityDistribution> usersActivityPdfs):PSPAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, firstSymbolVectorDetectedAt, nSurvivors),_usersActivityPdfs(usersActivityPdfs),_extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
 {
   if(m!=1)
 	throw RuntimeException("PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities: this algorithm is only implemented for flat channels.");

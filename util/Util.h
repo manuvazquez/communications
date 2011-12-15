@@ -49,7 +49,6 @@ public:
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
     static VectorXd normalize(const VectorXd &v);
     static void normalize(std::vector<double> &v);    
-//     static double sum(const VectorXd &v);
     static double squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B);
     static void print(const MatrixXd &A);
     template<class T> static T sum(const std::vector<T> &vector);
@@ -59,7 +58,7 @@ public:
 	static MatrixXd applyPermutationOnColumns(const MatrixXd &symbols,const vector<uint> &permutation,const vector<int> &signs);
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
     template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
-    template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
+    template<class T> static void howManyTimes(const vector<T> &v,vector<uint> &firstOccurrence,vector<uint> &times);
     
 	
 	/**

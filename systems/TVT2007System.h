@@ -42,7 +42,7 @@
 class TVT2007System : public ChannelOrderEstimationSystem
 {
 protected:
-    int nSurvivors;
+    uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
     double forgettingFactor;

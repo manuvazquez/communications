@@ -43,11 +43,11 @@ WithThresholdResamplingAlgorithmWrapper::WithThresholdResamplingAlgorithmWrapper
 VectorXd WithThresholdResamplingAlgorithmWrapper::FlattenWeights(const VectorXd &weights, double threshold) const
 {
     double remainingWeight = 0.0;
-    int nParticlesOverThreshold = 0;
+    uint nParticlesOverThreshold = 0;
 
     VectorXd newWeights = weights;
 
-    for(int iWeight=0;iWeight<weights.size();iWeight++)
+    for(uint iWeight=0;iWeight<weights.size();iWeight++)
         if(newWeights(iWeight)>=threshold)
         {
             nParticlesOverThreshold++;
@@ -59,7 +59,7 @@ VectorXd WithThresholdResamplingAlgorithmWrapper::FlattenWeights(const VectorXd 
     {
         double weightToAddToEachParticle = remainingWeight/double(weights.size() - nParticlesOverThreshold);
 
-        for(int iWeight=0;iWeight<weights.size();iWeight++)
+        for(uint iWeight=0;iWeight<weights.size();iWeight++)
             if(newWeights(iWeight) < threshold)
                 newWeights(iWeight) += weightToAddToEachParticle;
     }
