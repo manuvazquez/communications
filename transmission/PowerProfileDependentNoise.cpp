@@ -33,8 +33,6 @@ void PowerProfileDependentNoise::setSNR(int SNR)
 {
 	double newStdDev = computeStd(SNR);
 	
-	std::cout << "PowerProfileDependentNoise::setSNR: standard deviation set to " << newStdDev << std::endl;
-
 	_matrix *= (newStdDev/_stdDev);
 	_stdDev = newStdDev;
 }

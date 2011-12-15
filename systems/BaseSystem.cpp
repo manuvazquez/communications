@@ -61,8 +61,7 @@ BaseSystem::BaseSystem()
 {
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
-    // comment/uncomment to set to false/true
-//  	_saveAtEveryFrame = true;
+ 	_saveAtEveryFrame = true; // comment/uncomment to set to false/true
 
 
 // ------------------------ iswcs 2010 ----------------------
@@ -93,9 +92,9 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-	_nFrames = 1000;
+// 	_nFrames = 1000;
 // 	_nFrames = 1;
-// 	_nFrames = 2;
+	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
 // 	_L=8,_N=3,_frameLength=2;

@@ -80,7 +80,8 @@ void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noise
             // channel matrix is estimated by means of the particle channel estimator
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVectors(iObservationToBeProcessed-_channelOrder+1,iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
 
-            processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
+//             processedParticle->setWeight(processedParticle->getWeight()* Util::sum(likelihoods));
+			processedParticle->setWeight(processedParticle->getWeight()*likelihoods.sum());
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 
         _particleFilter->normalizeWeights();

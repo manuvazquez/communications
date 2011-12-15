@@ -35,14 +35,14 @@
 class Octave{
   
 public:
-    static void eigenToOctaveFileStream(const MatrixXd A,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(std::vector<std::vector<MatrixXd> > matrices,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(std::vector<std::vector<std::vector<MatrixXd> > > matrices,string name,std::ofstream &f);
-	static void eigenToOctaveFileStream(std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > matrices,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(std::vector<MatrixXd> matrices,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const MatrixXd &A,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,string name,std::ofstream &f);
+	static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,string name,std::ofstream &f);
     template<class T> static void toOctaveFileStream(T scalar,string name,std::ofstream &f);
-    static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,std::ofstream &f);
-    template<class T> static void toOctaveFileStream(std::vector<T> vector,string name,std::ofstream &f);
+    static void stringsVectorToOctaveFileStream(const std::vector<string> &strings,string name,std::ofstream &f);
+    template<class T> static void toOctaveFileStream(const std::vector<T> &vector,string name,std::ofstream &f);
 	template<class T> static void toOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,std::ofstream &f);
 	template<class T> static void toOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,std::ofstream &f);
 };

@@ -49,17 +49,9 @@ public:
     static MatrixXd toMatrix(const VectorXd &vector,tOrder order,uint rows);
     static VectorXd normalize(const VectorXd &v);
     static void normalize(std::vector<double> &v);    
-    static double sum(const VectorXd &v);
+//     static double sum(const VectorXd &v);
     static double squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B);
     static void print(const MatrixXd &A);
-    static void matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f);
-    template<class T> static void matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f);
-    static void matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f);
-    static void matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f);
-	static void matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<vector<vector<MatrixXd> > > > matrices,string name,ofstream &f); //
-    template<class T> static void scalarToOctaveFileStream(T scalar,string name,ofstream &f);
-    static void stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f);
-    template<class T> static void scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f);
     template<class T> static T sum(const std::vector<T> &vector);
     static void shiftUp(VectorXd &v,uint n);
     template<class T> static std::vector<std::vector<T> > permutations(T *array, uint nElements);
@@ -68,8 +60,6 @@ public:
 	template<class T> static vector<T> applyPermutation(const vector<T> &v,const vector<uint> &permutation);			//
     template<class T> static void nextVector(std::vector<T> &vector,const std::vector<std::vector<T> > &alphabets);
     template<class T> static void howManyTimes(const vector<T> &v,vector<int> &firstOccurrence,vector<int> &times);
-	template<class T> static void scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,ofstream &f);
-	template<class T> static void scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,ofstream &f);
     
 	
 	/**

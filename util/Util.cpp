@@ -98,14 +98,14 @@ void Util::normalize(std::vector<double> &v)
         v[k] = v[k]/sum;
 }
 
-double Util::sum(const VectorXd &v)
-{
-    double res = 0.0;
-
-    for(uint i=v.size();i--;)
-        res += v(i);
-    return res;
-}
+// double Util::sum(const VectorXd &v)
+// {
+//     double res = 0.0;
+// 
+//     for(uint i=v.size();i--;)
+//         res += v(i);
+//     return res;
+// }
 
 double Util::squareErrorPaddingWithZeros(const MatrixXd &A,const MatrixXd &B)
 {
@@ -148,128 +148,6 @@ void Util::print(const MatrixXd &A)
         cout << endl;
     }
 }
-
-void Util::matrixToOctaveFileStream(const MatrixXd A,string name,ofstream &f)
-{
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << A.rows() << endl << "# columns: " << A.cols() << endl;
-
-    for(int i=0;i<A.rows();i++)
-    {
-        for(int j=0;j<A.cols();j++)
-            f << A(i,j) << " ";
-        f << endl;
-    }
-}
-
-template<class T> void Util::matricesVectorToOctaveFileStream(vector<T> matrices,string name,ofstream &f)
-{
-    if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
-    {
-        cout << "Util::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-        return;
-    }
-
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << endl;
-
-    int i,j;
-    for(uint iMatrix=0;iMatrix<matrices.size();iMatrix++)
-        for(j=0;j<(matrices.at(iMatrix)).cols();j++)
-            for(i=0;i<(matrices.at(iMatrix)).rows();i++)
-                f << " " << (matrices.at(iMatrix))(i,j) << endl;
-}
-template void Util::matricesVectorToOctaveFileStream(vector<MatrixXd> matrices,string name,ofstream &f);
-
-void Util::matricesVectorsVectorToOctaveFileStream(vector<vector<MatrixXd> > matrices,string name,ofstream &f)
-{
-    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
-    {
-        cout << "Util::matricesVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-        return;
-    }
-
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 4" << endl << " " << matrices[0][0].rows() << " " << matrices[0][0].cols() << " " << matrices[0].size() << " " << matrices.size() << endl;
-
-    int i,j;
-    uint k;
-    for(uint l=0;l<matrices.size();l++)
-        for(k=0;k<matrices[l].size();k++)
-            for(j=0;j<matrices[l][k].cols();j++)
-                for(i=0;i<matrices[l][k].rows();i++)
-                    f << " " << matrices[l][k](i,j) << endl;
-}
-
-void Util::matricesVectorsVectorsVectorToOctaveFileStream(vector<vector<vector<MatrixXd> > > matrices,string name,ofstream &f)
-{
-    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
-    {
-        cout << "Util::matricesVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-        return;
-    }
-
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 5" << endl << " " << matrices[0][0][0].rows() << " " << matrices[0][0][0].cols() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << endl;
-
-    int i,j;
-    uint k,l;
-    for(uint m=0;m<matrices.size();m++)
-        for(l=0;l<matrices[m].size();l++)
-            for(k=0;k<matrices[m][l].size();k++)
-                for(j=0;j<matrices[m][l][k].cols();j++)
-                    for(i=0;i<matrices[m][l][k].rows();i++)
-                        f << " " << matrices[m][l][k](i,j) << endl;
-}
-
-template<class T> void Util::scalarToOctaveFileStream(T scalar,string name,ofstream &f)
-{
-    f << "# name: "<< name << endl <<"# type: scalar" << endl << scalar << endl;
-}
-
-template void Util::scalarToOctaveFileStream(int scalar,string name,ofstream &f);
-template void Util::scalarToOctaveFileStream(double scalar,string name,ofstream &f);
-template void Util::scalarToOctaveFileStream(uint scalar,string name,ofstream &f);
-
-void Util::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,ofstream &f)
-{
-    if(strings.size()==0)
-	{
-		std::cout << "Util::stringsVectorToOctaveFileStream: the vector is empty, nothing is written." << std::endl;
-        return;
-	}
-
-    int j;
-
-    f << "# name: "<< name << endl <<"# type: string" << endl << "# elements: " << strings.size() << endl;
-
-    uint iMax = 0;
-    uint max = strings[0].length();
-    for(uint i=0;i<strings.size();i++)
-        if(strings[i].length()>max)
-        {
-            iMax = i;
-            max = strings[i].length();
-        }
-    for(uint i=0;i<strings.size();i++)
-    {
-        f << "# length: " << max << endl;
-        f << strings[i];
-
-        // padding with spaces
-        for(j=max-strings[i].length();j>0;j--)
-            f << " ";
-        f << endl;
-    }
-}
-
-template<class T> void Util::scalarsVectorToOctaveFileStream(std::vector<T> vector,string name,ofstream &f)
-{
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << "1" << endl << "# columns: " << vector.size() << endl;
-
-    for(uint i=0;i<vector.size();i++)
-        f << vector[i] << " ";
-    f << endl;
-}
-template void Util::scalarsVectorToOctaveFileStream(std::vector<double> vector,string name,ofstream &f);
-template void Util::scalarsVectorToOctaveFileStream(std::vector<int> vector,string name,ofstream &f);
-template void Util::scalarsVectorToOctaveFileStream(std::vector<uint32_t> vector,string name,ofstream &f);
 
 template<class T> T Util::sum(const std::vector<T> &vector)
 {
@@ -505,41 +383,6 @@ double Util::maxCoefficientsRatio(const MatrixXd &A)
   return max/min;
 }
 
-void Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream(vector<vector<vector<vector<MatrixXd> > > > matrices,string name,ofstream &f)
-{
-    if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
-    {
-        cout << "Util::matricesVectorsVectorsVectoresVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-// 		cout << "dimensions are:" << endl;
-// 		cout << matrices.size() << endl;
-// 		cout << matrices[0].size() << endl;
-// 		cout << matrices[0][0].size() << endl;
-// 		cout << matrices[0][0][0].size() << endl;
-// 		cout << matrices[0][0][0][0].rows() << endl;
-// 		cout << matrices[0][0][0][0].cols() << endl;
-        return;
-    }
-
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 6" << endl << " " << matrices[0][0][0][0].rows() << " " << matrices[0][0][0][0].cols() << " " << matrices[0][0][0].size() << " " << matrices[0][0].size() << " " << matrices[0].size() << " " << matrices.size() << endl;
-
-    int i,j;
-    uint k,l,m;
-    for(uint n=0;n<matrices.size();n++)
-        for(m=0;m<matrices[n].size();m++)
-            for(l=0;l<matrices[n][m].size();l++)
-				for(k=0;k<matrices[n][m][l].size();k++)
-// 				  // if this is an empty matrix
-// 				  if(matrices[n][m][l][k].cols() == 0 || matrices[n][m][l][k].rows())
-// 					// its space is filled with NaN's
-// 					for(j=0;j<matrices[0][0][0][0].cols();j++)
-// 					  for(i=0;i<matrices[0][0][0][0].rows();i++)
-// 						f << " NaN" << endl;
-// 				  else
-					for(j=0;j<matrices[n][m][l][k].cols();j++)
-						for(i=0;i<matrices[n][m][l][k].rows();i++)
-							f << " " << matrices[n][m][l][k](i,j) << endl;
-}
-
 std::vector<uint> Util::computeInversePermutation(const std::vector<uint> &permutation)
 {
   std::vector<uint> res(permutation.size());
@@ -604,45 +447,6 @@ std::vector<MatrixXd> Util::keepCol(const std::vector<MatrixXd> &matricesVector,
 	
 	return res;
 }
-
-template<class T> void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,ofstream &f)
-{
-	uint nRows = matrix.size();
-	assert(nRows!=0);
-	
-	f << "# name: "<< name << endl <<"# type: matrix" << endl << "# rows: " << matrix.size() << endl << "# columns: " << matrix[0].size() << endl;
-	
-	uint nCols = matrix[0].size();
-	
-	for(uint iRow=0;iRow<nRows;iRow++)
-	{
-		assert(matrix[iRow].size()==nCols);
-		for(uint iCol=0;iCol<nCols;iCol++)
-			f << matrix[iRow][iCol] << " ";
-		f << endl;
-	}
-}
-template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <double> > &matrix,string name,ofstream &f);
-template void Util::scalarsVectorsVectorToOctaveFileStream(const std::vector<std::vector <bool> > &matrix,string name,ofstream &f);
-
-template<class T> void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,ofstream &f)
-{
-    if(matrix.size()==0 || matrix[0].size()==0 || matrix[0][0].size()==0)
-    {
-        cout << "Util::scalarsVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << endl;
-        return;
-    }
-
-    f << "# name: "<< name << endl <<"# type: matrix" << endl << "# ndims: 3" << endl << " " << matrix[0].size() << " " << matrix[0][0].size() << " " << matrix.size() << endl;
-
-    uint i,j;
-    for(uint iMatrix=0;iMatrix<matrix.size();iMatrix++)
-        for(j=0;j<matrix[iMatrix][0].size();j++)
-            for(i=0;i<matrix[iMatrix].size();i++)
-                f << " " << matrix[iMatrix][i][j] << endl;
-}
-template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,string name,ofstream &f);
-template void Util::scalarsVectorsVectorsVectorToOctaveFileStream(const std::vector<std::vector<std::vector <bool> > >&matrix,string name,ofstream &f);
 
 bool Util::areColsOrthogonal(const MatrixXd &matrix)
 {

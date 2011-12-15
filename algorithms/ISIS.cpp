@@ -171,7 +171,8 @@ void ISIS::process(const MatrixXd& observations, vector< double > noiseVariances
                 for(iChannelOrder=0;iChannelOrder<_candidateOrders.size();iChannelOrder++)
                     processedParticle->setChannelOrderAPP(newChannelOrderAPPs[iChannelOrder]/channelOrderAPPsNormConstant,iChannelOrder);
 
-            processedParticle->setWeight(processedParticle->getWeight()*Util::sum(likelihoods));
+//             processedParticle->setWeight(processedParticle->getWeight()*Util::sum(likelihoods));
+			processedParticle->setWeight(processedParticle->getWeight()*likelihoods.sum());
 
         } // for(iParticle=0;iParticle<_nParticles;iParticle++)
 

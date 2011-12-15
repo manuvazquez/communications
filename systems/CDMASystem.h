@@ -49,9 +49,6 @@ protected:
     
 	std::vector<UsersActivityDistribution> _usersActivityPdfs;
 	
-	// this is used in two different methods (though only computed in one of them...)
-	double _maximumRatio;
-	
 	MatrixXd _presentFramePeActivityDetection;
 	vector<MatrixXd> _peActivityDetectionFrames;
 	
@@ -82,6 +79,13 @@ protected:
 	int _minSignalToInterferenceRatio;
 	
 	std::vector<MatrixXd> _everyFrameSpreadingCodes;
+	
+	/**
+	 * @brief number of sign changes that occur in the channel estimate of all the algorithms for every SNR and every frame
+	 **/
+	std::vector<std::vector<std::vector<uint> > > _everyFrameNumberSignChanges;
+	
+	std::vector<std::vector<uint> > _thisFrameNumberSignChanges;
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();

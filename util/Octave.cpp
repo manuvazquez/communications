@@ -21,7 +21,7 @@
 
 #include <bashcolors.h>
 
-void Octave::eigenToOctaveFileStream(const MatrixXd A,string name,std::ofstream &f)
+void Octave::eigenToOctaveFileStream(const MatrixXd &A,string name,std::ofstream &f)
 {
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# rows: " << A.rows() << std::endl << "# columns: " << A.cols() << std::endl;
 
@@ -33,24 +33,7 @@ void Octave::eigenToOctaveFileStream(const MatrixXd A,string name,std::ofstream 
     }
 }
 
-void Octave::eigenToOctaveFileStream(std::vector<MatrixXd> matrices,string name,std::ofstream &f)
-{
-    if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
-    {
-        std::cout << "Octave::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << std::endl;
-        return;
-    }
-
-    f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 3" << std::endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << std::endl;
-
-    int i,j;
-    for(uint iMatrix=0;iMatrix<matrices.size();iMatrix++)
-        for(j=0;j<(matrices.at(iMatrix)).cols();j++)
-            for(i=0;i<(matrices.at(iMatrix)).rows();i++)
-                f << " " << (matrices.at(iMatrix))(i,j) << std::endl;
-}
-
-void Octave::eigenToOctaveFileStream(std::vector<std::vector<MatrixXd> > matrices,string name,std::ofstream &f)
+void Octave::eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
     {
@@ -69,7 +52,7 @@ void Octave::eigenToOctaveFileStream(std::vector<std::vector<MatrixXd> > matrice
                     f << " " << matrices[l][k](i,j) << std::endl;
 }
 
-void Octave::eigenToOctaveFileStream(std::vector<std::vector<std::vector<MatrixXd> > > matrices,string name,std::ofstream &f)
+void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
     {
@@ -89,7 +72,7 @@ void Octave::eigenToOctaveFileStream(std::vector<std::vector<std::vector<MatrixX
                         f << " " << matrices[m][l][k](i,j) << std::endl;
 }
 
-void Octave::eigenToOctaveFileStream(std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > matrices,string name,std::ofstream &f)
+void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
     {
@@ -110,16 +93,24 @@ void Octave::eigenToOctaveFileStream(std::vector<std::vector<std::vector<std::ve
 							f << " " << matrices[n][m][l][k](i,j) << std::endl;
 }
 
-template<class T> void Octave::toOctaveFileStream(T scalar,string name,std::ofstream &f)
+void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,string name,std::ofstream &f)
 {
-    f << "# name: "<< name << std::endl <<"# type: scalar" << std::endl << scalar << std::endl;
+    if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
+    {
+        std::cout << "Octave::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << std::endl;
+        return;
+    }
+
+    f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# ndims: 3" << std::endl << " " << (matrices.at(0)).rows() << " " << (matrices.at(0)).cols() << " " << matrices.size() << std::endl;
+
+    int i,j;
+    for(uint iMatrix=0;iMatrix<matrices.size();iMatrix++)
+        for(j=0;j<(matrices.at(iMatrix)).cols();j++)
+            for(i=0;i<(matrices.at(iMatrix)).rows();i++)
+                f << " " << (matrices.at(iMatrix))(i,j) << std::endl;
 }
 
-template void Octave::toOctaveFileStream(int scalar,string name,std::ofstream &f);
-template void Octave::toOctaveFileStream(double scalar,string name,std::ofstream &f);
-template void Octave::toOctaveFileStream(uint scalar,string name,std::ofstream &f);
-
-void Octave::stringsVectorToOctaveFileStream(std::vector<string> strings,string name,std::ofstream &f)
+void Octave::stringsVectorToOctaveFileStream(const std::vector<string> &strings,string name,std::ofstream &f)
 {
     if(strings.size()==0)
 	{
@@ -151,7 +142,16 @@ void Octave::stringsVectorToOctaveFileStream(std::vector<string> strings,string 
     }
 }
 
-template<class T> void Octave::toOctaveFileStream(std::vector<T> vector,string name,std::ofstream &f)
+template<class T> void Octave::toOctaveFileStream(T scalar,string name,std::ofstream &f)
+{
+    f << "# name: "<< name << std::endl <<"# type: scalar" << std::endl << scalar << std::endl;
+}
+
+template void Octave::toOctaveFileStream(int scalar,string name,std::ofstream &f);
+template void Octave::toOctaveFileStream(double scalar,string name,std::ofstream &f);
+template void Octave::toOctaveFileStream(uint scalar,string name,std::ofstream &f);
+
+template<class T> void Octave::toOctaveFileStream(const std::vector<T> &vector,string name,std::ofstream &f)
 {
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# rows: " << "1" << std::endl << "# columns: " << vector.size() << std::endl;
 
@@ -159,9 +159,9 @@ template<class T> void Octave::toOctaveFileStream(std::vector<T> vector,string n
         f << vector[i] << " ";
     f << std::endl;
 }
-template void Octave::toOctaveFileStream(std::vector<double> vector,string name,std::ofstream &f);
-template void Octave::toOctaveFileStream(std::vector<int> vector,string name,std::ofstream &f);
-template void Octave::toOctaveFileStream(std::vector<uint32_t> vector,string name,std::ofstream &f);
+template void Octave::toOctaveFileStream(const std::vector<double> &vector,string name,std::ofstream &f);
+template void Octave::toOctaveFileStream(const std::vector<int> &vector,string name,std::ofstream &f);
+template void Octave::toOctaveFileStream(const std::vector<uint32_t> &vector,string name,std::ofstream &f);
 
 template<class T> void Octave::toOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,std::ofstream &f)
 {

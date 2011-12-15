@@ -52,18 +52,18 @@ CDMASystem::CDMASystem(): SMCSystem()
 // ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
 // ,_userPersistenceProb(1.0),_newActiveUserProb(0.2),_userPriorProb(1.0)		// all the users are active all the time
 ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
-,_maximumRatio(FUNNY_VALUE)
 ,_iUserOfInterest(0u)
 {
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
 	
-	_minSignalToInterferenceRatio = -30;
+ 	_minSignalToInterferenceRatio = -30;
+	//_minSignalToInterferenceRatio = -50;
 
 	// first user starts transmitting something
 	_usersActivityPdfs[0].setApriori(1.0);
 
-	_nSurvivors = 8;
+	_nSurvivors = 2;
 
     // AR process parameters
     ARcoefficients = vector<double>(2);
@@ -304,6 +304,9 @@ void CDMASystem::onlyOnce()
 	SMCSystem::onlyOnce();
 
 	_presentFramePeActivityDetection = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+	
+	// the no sign changes is needed (the algorithm knows the channel), the value is set to 0
+	_thisFrameNumberSignChanges = std::vector<std::vector<uint> >(_SNRs.size(),std::vector<uint>(_algorithms.size(),0u));
 }
 
 double CDMASystem::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)
@@ -340,6 +343,8 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 		_signChanges[0] = 0; _signChanges[1] = _frameLength;
 	}
 
+	_thisFrameNumberSignChanges[_iSNR][_iAlgorithm] = _signChanges.size();
+	
 	uint overallNumberAccountedSymbols = 0;
 
 	for (uint iSignChange=1;iSignChange<_signChanges.size();iSignChange++)
@@ -450,6 +455,7 @@ void CDMASystem::storeFrameResults()
     _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
 	_everyFrameUsersActivity.push_back(_usersActivity);
 	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
+	_everyFrameNumberSignChanges.push_back(_thisFrameNumberSignChanges);
 }
 
 void CDMASystem::saveFrameResults()
@@ -465,6 +471,7 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
+	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
 	
 // 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
 // 	std::vector<MatrixXd> m;

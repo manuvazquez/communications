@@ -44,6 +44,26 @@ ARparametersComparisonCDMASystem::ARparametersComparisonCDMASystem()
 	
 	ARcoeffs[0] = 0.59999;
 	ARcoeffs[1] = 0.39999;
+	_ARvariances.push_back(0.00001);
+	_ARCoeffs.push_back(ARcoeffs);
+	
+	ARcoeffs[0] = 0.59999;
+	ARcoeffs[1] = 0.39999;
+	_ARvariances.push_back(0.000001);
+	_ARCoeffs.push_back(ARcoeffs);
+	
+	ARcoeffs[0] = 0.59999;
+	ARcoeffs[1] = 0.39999;
+	_ARvariances.push_back(0.0000001);
+	_ARCoeffs.push_back(ARcoeffs);
+	
+	ARcoeffs[0] = 0.59999;
+	ARcoeffs[1] = 0.39999;
+	_ARvariances.push_back(0.001);
+	_ARCoeffs.push_back(ARcoeffs);
+	
+	ARcoeffs[0] = 0.59999;
+	ARcoeffs[1] = 0.39999;
 	_ARvariances.push_back(0.01);
 	_ARCoeffs.push_back(ARcoeffs);
 	
