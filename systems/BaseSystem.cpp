@@ -92,9 +92,9 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-// 	_nFrames = 1000;
+	_nFrames = 1000;
 // 	_nFrames = 1;
-	_nFrames = 2;
+// 	_nFrames = 2;
 	
 	_L=8,_N=3,_frameLength=1000;
 // 	_L=8,_N=3,_frameLength=2;
@@ -295,8 +295,8 @@ if(__nFramesHasBeenPassed)
 // 		_randomGenerator.setSeed(2676010796);
 // 		StatUtil::getRandomGenerator().setSeed(2651759667);
 		
-		_randomGenerator.setSeed(480200525);
-		StatUtil::getRandomGenerator().setSeed(259918536);
+		_randomGenerator.setSeed(3238517596);
+		StatUtil::getRandomGenerator().setSeed(1294795822);
 	}
 
     cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -313,8 +313,6 @@ if(__nFramesHasBeenPassed)
 		
 		_mainRandoms.push_back(_randomGenerator.getSeed());
 		_statUtilRandoms.push_back(StatUtil::getRandomGenerator());
-		
-
 
         // bits are generated ...
         Bits generatedBits(_N,_nBitsGenerated,_randomGenerator);
@@ -400,7 +398,7 @@ if(__nFramesHasBeenPassed)
 
 // 				StatUtil::getRandomGenerator().setSeed(596381295);
 				
-				StatUtil::getRandomGenerator().setSeed(1821685013);
+				StatUtil::getRandomGenerator().setSeed(1300138858);
 // 				StatUtil::getRandomGenerator().setStoredSample(596381295);
 
 				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
@@ -822,7 +820,8 @@ void BaseSystem::saveFrameResults()
     Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
 #endif
 
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
+//     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
+	Octave::stringsVectorToOctaveFileStream(vector<string>(1,_channel->name()),"channelClass",_f);
     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
 

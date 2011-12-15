@@ -84,7 +84,7 @@ void LMSmuTestSystem::addAlgorithms()
     for(uint iMu=0;iMu<musLMS.size();iMu++)
     {
         sprintf(algorithmName,"LMS-D-SIS mu = %f",musLMS[iMu]);
-        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
     }
 }
 

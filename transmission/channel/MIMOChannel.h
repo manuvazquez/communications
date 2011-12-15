@@ -24,6 +24,7 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include <string>
 #include <types.h>
 #include <Noise.h>
 #include <exceptions.h>
@@ -37,6 +38,8 @@ public:
 	MIMOChannel();
     MIMOChannel(uint nInputs,uint nOutputs,uint length);
     virtual ~MIMOChannel() {};
+	
+	virtual std::string name() const = 0;
     
     virtual uint nInputs() const { return _nInputs;}
     virtual uint nOutputs() const { return _nOutputs;}

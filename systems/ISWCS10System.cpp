@@ -52,11 +52,11 @@ ISWCS10System::ISWCS10System()
 	// in order to use a Bessel channel (considering the Clarke model), the parameters of the AR process the algorithms will consider
 	// are derived from those of the Clarke model
 	double computedARprocessVariance;
-	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
+	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
 	
 	// by default, AR channel is assumed
-	std::vector<double> kalmanEstimatorARcoeffs = ARcoefficients;
-	double kalmanEstimatorVariance =  ARvariance;
+	std::vector<double> kalmanEstimatorARcoeffs = _ARcoefficients;
+	double kalmanEstimatorVariance =  _ARvariance;
 	
 	#if defined USE_AR_CHANNEL
 		// it's ok: by default, above it is assumed that the channel is AR
@@ -206,7 +206,7 @@ void ISWCS10System::addAlgorithms()
 	
      _algorithms.push_back(new ViterbiAlgorithm("Viterbi (known channel)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 	 
-	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MLSD-m (single channel order)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanWholeChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
 }
 
 // double ISWCS10System::computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns)

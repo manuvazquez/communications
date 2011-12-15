@@ -35,6 +35,8 @@ protected:
 	ARprocess _ARproc;
 public:
 	ARchannel(uint nInputs, uint nOutputs, uint memory, uint length,ARprocess ARproc);
+	
+	virtual std::string name() const { return string("AR process-based Channel"); }
 
 	MatrixXd at(uint n) const { return _channelMatrices[n];}
 	

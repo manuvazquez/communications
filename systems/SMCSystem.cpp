@@ -22,7 +22,7 @@
 // #define DEBUG
 
 SMCSystem::SMCSystem()
- : BaseSystem(),ARcoefficients(1)
+ : BaseSystem(),_ARcoefficients(1)
 {
     nParticles = 1;
 //     nParticles = 200;
@@ -31,11 +31,10 @@ SMCSystem::SMCSystem()
 
     // back and forward smoothing
     c = 0;
-    e = _d;
 
     // AR process parameters
-    ARcoefficients[0] = 0.99999;
-    ARvariance=0.0001;
+    _ARcoefficients[0] = 0.99999;
+    _ARvariance=0.0001;
 
     // always the same resampling criterion and algorithms
     ResamplingCriterion criterioRemuestreo(resamplingRatio);
@@ -56,8 +55,7 @@ void SMCSystem::saveFrameResults()
     BaseSystem::saveFrameResults();
     Octave::toOctaveFileStream(nParticles,"nParticles",_f);
     Octave::toOctaveFileStream(resamplingRatio,"resamplingRatio",_f);
-    Octave::toOctaveFileStream(ARcoefficients,"ARcoefficients",_f);
-    Octave::toOctaveFileStream(ARvariance,"ARvariance",_f);
+    Octave::toOctaveFileStream(_ARcoefficients,"ARcoefficients",_f);
+    Octave::toOctaveFileStream(_ARvariance,"ARvariance",_f);
     Octave::toOctaveFileStream(c,"c",_f);
-    Octave::toOctaveFileStream(e,"e",_f);
 }

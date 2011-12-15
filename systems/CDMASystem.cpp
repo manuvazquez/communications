@@ -66,10 +66,10 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_nSurvivors = 2;
 
     // AR process parameters
-    ARcoefficients = vector<double>(2);
-    ARcoefficients[0] = 0.59999;
-    ARcoefficients[1] = 0.39999;
-    ARvariance=0.0001;    
+    _ARcoefficients = vector<double>(2);
+    _ARcoefficients[0] = 0.59999;
+    _ARcoefficients[1] = 0.39999;
+    _ARvariance=0.0001;    
     
 //     // AR process parameters
 //     ARcoefficients = vector<double>(1);
@@ -90,9 +90,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 
     _T = 1.0/_symbolRate; // (s)
     
-    
-// 	ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,ARvariance);
-// 	std::cout << "ARcoeffs:" << std::endl << ARcoefficients << std::endl << "AR variance = " << ARvariance << std::endl;
+
+    // the parameters obtained from the Yule-Walker equations are used for the channel estimator
+	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
     
 	_cdmaKalmanEstimator = NULL;
 
@@ -145,7 +145,7 @@ void CDMASystem::addAlgorithms()
 {
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
-	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),ARcoefficients,ARvariance,_spreadingCodes);
+	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_ARcoefficients,_ARvariance,_spreadingCodes);
 	
     _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
 
@@ -223,9 +223,9 @@ void CDMASystem::buildSystemSpecificVariables()
 	{
 		delete _channel;
 
-		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
+// 		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
 // 		channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
-// 		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
 		
 		// Signal to Interference Ratio's
 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
@@ -472,6 +472,11 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
+	
+	Octave::toOctaveFileStream(_velocity,"velocity",_f);
+	Octave::toOctaveFileStream(_carrierFrequency,"carrierFrequency",_f);
+	Octave::toOctaveFileStream(_symbolRate,"symbolRate",_f);
+	Octave::toOctaveFileStream(_T,"T",_f);
 	
 // 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
 // 	std::vector<MatrixXd> m;

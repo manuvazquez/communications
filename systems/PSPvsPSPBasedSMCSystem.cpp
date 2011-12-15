@@ -33,7 +33,7 @@ PSPvsPSPBasedSMCSystem::PSPvsPSPBasedSMCSystem()
         cout << "Number of particles adjusted to " << nParticles << endl;
     }
 
-    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,ARcoefficients,ARvariance);
+    kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 
     ResamplingCriterion resamplingCriterion(resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);

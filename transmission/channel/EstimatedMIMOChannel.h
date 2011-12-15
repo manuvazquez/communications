@@ -32,6 +32,8 @@ protected:
     std::vector<MatrixXd> _channelMatrices;
 public:
     EstimatedMIMOChannel(uint nInputs, uint nOutputs, uint memory, uint length, uint preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances);
+	
+	virtual std::string name() const { return string("Estimated channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrices[n];}
 };

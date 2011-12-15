@@ -54,10 +54,11 @@ protected:
     double resamplingRatio;
 
     // back and forward smoothing
-    uint c,e;
+//     uint c,e;
+	uint c;
 
-    std::vector<double> ARcoefficients;
-    double ARvariance;
+    std::vector<double> _ARcoefficients;
+    double _ARvariance;
 
     ResamplingAlgorithm *algoritmoRemuestreo;
 

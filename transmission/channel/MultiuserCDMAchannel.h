@@ -37,6 +37,8 @@ protected:
 public:
 	MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes);
 	
+	virtual std::string name() const { return string("Multiuser CDMA ") + _channel->name(); }
+	
 	~MultiuserCDMAchannel();
 
 	//! It returns the "equivalent" channel matrix for this system

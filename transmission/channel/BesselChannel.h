@@ -38,6 +38,8 @@ protected:
     std::vector<MatrixXd> _channelMatrices;   
 public:
     BesselChannel(uint nInputs, uint nOutputs, uint memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
+	
+	virtual std::string name() const { return string("Bessel Channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrices[n];}
     
