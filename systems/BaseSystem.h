@@ -53,8 +53,6 @@
 
 #define SYMBOLIC_LINK_NAME "last_res"
 
-// #define MSE_TIME_EVOLUTION_COMPUTING
-
 // to save all the generated channels (each one being a collection of channel matrices)
 #define KEEP_ALL_CHANNEL_MATRICES
 
@@ -162,11 +160,6 @@ protected:
 	std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
 #endif
 
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    vector<MatrixXd> presentFrameMSEtimeEvolution;
-    vector<vector<MatrixXd> > MSEtimeEvolution;
-#endif
-
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	std::vector<std::vector<MatrixXd> > _channelMatrices;
 #endif
@@ -180,7 +173,7 @@ protected:
     MatrixXd _symbols;
     MatrixXd _detectedSymbols;
 
-    ofstream _f,_xmlFile;
+    ofstream _f;
 
     DelayPowerProfile *_powerProfile;
 	

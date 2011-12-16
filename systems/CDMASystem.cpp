@@ -42,7 +42,6 @@
 // #define PRINT_INFO
 
 // #define DEBUG_SER
-// #define DEBUG_MSE
 // #define DEBUG_ACTIVITY_DETECTION_ERROR_RATE
 
 // #define DEBUG
@@ -92,9 +91,10 @@ CDMASystem::CDMASystem(): SMCSystem()
     
 
     // the parameters obtained from the Yule-Walker equations are used for the channel estimator
-	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
+// 	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
     
 	_cdmaKalmanEstimator = NULL;
+	_cdmaKnownChannelChannelMatrixEstimator = NULL;
 
 	_mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 	
@@ -138,6 +138,7 @@ CDMASystem::~CDMASystem()
 {
     delete _powerProfile;
     delete _cdmaKalmanEstimator;
+	delete _cdmaKnownChannelChannelMatrixEstimator;
     delete _mmseDetector;
 }
 
@@ -147,11 +148,16 @@ void CDMASystem::addAlgorithms()
 	delete _cdmaKalmanEstimator;
 	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_ARcoefficients,_ARvariance,_spreadingCodes);
 	
+    delete _cdmaKnownChannelChannelMatrixEstimator;
+    _cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N,_spreadingCodes);
+	
     _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
 
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+	
+    _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
 //     _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
@@ -405,24 +411,10 @@ double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMa
   
   double res = (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
 								_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
-#ifdef DEBUG_MSE
-	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
-	cout << "mse = " << BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]) << endl;
-	cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
-	cout << "and the signs" << endl << _piecesBestPermutationSigns[iSignChange-1] << endl;
-#endif
-
   iSignChange++;
   
   for(;iSignChange<_signChanges.size();iSignChange++)
   {
-#ifdef DEBUG_MSE
-	cout << "computing MSE between " << _signChanges[iSignChange-1] << " and " << _signChanges[iSignChange] << " ( " << (_signChanges[iSignChange]-_signChanges[iSignChange-1]) << " matrices)" << endl;
-	cout << "mse = " << BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]) << endl;
-	cout << "the permutation is " << _piecesBestPermuationIndexes[iSignChange-1] << endl;
-	cout << "and the signs" << endl << _piecesBestPermutationSigns[iSignChange-1] << endl;
-#endif
-  
 	toCheckRealChannelMatrices = std::vector<MatrixXd>(realChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
 	toCheckEstimatedChannelMatrices = std::vector<MatrixXd>(estimatedChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
 	

@@ -217,11 +217,6 @@ BaseSystem::BaseSystem()
 	_perAlgorithmAndSNRstatUtilRandoms.reserve(_nFrames);
 #endif
 
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    presentFrameMSEtimeEvolution.resize(SNRs.size());
-    MSEtimeEvolution.reserve(nFrames);
-#endif
-
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	_channelMatrices.reserve(_nFrames);
 #endif
@@ -438,22 +433,6 @@ if(__nFramesHasBeenPassed)
 		getchar();
 #endif
         } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
-
-// 		// only if the results are to be saved after every processed frame, we initialize the file pointer with a valid filename at each frame
-// 		// FIXME: the program is still trying to save the data all the time (the calls to write in the file are made anyway)
-// 		if(_saveAtEveryFrame)
-// 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
-// 		else if(_iFrame==_nFrames-1)
-// 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
-// 
-// //         beforeEndingFrame();
-// 		storeFrameResults();
-// 		saveFrameResults();
-// 		
-// 		if(_saveAtEveryFrame)
-// 			_f.close();
-// 		else if(_iFrame==_nFrames-1)
-// 			_f.close();
 		
 		storeFrameResults();
 		if(_saveAtEveryFrame || _iFrame==_nFrames-1)
@@ -491,10 +470,6 @@ if(__nFramesHasBeenPassed)
 
     cout << "Overall MSE:" << endl;
     Util::print(_overallMseMatrix);
-    
-    // data saving
-    _xmlFile << "</com>" << endl;
-    _xmlFile.close();
 }
 
 void BaseSystem::onlyOnce()
@@ -522,11 +497,6 @@ void BaseSystem::onlyOnce()
 		_thisFramePerAlgorithmAndSNRstatUtilRandoms = std::vector<std::vector<Random> > (_SNRs.size(),std::vector<Random>(_algorithms.size()));
 #endif
 
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    for(uint i=0;i<SNRs.size();i++)
-        presentFrameMSEtimeEvolution[i] = MatrixXd(algorithms.size(),frameLength);
-#endif
-
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
   // channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
   _presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
@@ -546,13 +516,6 @@ void BaseSystem::beforeEndingAlgorithm()
 	{
 	  _mse = FUNNY_VALUE;
 	}
-
-
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    VectorXd mseAlongTime = TransmissionUtil::MSEalongTime(algorithms[iAlgorithm]->getEstimatedChannelMatrices(),0,frameLength-1,channel->range(preambleLength,preambleLength+frameLength-1),0,frameLength-1);
-    for(uint ik=0;ik<frameLength;ik++)
-        presentFrameMSEtimeEvolution[iSNR](iAlgorithm,ik) = mseAlongTime(ik);
-#endif
 
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices;
@@ -753,10 +716,6 @@ void BaseSystem::storeFrameResults()
     // MSE
     _MSEMatrices.push_back(_presentFrameMSE);
 
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    MSEtimeEvolution.push_back(presentFrameMSEtimeEvolution);
-#endif
-
 #ifdef SAVE_ALL_SEEDS
 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);	
 	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
@@ -778,10 +737,6 @@ void BaseSystem::saveFrameResults()
 
     // MSE
     Octave::eigenToOctaveFileStream(_MSEMatrices,"mse",_f);
-
-#ifdef MSE_TIME_EVOLUTION_COMPUTING
-    Octave::eigenToOctaveFileStream(MSEtimeEvolution,"MSEtimeEvolution",f);
-#endif
 
     Octave::toOctaveFileStream(_iFrame+1,"nFrames",_f);
     Octave::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
@@ -820,7 +775,6 @@ void BaseSystem::saveFrameResults()
     Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
 #endif
 
-//     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_channel).name())),"channelClass",_f);
 	Octave::stringsVectorToOctaveFileStream(vector<string>(1,_channel->name()),"channelClass",_f);
     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
     Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);

@@ -18,6 +18,7 @@
 #include "ARparametersComparisonCDMASystem.h"
 
 #include <defines.h>
+#include <OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 
 void ARparametersComparisonCDMASystem::addAlgorithms()
 {	
@@ -26,10 +27,13 @@ void ARparametersComparisonCDMASystem::addAlgorithms()
 		delete _cdmaKalmanEstimator; 
 		_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_ARCoeffs[i],_ARvariances[i],_spreadingCodes);
 
-		std::stringstream algorithmName;	
-		algorithmName << "KF coeff[0]=" << _ARCoeffs[i][0] << " coeff[1]=" << _ARCoeffs[i][1] << " var=" << _ARvariances[i];
+// 		std::stringstream algorithmName;	
+// 		algorithmName << "KF coeff[0]=" << _ARCoeffs[i][0] << " coeff[1]=" << _ARCoeffs[i][1] << " var=" << _ARvariances[i];
+// 		_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(algorithmName.str(),*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_symbols));
 		
-		_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(algorithmName.str(),*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_symbols));
+		std::stringstream algorithmName;	
+		algorithmName << "SMC-LF coeff[0]=" << _ARCoeffs[i][0] << " coeff[1]=" << _ARCoeffs[i][1] << " var=" << _ARvariances[i];
+		_algorithms.push_back(new OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm (algorithmName.str(),*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	}
 }
 
