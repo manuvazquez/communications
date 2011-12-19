@@ -85,7 +85,14 @@ BaseSystem::BaseSystem()
 	if(!thisSystemParameters)
 		throw RuntimeException("BaseSystem::BaseSystem: cannot find parameters for this system.");
 	
+	readParameterFromXML(thisSystemParameters,"randomSeeds",_randomSeeds);
+	
+	readParameterFromXML(thisSystemParameters,"loadSeeds",_loadSeeds);
+	readParameterFromXML(thisSystemParameters,"mainSeedToBeLoaded",_mainSeedToBeLoaded);
+	readParameterFromXML(thisSystemParameters,"statUtilSeedToBeLoaded",_statUtilSeedToBeLoaded);
+	
 	readParameterFromXML(thisSystemParameters,"saveAtEveryFrame",_saveAtEveryFrame);
+	
 	readParameterFromXML(thisSystemParameters,"nFrames",_nFrames);
 	readParameterFromXML(thisSystemParameters,"L",_L);
 	readParameterFromXML(thisSystemParameters,"N",_N);
@@ -98,14 +105,8 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"velocity",_velocity);
 	readParameterFromXML(thisSystemParameters,"carrierFrequency",_carrierFrequency);
 	readParameterFromXML(thisSystemParameters,"symbolRate",_symbolRate);
-	
-// 	_randomSeeds = false;
-	
-	readParameterFromXML(thisSystemParameters,"randomSeeds",_randomSeeds);
-	
-    // GLOBAL PARAMETERS
-	_saveAtEveryFrame = false;
- 	_saveAtEveryFrame = true; // comment/uncomment to set to false/true
+
+
 
 // ------------------------ iswcs 2010 ----------------------
 
@@ -133,28 +134,8 @@ BaseSystem::BaseSystem()
 //     // the algorithms with the higher smoothing lag require
 //     _nSmoothingSymbolsVectors = 10;
 
-// --------------------------- CDMA -------------------------
 
-// 	_nFrames = 1000;
-// // 	_nFrames = 1;
-// // 	_nFrames = 2;
-// 	
-// 	_L=8,_N=3,_frameLength=1000;
-// // 	_L=8,_N=3,_frameLength=2;
-// 
-// 	_m = 1;
-// 	_d = _m - 1;
-// 	_trainSeqLength = 0;
-// 	_preambleLength = 0;
-// 
-// 	// the algorithms with the higher smoothing lag require
-// 	_nSmoothingSymbolsVectors = _d;
-
-
-// ----------------------------------------------------------
-
-	// derived parameters
-	
+	// ==================================== derived parameters ====================================
 
 	// smoothing factor
 	_d = _m - 1;
@@ -170,9 +151,7 @@ BaseSystem::BaseSystem()
 	_velocity /= 3.6;
 	
 	_T = 1.0/_symbolRate;
-	
-//   Random StatUtil::_randomGenerator(4135925433);
-//   Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
+
 	if(!_randomSeeds)
 	{
 		StatUtil::getRandomGenerator().setSeed(4135925433);
@@ -254,8 +233,8 @@ BaseSystem::BaseSystem()
     _overallPeTimeEvolution.resize(_SNRs.size());
     _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
 
-    _mainSeeds.reserve(_nFrames);
-    _statUtilSeeds.reserve(_nFrames);
+//     _mainSeeds.reserve(_nFrames);
+//     _statUtilSeeds.reserve(_nFrames);
 	
     _mainRandoms.reserve(_nFrames);
     _statUtilRandoms.reserve(_nFrames);
@@ -273,11 +252,6 @@ BaseSystem::BaseSystem()
 #ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
 	_channelEstimations.reserve(_nFrames);
 #endif
-
-// #ifndef RANDOM_SEED
-// 	// we don't want the same bits to be generated over and over
-// 	_randomGenerator.setSeed(3763650855);
-// #endif
 
     _channel = NULL;
     _powerProfile = NULL;
@@ -300,47 +274,39 @@ if(__nFramesHasBeenPassed)
 	cout << COLOR_LIGHT_BLUE << _nFrames << " frames are going to be simulated." << COLOR_NORMAL << endl;
 }
 
-#ifdef LOAD_SEEDS
+// #ifdef LOAD_SEEDS
     // for repeating simulations
+    if(_loadSeeds)
+	{
 	
-	if(__randomSeedHasBeenPassed)
-	{
-		_randomGenerator.setSeed(__mainSeedPassed);
-		StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
-	}else
-	{
-// 		_randomGenerator.setSeed(825535300);
-// 		StatUtil::getRandomGenerator().setSeed(500436508);
-		
-// 		_randomGenerator.setSeed(295557636);
-// 		StatUtil::getRandomGenerator().setSeed(727092075);
-		
-// 		_randomGenerator.setSeed(3555280860);
-// 		StatUtil::getRandomGenerator().setSeed(3347172980);
-		
-// 		_randomGenerator.setSeed(3634179949);					// middle of the frame ambiguity problem
-// 		StatUtil::getRandomGenerator().setSeed(3781697018);		// middle of the frame ambiguity problem
-		
-// 		_randomGenerator.setSeed(2676010796);
-// 		StatUtil::getRandomGenerator().setSeed(2651759667);
-		
-		_randomGenerator.setSeed(3238517596);
-		StatUtil::getRandomGenerator().setSeed(1294795822);
-	}
+		if(__randomSeedHasBeenPassed)
+		{
+			_randomGenerator.setSeed(__mainSeedPassed);
+			StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
+		}else
+		{
+// 			_randomGenerator.setSeed(3238517596);
+// 			StatUtil::getRandomGenerator().setSeed(1294795822);
 
-    cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
-	cout << COLOR_LIGHT_BLUE << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
-#endif
+			_randomGenerator.setSeed(_mainSeedToBeLoaded);
+			StatUtil::getRandomGenerator().setSeed(_statUtilSeedToBeLoaded);
+		}
+
+		cout << COLOR_LIGHT_BLUE << "seeds are being loaded..." << COLOR_NORMAL << endl;
+		cout << COLOR_LIGHT_BLUE << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
+
+	}
+// #endif
 
     _iFrame = 0;
     while((_iFrame<_nFrames) && (!__done))
     {
 
         // the seeds are kept for saving later
-        _mainSeeds.push_back(_randomGenerator.getSeed());
-        _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
+//         _mainSeeds.push_back(_randomGenerator.getSeed());
+//         _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
 		
-		_mainRandoms.push_back(_randomGenerator.getSeed());
+		_mainRandoms.push_back(_randomGenerator);
 		_statUtilRandoms.push_back(StatUtil::getRandomGenerator());
 
         // bits are generated ...
@@ -784,8 +750,8 @@ void BaseSystem::saveFrameResults()
     Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
     Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
     Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
-    Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
-    Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
+//     Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
+//     Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
 	
 	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
 	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
@@ -852,7 +818,6 @@ template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,s
 	value.str(parameterNode->value());
 	value >> parameter;
 }
-template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,double &parameter);
 template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,int &parameter);
 
 template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector)

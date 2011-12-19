@@ -18,9 +18,6 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-// the seed used to create the random objects is generated from the system time
-//  #define RANDOM_SEED
-
 // whether the ENTIRE sequence of channel matrices estimated by every path is kept (it doesn't get saved, either way)
 // this only applies to algorithms using "PSPPath"
 // #define DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
