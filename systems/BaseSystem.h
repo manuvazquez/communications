@@ -59,8 +59,6 @@
 // to save all the generated channels (each one being a collection of channel matrices)
 #define KEEP_ALL_CHANNEL_MATRICES
 
-#define KEEP_ALL_CHANNEL_ESTIMATIONS
-
 #define SAVE_ALL_SEEDS
 
 extern bool __done;
@@ -73,6 +71,8 @@ protected:
 	bool _loadSeeds;
 	uint32_t _mainSeedToBeLoaded;
 	uint32_t _statUtilSeedToBeLoaded;
+	
+	bool _keepAllChannelEstimates;
 	
     double _pe,_mse;
     uint _iSNR;
@@ -167,10 +167,8 @@ protected:
 	std::vector<std::vector<Random> > _thisFramePerAlgorithmAndSNRstatUtilRandoms;
 #endif
 
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimations;
-	std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
-#endif
+std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimations;
+std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	std::vector<std::vector<MatrixXd> > _channelMatrices;

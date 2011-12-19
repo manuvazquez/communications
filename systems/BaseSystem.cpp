@@ -92,6 +92,7 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"statUtilSeedToBeLoaded",_statUtilSeedToBeLoaded);
 	
 	readParameterFromXML(thisSystemParameters,"saveAtEveryFrame",_saveAtEveryFrame);
+	readParameterFromXML(thisSystemParameters,"keepAllChannelEstimates",_keepAllChannelEstimates);
 	
 	readParameterFromXML(thisSystemParameters,"nFrames",_nFrames);
 	readParameterFromXML(thisSystemParameters,"L",_L);
@@ -249,9 +250,8 @@ BaseSystem::BaseSystem()
 	_channelMatrices.reserve(_nFrames);
 #endif
 
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	_channelEstimations.reserve(_nFrames);
-#endif
+	if(_keepAllChannelEstimates)
+		_channelEstimations.reserve(_nFrames);
 
     _channel = NULL;
     _powerProfile = NULL;
@@ -495,10 +495,9 @@ void BaseSystem::onlyOnce()
 		_thisFramePerAlgorithmAndSNRstatUtilRandoms = std::vector<std::vector<Random> > (_SNRs.size(),std::vector<Random>(_algorithms.size()));
 #endif
 
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-  // channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
-  _presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
-#endif
+	if(_keepAllChannelEstimates)
+		// channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
+		_presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
 }
 
 void BaseSystem::beforeEndingAlgorithm()
@@ -515,18 +514,19 @@ void BaseSystem::beforeEndingAlgorithm()
 	  _mse = FUNNY_VALUE;
 	}
 
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices;
-	
-	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
-		// we get the channel matrices estimated by this algorithm
-		thisAlgorithmEstimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
-	else
-		// we generate a sequence of matrices initialized to a "funny" value
-		thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Constant(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols(),FUNNY_VALUE));
+	if(_keepAllChannelEstimates)
+	{
+		vector<MatrixXd> thisAlgorithmEstimatedChannelMatrices;
+		
+		if(_algorithms[_iAlgorithm]->performsChannelEstimation())
+			// we get the channel matrices estimated by this algorithm
+			thisAlgorithmEstimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
+		else
+			// we generate a sequence of matrices initialized to a "funny" value
+			thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Constant(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols(),FUNNY_VALUE));
 
-	_presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
-#endif
+		_presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
+	}
 
     cout << COLOR_GREEN << _algorithms[_iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << _pe << " , MSE = " << _mse << endl;
 
@@ -723,9 +723,8 @@ void BaseSystem::storeFrameResults()
 	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
 #endif
 
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
-#endif
+	if(_keepAllChannelEstimates)
+		_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
 }
 
 void BaseSystem::saveFrameResults()
@@ -783,9 +782,8 @@ void BaseSystem::saveFrameResults()
         Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
     }
     
-#ifdef KEEP_ALL_CHANNEL_ESTIMATIONS
-	Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
-#endif
+	if(_keepAllChannelEstimates)
+		Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
 }
 
 xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)

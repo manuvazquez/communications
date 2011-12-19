@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<parameteres>
+  
+	<!-- ********************************** BaseSystem ************************************* -->
+	<BaseSystem>
+
+		<randomSeeds> 1 </randomSeeds> <!-- random seeds must be used for the simulations? -->
+		
+		<loadSeeds> 0 </loadSeeds>
+		<mainSeedToBeLoaded> 1323092389 </mainSeedToBeLoaded>
+		<statUtilSeedToBeLoaded> 34310919 </statUtilSeedToBeLoaded>
+		
+		<saveAtEveryFrame> 1 </saveAtEveryFrame>
+		<keepAllChannelEstimates> 1 </keepAllChannelEstimates>
+		
+		<nFrames> 1000 </nFrames>
+		<L> 8 </L>
+		<N> 3 </N>
+		<frameLength> 1000 </frameLength>
+		<m> 1 </m>
+		<trainSeqLength> 0 </trainSeqLength>
+		<preambleLength> 0 </preambleLength>
+		<SNRs>
+			<value> 0 </value>
+			<value> 3 </value>
+			<value> 6 </value>
+			<value> 9 </value>
+			<value> 12 </value>
+			<value> 15 </value>
+		</SNRs>
+		
+		<velocity> 50 </velocity> <!-- in km/h -->
+		<carrierFrequency> 2e9 </carrierFrequency> <!-- in Hz -->
+		<symbolRate> 500e3 </symbolRate> <!-- in Hz -->
+
+	</BaseSystem>
+	
+	<!-- *********************************** SMCSystem ************************************* -->
+	<SMCSystem>
+		
+		<nParticles> 1 </nParticles>
+		<resamplingRatio> 0.9 </resamplingRatio>
+		<c> 0 </c>
+		<ARprocess>
+			<coefficients>
+				<value> 0.59999 </value>
+				<value> 0.39999 </value>
+			</coefficients>
+			<variance> 0.0001 </variance>
+		</ARprocess>
+		<firstSampledChannelMatrixVariance> 0.0 </firstSampledChannelMatrixVariance>
+		
+	</SMCSystem>
+	
+	<!-- ********************************** CDMASystem ************************************* -->
+	<CDMASystem>
+		<userPersistenceProb> 0.99 </userPersistenceProb>
+		<newActiveUserProb> 0.01 </newActiveUserProb>
+		<userPriorProb> 0.5 </userPriorProb>
+		
+		<adjustParticlesNumberFromSurvivors> 1 </adjustParticlesNumberFromSurvivors>
+		<adjustSurvivorsFromParticlesNumber> 0 </adjustSurvivorsFromParticlesNumber>
+		<minSignalToInterferenceRatio> -30 </minSignalToInterferenceRatio>
+		
+		<nSurvivors> 2 </nSurvivors>
+		<iUserOfInterest> 0 </iUserOfInterest>
+
+	</CDMASystem>
+
+</parameters>
