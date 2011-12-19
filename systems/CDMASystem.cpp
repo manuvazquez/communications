@@ -47,11 +47,10 @@
 // #define DEBUG
 
 CDMASystem::CDMASystem(): SMCSystem()
-,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)	// <- a reasonable model
-// ,userPersistenceProb(0.8),newActiveUserProb(0.2),userPriorProb(1.0)
+// ,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)	// <- a reasonable model
 // ,_userPersistenceProb(1.0),_newActiveUserProb(0.2),_userPriorProb(1.0)		// all the users are active all the time
-,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
-,_iUserOfInterest(0u)
+// ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
+// ,_iUserOfInterest(0u)
 {
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -61,22 +60,32 @@ CDMASystem::CDMASystem(): SMCSystem()
 	if(!thisSystemParameters)
 		throw RuntimeException("CDMASystem::CDMASystem: cannot find parameters for this system.");
 	
+	readParameterFromXML(thisSystemParameters,"userPersistenceProb",_userPersistenceProb);
+	readParameterFromXML(thisSystemParameters,"newActiveUserProb",_newActiveUserProb);
+	readParameterFromXML(thisSystemParameters,"userPriorProb",_userPriorProb);
+	
 	readParameterFromXML(thisSystemParameters,"adjustParticlesNumberFromSurvivors",_adjustParticlesNumberFromSurvivors);
 	readParameterFromXML(thisSystemParameters,"adjustSurvivorsFromParticlesNumber",_adjustSurvivorsFromParticlesNumber);
+	readParameterFromXML(thisSystemParameters,"minSignalToInterferenceRatio",_minSignalToInterferenceRatio);
 	
- 	_minSignalToInterferenceRatio = -30;
+	readParameterFromXML(thisSystemParameters,"nSurvivors",_nSurvivors);
+	readParameterFromXML(thisSystemParameters,"iUserOfInterest",_iUserOfInterest);
+		
+//  	_minSignalToInterferenceRatio = -30;
 	//_minSignalToInterferenceRatio = -50;
+	
+	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
 	// first user starts transmitting something
 	_usersActivityPdfs[0].setApriori(1.0);
 
-	_nSurvivors = 2;
+// 	_nSurvivors = 2;
 
-    // AR process parameters
-    _ARcoefficients = vector<double>(2);
-    _ARcoefficients[0] = 0.59999;
-    _ARcoefficients[1] = 0.39999;
-    _ARvariance=0.0001;    
+//     // AR process parameters
+//     _ARcoefficients = vector<double>(2);
+//     _ARcoefficients[0] = 0.59999;
+//     _ARcoefficients[1] = 0.39999;
+//     _ARvariance=0.0001;    
     
 //     // AR process parameters
 //     ARcoefficients = vector<double>(1);
@@ -89,13 +98,13 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	FlatPowerProfile::setCoefficientsMean(5.0);
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
 
-	// bessel channel parameters
-//     _velocity = 180/3.6; // (m/s)
-    _velocity = 50/3.6; // (m/s)
-    _carrierFrequency = 2e9; // (Hz)
-    _symbolRate = 500e3; // (Hz)
-
-    _T = 1.0/_symbolRate; // (s)
+// 	// bessel channel parameters
+// //     _velocity = 180/3.6; // (m/s)
+//     _velocity = 50/3.6; // (m/s)
+//     _carrierFrequency = 2e9; // (Hz)
+//     _symbolRate = 500e3; // (Hz)
+// 
+//     _T = 1.0/_symbolRate; // (s)
     
 
     // the parameters obtained from the Yule-Walker equations are used for the channel estimator
@@ -454,12 +463,4 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_carrierFrequency,"carrierFrequency",_f);
 	Octave::toOctaveFileStream(_symbolRate,"symbolRate",_f);
 	Octave::toOctaveFileStream(_T,"T",_f);
-	
-// 	ARprocess miar(StatUtil::randnMatrix(1,3,0.0,1.0),2,_velocity,_carrierFrequency,_T);
-// 	std::vector<MatrixXd> m;
-// 	
-// 	for(uint i=0;i<1000;i++)
-// 		m.push_back(miar.nextMatrix());
-// 	
-// 	Octave::eigenToOctaveFileStream(m,"matrices",_f);
 }

@@ -92,7 +92,11 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"trainSeqLength",_trainSeqLength);
 	readParameterFromXML(thisSystemParameters,"preambleLength",_preambleLength);
 	readMultiValuedParameterFromXML(thisSystemParameters,"SNRs",_SNRs);
-
+	
+	readParameterFromXML(thisSystemParameters,"velocity",_velocity);
+	readParameterFromXML(thisSystemParameters,"carrierFrequency",_carrierFrequency);
+	readParameterFromXML(thisSystemParameters,"symbolRate",_symbolRate);
+	
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
  	_saveAtEveryFrame = true; // comment/uncomment to set to false/true
@@ -170,6 +174,11 @@ BaseSystem::BaseSystem()
     _symbolsDetectionWindowStart = _trainSeqLength;
 
     _MSEwindowStart = _frameLength*9/10;
+	
+	// it's assumed that velocity is given in km/h...
+	_velocity /= 3.6;
+	
+	_T = 1.0/_symbolRate;
 
 	// ---------------------------------------------------------------------------------------------
 
@@ -863,6 +872,7 @@ template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,s
 	value >> parameter;
 }
 template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,double &parameter);
+template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,int &parameter);
 
 template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector)
 {

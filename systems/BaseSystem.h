@@ -123,6 +123,8 @@ protected:
 
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     uint _nSmoothingSymbolsVectors;
+	
+	double _velocity,_carrierFrequency,_symbolRate,_T;
     
 	/*
 	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol

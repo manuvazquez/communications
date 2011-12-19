@@ -41,7 +41,7 @@ protected:
     
     double _userPersistenceProb,_newActiveUserProb,_userPriorProb;
 	
-    double _velocity,_carrierFrequency,_symbolRate,_T;
+//     double _velocity,_carrierFrequency,_symbolRate,_T;
     
     CDMAKalmanEstimator *_cdmaKalmanEstimator;
 	CDMAKnownChannelChannelMatrixEstimator *_cdmaKnownChannelChannelMatrixEstimator;
