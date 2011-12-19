@@ -54,6 +54,12 @@ public:
 	
 	//! it returns the corresponding covariance AS STORED by the internal Kalman Filter
     virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance_eigen();}
+    
+	virtual MatrixXd getVariances() const 
+	{
+// 		return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); 
+		return Util::toMatrix(_kalmanFilter->filteredCovariance_eigen().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
+	}
 };
 
 #endif

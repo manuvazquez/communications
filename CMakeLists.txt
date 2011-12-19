@@ -6,7 +6,8 @@ set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0")
 #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0  -DNDEBUG") # in order to take out the assertions in eigen
 
-include_directories($ENV{HOME}/eigen-eigen-3.0.3 ${PROJECT_SOURCE_DIR}/includes)
+# include_directories($ENV{HOME}/eigen-eigen-3.0.3 ${PROJECT_SOURCE_DIR}/includes)
+include_directories($ENV{HOME}/eigen-eigen-3.0.3 $ENV{HOME}/rapidxml-1.13 ${PROJECT_SOURCE_DIR}/includes)
 add_subdirectory(random)
 add_subdirectory(util)
 add_subdirectory(statistics)

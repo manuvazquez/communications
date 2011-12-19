@@ -19,6 +19,7 @@
 #include <ParticleWithChannelEstimation.h>
 
 // #define DEBUG3
+// #define DEBUG4
 
 CDMAunknownActiveUsersSISopt::CDMAunknownActiveUsersSISopt(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances,const std::vector<UsersActivityDistribution> usersActivityPdfs): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances),_usersActivityPdfs(usersActivityPdfs)
 {    
@@ -73,6 +74,10 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 #endif
 			  
 			  likelihoods[iTestedCombination] = processedParticle->getChannelMatrixEstimator()->likelihood(observations.col(iObservationToBeProcessed),symbolsVector,noiseVariances[iObservationToBeProcessed]);
+			  
+#ifdef DEBUG4
+			  cout << "variances" << endl << processedParticle->getChannelMatrixEstimator()->getVariances() << endl;
+#endif
 
 			  // the probability of these users being active and this particular symbol vector being transmitted is computed...
 			  // ...either taking into account the users previous state in case this exists

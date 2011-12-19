@@ -59,10 +59,43 @@ extern bool __nFramesHasBeenPassed;
 
 BaseSystem::BaseSystem()
 {
+	_parametersFile.open("parameters.xml",ofstream::in);
+	
+	if(!_parametersFile.good())
+		throw RuntimeException("BaseSystem::BaseSystem: cannot read from \"parameters.xml\"!!");
+	
+	string parameters,parametersAux;
+	getline(_parametersFile,parametersAux);
+	while (_parametersFile) {
+		parameters += parametersAux;
+		getline(_parametersFile,parametersAux);
+	}
+	_parametersFile.close();
+	
+	_parameters = new char[parameters.size()+1];
+	strcpy (_parameters, parameters.c_str());
+	
+	_doc.parse<0>(_parameters);
+	cout << "Name of my first node is: " << _doc.first_node()->name() << endl;
+	
+	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"BaseSystem");
+	
+	if(!thisSystemParameters)
+		throw RuntimeException("BaseSystem::BaseSystem: cannot find parameters for this system.");
+	
+	readParameterFromXML(thisSystemParameters,"saveAtEveryFrame",_saveAtEveryFrame);
+	readParameterFromXML(thisSystemParameters,"nFrames",_nFrames);
+	readParameterFromXML(thisSystemParameters,"L",_L);
+	readParameterFromXML(thisSystemParameters,"N",_N);
+	readParameterFromXML(thisSystemParameters,"frameLength",_frameLength);
+	readParameterFromXML(thisSystemParameters,"m",_m);
+	readParameterFromXML(thisSystemParameters,"trainSeqLength",_trainSeqLength);
+	readParameterFromXML(thisSystemParameters,"preambleLength",_preambleLength);
+	readMultiValuedParameterFromXML(thisSystemParameters,"SNRs",_SNRs);
+
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
  	_saveAtEveryFrame = true; // comment/uncomment to set to false/true
-
 
 // ------------------------ iswcs 2010 ----------------------
 
@@ -92,43 +125,51 @@ BaseSystem::BaseSystem()
 
 // --------------------------- CDMA -------------------------
 
-	_nFrames = 1000;
-// 	_nFrames = 1;
-// 	_nFrames = 2;
-	
-	_L=8,_N=3,_frameLength=1000;
-// 	_L=8,_N=3,_frameLength=2;
-
-	_m = 1;
-	_d = _m - 1;
-	_trainSeqLength = 0;
-	_preambleLength = 0;
-
-	// the algorithms with the higher smoothing lag require
-	_nSmoothingSymbolsVectors = _d;
+// 	_nFrames = 1000;
+// // 	_nFrames = 1;
+// // 	_nFrames = 2;
+// 	
+// 	_L=8,_N=3,_frameLength=1000;
+// // 	_L=8,_N=3,_frameLength=2;
+// 
+// 	_m = 1;
+// 	_d = _m - 1;
+// 	_trainSeqLength = 0;
+// 	_preambleLength = 0;
+// 
+// 	// the algorithms with the higher smoothing lag require
+// 	_nSmoothingSymbolsVectors = _d;
 
 
 // ----------------------------------------------------------
 
-	_SNRs.push_back(0);
-	
-	_SNRs.push_back(3);
-	_SNRs.push_back(6);
-	_SNRs.push_back(9);
-	_SNRs.push_back(12);
-	_SNRs.push_back(15);
+// 	_SNRs.push_back(0);
+// 	
+// 	_SNRs.push_back(3);
+// 	_SNRs.push_back(6);
+// 	_SNRs.push_back(9);
+// 	_SNRs.push_back(12);
+// 	_SNRs.push_back(15);
 	
 // 	_SNRs.push_back(18);
 // 	_SNRs.push_back(21);
 // 	_SNRs.push_back(24);
 // 	_SNRs.push_back(27);
 
+
+	// derived parameters
+	
+
+	// smoothing factor
+	_d = _m - 1;
+	
+	// the algorithms with the higher smoothing lag require
+	_nSmoothingSymbolsVectors = _d;
+	
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;
-//     symbolsDetectionWindowStart = frameLength*3/10; 
 
     _MSEwindowStart = _frameLength*9/10;
-//     MSEwindowStart = 0;
 
 	// ---------------------------------------------------------------------------------------------
 
@@ -155,7 +196,7 @@ BaseSystem::BaseSystem()
     for(int i=strlen(presentTimeString)-1;i>=0;i--)
         if(presentTimeString[i]==' ')
             presentTimeString[i]='_';
-		
+
 	// the name of the results file is built
 	_resultsFile = string("res_") + string(hostname) + string("_") + string(presentTimeString);
 	
@@ -254,6 +295,7 @@ BaseSystem::BaseSystem()
 BaseSystem::~BaseSystem()
 {
     delete _alphabet;
+	delete[] _parameters;
 }
 
 void BaseSystem::simulate()
@@ -789,3 +831,53 @@ void BaseSystem::saveFrameResults()
 	Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
 #endif
 }
+
+xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)
+{
+    // cycles every child
+    for (xml_node<> *nodeChild = inputNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
+    {
+        if (nodeChild->name() == sNodeFilter)
+        {
+            cout << "node name " << nodeChild->name() << "\n";
+            cout << "nodeChild " << nodeChild << endl;
+            // returns the desired child
+            return nodeChild;
+        }
+        xml_node<> * x = get_child(nodeChild, sNodeFilter);
+        if (x) 
+          return x;
+    }
+    return 0;
+}
+
+template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,T &parameter)
+{
+	xml_node<> *parameterNode = get_child(parentNode,xmlName); 
+	if(!parameterNode)
+		throw RuntimeException(string("BaseSystem::readParameterFromXML: cannot find parameter \"")+xmlName+"\"");
+	
+	std::istringstream value;
+// 	value.clear(); 
+	value.str(parameterNode->value());
+	value >> parameter;
+}
+template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,double &parameter);
+
+template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector)
+{
+	xml_node<> *parameterNode = get_child(parentNode,xmlName);
+	if(!parameterNode)
+		throw RuntimeException(string("BaseSystem::readMultiValuedParameterFromXML: cannot find parameter \"")+xmlName+"\"");
+	
+	std::istringstream value;
+	
+	for (xml_node<> *nodeChild = parameterNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
+	{
+		T tmp;
+		value.clear(); value.str(nodeChild->value()); value >> tmp;
+		vector.push_back(tmp);
+		cout << "added " << vector.back() << endl;
+	}
+}
+template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<double> &vector);

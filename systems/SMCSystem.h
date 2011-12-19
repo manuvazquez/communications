@@ -53,8 +53,7 @@ protected:
     uint nParticles;
     double resamplingRatio;
 
-    // back and forward smoothing
-//     uint c,e;
+    // forward smoothing
 	uint c;
 
     std::vector<double> _ARcoefficients;

@@ -25,6 +25,7 @@
 */
 
 #include <types.h>
+#include <defines.h>
 #include <exceptions.h>
 #include <vector>
 #include <Util.h>
@@ -76,6 +77,8 @@ public:
     virtual MatrixXd lastEstimatedChannelCoefficientsMatrix() const { return _lastEstimatedChannelCoefficientsMatrix;}
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
+	
+	virtual MatrixXd getVariances() const {return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); }
 };
 
 #endif

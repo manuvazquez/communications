@@ -26,6 +26,7 @@
 
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <unistd.h>
 #include <ctime>
@@ -47,6 +48,8 @@
 #include <Algorithm.h>
 #include <TransmissionUtil.h>
 
+#include <rapidxml.hpp>
+
 #define HOSTNAME_LENGTH 50
 #define MV_COMMAND "mv"
 #define LN_COMMAND "ln"
@@ -61,6 +64,8 @@
 #define SAVE_ALL_SEEDS
 
 extern bool __done;
+
+using namespace rapidxml;
 
 class BaseSystem{
 protected:
@@ -174,6 +179,9 @@ protected:
     MatrixXd _detectedSymbols;
 
     ofstream _f;
+    std::ifstream _parametersFile;
+	
+	char *_parameters;
 
     DelayPowerProfile *_powerProfile;
 	
@@ -214,7 +222,14 @@ protected:
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
 	
 	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
-
+	
+	xml_node<>* get_child(xml_node<> *inputNode, string sNodeFilter);
+	
+	template<class T> void readParameterFromXML(xml_node<> *parentNode,string xmlName,T &parameter);
+	template<class T> void readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector);
+	
+	xml_document<> _doc;
+	
 public:
     BaseSystem();
     virtual ~BaseSystem();
