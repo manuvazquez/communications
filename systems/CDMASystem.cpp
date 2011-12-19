@@ -56,6 +56,14 @@ CDMASystem::CDMASystem(): SMCSystem()
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
 	
+	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"CDMASystem");
+	
+	if(!thisSystemParameters)
+		throw RuntimeException("CDMASystem::CDMASystem: cannot find parameters for this system.");
+	
+	readParameterFromXML(thisSystemParameters,"adjustParticlesNumberFromSurvivors",_adjustParticlesNumberFromSurvivors);
+	readParameterFromXML(thisSystemParameters,"adjustSurvivorsFromParticlesNumber",_adjustSurvivorsFromParticlesNumber);
+	
  	_minSignalToInterferenceRatio = -30;
 	//_minSignalToInterferenceRatio = -50;
 
@@ -97,31 +105,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_cdmaKnownChannelChannelMatrixEstimator = NULL;
 
 	_mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
-	
-    // adjusting the number of particles from that of the survivors or the other way around
-    _adjustSurvivorsFromParticlesNumber = false;
-    _adjustParticlesNumberFromSurvivors = true;
-	
-    // check the adjustments for particle and survivor numbers
-    if(_adjustParticlesNumberFromSurvivors && _adjustSurvivorsFromParticlesNumber)
-        throw RuntimeException("CDMASystem::CDMASystem: \"adjustParticlesNumberFromSurvivors\" and \"adjustSurvivorsFromParticlesNumber\" shouldn't be true at the same time.");
-
-    if(_adjustParticlesNumberFromSurvivors)
-    {
-	  cout << "Number of particles adjusted from " << nParticles;
-	  
-	  // the number of particles must be the number of states of the Viterbi/PSP algorithm times that of survivors
-	  nParticles = (uint)pow((double)_alphabet->length()+1,_N)*_nSurvivors;
-	  
-	  cout << " to " << nParticles << endl;
-    }
-
-    if(_adjustSurvivorsFromParticlesNumber)
-    {
-	  cout << "Number of survivors adjusted from " << _nSurvivors;
-	  _nSurvivors = uint(ceil(double(nParticles)/pow((double)_alphabet->length()+1,double(_N))));
-	  cout << " to " << _nSurvivors << endl;
-    }
+	    
+    adjustParticlesSurvivors(nParticles,_nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
 
 	// in order to compute the BER/MSE/... of the user of interest only, a "dummy" permutation (a permutation for a set of 1 element) is generated
 	_permutations = std::vector<std::vector<uint> >(1,std::vector<uint>(1,0));

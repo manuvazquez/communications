@@ -42,23 +42,8 @@ LMSmuTestSystem::LMSmuTestSystem()
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
     _powerProfile->print();
-
-    // check the adjustments for particle and survivor numbers
-    if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
-        throw RuntimeException("adjustParticlesNumberFromSurvivors y adjustSurvivorsFromParticlesNumber no pueden ser true a la vez.");
-
-    if(adjustParticlesNumberFromSurvivors)
-    {
-        nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
-        cout << "Number of particles adjusted to " << nParticles << endl;
-    }
-
-    if(adjustSurvivorsFromParticlesNumber)
-    {
-        cout << "Number of survivors adjusted from " << nSurvivors;
-        nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
-        cout << " to " << nSurvivors << endl;
-    }
+	
+	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
     // estimacion conjunta del canal y los datos
     rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));

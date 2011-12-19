@@ -26,7 +26,7 @@ TVT2007System::TVT2007System()
 {
     nSurvivors = 12;
 	adjustSurvivorsFromParticlesNumber = true;
-//     adjustParticlesNumberFromSurvivors = false;
+    adjustParticlesNumberFromSurvivors = false;
 
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
@@ -37,18 +37,7 @@ TVT2007System::TVT2007System()
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
-// 	if(adjustParticlesNumberFromSurvivors)
-// 	{
-// 		nParticles = (uint)pow((double)alphabet->length(),N*(m-1))*nSurvivors;
-//         cout << "Number of particles adjusted to " << nParticles << endl;
-//     }
-
-	if(adjustSurvivorsFromParticlesNumber)
-	{
-		cout << "number of survivors adjusted from " << nSurvivors;
-		nSurvivors = uint(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
-		cout << " to " << nSurvivors << endl;
-	}
+	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
 	rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 

@@ -64,6 +64,8 @@ protected:
     double firstSampledChannelMatrixVariance;
 
 	virtual void saveFrameResults();
+	
+	void adjustParticlesSurvivors(uint &nParticles,uint &nSurvivors,bool particlesFromSurvivors, bool survivorsFromParticles);
 public:
     SMCSystem();
 

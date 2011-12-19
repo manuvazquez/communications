@@ -21,6 +21,8 @@
 
 // #define DEBUG
 
+#include<bashcolors.h>
+
 SMCSystem::SMCSystem()
  : BaseSystem()
 {
@@ -79,3 +81,27 @@ void SMCSystem::saveFrameResults()
     Octave::toOctaveFileStream(_ARvariance,"ARvariance",_f);
     Octave::toOctaveFileStream(c,"c",_f);
 }
+
+void SMCSystem::adjustParticlesSurvivors(uint &nParticles,uint &nSurvivors,bool particlesFromSurvivors, bool survivorsFromParticles)
+{
+	if(particlesFromSurvivors && survivorsFromParticles)
+		throw RuntimeException("SMCSystem::adjustParticlesSurvivors: both number of particles and number of survivors cannot be adjusted.");
+	
+	if(particlesFromSurvivors)
+	{
+		std::cout << COLOR_INFO << "number of particles adjusted from " << COLOR_NORMAL << nParticles;
+
+		// the number of particles must be the number of states of the Viterbi/PSP algorithm times that of survivors
+		nParticles = (uint)pow((double)_alphabet->length()+1,_N)*nSurvivors;
+
+		std::cout << COLOR_INFO << " to " << COLOR_NORMAL << nParticles << std::endl;
+	}else if(survivorsFromParticles)
+	{
+		cout << "Number of survivors adjusted from " << nSurvivors;
+		nSurvivors = uint(ceil(double(nParticles)/pow((double)_alphabet->length()+1,double(_N))));
+		cout << " to " << nSurvivors << endl;
+	}
+		
+}
+
+// template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,tParticlesSurvivorsAdjustment &parameter);

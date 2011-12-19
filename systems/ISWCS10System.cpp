@@ -82,19 +82,8 @@ ISWCS10System::ISWCS10System()
 	#endif
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
-
-	if(adjustParticlesNumberFromSurvivors)
-	{
-		nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
-        cout << COLOR_WHITE << "Number of particles adjusted to " << COLOR_NORMAL << nParticles << endl;
-    }
-
-	if(adjustSurvivorsFromParticlesNumber)
-	{
-		cout << COLOR_WHITE << "Number of survivors adjusted from " << COLOR_NORMAL << nSurvivors;
-		nSurvivors = int(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
-		cout << COLOR_WHITE << " to " << COLOR_NORMAL << nSurvivors << endl;
-	}
+	
+	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
 	for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
 	{

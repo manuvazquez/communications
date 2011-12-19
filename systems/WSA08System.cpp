@@ -35,19 +35,8 @@ WSA08System::WSA08System()
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
-
-	if(adjustParticlesNumberFromSurvivors)
-	{
-		nParticles = (uint)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
-        cout << COLOR_WHITE << "Number of particles adjusted to " << COLOR_NORMAL << nParticles << endl;
-    }
-
-	if(adjustSurvivorsFromParticlesNumber)
-	{
-		cout << COLOR_WHITE << "Number of survivors adjusted from " << COLOR_NORMAL << nSurvivors;
-		nSurvivors = uint(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
-		cout << COLOR_WHITE << " to " << COLOR_NORMAL << nSurvivors << endl;
-	}
+	
+	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
 	rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 

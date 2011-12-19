@@ -32,22 +32,8 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
     forgettingFactorDetector = 0.95;
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
-
-    if(adjustParticlesNumberFromSurvivors && adjustSurvivorsFromParticlesNumber)
-        throw RuntimeException("adjustParticlesNumberFromSurvivors y adjustSurvivorsFromParticlesNumber no pueden ser true a la vez.");
-
-    if(adjustParticlesNumberFromSurvivors)
-    {
-        nParticles = (uint)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
-        cout << "Number of particles adjusted to " << nParticles << endl;
-    }
-
-    if(adjustSurvivorsFromParticlesNumber)
-    {
-        cout << "number of survivors adjusted from " << nSurvivors;
-        nSurvivors = uint(ceil(double(nParticles)/pow(2.0,double(_N*(_m-1)))));
-        cout << " to " << nSurvivors << endl;
-    }
+	
+	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
     rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
     rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
