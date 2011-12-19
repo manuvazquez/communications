@@ -64,6 +64,7 @@ BaseSystem::BaseSystem()
 	if(!_parametersFile.good())
 		throw RuntimeException("BaseSystem::BaseSystem: cannot read from \"parameters.xml\"!!");
 	
+	// the xml file is read to memory...
 	string parameters,parametersAux;
 	getline(_parametersFile,parametersAux);
 	while (_parametersFile) {
@@ -72,12 +73,13 @@ BaseSystem::BaseSystem()
 	}
 	_parametersFile.close();
 	
+	// ...converted to a char* ...
 	_parameters = new char[parameters.size()+1];
 	strcpy (_parameters, parameters.c_str());
 	
+	// ...and then parsed
 	_doc.parse<0>(_parameters);
-	cout << "Name of my first node is: " << _doc.first_node()->name() << endl;
-	
+
 	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"BaseSystem");
 	
 	if(!thisSystemParameters)
@@ -96,6 +98,10 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"velocity",_velocity);
 	readParameterFromXML(thisSystemParameters,"carrierFrequency",_carrierFrequency);
 	readParameterFromXML(thisSystemParameters,"symbolRate",_symbolRate);
+	
+// 	_randomSeeds = false;
+	
+	readParameterFromXML(thisSystemParameters,"randomSeeds",_randomSeeds);
 	
     // GLOBAL PARAMETERS
 	_saveAtEveryFrame = false;
@@ -147,20 +153,6 @@ BaseSystem::BaseSystem()
 
 // ----------------------------------------------------------
 
-// 	_SNRs.push_back(0);
-// 	
-// 	_SNRs.push_back(3);
-// 	_SNRs.push_back(6);
-// 	_SNRs.push_back(9);
-// 	_SNRs.push_back(12);
-// 	_SNRs.push_back(15);
-	
-// 	_SNRs.push_back(18);
-// 	_SNRs.push_back(21);
-// 	_SNRs.push_back(24);
-// 	_SNRs.push_back(27);
-
-
 	// derived parameters
 	
 
@@ -172,13 +164,21 @@ BaseSystem::BaseSystem()
 	
     // BER and MSE computing
     _symbolsDetectionWindowStart = _trainSeqLength;
-
     _MSEwindowStart = _frameLength*9/10;
 	
 	// it's assumed that velocity is given in km/h...
 	_velocity /= 3.6;
 	
 	_T = 1.0/_symbolRate;
+	
+//   Random StatUtil::_randomGenerator(4135925433);
+//   Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
+	if(!_randomSeeds)
+	{
+		StatUtil::getRandomGenerator().setSeed(4135925433);
+		StatUtil::_particlesInitializerRandomGenerator.setSeed(2484546298);
+		_randomGenerator.setSeed(3763650855);
+	}
 
 	// ---------------------------------------------------------------------------------------------
 
@@ -261,8 +261,7 @@ BaseSystem::BaseSystem()
     _statUtilRandoms.reserve(_nFrames);
 	
 #ifdef SAVE_ALL_SEEDS
-// 	_perAlgorithmAndSNRmainSeeds.reserve(_nFrames);
-	_perAlgorithmAndSNRstatUtilSeeds.reserve(_nFrames);
+// 	_perAlgorithmAndSNRstatUtilSeeds.reserve(_nFrames);
 	
 	_perAlgorithmAndSNRstatUtilRandoms.reserve(_nFrames);
 #endif
@@ -275,30 +274,14 @@ BaseSystem::BaseSystem()
 	_channelEstimations.reserve(_nFrames);
 #endif
 
-#ifndef RANDOM_SEED
-	// we don't want the same bits to be generated over and over
-	_randomGenerator.setSeed(3763650855);
-#endif
+// #ifndef RANDOM_SEED
+// 	// we don't want the same bits to be generated over and over
+// 	_randomGenerator.setSeed(3763650855);
+// #endif
 
     _channel = NULL;
     _powerProfile = NULL;
 	_noise = NULL;
-    
-// #define XML_STRING_ATTRIBUTE(NAME,VALUE) "NAME=\"" << VALUE << "\"";    
-//     
-//     // data parameters saving
-//     xmlFile.open("data.xml",ofstream::trunc);
-//     xmlFile << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" << endl;
-//     xmlFile << "<com>" << endl;
-//     xmlFile << "  <parameters>" << endl;
-//     xmlFile << "    <nInputs type=\"scalar\">" << N << "</nInputs>" << endl;
-//     xmlFile << "    <nOutputs type=\"scalar\">" << L << "</nOutputs>" << endl;
-//     xmlFile << "    <frameLength type=\"scalar\">" << frameLength << "</frameLength>" << endl;
-//     xmlFile << "    <channelOrder type=\"scalar\">" << m << "</channelOrder>" << endl;
-//     xmlFile << "    <smoothingLag type=\"scalar\">" << d << "</smoothingLag>" << endl;
-//     xmlFile << "    <trainingSeqLength type=\"scalar\">" << trainSeqLength << "</trainingSeqLength>" << endl;
-//     xmlFile << "    <preambleLength type=\"scalar\">" << preambleLength << "</preambleLength>" << endl;
-//     xmlFile << "  </parameters>" << endl;
 }
 
 BaseSystem::~BaseSystem()
@@ -452,8 +435,7 @@ if(__nFramesHasBeenPassed)
 #endif
 				
 #ifdef SAVE_ALL_SEEDS
-// 				_thisFramePerAlgorithmAndSNRmainSeeds[_iSNR][_iAlgorithm] = _randomGenerator.getSeed();
-				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
+// 				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
 				_thisFramePerAlgorithmAndSNRstatUtilRandoms[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator();
 #endif
                 // if there is training sequence
@@ -543,8 +525,7 @@ void BaseSystem::onlyOnce()
         _algorithmsNames.push_back(_algorithms[iAlgorithm]->getName());
 
 #ifdef SAVE_ALL_SEEDS
-// 		_thisFramePerAlgorithmAndSNRmainSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
-		_thisFramePerAlgorithmAndSNRstatUtilSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
+// 		_thisFramePerAlgorithmAndSNRstatUtilSeeds = std::vector<std::vector<uint32_t> > (_SNRs.size(),std::vector<uint32_t>(_algorithms.size(),0));
 		_thisFramePerAlgorithmAndSNRstatUtilRandoms = std::vector<std::vector<Random> > (_SNRs.size(),std::vector<Random>(_algorithms.size()));
 #endif
 
@@ -768,7 +749,7 @@ void BaseSystem::storeFrameResults()
     _MSEMatrices.push_back(_presentFrameMSE);
 
 #ifdef SAVE_ALL_SEEDS
-	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);	
+// 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);	
 	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
 #endif
 	
@@ -810,7 +791,7 @@ void BaseSystem::saveFrameResults()
 	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
 
 #ifdef SAVE_ALL_SEEDS
-	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);	
+// 	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);	
 	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
 #endif
 	
@@ -848,8 +829,8 @@ xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)
     {
         if (nodeChild->name() == sNodeFilter)
         {
-            cout << "node name " << nodeChild->name() << "\n";
-            cout << "nodeChild " << nodeChild << endl;
+//             cout << "node name " << nodeChild->name() << "\n";
+//             cout << "nodeChild " << nodeChild << endl;
             // returns the desired child
             return nodeChild;
         }
@@ -887,7 +868,7 @@ template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *p
 		T tmp;
 		value.clear(); value.str(nodeChild->value()); value >> tmp;
 		vector.push_back(tmp);
-		cout << "added " << vector.back() << endl;
+// 		cout << "added " << vector.back() << endl;
 	}
 }
 template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<double> &vector);

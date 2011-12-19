@@ -38,19 +38,11 @@
 
 #define PRINT_CODES_INFO
 // #define PRINT_ACTIVITY_SAMPLING
-
 // #define PRINT_INFO
-
-// #define DEBUG_SER
-// #define DEBUG_ACTIVITY_DETECTION_ERROR_RATE
 
 // #define DEBUG
 
 CDMASystem::CDMASystem(): SMCSystem()
-// ,_userPersistenceProb(0.99),_newActiveUserProb(0.01),_userPriorProb(0.5)	// <- a reasonable model
-// ,_userPersistenceProb(1.0),_newActiveUserProb(0.2),_userPriorProb(1.0)		// all the users are active all the time
-// ,_usersActivityPdfs(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb))
-// ,_iUserOfInterest(0u)
 {
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -71,41 +63,16 @@ CDMASystem::CDMASystem(): SMCSystem()
 	readParameterFromXML(thisSystemParameters,"nSurvivors",_nSurvivors);
 	readParameterFromXML(thisSystemParameters,"iUserOfInterest",_iUserOfInterest);
 		
-//  	_minSignalToInterferenceRatio = -30;
-	//_minSignalToInterferenceRatio = -50;
-	
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
 	// first user starts transmitting something
 	_usersActivityPdfs[0].setApriori(1.0);
 
-// 	_nSurvivors = 2;
-
-//     // AR process parameters
-//     _ARcoefficients = vector<double>(2);
-//     _ARcoefficients[0] = 0.59999;
-//     _ARcoefficients[1] = 0.39999;
-//     _ARvariance=0.0001;    
-    
-//     // AR process parameters
-//     ARcoefficients = vector<double>(1);
-//     ARcoefficients[0] = 0.99999;
-//     ARvariance=0.0001;
-    
     // a flat power profile is generated. Notice:
     //      i) that m should be 1, otherwise an exception would have been thrown
     //     ii) we only need to generate a coefficient per user, i.e., a 1xN vector
 // 	FlatPowerProfile::setCoefficientsMean(5.0);
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
-
-// 	// bessel channel parameters
-// //     _velocity = 180/3.6; // (m/s)
-//     _velocity = 50/3.6; // (m/s)
-//     _carrierFrequency = 2e9; // (Hz)
-//     _symbolRate = 500e3; // (Hz)
-// 
-//     _T = 1.0/_symbolRate; // (s)
-    
 
     // the parameters obtained from the Yule-Walker equations are used for the channel estimator
 // 	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
@@ -362,11 +329,6 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 										detectedSymbols.block(0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										Util::block(mask,0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										iBestPermutation,bestPermutationSigns);
-		
-#ifdef DEBUG
-		cout << "iBestPermutation = " << iBestPermutation << endl << "bestPermutationSigns:" << endl << bestPermutationSigns << endl;
-		cout << detectedSymbols.block(0,_frameLength-50,nSymbolsRows,50);
-#endif
 		assert(iBestPermutation==0);
 		
 		// we need to store which the best permutations were along with their corresponding signs since it will be needed later by "computeActivityDetectionErrorRate" and "computeMSE"

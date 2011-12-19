@@ -23,13 +23,13 @@
 
 // #define DEBUG
 
-#ifdef RANDOM_SEED
+// #ifdef RANDOM_SEED
   Random StatUtil::_randomGenerator;
   Random StatUtil::_particlesInitializerRandomGenerator;
-#else
-  Random StatUtil::_randomGenerator(4135925433);
-  Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
-#endif
+// #else
+//   Random StatUtil::_randomGenerator(4135925433);
+//   Random StatUtil::_particlesInitializerRandomGenerator(2484546298);
+// #endif
 
 uint StatUtil::discrete_rnd(const VectorXd &probabilities,Random &randomGenerator)
 {
