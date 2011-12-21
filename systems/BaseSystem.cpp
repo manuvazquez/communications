@@ -44,9 +44,6 @@ extern bool __nFramesHasBeenPassed;
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
 
-// #define LOAD_SEEDS
-// #define LOAD_PER_ALGORITHM_AND_SNR_SEEDS
-
 #ifdef EXPORT_REAL_DATA
     MIMOChannel *realChannel;
     MatrixXd *realSymbols;
@@ -91,6 +88,9 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"mainSeedToBeLoaded",_mainSeedToBeLoaded);
 	readParameterFromXML(thisSystemParameters,"statUtilSeedToBeLoaded",_statUtilSeedToBeLoaded);
 	
+	readParameterFromXML(thisSystemParameters,"loadPerAlgorithmAndSNRseeds",_loadPerAlgorithmAndSNRseeds);
+	readParameterFromXML(thisSystemParameters,"perAlgorithmAndSNRstatUtilSeedToBeLoaded",_perAlgorithmAndSNRstatUtilSeedToBeLoaded);
+
 	readParameterFromXML(thisSystemParameters,"saveAtEveryFrame",_saveAtEveryFrame);
 	readParameterFromXML(thisSystemParameters,"keepAllChannelEstimates",_keepAllChannelEstimates);
 	
@@ -274,7 +274,6 @@ if(__nFramesHasBeenPassed)
 	cout << COLOR_LIGHT_BLUE << _nFrames << " frames are going to be simulated." << COLOR_NORMAL << endl;
 }
 
-// #ifdef LOAD_SEEDS
     // for repeating simulations
     if(_loadSeeds)
 	{
@@ -296,16 +295,12 @@ if(__nFramesHasBeenPassed)
 		cout << COLOR_LIGHT_BLUE << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
 
 	}
-// #endif
 
     _iFrame = 0;
     while((_iFrame<_nFrames) && (!__done))
     {
 
         // the seeds are kept for saving later
-//         _mainSeeds.push_back(_randomGenerator.getSeed());
-//         _statUtilSeeds.push_back(StatUtil::getRandomGenerator().getSeed());
-		
 		_mainRandoms.push_back(_randomGenerator);
 		_statUtilRandoms.push_back(StatUtil::getRandomGenerator());
 
@@ -383,23 +378,15 @@ if(__nFramesHasBeenPassed)
             // algorithms are executed
             for(_iAlgorithm=0;_iAlgorithm<_algorithms.size();_iAlgorithm++)
             {
-#ifdef LOAD_PER_ALGORITHM_AND_SNR_SEEDS
-// 				_randomGenerator.setSeed(4091652794);
-// 				StatUtil::getRandomGenerator().setSeed(3715014788);
-// 				StatUtil::getRandomGenerator().setSeed(2627962102);
-// 				StatUtil::getRandomGenerator().setSeed(2468980981);
+				if(_loadPerAlgorithmAndSNRseeds)
+				{
+					StatUtil::getRandomGenerator().setSeed(_perAlgorithmAndSNRstatUtilSeedToBeLoaded);
+// 					StatUtil::getRandomGenerator().setStoredSample(596381295);
 
-// 				StatUtil::getRandomGenerator().setSeed(4094155604);	// middle of the frame ambiguity problem
+					cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
+					cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
+				}
 
-// 				StatUtil::getRandomGenerator().setSeed(596381295);
-				
-				StatUtil::getRandomGenerator().setSeed(1300138858);
-// 				StatUtil::getRandomGenerator().setStoredSample(596381295);
-
-				cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
-				cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
-#endif
-				
 #ifdef SAVE_ALL_SEEDS
 // 				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
 				_thisFramePerAlgorithmAndSNRstatUtilRandoms[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator();

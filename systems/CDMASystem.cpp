@@ -147,8 +147,8 @@ void CDMASystem::buildSystemSpecificVariables()
 		// when users are not transmitting, their symbols are zero
 		_symbols(iUser,_preambleLength+_trainSeqLength) = double(_usersActivity[iUser][_trainSeqLength])*_symbols(iUser,_preambleLength+_trainSeqLength);
 		
-		// the symbol is accounted for detection only if the corresponding user is active
-		_isSymbolAccountedForDetection[iUser][_trainSeqLength] = _usersActivity[iUser][_trainSeqLength];
+// 		// the symbol is accounted for detection only if the corresponding user is active
+// 		_isSymbolAccountedForDetection[iUser][_trainSeqLength] = _usersActivity[iUser][_trainSeqLength];
     }
       
     // set of active users evolves according to the given probabilities
@@ -157,7 +157,7 @@ void CDMASystem::buildSystemSpecificVariables()
 		{   
 			_usersActivity[iUser][iTime] = _usersActivityPdfs[iUser].sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
 			_symbols(iUser,_preambleLength+iTime) = _symbols(iUser,_preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
-			_isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
+// 			_isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
 		}
             
 #ifdef PRINT_INFO

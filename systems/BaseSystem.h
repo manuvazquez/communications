@@ -69,8 +69,12 @@ class BaseSystem{
 protected:
 	bool _randomSeeds;
 	bool _loadSeeds;
+	bool _loadPerAlgorithmAndSNRseeds;
+	
 	uint32_t _mainSeedToBeLoaded;
 	uint32_t _statUtilSeedToBeLoaded;
+	
+	uint32_t _perAlgorithmAndSNRstatUtilSeedToBeLoaded;
 	
 	bool _keepAllChannelEstimates;
 	
