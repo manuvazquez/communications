@@ -117,24 +117,33 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
 
 uint KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
 {
-    int iBest = -1;
+	assert(nodes.size()>0);
+    uint iBest;
     double bestCost = 0.0;
 
-	assert(nodes.size()>0);
-    for(uint i=0;i<nodes.size();i++)
+	uint i=0;
+	
+	// the first leaf node is searched for
+	while(i<nodes.size() && nodes[i].children.size()!=0)
+		i++;
+	
+	iBest = i;
+	bestCost = nodes[i].cost;
+	
+    for(i=i+1;i<nodes.size();i++)
     {
-        // if it isn't a leaf node
+        // if it isn't a leaf node...
         if(nodes[i].children.size()!=0)
             continue;
 
-        if(iBest==-1 || nodes[i].cost < bestCost)
+        if(nodes[i].cost < bestCost)
         {
             iBest = i;
             bestCost = nodes[i].cost;
         }
     }
-    
-    return static_cast<uint>(iBest);
+        
+    return iBest;
 }
 
 MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()

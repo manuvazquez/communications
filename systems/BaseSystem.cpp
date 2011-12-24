@@ -567,7 +567,7 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
           
             uint currentStreamErrorsInverting=0,currentStreamErrorsWithoutInverting=0;
             
-            for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+            for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
             {
                 // if this symbol is not accounted for
                 if(!mask[iStream][iTime])
@@ -673,7 +673,7 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 
   for(uint iStream=0;iStream<nSymbolsRows;iStream++)
   {
-	  for(uint iTime=0;iTime<static_cast<uint> (sourceSymbols.cols());iTime++)
+	  for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
 	  {
 		  // if this symbol is not accounted for
 		  if(!mask[iStream][iTime])

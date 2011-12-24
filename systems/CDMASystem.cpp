@@ -136,7 +136,7 @@ void CDMASystem::buildSystemSpecificVariables()
 	// when users are not transmitting, their symbols are zero
 	_usersActivity = vector<vector<bool> >(_symbols.rows(),vector<bool>(_frameLength));
     
-    for(uint iUser=0;iUser<static_cast<uint>(_symbols.rows());iUser++)
+    for(uint iUser=0;iUser<_symbols.rows();iUser++)
     {
 		// at the first time instant the prior probability is used to decide which users are active
 		_usersActivity[iUser][_trainSeqLength] = _usersActivityPdfs[iUser].sampleFromPrior();
@@ -205,8 +205,8 @@ void CDMASystem::buildSystemSpecificVariables()
 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
 	
 	// the noise is generated
-	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-// 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
+// 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const

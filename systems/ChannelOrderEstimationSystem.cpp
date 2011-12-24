@@ -94,7 +94,7 @@ void ChannelOrderEstimationSystem::beforeEndingAlgorithm()
 	else
 	  if(_algorithms[_iAlgorithm]->estimatesOneChannelOrderPerOutput())
 	  {
-		for(uint iOutput=0;iOutput<static_cast<uint>(_L);iOutput++)
+		for(uint iOutput=0;iOutput<_L;iOutput++)
 			_presentFrameOneChannelOrderPerOutputAPPsAlongTime[iOutput][_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation][_iSNR] = (dynamic_cast <UnknownChannelOrderAlgorithm *>(_algorithms[_iAlgorithm]))->getComputedChannelOrderAPPs(iOutput);
 		
 		_iAlgorithmPerformingOneChannelOrderPerOutputAPPestimation++;
