@@ -43,7 +43,7 @@ public:
 
 protected:
     uint nSurvivors;
-    bool adjustParticlesNumberFromSurvivors;
+    bool _adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber;
 
     KalmanEstimator *kalmanEstimator;
     ResamplingAlgorithm *withoutReplacementResamplingAlgorithm,*bestParticlesResamplingAlgorithm;

@@ -33,7 +33,7 @@ class KnownChannelChannelMatrixEstimator : public ChannelMatrixEstimator
 {
 protected:
     const MIMOChannel *_channel;
-    int _iNextMatrix;
+    uint _iNextMatrix;
 public:
     KnownChannelChannelMatrixEstimator(const MIMOChannel *channel, uint iFirstChannelMatrix, uint N);
 

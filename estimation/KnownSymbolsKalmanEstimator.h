@@ -28,10 +28,10 @@
 class KnownSymbolsKalmanEstimator : public KalmanEstimator
 {
 protected:
-    int _presentTime;
+    uint _presentTime;
     const MatrixXd &_symbols;
 public:
-    KnownSymbolsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, vector<double> ARcoefficient, double ARvariance,const MatrixXd &symbols,int startDetectionTime);
+    KnownSymbolsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, vector<double> ARcoefficient, double ARvariance,const MatrixXd &symbols,uint startDetectionTime);
 
     KnownSymbolsKalmanEstimator* clone() const;
 

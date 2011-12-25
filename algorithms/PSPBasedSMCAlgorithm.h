@@ -32,7 +32,7 @@ protected:
 	
 
 	typedef struct{
-		int fromParticle;
+		uint fromParticle;
 		MatrixXd symbolVectorsMatrix;
 		double weight;
 	}tParticleCandidate;

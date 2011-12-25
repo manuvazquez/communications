@@ -64,7 +64,7 @@ PSPPath::PSPPath(const PSPPath &path):ViterbiPath(path),_channelMatrixEstimators
 
 #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 		_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-			for(int i=0;i<_nTimeInstants;i++)
+			for(uint i=0;i<_nTimeInstants;i++)
 				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 #endif
     }
@@ -148,7 +148,7 @@ void PSPPath::update(const PSPPath& path, VectorXd newSymbolVector, double newCo
 		delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
 		_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
 
-		for(int i=0;i<_nTimeInstants;i++)
+		for(uint i=0;i<_nTimeInstants;i++)
 			_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 
 		// the new matrix is added at the right index based on the last detected vector
@@ -175,7 +175,7 @@ void PSPPath::operator=(const PSPPath &path)
 
 #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 			_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-			for(int i=0;i<_nTimeInstants;i++)
+			for(uint i=0;i<_nTimeInstants;i++)
 				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 #endif
         }
@@ -191,7 +191,7 @@ void PSPPath::operator=(const PSPPath &path)
 #ifndef DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 			delete[] _estimatedChannelMatrices[iChannelMatrixEstimator];
 			_estimatedChannelMatrices[iChannelMatrixEstimator] = new MatrixXd[_nTimeInstants];
-			for(int i=0;i<_nTimeInstants;i++)
+			for(uint i=0;i<_nTimeInstants;i++)
 				_estimatedChannelMatrices[iChannelMatrixEstimator][i] = path._estimatedChannelMatrices[iChannelMatrixEstimator][i];
 #endif
         }

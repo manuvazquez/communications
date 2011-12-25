@@ -26,7 +26,7 @@ PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities(strin
 	throw RuntimeException("PSPAlgorithmWithAprioriProbabilities::PSPAlgorithmWithAprioriProbabilities: this algorithm is only implemented for flat channels.");
 }
 
-void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorXd& observations, double noiseVariance)
+void PSPAlgorithmWithAprioriProbabilities::deployState(uint iState, const VectorXd& observations, double noiseVariance)
 {    
     double newCost;
     uint arrivalState,iDisposableSurvivor;
@@ -72,8 +72,8 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorX
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._newSymbolVector = symbolsVector;
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolsVector;
 				}
-		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
-    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+		} // for(uint iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
+    } // for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< double > noiseVariances)

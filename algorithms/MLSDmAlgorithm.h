@@ -33,9 +33,9 @@ class MLSDmAlgorithm : public MultipleChannelEstimatorsPerParticleSMCAlgorithm
 protected:
     ParticleFilter *_particleFilter;
     double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    vector<int> _particlesBestChannelOrders;
+    vector<uint> _particlesBestChannelOrders;
 
-    int iBestChannelOrder(int iBestParticle);
+    uint iBestChannelOrder(uint iBestParticle);
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence);
 public:
 	// FIXME: it seems samplingVariance is not used anywhere!!

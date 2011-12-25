@@ -55,9 +55,9 @@ protected:
     
     virtual void process(const MatrixXd& observations, vector< double > noiseVariances);
 
-    virtual void beforeResamplingProcess(int iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances) {}
+    virtual void beforeResamplingProcess(uint iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances) {}
 
-    int iBestChannelOrder(int iBestParticle);
+    uint iBestChannelOrder(uint iBestParticle);
 
     virtual void beforeInitializingParticles(const MatrixXd &observations, vector<double> &noiseVariances, const MatrixXd &trainingSequence);
     

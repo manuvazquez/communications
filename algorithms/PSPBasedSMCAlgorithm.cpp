@@ -33,8 +33,7 @@
 	extern Noise *realNoise;
 #endif
 
-PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances/*, double ARcoefficient*/): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
-// ,_ARcoefficient(ARcoefficient)
+PSPBasedSMCAlgorithm::PSPBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
 {
 }
 
@@ -48,16 +47,10 @@ void PSPBasedSMCAlgorithm::initializeParticles()
 
 void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double > noiseVariances)
 {
-    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+    uint nSymbolVectors = uint(pow((double)_alphabet.length(),(double)_nInputs));
     vector<tSymbol> testedVector(_nInputs);
     VectorXd computedObservations(_nOutputs);
     double normConst;
-
-//     typedef struct{
-//         int fromParticle;
-//         MatrixXd symbolVectorsMatrix;
-//         double weight;
-//     }tParticleCandidate;
 
     tParticleCandidate *particleCandidates = new tParticleCandidate[_particleFilter->capacity()*nSymbolVectors] ;
 
@@ -65,7 +58,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
     MatrixXd symbolVectorsMatrix(_nInputs,_channelOrder);
     VectorXd symbolsVector(_nInputsXchannelOrder);
 
-    int iLastSymbolVectorStartWithinStackedVector = _nInputsXchannelOrder - _nInputs;
+    uint iLastSymbolVectorStartWithinStackedVector = _nInputsXchannelOrder - _nInputs;
 
     // at first, there is only one particle
     for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
@@ -128,7 +121,7 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 			getchar();
 #endif
 
-        } // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        } // for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
         // a vector of size the number of generated candidates is declared...
         VectorXd weights(iCandidate);
@@ -139,24 +132,6 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
 
         // the candidates that are going to give particles are selected
         vector<uint> indexesSelectedCandidates = _resamplingAlgorithm->obtainIndexes(_particleFilter->capacity(),weights);
-		
-		
-		// -----------------------------------------------
-		
-// 		vector<int> indexesSelectedCandidates;
-// 		
-// 		uint nSurvivors = _particleFilter->capacity()/int(pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1))));
-// 		if(_particleFilter->capacity() % int(pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1)))) !=0)
-// 			throw RuntimeException("OneChannelOrderPerOutputSMCAlgorithm:process: the number of computed survivors is not integer.");
-// 		
-// 		std::vector<std::vector<bool> > stateMasks = imposeFixedNumberOfSurvivorsPerState(particleCandidates,iCandidate);
-// 		for(uint i=0;i<stateMasks.size();i++)
-// 		{
-// 			std::vector<int> thisStateIndexes = _resamplingAlgorithm->obtainIndexes(nSurvivors,weights,stateMasks[i]);
-// 			indexesSelectedCandidates.insert(indexesSelectedCandidates.end(),thisStateIndexes.begin(),thisStateIndexes.end());
-// 		}
-		
-		// -------------------------------
 
         // every survivor candidate is associated with an old particle
         vector<uint> indexesParticles(indexesSelectedCandidates.size());
@@ -178,26 +153,21 @@ void PSPBasedSMCAlgorithm::process(const MatrixXd& observations, vector< double 
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),particleCandidates[indexesSelectedCandidates[iParticle]].symbolVectorsMatrix,noiseVariances[iObservationToBeProcessed]));
 
             processedParticle->setWeight(particleCandidates[indexesSelectedCandidates[iParticle]].weight);
-        } // for(int iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
+        } // for(uint iParticle=0;iParticle<_particleFilter->nParticles();iParticle++)
 
         _particleFilter->normalizeWeights();
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
-
-// 	// covariance test
-// 	ParticleWithChannelEstimation *bestPart = dynamic_cast<ParticleWithChannelEstimation *>(_particleFilter->getBestParticle());
-// 	KalmanEstimator *bestEst = dynamic_cast<KalmanEstimator *>(bestPart->getChannelMatrixEstimator());
-// 	cout << "covariance" << endl << bestEst->getFilteredCovariance() << endl;
+    } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
 
     delete[] particleCandidates;
 }
 
 std::vector<std::vector<bool> > PSPBasedSMCAlgorithm::imposeFixedNumberOfSurvivorsPerState(const tParticleCandidate *particleCandidates,uint nCandidates)
 {
-	int nStates = pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1)));
+	uint nStates = uint(pow(double(_alphabet.length()),double(_nInputs*(_channelOrder-1))));
 	
 	std::vector<std::vector<bool> > statesMasks(nStates,std::vector<bool>(nCandidates,false));
 	
-	for(int iState=0;iState<nStates;iState++)
+	for(uint iState=0;iState<nStates;iState++)
 	{
 		MatrixXd state = _alphabet.int2eigenMatrix(iState,_nInputs,_channelOrder-1);
 		

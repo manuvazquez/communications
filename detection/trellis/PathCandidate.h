@@ -25,8 +25,8 @@
 */
 class PathCandidate{
 public:
-    int _fromState;
-    int _input;
+    uint _fromState;
+    uint _input;
     double _cost;
     VectorXd _newSymbolVector;
 

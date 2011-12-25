@@ -58,12 +58,13 @@ void ViterbiAlgorithm::run(MatrixXd observations,vector<double> noiseVariances,u
     vector<tSymbol> preambleVector(_nInputs*(channel.memory()-1));
 
     // (it must be taken into account that the number of columns of the preamble might be greater than m-1)
-    int iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_nInputs;
-    for(int i=iFirstPreambleSymbolNeeded;i<_preamble.size();i++)
+	assert(_preamble.cols()>channel.memory());
+    uint iFirstPreambleSymbolNeeded = (_preamble.cols()-(channel.memory()-1))*_nInputs;
+    for(uint i=iFirstPreambleSymbolNeeded;i<_preamble.size();i++)
         preambleVector[i-iFirstPreambleSymbolNeeded] = _preamble(i % _preamble.rows(),i / _preamble.rows());
   
 	// the sequence of symbols is converted to a number using the corresponding method from "Alphabet"
-    int initialState = _alphabet.symbolsArray2int(preambleVector);
+    uint initialState = _alphabet.symbolsArray2int(preambleVector);
 
     _exitStage[initialState] = ViterbiPath(_iLastSymbolVectorToBeDetected,0.0,_preamble);
   
@@ -127,12 +128,12 @@ void ViterbiAlgorithm::process(MatrixXd observations,vector<double> noiseVarianc
 	}
 }
 
-void ViterbiAlgorithm::deployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance)
+void ViterbiAlgorithm::deployState(uint iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance)
 {
     const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
 
     double newCost;
-    int arrivalState;
+    uint arrivalState;
 
     // "symbolVectors" will contain all the symbols involved in the current observation
     MatrixXd symbolVectors(channel.nInputs(),channel.memory());
@@ -157,7 +158,7 @@ void ViterbiAlgorithm::deployState(int iState,const VectorXd &observations,const
             (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
                 _arrivalStage[arrivalState].update(_exitStage[iState],symbolVectors.col(channel.memory()-1),newCost);
-    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    } // for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 
 }
 

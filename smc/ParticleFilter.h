@@ -44,7 +44,7 @@ public:
 
     void clear();
 
-    Particle *getParticle(int n) const { return _particles[n];}
+    Particle *getParticle(uint n) const { return _particles[n];}
     virtual void keepParticles(std::vector<uint> resamplingIndexes,std::vector<uint> indexes);
     /**
      *    It performs resamling keeping only the particles given by the vector of indexes. It guarantees that the order of the particles in the resulting particle filter is the one specified by the vector of indexes.
@@ -77,7 +77,7 @@ public:
             _particles[i]->setWeight(_particles[i]->getWeight()/sum);
     }
 
-    void normalizeWeights(std::vector<int> indexes)
+    void normalizeWeights(std::vector<uint> indexes)
     {
         double sum = 0.0;
         uint i,nParticles=indexes.size();

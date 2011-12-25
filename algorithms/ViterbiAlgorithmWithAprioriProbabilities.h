@@ -31,7 +31,7 @@ protected:
     const std::vector<UsersActivityDistribution> _usersActivityPdfs;
 	Alphabet _extendedAlphabet;
   
-  virtual void deployState(int iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance);
+  virtual void deployState(uint iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance);
 };
 
 #endif // VITERBIALGORITHMWITHAPRIORIPROBABILITIES_H

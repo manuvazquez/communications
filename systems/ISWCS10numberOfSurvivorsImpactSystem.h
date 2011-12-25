@@ -27,7 +27,7 @@
 class ISWCS10numberOfSurvivorsImpactSystem : public ISWCS10System
 {
 protected:
-	std::vector<int> nParticlesStudied;
+	std::vector<uint> nParticlesStudied;
 	
 	virtual void addAlgorithms();
 	virtual void saveFrameResults();

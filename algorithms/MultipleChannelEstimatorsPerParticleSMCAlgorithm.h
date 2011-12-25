@@ -49,7 +49,7 @@ protected:
     virtual ParticleFilter* getParticleFilterPointer() = 0;
     virtual void initializeParticles() = 0;
     virtual void process(const MatrixXd &observations,vector<double> noiseVariances) = 0; // eigen
-    virtual int iBestChannelOrder(int iBestParticle) = 0;
+    virtual uint iBestChannelOrder(uint iBestParticle) = 0;
 
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
     virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {}

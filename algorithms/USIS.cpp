@@ -153,7 +153,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
                     MatrixXd s2qAux = _alphabet.variance()*stackedChannelMatrix*stackedChannelMatrix.transpose() + stackedNoiseCovariance.block(iLinearFilterNeeded*_nOutputs,iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1),_nOutputs*(d+1));
 
                     // the real symbol we are sampling (it depends on "iLinearFilterNeeded")
-                    int iSampledSymbolPos = iLinearFilterNeeded*_nInputs - 1;
+                    uint iSampledSymbolPos = iLinearFilterNeeded*_nInputs - 1;
 
                     // sampling
                     for(iSampledSymbol=0;iSampledSymbol<(_nInputs*(d+1));iSampledSymbol++)
@@ -270,11 +270,11 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
     } // while((iObservationToBeProcessed<_iLastSymbolVectorToBeDetected) && !_processDoneExternally)
 }
 
-int USIS::iBestChannelOrder(int iBestParticle)
+uint USIS::iBestChannelOrder(uint iBestParticle)
 {
     ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *bestParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iBestParticle));
 
-    int iMaxChannelOrderAPP = 0;
+    uint iMaxChannelOrderAPP = 0;
     double maxChannelOrderAPP = bestParticle->getChannelOrderEstimator()->getChannelOrderAPP(iMaxChannelOrderAPP);
 
     for(uint i=1;i<_candidateOrders.size();i++)

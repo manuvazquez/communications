@@ -64,9 +64,9 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
 	double likelihood;
 
     typedef struct{
-        int fromParticle;
+        uint fromParticle;
         MatrixXd symbolVectorsMatrix;
-        int iBestChannelOrder;
+        uint iBestChannelOrder;
         VectorXd unnormalizedChannelOrderAPPs;
         double likelihood;
         double weight;
@@ -78,10 +78,10 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
     MatrixXd symbolVectorsMatrix(_nInputs,_maxOrder);
     VectorXd symbolsVector;
 
-    int lastSymbolVectorStart = _nInputsXmaxChannelOrder - _nInputs;
+    uint lastSymbolVectorStart = _nInputsXmaxChannelOrder - _nInputs;
 
     vector<bool> activeCandidateOrders(_candidateOrders.size(),true);
-    int iBestChannelOrder = 0,timesBestChannelOrder = 0;
+    uint iBestChannelOrder = 0,timesBestChannelOrder = 0;
 
     for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected+_d;iObservationToBeProcessed++)
     {
@@ -235,7 +235,7 @@ void MLSDmAlgorithm::process(const MatrixXd& observations, vector<double> noiseV
     delete[] particleCandidates;
 }
 
-int MLSDmAlgorithm::iBestChannelOrder(int iBestParticle)
+uint MLSDmAlgorithm::iBestChannelOrder(uint iBestParticle)
 {
     return _particlesBestChannelOrders[iBestParticle];
 }

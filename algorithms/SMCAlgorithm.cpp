@@ -152,7 +152,7 @@ vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices()
     channelMatrices.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
 
     // best particle is chosen
-    int iBestParticle = _particleFilter->iBestParticle();
+    uint iBestParticle = _particleFilter->iBestParticle();
 
     for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
         channelMatrices.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iBestParticle))->getChannelMatrix(_estimatorIndex,i));
@@ -160,7 +160,7 @@ vector<MatrixXd> SMCAlgorithm::getEstimatedChannelMatrices()
     return channelMatrices;
 }
 
-double SMCAlgorithm::smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,int iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances)
+double SMCAlgorithm::smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,uint iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances)
 {
     double likelihoodsProd = 1.0;
 

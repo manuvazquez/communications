@@ -25,12 +25,12 @@ _extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))
 	throw RuntimeException("ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities: algorithm is only implemented for flat channels.");
 }
 
-void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance)
+void ViterbiAlgorithmWithAprioriProbabilities::deployState(uint iState, const VectorXd& observations, const MatrixXd& channelMatrix, const double noiseVariance)
 {
     const StillMemoryMIMOChannel &channel = dynamic_cast<const StillMemoryMIMOChannel &> (_channel);
 
     double newCost;
-    int arrivalState;
+    uint arrivalState;
 
 	VectorXd previousSymbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	
@@ -54,7 +54,7 @@ void ViterbiAlgorithmWithAprioriProbabilities::deployState(int iState, const Vec
             (_arrivalStage[arrivalState].getCost() > newCost))
                 // the ViterbiPath object at the arrival state is updated with that from the exit stage, the new symbol vector, and the new cost
                 _arrivalStage[arrivalState].update(_exitStage[iState],symbolsVector.col(channel.memory()-1),newCost);
-    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+    } // for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 void ViterbiAlgorithmWithAprioriProbabilities::run(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt)

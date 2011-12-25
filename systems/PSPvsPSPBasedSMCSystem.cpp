@@ -23,15 +23,12 @@ PSPvsPSPBasedSMCSystem::PSPvsPSPBasedSMCSystem()
  : SMCSystem()
 {
     nSurvivors = 2;
-    adjustParticlesNumberFromSurvivors = true;
+    _adjustParticlesNumberFromSurvivors = true;
+	_adjustSurvivorsFromParticlesNumber = false;
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
-
-	if(adjustParticlesNumberFromSurvivors)
-	{
-		nParticles = (int)pow((double)_alphabet->length(),_N*(_m-1))*nSurvivors;
-        cout << "Number of particles adjusted to " << nParticles << endl;
-    }
+    
+    adjustParticlesSurvivors(nParticles,nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
 
     kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 

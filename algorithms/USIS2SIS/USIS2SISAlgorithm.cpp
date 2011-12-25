@@ -25,7 +25,7 @@ USIS2SISAlgorithm::USIS2SISAlgorithm(string name, Alphabet alphabet, uint L, uin
 {
 }
 
-void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances)
+void USIS2SISAlgorithm::beforeResamplingProcess(uint iProcessedObservation, const MatrixXd& observations, const vector<double> &noiseVariances)
 {
     VectorXd _weightedChannelOrderAPPs = VectorXd::Zero(_candidateOrders.size());
 
@@ -38,7 +38,7 @@ void USIS2SISAlgorithm::beforeResamplingProcess(int iProcessedObservation, const
     }
 
     // the maximum probability is obtained
-    int iMax;
+    uint iMax;
     _weightedChannelOrderAPPs.maxCoeff(&iMax);
 
     // if the transition criterion is satisfied

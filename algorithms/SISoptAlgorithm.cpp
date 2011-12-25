@@ -32,7 +32,7 @@ void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noise
     // it includes all symbol vectors involved in the smoothing
     MatrixXd involvedSymbolVectors(_nInputs,_channelOrder);
 
-    uint nSymbolVectors = (int) pow((double)_alphabet.length(),(double)_nInputs);
+    uint nSymbolVectors = uint(pow((double)_alphabet.length(),(double)_nInputs));
 
     // a likelihood is computed for every possible symbol vector
     VectorXd likelihoods(nSymbolVectors);
@@ -90,5 +90,5 @@ void SISoptAlgorithm::process(const MatrixXd& observations, vector<double> noise
         if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

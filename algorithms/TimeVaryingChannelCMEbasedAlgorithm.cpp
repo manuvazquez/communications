@@ -34,7 +34,7 @@ TimeVaryingChannelCMEbasedAlgorithm::TimeVaryingChannelCMEbasedAlgorithm(string 
 void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances)
 {
     uint m,iTxAntenna,iDelay;
-    int nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
+    uint nSymbolVectors = _symbolVectors.cols() - _preamble.cols();
     VectorXd CMEs(_candidateOrders.size());
     double accumulatedSquaredObservationsError;
 
@@ -49,8 +49,8 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
         accumulatedSquaredObservationsError = 0.0;
 
         // channel estimation
-        int skipNumber = 0;
-        for(int iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
+        uint skipNumber = 0;
+        for(uint iSymbolVector=_preamble.cols();iSymbolVector<observations.cols();iSymbolVector++)
         {
             _channelEstimators[iChannelOrder]->nextMatrix(observations.col(iSymbolVector),_symbolVectors.block(0,iSymbolVector-m+1,_nInputs,m),noiseVariances[iSymbolVector]);
 
@@ -69,7 +69,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
         for(iTxAntenna=0;iTxAntenna<_nInputs;iTxAntenna++)
             for(iDelay=0;iDelay<m;iDelay++)
                 // symbols are transformed
-                for(int CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
+                for(uint CmatrixRow=0;CmatrixRow<nSymbolVectors;CmatrixRow++)
                     C(CmatrixRow,iTxAntenna*m+iDelay) = _symbolVectors(iTxAntenna,_preamble.cols()-iDelay+CmatrixRow);
 
         // CME

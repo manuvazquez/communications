@@ -65,7 +65,7 @@ protected:
      * @param noiseVariances
      * @return
      */
-    double smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,int iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances);
+    double smoothedLikelihood(const vector<MatrixXd> &channelMatrices,const MatrixXd &involvedSymbolVectors,uint iObservationToBeProcessed,const MatrixXd &observations,const vector<double> &noiseVariances);
 
     bool _randomParticlesInitilization;
 

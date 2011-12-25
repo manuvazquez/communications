@@ -54,12 +54,12 @@ void ParticleFilter::keepParticles(std::vector<uint> resamplingIndexes,std::vect
     if(resamplingIndexes.size()!=indexes.size())
         throw RuntimeException("ParticleFilter::KeepParticles: the size of the indexes vector and resampling indexes vector don't match.");
 
-    int nParticlesToBeResampled = indexes.size();
+    uint nParticlesToBeResampled = indexes.size();
 
     Particle **resParticles = new Particle*[_capacity];
 
     // the particles given by indexes are resampled
-    for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+    for(uint iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
     {
         resParticles[indexes[iParticle]] = (_particles[resamplingIndexes[iParticle]])->clone();
         resParticles[indexes[iParticle]]->setWeight(1.0/(double)nParticlesToBeResampled);
@@ -67,7 +67,7 @@ void ParticleFilter::keepParticles(std::vector<uint> resamplingIndexes,std::vect
 
     // the particles out of index are left the same. Their memory will not be released later
     uint previousResampledParticle = 0;
-    for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+    for(uint iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
     {
         while(previousResampledParticle<indexes[iParticle])
         {
@@ -83,7 +83,7 @@ void ParticleFilter::keepParticles(std::vector<uint> resamplingIndexes,std::vect
     }
 
     // the memory of the particles given by index is released
-    for(int iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
+    for(uint iParticle=0;iParticle<nParticlesToBeResampled;iParticle++)
         delete _particles[indexes[iParticle]];
 
     delete[] _particles;
@@ -125,7 +125,7 @@ void ParticleFilter::keepParticles(vector<uint> indexes)
 
 uint ParticleFilter::iBestParticle() const
 {
-//  int iBestParticle;
+//  uint iBestParticle;
 //  Util::max(getWeightsVector(),iBestParticle);
 //  return iBestParticle;
 
@@ -151,7 +151,7 @@ uint ParticleFilter::iBestParticle() const
             }
         }
     }
-//     int iBestParticle = Util::max(accumulatedWeights);
+//     uint iBestParticle = Util::max(accumulatedWeights);
 	uint iBestParticle = std::max_element(accumulatedWeights.begin(),accumulatedWeights.end())-accumulatedWeights.begin();
 
     return iBestParticle;

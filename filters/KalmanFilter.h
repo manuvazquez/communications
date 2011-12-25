@@ -33,24 +33,19 @@
 
 class KalmanFilter{
 private:
-    int _nElementsToEstimate;
+    uint _nElementsToEstimate;
     MatrixXd _R_eigen,_stateEquationCovariance_eigen,_predictiveCovariance_eigen,_filteredCovariance_eigen;
     VectorXd _predictiveMean_eigen,_filteredMean_eigen;
 
 public:
-    KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance); // eigen
+    KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance);
 
-    void step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen); // eigen
-
-//     tVector predictiveMean() const { return Util::eigen2lapack(_predictiveMean_eigen);}
-//     tVector filteredMean() const { return Util::eigen2lapack(_filteredMean_eigen);}
-//     tMatrix predictiveCovariance() const { return Util::eigen2lapack(_predictiveCovariance_eigen);}
-//     tMatrix filteredCovariance() const { return Util::eigen2lapack(_filteredCovariance_eigen);}
+    void step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen);
     
-    VectorXd predictiveMean_eigen() const { return _predictiveMean_eigen;} // eigen
-    VectorXd filteredMean_eigen() const { return _filteredMean_eigen;} // eigen
-    MatrixXd predictiveCovariance_eigen() const { return _predictiveCovariance_eigen;} // eigen
-    MatrixXd filteredCovariance_eigen() const { return _filteredCovariance_eigen;} //eigen
+    VectorXd predictiveMean_eigen() const { return _predictiveMean_eigen;}
+    VectorXd filteredMean_eigen() const { return _filteredMean_eigen;}
+    MatrixXd predictiveCovariance_eigen() const { return _predictiveCovariance_eigen;}
+    MatrixXd filteredCovariance_eigen() const { return _filteredCovariance_eigen;}
     
     void setFilteredMean(const VectorXd &filteredMean);
     void setFilteredCovariance(const MatrixXd &filteredCovariance);    

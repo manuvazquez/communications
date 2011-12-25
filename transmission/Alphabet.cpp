@@ -59,23 +59,25 @@ vector<tBit> Alphabet::operator [ ](tSymbol symbol) const
 	return _bitsSequences[iterator - _symbols.begin()];
 }
 
-void Alphabet::int2symbolsArray(int numero, vector<tSymbol> &res) const
+void Alphabet::int2symbolsArray(uint number, vector<tSymbol> &res) const
 {
-	int tamVector = res.size();
+	assert(number>=0);
 
-	if(numero>=pow((double)_length,(double)tamVector))
+	uint tamVector = res.size();
+
+	if(number>=pow((double)_length,(double)tamVector))
 		throw RuntimeException("Alphabet::int2symbolsArray: vector size is smaller than needed.");
 
-	int resto,i;
-
+	uint remainder,i;
+	
 	i=1;
 	do
 	{
-		resto = numero % _length;
-		res[tamVector-i] =  _symbols[resto];
-		numero /= _length;
+		remainder = number % _length;
+		res[tamVector-i] =  _symbols[remainder];
+		number /= _length;
 		i++;
-	}while(numero!=0);
+	}while(number!=0);
 
 	for(;tamVector>=i;i++)
 		res[tamVector-i] = _symbols[0];
@@ -132,7 +134,7 @@ bool Alphabet::doesItBelong(const tSymbol symbol) const
 	  return true;
 }
 
-VectorXd Alphabet::int2eigenVector(int number, uint length) const
+VectorXd Alphabet::int2eigenVector(uint number, uint length) const
 {
 	assert(number>=0);
 	if(number>=pow((double)_length,(double)length))
@@ -154,7 +156,7 @@ VectorXd Alphabet::int2eigenVector(int number, uint length) const
 	return res;
 }
 
-MatrixXd Alphabet::int2eigenMatrix(int number, uint rows, uint cols) const
+MatrixXd Alphabet::int2eigenMatrix(uint number, uint rows, uint cols) const
 {
 	uint length = rows*cols;
 	
@@ -170,7 +172,6 @@ MatrixXd Alphabet::int2eigenMatrix(int number, uint rows, uint cols) const
 	{
 		remainder = number % _length;
 		res(length % rows,length / rows) = _symbols[remainder];
-// 		res(length % cols,length / cols) = _symbols[remainder];
 		number /= _length;
 		length--;
 	}while(number!=0);

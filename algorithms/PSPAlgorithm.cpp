@@ -213,7 +213,7 @@ void PSPAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
     process(observations,noiseVariances);
 }
 
-void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double noiseVariance)
+void PSPAlgorithm::deployState(uint iState,const VectorXd &observations,double noiseVariance)
 {
     double newCost;
     uint arrivalState,iDisposableSurvivor;
@@ -269,8 +269,8 @@ void PSPAlgorithm::deployState(int iState,const VectorXd &observations,double no
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._newSymbolVector = symbolVectors.col(_channelOrder-1);
 					_bestArrivingPaths[arrivalState][iDisposableSurvivor]._detectedSymbolVectors = symbolVectors;
 				}
-		} // for(int iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
-    } // for(int iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
+		} // for(uint iSourceSurvivor=0;iSourceSurvivor<_nSurvivors;iSourceSurvivor++)
+    } // for(uint iInput=0;iInput<_trellis->nPossibleInputs();iInput++)
 }
 
 MatrixXd PSPAlgorithm::getDetectedSymbolVectors()
@@ -314,7 +314,7 @@ void PSPAlgorithm::bestPairStateSurvivor(uint& bestState, uint& bestSurvivor)
 		}
 }
 
-uint PSPAlgorithm::disposableSurvivor(int iState)
+uint PSPAlgorithm::disposableSurvivor(uint iState)
 {
     uint iWorstCost;
     double worstCost;

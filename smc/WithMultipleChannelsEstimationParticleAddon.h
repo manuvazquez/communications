@@ -28,17 +28,17 @@ protected:
 public:
   WithMultipleChannelsEstimationParticleAddon(std::vector<std::vector <ChannelMatrixEstimator *> > channelMatrixEstimators,uint trajectoryLength);
 
-    MatrixXd getChannelMatrix(uint iChannel,int iChannelOrder,int n) const
+    MatrixXd getChannelMatrix(uint iChannel,uint iChannelOrder,uint n) const
     {
         return _channelEstimationParticleAddons[iChannel].getChannelMatrix(iChannelOrder,n);
     }
 
-    void setChannelMatrix(uint iChannel,int iChannelOrder,int n,const MatrixXd &matrix)
+    void setChannelMatrix(uint iChannel,uint iChannelOrder,uint n,const MatrixXd &matrix)
     {
 	  _channelEstimationParticleAddons[iChannel].setChannelMatrix(iChannelOrder,n,matrix);
     }
 
-    ChannelMatrixEstimator *getChannelMatrixEstimator(uint iChannel,int iChannelOrder) const
+    ChannelMatrixEstimator *getChannelMatrixEstimator(uint iChannel,uint iChannelOrder) const
     { 
 		return _channelEstimationParticleAddons[iChannel].getChannelMatrixEstimator(iChannelOrder);
     }

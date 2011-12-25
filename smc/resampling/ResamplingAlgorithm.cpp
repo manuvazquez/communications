@@ -33,8 +33,8 @@ bool ResamplingAlgorithm::resampleWhenNecessary(ParticleFilter *particleFilter)
 
 #ifdef PRINT_RESAMPLED_INFO
         cout << "particles that are going to be resampled..." << endl;
-        vector<int> occurrences;
-        vector<int> times;
+        vector<uint> occurrences;
+        vector<uint> times;
         Util::howManyTimes(indexes,occurrences,times);
         cout << "occurrences (" << occurrences.size() << ")\t / times" << endl;
         for(uint i=0;i<occurrences.size();i++)

@@ -30,7 +30,7 @@
 
 class ViterbiPath{
 protected:
-    int _nTimeInstants;
+    uint _nTimeInstants;
     double _cost;
     MatrixXd *_detectedSequence;
 public:
@@ -43,7 +43,7 @@ public:
     double getCost() const { return _cost;}
     void clean() { delete _detectedSequence; _detectedSequence = NULL;}
     bool isEmpty() const { return (_detectedSequence == NULL);}
-    VectorXd getSymbolVector(int n) const { return _detectedSequence->col(n);}
+    VectorXd getSymbolVector(uint n) const { return _detectedSequence->col(n);}
     MatrixXd getDetectedSequence()  const { return *_detectedSequence;}
 
     virtual void print() const;

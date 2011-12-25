@@ -21,17 +21,14 @@
 
 // #define DEBUG
 
-KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, vector<double> ARcoefficients, double ARvariance,const MatrixXd &symbols,int startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficients, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
-// ,_symbols_eigen(Util::lapack2eigen(symbols))
+KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, vector<double> ARcoefficients, double ARvariance,const MatrixXd &symbols,uint startDetectionTime): KalmanEstimator(initialEstimation, variances, N, ARcoefficients, ARvariance),_presentTime(startDetectionTime),_symbols(symbols)
 {
 }
 
-// eigen
 MatrixXd KnownSymbolsKalmanEstimator::nextMatrix(const VectorXd &observations, const MatrixXd &symbolsMatrix, double noiseVariance)
 {
     _presentTime++;
     return KalmanEstimator::nextMatrix(observations, _symbols.block(0,_presentTime-_channelOrder,_nInputs,_channelOrder), noiseVariance);
-//     return KalmanEstimator::nextMatrix(observations, _symbols(tRange(0,_nInputs-1),tRange(_presentTime-_channelOrder,_presentTime-1)), noiseVariance);
 }
 
 KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::clone() const

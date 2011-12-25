@@ -38,7 +38,7 @@ public:
 
     uint nStates() const { return _nStates;}
     uint nPossibleInputs() const {return _nPossibleInputs;}
-    uint operator ()(int state, int input) const { return _stateTransitionMatrix[state][input];}
+    uint operator ()(uint state, int input) const { return _stateTransitionMatrix[state][input];}
 
 };
 

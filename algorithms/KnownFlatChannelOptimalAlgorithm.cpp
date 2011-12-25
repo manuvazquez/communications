@@ -112,7 +112,7 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         // for the next iteration
         nodes.clear();
         
-    } //for(int iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
+    } //for(uint iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
 }
 
 uint KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)

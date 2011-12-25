@@ -33,25 +33,25 @@ ResidualResamplingAlgorithm* ResidualResamplingAlgorithm::clone() const
 std::vector<uint> ResidualResamplingAlgorithm::obtainIndexes(uint n,const VectorXd &weights) const
 {
 	VectorXd residues(weights.size());
-	int *timesToBeResampled = new int[weights.size()];
+	uint *timesToBeResampled = new uint[weights.size()];
 
-	int nDeterministicParticles = 0;
-	for(int iWeight=0;iWeight<weights.size();iWeight++)
+	uint nDeterministicParticles = 0;
+	for(uint iWeight=0;iWeight<weights.size();iWeight++)
 	{
-		timesToBeResampled[iWeight] = int(n*weights(iWeight));
+		timesToBeResampled[iWeight] = uint(n*weights(iWeight));
 		nDeterministicParticles += timesToBeResampled[iWeight];
 		residues(iWeight) = double(n)*weights(iWeight) - double(timesToBeResampled[iWeight]);
 	}
-	int nParticlesFromResidues = n - nDeterministicParticles;
+	uint nParticlesFromResidues = n - nDeterministicParticles;
 	residues /= double(nParticlesFromResidues);
 
 	vector<uint> indexes = StatUtil::discrete_rnd(nParticlesFromResidues,residues);
 
 	indexes.reserve(n);
 
-	int vectorIndex = nParticlesFromResidues;
-	for(int iWeight=0;iWeight<weights.size();iWeight++)
-		for(int j=0;j<timesToBeResampled[iWeight];j++,vectorIndex++)
+	uint vectorIndex = nParticlesFromResidues;
+	for(uint iWeight=0;iWeight<weights.size();iWeight++)
+		for(uint j=0;j<timesToBeResampled[iWeight];j++,vectorIndex++)
 			indexes.push_back(iWeight);
 
 	delete[] timesToBeResampled;

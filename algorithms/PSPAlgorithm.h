@@ -61,18 +61,18 @@ protected:
 	PSPPathCandidate **_bestArrivingPaths;
 
 	//! this variable will always be equal to \ref _startDetectionTime in this algorithm but not in \ref PSPAlgorithmWithAprioriProbabilities
-	int _iFirstInLoopProcessedObservation;
+	uint _iFirstInLoopProcessedObservation;
 
 	/*!
 	  It seeks the survivor with the worst cost...or simply an empty slot in the list of \ref _bestArrivingPaths
 	  \param iState the state of \ref _bestArrivingPaths that is to be searched in
 	  \return the index of the survivor with the worst cost
 	*/
-    uint disposableSurvivor(int iState);
+    uint disposableSurvivor(uint iState);
 
     void processOneObservation(const VectorXd &observations,double noiseVariance);
     void process(const MatrixXd &observations,vector<double> noiseVariances);
-    virtual void deployState(int iState,const VectorXd &observations, double noiseVariance);
+    virtual void deployState(uint iState,const VectorXd &observations, double noiseVariance);
 public:
     PSPAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, uint firstSymbolVectorDetectedAt, uint nSurvivors);
 

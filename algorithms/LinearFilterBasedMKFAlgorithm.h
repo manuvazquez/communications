@@ -31,10 +31,10 @@
 class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
 {
 public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, int forwardSmoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, uint forwardSmoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
 protected:
-    virtual void fillFirstEstimatedChannelMatrix(int iParticle, MatrixXd& firstEstimatedChannelMatrix) const
+    virtual void fillFirstEstimatedChannelMatrix(uint iParticle, MatrixXd& firstEstimatedChannelMatrix) const
     {
         firstEstimatedChannelMatrix = (dynamic_cast<KalmanEstimator *> (dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)))->sampleFromPredictive();
     }

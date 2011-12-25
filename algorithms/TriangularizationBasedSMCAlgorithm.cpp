@@ -33,7 +33,7 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
     vector<MatrixXd> matricesToStack(_d+1,MatrixXd(_nOutputs,_nInputsXchannelOrder));
     MatrixXd observationsCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
     MatrixXd involvedSymbolVectors = MatrixXd::Zero(_nInputs,_channelOrder+_d);
-    int NmMinus1 = _nInputs*(_channelOrder-1);
+    uint NmMinus1 = _nInputs*(_channelOrder-1);
     VectorXd symbolProbabilities(_alphabet.length());
 
     for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
@@ -142,5 +142,5 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
         if(iObservationToBeProcessed<(_iLastSymbolVectorToBeDetected-1))
             _resamplingAlgorithm->resampleWhenNecessary(_particleFilter);
 
-    } // for(int iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+    } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

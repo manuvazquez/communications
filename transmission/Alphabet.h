@@ -24,13 +24,13 @@ class Alphabet
         tSymbol operator [](uint index) const { return _symbols[index];}
         std::vector<tBit> operator [](tSymbol simbolo) const;
         uint length() const { return _length;}
-        void int2symbolsArray(int numero, std::vector<tSymbol> &res) const;
+        void int2symbolsArray(uint number, std::vector<tSymbol> &res) const;
         uint symbolsArray2int(std::vector<tSymbol> symbolsVector) const;
         tSymbol hardDecision(double softEstimation) const;
         tSymbol opposite(const tSymbol symbol) const { return -1.0*symbol;}
 		bool doesItBelong(const tSymbol symbol) const;
-		VectorXd int2eigenVector(int number, uint length) const;
-		MatrixXd int2eigenMatrix(int number, uint rows, uint cols) const;
+		VectorXd int2eigenVector(uint number, uint length) const;
+		MatrixXd int2eigenMatrix(uint number, uint rows, uint cols) const;
 		
 		/*!
 		  it builds a new alphabet from this one with one additional symbol \ref symbol

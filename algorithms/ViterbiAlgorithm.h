@@ -45,7 +45,7 @@ protected:
 	//! e.g. ViterbiAlgorithmWithAprioriProbabilities
 	uint _iFirstInLoopProcessedObservation;
 
-    virtual void deployState(int iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
+    virtual void deployState(uint iState,const VectorXd &observations,const MatrixXd &channelMatrix,const double noiseVariance);
 	void swapStages();
 	
 	/*!

@@ -34,7 +34,7 @@
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint backwardsSmoothingLag, int SMCsmoothingLag, int forwardSmoothingLag, uint nParticles, ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint backwardsSmoothingLag, uint SMCsmoothingLag, uint forwardSmoothingLag, uint nParticles, ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
     /**
      * Constructor for allowing the algorithm to operate over an already constructed particle filter
@@ -52,7 +52,7 @@ public:
      * @param samplingVariance
      * @param ARprocessVariance
      */
-    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble, int SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble, uint SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
     ~LinearFilterBasedSMCAlgorithm();
 
@@ -66,7 +66,7 @@ protected:
 
     bool _substractContributionFromKnownSymbols;
 
-    virtual void fillFirstEstimatedChannelMatrix(int iParticle,MatrixXd &firstEstimatedChannelMatrix) const
+    virtual void fillFirstEstimatedChannelMatrix(uint iParticle,MatrixXd &firstEstimatedChannelMatrix) const
     {
         // firstEstimatedChannelMatrix = _ARcoefficient * <lastEstimatedChannelMatrix> + randn(_nOutputs,_nInputsXchannelOrder)*_samplingVariance
         firstEstimatedChannelMatrix = _ARcoefficient*dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle))->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelMatrix() + StatUtil::randnMatrix(_nOutputs,_nInputsXchannelOrder,0.0,_samplingVariance);
