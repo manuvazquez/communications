@@ -26,6 +26,7 @@ It implements the channel related part for a particle
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <defines.h>
 #include <types.h>
 #include <vector>
 #include <ChannelMatrixEstimator.h>
@@ -34,6 +35,11 @@ class WithChannelEstimationParticleAddon{
 protected:
     std::vector<ChannelMatrixEstimator *> _channelMatrixEstimators;
     std::vector<std::vector<MatrixXd> > _estimatedChannelMatrices;
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+	std::vector<std::vector<MatrixXd> > _channelEstimatesVariances;
+#endif
+	
 public:
     WithChannelEstimationParticleAddon(ChannelMatrixEstimator * channelMatrixEstimator, uint trajectorylength);
     WithChannelEstimationParticleAddon(std::vector <ChannelMatrixEstimator *> channelMatrixEstimators, uint trajectorylength);
@@ -50,6 +56,18 @@ public:
     {
             _estimatedChannelMatrices[iChannelOrder][n] = matrix;
     }
+    
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+	MatrixXd getChannelEstimatesVariances(uint n,uint iChannelOrder=0) const
+	{
+		return _channelEstimatesVariances[iChannelOrder][n];
+	}
+	
+	void setChannelEstimatesVariances(uint n,const MatrixXd &matrix,uint iChannelOrder=0)
+	{
+		_channelEstimatesVariances[iChannelOrder][n] = matrix;
+	}
+#endif
 
     ChannelMatrixEstimator *getChannelMatrixEstimator(uint iChannelOrder) const
     { 

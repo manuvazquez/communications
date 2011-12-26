@@ -233,9 +233,6 @@ BaseSystem::BaseSystem()
 	
     _overallPeTimeEvolution.resize(_SNRs.size());
     _overallErrorsNumberTimeEvolution.resize(_SNRs.size());
-
-//     _mainSeeds.reserve(_nFrames);
-//     _statUtilSeeds.reserve(_nFrames);
 	
     _mainRandoms.reserve(_nFrames);
     _statUtilRandoms.reserve(_nFrames);
@@ -252,6 +249,10 @@ BaseSystem::BaseSystem()
 
 	if(_keepAllChannelEstimates)
 		_channelEstimations.reserve(_nFrames);
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		_channelEstimatesVariances.reserve(_nFrames);
+#endif
 
     _channel = NULL;
     _powerProfile = NULL;
@@ -284,9 +285,6 @@ if(__nFramesHasBeenPassed)
 			StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
 		}else
 		{
-// 			_randomGenerator.setSeed(3238517596);
-// 			StatUtil::getRandomGenerator().setSeed(1294795822);
-
 			_randomGenerator.setSeed(_mainSeedToBeLoaded);
 			StatUtil::getRandomGenerator().setSeed(_statUtilSeedToBeLoaded);
 		}
@@ -381,7 +379,6 @@ if(__nFramesHasBeenPassed)
 				if(_loadPerAlgorithmAndSNRseeds)
 				{
 					StatUtil::getRandomGenerator().setSeed(_perAlgorithmAndSNRstatUtilSeedToBeLoaded);
-// 					StatUtil::getRandomGenerator().setStoredSample(596381295);
 
 					cout << COLOR_LIGHT_PINK << "per ALGORITHM and SNR seeds are being loaded..." << COLOR_NORMAL << endl;
 					cout << COLOR_LIGHT_PINK << "\t " << _randomGenerator.getSeed() << endl << "\t " << StatUtil::getRandomGenerator().getSeed() << COLOR_NORMAL << endl;
@@ -485,6 +482,10 @@ void BaseSystem::onlyOnce()
 	if(_keepAllChannelEstimates)
 		// channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
 		_presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		_presentFrameChannelEstimatesVariances = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
+#endif
 }
 
 void BaseSystem::beforeEndingAlgorithm()
@@ -514,6 +515,20 @@ void BaseSystem::beforeEndingAlgorithm()
 
 		_presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 	}
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		vector<MatrixXd> thisAlgorithmChannelEstimatesVariances;
+		
+		if(_algorithms[_iAlgorithm]->computesChannelEstimatesVariances())
+			// we get the channel matrices estimated by this algorithm
+			thisAlgorithmChannelEstimatesVariances = _algorithms[_iAlgorithm]->getChannelEstimatesVariances();
+		else
+			// we generate a sequence of matrices initialized to a "funny" value
+			thisAlgorithmChannelEstimatesVariances = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Constant(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols(),FUNNY_VALUE));
+
+		_presentFrameChannelEstimatesVariances[_iSNR][_iAlgorithm] = thisAlgorithmChannelEstimatesVariances;
+		
+#endif
 
     cout << COLOR_GREEN << _algorithms[_iAlgorithm]->getName() << COLOR_NORMAL << ": Pe = " << _pe << " , MSE = " << _mse << endl;
 
@@ -712,6 +727,10 @@ void BaseSystem::storeFrameResults()
 
 	if(_keepAllChannelEstimates)
 		_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		_channelEstimatesVariances.push_back(_presentFrameChannelEstimatesVariances);
+#endif
 }
 
 void BaseSystem::saveFrameResults()
@@ -736,8 +755,6 @@ void BaseSystem::saveFrameResults()
     Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
     Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
     Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
-//     Octave::toOctaveFileStream(_mainSeeds,"mainSeeds",_f);
-//     Octave::toOctaveFileStream(_statUtilSeeds,"statUtilSeeds",_f);
 	
 	Random::toOctaveFileStream(_mainRandoms,"mainRandoms",_f);
 	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
@@ -771,6 +788,10 @@ void BaseSystem::saveFrameResults()
     
 	if(_keepAllChannelEstimates)
 		Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		Octave::eigenToOctaveFileStream(_channelEstimatesVariances,"channelEstimatesVariances",_f);
+#endif
 }
 
 xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)
@@ -799,7 +820,6 @@ template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,s
 		throw RuntimeException(string("BaseSystem::readParameterFromXML: cannot find parameter \"")+xmlName+"\"");
 	
 	std::istringstream value;
-// 	value.clear(); 
 	value.str(parameterNode->value());
 	value >> parameter;
 }
@@ -818,7 +838,6 @@ template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *p
 		T tmp;
 		value.clear(); value.str(nodeChild->value()); value >> tmp;
 		vector.push_back(tmp);
-// 		cout << "added " << vector.back() << endl;
 	}
 }
 template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<double> &vector);

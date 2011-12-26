@@ -54,6 +54,8 @@ public:
     virtual vector<MatrixXd> getEstimatedChannelMatrices();
 	
 	virtual bool performsSymbolsDetection() const { return false; }
+	
+	virtual bool computesChannelEstimatesVariances() const { return false; }
 };
 
 #endif

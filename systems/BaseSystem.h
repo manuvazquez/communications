@@ -32,6 +32,7 @@
 #include <ctime>
 #include <vector>
 
+#include <defines.h>
 #include <Alphabet.h>
 #include <Bits.h>
 #include <Modulator.h>
@@ -77,6 +78,10 @@ protected:
 	uint32_t _perAlgorithmAndSNRstatUtilSeedToBeLoaded;
 	
 	bool _keepAllChannelEstimates;
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+	bool _saveChannelEstimatesVariances;
+#endif
 	
     double _pe,_mse;
     uint _iSNR;
@@ -173,6 +178,9 @@ protected:
 
 std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimations;
 std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
+
+std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimatesVariances;
+std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimatesVariances;
 
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	std::vector<std::vector<MatrixXd> > _channelMatrices;

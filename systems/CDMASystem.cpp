@@ -35,6 +35,7 @@
 #include <bashcolors.h>
 #include <defines.h>
 #include <SingleUserChannelDependentNoise.h>
+#include <SingleUserPowerProfileDependentNoise.h>
 
 #define PRINT_CODES_INFO
 // #define PRINT_ACTIVITY_SAMPLING
@@ -206,6 +207,7 @@ void CDMASystem::buildSystemSpecificVariables()
 	
 	// the noise is generated
 // 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+// 	_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 }
 

@@ -26,3 +26,5 @@
 
 // used as a value when there shouldn't be any value :) (e.g. not computed BER's or MSE's)
 #define FUNNY_VALUE -3.14
+
+#define SAVE_CHANNEL_ESTIMATES_VARIANCES

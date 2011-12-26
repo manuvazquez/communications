@@ -131,8 +131,10 @@ void CDMAunknownActiveUsersSISopt::process(const MatrixXd& observations, std::ve
 
 		  // the last estimated channel coefficients (NOT channel matrix) are stored in the particle
 		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelCoefficientsMatrix());
-
-// 		  processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatrix(observations.col(iObservationToBeProcessed),processedParticle->getSymbolVector(iObservationToBeProcessed),noiseVariances[iObservationToBeProcessed]));
+		  
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+		  processedParticle->setChannelEstimatesVariances(iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->getVariances());
+#endif
 
 		  processedParticle->setWeight(processedParticle->getWeight()* likelihoodsSum);
 		  

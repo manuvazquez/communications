@@ -43,7 +43,10 @@ public:
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::channelMatrices2stackedChannelMatrix;
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}   
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
+    
+    virtual bool computesChannelEstimatesVariances() const { return _channelEstimator->computesVariances(); }
+//     virtual bool computesChannelEstimatesVariances() const { return false; }
 };
 
 #endif

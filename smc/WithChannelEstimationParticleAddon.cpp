@@ -20,15 +20,27 @@
 #include "WithChannelEstimationParticleAddon.h"
 
 WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(ChannelMatrixEstimator *channelMatrixEstimator,uint trajectorylength):_channelMatrixEstimators(1),_estimatedChannelMatrices(1,vector<MatrixXd>(trajectorylength))
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+,
+_channelEstimatesVariances(1,vector<MatrixXd>(trajectorylength))
+#endif
 {
     _channelMatrixEstimators[0] = channelMatrixEstimator;
 }
 
 WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(std::vector <ChannelMatrixEstimator *> channelMatrixEstimators,uint trajectorylength):_channelMatrixEstimators(channelMatrixEstimators),_estimatedChannelMatrices(channelMatrixEstimators.size(),vector<MatrixXd>(trajectorylength))
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+,
+_channelEstimatesVariances(channelMatrixEstimators.size(),vector<MatrixXd>(trajectorylength))
+#endif
 {
 }
 
 WithChannelEstimationParticleAddon::WithChannelEstimationParticleAddon(const WithChannelEstimationParticleAddon& withChannelEstimationParticleAddon):_channelMatrixEstimators(withChannelEstimationParticleAddon._channelMatrixEstimators.size()),_estimatedChannelMatrices(withChannelEstimationParticleAddon._estimatedChannelMatrices)
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+,
+_channelEstimatesVariances(withChannelEstimationParticleAddon._channelEstimatesVariances)
+#endif
 {
     for(uint i=0;i<_channelMatrixEstimators.size();i++)
         _channelMatrixEstimators[i] = withChannelEstimationParticleAddon._channelMatrixEstimators[i]->clone();

@@ -84,6 +84,8 @@ public:
     MatrixXd getDetectedSymbolVectors();
     std::vector<MatrixXd> getEstimatedChannelMatrices();
     void printState(int iState);
+	
+	virtual bool computesChannelEstimatesVariances() const { return false; }
 
 };
 

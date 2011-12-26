@@ -58,3 +58,20 @@ vector<MatrixXd> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(co
     return estimatedMatrices;
 }
 
+std::vector<MatrixXd> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances)
+{
+	assert(observations.cols()>=iTo);
+	assert(computesVariances());
+	
+    std::vector<MatrixXd> estimatedMatrices(iTo-iFrom);
+	channelEstimatesVariances = std::vector<MatrixXd>(iTo-iFrom);
+
+    for(uint i=iFrom;i<iTo;i++)
+	{
+        estimatedMatrices[i-iFrom] = nextMatrix(observations.col(i),symbolVectors.block(0,i-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[i]);
+		channelEstimatesVariances[i-iFrom] = getVariances();
+	}
+    
+    return estimatedMatrices;
+}
+

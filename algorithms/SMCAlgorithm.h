@@ -26,6 +26,7 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include <defines.h>
 #include <ParticleFilter.h>
 #include <ResamplingCriterion.h>
 #include <ResamplingAlgorithm.h>
@@ -100,7 +101,11 @@ public:
 
     virtual MatrixXd getDetectedSymbolVectors();
     
-    virtual vector<MatrixXd> getEstimatedChannelMatrices();    
+    virtual vector<MatrixXd> getEstimatedChannelMatrices();
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+	virtual std::vector<MatrixXd> getChannelEstimatesVariances() const;
+#endif
 };
 
 #endif

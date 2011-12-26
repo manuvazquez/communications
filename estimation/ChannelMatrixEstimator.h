@@ -46,7 +46,7 @@ public:
     ChannelMatrixEstimator(MatrixXd initialEstimation,uint N);
     virtual ~ChannelMatrixEstimator() {};
 
-    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelCoefficientsMatrix = matrix;} // eigen
+    virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) { _lastEstimatedChannelCoefficientsMatrix = matrix;}
 
     /*!
 	  It updates the channel estimation of this estimator (it thus modifies the state of the estimator)
@@ -78,7 +78,12 @@ public:
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
 	
-	virtual MatrixXd getVariances() const {return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); }
+	std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances);
+	
+	virtual bool computesVariances() const { return false; }
+	
+// 	virtual MatrixXd getVariances() const {return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); }
+	virtual MatrixXd getVariances() const { throw RuntimeException("ChannelMatrixEstimator::getVariances: not implemented for this estimator."); }
 };
 
 #endif

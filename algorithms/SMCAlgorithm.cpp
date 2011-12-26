@@ -125,11 +125,24 @@ void SMCAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, Matr
     {
         WithChannelEstimationParticleAddon *processedParticle = dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iParticle));
 
+#ifndef SAVE_CHANNEL_ESTIMATES_VARIANCES
         vector<MatrixXd> trainingSequenceChannelMatrices = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols());
 
         //the channel estimation given by the training sequence is copied into each particle...
         for(j=_preamble.cols();j<preambleTrainingSequence.cols();j++)
             processedParticle->setChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
+
+#else
+		std::vector<MatrixXd> channelEstimatesVariances;
+        vector<MatrixXd> trainingSequenceChannelMatrices = processedParticle->getChannelMatrixEstimator(_estimatorIndex)->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),preambleTrainingSequence.cols(),channelEstimatesVariances);
+
+        //the channel estimation given by the training sequence is copied into each particle...
+        for(j=_preamble.cols();j<preambleTrainingSequence.cols();j++)
+		{
+            processedParticle->setChannelMatrix(_estimatorIndex,j,trainingSequenceChannelMatrices[j-_preamble.cols()]);
+			processedParticle->setChannelEstimatesVariances(j,channelEstimatesVariances[j-_preamble.cols()]);
+		}
+#endif
 
         //... the symbols are considered detected...
         _particleFilter->getParticle(iParticle)->setSymbolVectors(_preamble.cols(),preambleTrainingSequence.cols(),trainingSequence);
@@ -172,3 +185,21 @@ double SMCAlgorithm::smoothedLikelihood(const vector<MatrixXd> &channelMatrices,
     }
     return likelihoodsProd;
 }
+
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+
+std::vector<MatrixXd> SMCAlgorithm::getChannelEstimatesVariances() const
+{
+    vector<MatrixXd> channelEstimatesVariances;
+    channelEstimatesVariances.reserve(_iLastSymbolVectorToBeDetected-_preamble.cols());
+
+    // best particle is chosen
+    uint iBestParticle = _particleFilter->iBestParticle();
+
+    for(uint i=_preamble.cols();i<_iLastSymbolVectorToBeDetected;i++)
+        channelEstimatesVariances.push_back(dynamic_cast<WithChannelEstimationParticleAddon *>(_particleFilter->getParticle(iBestParticle))->getChannelEstimatesVariances(i));
+
+    return channelEstimatesVariances;
+}
+
+#endif

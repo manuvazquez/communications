@@ -175,6 +175,10 @@ void OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm::process(const MatrixXd&
 
 			// ...and the channel matrix coefficients (NOT the channel matrix) stored
             processedParticle->setChannelMatrix(_estimatorIndex,iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->lastEstimatedChannelCoefficientsMatrix());
+			
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+			processedParticle->setChannelEstimatesVariances(iObservationToBeProcessed,processedParticle->getChannelMatrixEstimator(_estimatorIndex)->getVariances());
+#endif
 
         } // for(iParticle=0;iParticle<_particleFilter->capacity();iParticle++)
 

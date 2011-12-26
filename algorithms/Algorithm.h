@@ -24,6 +24,7 @@
     @author Manu <manu@rustneversleeps>
 */
 
+#include <defines.h>
 #include <string>
 #include <vector>
 #include <types.h>
@@ -61,11 +62,18 @@ public:
      * \return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */    
     virtual vector<MatrixXd> getEstimatedChannelMatrices() = 0;
+	
+#ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
+	virtual std::vector<MatrixXd> getChannelEstimatesVariances() const { throw RuntimeException("Algorithm::getChannelEstimatesVariances: not implemented for this algorithm."); }
+#endif
 
 
     virtual bool estimatesOneSingleChannelOrder() const { return false;}
     virtual bool performsSymbolsDetection() const { return true; }
+    
     virtual bool performsChannelEstimation() const { return true; }
+    virtual bool computesChannelEstimatesVariances() const { return false; }
+    
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
 
     double MSE(const vector<MatrixXd> &channelMatrices);
