@@ -36,6 +36,12 @@
 		<velocity> 50 </velocity> <!-- in km/h -->
 		<carrierFrequency> 2e9 </carrierFrequency> <!-- in Hz -->
 		<symbolRate> 500e3 </symbolRate> <!-- in Hz -->
+		
+		<!-- options are: NullNoise, ChannelDependentNoise, PowerProfileDependentNoise, SingleUserPowerProfileDependentNoise, SingleUserChannelDependentNoise -->
+		<noiseClassToBeInstantiated> SingleUserChannelDependentNoise </noiseClassToBeInstantiated>
+		
+		<!-- options are: TimeInvariantChannel, BesselChannel, ARchannel, MultiuserCDMAchannel_{TimeInvariantChannel.BesselChannel,ARchannel} -->
+		<channelClassToBeInstantiated> MultiuserCDMAchannel_BesselChannel </channelClassToBeInstantiated>
 
 	</BaseSystem>
 	

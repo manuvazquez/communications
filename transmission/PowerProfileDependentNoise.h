@@ -54,6 +54,7 @@ public:
     virtual void setSNR(int SNR);
 	virtual void print() const { cout << _matrix;}
 
+	static std::string getXMLname() { return "PowerProfileDependentNoise"; }
 };
 
 #endif

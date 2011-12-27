@@ -32,6 +32,8 @@ protected:
     MatrixXd _channelMatrix;   
 public:
     TimeInvariantChannel(uint nInputs, uint nOutputs, uint memory, uint length, MatrixXd channelMatrix);
+	
+	virtual std::string name() const { return string("Time Invariant Channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrix;};
 	
@@ -41,7 +43,9 @@ public:
 		throw RuntimeException("ARchannel:set: matrix dimensions are wrong.");
 
 	  _channelMatrix = mat;
-	}  
+	}
+	
+	static std::string getXMLname() { return "TimeInvariantChannel"; }
 };
 
 #endif

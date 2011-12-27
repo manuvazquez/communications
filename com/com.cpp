@@ -60,7 +60,7 @@ int main(int argc,char* argv[])
 {
 // 	signal(SIGINT,&setDoneTrue);
 
-	std::cout << COLOR_WHITE << "received " << COLOR_NORMAL << argc << COLOR_WHITE << " argument(s)" << COLOR_NORMAL << endl;
+	std::cout << COLOR_WHITE << "received " << COLOR_NORMAL << argc-1 << COLOR_WHITE << " argument(s)" << COLOR_NORMAL << endl;
 
 	std::istringstream argument;
 

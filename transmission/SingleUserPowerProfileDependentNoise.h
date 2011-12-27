@@ -35,7 +35,9 @@ protected:
 	uint _iUser;
 	double _iUserSNRcontribution;
 public:
-    SingleUserPowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile);
+    SingleUserPowerProfileDependentNoise(double alphabetVariance, uint nOutputs, uint length, const DelayPowerProfile &powerProfile,const uint iUser);
+	
+	static std::string getXMLname() { return "SingleUserPowerProfileDependentNoise"; }
 };
 
 #endif

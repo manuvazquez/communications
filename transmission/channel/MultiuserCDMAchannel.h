@@ -56,6 +56,8 @@ public:
 	
 	double signalToInterferenceRatio(uint iUserOfInterest,uint t) const;
 	std::vector<double> signalToInterferenceRatio(uint iUserOfInterest) const;
+	
+	static std::string getXMLname() { return "MultiuserCDMAchannel"; }
 };
 
 #endif

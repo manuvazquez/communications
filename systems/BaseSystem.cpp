@@ -27,6 +27,8 @@
 #include <stdlib.h>
 
 #include <SingleUserPowerProfileDependentNoise.h>
+#include <TimeInvariantChannel.h>
+#include <BesselChannel.h>
 
 extern uint32_t __mainSeedPassed;
 extern uint32_t __statUtilSeedPassed;
@@ -106,8 +108,9 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"velocity",_velocity);
 	readParameterFromXML(thisSystemParameters,"carrierFrequency",_carrierFrequency);
 	readParameterFromXML(thisSystemParameters,"symbolRate",_symbolRate);
-
-
+	
+	readParameterFromXML(thisSystemParameters,"noiseClassToBeInstantiated",_noiseClassToBeInstantiated);
+	readParameterFromXML(thisSystemParameters,"channelClassToBeInstantiated",_channelClassToBeInstantiated);
 
 // ------------------------ iswcs 2010 ----------------------
 
@@ -342,6 +345,8 @@ if(__nFramesHasBeenPassed)
 
 // 		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 // 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+	
+	_noise = createNoise();
 	
 	assert(_noise!=NULL);
 
@@ -841,3 +846,26 @@ template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *p
 	}
 }
 template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<double> &vector);
+
+Noise *BaseSystem::createNoise() const
+{
+	if(!_noiseClassToBeInstantiated.compare(NullNoise::getXMLname()))
+		return new NullNoise(_L,_channel->length());
+	else if(!_noiseClassToBeInstantiated.compare(ChannelDependentNoise::getXMLname()))
+		return new ChannelDependentNoise(_alphabet->variance(),_channel);
+	else if(!_noiseClassToBeInstantiated.compare(PowerProfileDependentNoise::getXMLname()))
+		return new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+	else
+		throw RuntimeException(std::string("BaseSystem::createNoise: unknown Noise class \"") + _noiseClassToBeInstantiated + std::string("\" cannot be instantiated."));
+		
+}
+
+MIMOChannel *BaseSystem::createChannel()
+{
+	if(!_channelClassToBeInstantiated.compare(TimeInvariantChannel::getXMLname()))
+		return new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
+	else if(!_channelClassToBeInstantiated.compare(BesselChannel::getXMLname()))
+		return new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
+	else
+		throw RuntimeException(std::string("BaseSystem::createChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
+}

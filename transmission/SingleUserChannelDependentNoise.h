@@ -37,6 +37,8 @@ protected:
 
 public:
     SingleUserChannelDependentNoise(double alphabetVariance, MIMOChannel* channel, const uint iUser);
+	
+	static std::string getXMLname() { return "SingleUserChannelDependentNoise"; }
 };
 
 #endif // SINGLEUSERCHANNELDEPENDENTNOISE_H

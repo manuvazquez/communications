@@ -83,6 +83,9 @@ protected:
 	bool _saveChannelEstimatesVariances;
 #endif
 	
+	std::string _noiseClassToBeInstantiated;
+	std::string _channelClassToBeInstantiated;
+	
     double _pe,_mse;
     uint _iSNR;
 	uint _iFrame,_iAlgorithm;
@@ -169,9 +172,6 @@ protected:
 	std::vector<Random> _mainRandoms,_statUtilRandoms;
 
 #ifdef SAVE_ALL_SEEDS
-// 	std::vector<std::vector<std::vector<uint32_t> > > _perAlgorithmAndSNRstatUtilSeeds;
-// 	std::vector<std::vector<uint32_t> > _thisFramePerAlgorithmAndSNRstatUtilSeeds;
-	
 	std::vector<std::vector<std::vector<Random> > > _perAlgorithmAndSNRstatUtilRandoms;
 	std::vector<std::vector<Random> > _thisFramePerAlgorithmAndSNRstatUtilRandoms;
 #endif
@@ -246,6 +246,20 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	template<class T> void readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector);
 	
 	xml_document<> _doc;
+	
+	/**
+	 * @brief it builds and returns a pointer to a Noise object according to the content of the variable _noiseClassToBeInstantiated read from XML
+	 *
+	 * @return Noise*
+	 **/
+	virtual Noise *createNoise() const;
+	
+	/**
+	 * @brief it builds and returns a pointer to a MIMOChannel object according to the content of the variable  _channelClassToBeInstantiated read from XML
+	 *
+	 * @return MIMOChannel*
+	 **/
+	virtual MIMOChannel *createChannel();
 	
 public:
     BaseSystem();

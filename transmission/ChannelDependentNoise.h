@@ -46,6 +46,8 @@ public:
     virtual void print() const { cout << _matrix;}
     double stdDevAt(uint n) const;
     VectorXd at(uint n) const;
+	
+	static std::string getXMLname() { return "ChannelDependentNoise"; }
 };
 
 #endif

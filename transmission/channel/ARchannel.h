@@ -46,7 +46,9 @@ public:
 		throw RuntimeException("ARchannel:set: matrix dimensions are wrong.");
 
 	  _channelMatrices[n] = mat;
-	}   
+	}
+	
+	static std::string getXMLname() { return "ARchannel"; }
 };
 
 #endif

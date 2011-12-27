@@ -49,7 +49,9 @@ public:
 		throw RuntimeException("BesselChannel:set: matrix dimensions are wrong.");
 
 	  _channelMatrices[n] = mat;
-	}    
+	}
+	
+	static std::string getXMLname() { return "BesselChannel"; }
 };
 
 #endif

@@ -34,6 +34,8 @@ public:
     virtual VectorXd at(uint n) const;
 	virtual void setSNR(int SNR) {}
 	virtual void print() const {std::cout << "Null Noise" << std::endl;}
+	
+	static std::string getXMLname() { return "NullNoise"; }
 };
 
 #endif

@@ -193,7 +193,9 @@ void CDMASystem::buildSystemSpecificVariables()
 
 // 		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
 // 		channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
-		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+// 		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+		
+		_channel = createChannel();
 		
 		// Signal to Interference Ratio's
 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
@@ -207,8 +209,8 @@ void CDMASystem::buildSystemSpecificVariables()
 	
 	// the noise is generated
 // 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-// 	_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
+// 	_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile,_iUserOfInterest);
+// 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
@@ -427,4 +429,26 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_carrierFrequency,"carrierFrequency",_f);
 	Octave::toOctaveFileStream(_symbolRate,"symbolRate",_f);
 	Octave::toOctaveFileStream(_T,"T",_f);
+}
+
+Noise *CDMASystem::createNoise() const
+{
+	if(!_noiseClassToBeInstantiated.compare(SingleUserPowerProfileDependentNoise::getXMLname()))
+		return new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile,_iUserOfInterest);
+	else if(!_noiseClassToBeInstantiated.compare(SingleUserChannelDependentNoise::getXMLname()))
+		return new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
+	else
+		return SMCSystem::createNoise();
+}
+
+MIMOChannel *CDMASystem::createChannel()
+{
+	if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + ARchannel::getXMLname()))
+		return new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance)),_spreadingCodes);
+	else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + TimeInvariantChannel::getXMLname()))
+		return new MultiuserCDMAchannel(new TimeInvariantChannel(_powerProfile->nInputs(),_powerProfile->nOutputs(),_m,_symbols.cols(),MatrixXd::Ones(_powerProfile->nOutputs(),_powerProfile->nInputs())),_spreadingCodes);
+	else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + BesselChannel::getXMLname()))
+		return new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+	else
+		return SMCSystem::createChannel();
 }
