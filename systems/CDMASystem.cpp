@@ -22,8 +22,8 @@
 #include <CDMAunknownActiveUsersSISoptWithNoUsersActivityKnowledge.h>
 #include <KnownFlatChannelOptimalAlgorithm.h>
 #include <KnownFlatChannelAndActiveUsersOptimalAlgorithm.h>
+#include <NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 #include <UnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
-#include <OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm.h>
 #include <CDMAunknownActiveUsersSISopt.h>
 #include <TimeInvariantChannel.h>
 #include <MultiuserCDMAchannel.h>
@@ -121,9 +121,9 @@ void CDMASystem::addAlgorithms()
 	
 //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-//     _algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+//     _algorithms.push_back(new NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-	_algorithms.push_back(new OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("Old CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
 	_algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi with a priori probabilities (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d,_usersActivityPdfs));
 	
@@ -190,10 +190,6 @@ void CDMASystem::buildSystemSpecificVariables()
 	do
 	{
 		delete _channel;
-
-// 		_channel = new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),ARcoefficients,ARvariance)),_spreadingCodes);
-// 		channel = new MultiuserCDMAchannel(new TimeInvariantChannel(powerProfile->nInputs(),powerProfile->nOutputs(),m,symbols.cols(),MatrixXd::Ones(powerProfile->nOutputs(),powerProfile->nInputs())),_spreadingCodes);
-// 		_channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
 		
 		_channel = createChannel();
 		
@@ -204,13 +200,7 @@ void CDMASystem::buildSystemSpecificVariables()
 		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
 		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
 
-// 	} while(false);
 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
-	
-	// the noise is generated
-// 	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-// 	_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile,_iUserOfInterest);
-// 	_noise = new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const

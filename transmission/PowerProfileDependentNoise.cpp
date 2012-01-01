@@ -36,5 +36,4 @@ void PowerProfileDependentNoise::setSNR(int SNR)
 	
 	_matrix *= (newStdDev/_stdDev);
 	_stdDev = newStdDev;
-	cout << "new std = " << newStdDev << endl;
 }

@@ -241,8 +241,6 @@ BaseSystem::BaseSystem()
     _statUtilRandoms.reserve(_nFrames);
 	
 #ifdef SAVE_ALL_SEEDS
-// 	_perAlgorithmAndSNRstatUtilSeeds.reserve(_nFrames);
-	
 	_perAlgorithmAndSNRstatUtilRandoms.reserve(_nFrames);
 #endif
 
@@ -337,15 +335,7 @@ if(__nFramesHasBeenPassed)
     cout << "isSymbolAccountedForDetection" << endl;
     Util::print(isSymbolAccountedForDetection);
 #endif    
-        
-// 	_noise = new NullNoise(_L,_channel->length());
-	
-	// noise is generated according to the channel
-// 	_noise = new ChannelDependentNoise(_alphabet->variance(),_channel);
 
-// 		_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-// 		_noise = new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
-	
 	_noise = createNoise();
 	
 	assert(_noise!=NULL);
@@ -390,7 +380,6 @@ if(__nFramesHasBeenPassed)
 				}
 
 #ifdef SAVE_ALL_SEEDS
-// 				_thisFramePerAlgorithmAndSNRstatUtilSeeds[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator().getSeed();
 				_thisFramePerAlgorithmAndSNRstatUtilRandoms[_iSNR][_iAlgorithm] = StatUtil::getRandomGenerator();
 #endif
                 // if there is training sequence
@@ -765,7 +754,6 @@ void BaseSystem::saveFrameResults()
 	Random::toOctaveFileStream(_statUtilRandoms,"statUtilRandoms",_f);
 
 #ifdef SAVE_ALL_SEEDS
-// 	Octave::toOctaveFileStream(_perAlgorithmAndSNRstatUtilSeeds,"perAlgorithmAndSNRstatUtilSeeds",_f);	
 	Random::toOctaveFileStream(_perAlgorithmAndSNRstatUtilRandoms,"perAlgorithmAndSNRstatUtilRandoms",_f);
 #endif
 	

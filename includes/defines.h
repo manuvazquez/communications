@@ -22,9 +22,8 @@
 // this only applies to algorithms using "PSPPath"
 // #define DO_NOT_STORE_THE_SEQUENCE_OF_CHANNEL_MATRICES_ESTIMATED_BY_EVERY_PATH
 
-#define ALGORITHM_NAME_MAX_LENGTH 80
-
 // used as a value when there shouldn't be any value :) (e.g. not computed BER's or MSE's)
 #define FUNNY_VALUE -3.14
 
-#define SAVE_CHANNEL_ESTIMATES_VARIANCES
+// the variances of the channel estimates coefficients are saved whenever possible (it depends on the channel estimator employed by the algorithm)
+//#define SAVE_CHANNEL_ESTIMATES_VARIANCES

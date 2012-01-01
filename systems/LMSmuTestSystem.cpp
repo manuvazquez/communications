@@ -64,12 +64,12 @@ LMSmuTestSystem::~LMSmuTestSystem()
 
 void LMSmuTestSystem::addAlgorithms()
 {
-    char algorithmName[ALGORITHM_NAME_MAX_LENGTH];
-
     for(uint iMu=0;iMu<musLMS.size();iMu++)
     {
-        sprintf(algorithmName,"LMS-D-SIS mu = %f",musLMS[iMu]);
-        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName,*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+		std::stringstream algorithmName;
+		algorithmName << "LMS-D-SIS mu = " << musLMS[iMu];
+
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
     }
 }
 

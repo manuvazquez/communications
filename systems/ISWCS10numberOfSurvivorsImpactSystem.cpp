@@ -76,12 +76,12 @@ void ISWCS10numberOfSurvivorsImpactSystem::addAlgorithms()
 	// this is needed since the method below initializes some counters needed to deal with algorithms estimating channel orders
 	ChannelOrderEstimationSystem::addAlgorithms();
 	
-	char algorithmName[ALGORITHM_NAME_MAX_LENGTH];
-
 	for(uint inParticles=0;inParticles<nParticlesStudied.size();inParticles++)
 	{
-		sprintf(algorithmName,"MLSD-m P = %d",nParticlesStudied[inParticles]);
-		_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm(algorithmName,*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticlesStudied[inParticles],bestParticlesResamplingAlgorithm));
+		std::stringstream algorithmName;
+		algorithmName << "MLSD-m P = " << nParticlesStudied[inParticles];
+		
+		_algorithms.push_back(new OneChannelOrderPerOutputSMCAlgorithm(algorithmName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticlesStudied[inParticles],bestParticlesResamplingAlgorithm));
 	}
 }
 

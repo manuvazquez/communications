@@ -34,13 +34,10 @@
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
-// 	nSurvivors = 1;
 	nSurvivors = 2;
 
 	nParticles = 128;
 
-//     adjustSurvivorsFromParticlesNumber = false;
-//     adjustParticlesNumberFromSurvivors = true;
     adjustSurvivorsFromParticlesNumber = true;
     adjustParticlesNumberFromSurvivors = false;
 

@@ -40,25 +40,6 @@ SMCSystem::SMCSystem()
 		throw RuntimeException("SMCSystem::SMCSystem: cannot find parameter \"ARprocess\"");
 	readMultiValuedParameterFromXML(ARprocessNode,"coefficients",_ARcoefficients);
 	readParameterFromXML(ARprocessNode,"variance",_ARvariance);
-	
-// // 	cout << "nParticles = " << nParticles << " resamplingRatio = " << resamplingRatio << " c = " << c << endl;
-// // 	cout << "_ARcoefficients = " << endl << _ARcoefficients << endl << "_ARvariance = " << _ARvariance << endl;
-// 	
-// 	
-//     nParticles = 1;
-// //     nParticles = 200;
-// //     nParticles = 1000;
-//     resamplingRatio = 0.9;
-// 
-//     // back and forward smoothing
-//     c = 0;
-// 
-//     // AR process parameters
-// //     _ARcoefficients[0] = 0.99999;
-// 	_ARcoefficients.push_back(0.99999);
-//     _ARvariance=0.0001;
-// 	
-//     firstSampledChannelMatrixVariance = 0.0;
 
     // always the same resampling criterion and algorithms
     ResamplingCriterion criterioRemuestreo(resamplingRatio);

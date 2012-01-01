@@ -17,8 +17,8 @@
  *   Free Software Foundation, Inc.,                                       *
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
-#ifndef OLDUNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
-#define OLDUNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
+#ifndef NEWWEIGHTSUNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
+#define NEWWEIGHTSUNKNOWNACTIVEUSERSLINEARFILTERBASEDSMCALGORITHM_H
 
 #include <SMCAlgorithm.h>
 
@@ -32,12 +32,12 @@ An SMC algorithm based on linear filters that for a system whose users are not p
 #include <KalmanEstimator.h>
 #include <UsersActivityDistribution.h>
 
-class OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm : public SMCAlgorithm
+class NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs);
+    NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, LinearDetector *linearDetector, MatrixXd preamble, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, const std::vector<UsersActivityDistribution> usersActivityPdfs);
 
-    ~OldUnknownActiveUsersLinearFilterBasedSMCAlgorithm();
+    ~NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm();
 
 protected:
     LinearDetector *_linearDetector;
