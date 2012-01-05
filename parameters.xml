@@ -15,7 +15,8 @@
 		<perAlgorithmAndSNRstatUtilSeedToBeLoaded> 5 </perAlgorithmAndSNRstatUtilSeedToBeLoaded>
 		
 		<saveAtEveryFrame> 1 </saveAtEveryFrame>
-		<keepAllChannelEstimates> 1 </keepAllChannelEstimates>
+		
+		<keepAllChannelEstimates> 0 </keepAllChannelEstimates>
 		
 		<nFrames> 1000 </nFrames>
 		<L> 8 </L>
@@ -38,7 +39,7 @@
 		<symbolRate> 500e3 </symbolRate> <!-- in Hz -->
 		
 		<!-- options are: NullNoise, ChannelDependentNoise, PowerProfileDependentNoise, SingleUserPowerProfileDependentNoise, SingleUserChannelDependentNoise -->
-		<noiseClassToBeInstantiated> SingleUserChannelDependentNoise </noiseClassToBeInstantiated>
+		<noiseClassToBeInstantiated> SingleUserPowerProfileDependentNoise </noiseClassToBeInstantiated>
 		
 		<!-- options are: TimeInvariantChannel, BesselChannel, ARchannel, MultiuserCDMAchannel_{TimeInvariantChannel.BesselChannel,ARchannel} -->
 		<channelClassToBeInstantiated> MultiuserCDMAchannel_BesselChannel </channelClassToBeInstantiated>

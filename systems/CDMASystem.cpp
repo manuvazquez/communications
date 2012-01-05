@@ -31,6 +31,11 @@
 #include <PSPAlgorithmWithAprioriProbabilities.h>
 
 #include <math.h>
+#include <algorithm>
+// #include <iostream>
+// #include <vector>
+
+using namespace std; 
 
 #include <bashcolors.h>
 #include <defines.h>
@@ -121,7 +126,7 @@ void CDMASystem::addAlgorithms()
 	
 //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-//     _algorithms.push_back(new NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+//     _algorithms.push_back(new NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters (new weights)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
@@ -292,18 +297,27 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 	// NOTE: even though ultimately only symbol vectors from "_symbolsDetectionWindowStart" will be taken into account for detection, we don't have to worry about it here, since the mask will take care of that. That being so, 
 	// "_signChanges" actually contains all the sign changes that occur within the frame
 	
-	// if the algorithm performs channel estimation we use ITS channel estimations to split the frame and tackle the ambiguity problem
+	std::vector<uint> trueChannelSignChanges,channelEstimateSignChanges;
+	
+	// if the algorithm performs channel estimation we use ITS channel estimates to split the frame and tackle the ambiguity problem
 	if(_algorithms[_iAlgorithm]->performsChannelEstimation())
-// 		_signChanges = Util::getZeroCrossings(_channel->getChannelMatrices(),_preambleLength,_frameLength);
-// 		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_preambleLength,_frameLength);
-		_signChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_iUserOfInterest,_preambleLength,_frameLength);
+	{
+		trueChannelSignChanges = Util::getZeroCrossings(_channel->getChannelMatrices(),_iUserOfInterest,_preambleLength,_frameLength);
+		channelEstimateSignChanges = Util::getZeroCrossings(_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_iUserOfInterest,_preambleLength,_frameLength);
+	}
 	//...if it doesn't perform channel estimation, the ambiguity problem is gone
 	else
 	{
-		_signChanges = std::vector<uint>(2);
-		_signChanges[0] = 0; _signChanges[1] = _frameLength;
+		channelEstimateSignChanges = std::vector<uint>(2);
+		channelEstimateSignChanges[0] = 0; channelEstimateSignChanges[1] = _frameLength;
+		
+		trueChannelSignChanges = channelEstimateSignChanges;
 	}
-
+	
+	_signChanges = std::vector<uint>(trueChannelSignChanges.size()+channelEstimateSignChanges.size());
+	std::vector<uint>::iterator it = std::set_union (trueChannelSignChanges.begin(), trueChannelSignChanges.end(), channelEstimateSignChanges.begin(), channelEstimateSignChanges.end(), _signChanges.begin());
+	_signChanges.resize(it - _signChanges.begin());
+	
 	_thisFrameNumberSignChanges[_iSNR][_iAlgorithm] = _signChanges.size();
 	
 	uint overallNumberAccountedSymbols = 0;
