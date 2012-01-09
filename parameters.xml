@@ -74,7 +74,11 @@
 		<minSignalToInterferenceRatio> -30 </minSignalToInterferenceRatio>
 		
 		<nSurvivors> 2 </nSurvivors>
+		
 		<iUserOfInterest> 0 </iUserOfInterest>
+		
+		<!-- options are: all, activityDetectedAsActivity, activity -->
+		<maskUsedToComputeTheSER> all </maskUsedToComputeTheSER>
 
 	</CDMASystem>
 

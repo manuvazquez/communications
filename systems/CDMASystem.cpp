@@ -32,8 +32,6 @@
 
 #include <math.h>
 #include <algorithm>
-// #include <iostream>
-// #include <vector>
 
 using namespace std; 
 
@@ -68,7 +66,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 	readParameterFromXML(thisSystemParameters,"nSurvivors",_nSurvivors);
 	readParameterFromXML(thisSystemParameters,"iUserOfInterest",_iUserOfInterest);
-		
+	
+	readParameterFromXML(thisSystemParameters,"maskUsedToComputeTheSER",_maskUsedToComputeTheSER);
+			
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
 	// first user starts transmitting something
@@ -227,7 +227,7 @@ double CDMASystem::computeSelectedUsersActivityDetectionErrorRate(MatrixXd sourc
 	std::vector<std::vector<bool> > mask(nSymbolsRows,std::vector<bool>(_frameLength,true));
 
 	// in order to compute the probability of activity detection it makes no difference the symbol detected: the only thing that matters is wether a symbol (any) was detected or not
-	// for both the "sourceSymbols" and the "detectedSymbols", every symbol belonging to the alphabet is transformed into the "first" symbol of the alphabet
+	// for both the "sourceSymbols" and the "detectedSymbols", every symbol belonging to the alphabet is transformed into the first (for example) symbol of the alphabet
 	for (uint i=0;i<sourceSymbols.rows();i++)
 		for (uint j=0;j<sourceSymbols.cols();j++)
 		{
@@ -259,8 +259,8 @@ void CDMASystem::beforeEndingAlgorithm()
 
 	if(_algorithms[_iAlgorithm]->performsSymbolsDetection())
 		_presentFramePeActivityDetection(_iSNR,_iAlgorithm) = computeActivityDetectionErrorRate(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols);
-	else
-		_presentFramePeActivityDetection(_iSNR,_iAlgorithm) = -3.14;
+// 	else
+// 		_presentFramePeActivityDetection(_iSNR,_iAlgorithm) = -3.14;
 	
 	resetFramePieces();
 }
@@ -269,7 +269,8 @@ void CDMASystem::onlyOnce()
 {
 	SMCSystem::onlyOnce();
 
-	_presentFramePeActivityDetection = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+// 	_presentFramePeActivityDetection = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+	_presentFramePeActivityDetection = MatrixXd::Constant(_SNRs.size(),_algorithms.size(),FUNNY_VALUE);
 	
 	// the no sign changes is needed (the algorithm knows the channel), the value is set to 0
 	_thisFrameNumberSignChanges = std::vector<std::vector<uint> >(_SNRs.size(),std::vector<uint>(_algorithms.size(),0u));
@@ -288,7 +289,7 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 
 	uint nSymbolsRows = detectedSymbols.rows();
 		
-	// we dismiss the initialization in the constructor
+	// if this method is called, we dismiss the initialization in the constructor
 	_piecesBestPermuationIndexes.clear();
 	_piecesBestPermutationSigns.clear();
 
@@ -314,11 +315,48 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 		trueChannelSignChanges = channelEstimateSignChanges;
 	}
 	
+	// enough space for the set resulting from the union of "trueChannelSignChanges" and "channelEstimateSignChanges" is reserved
 	_signChanges = std::vector<uint>(trueChannelSignChanges.size()+channelEstimateSignChanges.size());
+	
+	// the union set is obtained
 	std::vector<uint>::iterator it = std::set_union (trueChannelSignChanges.begin(), trueChannelSignChanges.end(), channelEstimateSignChanges.begin(), channelEstimateSignChanges.end(), _signChanges.begin());
+	
+	// since some elements were in both sets (the intersection was not null), we resize the vector representing the union set to the appropriate size
 	_signChanges.resize(it - _signChanges.begin());
 	
+	// the number of sign changes counted is saved
 	_thisFrameNumberSignChanges[_iSNR][_iAlgorithm] = _signChanges.size();
+	
+	
+	// a mask built for taking into account "real" transmitted symbols that are detected by the algorithm as symbols (i.e., activity)
+	std::vector<std::vector<bool> > activityDetectedAsActivityMask = mask;
+	
+	// a mask built for taking into account "real" transmitted symbols no matter if they are actually detected as real symbols by the algorithm or not
+	std::vector<std::vector<bool> > activityMask = mask;
+	
+	for (uint iUser=0;iUser<nSymbolsRows;iUser++)
+		for(uint iTime=_trainSeqLength;iTime<_frameLength;iTime++)
+		{
+			assert(Util::isUserActive(sourceSymbols(iUser,iTime))==_usersActivity[iUser][iTime]);
+			activityDetectedAsActivityMask[iUser][iTime] = mask[iUser][iTime] && _usersActivity[iUser][iTime] && Util::isUserActive(detectedSymbols(iUser,iTime));
+			activityMask[iUser][iTime] = mask[iUser][iTime] && _usersActivity[iUser][iTime];
+		}
+		
+// 	cout << "mask" << endl << mask << endl;
+// 	cout << "activityDetectedAsActivityMask" << endl << activityDetectedAsActivityMask << endl;
+// 	cout << "activityMask" << endl << activityMask << endl;
+	
+	std::vector<std::vector<bool> > symbolsToAccountForWhenComputingSER;
+	
+	if(!_maskUsedToComputeTheSER.compare("all"))
+		symbolsToAccountForWhenComputingSER = mask;
+	else if(!_maskUsedToComputeTheSER.compare("activityDetectedAsActivity"))
+		symbolsToAccountForWhenComputingSER = activityDetectedAsActivityMask;
+	else if(!_maskUsedToComputeTheSER.compare("activity"))
+		symbolsToAccountForWhenComputingSER = activityMask;
+	else
+		throw RuntimeException(std::string("CDMASystem::computeSelectedUsersSER: unknown maskUsedToComputeTheSER: \"") + _maskUsedToComputeTheSER + std::string("\"."));
+	
 	
 	uint overallNumberAccountedSymbols = 0;
 
@@ -328,14 +366,14 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 		uint thisSubframeNumberAccountedSymbols = 0;
 		for (uint i=0;i<nSymbolsRows;i++)
 			for (uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
-				thisSubframeNumberAccountedSymbols += mask[i][j];
+				thisSubframeNumberAccountedSymbols += symbolsToAccountForWhenComputingSER[i][j];
 
 		overallNumberAccountedSymbols += thisSubframeNumberAccountedSymbols;
 
 		res += thisSubframeNumberAccountedSymbols*
 				BaseSystem::computeSER(sourceSymbols.block(0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										detectedSymbols.block(0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
-										Util::block(mask,0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+										Util::block(symbolsToAccountForWhenComputingSER,0,_signChanges[iSignChange-1],nSymbolsRows,_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 										iBestPermutation,bestPermutationSigns);
 		assert(iBestPermutation==0);
 		
@@ -344,6 +382,7 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 		_piecesBestPermutationSigns.push_back(bestPermutationSigns);
   }
 
+	assert(overallNumberAccountedSymbols!=0);
 	res /= overallNumberAccountedSymbols;
 
 	return res;

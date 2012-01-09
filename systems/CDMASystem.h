@@ -86,6 +86,8 @@ protected:
 	
 	std::vector<std::vector<uint> > _thisFrameNumberSignChanges;
 	
+	std::string _maskUsedToComputeTheSER;
+	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
 	virtual void storeFrameResults();

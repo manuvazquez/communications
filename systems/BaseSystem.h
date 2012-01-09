@@ -255,7 +255,7 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	virtual Noise *createNoise() const;
 	
 	/**
-	 * @brief it builds and returns a pointer to a MIMOChannel object according to the content of the variable  _channelClassToBeInstantiated read from XML
+	 * @brief it builds and returns a pointer to a MIMOChannel object according to the content of the variable  _channelClassToBeInstantiated read from XML (it might need to modify some class variables, e.g., in CDMA the activity)
 	 *
 	 * @return MIMOChannel*
 	 **/
