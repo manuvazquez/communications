@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "RLSEstimator.h"
 
-RLSEstimator::RLSEstimator(const MatrixXd &initialEstimation,uint N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde_eigen(MatrixXd::Identity(_nInputsXchannelOrder,_nInputsXchannelOrder))
+RLSEstimator::RLSEstimator(const MatrixXd &initialEstimation,uint N,double forgettingFactor): ChannelMatrixEstimator(initialEstimation,N),_invForgettingFactor(1.0/forgettingFactor),_invRtilde(MatrixXd::Identity(_nInputsXchannelOrder,_nInputsXchannelOrder))
 {
 }
 
@@ -36,18 +36,17 @@ double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symb
 
 MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-    if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
-        throw RuntimeException("RLSEstimator::nextMatrix: Observations vector length or symbols matrix dimensions are wrong.");
+	assert(observations.size()==_nOutputs && symbolsMatrix.size()==_nInputsXchannelOrder);
 
     VectorXd symbolsVector = Util::toVector(symbolsMatrix,columnwise);
 
-    VectorXd invForgettingFactorSymbolsVectorInvRtilde = _invForgettingFactor*_invRtilde_eigen.transpose()*symbolsVector;
+    VectorXd invForgettingFactorSymbolsVectorInvRtilde = _invForgettingFactor*_invRtilde.transpose()*symbolsVector;
 
     VectorXd g = invForgettingFactorSymbolsVectorInvRtilde / (1.0 + symbolsVector.dot(invForgettingFactorSymbolsVectorInvRtilde));
 
     _lastEstimatedChannelCoefficientsMatrix = _lastEstimatedChannelCoefficientsMatrix + (observations-_lastEstimatedChannelCoefficientsMatrix*symbolsVector)*g.transpose();
 
-    _invRtilde_eigen = _invForgettingFactor*_invRtilde_eigen - (_invForgettingFactor*_invRtilde_eigen*symbolsVector)*g.transpose();
+    _invRtilde = _invForgettingFactor*_invRtilde - (_invForgettingFactor*_invRtilde*symbolsVector)*g.transpose();
 
     return _lastEstimatedChannelCoefficientsMatrix;
 }

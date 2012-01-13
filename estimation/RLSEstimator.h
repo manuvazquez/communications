@@ -34,7 +34,7 @@ class RLSEstimator : public ChannelMatrixEstimator
 {
 protected:
 	double _invForgettingFactor;
-    MatrixXd _invRtilde_eigen;   
+    MatrixXd _invRtilde;   
 
 public:
     RLSEstimator(const MatrixXd &initialEstimation,uint N,double forgettingFactor);

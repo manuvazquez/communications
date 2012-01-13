@@ -152,9 +152,6 @@ void CDMASystem::buildSystemSpecificVariables()
 #endif
 		// when users are not transmitting, their symbols are zero
 		_symbols(iUser,_preambleLength+_trainSeqLength) = double(_usersActivity[iUser][_trainSeqLength])*_symbols(iUser,_preambleLength+_trainSeqLength);
-		
-// 		// the symbol is accounted for detection only if the corresponding user is active
-// 		_isSymbolAccountedForDetection[iUser][_trainSeqLength] = _usersActivity[iUser][_trainSeqLength];
     }
       
     // set of active users evolves according to the given probabilities
@@ -163,7 +160,6 @@ void CDMASystem::buildSystemSpecificVariables()
 		{   
 			_usersActivity[iUser][iTime] = _usersActivityPdfs[iUser].sampleGivenItWas(_usersActivity[iUser][iTime-1]);             
 			_symbols(iUser,_preambleLength+iTime) = _symbols(iUser,_preambleLength+iTime)*double(_usersActivity[iUser][iTime]);
-// 			_isSymbolAccountedForDetection[iUser][iTime] = _usersActivity[iUser][iTime];
 		}
             
 #ifdef PRINT_INFO
@@ -259,8 +255,6 @@ void CDMASystem::beforeEndingAlgorithm()
 
 	if(_algorithms[_iAlgorithm]->performsSymbolsDetection())
 		_presentFramePeActivityDetection(_iSNR,_iAlgorithm) = computeActivityDetectionErrorRate(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols);
-// 	else
-// 		_presentFramePeActivityDetection(_iSNR,_iAlgorithm) = -3.14;
 	
 	resetFramePieces();
 }
@@ -269,7 +263,6 @@ void CDMASystem::onlyOnce()
 {
 	SMCSystem::onlyOnce();
 
-// 	_presentFramePeActivityDetection = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
 	_presentFramePeActivityDetection = MatrixXd::Constant(_SNRs.size(),_algorithms.size(),FUNNY_VALUE);
 	
 	// the no sign changes is needed (the algorithm knows the channel), the value is set to 0
@@ -342,10 +335,6 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 			activityMask[iUser][iTime] = mask[iUser][iTime] && _usersActivity[iUser][iTime];
 		}
 		
-// 	cout << "mask" << endl << mask << endl;
-// 	cout << "activityDetectedAsActivityMask" << endl << activityDetectedAsActivityMask << endl;
-// 	cout << "activityMask" << endl << activityMask << endl;
-	
 	std::vector<std::vector<bool> > symbolsToAccountForWhenComputingSER;
 	
 	if(!_maskUsedToComputeTheSER.compare("all"))
