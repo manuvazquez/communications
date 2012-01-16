@@ -36,21 +36,21 @@ MMSEDetector *MMSEDetector::clone()
 	return new MMSEDetector(*this);
 }
 
-MatrixXd MMSEDetector::computedFilter_eigen()
+MatrixXd MMSEDetector::computedFilter()
 {
-    return _filter_eigen.block(0,_detectionStart,_channelMatrixRows,_nSymbolsToBeDetected);
+    return _filter.block(0,_detectionStart,_channelMatrixRows,_nSymbolsToBeDetected);
 }
 
 VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
 {
-    MatrixXd _Rx_eigen = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
+    MatrixXd _Rx = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
 
-    _filter_eigen = _Rx_eigen.inverse()*channelMatrix*_alphabetVariance;
+    _filter = _Rx.inverse()*channelMatrix*_alphabetVariance;
 
-    VectorXd softEstimations = _filter_eigen.transpose()*observations;
+    VectorXd softEstimations = _filter.transpose()*observations;
 
     // required for nthSymbolVariance computing
-    _channelMatrix_eigen = channelMatrix;
+    _channelMatrix = channelMatrix;
 
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
@@ -62,5 +62,5 @@ double MMSEDetector::nthSymbolVariance(uint n,double noiseVariance)
 
 double MMSEDetector::nthSymbolGain(uint n) const
 {
-    return _filter_eigen.col(_detectionStart+n).dot(_channelMatrix_eigen.col(_detectionStart+n));   
+    return _filter.col(_detectionStart+n).dot(_channelMatrix.col(_detectionStart+n));   
 }

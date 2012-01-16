@@ -48,23 +48,23 @@ public:
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
     virtual KalmanEstimator *clone() const;
-    virtual MatrixXd sampleFromPredictive() const;
-    virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean_eigen().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
+    virtual MatrixXd samplePredicted() const;
+//     virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix);
 	
 	//! it returns the corresponding covariance AS STORED by the internal Kalman Filter
-    virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance_eigen();}
+    virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance();}
     
     virtual bool computesVariances() const { return true; }
     
 	virtual MatrixXd getVariances() const 
 	{
 // 		return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); 
-		return Util::toMatrix(_kalmanFilter->filteredCovariance_eigen().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
+		return Util::toMatrix(_kalmanFilter->filteredCovariance().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
 	}
 	
-	// implemented as a sample from the predictive distribution
-	virtual MatrixXd predictedMatrix() const { return getPredictive();}
+// 	virtual MatrixXd predictedMatrix() const { return getPredictive();}
+	virtual MatrixXd predictedMatrix() const { return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
 };
 
 #endif

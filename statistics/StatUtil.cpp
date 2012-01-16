@@ -121,7 +121,7 @@ VectorXd StatUtil::randnMatrix(const VectorXd &mean,const MatrixXd &covariance,R
     if(covariance.rows()!=mean.size() || covariance.cols()!=mean.size())
         throw RuntimeException("StatUtil::randnMatrix: dimensions of the mean or the covariance are wrong.");
 
-//     return mean + Util::cholesky(covariance)*randnMatrix_eigen(mean.size(),1,0.0,1.0,randomGenerator);
+//     return mean + Util::cholesky(covariance)*randnMatrix(mean.size(),1,0.0,1.0,randomGenerator);
     return mean + Eigen::LLT<MatrixXd>(covariance).matrixL()*randnMatrix(mean.size(),1,0.0,1.0,randomGenerator);
 }
 

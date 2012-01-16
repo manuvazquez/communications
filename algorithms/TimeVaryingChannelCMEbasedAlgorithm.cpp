@@ -61,7 +61,7 @@ void TimeVaryingChannelCMEbasedAlgorithm::run(MatrixXd observations,vector<doubl
             skipNumber++;
         }
 
-//         MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix_eigen();
+//         MatrixXd estimatedChannelMatrix = _channelEstimators[iChannelOrder]->lastEstimatedChannelMatrix();
 
 //         vector<VectorXd> hs(_nOutputs,MatrixXd::Zero(_nInputs*m,1));
 

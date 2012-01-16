@@ -35,7 +35,7 @@ public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
     virtual void stateStep(VectorXd observations) = 0;
     virtual VectorXd detect(VectorXd observations,MatrixXd channelMatrix,const MatrixXd &noiseCovariance) = 0;
-    virtual MatrixXd computedFilter_eigen() = 0;
+    virtual MatrixXd computedFilter() = 0;
     /**
      *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to Detect
      * @param n

@@ -33,7 +33,7 @@ void USIS2SISAlgorithm::beforeResamplingProcess(uint iProcessedObservation, cons
     {
         ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *processedParticle = dynamic_cast <ParticleWithChannelEstimationAndLinearDetectionAndChannelOrderEstimation *>(_particleFilter.getParticle(iParticle));
 
-        VectorXd particleChannelOrderAPPs = processedParticle->getChannelOrderEstimator()->getChannelOrderAPPsVector_eigen();
+        VectorXd particleChannelOrderAPPs = processedParticle->getChannelOrderEstimator()->getChannelOrderAPPsVector();
         _weightedChannelOrderAPPs += processedParticle->getWeight()*particleChannelOrderAPPs;
     }
 

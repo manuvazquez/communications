@@ -33,16 +33,16 @@ class MMSEDetector : public LinearDetector
 {
 protected:
 	uint _nSymbolsToBeDetected,_detectionStart;
-    MatrixXd _filter_eigen;   
+    MatrixXd _filter;   
 
 	// required for nthSymbolVariance computing
-    MatrixXd _channelMatrix_eigen,_Rx_eigen;   
+    MatrixXd _channelMatrix,_Rx;   
 public:
     MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected);
     MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom);
 
     virtual MMSEDetector * clone();
-    virtual MatrixXd computedFilter_eigen();
+    virtual MatrixXd computedFilter();
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance); // eigen
     virtual void stateStep(VectorXd observations) {}
 	virtual double nthSymbolVariance(uint n,double noiseVariance);

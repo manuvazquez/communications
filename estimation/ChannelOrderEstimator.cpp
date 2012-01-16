@@ -27,7 +27,7 @@ ChannelOrderEstimator::ChannelOrderEstimator(std::vector<uint> candidateOrders, 
 {
 }
 
-VectorXd ChannelOrderEstimator::getChannelOrderAPPsVector_eigen()
+VectorXd ChannelOrderEstimator::getChannelOrderAPPsVector()
 {
     VectorXd res(_channelOrderAPPs.size());
     for(uint i=0;i<_channelOrderAPPs.size();i++)

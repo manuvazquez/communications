@@ -34,8 +34,8 @@ EstimatedMIMOChannel::EstimatedMIMOChannel(uint nInputs, uint nOutputs, uint mem
 	for(i=0;i<preambleLength;i++)
 		_channelMatrices[i] = nullMatrix;
 
-//     MatrixXd symbols_eigen = Util::lapack2eigen(symbols);
-//     MatrixXd observations_eigen = Util::lapack2eigen(observations);
+//     MatrixXd symbols = Util::lapack2eigen(symbols);
+//     MatrixXd observations = Util::lapack2eigen(observations);
 
 	for(i=preambleLength;i<_length;i++)
         _channelMatrices[i] = channelMatrixEstimatorClone->nextMatrix(observations.col(i),symbols.block(0,i-memory+1,nInputs,memory),noiseVariances[i]);      

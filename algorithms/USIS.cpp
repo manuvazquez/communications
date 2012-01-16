@@ -143,7 +143,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
                     // of the transmitted symbols
                     VectorXd softEstimations = linearDetectorBeingProccessed->detect(stackedObservations.segment(iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1)),stackedChannelMatrix,stackedNoiseCovariance.block(iLinearFilterNeeded*_nOutputs,iLinearFilterNeeded*_nOutputs,_nOutputs*(d+1),_nOutputs*(d+1)));
 
-                    MatrixXd filter = linearDetectorBeingProccessed->computedFilter_eigen();
+                    MatrixXd filter = linearDetectorBeingProccessed->computedFilter();
 
                     // during the first iteration, we have used the real linear detector of this particle for this channel; during the remaining iterations we don't want the real linear detector to be modified
                     if(iLinearFilterNeeded==0)

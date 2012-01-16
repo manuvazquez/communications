@@ -68,7 +68,7 @@ public:
 	 *
 	 * @return MatrixXd
 	 **/
-	virtual MatrixXd sampleFromPredictive() const { return predictedMatrix(); }
+	virtual MatrixXd samplePredicted() const { return predictedMatrix(); }
     
     virtual ChannelMatrixEstimator *clone() const = 0;
     

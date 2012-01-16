@@ -42,7 +42,7 @@ public:
 
     double getChannelOrderAPP(uint n) {return _channelOrderAPPs[n];}
 
-    VectorXd getChannelOrderAPPsVector_eigen();
+    VectorXd getChannelOrderAPPsVector();
 
     virtual ChannelOrderEstimator *clone() = 0;
 

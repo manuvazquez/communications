@@ -55,10 +55,10 @@ void TesisComplejidadReducidaBesselNumeroParticulasSystem::addAlgorithms()
         _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(LMSDSISname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,lmsEstimator,rmmseDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
 
         // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
-//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
 
 //         sprintf(algorithmName,"SIS opt: %d particles)",particlesNumbers[iNparticles]);
-//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means_eigen(),powerProfile->variances_eigen()));
+//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
     }
 
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));

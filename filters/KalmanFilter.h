@@ -34,18 +34,18 @@
 class KalmanFilter{
 private:
     uint _nElementsToEstimate;
-    MatrixXd _R_eigen,_stateEquationCovariance_eigen,_predictiveCovariance_eigen,_filteredCovariance_eigen;
-    VectorXd _predictiveMean_eigen,_filteredMean_eigen;
+    MatrixXd _R,_stateEquationCovariance,_predictiveCovariance,_filteredCovariance;
+    VectorXd _predictiveMean,_filteredMean;
 
 public:
     KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance);
 
-    void step(const MatrixXd &F_eigen,const VectorXd &observation_eigen,const MatrixXd &observationEquationCovariance_eigen);
+    void step(const MatrixXd &F,const VectorXd &observation,const MatrixXd &observationEquationCovariance);
     
-    VectorXd predictiveMean_eigen() const { return _predictiveMean_eigen;}
-    VectorXd filteredMean_eigen() const { return _filteredMean_eigen;}
-    MatrixXd predictiveCovariance_eigen() const { return _predictiveCovariance_eigen;}
-    MatrixXd filteredCovariance_eigen() const { return _filteredCovariance_eigen;}
+    VectorXd predictiveMean() const { return _predictiveMean;}
+    VectorXd filteredMean() const { return _filteredMean;}
+    MatrixXd predictiveCovariance() const { return _predictiveCovariance;}
+    MatrixXd filteredCovariance() const { return _filteredCovariance;}
     
     void setFilteredMean(const VectorXd &filteredMean);
     void setFilteredCovariance(const MatrixXd &filteredCovariance);    

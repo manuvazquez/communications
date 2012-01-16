@@ -25,8 +25,8 @@ DecorrelatorDetector::DecorrelatorDetector(uint rows, uint cols, double alphabet
 
 double DecorrelatorDetector::nthSymbolVariance(uint n,double noiseVariance)
 {
-//     return _filter_eigen.row(n).dot(_filter_eigen.row(n));
-    return noiseVariance*_filter_eigen.row(n).dot(_filter_eigen.row(n));    
+//     return _filter.row(n).dot(_filter.row(n));
+    return noiseVariance*_filter.row(n).dot(_filter.row(n));    
 }
 
 LinearDetector* DecorrelatorDetector::clone()
@@ -36,7 +36,7 @@ LinearDetector* DecorrelatorDetector::clone()
 
 VectorXd DecorrelatorDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
 {
-    _filter_eigen = (channelMatrix.transpose()*channelMatrix).inverse()*channelMatrix.transpose();
+    _filter = (channelMatrix.transpose()*channelMatrix).inverse()*channelMatrix.transpose();
 
-    return _filter_eigen*observations;
+    return _filter*observations;
 }

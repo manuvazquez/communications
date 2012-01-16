@@ -37,13 +37,13 @@ protected:
     double _alphaPowerSumNow,_alphaPowerSumPrevious;
     double _alphaPower,_alphaPowerSumFactor;
 
-    VectorXd _g_eigen;
-    MatrixXd _invRtilde_eigen,_filter_eigen;
+    VectorXd _g;
+    MatrixXd _invRtilde,_filter;
 
     MatrixXd _E;
 
     // required for nthSymbolVariance computing
-    MatrixXd _channelMatrix_eigen,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance_eigen;
+    MatrixXd _channelMatrix,_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance;
 public:
     RMMSEDetector(uint rows, uint cols,double alphabetVariance,double forgettingFactor,uint nSymbolsToBeDetected);
 
@@ -53,7 +53,7 @@ public:
     void stateStep(VectorXd observations);
 
     double nthSymbolVariance(uint n,double noiseVariance);
-    MatrixXd computedFilter_eigen() { return _filter_eigen;}
+    MatrixXd computedFilter() { return _filter;}
 
 };
 
