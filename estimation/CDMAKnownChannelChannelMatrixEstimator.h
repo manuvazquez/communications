@@ -35,6 +35,12 @@ public:
     CDMAKnownChannelChannelMatrixEstimator(const MIMOChannel *channel, uint iFirstChannelMatrix, uint N, const MatrixXd &spreadingCodes);
 
     virtual CDMAKnownChannelChannelMatrixEstimator *clone() const;
+	
+	virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance) { return _spreadingCodes * KnownChannelChannelMatrixEstimator::nextMatrix(observations,symbolsMatrix,noiseVariance).asDiagonal();}
+	
+	virtual MatrixXd predictedMatrix() const { return _spreadingCodes * KnownChannelChannelMatrixEstimator::predictedMatrix().asDiagonal();}
+	
+	virtual MatrixXd lastEstimatedChannelMatrix() const { return _spreadingCodes * KnownChannelChannelMatrixEstimator::lastEstimatedChannelCoefficientsMatrix().asDiagonal();}
 };
 
 #endif

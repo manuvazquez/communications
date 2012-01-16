@@ -56,6 +56,19 @@ public:
 	  \return the updated estimation of the channel
 	*/
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance) = 0;
+	
+	/**
+	 * @brief It returns an estimate of the channel at the current time instant as predicted by the estimator, i.e., prior to using the corresponding observations and symbols to update it (as opposed to "nextMatrix"). It defaults to the last estimated channel matrix
+	 * @return MatrixXd
+	 **/
+	virtual MatrixXd predictedMatrix() const { return lastEstimatedChannelMatrix();}
+	
+	/**
+	 * @brief It returns (if possible) a sample of the matrix returned by predictedMatrix. It defaults to simply calling the latter.
+	 *
+	 * @return MatrixXd
+	 **/
+	virtual MatrixXd sampleFromPredictive() const { return predictedMatrix(); }
     
     virtual ChannelMatrixEstimator *clone() const = 0;
     

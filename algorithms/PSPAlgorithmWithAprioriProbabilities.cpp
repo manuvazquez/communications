@@ -46,7 +46,8 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(uint iState, const Vector
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
 
-            VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
+//             VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
+			VectorXd error = observations - _exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->predictedMatrix()*symbolsVector;
 			
 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + 
 					  (error.dot(error))/(2*noiseVariance) - 
@@ -102,7 +103,8 @@ void PSPAlgorithmWithAprioriProbabilities::run(MatrixXd observations, vector< do
   {
 	VectorXd symbolsVector = _extendedAlphabet.int2eigenVector(iState,_nInputs);
 	
-	CDMAKalmanEstimator *clonedChannelMatrixEstimator = dynamic_cast <CDMAKalmanEstimator *> (_channelEstimator->clone());
+// 	CDMAKalmanEstimator *clonedChannelMatrixEstimator = dynamic_cast <CDMAKalmanEstimator *> (_channelEstimator->clone());
+	ChannelMatrixEstimator *clonedChannelMatrixEstimator = _channelEstimator->clone();
 
 	VectorXd error = observations.col(_startDetectionTime) - clonedChannelMatrixEstimator->lastEstimatedChannelMatrix()*symbolsVector;	
 

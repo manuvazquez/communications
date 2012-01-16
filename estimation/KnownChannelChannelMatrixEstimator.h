@@ -40,6 +40,7 @@ public:
     virtual KnownChannelChannelMatrixEstimator* clone() const;
     virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance);
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix) {}
+    virtual MatrixXd predictedMatrix() const { return _channel->at(_iNextMatrix);}
 };
 
 #endif
