@@ -24,6 +24,7 @@
 #include <FlatPowerProfile.h>
 #include <CDMAKalmanEstimator.h>
 #include <CDMAKnownChannelChannelMatrixEstimator.h>
+#include <CDMARLSEstimator.h>
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UsersActivityDistribution.h>
 
@@ -43,6 +44,7 @@ protected:
 	
     CDMAKalmanEstimator *_cdmaKalmanEstimator;
 	CDMAKnownChannelChannelMatrixEstimator *_cdmaKnownChannelChannelMatrixEstimator;
+	CDMARLSEstimator *_cdmaRLSEstimator;
 	
     MMSEDetector *_mmseDetector;
     
@@ -87,6 +89,8 @@ protected:
 	std::vector<std::vector<uint> > _thisFrameNumberSignChanges;
 	
 	std::string _maskUsedToComputeTheSER;
+	
+	double _forgettingFactor;
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();

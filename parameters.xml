@@ -5,7 +5,7 @@
 	<!-- ********************************** BaseSystem ************************************* -->
 	<BaseSystem>
 
-		<randomSeeds> 1 </randomSeeds> <!-- random seeds must be used for the simulations? -->
+		<randomSeeds> 1 </randomSeeds>
 		
 		<loadSeeds> 0 </loadSeeds> <!-- load (per frame) seeds? -->
 		<mainSeedToBeLoaded> 1323092389 </mainSeedToBeLoaded>
@@ -79,6 +79,8 @@
 		
 		<!-- options are: all, activityDetectedAsActivity, activity -->
 		<maskUsedToComputeTheSER> all </maskUsedToComputeTheSER>
+		
+		<forgettingFactor> 0.95 </forgettingFactor>
 
 	</CDMASystem>
 

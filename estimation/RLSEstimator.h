@@ -32,7 +32,8 @@
 
 class RLSEstimator : public ChannelMatrixEstimator
 {
-protected:
+// protected:
+private:
 	double _invForgettingFactor;
     MatrixXd _invRtilde;   
 
@@ -41,9 +42,9 @@ public:
 
     virtual ChannelMatrixEstimator* clone() const;
 
-    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance); // eigen
+    virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance);
 
-    virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance); // eigen   
+    virtual double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
 };
 
 #endif

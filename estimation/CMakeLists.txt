@@ -9,6 +9,7 @@ ADD_LIBRARY (estimation STATIC
 			APPbasedChannelOrderEstimator
 			CDMAKalmanEstimator
 			CDMAKnownChannelChannelMatrixEstimator
+			CDMARLSEstimator
 			ChannelMatrixEstimator
 			ChannelOrderEstimator
 			KalmanEstimator

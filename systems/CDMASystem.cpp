@@ -68,6 +68,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	readParameterFromXML(thisSystemParameters,"iUserOfInterest",_iUserOfInterest);
 	
 	readParameterFromXML(thisSystemParameters,"maskUsedToComputeTheSER",_maskUsedToComputeTheSER);
+	
+	readParameterFromXML(thisSystemParameters,"forgettingFactor",_forgettingFactor);
 			
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
@@ -85,6 +87,7 @@ CDMASystem::CDMASystem(): SMCSystem()
     
 	_cdmaKalmanEstimator = NULL;
 	_cdmaKnownChannelChannelMatrixEstimator = NULL;
+	_cdmaRLSEstimator = NULL;
 
 	_mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 	    
@@ -106,6 +109,7 @@ CDMASystem::~CDMASystem()
     delete _powerProfile;
     delete _cdmaKalmanEstimator;
 	delete _cdmaKnownChannelChannelMatrixEstimator;
+	delete _cdmaRLSEstimator;
     delete _mmseDetector;
 }
 
@@ -118,17 +122,22 @@ void CDMASystem::addAlgorithms()
     delete _cdmaKnownChannelChannelMatrixEstimator;
     _cdmaKnownChannelChannelMatrixEstimator = new CDMAKnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N,_spreadingCodes);
 	
+	delete _cdmaRLSEstimator;
+	_cdmaRLSEstimator = new CDMARLSEstimator(_powerProfile->means(),_N,_forgettingFactor,_spreadingCodes);
+	
     _algorithms.push_back(new KnownFlatChannelOptimalAlgorithm ("CDMA optimal with known channel BUT no knowledge of users activity probabilities",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength));
 
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-//     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+// //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-//     _algorithms.push_back(new NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters (new weights)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+// //     _algorithms.push_back(new NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters (new weights)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+	
+// 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaRLSEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
 	_algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi with a priori probabilities (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d,_usersActivityPdfs));
 	

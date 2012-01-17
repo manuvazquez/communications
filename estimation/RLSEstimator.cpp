@@ -31,7 +31,8 @@ ChannelMatrixEstimator* RLSEstimator::clone() const
 
 double RLSEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
-    return StatUtil::normalPdf(observations,_lastEstimatedChannelCoefficientsMatrix*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
+//     return StatUtil::normalPdf(observations,_lastEstimatedChannelCoefficientsMatrix*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
+	return StatUtil::normalPdf(observations,lastEstimatedChannelMatrix()*Util::toVector(symbolsMatrix,columnwise),noiseVariance);
 }
 
 MatrixXd RLSEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
