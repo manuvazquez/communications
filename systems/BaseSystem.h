@@ -143,11 +143,11 @@ protected:
 	
 	double _velocity,_carrierFrequency,_symbolRate,_T;
     
-	/*
-	  indicates wether or not a symbol must be taken into account for detection. NOTE: this only has a bool for every information symbol
-	  Hence,it doesn't include preamble symbols or smoothing symbols.
-	*/
+	// indicates wether or not a symbol must be taken into account for detection. It has a bool for every symbol WITHIN THE FRAME, and hence it doesn't include preamble symbols or smoothing symbols
     vector<vector<bool> > _isSymbolAccountedForDetection;
+	
+	// indicates wether or not a channel estimate must be taken into account for MSE computation. It has a bool for every channel estimate WITHIN THE FRAME, and hence it doesn't include channel estimates corresponding to the preamble or smoothing
+	vector<bool> _isChannelEstimateAccountedForMSE;
     
     std::vector<std::vector<uint> > _permutations;
 	uint _iBestPermutation;
@@ -236,9 +236,9 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	  \param detectedChannelMatrices the detected channel matrices
 	  \return the computed MSE
 	*/
-	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const;
+	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask) const;
 	
-	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
+	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
 	
 	xml_node<>* get_child(xml_node<> *inputNode, string sNodeFilter);
 	

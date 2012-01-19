@@ -219,6 +219,11 @@ BaseSystem::BaseSystem()
     for(uint iTime=_symbolsDetectionWindowStart;iTime<_frameLength;iTime++)
         for(uint iInput=0;iInput<_N;iInput++)
             _isSymbolAccountedForDetection[iInput][iTime] = true;
+		
+	_isChannelEstimateAccountedForMSE = vector<bool>(_frameLength,true);
+	for(uint iTime=0;iTime<_MSEwindowStart;iTime++)
+		_isChannelEstimateAccountedForMSE[iTime] = false;
+	
     
 #ifdef PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
     cout << "isSymbolAccountedForDetection" << endl;
@@ -490,7 +495,8 @@ void BaseSystem::beforeEndingAlgorithm()
 		std::vector<MatrixXd> estimatedChannelMatrices = _algorithms[_iAlgorithm]->getEstimatedChannelMatrices();
 		std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_MSEwindowStart,estimatedChannelMatrices.end());
 
-		_mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
+// 		_mse = computeMSE(_channel->range(_preambleLength+_MSEwindowStart,_iLastSymbolVectorToBeDetected-1),toCheckEstimatedChannelMatrices);
+		_mse = computeMSE(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),_algorithms[_iAlgorithm]->getEstimatedChannelMatrices(),_isChannelEstimateAccountedForMSE);
 	}else
 	{
 	  _mse = FUNNY_VALUE;
@@ -623,28 +629,32 @@ double BaseSystem::computeSER(const MatrixXd& sourceSymbols, const MatrixXd& det
       return double(minErrors)/double(nAccountedSymbols);
 }
 
-double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
+double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices, const std::vector<bool> &mask) const
 {
     uint nRealChannelMatrices = realChannelMatrices.size();
-    uint nEstimatedChannelMatrices = estimatedChannelMatrices.size();
-
-    if(nRealChannelMatrices!=nEstimatedChannelMatrices)
-        throw RuntimeException("BaseSystem::computeMSE: number of real channel matrices doesn't match that of the estimated.");
+	
+	assert(nRealChannelMatrices==estimatedChannelMatrices.size());
+	assert(nRealChannelMatrices==mask.size());
 
     double mse = 0;
+	uint nChannelEstimatesAccountedFor = 0;
 	
 	for(uint i=0;i<nRealChannelMatrices;i++)
 	{
-		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
-		// (i.e. the sum of all the elements squared) of the real channel matrix
+		if(!mask[i])
+			continue;
+		
+		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix.
 		// also notice that if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
 		mse += Util::squareErrorPaddingWithZeros(realChannelMatrices.at(i),estimatedChannelMatrices.at(i))/realChannelMatrices.at(i).squaredNorm();
+		
+		nChannelEstimatesAccountedFor++;	
 	}
 
-    return mse/(double)nRealChannelMatrices;
+	return mse/(double)nChannelEstimatesAccountedFor;
 }
 
-double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const
+double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const
 {
 	vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
 
@@ -656,7 +666,7 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 	for (uint i=0;i<realchannelMatrices.size();i++)
 		permutedRealChannelMatrices[i] = Util::applyPermutationOnColumns(realchannelMatrices[i],realChannelMatricesPermutation,realChannelMatricesSignsPermutation);
 
-	return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices);
+	return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices,mask);
 }
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
@@ -675,7 +685,7 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 
 	uint nSymbolsRows = detectedSymbols.rows();
 
-  // max number of errors
+  // maximum number of errors
   uint errors = 0;
 
   uint nAccountedSymbols = 0;

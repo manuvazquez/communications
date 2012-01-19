@@ -383,46 +383,38 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 	return res;
 }
 
-double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
+double CDMASystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask) const
 {
-	return computeSelectedUsersMSE(Util::keepCol(realChannelMatrices,_iUserOfInterest),Util::keepCol(estimatedChannelMatrices,_iUserOfInterest));
+	return computeSelectedUsersMSE(Util::keepCol(realChannelMatrices,_iUserOfInterest),Util::keepCol(estimatedChannelMatrices,_iUserOfInterest),mask);
 // 	return computeSelectedUsersMSE(realChannelMatrices,estimatedChannelMatrices);
 }
 
 
-double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices) const
+double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask) const
 {
-  if(realChannelMatrices.size()!=estimatedChannelMatrices.size())
-	throw RuntimeException("CDMASystem::computeMSE: different number of real channel matrices than estimated channel matrices.");
-
-  // we know that the received channel matrices go from time instant preambleLength+MSEwindowStart (both known parameters of the system) to the end of the frame. The first matrix of realChannelMatrices/estimatedChannelMatrices corresponds to the time instant:
-  uint iChannelMatricesStart = _preambleLength+_MSEwindowStart;
   
-  // we find which interval "iChannelMatricesStart" belongs to ("_signChanges" was computed previously in "computeSER")
-  uint iSignChange = 1;
-  while(_signChanges[iSignChange]<=iChannelMatricesStart && iSignChange<_signChanges.size())
-	iSignChange++;
-  
+	assert(realChannelMatrices.size()==estimatedChannelMatrices.size());
 
-  std::vector<MatrixXd> toCheckRealChannelMatrices(realChannelMatrices.begin(),realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
-  std::vector<MatrixXd> toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin(),estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
-  
-  double res = (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
-								_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
-  iSignChange++;
-  
-  for(;iSignChange<_signChanges.size();iSignChange++)
-  {
-	toCheckRealChannelMatrices = std::vector<MatrixXd>(realChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,realChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
-	toCheckEstimatedChannelMatrices = std::vector<MatrixXd>(estimatedChannelMatrices.begin()+_signChanges[iSignChange-1]-iChannelMatricesStart,estimatedChannelMatrices.begin()+_signChanges[iSignChange]-iChannelMatricesStart);
-	
-	res += (_signChanges[iSignChange]-iChannelMatricesStart)*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
-								_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
-  }
+	double res = 0.0;
 
-  res /= realChannelMatrices.size();
+	for (uint iSignChange = 1;iSignChange<_signChanges.size();iSignChange++)
+	{
+		std::vector<MatrixXd>  toCheckRealChannelMatrices(realChannelMatrices.begin()+_signChanges[iSignChange-1],realChannelMatrices.begin()+_signChanges[iSignChange]);
+		std::vector<MatrixXd>  toCheckEstimatedChannelMatrices(estimatedChannelMatrices.begin()+_signChanges[iSignChange-1],estimatedChannelMatrices.begin()+_signChanges[iSignChange]);
 
-  return res;
+		uint thisSubframeNumberAccountedChannelEstimates = 0;
+		
+		for (uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
+			thisSubframeNumberAccountedChannelEstimates += mask[j];
+		
+		res += thisSubframeNumberAccountedChannelEstimates*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
+				Util::block(mask,_signChanges[iSignChange-1],_signChanges[iSignChange]-_signChanges[iSignChange-1]),
+				_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
+	}
+
+	res /= realChannelMatrices.size();
+
+	return res;
 }
 
 void CDMASystem::resetFramePieces()

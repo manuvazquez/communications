@@ -92,6 +92,15 @@ public:
 	*/
 	template<class T> static std::vector<std::vector<T> > block(const std::vector<std::vector<T> > &matrix, uint iStartRow, uint iStartColumn, uint nRows, uint nCols);
 	
+	/*!
+	  it returns a subvector of the received vector
+	  \param vector the original matrix
+	  \param iStart the first element to be kept
+	  \param n number of elements to be kept
+	  \return the specified subvector
+	*/
+	template<class T> static std::vector<T> block(const std::vector<T> &vector, uint iStart, uint n);
+	
 	//! It returns if the the corresponding symbol implies the user is active
 	/*!
 	  \param symbol
