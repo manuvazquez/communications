@@ -38,7 +38,6 @@ ADD_LIBRARY (algorithms STATIC
 			SMCAlgorithm
 			TimeVaryingChannelCMEbasedAlgorithm
 			TriangularizationBasedSMCAlgorithm
-			NewWeightsUnknownActiveUsersLinearFilterBasedSMCAlgorithm
 			UnknownActiveUsersLinearFilterBasedSMCAlgorithm
 			UnknownChannelAlgorithm
 			UnknownChannelOrderAlgorithm

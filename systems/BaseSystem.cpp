@@ -638,7 +638,7 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
 		// (i.e. the sum of all the elements squared) of the real channel matrix
 		// also notice that if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-		mse += Util::squareErrorPaddingWithZeros(realChannelMatrices.at(i),estimatedChannelMatrices.at(i))/pow(realChannelMatrices.at(i).norm(),2.0);
+		mse += Util::squareErrorPaddingWithZeros(realChannelMatrices.at(i),estimatedChannelMatrices.at(i))/realChannelMatrices.at(i).squaredNorm();
 	}
 
     return mse/(double)nRealChannelMatrices;

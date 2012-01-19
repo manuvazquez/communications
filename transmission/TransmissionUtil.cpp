@@ -158,7 +158,7 @@ VectorXd TransmissionUtil::MSEalongTime(const std::vector<MatrixXd> &estimatedCh
         for(uint iSource1=from1,iSource2=from2,iRes=0;iSource1<=to1;iSource1++,iSource2++,iRes++)
         {
             // the square error committed by the estimated matrix is normalized by the squared Frobenius norm (i.e. the sum of all the elements squared) of the real channel matrix
-            res(iRes) = Util::squareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/pow(trueChannelMatrices.at(iSource2).norm(),2.0);
+            res(iRes) = Util::squareErrorPaddingWithZeros(trueChannelMatrices.at(iSource2),estimatedChannelMatrices.at(iSource1))/trueChannelMatrices.at(iSource2).squaredNorm();
 
         }
     } catch (IncompatibleOperandsException) {

@@ -57,9 +57,9 @@ double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
 		// (i.e. the sum of all the elements squared) of the real channel matrix
 #ifdef DEBUG
 		cout << "comparing" << endl << channelMatrices.at(i-windowStart) << endl << "and" << endl << estimatedChannelMatrices.at(i) << endl;
-		cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0) << endl;
+		cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/channelMatrices.at(i-windowStart).squaredNorm() << endl;
 #endif
-		mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/pow(channelMatrices.at(i-windowStart).norm(),2.0);
+		mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/channelMatrices.at(i-windowStart).squaredNorm();
 	}
 
     return mse/(double)windowSize;
