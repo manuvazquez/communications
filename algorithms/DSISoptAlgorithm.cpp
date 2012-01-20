@@ -22,7 +22,7 @@
 // #define DEBUG
 // #define PRINT_INFO
 
-DSISoptAlgorithm::DSISoptAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
+DSISoptAlgorithm::DSISoptAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble, uint smoothingLag, uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m,  channelEstimator, preamble, smoothingLag, nParticles,resamplingAlgorithm,channelMatrixMean,channelMatrixVariances)
 {
 //     _randomParticlesInitilization = true;
 }

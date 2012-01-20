@@ -27,6 +27,7 @@
 */
 
 #include <math.h>
+#include <string>
 #include <StatUtil.h>
 #include <DelayPowerProfile.h>
 #include <ContinuousPowerProfile.h>
@@ -39,7 +40,7 @@ protected:
 public:
     BesselChannel(uint nInputs, uint nOutputs, uint memory, uint length, double velocity, double carrierFrequency, double T, const DelayPowerProfile &powerProfile);
 	
-	virtual std::string name() const { return string("Bessel Channel"); }
+	virtual std::string name() const { return std::string("Bessel Channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrices[n];}
     

@@ -18,17 +18,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef EXCEPCIONESTRANSMISION_H
-#define EXCEPCIONESTRANSMISION_H
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 
 #include <stdexcept>
+#include <string>
 
-using std::string;
+// using std::string;
 
-//excepcion generica que solo contiene el mensaje de error
+// generic exception just containing the error message
 class RuntimeException : public std::runtime_error
 {
 	public:
-		RuntimeException(string s) : runtime_error(s) { }
+		RuntimeException(std::string s) : runtime_error(s) { }
 };
+ 
+class DivisionByZero : public std::runtime_error {
+public:
+	DivisionByZero() : std::runtime_error("Divided by zero") { }
+ };
 #endif

@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,ChannelMatrixEstimator* channelEstimator, MatrixXd preamble,const MatrixXd &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsKalmanBasedChannelEstimatorAlgorithm::KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,ChannelMatrixEstimator* channelEstimator, MatrixXd preamble,const MatrixXd &symbolVectors): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble),_symbolVectors(symbolVectors)
 {
 }
 

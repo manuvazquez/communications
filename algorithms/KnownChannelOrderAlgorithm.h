@@ -38,8 +38,8 @@ protected:
     MatrixXd _preamble;   
 
 public:
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,MatrixXd preamble);
-    KnownChannelOrderAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble);
+    KnownChannelOrderAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,MatrixXd preamble);
+    KnownChannelOrderAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble);
 	~KnownChannelOrderAlgorithm();
 
 	using Algorithm::channelMatrices2stackedChannelMatrix;

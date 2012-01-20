@@ -30,7 +30,7 @@ It implements the optimal detection algorithm for a flat channel when at each ti
 class KnownFlatChannelAndActiveUsersOptimalAlgorithm : public KnownFlatChannelOptimalAlgorithm
 {
 public:
-    KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength, std::vector<std::vector<bool> > usersActivity);
+    KnownFlatChannelAndActiveUsersOptimalAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength, std::vector<std::vector<bool> > usersActivity);
 
     ~KnownFlatChannelAndActiveUsersOptimalAlgorithm();
 

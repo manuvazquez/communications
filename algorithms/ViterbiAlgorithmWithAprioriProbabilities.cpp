@@ -16,7 +16,7 @@
 
 #include "ViterbiAlgorithmWithAprioriProbabilities.h"
 
-ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, uint smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs)
+ViterbiAlgorithmWithAprioriProbabilities::ViterbiAlgorithmWithAprioriProbabilities(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel, const MatrixXd& preamble, uint smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs)
 :ViterbiAlgorithm(name, alphabet,L,Nr,N, iLastSymbolVectorToBeDetected, channel,preamble,smoothingLag),
 _usersActivityPdfs(usersActivityPdfs),
 _extendedAlphabet(alphabet.buildNewAlphabetByAddingSymbol(0.0))

@@ -21,7 +21,7 @@
 
 #include <assert.h>
 
-KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
+KnownFlatChannelOptimalAlgorithm::KnownFlatChannelOptimalAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength): KnownChannelAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel),_preambleLength(preambleLength),_detectedSymbols(_nInputs,iLastSymbolVectorToBeDetected-preambleLength)
 {
     // a new alphabet extended with 0 (that meaning, no symbol is transmitted)
     vector<tSymbol> extendedAlphabetSymbols(_alphabet.length()+1);

@@ -44,7 +44,7 @@ public:
      * @param symbolVectors includes the preamble
      * @return
      */
-    KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble,const MatrixXd &symbolVectors);
+    KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble,const MatrixXd &symbolVectors);
 
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);

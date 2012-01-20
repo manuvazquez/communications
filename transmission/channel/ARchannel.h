@@ -22,6 +22,7 @@
 
 #include <StillMemoryMIMOChannel.h>
 #include <vector>
+#include <string>
 #include <ARprocess.h>
 
 /**
@@ -36,7 +37,7 @@ protected:
 public:
 	ARchannel(uint nInputs, uint nOutputs, uint memory, uint length,ARprocess ARproc);
 	
-	virtual std::string name() const { return string("AR process-based Channel"); }
+	virtual std::string name() const { return std::string("AR process-based Channel"); }
 
 	MatrixXd at(uint n) const { return _channelMatrices[n];}
 	

@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "UnknownChannelAlgorithm.h"
 
-UnknownChannelAlgorithm::UnknownChannelAlgorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected) : Algorithm(name,alphabet,L,Nr,N,iLastSymbolVectorToBeDetected)
+UnknownChannelAlgorithm::UnknownChannelAlgorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected) : Algorithm(name,alphabet,L,Nr,N,iLastSymbolVectorToBeDetected)
 {
 }
 

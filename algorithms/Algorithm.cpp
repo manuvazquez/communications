@@ -22,7 +22,7 @@
 
 // #define DEBUG
 
-Algorithm::Algorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N,uint iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
+Algorithm::Algorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N,uint iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
 }
 

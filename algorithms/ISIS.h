@@ -42,7 +42,7 @@ protected:
 	// it's never gonna be called
     uint iBestChannelOrder(uint iBestParticle) { return 0u;}
 public:
-    ISIS(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm);
+    ISIS(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation, uint smoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm);
 
     vector<MatrixXd> getEstimatedChannelMatrices();
 };

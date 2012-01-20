@@ -26,6 +26,8 @@
 	@author Manu <manu@rustneversleeps>
 */
 
+#include <string>
+
 class TimeInvariantChannel : public StillMemoryMIMOChannel
 {
 protected:
@@ -33,7 +35,7 @@ protected:
 public:
     TimeInvariantChannel(uint nInputs, uint nOutputs, uint memory, uint length, MatrixXd channelMatrix);
 	
-	virtual std::string name() const { return string("Time Invariant Channel"); }
+	virtual std::string name() const { return std::string("Time Invariant Channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrix;};
 	

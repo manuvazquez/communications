@@ -64,7 +64,7 @@ BaseSystem::BaseSystem()
 		throw RuntimeException("BaseSystem::BaseSystem: cannot read from \"parameters.xml\"!!");
 	
 	// the xml file is read to memory...
-	string parameters,parametersAux;
+	std::string parameters,parametersAux;
 	getline(_parametersFile,parametersAux);
 	while (_parametersFile) {
 		parameters += parametersAux;
@@ -190,14 +190,14 @@ BaseSystem::BaseSystem()
             presentTimeString[i]='_';
 
 	// the name of the results file is built
-	_resultsFile = string("res_") + string(hostname) + string("_") + string(presentTimeString);
+	_resultsFile = std::string("res_") + std::string(hostname) + std::string("_") + std::string(presentTimeString);
 	
 	// a symbolic link pointing to the results file is created
-	std::string lnCommand = string(LN_COMMAND) + string(" -sf ") + _resultsFile + string(" ") + string(SYMBOLIC_LINK_NAME);
+	std::string lnCommand = std::string(LN_COMMAND) + std::string(" -sf ") + _resultsFile + std::string(" ") + std::string(SYMBOLIC_LINK_NAME);
 	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _resultsFile << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
 	
 	// the name for the temporal file is obtained from the final one	
-	_tmpResultsFile = string("tmp_") + _resultsFile;
+	_tmpResultsFile = std::string("tmp_") + _resultsFile;
 
     // a specific preamble is generated...
     _preamble = MatrixXd::Zero(1,1);
@@ -424,7 +424,7 @@ if(__nFramesHasBeenPassed)
 			_f.close();
 			
 			// the temporal file is renamed as the final
-			std::string mvCommand = string(MV_COMMAND) + string(" ") + _tmpResultsFile + string(" ") + _resultsFile;
+			std::string mvCommand = std::string(MV_COMMAND) + std::string(" ") + _tmpResultsFile + std::string(" ") + _resultsFile;
 			int systemCommandReturn = system(mvCommand.c_str());
 			cout << COLOR_INFO << "moving operation returned " << COLOR_NORMAL << systemCommandReturn << endl;
 		}
@@ -651,7 +651,10 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realChannelMatrices,const 
 		nChannelEstimatesAccountedFor++;	
 	}
 
-	return mse/(double)nChannelEstimatesAccountedFor;
+	if(nChannelEstimatesAccountedFor==0)
+		throw DivisionByZero();
+	else
+		return mse/(double)nChannelEstimatesAccountedFor;
 }
 
 double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const
@@ -779,14 +782,14 @@ void BaseSystem::saveFrameResults()
     Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
 #endif
 
-	Octave::stringsVectorToOctaveFileStream(vector<string>(1,_channel->name()),"channelClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_noise).name())),"noiseClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*this).name())),"systemClass",_f);
+	Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,_channel->name()),"channelClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*_noise).name())),"noiseClass",_f);
+    Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*this).name())),"systemClass",_f);
 
     if(_powerProfile!=NULL)
     {
         Octave::toOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
-        Octave::stringsVectorToOctaveFileStream(vector<string>(1,string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
+        Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
     }
     
 	if(_keepAllChannelEstimates)
@@ -797,7 +800,7 @@ void BaseSystem::saveFrameResults()
 #endif
 }
 
-xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)
+xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, std::string sNodeFilter)
 {
     // cycles every child
     for (xml_node<> *nodeChild = inputNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
@@ -816,23 +819,23 @@ xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, string sNodeFilter)
     return 0;
 }
 
-template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,T &parameter)
+template<class T> void BaseSystem::readParameterFromXML(xml_node<> *parentNode,std::string xmlName,T &parameter)
 {
 	xml_node<> *parameterNode = get_child(parentNode,xmlName); 
 	if(!parameterNode)
-		throw RuntimeException(string("BaseSystem::readParameterFromXML: cannot find parameter \"")+xmlName+"\"");
+		throw RuntimeException(std::string("BaseSystem::readParameterFromXML: cannot find parameter \"")+xmlName+"\"");
 	
 	std::istringstream value;
 	value.str(parameterNode->value());
 	value >> parameter;
 }
-template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,string xmlName,int &parameter);
+template void BaseSystem::readParameterFromXML(xml_node<> *parentNode,std::string xmlName,int &parameter);
 
-template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector)
+template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,std::string xmlName,std::vector<T> &vector)
 {
 	xml_node<> *parameterNode = get_child(parentNode,xmlName);
 	if(!parameterNode)
-		throw RuntimeException(string("BaseSystem::readMultiValuedParameterFromXML: cannot find parameter \"")+xmlName+"\"");
+		throw RuntimeException(std::string("BaseSystem::readMultiValuedParameterFromXML: cannot find parameter \"")+xmlName+"\"");
 	
 	std::istringstream value;
 	
@@ -843,7 +846,7 @@ template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *p
 		vector.push_back(tmp);
 	}
 }
-template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<double> &vector);
+template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,std::string xmlName,std::vector<double> &vector);
 
 Noise *BaseSystem::createNoise() const
 {

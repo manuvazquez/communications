@@ -24,7 +24,7 @@
 class ViterbiAlgorithmWithAprioriProbabilities : public ViterbiAlgorithm
 {
 public:
-    ViterbiAlgorithmWithAprioriProbabilities(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs);
+    ViterbiAlgorithmWithAprioriProbabilities(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag, const std::vector<UsersActivityDistribution> usersActivityPdfs);
 	
 	virtual void run(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt);
 protected:

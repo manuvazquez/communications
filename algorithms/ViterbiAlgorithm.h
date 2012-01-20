@@ -54,7 +54,7 @@ protected:
 	void process(MatrixXd observations,vector<double> noiseVariances,uint firstSymbolVectorDetectedAt);
 
 public:
-    ViterbiAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag);
+    ViterbiAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag);
 
     ~ViterbiAlgorithm();
 

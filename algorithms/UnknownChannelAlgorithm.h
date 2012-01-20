@@ -27,11 +27,12 @@
 */
 
 #include <ChannelMatrixEstimator.h>
+#include <string>
 
 class UnknownChannelAlgorithm : public Algorithm
 {
 public:
-    UnknownChannelAlgorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected);
+    UnknownChannelAlgorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected);
 };
 
 #endif

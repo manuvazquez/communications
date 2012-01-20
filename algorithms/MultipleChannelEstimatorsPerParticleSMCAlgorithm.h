@@ -54,7 +54,7 @@ protected:
     virtual void beforeInitializingParticles(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &trainingSequence) {}
     virtual void updateParticleChannelOrderEstimators(Particle *particle,const MatrixXd &observations,const std::vector<std::vector<MatrixXd> > &channelMatrices,vector<double> &noiseVariances,const MatrixXd &sequenceToProcess) {}
 public:
-    MultipleChannelEstimatorsPerParticleSMCAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm);
+    MultipleChannelEstimatorsPerParticleSMCAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, uint iFirstObservation,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm);
 
     virtual void run(MatrixXd observations,vector<double> noiseVariances);
     virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence);

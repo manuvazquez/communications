@@ -20,6 +20,7 @@
 #ifndef ESTIMATEDMIMOCHANNEL_H
 #define ESTIMATEDMIMOCHANNEL_H
 
+#include <string>
 #include <StillMemoryMIMOChannel.h>
 #include <ChannelMatrixEstimator.h>
 
@@ -33,7 +34,7 @@ protected:
 public:
     EstimatedMIMOChannel(uint nInputs, uint nOutputs, uint memory, uint length, uint preambleLength, const ChannelMatrixEstimator *channelMatrixEstimator, const MatrixXd &symbols, const MatrixXd &observations, const vector<double> &noiseVariances);
 	
-	virtual std::string name() const { return string("Estimated channel"); }
+	virtual std::string name() const { return std::string("Estimated channel"); }
 
     MatrixXd at(uint n) const { return _channelMatrices[n];}
 };

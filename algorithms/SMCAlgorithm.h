@@ -73,7 +73,7 @@ protected:
     virtual void beforeInitializingParticles(const MatrixXd &observations, const MatrixXd &trainingSequence) {}
 
 public:
-    SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances);
+    SMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator, MatrixXd preamble,uint smoothingLag,uint nParticles,ResamplingAlgorithm *resamplingAlgorithm, const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances);
 
     /**
      * Constructor for allowing the algorithm to operate over a already constructed particle filter
@@ -89,7 +89,7 @@ public:
      * @param particleFilter
      * @param resamplingAlgorithm
      */
-    SMCAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, MatrixXd preamble,uint smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm);
+    SMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, MatrixXd preamble,uint smoothingLag,ParticleFilter *particleFilter,ResamplingAlgorithm *resamplingAlgorithm);
 
     ~SMCAlgorithm();
 

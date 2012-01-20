@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownSymbolsCMEapplyingAlgorithm.h"
 
-KnownSymbolsCMEapplyingAlgorithm::KnownSymbolsCMEapplyingAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, const MatrixXd &symbolVectors): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_symbolVectors(symbolVectors)
+KnownSymbolsCMEapplyingAlgorithm::KnownSymbolsCMEapplyingAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, vector< ChannelMatrixEstimator * > channelEstimators, MatrixXd preamble, const MatrixXd &symbolVectors): CMEapplyingAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, channelEstimators, preamble),_symbolVectors(symbolVectors)
 {
 }
 

@@ -49,7 +49,7 @@ protected:
     
     virtual const Alphabet *getAlphabetAt(uint time, int leafHeight) const { return _extendedAlphabet;}
 public:
-    KnownFlatChannelOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength);
+    KnownFlatChannelOptimalAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength);
 
     ~KnownFlatChannelOptimalAlgorithm();
 

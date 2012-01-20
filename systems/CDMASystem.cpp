@@ -396,6 +396,8 @@ double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMa
 	assert(realChannelMatrices.size()==estimatedChannelMatrices.size());
 
 	double res = 0.0;
+	
+	uint overallNumberAccountedChannelEstimates = 0;
 
 	for (uint iSignChange = 1;iSignChange<_signChanges.size();iSignChange++)
 	{
@@ -404,16 +406,32 @@ double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMa
 
 		uint thisSubframeNumberAccountedChannelEstimates = 0;
 		
+		// TODO: this is also computed by the "computeMSE" method -> it could return this in a parameter...
 		for (uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
 			thisSubframeNumberAccountedChannelEstimates += mask[j];
 		
-		res += thisSubframeNumberAccountedChannelEstimates*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
+// 		cout << "thisSubframeNumberAccountedChannelEstimates = " << thisSubframeNumberAccountedChannelEstimates << endl;
+// 		cout << "_signChanges.size() = " << _signChanges.size() << endl;
+		
+		try
+		{
+			res += thisSubframeNumberAccountedChannelEstimates*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
 				Util::block(mask,_signChanges[iSignChange-1],_signChanges[iSignChange]-_signChanges[iSignChange-1]),
-				_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);
+				_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);		
+		}
+		catch (exception DivisionByZero)
+		{
+// 			std::cout << "CDMASystem::computeSelectedUsersMSE: division by zero captured" << std::endl;
+			
+			// this subframe is not accounted for in any way
+			continue;
+		}
+		
+		overallNumberAccountedChannelEstimates += thisSubframeNumberAccountedChannelEstimates;
 	}
 
-	res /= realChannelMatrices.size();
-
+	// if overallNumberAccountedChannelEstimates==0, this will give NaN...which is a good thing register in the results file
+	res /= overallNumberAccountedChannelEstimates;
 	return res;
 }
 

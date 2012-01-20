@@ -31,7 +31,7 @@
 class LinearFilterBasedMKFAlgorithm : public LinearFilterBasedSMCAlgorithm
 {
 public:
-    LinearFilterBasedMKFAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, uint forwardSmoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedMKFAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, LinearDetector* linearDetector, MatrixXd preamble, uint backwardsSmoothingLag, uint smoothingLag, uint forwardSmoothingLag, uint nParticles, ResamplingAlgorithm* resamplingAlgorithm, const MatrixXd& channelMatrixMean, const MatrixXd& channelMatrixVariances, double ARcoefficient, double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
 protected:
     virtual void fillFirstEstimatedChannelMatrix(uint iParticle, MatrixXd& firstEstimatedChannelMatrix) const

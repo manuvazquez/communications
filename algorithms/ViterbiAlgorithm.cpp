@@ -21,7 +21,7 @@
 
 // #define DEBUG
 
-ViterbiAlgorithm::ViterbiAlgorithm(string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag): KnownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,  channel),_d(smoothingLag),_trellis(NULL),_preamble(preamble),_detectedSymbolVectors(NULL),_iFirstInLoopProcessedObservation(_preamble.cols())
+ViterbiAlgorithm::ViterbiAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected, const StillMemoryMIMOChannel& channel,const MatrixXd &preamble,uint smoothingLag): KnownChannelAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,  channel),_d(smoothingLag),_trellis(NULL),_preamble(preamble),_detectedSymbolVectors(NULL),_iFirstInLoopProcessedObservation(_preamble.cols())
 {
     if(preamble.cols() < (channel.memory()-1))
         throw RuntimeException("ViterbiAlgorithm::ViterbiAlgorithm: preamble dimensions are wrong.");

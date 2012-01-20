@@ -35,17 +35,17 @@
 
 class Algorithm{
 protected:
-    const string _name;
+    const std::string _name;
     const Alphabet _alphabet;
     const uint _nOutputs; /// number of outputs (observations) of the system at each time instant
     const uint _Nr; /// number of receiving antennas of the system
     const uint _nInputs; /// number of inputs of the system at each time instant (assumed to be equal to the number of transmitting antennas/users)
     const uint _iLastSymbolVectorToBeDetected;
 public:
-    Algorithm(string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected);
+    Algorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected);
     virtual ~Algorithm() {};
 
-    string getName() const {return _name;}
+    std::string getName() const {return _name;}
 
     virtual void run(MatrixXd observations,vector<double> noiseVariances) = 0;
     

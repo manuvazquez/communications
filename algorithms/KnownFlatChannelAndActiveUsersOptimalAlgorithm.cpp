@@ -19,7 +19,7 @@
  ***************************************************************************/
 #include "KnownFlatChannelAndActiveUsersOptimalAlgorithm.h"
 
-KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm(string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength, std::vector<std::vector<bool> > usersActivity): KnownFlatChannelOptimalAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel, preambleLength),_noTransmissionAlphabet(new Alphabet(vector<tSymbol>(1,0.0))),_usersActivity(usersActivity)
+KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, const MIMOChannel& channel, uint preambleLength, std::vector<std::vector<bool> > usersActivity): KnownFlatChannelOptimalAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, channel, preambleLength),_noTransmissionAlphabet(new Alphabet(vector<tSymbol>(1,0.0))),_usersActivity(usersActivity)
 {
     if(_usersActivity.size()!=_nInputs || _usersActivity[0].size()!=(_iLastSymbolVectorToBeDetected-_preambleLength))
         throw RuntimeException("KnownFlatChannelAndActiveUsersOptimalAlgorithm::KnownFlatChannelAndActiveUsersOptimalAlgorithm: users activity vector has wrong dimensions.");

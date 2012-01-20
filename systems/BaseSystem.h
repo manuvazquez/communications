@@ -240,10 +240,10 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	
 	virtual double computeMSE(const vector<MatrixXd> &realchannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns) const;
 	
-	xml_node<>* get_child(xml_node<> *inputNode, string sNodeFilter);
+	xml_node<>* get_child(xml_node<> *inputNode, std::string sNodeFilter);
 	
-	template<class T> void readParameterFromXML(xml_node<> *parentNode,string xmlName,T &parameter);
-	template<class T> void readMultiValuedParameterFromXML(xml_node<> *parentNode,string xmlName,std::vector<T> &vector);
+	template<class T> void readParameterFromXML(xml_node<> *parentNode,std::string xmlName,T &parameter);
+	template<class T> void readMultiValuedParameterFromXML(xml_node<> *parentNode,std::string xmlName,std::vector<T> &vector);
 	
 	xml_document<> _doc;
 	

@@ -44,7 +44,7 @@ protected:
     std::vector<MatrixXd> _channelOrderAPPs;
 // 	MatrixXd _channelOrderAPPs;
 public:
-    UnknownChannelOrderAlgorithm(string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation);
+    UnknownChannelOrderAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected,vector<ChannelMatrixEstimator *> channelEstimators,MatrixXd preamble,uint iFirstObservation);
 
     ~UnknownChannelOrderAlgorithm();
 

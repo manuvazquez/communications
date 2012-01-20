@@ -22,6 +22,8 @@
 
 #include <StillMemoryMIMOChannel.h>
 
+#include <string>
+
 /**
 Meant to model a CDMA multiuser communication sytem (whose channel is flat) as a MIMO system
 
@@ -37,7 +39,7 @@ protected:
 public:
 	MultiuserCDMAchannel(const MIMOChannel* const channel, const MatrixXd &spreadingCodes);
 	
-	virtual std::string name() const { return string("Multiuser CDMA ") + _channel->name(); }
+	virtual std::string name() const { return std::string("Multiuser CDMA ") + _channel->name(); }
 	
 	~MultiuserCDMAchannel();
 

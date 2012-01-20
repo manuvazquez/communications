@@ -29,22 +29,23 @@
 #include <stdint.h>
 #include <iomanip>
 #include <vector>
+#include <string>
 #include <types.h>
 #include <exceptions.h>
 
 class Octave{
   
 public:
-    static void eigenToOctaveFileStream(const MatrixXd &A,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,string name,std::ofstream &f);
-	static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,string name,std::ofstream &f);
-    static void eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,string name,std::ofstream &f);
-    template<class T> static void toOctaveFileStream(T scalar,string name,std::ofstream &f);
-    static void stringsVectorToOctaveFileStream(const std::vector<string> &strings,string name,std::ofstream &f);
-    template<class T> static void toOctaveFileStream(const std::vector<T> &vector,string name,std::ofstream &f);
-	template<class T> static void toOctaveFileStream(const std::vector<std::vector <T> > &matrix,string name,std::ofstream &f);
-	template<class T> static void toOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const MatrixXd &A,std::string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,std::string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,std::string name,std::ofstream &f);
+	static void eigenToOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,std::string name,std::ofstream &f);
+    static void eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::string name,std::ofstream &f);
+    template<class T> static void toOctaveFileStream(T scalar,std::string name,std::ofstream &f);
+    static void stringsVectorToOctaveFileStream(const std::vector<std::string> &strings,std::string name,std::ofstream &f);
+    template<class T> static void toOctaveFileStream(const std::vector<T> &vector,std::string name,std::ofstream &f);
+	template<class T> static void toOctaveFileStream(const std::vector<std::vector <T> > &matrix,std::string name,std::ofstream &f);
+	template<class T> static void toOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,std::string name,std::ofstream &f);
 };
 
 #endif
