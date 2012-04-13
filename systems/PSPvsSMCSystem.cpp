@@ -63,7 +63,7 @@ PSPvsSMCSystem::PSPvsSMCSystem()
 
     _powerProfile->print();
 	
-	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
+	adjustParticlesSurvivors(_nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
     kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 }
@@ -78,7 +78,7 @@ void PSPvsSMCSystem::addAlgorithms()
 {
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-    _algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances()));
+    _algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()));
 }
 
 void PSPvsSMCSystem::buildSystemSpecificVariables()

@@ -33,7 +33,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
-	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
+	adjustParticlesSurvivors(_nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
     rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
     rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
@@ -47,7 +47,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
         RMMSElinearDetectors.push_back(new RMMSEDetector(_L*_candidateChannelOrders[iChannelOrder],_N*(2*_candidateChannelOrders[iChannelOrder]-1),_alphabet->variance(),forgettingFactorDetector,_N*_candidateChannelOrders[iChannelOrder]));
     }
 
-    ResamplingCriterion resamplingCriterion(resamplingRatio);
+    ResamplingCriterion resamplingCriterion(_resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
     bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
     multinomialResamplingAlgorithm = new MultinomialResamplingAlgorithm(resamplingCriterion);
@@ -95,12 +95,12 @@ void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
 	// we gotta make sure the channel has memory...
 	assert(_iTrueChannelOrder!=0);
 	
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m-1,RLSchannelEstimators[_iTrueChannelOrder-1],RMMSElinearDetectors[_iTrueChannelOrder-1],_preamble,c,_d-1,_d-1,nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder-1],_channelOrderCoefficientsVariances[_iTrueChannelOrder-1],_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m-1,RLSchannelEstimators[_iTrueChannelOrder-1],RMMSElinearDetectors[_iTrueChannelOrder-1],_preamble,c,_d-1,_d-1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder-1],_channelOrderCoefficientsVariances[_iTrueChannelOrder-1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,RLSchannelEstimators[_iTrueChannelOrder],RMMSElinearDetectors[_iTrueChannelOrder],_preamble,c,_d,_d,nParticles,multinomialResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,RLSchannelEstimators[_iTrueChannelOrder],RMMSElinearDetectors[_iTrueChannelOrder],_preamble,c,_d,_d,_nParticles,multinomialResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 	assert((_iTrueChannelOrder+1)<_candidateChannelOrders.size());
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+1,RLSchannelEstimators[_iTrueChannelOrder+1],RMMSElinearDetectors[_iTrueChannelOrder+1],_preamble,c,_d+1,_d+1,nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+1],_channelOrderCoefficientsVariances[_iTrueChannelOrder+1],_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+1,RLSchannelEstimators[_iTrueChannelOrder+1],RMMSElinearDetectors[_iTrueChannelOrder+1],_preamble,c,_d+1,_d+1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+1],_channelOrderCoefficientsVariances[_iTrueChannelOrder+1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 // // 	assert((_iTrueChannelOrder+2)<_candidateChannelOrders.size());
 //     _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado por 2)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+2,RLSchannelEstimators[_iTrueChannelOrder+2],RMMSElinearDetectors[_iTrueChannelOrder+2],_preamble,c,_d+2,_d+2,nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+2],_channelOrderCoefficientsVariances[_iTrueChannelOrder+2],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
@@ -117,13 +117,13 @@ void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
 
 //     algorithms.push_back(new ISIS("ISIS",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,kalmanChannelEstimators,preamble,preamble.cols(),d,nParticles,multinomialResamplingAlgorithm));
 
-    _algorithms.push_back(new USIS("USIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new USIS("USIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,_nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 // //     _algorithms.push_back(new USIS2SISAlgorithm("USIS2SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,RMMSElinearDetectors,_preamble,_preamble.cols(),_d,nParticles,multinomialResamplingAlgorithm,channelOrderEstimator,ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance,USISmaximumProbabilityCriterion));
 
-    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (RLS)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (RLS)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,_nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
-    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (Kalman)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new MLSDmAlgorithm("MLSD-m (Kalman)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,_nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 

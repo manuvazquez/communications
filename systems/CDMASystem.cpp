@@ -90,7 +90,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 
 	_mmseDetector = new MMSEDetector(_L,_N,_alphabet->variance(),_N);
 	    
-    adjustParticlesSurvivors(nParticles,_nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
+    adjustParticlesSurvivors(_nParticles,_nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
 
 	// in order to compute the BER/MSE/... of the user of interest only, a "dummy" permutation (a permutation for a set of 1 element) is generated
 	_permutations = std::vector<std::vector<uint> >(1,std::vector<uint>(1,0));
@@ -128,13 +128,13 @@ void CDMASystem::addAlgorithms()
 
     _algorithms.push_back(new KnownFlatChannelAndActiveUsersOptimalAlgorithm ("CDMA optimal (known channel and active users)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*_channel,_preambleLength,_usersActivity));
      
-    _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+    _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-// //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+// //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
-	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-// // 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaRLSEstimator,_mmseDetector,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
+// // 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaRLSEstimator,_mmseDetector,_preamble,_d,nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 
 	_algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi with a priori probabilities (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d,_usersActivityPdfs));
 	

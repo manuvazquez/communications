@@ -30,7 +30,7 @@ void Rev2TVT2007System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();
 
-	_algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,uniquekalmanChannelEstimator,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,uniquekalmanChannelEstimator,_preamble,_preamble.cols(),_d,_nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }

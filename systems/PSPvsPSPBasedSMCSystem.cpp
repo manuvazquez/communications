@@ -28,11 +28,11 @@ PSPvsPSPBasedSMCSystem::PSPvsPSPBasedSMCSystem()
 
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
     
-    adjustParticlesSurvivors(nParticles,nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
+    adjustParticlesSurvivors(_nParticles,nSurvivors,_adjustParticlesNumberFromSurvivors,_adjustSurvivorsFromParticlesNumber);
 
     kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 
-    ResamplingCriterion resamplingCriterion(resamplingRatio);
+    ResamplingCriterion resamplingCriterion(_resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 }
@@ -51,11 +51,11 @@ void PSPvsPSPBasedSMCSystem::addAlgorithms()
 {
 	_algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
-	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
+	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (deterministic)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_nParticles,bestParticlesResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
 
-	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (without replacement resampling)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,withoutReplacementResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
+	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (without replacement resampling)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_nParticles,withoutReplacementResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
 
-	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (residual resampling)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,nParticles,algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
+	_algorithms.push_back(new PSPBasedSMCAlgorithm("PSP based SMC algorithm (residual resampling)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances()/*,ARcoefficients[0]*/));
 
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
 }

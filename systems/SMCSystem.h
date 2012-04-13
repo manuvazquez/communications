@@ -50,8 +50,8 @@
 class SMCSystem : public BaseSystem
 {
 protected:
-    uint nParticles;
-    double resamplingRatio;
+    uint _nParticles;
+    double _resamplingRatio;
 
     // forward smoothing
 	uint c;
@@ -59,9 +59,9 @@ protected:
     std::vector<double> _ARcoefficients;
     double _ARvariance;
 
-    ResamplingAlgorithm *algoritmoRemuestreo;
+    ResamplingAlgorithm *_resamplingAlgorithm;
 
-    double firstSampledChannelMatrixVariance;
+    double _firstSampledChannelMatrixVariance;
 
 	virtual void saveFrameResults();
 	

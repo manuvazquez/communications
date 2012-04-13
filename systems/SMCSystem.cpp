@@ -31,8 +31,8 @@ SMCSystem::SMCSystem()
 	if(!thisSystemParameters)
 		throw RuntimeException("SMCSystem::SMCSystem: cannot find parameters for this system.");
 	
-	readParameterFromXML(thisSystemParameters,"nParticles",nParticles);
-	readParameterFromXML(thisSystemParameters,"resamplingRatio",resamplingRatio);
+	readParameterFromXML(thisSystemParameters,"nParticles",_nParticles);
+	readParameterFromXML(thisSystemParameters,"resamplingRatio",_resamplingRatio);
 	readParameterFromXML(thisSystemParameters,"c",c);
 	
 	xml_node<> *ARprocessNode = get_child(thisSystemParameters,"ARprocess");
@@ -42,22 +42,22 @@ SMCSystem::SMCSystem()
 	readParameterFromXML(ARprocessNode,"variance",_ARvariance);
 
     // always the same resampling criterion and algorithms
-    ResamplingCriterion criterioRemuestreo(resamplingRatio);
+    ResamplingCriterion criterioRemuestreo(_resamplingRatio);
 
-    algoritmoRemuestreo = new ResidualResamplingAlgorithm(criterioRemuestreo);
+    _resamplingAlgorithm = new ResidualResamplingAlgorithm(criterioRemuestreo);
 }
 
 
 SMCSystem::~SMCSystem()
 {
-  delete algoritmoRemuestreo;
+  delete _resamplingAlgorithm;
 }
 
 void SMCSystem::saveFrameResults()
 {
     BaseSystem::saveFrameResults();
-    Octave::toOctaveFileStream(nParticles,"nParticles",_f);
-    Octave::toOctaveFileStream(resamplingRatio,"resamplingRatio",_f);
+    Octave::toOctaveFileStream(_nParticles,"nParticles",_f);
+    Octave::toOctaveFileStream(_resamplingRatio,"resamplingRatio",_f);
     Octave::toOctaveFileStream(_ARcoefficients,"ARcoefficients",_f);
     Octave::toOctaveFileStream(_ARvariance,"ARvariance",_f);
     Octave::toOctaveFileStream(c,"c",_f);

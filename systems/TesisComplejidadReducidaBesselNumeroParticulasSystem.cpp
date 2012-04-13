@@ -33,32 +33,32 @@ void TesisComplejidadReducidaBesselNumeroParticulasSystem::addAlgorithms()
         // ---------------------------------------------------------- con variables auxiliares ----------------------------------------------------
 		std::stringstream choleskyName;
 		choleskyName << "Cholesky: " << particlesNumbers[iNparticles] << " particles";
-        _algorithms.push_back(new TriangularizationBasedSMCAlgorithm(choleskyName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_ARvariance));
+        _algorithms.push_back(new TriangularizationBasedSMCAlgorithm(choleskyName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,particlesNumbers[iNparticles],_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_ARvariance));
 
         // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
 		std::stringstream MMSEMKFname;
 		MMSEMKFname << "MKF (MMSE): " << particlesNumbers[iNparticles] << " particles";
-        _algorithms.push_back(new LinearFilterBasedMKFAlgorithm(MMSEMKFname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,mmseDetectorSmall,_preamble,c,_d,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance,true));
+        _algorithms.push_back(new LinearFilterBasedMKFAlgorithm(MMSEMKFname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,mmseDetectorSmall,_preamble,c,_d,_d,particlesNumbers[iNparticles],_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance,true));
 
         // aquí restamos la contribución de los símbolos anteriores (el true al final) por lo que se debe usar "mmseDetectorSmall"
 		std::stringstream MMSEDecName;
 		MMSEDecName << "MKF (Decorrelator): " << particlesNumbers[iNparticles] << " particles";
-        _algorithms.push_back(new LinearFilterBasedMKFAlgorithm(MMSEDecName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,decorrelatorDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance,true));
+        _algorithms.push_back(new LinearFilterBasedMKFAlgorithm(MMSEDecName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,decorrelatorDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance,true));
 
         // ------------------------------------------------ estimacion conjunta del canal y los datos ---------------------------------------------
 		std::stringstream RLSDSISname;
 		RLSDSISname << "RLS-D-SIS: " << particlesNumbers[iNparticles] << " particles";
-        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(RLSDSISname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,rlsEstimator,rmmseDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(RLSDSISname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,rlsEstimator,rmmseDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 		std::stringstream LMSDSISname;
 		LMSDSISname << "LMS-D-SIS: " << particlesNumbers[iNparticles] << " particles";
-        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(LMSDSISname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,lmsEstimator,rmmseDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],algoritmoRemuestreo,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(LMSDSISname.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,lmsEstimator,rmmseDetector,_preamble,c,_d,_d,particlesNumbers[iNparticles],_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
         // -------------------------------------------------------------- algoritmos comunes ------------------------------------------------------
-//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+//         algorithms.push_back(new DSISoptAlgorithm ("D-SIS opt",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,particlesNumbers[iNparticles],_resamplingAlgorithm,powerProfile->means(),powerProfile->variances()));
 
 //         sprintf(algorithmName,"SIS opt: %d particles)",particlesNumbers[iNparticles]);
-//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],algoritmoRemuestreo,powerProfile->means(),powerProfile->variances()));
+//         algorithms.push_back(new SISoptAlgorithm (algorithmName,*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,particlesNumbers[iNparticles],_resamplingAlgorithm,powerProfile->means(),powerProfile->variances()));
     }
 
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));

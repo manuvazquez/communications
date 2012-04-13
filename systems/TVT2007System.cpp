@@ -37,7 +37,7 @@ TVT2007System::TVT2007System()
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 
-	adjustParticlesSurvivors(nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
+	adjustParticlesSurvivors(_nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
 	rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 
@@ -49,7 +49,7 @@ TVT2007System::TVT2007System()
 		noForgetRLSchannelEstimators.push_back(new RLSEstimator(_channelOrderCoefficientsMeans[iChannelOrder],_N,1.0));
 	}
 
-    ResamplingCriterion resamplingCriterion(resamplingRatio);
+    ResamplingCriterion resamplingCriterion(_resamplingRatio);
     withoutReplacementResamplingAlgorithm = new WithoutReplacementResamplingAlgorithm(resamplingCriterion);
 	bestParticlesResamplingAlgorithm = new BestParticlesResamplingAlgorithm(resamplingCriterion);
 
@@ -92,9 +92,9 @@ void TVT2007System::addAlgorithms()
 
 	_algorithms.push_back(new TimeVaryingChannelCMEbasedAlgorithm("TimeVaryingChannelCMEbasedAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,noForgetRLSchannelEstimators,_preamble,_preamble.cols(),_symbols));
 
-	_algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,RLSchannelEstimators,_preamble,_preamble.cols(),_d,_nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
-	_algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],firstSampledChannelMatrixVariance,_ARvariance));
+	_algorithms.push_back(new MLSDmAlgorithm("MKF MLSDmAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,kalmanChannelEstimators,_preamble,_preamble.cols(),_d,_nParticles,bestParticlesResamplingAlgorithm,_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 // 	algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*alphabet,L,L,N,iLastSymbolVectorToBeDetected,m,kalmanEstimator,preamble,d,iLastSymbolVectorToBeDetected+d,ARcoefficients[0],nSurvivors));
 
