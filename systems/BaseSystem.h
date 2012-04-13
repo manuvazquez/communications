@@ -90,6 +90,13 @@ protected:
     uint _iSNR;
 	uint _iFrame,_iAlgorithm;
 	
+	std::string _tmpResultsFile,_resultsFile;
+
+    Alphabet *_alphabet;
+
+    Noise *_noise;
+    MatrixXd _observations;
+	
 	/**
 	 * @brief the algorithms will stop the processing (and hence, the detection of the symbols transmitted) here (this is usually the last time instant for which enough observations are available to perform smoothing)
 	 **/
@@ -114,15 +121,11 @@ protected:
 	 * @brief number of inputs
 	 **/
 	uint _N;
+
+	/**
+	 * @brief SNRs to be processed
+	 **/
 	
-	std::string _tmpResultsFile,_resultsFile;
-
-    Alphabet *_alphabet;
-
-    Noise *_noise;
-    MatrixXd _observations;
-
-    // SNRs to be processed
     std::vector<int> _SNRs;
 
 	/**
@@ -140,8 +143,21 @@ protected:
 
     // algorithms performing smoothing require symbol vector x_{frameLength:frameLength+d} in order to detect the last symbol vector
     uint _nSmoothingSymbolsVectors;
-	
+
+	/**
+	 * @brief Bessel channel parameters
+	 **/
 	double _velocity,_carrierFrequency,_symbolRate,_T;
+
+	/**
+	 * @brief coefficients for the Auto-Regressive channel
+	 **/
+	std::vector<double> _ARcoefficients;
+	
+	/**
+	 * @brief variance for the Auto-Regressive channel
+	 **/
+    double _ARvariance;
     
 	// indicates wether or not a symbol must be taken into account for detection. It has a bool for every symbol WITHIN THE FRAME, and hence it doesn't include preamble symbols or smoothing symbols
     vector<vector<bool> > _isSymbolAccountedForDetection;

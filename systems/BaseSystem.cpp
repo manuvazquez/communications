@@ -109,6 +109,12 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"carrierFrequency",_carrierFrequency);
 	readParameterFromXML(thisSystemParameters,"symbolRate",_symbolRate);
 	
+	xml_node<> *ARprocessNode = get_child(thisSystemParameters,"ARprocess");
+	if(!ARprocessNode)
+		throw RuntimeException("BaseSystem::BaseSystem: cannot find parameter \"ARprocess\"");
+	readMultiValuedParameterFromXML(ARprocessNode,"coefficients",_ARcoefficients);
+	readParameterFromXML(ARprocessNode,"variance",_ARvariance);
+	
 	readParameterFromXML(thisSystemParameters,"noiseClassToBeInstantiated",_noiseClassToBeInstantiated);
 	readParameterFromXML(thisSystemParameters,"channelClassToBeInstantiated",_channelClassToBeInstantiated);
 
@@ -798,6 +804,14 @@ void BaseSystem::saveFrameResults()
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 		Octave::eigenToOctaveFileStream(_channelEstimatesVariances,"channelEstimatesVariances",_f);
 #endif
+
+	Octave::toOctaveFileStream(_velocity,"velocity",_f);
+	Octave::toOctaveFileStream(_carrierFrequency,"carrierFrequency",_f);
+	Octave::toOctaveFileStream(_symbolRate,"symbolRate",_f);
+	Octave::toOctaveFileStream(_T,"T",_f);
+
+	Octave::toOctaveFileStream(_ARcoefficients,"ARcoefficients",_f);
+	Octave::toOctaveFileStream(_ARvariance,"ARvariance",_f);
 }
 
 xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, std::string sNodeFilter)

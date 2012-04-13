@@ -33,12 +33,6 @@ public:
     ~TesisComplejidadReducidaBesselSystem();
 
 protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
-	virtual void saveFrameResults();
     virtual void buildSystemSpecificVariables();
 
 };

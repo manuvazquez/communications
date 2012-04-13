@@ -36,11 +36,6 @@
 class PSPvsSMCSystem : public SMCSystem
 {
 protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
     uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 

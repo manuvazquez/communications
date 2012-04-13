@@ -27,11 +27,6 @@ PSPvsSMCSystem::PSPvsSMCSystem()
     adjustSurvivorsFromParticlesNumber = false;
     adjustParticlesNumberFromSurvivors = true;
 
-    velocity = 50/3.6; // (m/s)
-    carrierFrequency = 2e9; // (Hz)
-    symbolRate = 500e3; // (Hz)
-    T = 1.0/symbolRate; // (s)
-
     vector<double> differentialDelays,powers;
 
 //     // suburban macro
@@ -84,14 +79,11 @@ void PSPvsSMCSystem::addAlgorithms()
 void PSPvsSMCSystem::buildSystemSpecificVariables()
 {
 //  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
+    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
 }
 
 void PSPvsSMCSystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();
-    Octave::toOctaveFileStream(velocity,"velocity",_f);
-    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
     Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
 }

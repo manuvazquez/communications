@@ -48,8 +48,6 @@ protected:
     double forgettingFactor;
     double forgettingFactorDetector;
 
-	double velocity;
-
 	// vectors of channel estimators and linear detectors for unknown channel order algorithms
 	vector<ChannelMatrixEstimator *> RLSchannelEstimators;
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;

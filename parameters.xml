@@ -38,6 +38,14 @@
 		<carrierFrequency> 2e9 </carrierFrequency> <!-- in Hz -->
 		<symbolRate> 500e3 </symbolRate> <!-- in Hz -->
 		
+		<ARprocess>
+			<coefficients>
+				<value> 0.59999 </value>
+				<value> 0.39999 </value>
+			</coefficients>
+			<variance> 0.0001 </variance>
+		</ARprocess>
+		
 		<!-- options are: NullNoise, ChannelDependentNoise, PowerProfileDependentNoise, SingleUserPowerProfileDependentNoise, SingleUserChannelDependentNoise -->
 		<noiseClassToBeInstantiated> SingleUserPowerProfileDependentNoise </noiseClassToBeInstantiated>
 		
@@ -52,13 +60,6 @@
 		<nParticles> 1 </nParticles>
 		<resamplingRatio> 0.9 </resamplingRatio>
 		<c> 0 </c>
-		<ARprocess>
-			<coefficients>
-				<value> 0.59999 </value>
-				<value> 0.39999 </value>
-			</coefficients>
-			<variance> 0.0001 </variance>
-		</ARprocess>
 		<firstSampledChannelMatrixVariance> 0.0 </firstSampledChannelMatrixVariance>
 		
 	</SMCSystem>

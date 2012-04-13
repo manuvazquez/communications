@@ -41,11 +41,6 @@ ISWCS10System::ISWCS10System()
     adjustSurvivorsFromParticlesNumber = true;
     adjustParticlesNumberFromSurvivors = false;
 
-	_velocity = 50.0; // m/s
-	_carrierFrequency = 2e9;
-	_period = 1.0/500.0e3;
-
-
 	// in order to use a Bessel channel (considering the Clarke model), the parameters of the AR process the algorithms will consider
 	// are derived from those of the Clarke model
 	double computedARprocessVariance;
@@ -199,6 +194,5 @@ void ISWCS10System::saveFrameResults()
 {
     ChannelOrderEstimationSystem::saveFrameResults();
     Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
-	Octave::toOctaveFileStream(_velocity,"velocity",_f);
 	Octave::toOctaveFileStream(_subchannelOrders,"subchannelOrders",_f);
 }

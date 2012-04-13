@@ -36,15 +36,10 @@
 class LMSmuTestSystem : public SMCSystem
 {
 protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
     uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
-    // estimacion conjunta del canal y los datos
+    // joint channel and data estimation
     double forgettingFactorDetector;
     RMMSEDetector *rmmseDetector;
 

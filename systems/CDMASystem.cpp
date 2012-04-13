@@ -466,11 +466,6 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
-	
-	Octave::toOctaveFileStream(_velocity,"velocity",_f);
-	Octave::toOctaveFileStream(_carrierFrequency,"carrierFrequency",_f);
-	Octave::toOctaveFileStream(_symbolRate,"symbolRate",_f);
-	Octave::toOctaveFileStream(_T,"T",_f);
 }
 
 Noise *CDMASystem::createNoise() const

@@ -32,13 +32,7 @@
 class Elsevier2007BesselChannelSystem : public Elsevier2007System
 {
 protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
     virtual void buildSystemSpecificVariables();
-	virtual void saveFrameResults();
 public:
     Elsevier2007BesselChannelSystem();
 

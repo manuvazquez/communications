@@ -56,9 +56,6 @@ protected:
     // forward smoothing
 	uint c;
 
-    std::vector<double> _ARcoefficients;
-    double _ARvariance;
-
     ResamplingAlgorithm *_resamplingAlgorithm;
 
     double _firstSampledChannelMatrixVariance;

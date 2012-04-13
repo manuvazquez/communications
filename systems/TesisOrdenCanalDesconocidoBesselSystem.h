@@ -51,13 +51,7 @@
 class TesisOrdenCanalDesconocidoBesselSystem : public TesisOrdenCanalDesconocidoSystem
 {
 protected:
-    double velocity; // (Km/h)
-    double carrierFrequency; // (Hz)
-    double symbolRate; // (Hz)
-    double T; // (s)
-
     virtual void buildSystemSpecificVariables();
-	virtual void saveFrameResults();
 public:
     TesisOrdenCanalDesconocidoBesselSystem();
 

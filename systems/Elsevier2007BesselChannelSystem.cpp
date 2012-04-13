@@ -22,12 +22,6 @@
 Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
  : Elsevier2007System()
 {
-	velocity = 50/3.6; // (m/s)
-    carrierFrequency = 2e9; // (Hz)
-    symbolRate = 500e3; // (Hz)
-    T = 1.0/symbolRate; // (s)
-
-
 // 	ARcoefficients = ARprocess::parametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
 // 	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
 // 	Util::print(ARcoefficients);
@@ -57,7 +51,7 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
 	}else
 		throw RuntimeException("Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem: memory has to be 3 or 6.");
 
-     _powerProfile = new ConstantMeanDSPowerProfile(_L,_N,differentialDelays,powers,T);
+     _powerProfile = new ConstantMeanDSPowerProfile(_L,_N,differentialDelays,powers,_T);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,T);
 // 	powerProfile = new FlatPowerProfile(L,N,m,1.0);
 
@@ -71,7 +65,6 @@ Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
 Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
 {
   delete _powerProfile;
-//   delete channel;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
 }
@@ -79,13 +72,5 @@ Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
 void Elsevier2007BesselChannelSystem::buildSystemSpecificVariables()
 {
 // 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,carrierFrequency,T,*_powerProfile);
-}
-
-void Elsevier2007BesselChannelSystem::saveFrameResults()
-{
-    Elsevier2007System::saveFrameResults();
-    Octave::toOctaveFileStream(velocity,"velocity",_f);
-    Octave::toOctaveFileStream(carrierFrequency,"carrierFrequency",_f);
-    Octave::toOctaveFileStream(symbolRate,"symbolRate",_f);
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
 }

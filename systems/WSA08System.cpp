@@ -31,8 +31,6 @@ WSA08System::WSA08System()
     forgettingFactor = 0.99;
     forgettingFactorDetector = 0.95;
 
-	velocity = 50.0; // m/s
-
     _powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 // 	powerProfile = new ExponentialPowerProfile(L,N,m,1.8e-6,1.0/500.0e3);
 	
@@ -58,7 +56,6 @@ WSA08System::WSA08System()
 
 WSA08System::~WSA08System()
 {
-// 	delete channel;
 	delete _powerProfile;
 
 	delete rmmseDetector;
@@ -80,13 +77,9 @@ WSA08System::~WSA08System()
 void WSA08System::buildSystemSpecificVariables()
 {
 //     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),velocity,2e9,1.0/500.0e3,*_powerProfile);
+	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
 
 // 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
-#ifdef DEBUG
-	cout << "El canal al principio" << endl << (*channel)[preamble.cols()];
-	cout << "El canal al final" << endl << (*channel)[frameLength];
-#endif
 }
 
 void WSA08System::addAlgorithms()
@@ -114,5 +107,4 @@ void WSA08System::saveFrameResults()
     Octave::toOctaveFileStream(nSurvivors,"nSurvivors",_f);
 	Octave::toOctaveFileStream(forgettingFactor,"forgettingFactor",_f);
 	Octave::toOctaveFileStream(forgettingFactorDetector,"forgettingFactorDetector",_f);
-	Octave::toOctaveFileStream(velocity,"velocity",_f);
 }
