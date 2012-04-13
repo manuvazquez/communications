@@ -168,7 +168,6 @@ protected:
     std::vector<MatrixXi> _overallErrorsNumberTimeEvolution;
 
     // seeds
-//     std::vector<uint32_t> _mainSeeds,_statUtilSeeds;
 	std::vector<Random> _mainRandoms,_statUtilRandoms;
 
 #ifdef SAVE_ALL_SEEDS

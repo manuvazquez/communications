@@ -228,7 +228,7 @@ double CDMASystem::computeSelectedUsersActivityDetectionErrorRate(MatrixXd sourc
 
 	std::vector<std::vector<bool> > mask(nSymbolsRows,std::vector<bool>(_frameLength,true));
 
-	// in order to compute the probability of activity detection it makes no difference the symbol detected: the only thing that matters is wether a symbol (any) was detected or not
+	// in order to compute the probability of activity detection the symbol detected makes no difference: the only thing that matters is wether a symbol (any) was detected or not
 	// for both the "sourceSymbols" and the "detectedSymbols", every symbol belonging to the alphabet is transformed into the first (for example) symbol of the alphabet
 	for (uint i=0;i<sourceSymbols.rows();i++)
 		for (uint j=0;j<sourceSymbols.cols();j++)
@@ -326,7 +326,6 @@ double CDMASystem::computeSelectedUsersSER(const MatrixXd &sourceSymbols,const M
 	// the number of sign changes counted is saved
 	_thisFrameNumberSignChanges[_iSNR][_iAlgorithm] = _signChanges.size();
 	
-	
 	// a mask built for taking into account "real" transmitted symbols that are detected by the algorithm as symbols (i.e., activity)
 	std::vector<std::vector<bool> > activityDetectedAsActivityMask = mask;
 	
@@ -410,19 +409,14 @@ double CDMASystem::computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMa
 		for (uint j=_signChanges[iSignChange-1];j<_signChanges[iSignChange];j++)
 			thisSubframeNumberAccountedChannelEstimates += mask[j];
 		
-// 		cout << "thisSubframeNumberAccountedChannelEstimates = " << thisSubframeNumberAccountedChannelEstimates << endl;
-// 		cout << "_signChanges.size() = " << _signChanges.size() << endl;
-		
 		try
 		{
 			res += thisSubframeNumberAccountedChannelEstimates*BaseSystem::computeMSE(toCheckRealChannelMatrices,toCheckEstimatedChannelMatrices,
 				Util::block(mask,_signChanges[iSignChange-1],_signChanges[iSignChange]-_signChanges[iSignChange-1]),
 				_permutations[_piecesBestPermuationIndexes[iSignChange-1]],_piecesBestPermutationSigns[iSignChange-1]);		
 		}
-		catch (exception DivisionByZero)
+		catch (DivisionByZero e)
 		{
-// 			std::cout << "CDMASystem::computeSelectedUsersMSE: division by zero captured" << std::endl;
-			
 			// this subframe is not accounted for in any way
 			continue;
 		}
@@ -461,7 +455,7 @@ void CDMASystem::storeFrameResults()
 void CDMASystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();
-    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"peActivityDetectionFrames",_f);
+    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"activityDetectionErrorRate",_f);
     Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
 	Octave::toOctaveFileStream(_nSurvivors,"nSurvivors",_f);
 	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);

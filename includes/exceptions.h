@@ -24,8 +24,6 @@
 #include <stdexcept>
 #include <string>
 
-// using std::string;
-
 // generic exception just containing the error message
 class RuntimeException : public std::runtime_error
 {

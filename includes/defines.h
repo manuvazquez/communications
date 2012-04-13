@@ -26,4 +26,4 @@
 #define FUNNY_VALUE -3.14
 
 // the variances of the channel estimates coefficients are saved whenever possible (it depends on the channel estimator employed by the algorithm)
-//#define SAVE_CHANNEL_ESTIMATES_VARIANCES
+// #define SAVE_CHANNEL_ESTIMATES_VARIANCES
