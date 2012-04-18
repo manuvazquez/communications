@@ -173,7 +173,7 @@ void CDMASystem::buildSystemSpecificVariables()
 #endif
 	
 	do
-	{	
+	{
 		// spreading codes for the users are generated randomly
 		_spreadingCodes = Util::sign(StatUtil::randnMatrix(_L,_N,0.0,1.0));
 

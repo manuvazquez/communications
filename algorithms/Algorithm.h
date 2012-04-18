@@ -80,6 +80,9 @@ public:
 	double MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns);
 
     VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint c,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
+	
+	// assuming c = 0
+	VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
 
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m,uint start,uint d);
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m)

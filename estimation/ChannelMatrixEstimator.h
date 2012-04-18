@@ -91,6 +91,17 @@ public:
     
     vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
 	
+	/**
+	 * @brief It runs the channel matrix estimator algorithm for several steps in a row
+	 *
+	 * @param observations a sequence of observations (possibly more than will be used)
+	 * @param noiseVariances the noise variances corresponding to the observations
+	 * @param symbolVectors sequence of symbol vectors
+	 * @param iFrom first time instant to be accounted for
+	 * @param iTo last time instant to be accounted for
+	 * @param channelEstimatesVariances return parameter
+	 * @return channel matrices obtained from all the channel matrix estimator steps
+	 **/
 	std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances);
 	
 	virtual bool computesVariances() const { return false; }

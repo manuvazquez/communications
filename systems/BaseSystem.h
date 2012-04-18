@@ -42,6 +42,7 @@
 #include <StatUtil.h>
 #include <Random.h>
 #include <MIMOChannel.h>
+#include <ARchannel.h>
 #include <Noise.h>
 #include <ChannelDependentNoise.h>
 #include <PowerProfileDependentNoise.h>

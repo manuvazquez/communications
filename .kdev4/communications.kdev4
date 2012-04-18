@@ -39,7 +39,7 @@ Working Directory=
 isExecutable=false
 
 [MakeBuilder]
-Default Make Environment Profile=0
+Default Make Environment Profile=
 Number Of Jobs=1
 
 [Project]

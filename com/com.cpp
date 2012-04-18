@@ -37,6 +37,7 @@
 #include <ARparametersComparisonCDMASystem.h>
 #include <ISWCS10System.h>
 #include <ISWCS10numberOfSurvivorsImpactSystem.h>
+#include <PlainSystem.h>
 
 #include <bashcolors.h>
 
@@ -127,12 +128,15 @@ int main(int argc,char* argv[])
 // 
 // 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
-	CDMASystem system;
 // 	ARparametersComparisonCDMASystem system;
 
 // 	ISWCS10System system;
 	
 // 	ISWCS10numberOfSurvivorsImpactSystem system;
+
+// 	CDMASystem system; // Transactions on Vehicular Technology 2012??
+
+	PlainSystem system;
 
 	system.simulate();
 }

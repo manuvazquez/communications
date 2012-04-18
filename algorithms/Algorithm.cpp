@@ -127,3 +127,24 @@ VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &ma
 
     return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
 }
+
+VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
+{
+    if(matrices.size()!=e+1)
+      throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
+
+    if(observations.size()!=(_nOutputs*(e+1)))
+       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: size of observations vector is wrong.");
+
+	assert(m>0);
+    if(involvedSymbolVectors.cols()!=m-1)
+         throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
+
+    uint i;
+    MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(e+1),_nInputs*(m-1));
+
+    for(i=0;i<m-1;i++)
+        substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-(i))*_nInputs);
+
+    return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
+}

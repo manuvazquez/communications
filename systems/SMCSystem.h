@@ -68,7 +68,7 @@ public:
 
     ~SMCSystem();
 	
-	virtual MIMOChannel *createChannel();
+// 	virtual MIMOChannel *createChannel();
 };
 
 #endif

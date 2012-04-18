@@ -53,3 +53,5 @@
 		- initialize observations to zero
 - KalmanFilter.cpp
 	- setFilteredCovariance
+- buildSystemSpecificVariables shouldn't build the channel (createChannel method should)
+- delayPowerProfile instatiation

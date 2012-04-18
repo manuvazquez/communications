@@ -35,6 +35,7 @@ ADD_LIBRARY (systems STATIC
 		    TesisOrdenCanalDesconocidoSystem
 		    TVT2007System
 		    WSA08System
+		    PlainSystem
 			ISWCS10System
 			ISWCS10numberOfSurvivorsImpactSystem)
 TARGET_LINK_LIBRARIES (systems

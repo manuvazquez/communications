@@ -334,7 +334,7 @@ if(__nFramesHasBeenPassed)
         // all the above symbols must be processed except those generated due to the smoothing
         _iLastSymbolVectorToBeDetected = _symbols.cols() - _nSmoothingSymbolsVectors;
 
-		// this method should generate the channel and the noise
+		// this method should build the channel
         buildSystemSpecificVariables();
 
 #ifdef PRINT_PARAMETERS
@@ -869,7 +869,10 @@ Noise *BaseSystem::createNoise() const
 	else if(!_noiseClassToBeInstantiated.compare(ChannelDependentNoise::getXMLname()))
 		return new ChannelDependentNoise(_alphabet->variance(),_channel);
 	else if(!_noiseClassToBeInstantiated.compare(PowerProfileDependentNoise::getXMLname()))
+	{
+		assert(_powerProfile!=NULL);
 		return new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
+	}
 	else
 		throw RuntimeException(std::string("BaseSystem::createNoise: unknown Noise class \"") + _noiseClassToBeInstantiated + std::string("\" cannot be instantiated."));
 		
@@ -877,10 +880,14 @@ Noise *BaseSystem::createNoise() const
 
 MIMOChannel *BaseSystem::createChannel()
 {
+	assert(_powerProfile!=NULL);
+
 	if(!_channelClassToBeInstantiated.compare(TimeInvariantChannel::getXMLname()))
 		return new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
 	else if(!_channelClassToBeInstantiated.compare(BesselChannel::getXMLname()))
 		return new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
+	else if(!_channelClassToBeInstantiated.compare(ARchannel::getXMLname()))
+		return new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance));
 	else
 		throw RuntimeException(std::string("BaseSystem::createChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
 }
