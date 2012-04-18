@@ -74,14 +74,6 @@ WSA08System::~WSA08System()
 	delete kalmanEstimator;
 }
 
-void WSA08System::buildSystemSpecificVariables()
-{
-//     channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
-
-// 	channel = new TimeInvariantChannel(N,L,m,symbols.cols(),powerProfile->generateChannelMatrix(randomGenerator));
-}
-
 void WSA08System::addAlgorithms()
 {
 	ChannelOrderEstimationSystem::addAlgorithms();

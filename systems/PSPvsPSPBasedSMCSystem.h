@@ -50,7 +50,6 @@ protected:
 
 	virtual void saveFrameResults();
     virtual void addAlgorithms();
-    virtual void buildSystemSpecificVariables();
 };
 
 #endif

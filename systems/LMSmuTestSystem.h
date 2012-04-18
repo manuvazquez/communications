@@ -46,7 +46,6 @@ protected:
     vector<double> musLMS;
     vector<ChannelMatrixEstimator *> LMSchannelEstimators;
 
-    virtual void buildSystemSpecificVariables();
 	virtual void saveFrameResults();
     virtual void addAlgorithms();
 public:

@@ -150,7 +150,7 @@ BaseSystem::BaseSystem()
 	// smoothing factor
 	_d = _m - 1;
 	
-	// the algorithms with the higher smoothing lag require
+	// "in principle" the algorithms require as many smoothing symbol vectors as "d" (though it's not always like that, .e.g,  when estimating the channel order)
 	_nSmoothingSymbolsVectors = _d;
 	
     // BER and MSE computing
@@ -210,9 +210,6 @@ BaseSystem::BaseSystem()
     _preamble.resize(_N,_preambleLength);
     if(_preamble.size()>0)
         _preamble.setConstant(-1.0);
-    
-    // the frame length in bits is
-    _nBitsGenerated = (_frameLength+_nSmoothingSymbolsVectors)*_alphabet->nBitsPerSymbol();
     
     // which symbols are to be taken into account when detecting
     _isSymbolAccountedForDetection = vector<vector<bool> >(_N,vector<bool>(_frameLength));
@@ -279,6 +276,10 @@ BaseSystem::~BaseSystem()
 
 void BaseSystem::simulate()
 {
+	
+	// the frame length in bits is
+    _nBitsGenerated = (_frameLength+_nSmoothingSymbolsVectors)*_alphabet->nBitsPerSymbol();
+	 //this is here just in case the value "_nSmoothingSymbolsVectors" is modified by a subclass of BaseSystem (e.g. "TesisOrdenCanalDesconocidoSystem")
 
 // if a number of frames has been passed...
 if(__nFramesHasBeenPassed)
@@ -336,6 +337,8 @@ if(__nFramesHasBeenPassed)
 
 		// this method should build the channel
         buildSystemSpecificVariables();
+		
+		_channel =  buildChannel();
 
 #ifdef PRINT_PARAMETERS
 		std::cout << "the true symbols:" << std::endl << _symbols << std::endl;
@@ -347,7 +350,7 @@ if(__nFramesHasBeenPassed)
     Util::print(isSymbolAccountedForDetection);
 #endif    
 
-	_noise = createNoise();
+	_noise = buildNoise();
 	
 	assert(_noise!=NULL);
 
@@ -862,7 +865,7 @@ template<class T> void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *p
 }
 template void BaseSystem::readMultiValuedParameterFromXML(xml_node<> *parentNode,std::string xmlName,std::vector<double> &vector);
 
-Noise *BaseSystem::createNoise() const
+Noise *BaseSystem::buildNoise() const
 {
 	if(!_noiseClassToBeInstantiated.compare(NullNoise::getXMLname()))
 		return new NullNoise(_L,_channel->length());
@@ -874,14 +877,14 @@ Noise *BaseSystem::createNoise() const
 		return new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 	}
 	else
-		throw RuntimeException(std::string("BaseSystem::createNoise: unknown Noise class \"") + _noiseClassToBeInstantiated + std::string("\" cannot be instantiated."));
+		throw RuntimeException(std::string("BaseSystem::buildNoise: unknown Noise class \"") + _noiseClassToBeInstantiated + std::string("\" cannot be instantiated."));
 		
 }
 
-MIMOChannel *BaseSystem::createChannel()
+MIMOChannel *BaseSystem::buildChannel()
 {
 	assert(_powerProfile!=NULL);
-
+	
 	if(!_channelClassToBeInstantiated.compare(TimeInvariantChannel::getXMLname()))
 		return new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
 	else if(!_channelClassToBeInstantiated.compare(BesselChannel::getXMLname()))
@@ -889,5 +892,5 @@ MIMOChannel *BaseSystem::createChannel()
 	else if(!_channelClassToBeInstantiated.compare(ARchannel::getXMLname()))
 		return new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance));
 	else
-		throw RuntimeException(std::string("BaseSystem::createChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
+		throw RuntimeException(std::string("BaseSystem::buildChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
 }

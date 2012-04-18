@@ -33,7 +33,6 @@ class Elsevier2007ARChannelSystem : public Elsevier2007System
 protected:
     double channelVariance;
 
-    virtual void buildSystemSpecificVariables();
 	virtual void saveFrameResults();
 public:
     Elsevier2007ARChannelSystem();

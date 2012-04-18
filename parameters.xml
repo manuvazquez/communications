@@ -84,5 +84,23 @@
 		<forgettingFactor> 0.95 </forgettingFactor>
 
 	</CDMASystem>
+	
+	<!-- ************************* TesisOrdenCanalDesconocidoSystem ************************ -->
+	
+	<TesisOrdenCanalDesconocidoSystem>
+		
+		<!-- number of extra symbol vectors needed at the end of the frame for smoothing -->
+		<nSmoothingSymbolsVectors> 10 </nSmoothingSymbolsVectors> 
+		
+	</TesisOrdenCanalDesconocidoSystem>	
+	
+	<!-- *********************************** ISWCS10System ********************************* -->
+	
+	<ISWCS10System>
+		
+		<!-- number of extra symbol vectors needed at the end of the frame for smoothing -->
+		<nSmoothingSymbolsVectors> 10 </nSmoothingSymbolsVectors>
+		
+	</ISWCS10System>	
 
 </parameters>

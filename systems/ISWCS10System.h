@@ -43,10 +43,6 @@ protected:
     uint nSurvivors;
     bool adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber;
 
-	double _velocity;
-	double _carrierFrequency;
-	double _period;
-
 	// vectors of channel estimators for the rows of the channel matrix (one channer per output algorithm)
 	vector<ChannelMatrixEstimator *> kalmanChannelEstimators;
 	
@@ -60,14 +56,13 @@ protected:
 	std::vector<uint> _subchannelOrders;
 
     virtual void addAlgorithms();
-    virtual void buildSystemSpecificVariables();
 	virtual void saveFrameResults();
+	
+	virtual MIMOChannel *buildChannel();
 public:
     ISWCS10System();
 
     ~ISWCS10System();
-	
-// 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 };
 
 #endif

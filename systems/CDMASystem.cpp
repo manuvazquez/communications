@@ -192,22 +192,22 @@ void CDMASystem::buildSystemSpecificVariables()
 // 	} while(false);
 	} while(!Util::areColsDifferentAndNotOpposite(_spreadingCodes));
 	
-	double thisChannelMinimumSIR;
-	
-	do
-	{
-		delete _channel;
-		
-		_channel = createChannel();
-		
-		// Signal to Interference Ratio's
-		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
-		
-		// the minimum is obtained
-		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
-		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
-
-	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
+// 	double thisChannelMinimumSIR;
+// 	
+// 	do
+// 	{
+// 		delete _channel;
+// 		
+// 		_channel = buildChannel();
+// 		
+// 		// Signal to Interference Ratio's
+// 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
+// 		
+// 		// the minimum is obtained
+// 		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
+// 		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
+// 
+// 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
@@ -468,17 +468,41 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
 }
 
-Noise *CDMASystem::createNoise() const
+Noise *CDMASystem::buildNoise() const
 {
 	if(!_noiseClassToBeInstantiated.compare(SingleUserPowerProfileDependentNoise::getXMLname()))
 		return new SingleUserPowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile,_iUserOfInterest);
 	else if(!_noiseClassToBeInstantiated.compare(SingleUserChannelDependentNoise::getXMLname()))
 		return new SingleUserChannelDependentNoise(_alphabet->variance(),_channel,_iUserOfInterest);
 	else
-		return SMCSystem::createNoise();
+		return SMCSystem::buildNoise();
 }
 
-MIMOChannel *CDMASystem::createChannel()
+MIMOChannel *CDMASystem::buildChannel()
+{
+	double thisChannelMinimumSIR;
+	
+	MIMOChannel *channel = NULL;
+	
+	do
+	{
+		delete channel;
+		
+		channel = instantiateChannelClass();
+		
+		// Signal to Interference Ratio's
+		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (channel)->signalToInterferenceRatio(_iUserOfInterest);
+		
+		// the minimum is obtained
+		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
+		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
+
+	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);
+	
+	return channel;
+}
+
+MIMOChannel *CDMASystem::instantiateChannelClass()
 {
 	if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + ARchannel::getXMLname()))
 		return new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance)),_spreadingCodes);
@@ -487,5 +511,6 @@ MIMOChannel *CDMASystem::createChannel()
 	else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + BesselChannel::getXMLname()))
 		return new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
 	else
-		return SMCSystem::createChannel();
+// 		return SMCSystem::buildChannel();
+		throw RuntimeException(std::string("CDMASystem::instantiateChannelClass: MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" is not supported within a multiuser CDMA system."));
 }

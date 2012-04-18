@@ -31,8 +31,6 @@
 
 class Elsevier2007BesselChannelSystem : public Elsevier2007System
 {
-protected:
-    virtual void buildSystemSpecificVariables();
 public:
     Elsevier2007BesselChannelSystem();
 

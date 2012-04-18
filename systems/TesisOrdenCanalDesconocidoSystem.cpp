@@ -22,6 +22,13 @@
 TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
  : ChannelOrderEstimationSystem()
 {
+	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"TesisOrdenCanalDesconocidoSystem");
+	
+	if(!thisSystemParameters)
+		throw RuntimeException("TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem: cannot find parameters for this system.");
+	
+	readParameterFromXML(thisSystemParameters,"nSmoothingSymbolsVectors",_nSmoothingSymbolsVectors);
+	
     nSurvivors = 12;
 //     nSurvivors = 1;    
     
@@ -128,11 +135,6 @@ void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
     _algorithms.push_back(new PSPAlgorithm("PSPAlgorithm",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,kalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,nSurvivors));
 
     _algorithms.push_back(new ViterbiAlgorithm("Viterbi",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d));
-}
-
-void TesisOrdenCanalDesconocidoSystem::buildSystemSpecificVariables()
-{
-	_noise = new PowerProfileDependentNoise(_alphabet->variance(),_L,_channel->length(),*_powerProfile);
 }
 
 void TesisOrdenCanalDesconocidoSystem::saveFrameResults()

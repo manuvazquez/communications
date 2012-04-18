@@ -68,12 +68,6 @@ void LMSmuTestSystem::addAlgorithms()
     }
 }
 
-void LMSmuTestSystem::buildSystemSpecificVariables()
-{
-//  channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-    _channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
-}
-
 void LMSmuTestSystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();

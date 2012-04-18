@@ -21,6 +21,8 @@
 
 Trellis::Trellis(const Alphabet &alphabet, uint N, uint m)
 {
+	assert(m>1);
+
     _nStates = uint(pow((double)alphabet.length(),N*(m-1)));
     _nPossibleInputs = uint(pow((double)alphabet.length(),N));
 

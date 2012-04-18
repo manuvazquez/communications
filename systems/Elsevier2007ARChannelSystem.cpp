@@ -22,6 +22,8 @@
 Elsevier2007ARChannelSystem::Elsevier2007ARChannelSystem()
  : Elsevier2007System()
 {
+	assert(!_channelClassToBeInstantiated.compare(ARchannel::getXMLname()));
+	
     channelVariance = 1.0;
     _powerProfile = new FlatPowerProfile(_L,_N,_m,channelVariance);
 
@@ -35,11 +37,6 @@ Elsevier2007ARChannelSystem::~Elsevier2007ARChannelSystem()
   delete _powerProfile;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
-}
-
-void Elsevier2007ARChannelSystem::buildSystemSpecificVariables()
-{
-    _channel = new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance));
 }
 
 void Elsevier2007ARChannelSystem::saveFrameResults()

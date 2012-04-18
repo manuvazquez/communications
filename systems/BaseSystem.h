@@ -221,7 +221,8 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	bool _saveAtEveryFrame;
 
     virtual void addAlgorithms() = 0;
-    virtual void buildSystemSpecificVariables() = 0;
+//     virtual void buildSystemSpecificVariables() = 0;
+	virtual void buildSystemSpecificVariables() {}
 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
     virtual void beforeEndingAlgorithm();
@@ -268,14 +269,14 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	 *
 	 * @return Noise*
 	 **/
-	virtual Noise *createNoise() const;
+	virtual Noise *buildNoise() const;
 	
 	/**
 	 * @brief it builds and returns a pointer to a MIMOChannel object according to the content of the variable  _channelClassToBeInstantiated read from XML (it might need to modify some class variables, e.g., in CDMA the activity)
 	 *
 	 * @return MIMOChannel*
 	 **/
-	virtual MIMOChannel *createChannel();
+	virtual MIMOChannel *buildChannel();
 	
 public:
     BaseSystem();

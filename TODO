@@ -55,3 +55,4 @@
 	- setFilteredCovariance
 - buildSystemSpecificVariables shouldn't build the channel (createChannel method should)
 - delayPowerProfile instatiation
+- every parameter that could be modified by a subclass of BaseSystem shouldn't be used (if possible) in the constructor of BaseSystem (it'd rather be used in "simulate()" or something like that)

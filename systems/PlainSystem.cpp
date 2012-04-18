@@ -34,11 +34,6 @@ PlainSystem::~PlainSystem()
 	delete _powerProfile;
 }
 
-void PlainSystem::buildSystemSpecificVariables()
-{
-	_channel = createChannel();
-}
-
 void PlainSystem::addAlgorithms()
 {
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients[0]));

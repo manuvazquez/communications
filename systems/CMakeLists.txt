@@ -26,12 +26,8 @@ ADD_LIBRARY (systems STATIC
 		    PSPvsSMCSystem
 		    Rev2TVT2007System
 		    SMCSystem
-		    TesisComplejidadReducidaARSystem
 		    TesisComplejidadReducidaBesselNumeroParticulasSystem
-		    TesisComplejidadReducidaBesselSystem
 		    TesisComplejidadReducidaSystem
-		    TesisOrdenCanalDesconocidoARSystem
-		    TesisOrdenCanalDesconocidoBesselSystem
 		    TesisOrdenCanalDesconocidoSystem
 		    TVT2007System
 		    WSA08System

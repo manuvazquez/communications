@@ -75,7 +75,6 @@ protected:
 
     virtual void addAlgorithms();
 	virtual void saveFrameResults();
-	virtual void buildSystemSpecificVariables();
 public:
     TesisOrdenCanalDesconocidoSystem();
 

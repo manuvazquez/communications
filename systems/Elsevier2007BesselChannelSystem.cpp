@@ -22,6 +22,8 @@
 Elsevier2007BesselChannelSystem::Elsevier2007BesselChannelSystem()
  : Elsevier2007System()
 {
+	assert(!_channelClassToBeInstantiated.compare(BesselChannel::getXMLname()));
+	
 // 	ARcoefficients = ARprocess::parametersFromYuleWalker(1,velocity,carrierFrequency,T,ARvariance);
 // 	cout << "La varianza es " << ARvariance << " y los coeficientes son" << endl;
 // 	Util::print(ARcoefficients);
@@ -67,10 +69,4 @@ Elsevier2007BesselChannelSystem::~Elsevier2007BesselChannelSystem()
   delete _powerProfile;
   delete kalmanEstimator;
   delete knownSymbolsKalmanEstimator;
-}
-
-void Elsevier2007BesselChannelSystem::buildSystemSpecificVariables()
-{
-// 	channel = new BesselChannel(N,L,m,symbols.cols(),velocity,carrierFrequency,T,*(dynamic_cast<ContinuousPowerProfile*> (powerProfile)));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile);
 }

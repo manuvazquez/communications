@@ -34,7 +34,6 @@ protected:
 	MMSEDetector *_MMSEdetector;
 	
 	
-    virtual void buildSystemSpecificVariables();
     virtual void addAlgorithms();
 
 public:

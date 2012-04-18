@@ -26,11 +26,8 @@
 #include <WSA08System.h>
 #include <Rev2TVT2007System.h>
 #include <TesisComplejidadReducidaSystem.h>
-#include <TesisComplejidadReducidaBesselSystem.h>
-#include <TesisComplejidadReducidaARSystem.h>
-#include <TesisOrdenCanalDesconocidoARSystem.h>
-#include <TesisOrdenCanalDesconocidoBesselSystem.h>
 #include <TesisComplejidadReducidaBesselNumeroParticulasSystem.h>
+#include <TesisOrdenCanalDesconocidoSystem.h>
 #include <LMSmuTestSystem.h>
 #include <PSPvsSMCSystem.h>
 #include <CDMASystem.h>
@@ -120,12 +117,10 @@ int main(int argc,char* argv[])
 // 	LMSmuTestSystem system;
 // 	PSPvsSMCSystem system;
 // 
-// 	TesisOrdenCanalDesconocidoARSystem system;
-// 	TesisOrdenCanalDesconocidoBesselSystem system;
+// 	TesisOrdenCanalDesconocidoSystem system;
 // 
-// 	TesisComplejidadReducidaBesselSystem system;
-// 	TesisComplejidadReducidaARSystem system;
-// 
+// 	TesisComplejidadReducidaSystem system;
+
 // 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
 // 	ARparametersComparisonCDMASystem system;

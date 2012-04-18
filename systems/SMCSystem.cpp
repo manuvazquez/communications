@@ -79,11 +79,3 @@ void SMCSystem::adjustParticlesSurvivors(uint &nParticles,uint &nSurvivors,bool 
 	}
 		
 }
-
-// MIMOChannel *SMCSystem::createChannel()
-// {
-// 	if(!_channelClassToBeInstantiated.compare(ARchannel::getXMLname()))
-// 		return new ARchannel(_N,_L,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance));
-// 	else
-// 		return BaseSystem::createChannel();
-// }

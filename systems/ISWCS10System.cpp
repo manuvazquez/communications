@@ -34,6 +34,13 @@
 ISWCS10System::ISWCS10System()
  : ChannelOrderEstimationSystem()
 {
+	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"ISWCS10System");
+	
+	if(!thisSystemParameters)
+		throw RuntimeException("ISWCS10System::ISWCS10System: cannot find parameters for this system.");
+	
+	readParameterFromXML(thisSystemParameters,"nSmoothingSymbolsVectors",_nSmoothingSymbolsVectors);
+	
 	nSurvivors = 2;
 
 	_nParticles = 128;
@@ -44,7 +51,7 @@ ISWCS10System::ISWCS10System()
 	// in order to use a Bessel channel (considering the Clarke model), the parameters of the AR process the algorithms will consider
 	// are derived from those of the Clarke model
 	double computedARprocessVariance;
-	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_period,computedARprocessVariance);
+	std::vector<double> computedARcoeffs = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,computedARprocessVariance);
 	
 	// by default, AR channel is assumed
 	std::vector<double> kalmanEstimatorARcoeffs = _ARcoefficients;
@@ -163,13 +170,12 @@ ISWCS10System::~ISWCS10System()
 	delete _kalmanEstimatorForMaximumChannelOrder;
 }
 
-void ISWCS10System::buildSystemSpecificVariables()
+MIMOChannel *ISWCS10System::buildChannel()
 {
-// 	channel = new ARchannel(N,L,m,symbols.cols(),ARprocess(powerProfile->generateChannelMatrix(randomGenerator),ARcoefficients,ARvariance));
-// 	_channel = new TimeInvariantChannel(_N,_L,_m,_symbols.cols(),_powerProfile->generateChannelMatrix(_randomGenerator));
-	_channel = new BesselChannel(_N,_L,_m,_symbols.cols(),_velocity,_carrierFrequency,_period,*_powerProfile);
-
+	_channel = ChannelOrderEstimationSystem::buildChannel();
 	dynamic_cast<StillMemoryMIMOChannel*>(_channel)->setSubchannelOrders(_subchannelOrders);
+	
+	return _channel;
 }
 
 void ISWCS10System::addAlgorithms()

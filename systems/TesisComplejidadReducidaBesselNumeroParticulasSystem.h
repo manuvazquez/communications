@@ -20,12 +20,12 @@
 #ifndef TESISCOMPLEJIDADREDUCIDABESSELNUMEROPARTICULASSYSTEM_H
 #define TESISCOMPLEJIDADREDUCIDABESSELNUMEROPARTICULASSYSTEM_H
 
-#include <TesisComplejidadReducidaBesselSystem.h>
+#include <TesisComplejidadReducidaSystem.h>
 
 /**
 	@author Manu <manu@rustneversleeps>
 */
-class TesisComplejidadReducidaBesselNumeroParticulasSystem : public TesisComplejidadReducidaBesselSystem
+class TesisComplejidadReducidaBesselNumeroParticulasSystem : public TesisComplejidadReducidaSystem
 {
 public:
     TesisComplejidadReducidaBesselNumeroParticulasSystem();

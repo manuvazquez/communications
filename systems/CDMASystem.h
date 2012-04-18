@@ -105,6 +105,8 @@ protected:
 	 * @return void
 	 **/
 	void resetFramePieces();
+	
+	virtual MIMOChannel *instantiateChannelClass();
 public:
     CDMASystem();
 
@@ -125,8 +127,8 @@ public:
 	virtual double computeMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask) const;
 	virtual double computeSelectedUsersMSE(const vector<MatrixXd> &realChannelMatrices,const vector<MatrixXd> &estimatedChannelMatrices,const std::vector<bool> &mask) const;
 	
-	virtual Noise *createNoise() const;
-	virtual MIMOChannel *createChannel();
+	virtual Noise *buildNoise() const;
+	virtual MIMOChannel *buildChannel();
 };
 
 #endif
