@@ -13,6 +13,7 @@ ADD_LIBRARY (estimation STATIC
 			ChannelMatrixEstimator
 			ChannelOrderEstimator
 			KalmanEstimator
+			KalmanEstimatorDecorator
 			KnownChannelChannelMatrixEstimator
 			KnownSymbolsKalmanEstimator
 			LMSEstimator

@@ -23,6 +23,7 @@ PlainSystem::PlainSystem()
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 
 	_kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
+	_decoratedKalmanEstimator = new KalmanEstimatorDecorator(_kalmanEstimator);
 	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1));
 }
 
@@ -30,12 +31,14 @@ PlainSystem::~PlainSystem()
 {
 	delete _kalmanEstimator;
 	delete _MMSEdetector;
+	delete _decoratedKalmanEstimator;
 	
 	delete _powerProfile;
 }
 
 void PlainSystem::addAlgorithms()
 {
-	_algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients[0]));
+// 	_algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients[0]));
+	_algorithms.push_back(new LinearFilterBasedAlgorithm("Kalman Filter + MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_decoratedKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients[0]));
 }
 

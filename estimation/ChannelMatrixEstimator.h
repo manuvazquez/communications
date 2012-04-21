@@ -38,6 +38,8 @@ protected:
     MatrixXd _lastEstimatedChannelCoefficientsMatrix;
 
 public:
+	ChannelMatrixEstimator() {} // needed to implement the decorator pattern
+		
 	/*!
 	  It builds a \ref ChannelMatrixEstimator object
 	  \param initialEstimation a matrix representing the initial estimation. It's what \ref lastEstimatedChannelMatrix returns when \ref nextMatrix hasn't been called yet
@@ -77,9 +79,9 @@ public:
         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
     }
     
-    uint cols() const { return _nInputsXchannelOrder;}
-    uint rows() const { return _nOutputs;}
-    uint memory() const;
+    virtual uint cols() const { return _nInputsXchannelOrder;}
+    virtual uint rows() const { return _nOutputs;}
+    virtual uint memory() const;
 
 	/*!
 	  It returns the last estimated channel matrix, that is, the one that multiplied by the symbols vector gives rise to the observations. This doesnt' necessarily coincide with the matrix ONLY containing channel coefficients (though usually, it does), which is returned by \ref lastEstimatedChannelCoefficientsMatrix
@@ -89,7 +91,7 @@ public:
 
     virtual MatrixXd lastEstimatedChannelCoefficientsMatrix() const { return _lastEstimatedChannelCoefficientsMatrix;}
     
-    vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
+    virtual vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
 	
 	/**
 	 * @brief It runs the channel matrix estimator algorithm for several steps in a row
@@ -102,7 +104,7 @@ public:
 	 * @param channelEstimatesVariances return parameter
 	 * @return channel matrices obtained from all the channel matrix estimator steps
 	 **/
-	std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances);
+	virtual std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances);
 	
 	virtual bool computesVariances() const { return false; }
 	

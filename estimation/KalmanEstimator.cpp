@@ -139,7 +139,7 @@ double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd s
 	PartialPivLU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
 
 	//...to invert the matrix
-	// TODO: is this better than just calling .inv()
+	// TODO: is this better than just calling .inv()?
 	MatrixXd invB = luforB.solve(MatrixXd::Identity(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs));
     
 	VectorXd invPredictiveCovariancePredictiveMean = invPredictiveCovariance*_kalmanFilter->predictiveMean();

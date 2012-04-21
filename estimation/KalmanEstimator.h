@@ -41,6 +41,7 @@ protected:
     
     virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
 public:
+	KalmanEstimator() {} // needed to implement the decorator pattern
     KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();

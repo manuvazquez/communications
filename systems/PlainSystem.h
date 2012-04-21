@@ -21,6 +21,7 @@
 #include <BaseSystem.h>
 
 #include <KalmanEstimator.h>
+#include <KalmanEstimatorDecorator.h>
 #include <MMSEDetector.h>
 #include <FlatPowerProfile.h>
 #include <LinearFilterBasedAlgorithm.h>
@@ -31,6 +32,7 @@ class PlainSystem : public BaseSystem
 
 protected:
 	KalmanEstimator *_kalmanEstimator;
+	KalmanEstimatorDecorator *_decoratedKalmanEstimator;
 	MMSEDetector *_MMSEdetector;
 	
 	
