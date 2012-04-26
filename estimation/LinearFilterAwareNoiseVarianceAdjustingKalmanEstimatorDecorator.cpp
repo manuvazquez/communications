@@ -1,0 +1,70 @@
+/*
+    Copyright 2012 Manu <manuavazquez@gmail.com>
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+*/
+
+
+#include "LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator.h"
+
+LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator, LinearDetector *linearDetector, double symbolsVariance):
+KalmanEstimatorDecorator(kalmanEstimator),_linearDetector(linearDetector),_symbolsVariance(symbolsVariance)
+{
+}
+
+MatrixXd LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
+{
+// 	computeExtraVariance(noiseVariance);
+	
+//     return KalmanEstimatorDecorator::nextMatrix(observations, symbolsMatrix, noiseVariance);
+	return KalmanEstimatorDecorator::nextMatrix(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
+}
+
+double LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance)
+{
+//     return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance);
+	return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
+}
+
+LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator* LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::clone() const
+{
+	return new LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator(*this);
+}
+
+double LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::computeExtraVariance(double noiseVariance)
+{
+	double expectationSoftEstTimesTrueSymbol = 0.0;
+	double expectationSoftEstTimesSoftEst = 0.0;
+	
+	MatrixXd filter = _linearDetector->computedFilter();
+	
+// 	cout << "filter.transpose()" << endl << filter.transpose() << endl;
+// 	cout << "_lastEstimatedChannelCoefficientsMatrix" << endl << _decorated->lastEstimatedChannelMatrix() << endl;
+// 	cout << "_nOutputs = " << _nOutputs << endl;
+	
+// 	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*_decorated->lastEstimatedChannelMatrix()*_decorated->lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(_decorated->rows(),_decorated->rows()))*filter).trace();
+// 	expectationSoftEstTimesTrueSymbol = (filter.transpose()*_decorated->lastEstimatedChannelMatrix()).trace();
+	
+	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*lastEstimatedChannelMatrix()*lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(rows(),rows()))*filter).trace();
+	expectationSoftEstTimesTrueSymbol = (filter.transpose()*lastEstimatedChannelMatrix()).trace();
+	
+// 	cout << "expectationSoftEstTimesSoftEst = " << expectationSoftEstTimesSoftEst << "| expectationSoftEstTimesTrueSymbol = " << expectationSoftEstTimesTrueSymbol << endl;
+	
+	double extraVariance = expectationSoftEstTimesSoftEst - 2*expectationSoftEstTimesTrueSymbol + rows()*_symbolsVariance;
+	
+// 	cout << "extraVariance = " << extraVariance << endl;
+	
+	return extraVariance;
+}
+
+

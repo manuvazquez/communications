@@ -33,11 +33,6 @@ KalmanEstimatorDecorator::~KalmanEstimatorDecorator()
 	delete _decorated;
 }
 
-// MatrixXd KalmanEstimatorDecorator::buildMeasurementMatrix(const VectorXd& symbolsVector)
-// {
-//     return _decorated->buildMeasurementMatrix(symbolsVector);
-// }
-
 MatrixXd KalmanEstimatorDecorator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
     return _decorated->nextMatrix(observations, symbolsMatrix, noiseVariance);
@@ -85,11 +80,13 @@ MatrixXd KalmanEstimatorDecorator::predictedMatrix() const
 
 MatrixXd KalmanEstimatorDecorator::lastEstimatedChannelMatrix() const
 {
+// 	cout << "_decorated->lastEstimatedChannelMatrix()" << endl << _decorated->lastEstimatedChannelMatrix() << endl;
     return _decorated->lastEstimatedChannelMatrix();
 }
 
 MatrixXd KalmanEstimatorDecorator::lastEstimatedChannelCoefficientsMatrix() const
 {
+	
     return _decorated->lastEstimatedChannelCoefficientsMatrix();
 }
 

@@ -53,7 +53,7 @@ public:
     void stateStep(VectorXd observations);
 
     double nthSymbolVariance(uint n,double noiseVariance);
-    MatrixXd computedFilter() { return _filter;}
+    MatrixXd computedFilter() const { return _filter;}
 
 };
 

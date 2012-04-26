@@ -22,6 +22,8 @@
 // #define DEBUG
 #include <KnownSymbolsKalmanEstimator.h>
 
+#include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator.h>
+
 LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
@@ -127,7 +129,12 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         for(iRow=0;iRow<_nInputs;iRow++)
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
+// 		cout << "softEstimations = " << endl << softEstimations << endl;
+
         _estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);
+		
+//         _estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
+
     } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 

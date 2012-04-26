@@ -31,8 +31,6 @@
 
 class LinearFilterBasedAlgorithm : public KnownChannelOrderAlgorithm
 {
-private:
-    void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 protected:
 	uint _d;
 	LinearDetector *_linearDetector;
@@ -41,6 +39,8 @@ protected:
 	double _ARcoefficient;
 
     bool _substractContributionFromKnownSymbols;
+	
+	virtual void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
 public:
     LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, double ARcoefficient, bool substractContributionFromKnownSymbols=false);

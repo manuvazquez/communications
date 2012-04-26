@@ -42,7 +42,7 @@ public:
     MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom);
 
     virtual MMSEDetector * clone();
-    virtual MatrixXd computedFilter();
+    virtual MatrixXd computedFilter() const;
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance); // eigen
     virtual void stateStep(VectorXd observations) {}
 	virtual double nthSymbolVariance(uint n,double noiseVariance);

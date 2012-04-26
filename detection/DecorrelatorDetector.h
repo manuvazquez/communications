@@ -37,7 +37,7 @@ public:
 
     virtual double nthSymbolVariance(uint n,double noiseVariance);
     virtual LinearDetector* clone();
-    virtual MatrixXd computedFilter() { return _filter;}
+    virtual MatrixXd computedFilter() const { return _filter;}
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
     virtual void stateStep(VectorXd observations) {}
 

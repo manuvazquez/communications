@@ -27,9 +27,6 @@ class KalmanEstimatorDecorator : public KalmanEstimator
 protected:
 	KalmanEstimator *_decorated;
 	
-// 	virtual MatrixXd buildMeasurementMatrix(const VectorXd& symbolsVector);
-
-
 public:
     KalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator);
     KalmanEstimatorDecorator(const KalmanEstimatorDecorator& other);
