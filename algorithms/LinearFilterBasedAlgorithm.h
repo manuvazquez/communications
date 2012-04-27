@@ -36,14 +36,14 @@ protected:
 	LinearDetector *_linearDetector;
     MatrixXd _detectedSymbolVectors;
     std::vector<MatrixXd> _estimatedChannelMatrices;
-	double _ARcoefficient;
+	std::vector<double> _ARcoefficients;
 
     bool _substractContributionFromKnownSymbols;
 	
 	virtual void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
 public:
-    LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, double ARcoefficient, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols=false);
 
     ~LinearFilterBasedAlgorithm();
 

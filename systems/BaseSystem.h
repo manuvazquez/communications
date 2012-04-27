@@ -73,7 +73,10 @@ protected:
 	bool _loadSeeds;
 	bool _loadPerAlgorithmAndSNRseeds;
 	
-	uint32_t _mainSeedToBeLoaded;
+	uint32_t _mainRandomSeed;
+	bool _mainRandomHaveStoredSample;
+	double _mainRandomStoredSample;
+	
 	uint32_t _statUtilSeedToBeLoaded;
 	
 	uint32_t _perAlgorithmAndSNRstatUtilSeedToBeLoaded;

@@ -20,11 +20,13 @@
 #include "LinearFilterBasedAlgorithm.h"
 
 // #define DEBUG
+
 #include <KnownSymbolsKalmanEstimator.h>
 
 #include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator.h>
 
-LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  double ARcoefficient, bool substractContributionFromKnownSymbols): KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficient(ARcoefficient),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols): 
+KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficients(ARcoefficients),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -41,8 +43,9 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 
 void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
-	// there is an actual training sequence...
+	// if there is an actual training sequence...
 	if(trainingSequence.rows()!=0)
+		// we make sure it has the proper number of rows
 		assert(trainingSequence.rows()==_nInputs);
 
 	uint startDetectionTime = _preamble.cols() + trainingSequence.cols();
@@ -71,6 +74,11 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 
 void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
+#ifdef DEBUG
+	cout << "---------------------------------------------------------" << endl;
+	cout << "algorithm: " << _name << endl;
+#endif
+	
 	assert(observations.rows()==_nOutputs); 
 	
     uint nObservations = observations.cols();
@@ -80,30 +88,55 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 	assert(nObservations>=startDetectionTime+1+_d);
 
     if(_substractContributionFromKnownSymbols)
-    {
-        if(_linearDetector->channelMatrixcols() != _nInputs*(_d+1))
-            throw RuntimeException("LinearFilterBasedAlgorithm::process: the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector.");
-    }
+		// the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector
+		assert(_linearDetector->channelMatrixcols()==_nInputs*(_d+1));
 
     vector<MatrixXd> matricesToStack(_d+1);
     uint iSmoothing,iRow;
     MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
     double ARcoefficientPower;
+	
+	std::vector<double>::iterator iterARcoeffs;
+	std::vector<MatrixXd>::reverse_iterator iterMatrices;
+	
+	std::vector<MatrixXd> ARmatricesBuffer(_ARcoefficients.size(),_channelEstimator->lastEstimatedChannelMatrix());
+	std::vector<MatrixXd> auxARmatricesBuffer;
+
+	// the channel matrices estimated during the training sequence are copied into ARmatricesBuffer (last matrix in the vector is the more recent)
+	iterMatrices = ARmatricesBuffer.rbegin();
+	for(uint iTrainingSeq=0;iTrainingSeq<trainingSequence.cols() && iterMatrices!=ARmatricesBuffer.rend();iTrainingSeq++,iterMatrices++)
+		*iterMatrices = _estimatedChannelMatrices[startDetectionTime-1-iTrainingSeq];
+	
+// 	cout << "ARmatricesBuffer = " << endl << ARmatricesBuffer << endl;
 
     for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
-        ARcoefficientPower = _ARcoefficient;
-        for(iSmoothing=0;iSmoothing<=_d;iSmoothing++)
+		// a copy of the buffer of matrices needed for the AR process is kept
+		auxARmatricesBuffer = ARmatricesBuffer;
+		
+        ARcoefficientPower = _ARcoefficients[0];
+        for(iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
         {
-			// if there is no training sequence...
-			if(iObservationToBeProcessed==_preamble.cols())
-				// the "last estimated channel matrix" given by the channel estimator is used (it should be the matrix that served to initialize the channel estimator)
-				matricesToStack[iSmoothing] = ARcoefficientPower*_channelEstimator->lastEstimatedChannelMatrix();
-			else
-				matricesToStack[iSmoothing] = ARcoefficientPower*_estimatedChannelMatrices[iObservationToBeProcessed-1];
-            ARcoefficientPower *= _ARcoefficient;
+// 			// if there is no training sequence...
+// 			if(iObservationToBeProcessed==_preamble.cols())
+// 				// the "last estimated channel matrix" given by the channel estimator is used (it should be the matrix that served to initialize the channel estimator)
+// 				matricesToStack[iSmoothing] = ARcoefficientPower*_channelEstimator->lastEstimatedChannelMatrix();
+// 			else
+// 				matricesToStack[iSmoothing] = ARcoefficientPower*_estimatedChannelMatrices[iObservationToBeProcessed-1];
+// 			
+//             ARcoefficientPower *= _ARcoefficients[0];
+			
+			// new matrix to be stacked is initialized to zero
+			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nOutputs*(_d+1));
+			
+			for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
+				matricesToStack[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
+			
+// 			cout << "matricesToStack[iSmoothing] = " << endl << matricesToStack[iSmoothing] << endl;
+			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
+			ARmatricesBuffer.push_back(matricesToStack[iSmoothing]);
         }
-
+        
         MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
 
         VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed,_nOutputs,_d+1),columnwise);
@@ -129,17 +162,31 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         for(iRow=0;iRow<_nInputs;iRow++)
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
-// 		cout << "softEstimations = " << endl << softEstimations << endl;
+#ifdef DEBUG
+			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
+			cout << "softEstimations = " << endl << softEstimations << endl;
+			cout << "detected vector = " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
+#endif
 
         _estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);
 		
 //         _estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
+		
+		// the buffer of matrices for the AR process at the beginning of the iteration is restored...
+		ARmatricesBuffer = auxARmatricesBuffer;
+		
+		// ...and updated with the last estimated channel matrix
+		ARmatricesBuffer.erase(ARmatricesBuffer.begin());
+		ARmatricesBuffer.push_back(_estimatedChannelMatrices[iObservationToBeProcessed]);
 
     } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
 
 MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
+#ifdef DEBUG
+	cout << "returning:" << endl << _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols()) << endl;
+#endif
     return _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
 

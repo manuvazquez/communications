@@ -8,7 +8,13 @@
 		<randomSeeds> 1 </randomSeeds>
 		
 		<loadSeeds> 0 </loadSeeds> <!-- load (per frame) seeds? -->
-		<mainSeedToBeLoaded> 1323092389 </mainSeedToBeLoaded>
+		
+		<mainRandom> <!-- main Random object -->
+			<seed> 1323092389 </seed>
+			<haveStoredSample> 0 </haveStoredSample>
+			<storedSample> 0 </storedSample>
+		</mainRandom>
+
 		<statUtilSeedToBeLoaded> 34310919 </statUtilSeedToBeLoaded>
 		
 		<loadPerAlgorithmAndSNRseeds> 0 </loadPerAlgorithmAndSNRseeds> <!-- load (per algorithm and SNR) seed? -->

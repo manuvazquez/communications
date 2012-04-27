@@ -30,6 +30,8 @@
 #include <TimeInvariantChannel.h>
 #include <BesselChannel.h>
 
+// #define DEBUG
+
 extern uint32_t __mainSeedPassed;
 extern uint32_t __statUtilSeedPassed;
 extern uint __nFramesPassed;
@@ -87,7 +89,15 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"randomSeeds",_randomSeeds);
 	
 	readParameterFromXML(thisSystemParameters,"loadSeeds",_loadSeeds);
-	readParameterFromXML(thisSystemParameters,"mainSeedToBeLoaded",_mainSeedToBeLoaded);
+	
+	xml_node<> *mainRandomNode = get_child(thisSystemParameters,"mainRandom");
+	if(!mainRandomNode)
+		throw RuntimeException("BaseSystem::BaseSystem: cannot find parameter \"mainRandom\"");
+	readParameterFromXML(mainRandomNode,"seed",_mainRandomSeed);
+	readParameterFromXML(mainRandomNode,"haveStoredSample",_mainRandomHaveStoredSample);
+	readParameterFromXML(mainRandomNode,"storedSample",_mainRandomStoredSample);
+	
+	
 	readParameterFromXML(thisSystemParameters,"statUtilSeedToBeLoaded",_statUtilSeedToBeLoaded);
 	
 	readParameterFromXML(thisSystemParameters,"loadPerAlgorithmAndSNRseeds",_loadPerAlgorithmAndSNRseeds);
@@ -117,6 +127,9 @@ BaseSystem::BaseSystem()
 	
 	readParameterFromXML(thisSystemParameters,"noiseClassToBeInstantiated",_noiseClassToBeInstantiated);
 	readParameterFromXML(thisSystemParameters,"channelClassToBeInstantiated",_channelClassToBeInstantiated);
+	
+	// the training sequence is included in the frame
+	assert(_frameLength>_trainSeqLength);
 
 // ------------------------ iswcs 2010 ----------------------
 
@@ -298,7 +311,9 @@ if(__nFramesHasBeenPassed)
 			StatUtil::getRandomGenerator().setSeed(__statUtilSeedPassed);
 		}else
 		{
-			_randomGenerator.setSeed(_mainSeedToBeLoaded);
+			_randomGenerator.setSeed(_mainRandomSeed);
+			if(_mainRandomHaveStoredSample)
+				_randomGenerator.setStoredSample(_mainRandomStoredSample);
 			StatUtil::getRandomGenerator().setSeed(_statUtilSeedToBeLoaded);
 		}
 
@@ -406,7 +421,18 @@ if(__nFramesHasBeenPassed)
 				if(_algorithms[_iAlgorithm]->performsSymbolsDetection())
 				{
 					_detectedSymbols = _algorithms[_iAlgorithm]->getDetectedSymbolVectors();
-					_pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+					
+					// if there is no training sequence
+					if(_trainSeqLength==0)
+						_pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
+					else
+					{
+						_pe = computeSERwithoutSolvingAmbiguity(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection);
+// 						std::cout << "no need to solve ambiguity..." << std::endl;
+					}
+#ifdef DEBUG
+					cout << "comparing returned with" << endl << _symbols.block(0,_preambleLength,_N,_frameLength) << "...gives pe = " << _pe << endl;
+#endif
 				}
 				// if the algorithm doesn't perform symbols detection...
 				else
@@ -683,17 +709,21 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
 {
-  if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
-  {
-	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-	  throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
-  }
+//   if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
+//   {
+// 	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
+// 	  throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
+//   }
+  
+  assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
 
-  if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
-  {
-	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
-	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
-  }
+//   if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
+//   {
+// 	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
+// 	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
+//   }
+  
+  assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
 
 	uint nSymbolsRows = detectedSymbols.rows();
 

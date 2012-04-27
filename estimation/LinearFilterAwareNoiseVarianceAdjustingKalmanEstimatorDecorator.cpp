@@ -24,15 +24,11 @@ KalmanEstimatorDecorator(kalmanEstimator),_linearDetector(linearDetector),_symbo
 
 MatrixXd LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-// 	computeExtraVariance(noiseVariance);
-	
-//     return KalmanEstimatorDecorator::nextMatrix(observations, symbolsMatrix, noiseVariance);
 	return KalmanEstimatorDecorator::nextMatrix(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
 }
 
 double LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance)
 {
-//     return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance);
 	return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
 }
 
@@ -48,21 +44,10 @@ double LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::computeE
 	
 	MatrixXd filter = _linearDetector->computedFilter();
 	
-// 	cout << "filter.transpose()" << endl << filter.transpose() << endl;
-// 	cout << "_lastEstimatedChannelCoefficientsMatrix" << endl << _decorated->lastEstimatedChannelMatrix() << endl;
-// 	cout << "_nOutputs = " << _nOutputs << endl;
-	
-// 	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*_decorated->lastEstimatedChannelMatrix()*_decorated->lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(_decorated->rows(),_decorated->rows()))*filter).trace();
-// 	expectationSoftEstTimesTrueSymbol = (filter.transpose()*_decorated->lastEstimatedChannelMatrix()).trace();
-	
-	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*lastEstimatedChannelMatrix()*lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(rows(),rows()))*filter).trace();
+	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*lastEstimatedChannelMatrix()*lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(filter.rows(),filter.rows()))*filter).trace();
 	expectationSoftEstTimesTrueSymbol = (filter.transpose()*lastEstimatedChannelMatrix()).trace();
 	
-// 	cout << "expectationSoftEstTimesSoftEst = " << expectationSoftEstTimesSoftEst << "| expectationSoftEstTimesTrueSymbol = " << expectationSoftEstTimesTrueSymbol << endl;
-	
-	double extraVariance = expectationSoftEstTimesSoftEst - 2*expectationSoftEstTimesTrueSymbol + rows()*_symbolsVariance;
-	
-// 	cout << "extraVariance = " << extraVariance << endl;
+	double extraVariance = expectationSoftEstTimesSoftEst - 2*expectationSoftEstTimesTrueSymbol + filter.rows()*_symbolsVariance;
 	
 	return extraVariance;
 }
