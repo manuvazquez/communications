@@ -33,7 +33,6 @@ SMCSystem::SMCSystem()
 	
 	readParameterFromXML(thisSystemParameters,"nParticles",_nParticles);
 	readParameterFromXML(thisSystemParameters,"resamplingRatio",_resamplingRatio);
-	readParameterFromXML(thisSystemParameters,"c",c);
 	readParameterFromXML(thisSystemParameters,"firstSampledChannelMatrixVariance",_firstSampledChannelMatrixVariance);
 
     // always the same resampling criterion...
@@ -54,7 +53,6 @@ void SMCSystem::saveFrameResults()
     BaseSystem::saveFrameResults();
     Octave::toOctaveFileStream(_nParticles,"nParticles",_f);
     Octave::toOctaveFileStream(_resamplingRatio,"resamplingRatio",_f);
-    Octave::toOctaveFileStream(c,"c",_f);
 	Octave::toOctaveFileStream(_firstSampledChannelMatrixVariance,"firstSampledChannelMatrixVariance",_f);
 }
 

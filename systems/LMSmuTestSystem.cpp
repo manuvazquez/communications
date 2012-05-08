@@ -41,7 +41,7 @@ LMSmuTestSystem::LMSmuTestSystem()
 	adjustParticlesSurvivors(_nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
     // estimacion conjunta del canal y los datos
-    rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
+    rmmseDetector = new RMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
 
     for(uint iMu=0;iMu<musLMS.size();iMu++)
         LMSchannelEstimators.push_back(new NLMSEstimator(_powerProfile->means(),_N,musLMS[iMu]));
@@ -64,7 +64,7 @@ void LMSmuTestSystem::addAlgorithms()
 		std::stringstream algorithmName;
 		algorithmName << "LMS-D-SIS mu = " << musLMS[iMu];
 
-        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,c,_d,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
+        _algorithms.push_back(new LinearFilterBasedSMCAlgorithm(algorithmName.str(),*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,LMSchannelEstimators[iMu],rmmseDetector,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
     }
 }
 

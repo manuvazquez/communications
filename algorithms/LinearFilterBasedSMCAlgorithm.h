@@ -34,7 +34,7 @@
 class LinearFilterBasedSMCAlgorithm : public SMCAlgorithm
 {
 public:
-    LinearFilterBasedSMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint backwardsSmoothingLag, uint SMCsmoothingLag, uint forwardSmoothingLag, uint nParticles, ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedSMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint SMCsmoothingLag, uint nParticles, ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols=false);
 
     /**
      * Constructor for allowing the algorithm to operate over an already constructed particle filter
@@ -59,7 +59,6 @@ public:
 protected:
     LinearDetector *_linearDetector;
     double _ARcoefficient,_samplingVariance,_ARprocessVariance;
-    uint _c,_e;
 
     void initializeParticles();
     void process(const MatrixXd &observations, vector<double> noiseVariances);

@@ -109,29 +109,28 @@ int main(int argc,char* argv[])
 
 // 	Elsevier2007BesselChannelSystem system;
 // 	Elsevier2007ARChannelSystem  system;
+
 // 	TVT2007System system;
-// 	WSA08System system;
-// 	PSPvsPSPBasedSMCSystem system;
 // 	Rev2TVT2007System system;
+
+// 	WSA08System system;
+// 	ISWCS10System system;
+// 	ISWCS10numberOfSurvivorsImpactSystem system;
+
+// 	PSPvsPSPBasedSMCSystem system;
 // 
 // 	LMSmuTestSystem system;
 // 	PSPvsSMCSystem system;
 // 
 // 	TesisOrdenCanalDesconocidoSystem system;
-// 
-// 	TesisComplejidadReducidaSystem system;
-
+	TesisComplejidadReducidaSystem system;
 // 	TesisComplejidadReducidaBesselNumeroParticulasSystem system;
 
 // 	ARparametersComparisonCDMASystem system;
 
-// 	ISWCS10System system;
-	
-// 	ISWCS10numberOfSurvivorsImpactSystem system;
-
 // 	CDMASystem system; // Transactions on Vehicular Technology 2012??
 
-	PlainSystem system;
+// 	PlainSystem system;
 
 	system.simulate();
 }

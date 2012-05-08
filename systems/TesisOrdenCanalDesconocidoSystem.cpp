@@ -42,7 +42,7 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
 	
 	adjustParticlesSurvivors(_nParticles,nSurvivors,adjustParticlesNumberFromSurvivors,adjustSurvivorsFromParticlesNumber);
 
-    rmmseDetector = new RMMSEDetector(_L*(c+_d+1),_N*(_m+c+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
+    rmmseDetector = new RMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),forgettingFactorDetector,_N*(_d+1));
     rlsEstimator = new RLSEstimator(_powerProfile->means(),_N,forgettingFactor);
 
     for(uint iChannelOrder=0;iChannelOrder<_candidateChannelOrders.size();iChannelOrder++)
@@ -102,15 +102,15 @@ void TesisOrdenCanalDesconocidoSystem::addAlgorithms()
 	// we gotta make sure the channel has memory...
 	assert(_iTrueChannelOrder!=0);
 	
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m-1,RLSchannelEstimators[_iTrueChannelOrder-1],RMMSElinearDetectors[_iTrueChannelOrder-1],_preamble,c,_d-1,_d-1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder-1],_channelOrderCoefficientsVariances[_iTrueChannelOrder-1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (subestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m-1,RLSchannelEstimators[_iTrueChannelOrder-1],RMMSElinearDetectors[_iTrueChannelOrder-1],_preamble,_d-1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder-1],_channelOrderCoefficientsVariances[_iTrueChannelOrder-1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,RLSchannelEstimators[_iTrueChannelOrder],RMMSElinearDetectors[_iTrueChannelOrder],_preamble,c,_d,_d,_nParticles,multinomialResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,RLSchannelEstimators[_iTrueChannelOrder],RMMSElinearDetectors[_iTrueChannelOrder],_preamble,_d,_nParticles,multinomialResamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 	assert((_iTrueChannelOrder+1)<_candidateChannelOrders.size());
-    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+1,RLSchannelEstimators[_iTrueChannelOrder+1],RMMSElinearDetectors[_iTrueChannelOrder+1],_preamble,c,_d+1,_d+1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+1],_channelOrderCoefficientsVariances[_iTrueChannelOrder+1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
+    _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+1,RLSchannelEstimators[_iTrueChannelOrder+1],RMMSElinearDetectors[_iTrueChannelOrder+1],_preamble,_d+1,_nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+1],_channelOrderCoefficientsVariances[_iTrueChannelOrder+1],_ARcoefficients[0],_firstSampledChannelMatrixVariance,_ARvariance));
 
 // // 	assert((_iTrueChannelOrder+2)<_candidateChannelOrders.size());
-//     _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado por 2)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+2,RLSchannelEstimators[_iTrueChannelOrder+2],RMMSElinearDetectors[_iTrueChannelOrder+2],_preamble,c,_d+2,_d+2,nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+2],_channelOrderCoefficientsVariances[_iTrueChannelOrder+2],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
+//     _algorithms.push_back(new LinearFilterBasedSMCAlgorithm("RLS-D-SIS (sobreestimado por 2)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m+2,RLSchannelEstimators[_iTrueChannelOrder+2],RMMSElinearDetectors[_iTrueChannelOrder+2],_preamble,_d+2,nParticles,multinomialResamplingAlgorithm,_channelOrderCoefficientsMeans[_iTrueChannelOrder+2],_channelOrderCoefficientsVariances[_iTrueChannelOrder+2],ARcoefficients[0],firstSampledChannelMatrixVariance,ARvariance));
 
     _algorithms.push_back(new CMEBasedAlgorithm("CME based algorithm (RLS no forget)",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,noForgetRLSchannelEstimators,_preamble,_preamble.cols(),_symbols));
 

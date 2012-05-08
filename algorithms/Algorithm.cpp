@@ -20,67 +20,9 @@
 #include "Algorithm.h"
 #include <assert.h>
 
-// #define DEBUG
-
 Algorithm::Algorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N,uint iLastSymbolVectorToBeDetected):_name(name),_alphabet(alphabet),_nOutputs(L),_Nr(Nr),_nInputs(N),_iLastSymbolVectorToBeDetected(iLastSymbolVectorToBeDetected)
 {
 }
-
-double Algorithm::MSE(const vector<MatrixXd> &channelMatrices)
-{
-    uint windowSize = channelMatrices.size();
-
-    vector<MatrixXd> estimatedChannelMatrices = getEstimatedChannelMatrices();
-    uint nEstimatedChannelMatrices = estimatedChannelMatrices.size();
-
-    // if the algorithm didn't make channel estimation
-    if(nEstimatedChannelMatrices==0)
-        return -1.0;
-
-    if(windowSize>nEstimatedChannelMatrices)
-        throw RuntimeException("Algorithm::MSE: more channel matrices passed than detected.");
-
-    double mse = 0;
-	
-	assert(nEstimatedChannelMatrices>=windowSize);
-    uint windowStart = nEstimatedChannelMatrices - windowSize;
-
-#ifdef DEBUG
-	cout << "computing MSE..." << endl;
-	cout << "windowStart = " << windowStart << " nEstimatedChannelMatrices = " << nEstimatedChannelMatrices << endl;
-#endif
-	
-    // if the channel is Sparkling memory, the channel matrices of the real channel may have different sizes
-	for(uint i=windowStart;i<nEstimatedChannelMatrices;i++)
-	{
-		// the square error committed by the estimated matrix is normalized by the squared Frobenius norm
-		// (i.e. the sum of all the elements squared) of the real channel matrix
-#ifdef DEBUG
-		cout << "comparing" << endl << channelMatrices.at(i-windowStart) << endl << "and" << endl << estimatedChannelMatrices.at(i) << endl;
-		cout << "result = " << Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/channelMatrices.at(i-windowStart).squaredNorm() << endl;
-#endif
-		mse += Util::squareErrorPaddingWithZeros(channelMatrices.at(i-windowStart),estimatedChannelMatrices.at(i))/channelMatrices.at(i-windowStart).squaredNorm();
-	}
-
-    return mse/(double)windowSize;
-}
-
-double Algorithm::MSE(const vector<MatrixXd> &channelMatrices,const vector<uint> &bestPermutation,const vector<int> &bestPermutationSigns)
-{
-  vector<uint> realChannelMatricesPermutation = Util::computeInversePermutation(bestPermutation);
-
-  // signs permutation is given  WITH RESPECT TO THE ESTIMATED CHANNEL MATRICES. 
-  // We have to permute them according to the best permutation with respect to the real channel matrices
-  vector<int> realChannelMatricesSignsPermutation = Util::applyPermutation(Util::applyPermutation(bestPermutationSigns,realChannelMatricesPermutation),realChannelMatricesPermutation);
-
-  vector<MatrixXd> permutedChannelMatrices(channelMatrices.size());
-  
-  for(uint i=0;i<channelMatrices.size();i++)
-	permutedChannelMatrices[i] = Util::applyPermutationOnColumns(channelMatrices[i],realChannelMatricesPermutation,realChannelMatricesSignsPermutation);
-
-  return MSE(permutedChannelMatrices);
-}
-
 
 MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector< MatrixXd > matrices, uint m, uint start, uint d)
 {
@@ -104,47 +46,20 @@ MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector< MatrixXd > matr
     return res;
 }
 
-VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint c,uint e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
-{
-    if(matrices.size()!=c+e+1)
-      throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
-
-    if(observations.size()!=(_nOutputs*(c+e+1)))
-       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: size of observations vector is wrong.");
-
-	assert(c+m>0);
-    if(involvedSymbolVectors.cols()!=c+m-1)
-         throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
-
-    uint i;
-    MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(c+e+1),_nInputs*(m-1+c));
-
-    for(i=0;i<c;i++)
-        substractingChannelMatrix.block(i*_nOutputs,i*_nInputs,_nOutputs,_nInputs*m) = matrices[i];
-
-    for(i=c;i<c+m-1;i++)
-        substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(c+m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-(i-c))*_nInputs);
-
-    return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
-}
-
-VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint e,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
-{
-    if(matrices.size()!=e+1)
-      throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of matrices.");
-
-    if(observations.size()!=(_nOutputs*(e+1)))
-       throw RuntimeException("Algorithm::substractKnownSymbolsContribution: size of observations vector is wrong.");
-
+VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
+{	
+	assert(matrices.size()==d+1);
+	assert(observations.size()==(_nOutputs*(d+1)));
 	assert(m>0);
+	
     if(involvedSymbolVectors.cols()!=m-1)
          throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
 
     uint i;
-    MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(e+1),_nInputs*(m-1));
+    MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(d+1),_nInputs*(m-1));
 
     for(i=0;i<m-1;i++)
-        substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-(i))*_nInputs);
+        substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-i)*_nInputs);
 
     return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
 }

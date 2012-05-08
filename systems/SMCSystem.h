@@ -53,9 +53,6 @@ protected:
     uint _nParticles;
     double _resamplingRatio;
 
-    // forward smoothing
-	uint c;
-
     ResamplingAlgorithm *_resamplingAlgorithm;
 
     double _firstSampledChannelMatrixVariance;

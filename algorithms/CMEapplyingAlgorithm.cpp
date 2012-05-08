@@ -19,9 +19,9 @@
  ***************************************************************************/
 #include "CMEapplyingAlgorithm.h"
 
-// #define EXPORT_REAL_DATA
+// #define IMPORT_REAL_DATA
 
-#ifdef EXPORT_REAL_DATA
+#ifdef IMPORT_REAL_DATA
     extern MIMOChannel *realChannel;
     extern MatrixXd *realSymbols;
     extern Noise *realNoise;
@@ -42,7 +42,7 @@ void CMEapplyingAlgorithm::run(MatrixXd observations,vector<double> noiseVarianc
 	uint iTxAntenna,iRxAntenna;
     VectorXd CMEs(_candidateOrders.size());
 
-#ifdef EXPORT_REAL_DATA
+#ifdef IMPORT_REAL_DATA
     MatrixXd channelMatrix = realChannel->at(_preamble.cols());
 #endif
 

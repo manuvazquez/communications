@@ -60,20 +60,16 @@ void TriangularizationBasedSMCAlgorithm::process(const MatrixXd& observations, v
 
             MatrixXd stackedChannelMatrixMinus = stackedChannelMatrix.block(0,(_channelOrder-1)*_nInputs,stackedChannelMatrix.rows(),stackedChannelMatrix.cols()-(_channelOrder-1)*_nInputs);
 
-            VectorXd stackedObservationsMinus = substractKnownSymbolsContribution(matricesToStack,_channelOrder,0,_d,stackedObservations,involvedSymbolVectors.block(0,0,_nInputs,_channelOrder-1));
+            VectorXd stackedObservationsMinus = substractKnownSymbolsContribution(matricesToStack,_channelOrder,_d,stackedObservations,involvedSymbolVectors.block(0,0,_nInputs,_channelOrder-1));
             
             // we want to start sampling the present symbol vector, not the future ones
             MatrixXd stackedChannelMatrixMinusFlipped = Util::flipLR(stackedChannelMatrixMinus);
 
             Eigen::LLT<MatrixXd> llt(stackedChannelMatrixMinusFlipped.transpose()*stackedChannelMatrixMinusFlipped);
 
-// 			MatrixXd L = llt.matrixL();
-//             MatrixXd U = L.transpose();
 			MatrixXd U = llt.matrixL().transpose();
 
 			MatrixXd invLstackedChannelMatrixMinusTrans = llt.matrixL().solve(stackedChannelMatrixMinusFlipped.transpose());
-// 			MatrixXd invLstackedChannelMatrixMinusTrans = llt.matrixL().inverse()*stackedChannelMatrixMinusFlipped.transpose();
-// 			MatrixXd invLstackedChannelMatrixMinusTrans = L.inverse()*stackedChannelMatrixMinusFlipped.transpose();
             VectorXd transformedStackedObservationsMinus = invLstackedChannelMatrixMinusTrans*stackedObservationsMinus;
 
             // the covariance of the transformed observations is computed...

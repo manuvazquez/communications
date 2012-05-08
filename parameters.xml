@@ -65,7 +65,6 @@
 		
 		<nParticles> 1 </nParticles>
 		<resamplingRatio> 0.9 </resamplingRatio>
-		<c> 0 </c>
 		<firstSampledChannelMatrixVariance> 0.0 </firstSampledChannelMatrixVariance>
 		
 	</SMCSystem>
