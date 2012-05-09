@@ -47,7 +47,10 @@ double LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator::computeE
 	expectationSoftEstTimesSoftEst = (filter.transpose()*(_symbolsVariance*lastEstimatedChannelMatrix()*lastEstimatedChannelMatrix().transpose() + noiseVariance*MatrixXd::Identity(filter.rows(),filter.rows()))*filter).trace();
 	expectationSoftEstTimesTrueSymbol = (filter.transpose()*lastEstimatedChannelMatrix()).trace();
 	
-	double extraVariance = expectationSoftEstTimesSoftEst - 2*expectationSoftEstTimesTrueSymbol + filter.rows()*_symbolsVariance;
+	double extraVariance = expectationSoftEstTimesSoftEst - 2*expectationSoftEstTimesTrueSymbol + filter.cols()*_symbolsVariance;
+	
+// 	expectationSoftEstTimesSoftEst = (filter.transpose()*filter).trace()*(filter.rows()*_symbolsVariance*1 + noiseVariance);
+// 	double extraVariance = expectationSoftEstTimesSoftEst + filter.rows()*_symbolsVariance;
 	
 	return extraVariance;
 }

@@ -708,22 +708,9 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 }
 
 double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
-{
-//   if(sourceSymbols.rows()!= detectedSymbols.rows() || static_cast<uint>(detectedSymbols.rows())!= mask.size())
-//   {
-// 	  cout << "sourceSymbols.rows() = " << sourceSymbols.rows() << " detectedSymbols.rows() = " << detectedSymbols.rows() << " mask.size() = " << mask.size() << endl;
-// 	  throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix row numbers differ.");
-//   }
-  
-  assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
-
-//   if(sourceSymbols.cols()!= detectedSymbols.cols() || static_cast<uint>(detectedSymbols.cols())!= mask[0].size())
-//   {
-// 	  cout << "sourceSymbols.cols() = " << sourceSymbols.cols() << " detectedSymbols.cols() = " << detectedSymbols.cols() << " mask.size() = " << mask.size() << endl; 
-// 	throw RuntimeException("BaseSystem::computeSERwithoutSolvingAmbiguity: matrix column numbers differ.");
-//   }
-  
-  assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
+{ 
+	assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
+	assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
 
 	uint nSymbolsRows = detectedSymbols.rows();
 
@@ -754,6 +741,35 @@ double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbo
 	return (double)errors/(double)(nAccountedSymbols);
 }
 
+double BaseSystem::computeSymbolVectorErrorRate(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
+{ 
+	assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
+	assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
+
+	// number of errors
+	uint errors = 0;
+
+	uint nAccountedVectors = 0;
+
+	for (uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+	{
+		// the first symbol of the vector is used to decide whether the entire vector should be accounted for detection or not
+		if (!mask[0][iTime])
+			continue;
+
+		// if the vectors differ, an error happened...
+		errors += sourceSymbols.col(iTime)!=detectedSymbols.col(iTime);
+		
+		nAccountedVectors++;
+	}
+
+	// if all the symbols were masked
+	if (nAccountedVectors==0)
+		return 0.0;
+	else
+		return (double)errors/(double)(nAccountedVectors);
+}
+
 void BaseSystem::storeFrameResults()
 {
     // pe
@@ -763,19 +779,19 @@ void BaseSystem::storeFrameResults()
     _MSEMatrices.push_back(_presentFrameMSE);
 
 #ifdef SAVE_ALL_SEEDS
-// 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);	
-	_perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
-#endif
-	
-#ifdef KEEP_ALL_CHANNEL_MATRICES
-	_channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
+// 	_perAlgorithmAndSNRstatUtilSeeds.push_back(_thisFramePerAlgorithmAndSNRstatUtilSeeds);		
+    _perAlgorithmAndSNRstatUtilRandoms.push_back(_thisFramePerAlgorithmAndSNRstatUtilRandoms);
 #endif
 
-	if(_keepAllChannelEstimates)
-		_channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
-	
+#ifdef KEEP_ALL_CHANNEL_MATRICES
+    _channelMatrices.push_back(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1));
+#endif
+
+    if (_keepAllChannelEstimates)
+        _channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
+
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
-		_channelEstimatesVariances.push_back(_presentFrameChannelEstimatesVariances);
+    _channelEstimatesVariances.push_back(_presentFrameChannelEstimatesVariances);
 #endif
 }
 

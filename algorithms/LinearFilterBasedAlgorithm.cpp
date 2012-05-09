@@ -20,6 +20,7 @@
 #include "LinearFilterBasedAlgorithm.h"
 
 // #define DEBUG
+// #include <realData.h>
 
 #include <KnownSymbolsKalmanEstimator.h>
 
@@ -75,8 +76,8 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
 #ifdef DEBUG
-	cout << "---------------------------------------------------------" << endl;
-	cout << "algorithm: " << _name << endl;
+// 	cout << "---------------------------------------------------------" << endl;
+	cout << " ================= algorithm: " << _name << "================" << endl;
 #endif
 	
 	assert(observations.rows()==_nOutputs); 
@@ -107,32 +108,23 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 	for(uint iTrainingSeq=0;iTrainingSeq<trainingSequence.cols() && iterMatrices!=ARmatricesBuffer.rend();iTrainingSeq++,iterMatrices++)
 		*iterMatrices = _estimatedChannelMatrices[startDetectionTime-1-iTrainingSeq];
 	
-// 	cout << "ARmatricesBuffer = " << endl << ARmatricesBuffer << endl;
-
     for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
+#ifdef DEBUG
+		cout << "------ " << iObservationToBeProcessed << " -------" << endl;
+#endif
 		// a copy of the buffer of matrices needed for the AR process is kept
 		auxARmatricesBuffer = ARmatricesBuffer;
 		
         ARcoefficientPower = _ARcoefficients[0];
         for(iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
         {
-// 			// if there is no training sequence...
-// 			if(iObservationToBeProcessed==_preamble.cols())
-// 				// the "last estimated channel matrix" given by the channel estimator is used (it should be the matrix that served to initialize the channel estimator)
-// 				matricesToStack[iSmoothing] = ARcoefficientPower*_channelEstimator->lastEstimatedChannelMatrix();
-// 			else
-// 				matricesToStack[iSmoothing] = ARcoefficientPower*_estimatedChannelMatrices[iObservationToBeProcessed-1];
-// 			
-//             ARcoefficientPower *= _ARcoefficients[0];
-			
 			// new matrix to be stacked is initialized to zero
-			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nOutputs*(_d+1));
+			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
 			
 			for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
 				matricesToStack[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
 			
-// 			cout << "matricesToStack[iSmoothing] = " << endl << matricesToStack[iSmoothing] << endl;
 			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
 			ARmatricesBuffer.push_back(matricesToStack[iSmoothing]);
         }
@@ -163,9 +155,17 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
 #ifdef DEBUG
-			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
-			cout << "softEstimations = " << endl << softEstimations << endl;
-			cout << "detected vector = " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
+			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;			
+			cout << "MSE commited = " << Util::squareErrorPaddingWithZeros(realChannel->at(iObservationToBeProcessed),stackedChannelMatrix)/realChannel->at(iObservationToBeProcessed).squaredNorm() << endl;
+// 			cout << "softEstimations = " << endl << softEstimations << endl;
+			cout << "detected vector: " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
+			cout << "true vector: " << endl << realSymbols->col(iObservationToBeProcessed) << endl;
+// 			cout << "properly detected? " << (_detectedSymbolVectors.col(iObservationToBeProcessed)==realSymbols->col(iObservationToBeProcessed)) << endl;
+			if(!(_detectedSymbolVectors.col(iObservationToBeProcessed)==realSymbols->col(iObservationToBeProcessed)))
+			{
+				cout << "detection ERROR!!" << endl;
+				getchar();
+			}
 #endif
 
         _estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);

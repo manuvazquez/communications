@@ -53,4 +53,3 @@ void PlainSystem::addAlgorithms()
     _knownChannelChannelMatrixEstimator = new KnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N);
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("Linear Filter with Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 }
-
