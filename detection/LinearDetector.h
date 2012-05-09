@@ -33,6 +33,8 @@ protected:
     double _alphabetVariance;
 public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
+    virtual ~LinearDetector() {}
+    
     virtual void stateStep(VectorXd observations) = 0;
     virtual VectorXd detect(VectorXd observations,MatrixXd channelMatrix,const MatrixXd &noiseCovariance) = 0;
     virtual MatrixXd computedFilter() const = 0;
@@ -45,7 +47,6 @@ public:
     virtual double nthSymbolVariance(uint n,double noiseVariance) = 0;
 
     virtual double nthSymbolGain(uint n) const { return 1.0;}
-    virtual ~LinearDetector() {}
     uint channelMatrixcols() { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
     

@@ -17,8 +17,8 @@
 
 #include "LinkedKalmanFilterAndLinearFilterBasedAlgorithm.h"
 
-LinkedKalmanFilterAndLinearFilterBasedAlgorithm::LinkedKalmanFilterAndLinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols)
+LinkedKalmanFilterAndLinearFilterBasedAlgorithm::LinkedKalmanFilterAndLinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols)
 :LinearFilterBasedAlgorithm(name,alphabet,L,Nr,N,iLastSymbolVectorToBeDetected,m,channelEstimator,preamble,smoothingLag,linearDetector,ARcoefficients,substractContributionFromKnownSymbols)
 {
-	(dynamic_cast<LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator *> (_channelEstimator))->setLinearDetector(_linearDetector);
+	(dynamic_cast<LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator *> (_channelEstimator))->setLinearDetector(_linearDetector);
 }

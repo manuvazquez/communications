@@ -20,13 +20,13 @@
 
 #include <LinearFilterBasedAlgorithm.h>
 
-#include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator.h>
+#include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator.h>
 
 
 class LinkedKalmanFilterAndLinearFilterBasedAlgorithm : public LinearFilterBasedAlgorithm
 {
 public:
-    LinkedKalmanFilterAndLinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols=false);
+	LinkedKalmanFilterAndLinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols=false);
 };
 
 #endif // LINKEDKALMANFILTERANDLINEARFILTERBASEDALGORITHM_H

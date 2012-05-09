@@ -27,8 +27,7 @@ MMSEDetector::MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nS
 
 MMSEDetector::MMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,uint startingFrom): LinearDetector(rows, cols, alphabetVariance),_nSymbolsToBeDetected(nSymbolsToBeDetected),_detectionStart(startingFrom)
 {
-// 	if(_detectionStart+_nSymbolsToBeDetected>_channelMatrixCols)
-// 		throw RuntimeException("MMSEDetector::MMSEDetector: nSymbolsToBeDetected, startingFrom or both parameters are wrong.");
+	// nSymbolsToBeDetected, startingFrom or both parameters are wrong
 	assert(_detectionStart+_nSymbolsToBeDetected<=_channelMatrixCols);
 }
 
@@ -39,6 +38,9 @@ MMSEDetector *MMSEDetector::clone()
 
 MatrixXd MMSEDetector::computedFilter() const
 {
+	if(_filter.rows()==0)
+		return MatrixXd();
+
     return _filter.block(0,_detectionStart,_channelMatrixRows,_nSymbolsToBeDetected);
 }
 
