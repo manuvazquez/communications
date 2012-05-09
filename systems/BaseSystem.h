@@ -48,7 +48,6 @@
 #include <PowerProfileDependentNoise.h>
 #include <NullNoise.h>
 #include <Algorithm.h>
-#include <TransmissionUtil.h>
 
 #include <rapidxml.hpp>
 

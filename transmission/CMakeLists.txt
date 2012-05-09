@@ -14,6 +14,5 @@ ADD_LIBRARY (transmission STATIC
 			  Noise
 			  NullNoise
 			  PowerProfileDependentNoise
-			  SingleUserPowerProfileDependentNoise
-			  TransmissionUtil)
+			  SingleUserPowerProfileDependentNoise)
 add_subdirectory(channel)
