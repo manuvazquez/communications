@@ -95,7 +95,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
     double ARcoefficientPower;
 	
-	std::vector<double>::iterator iterARcoeffs;
+	std::vector<double>::const_iterator iterARcoeffs;
 	std::vector<MatrixXd>::reverse_iterator iterMatrices;
 	
 	std::vector<MatrixXd> ARmatricesBuffer(_ARcoefficients.size(),_channelEstimator->lastEstimatedChannelMatrix());
@@ -155,7 +155,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 #ifdef DEBUG
 			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;			
 			cout << "MSE commited = " << Util::squareErrorPaddingWithZeros(realChannel->at(iObservationToBeProcessed),stackedChannelMatrix)/realChannel->at(iObservationToBeProcessed).squaredNorm() << endl;
-// 			cout << "softEstimations = " << endl << softEstimations << endl;
+			cout << "softEstimations = " << endl << softEstimations << endl;
 			cout << "detected vector: " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
 			cout << "true vector: " << endl << realSymbols->col(iObservationToBeProcessed) << endl;
 // 			cout << "properly detected? " << (_detectedSymbolVectors.col(iObservationToBeProcessed)==realSymbols->col(iObservationToBeProcessed)) << endl;

@@ -24,12 +24,12 @@
  
 KalmanFilter::KalmanFilter(const MatrixXd &R,const MatrixXd &stateEquationCovariance,const VectorXd &initialMean,const MatrixXd &initialCovariance):
 _nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEquationCovariance),_predictiveCovariance(R.rows(),R.rows()),_predictiveMean(R.rows())
-{
-    if(R.rows()!=_nElementsToEstimate || _nElementsToEstimate!=R.cols())
-        throw RuntimeException("KalmanFilter::KalmanFilter: matrices R and F dimensions are not coherent with those of the vector to be estimated.");
-
-    if(initialMean.size()!=initialCovariance.rows() || initialMean.size()!=initialCovariance.cols())
-        throw RuntimeException("KalmanFilter::KalmanFilter: the number of rows and columns of the covariance must be the number of rows of the mean.");
+{	
+	// matrices R and F dimensions are not coherent with those of the vector to be estimated
+	assert(R.rows()==_nElementsToEstimate && _nElementsToEstimate==R.cols());
+	
+	// the number of rows and columns of the covariance must be the number of rows of the mean
+	assert(initialMean.size()==initialCovariance.rows() && initialMean.size()==initialCovariance.cols());
 
     setFilteredMean(initialMean);
     setFilteredCovariance(initialCovariance);
@@ -37,8 +37,8 @@ _nElementsToEstimate(initialMean.size()),_R(R),_stateEquationCovariance(stateEqu
 
 void KalmanFilter::step(const MatrixXd &F,const VectorXd &observation,const MatrixXd &observationEquationCovariance)
 {
-    if(F.cols()!=_nElementsToEstimate || F.rows()!=observation.size())
-        throw RuntimeException("The matrix F or observation vector dimensions are wrong.");
+	// the matrix F or observation vector dimensions are wrong
+	assert(F.cols()==_nElementsToEstimate && F.rows()==observation.size());
     
     MatrixXd predictiveCovariance_Ft = _predictiveCovariance*F.transpose();
     
@@ -60,8 +60,8 @@ void KalmanFilter::step(const MatrixXd &F,const VectorXd &observation,const Matr
 
 void KalmanFilter::setFilteredMean(const VectorXd &filteredMean)
 {
-    if(filteredMean.size()!=_nElementsToEstimate)    
-        throw RuntimeException("KalmanFilter::setFilteredMean: the size of the received vector is wrong.");
+	// the size of the received vector is wrong
+	assert(filteredMean.size()==_nElementsToEstimate);
 
     _filteredMean = filteredMean;
 
@@ -70,8 +70,8 @@ void KalmanFilter::setFilteredMean(const VectorXd &filteredMean)
 
 void KalmanFilter::setFilteredCovariance(const MatrixXd &filteredCovariance)
 {
-    if(filteredCovariance.rows()!=_nElementsToEstimate || filteredCovariance.cols()!=_nElementsToEstimate)    
-        throw RuntimeException("KalmanFilter::setFilteredCovariance: the dimensions of the received matrix are wrong.");
+	// the dimensions of the received matrix are wrong
+	assert(filteredCovariance.rows()==_nElementsToEstimate && filteredCovariance.cols()==_nElementsToEstimate);
         
     _filteredCovariance = filteredCovariance;
     

@@ -84,8 +84,7 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
 
     MatrixXd observationEquationCovariance = noiseVariance*MatrixXd::Identity(_nOutputs,_nOutputs);
     
-    // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix. It is meant to take into account when there is more
-    // than one AR coefficient
+    // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
     
     extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));    
@@ -95,10 +94,6 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
     _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
 	
-// 	cout << getFilteredCovariance() << endl;
-	
-// 	cout << "-----" << endl;
-
     return _lastEstimatedChannelCoefficientsMatrix;
 }
 

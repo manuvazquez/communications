@@ -32,14 +32,13 @@
 
 class ChannelMatrixEstimator{
 protected:
-    uint _nOutputs,_nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_channelOrder,_nChannelCoeffs;
+	uint _nOutputs,_channelOrder;
+    const uint _nChannelMatrixRows,_nInputsXchannelOrder,_nInputs,_nChannelCoeffs;
 
 	// this stores the last estimated channel coefficients
     MatrixXd _lastEstimatedChannelCoefficientsMatrix;
 
 public:
-	ChannelMatrixEstimator() {} // needed to implement the decorator pattern
-		
 	/*!
 	  It builds a \ref ChannelMatrixEstimator object
 	  \param initialEstimation a matrix representing the initial estimation. It's what \ref lastEstimatedChannelMatrix returns when \ref nextMatrix hasn't been called yet

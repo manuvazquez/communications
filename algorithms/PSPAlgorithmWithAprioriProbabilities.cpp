@@ -46,7 +46,6 @@ void PSPAlgorithmWithAprioriProbabilities::deployState(uint iState, const Vector
 			if(_exitStage[iState][iSourceSurvivor].isEmpty())
 				continue;
 
-//             VectorXd error = observations - dynamic_cast<CDMAKalmanEstimator *>(_exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator())->getPredictive()*symbolsVector;
 			VectorXd error = observations - _exitStage[iState][iSourceSurvivor].getChannelMatrixEstimator()->predictedMatrix()*symbolsVector;
 			
 			newCost =  _exitStage[iState][iSourceSurvivor].getCost() + 

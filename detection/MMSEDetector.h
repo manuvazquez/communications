@@ -32,7 +32,7 @@
 class MMSEDetector : public LinearDetector
 {
 protected:
-	uint _nSymbolsToBeDetected,_detectionStart;
+	const uint _nSymbolsToBeDetected,_detectionStart;
     MatrixXd _filter;   
 
 	// required for nthSymbolVariance computing

@@ -29,8 +29,8 @@
 
 class LinearDetector{
 protected:
-    uint _channelMatrixRows, _channelMatrixCols;
-    double _alphabetVariance;
+    const uint _channelMatrixRows, _channelMatrixCols;
+    const double _alphabetVariance;
 public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
     virtual ~LinearDetector() {}

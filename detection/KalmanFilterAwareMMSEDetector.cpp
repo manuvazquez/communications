@@ -20,7 +20,6 @@
 KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator)
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator)
 {
-
 }
 
 VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
@@ -30,7 +29,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 	MatrixXd aux = MatrixXd::Zero(nRows,nRows);
 	
 	for(uint i=0;i<channelMatrix.cols();i++)
-		aux += covarianceMatrixForCol(i) + (_kalmanEstimator->lastEstimatedChannelMatrix().col(i))*(_kalmanEstimator->lastEstimatedChannelMatrix().col(i)).transpose();
+		aux += covarianceMatrixForCol(i) + _kalmanEstimator->predictedMatrix().col(i)*(_kalmanEstimator->predictedMatrix().col(i)).transpose();
 	
 //     MatrixXd _Rx = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*aux;
@@ -52,7 +51,7 @@ KalmanFilterAwareMMSEDetector* KalmanFilterAwareMMSEDetector::clone()
 
 MatrixXd KalmanFilterAwareMMSEDetector::covarianceMatrixForCol(uint iCol) const
 {
-	MatrixXd overallCovariance = _kalmanEstimator->getFilteredCovariance();
+	MatrixXd overallCovariance = _kalmanEstimator->getPredictiveCovariance();
 	
 	uint n = overallCovariance.rows();
 	uint nCols = _kalmanEstimator->cols();

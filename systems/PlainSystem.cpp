@@ -52,9 +52,10 @@ PlainSystem::~PlainSystem()
 
 void PlainSystem::addAlgorithms()
 {
-	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("Kalman Filter + Kalman Filter aware MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
+	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("Kalman Filter + Kalman Filter-aware-MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("Linear Filter + Kalman Filter with noise variance",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new LinkedKalmanFilterAndLinearFilterBasedAlgorithm("Linear Filter + Kalman Filter with ADJUSTED variance",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_linearFilterAwareNoiseVarianceAdjustingKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
+
 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
 	
     delete _knownChannelChannelMatrixEstimator;

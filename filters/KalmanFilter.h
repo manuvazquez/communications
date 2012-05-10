@@ -33,8 +33,9 @@
 
 class KalmanFilter{
 private:
-    uint _nElementsToEstimate;
-    MatrixXd _R,_stateEquationCovariance,_predictiveCovariance,_filteredCovariance;
+    const uint _nElementsToEstimate;
+    const MatrixXd _R,_stateEquationCovariance;
+	MatrixXd _predictiveCovariance,_filteredCovariance;
     VectorXd _predictiveMean,_filteredMean;
 
 public:

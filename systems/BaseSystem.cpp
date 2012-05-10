@@ -38,7 +38,7 @@ extern uint __nFramesPassed;
 extern bool __randomSeedHasBeenPassed;
 extern bool __nFramesHasBeenPassed;
 
-// #define EXPORT_REAL_DATA
+#define EXPORT_REAL_DATA
 // #define EXPORT_REAL_CHANNEL_ORDER
 
 // #define PRINT_PARAMETERS

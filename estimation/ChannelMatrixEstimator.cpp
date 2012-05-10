@@ -21,8 +21,8 @@
 
 ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,uint N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelCoefficientsMatrix(initialEstimation)
 {
-    if(_nInputsXchannelOrder < _nInputs)
-        throw RuntimeException("ChannelMatrixEstimator::ChannelMatrixEstimator: number of columns of \"initialEstimation\"  is less than N");
+	// number of columns of "initialEstimation" is less than N
+	assert(_nInputsXchannelOrder >= _nInputs);
 
     // check erased because of "OneChannelOrderPerTransmitAtennaWrapperEstimator"
     /*
@@ -47,8 +47,8 @@ uint ChannelMatrixEstimator::memory() const
 
 vector<MatrixXd> ChannelMatrixEstimator::nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo)
 {
-    if(observations.cols()<iTo)
-        throw RuntimeException("ChannelMatrixEstimator::nextMatricesFromObservationsSequence: insufficient number of observations.");
+	// insufficient number of observations
+	assert(observations.cols()>=iTo);
 
     vector<MatrixXd> estimatedMatrices(iTo-iFrom);
 

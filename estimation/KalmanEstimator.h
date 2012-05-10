@@ -37,34 +37,34 @@ class KalmanEstimator : public ChannelMatrixEstimator
 {
 protected:
     KalmanFilter *_kalmanFilter;
-    uint _nExtStateVectorCoeffs;
+    const uint _nExtStateVectorCoeffs;
     
     virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
 public:
-	KalmanEstimator() {} // needed to implement the decorator pattern
     KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
+	
+    virtual KalmanEstimator *clone() const;
     
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
-    virtual KalmanEstimator *clone() const;
+	
     virtual MatrixXd samplePredicted() const;
-//     virtual MatrixXd getPredictive() const {return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
+    
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix);
 	
-	//! it returns the corresponding covariance AS STORED by the internal Kalman Filter
+	//! they return the corresponding covariance AS STORED by the internal Kalman Filter
     virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance();}
+    virtual MatrixXd getPredictiveCovariance() const {return _kalmanFilter->predictiveCovariance();}
     
     virtual bool computesVariances() const { return true; }
     
 	virtual MatrixXd getVariances() const 
 	{
-// 		return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); 
 		return Util::toMatrix(_kalmanFilter->filteredCovariance().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
 	}
 	
-// 	virtual MatrixXd predictedMatrix() const { return getPredictive();}
 	virtual MatrixXd predictedMatrix() const { return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
 };
 

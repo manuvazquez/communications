@@ -32,8 +32,8 @@
 class RMMSEDetector : public LinearDetector
 {
 protected:
-    double _forgettingFactor,_invForgettingFactor;
-    uint _nSymbolsToBeDetected;
+    const double _forgettingFactor,_invForgettingFactor;
+    const uint _nSymbolsToBeDetected;
     double _alphaPowerSumNow,_alphaPowerSumPrevious;
     double _alphaPower,_alphaPowerSumFactor;
 

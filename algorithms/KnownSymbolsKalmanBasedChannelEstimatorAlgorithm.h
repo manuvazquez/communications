@@ -31,7 +31,7 @@
 class KnownSymbolsKalmanBasedChannelEstimatorAlgorithm : public KnownChannelOrderAlgorithm
 {
 protected:
-    MatrixXd _symbolVectors;
+    const MatrixXd _symbolVectors;
     vector<MatrixXd> _estimatedChannelMatrices;
 public:
 
