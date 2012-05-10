@@ -32,10 +32,6 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 	for(uint i=0;i<channelMatrix.cols();i++)
 		aux += covarianceMatrixForCol(i) + (_kalmanEstimator->lastEstimatedChannelMatrix().col(i))*(_kalmanEstimator->lastEstimatedChannelMatrix().col(i)).transpose();
 	
-// 	cout << "channelMatrix*channelMatrix.transpose()" << endl << channelMatrix*channelMatrix.transpose() << endl;
-// 	cout << "aux: " << endl << aux << endl;
-// 	cout << "------------" << endl;
-	
 //     MatrixXd _Rx = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*aux;
 
@@ -64,20 +60,9 @@ MatrixXd KalmanFilterAwareMMSEDetector::covarianceMatrixForCol(uint iCol) const
 	
 	MatrixXd res(nRows,nRows);
 	
-// 	cout << overallCovariance << endl;
-// 	cout << "nCols = " << nCols << " nRows = " << nRows << endl;
-// 	cout << "iCol = " << iCol << endl;
-	
 	for(uint iRow=0;iRow<nRows;iRow++)
 		for(uint i=iCol,iRes=0;i<n;i+=nCols,iRes++)
-		{
-// 			cout << "(iRow-1)*nRows+iCol = " << iRow*nCols+iCol << " i = " << i << endl;
 			res(iRow,iRes) = overallCovariance(iRow*nCols+iCol,i);
-// 			cout << "res(iRow,iRes) = " << endl;
-		}
-	
-// 	cout << "returning " << endl << res << endl;
-// 	getchar();
 	
 	return res;
 }

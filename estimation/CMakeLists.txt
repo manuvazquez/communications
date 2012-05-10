@@ -15,8 +15,6 @@ ADD_LIBRARY (estimation STATIC
 			ChannelOrderEstimator
 			KalmanEstimator
 			LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator
-			KalmanEstimatorDecorator
-			LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator
 			KnownChannelChannelMatrixEstimator
 			KnownSymbolsKalmanEstimator
 			LMSEstimator
