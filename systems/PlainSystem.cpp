@@ -32,7 +32,7 @@ PlainSystem::PlainSystem()
 	_kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 	_linearFilterAwareNoiseVarianceAdjustingKalmanEstimator = new LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_MMSEdetector,_alphabet->variance());
 	
-// 	_decoratedKalmanEstimator = new LinearFilterAwareNoiseVarianceAdjustingKalmanEstimatorDecorator(_kalmanEstimator,_MMSEdetector,_alphabet->variance());
+	_kalmanFilterAwareMMSEDetector = new KalmanFilterAwareMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator);
 	
 	_knownChannelChannelMatrixEstimator = NULL;
 }
@@ -43,16 +43,17 @@ PlainSystem::~PlainSystem()
 	delete _linearFilterAwareNoiseVarianceAdjustingKalmanEstimator;
 	
 	delete _MMSEdetector;
-// 	delete _decoratedKalmanEstimator;
 	delete _knownChannelChannelMatrixEstimator;
+	
+	delete _kalmanFilterAwareMMSEDetector;
 	
 	delete _powerProfile;
 }
 
 void PlainSystem::addAlgorithms()
 {
+	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("Kalman Filter + Kalman Filter aware MMSE",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("Linear Filter + Kalman Filter with noise variance",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
-// 	_algorithms.push_back(new LinkedKalmanFilterAndLinearFilterBasedAlgorithm("Linear Filter + Kalman Filter with ADJUSTED variance",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_decoratedKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new LinkedKalmanFilterAndLinearFilterBasedAlgorithm("Linear Filter + Kalman Filter with ADJUSTED variance",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_linearFilterAwareNoiseVarianceAdjustingKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
 	

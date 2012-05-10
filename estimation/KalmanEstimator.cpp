@@ -94,6 +94,10 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
     _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
+	
+// 	cout << getFilteredCovariance() << endl;
+	
+// 	cout << "-----" << endl;
 
     return _lastEstimatedChannelCoefficientsMatrix;
 }
