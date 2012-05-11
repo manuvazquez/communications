@@ -834,7 +834,7 @@ void BaseSystem::saveFrameResults()
 	Octave::eigenToOctaveFileStream(_channelMatrices,"channels",_f);
 #else
 	// only last channel is saved
-    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected),"channel",_f);
+    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"channel",_f);
 #endif
 
 	Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,_channel->name()),"channelClass",_f);

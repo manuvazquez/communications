@@ -38,8 +38,7 @@ private:
     static double computeFromActiveOperands(const VectorXd &probabilities,bool *activeOperands);
     static Random _randomGenerator;
 public:
-	// this is only used in USIS =>
-	// FIXME: it should be taken out
+	// this is only used in USIS => FIXME: it should be taken out
     static Random _particlesInitializerRandomGenerator;
 
 
@@ -48,26 +47,26 @@ public:
      * @param probabilities
      * @return
      */
-    static uint discrete_rnd(const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
-    static vector< uint > discrete_rnd(uint nSamples, const VectorXd& probabilities, Random& randomGenerator = _randomGenerator); // eigen
+    static uint discrete_rnd(const VectorXd &probabilities,Random &randomGenerator = _randomGenerator);
+    static vector< uint > discrete_rnd(uint nSamples, const VectorXd& probabilities, Random& randomGenerator = _randomGenerator);
     
-    // same functions as above but receiving c++ vectors instead of "eigen" vectors
+    // same function as above but receiving c++ vectors instead of "eigen" vectors
     static uint discrete_rnd(const std::vector<double> &probabilities,Random &randomGenerator = _randomGenerator);    
     
     static MatrixXd randnMatrix(uint rows,uint cols,double mean,double variance,Random &randomGenerator = _randomGenerator);
-    static VectorXd randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator = _randomGenerator); // eigen
+    static VectorXd randnMatrix(const VectorXd &mean,const MatrixXd &covariance,Random &randomGenerator = _randomGenerator);
     static double normalPdf(double x,double mean,double variance);
-    static double normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance); // eigen
-    static double normalPdf(const VectorXd &x,const VectorXd &mean,double variance); //eigen
+    static double normalPdf(const VectorXd &x,const VectorXd &mean,const MatrixXd &covariance);
+    static double normalPdf(const VectorXd &x,const VectorXd &mean,double variance);
     static double variance(const VectorXd &v);
     static double mean(const MatrixXd &A);
-    static vector<uint> withoutReplacementSampling(uint nSamples,const VectorXd &probabilities,Random &randomGenerator = _randomGenerator); // eigen
+    static vector<uint> withoutReplacementSampling(uint nSamples,const VectorXd &probabilities,Random &randomGenerator = _randomGenerator);
     static Random& getRandomGenerator() { return _randomGenerator;}
     static double probApriori(const VectorXd &symbolsVector, const std::vector<UsersActivityDistribution> &symbolsDistributions);
     static double probXgivenY(VectorXd &X, VectorXd &Y, const std::vector<UsersActivityDistribution> &symbolsDistributions);
 	
 	static double probSymbolsVectorGivenPreviousTimeInstantUsersActivity(const VectorXd& symbolsVector, const std::vector< bool >& previousTimeInstantUsersActivity, const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength);
-	static double probSymbolsVector(const VectorXd &symbolsVector,const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength);	
+	static double probSymbolsVector(const VectorXd &symbolsVector,const std::vector<UsersActivityDistribution> &usersActivityPdfs, uint alphabetLength);
 };
 
 #endif

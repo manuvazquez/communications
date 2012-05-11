@@ -564,3 +564,17 @@ std::vector<uint> Util::getZeroCrossings(const std::vector<MatrixXd> &matricesVe
 
 	return res;
 }
+
+MatrixXd Util::subMatrixFromVectorIndexes(const MatrixXd &matrix,const std::vector<uint> &rows, const std::vector<uint> &cols)
+{
+	MatrixXd res(rows.size(),cols.size());
+	
+	std::vector<uint>::const_iterator iterRows;
+	std::vector<uint>::const_iterator iterCols;
+	
+	for(iterRows=rows.begin();iterRows!=rows.end();iterRows++)
+		for(iterCols=cols.begin();iterCols!=cols.end();iterCols++)
+			res(iterRows-rows.begin(),iterCols-cols.begin()) = matrix(*iterRows,*iterCols);
+		
+	return res;
+}

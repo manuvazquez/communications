@@ -30,8 +30,7 @@
 #include <types.h>
 #include <exceptions.h>
 #include <Alphabet.h>
-#include <MIMOChannel.h>
-#include <LinearDetector.h>
+#include <Util.h>
 
 class Algorithm{
 protected:
@@ -47,9 +46,9 @@ public:
 
     std::string getName() const {return _name;}
 
-    virtual void run(MatrixXd observations,vector<double> noiseVariances) = 0;
+    virtual void run(MatrixXd observations,std::vector<double> noiseVariances) = 0;
     
-    virtual void run(MatrixXd observations,vector<double> noiseVariances, MatrixXd trainingSequence) = 0;
+    virtual void run(MatrixXd observations,std::vector<double> noiseVariances, MatrixXd trainingSequence) = 0;
 
     /*!
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
@@ -61,7 +60,7 @@ public:
      *
      * \return a vector of matrices with the channel matrices estimated. The vector length might be zero (a known channel algorithm).
      */    
-    virtual vector<MatrixXd> getEstimatedChannelMatrices() = 0;
+    virtual std::vector<MatrixXd> getEstimatedChannelMatrices() = 0;
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 	virtual std::vector<MatrixXd> getChannelEstimatesVariances() const { throw RuntimeException("Algorithm::getChannelEstimatesVariances: not implemented for this algorithm."); }
@@ -76,14 +75,14 @@ public:
     
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
 
-    VectorXd substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
+    VectorXd substractKnownSymbolsContribution(const std::vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
 
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m,uint start,uint d);
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m)
+    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m,uint start,uint d);
+    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m)
     {
         return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
     }
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices,uint m,uint d)
+    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m,uint d)
     {
         return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
     }    

@@ -33,20 +33,18 @@
 class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
 {
 protected:
-	ChannelMatrixEstimator *_channelEstimator;
-	uint _channelOrder,_nInputsXchannelOrder;
-    MatrixXd _preamble;   
+	ChannelMatrixEstimator * const _channelEstimator;
+	const uint _channelOrder,_nInputsXchannelOrder;
+    const MatrixXd _preamble;   
 
 public:
     KnownChannelOrderAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m, ChannelMatrixEstimator *channelEstimator,MatrixXd preamble);
     KnownChannelOrderAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble);
 	~KnownChannelOrderAlgorithm();
 
-	using Algorithm::channelMatrices2stackedChannelMatrix;
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return Algorithm::channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
     
     virtual bool computesChannelEstimatesVariances() const { return _channelEstimator->computesVariances(); }
-//     virtual bool computesChannelEstimatesVariances() const { return false; }
 };
 
 #endif

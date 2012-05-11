@@ -26,7 +26,7 @@ class LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator : public KalmanEsti
 {
 protected:
 	LinearDetector const *_linearDetector;
-	double _symbolsVariance;
+	const double _symbolsVariance;
 	
 	double computeExtraVariance(double noiseVariance);
 	

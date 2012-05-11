@@ -181,3 +181,13 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const MatrixXd &matrix)
      
     _kalmanFilter->setFilteredMean(extState);
 }
+
+std::vector<uint> KalmanEstimator::colIndexToIndexesWithinKFstateVector(uint iCol) const
+{
+	std::vector<uint> res(_nOutputs);
+	
+	for(uint i=0;i<_nOutputs;i++)
+		res[i] = i*_nInputsXchannelOrder+iCol;
+	
+	return res;
+}

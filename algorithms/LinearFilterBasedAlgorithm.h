@@ -40,10 +40,12 @@ protected:
 
     const bool _substractContributionFromKnownSymbols;
 	
+	virtual VectorXd obtainChannelMatrixEstimatorFeed(const VectorXd &softEstimates,const VectorXd &decisions) const { return decisions; }
+	
 	virtual void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 
 public:
-    LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols=false);
+    LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols = false);
 
     ~LinearFilterBasedAlgorithm();
 

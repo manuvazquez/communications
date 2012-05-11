@@ -40,7 +40,7 @@ public:
     virtual MatrixXd computedFilter() const = 0;
 
     /**
-     *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to Detect
+     *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to "detect"
      * @param n
      * @return
      */

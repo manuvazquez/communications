@@ -66,6 +66,14 @@ public:
 	}
 	
 	virtual MatrixXd predictedMatrix() const { return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
+	
+	/**
+	 * @brief It returns the indexes of the elements within the internal Kalman Filter state vector that are associated with a certain column
+	 *
+	 * @param iCol the index of the column
+	 * @return a vector of indexes
+	 **/
+	std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const;
 };
 
 #endif

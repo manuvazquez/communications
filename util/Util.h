@@ -150,6 +150,8 @@ public:
 	
 	static bool areColsOrthogonal(const MatrixXd &matrix);
 	static bool areColsDifferentAndNotOpposite(const MatrixXd &matrix);
+	
+	static MatrixXd subMatrixFromVectorIndexes(const MatrixXd &matrix,const std::vector<uint> &rows, const std::vector<uint> &cols);
 };
 
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);

@@ -24,36 +24,35 @@ Algorithm::Algorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N,
 {
 }
 
-MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(vector< MatrixXd > matrices, uint m, uint start, uint d)
+MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(std::vector< MatrixXd > matrices, uint m, uint start, uint d)
 {
-    if((matrices[0].cols() % m)!=0)
-        throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: incorrect number of columns in the matrices.");
+	// incorrect number of columns in the matrices
+	assert((matrices[0].cols() % m)==0);
 
     uint nMatricesToStack = d - start + 1;
 
-    if(matrices.size()< nMatricesToStack)
-        throw RuntimeException("Algorithm::channelMatrices2stackedChannelMatrix: insufficient number of matrices.");
+	// insufficient number of matrices
+	assert(matrices.size()>= nMatricesToStack);
+	
+	uint nOutputs = matrices[0].rows();
+	uint nInputs = matrices[0].cols()/m;
 
-    MatrixXd res = MatrixXd::Zero(_nOutputs*nMatricesToStack,_nInputs*(m+nMatricesToStack-1));
+	MatrixXd res = MatrixXd::Zero(nOutputs*nMatricesToStack,nInputs*(m+nMatricesToStack-1));
 
-    uint iStartingFromZero;
-    for(uint i=start;i<=d;i++)
-    {
-        iStartingFromZero = i - start;
-        res.block(iStartingFromZero*_nOutputs,iStartingFromZero*_nInputs,_nOutputs,_nInputs*m) = matrices[i];
-    }
+    for(uint i=start,iStartingFromZero=0;i<=d;i++,iStartingFromZero++)
+		res.block(iStartingFromZero*nOutputs,iStartingFromZero*nInputs,nOutputs,nInputs*m) = matrices[i];
 
     return res;
 }
 
-VectorXd Algorithm::substractKnownSymbolsContribution(const vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
+VectorXd Algorithm::substractKnownSymbolsContribution(const std::vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
 {	
 	assert(matrices.size()==d+1);
 	assert(observations.size()==(_nOutputs*(d+1)));
 	assert(m>0);
-	
-    if(involvedSymbolVectors.cols()!=m-1)
-         throw RuntimeException("Algorithm::substractKnownSymbolsContribution: wrong number of symbol vectors.");
+
+	// wrong number of symbol vectors
+	assert(involvedSymbolVectors.cols()==m-1);
 
     uint i;
     MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(d+1),_nInputs*(m-1));
