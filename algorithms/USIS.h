@@ -30,6 +30,7 @@
 #include <string>
 #include <sys/time.h>
 
+#include <TransmissionUtil.h>
 #include <LinearDetector.h>
 #include <ChannelOrderEstimator.h>
 #include <ParticleFilter.h>

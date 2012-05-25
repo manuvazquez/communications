@@ -24,27 +24,6 @@ Algorithm::Algorithm(std::string name, Alphabet  alphabet,uint L,uint Nr,uint N,
 {
 }
 
-MatrixXd Algorithm::channelMatrices2stackedChannelMatrix(std::vector< MatrixXd > matrices, uint m, uint start, uint d)
-{
-	// incorrect number of columns in the matrices
-	assert((matrices[0].cols() % m)==0);
-
-    uint nMatricesToStack = d - start + 1;
-
-	// insufficient number of matrices
-	assert(matrices.size()>= nMatricesToStack);
-	
-	uint nOutputs = matrices[0].rows();
-	uint nInputs = matrices[0].cols()/m;
-
-	MatrixXd res = MatrixXd::Zero(nOutputs*nMatricesToStack,nInputs*(m+nMatricesToStack-1));
-
-    for(uint i=start,iStartingFromZero=0;i<=d;i++,iStartingFromZero++)
-		res.block(iStartingFromZero*nOutputs,iStartingFromZero*nInputs,nOutputs,nInputs*m) = matrices[i];
-
-    return res;
-}
-
 VectorXd Algorithm::substractKnownSymbolsContribution(const std::vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &involvedSymbolVectors)
 {	
 	assert(matrices.size()==d+1);

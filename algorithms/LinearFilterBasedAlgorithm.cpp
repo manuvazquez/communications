@@ -20,7 +20,10 @@
 #include "LinearFilterBasedAlgorithm.h"
 
 // #define DEBUG
-// #include <realData.h>
+
+// #include <MIMOChannel.h>
+
+#include <realData.h>
 
 #include <KnownSymbolsKalmanEstimator.h>
 
@@ -93,7 +96,6 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     vector<MatrixXd> matricesToStack(_d+1);
     uint iSmoothing,iRow;
     MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
-    double ARcoefficientPower;
 	
 	std::vector<double>::const_iterator iterARcoeffs;
 	std::vector<MatrixXd>::reverse_iterator iterMatrices;
@@ -110,18 +112,23 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
     {
 #ifdef DEBUG
 		cout << "------ " << iObservationToBeProcessed << " -------" << endl;
+		cout << "buffer: " << endl << ARmatricesBuffer << endl;
 #endif
 		// a copy of the buffer of matrices needed for the AR process is kept
 		auxARmatricesBuffer = ARmatricesBuffer;
 		
-        ARcoefficientPower = _ARcoefficients[0];
         for(iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
         {
 			// new matrix to be stacked is initialized to zero
 			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
 			
 			for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
+			{
 				matricesToStack[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
+#ifdef DEBUG
+				cout << "(*iterARcoeffs)*(*iterMatrices) = " << endl << (*iterARcoeffs)*(*iterMatrices) << endl;
+#endif
+			}
 			
 			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
 			ARmatricesBuffer.push_back(matricesToStack[iSmoothing]);
@@ -153,8 +160,9 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
 #ifdef DEBUG
-			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;			
-			cout << "MSE commited = " << Util::squareErrorPaddingWithZeros(realChannel->at(iObservationToBeProcessed),stackedChannelMatrix)/realChannel->at(iObservationToBeProcessed).squaredNorm() << endl;
+			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
+			cout << "realChannel->at(iObservationToBeProcessed)" << endl << realChannel->at(iObservationToBeProcessed) << endl;
+// 			cout << "MSE commited = " << Util::squareErrorPaddingWithZeros(realChannel->at(iObservationToBeProcessed),stackedChannelMatrix)/realChannel->at(iObservationToBeProcessed).squaredNorm() << endl;
 			cout << "softEstimations = " << endl << softEstimations << endl;
 			cout << "detected vector: " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
 			cout << "true vector: " << endl << realSymbols->col(iObservationToBeProcessed) << endl;

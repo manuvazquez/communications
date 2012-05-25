@@ -137,7 +137,7 @@ void USIS::process(const MatrixXd& observations, vector<double> noiseVariances)
                 for(iLinearFilterNeeded=0;iLinearFilterNeeded<nLinearFiltersNeeded;iLinearFilterNeeded++)
                 {
                     // matrices are stacked to give
-                    MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
+					MatrixXd stackedChannelMatrix = TransmissionUtil::channelMatrices2stackedChannelMatrix(matricesToStack[iChannelOrder],m,iLinearFilterNeeded,d+iLinearFilterNeeded);
 
                     // the estimated stacked channel matrix is used to obtain soft estimations
                     // of the transmitted symbols

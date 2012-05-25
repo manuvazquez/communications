@@ -7,6 +7,7 @@ include_directories(.
 ADD_LIBRARY (transmission STATIC 
 			  Alphabet
 			  Bits
+			  TransmissionUtil
 			  ChannelDependentNoise
 			  SingleUserChannelDependentNoise
 			  Demodulator

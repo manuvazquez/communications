@@ -40,7 +40,7 @@ protected:
 
     const bool _substractContributionFromKnownSymbols;
 	
-	virtual VectorXd obtainChannelMatrixEstimatorFeed(const VectorXd &softEstimates,const VectorXd &decisions) const { return decisions; }
+	virtual MatrixXd obtainChannelMatrixEstimatorFeed(const MatrixXd &softEstimates,const MatrixXd &decisions) const { return decisions; }
 	
 	virtual void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
 

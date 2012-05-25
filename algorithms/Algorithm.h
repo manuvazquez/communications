@@ -76,16 +76,6 @@ public:
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
 
     VectorXd substractKnownSymbolsContribution(const std::vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
-
-    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m,uint start,uint d);
-    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m)
-    {
-        return channelMatrices2stackedChannelMatrix(matrices,m,0,matrices.size()-1);
-    }
-    static MatrixXd channelMatrices2stackedChannelMatrix(std::vector<MatrixXd> matrices,uint m,uint d)
-    {
-        return channelMatrices2stackedChannelMatrix(matrices,m,0,d);
-    }    
 };
 
 #endif

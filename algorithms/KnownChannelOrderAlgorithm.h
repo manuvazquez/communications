@@ -28,6 +28,8 @@
 
 #include <vector>
 #include <types.h>
+#include <Algorithm.h>
+#include <TransmissionUtil.h>
 #include <Util.h>
 
 class KnownChannelOrderAlgorithm : public UnknownChannelAlgorithm
@@ -42,7 +44,7 @@ public:
     KnownChannelOrderAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble);
 	~KnownChannelOrderAlgorithm();
 
-    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return Algorithm::channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
+    MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return TransmissionUtil::channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
     
     virtual bool computesChannelEstimatesVariances() const { return _channelEstimator->computesVariances(); }
 };

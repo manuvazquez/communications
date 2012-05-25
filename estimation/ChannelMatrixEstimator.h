@@ -78,8 +78,9 @@ public:
         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
     }
     
-    virtual uint cols() const { return _nInputsXchannelOrder;}
-    virtual uint rows() const { return _nOutputs;}
+    uint cols() const { return _nInputsXchannelOrder;}
+    uint rows() const { return _nOutputs;}
+    uint nInputs() const { return _nInputs;}
     virtual uint memory() const;
 
 	/*!
