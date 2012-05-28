@@ -58,7 +58,7 @@
 #define SYMBOLIC_LINK_NAME "last_res"
 
 // to save all the generated channels (each one being a collection of channel matrices)
-#define KEEP_ALL_CHANNEL_MATRICES
+// #define KEEP_ALL_CHANNEL_MATRICES
 
 #define SAVE_ALL_SEEDS
 

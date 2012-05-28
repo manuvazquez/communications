@@ -34,7 +34,7 @@ PlainSystem::PlainSystem()
 	_linearFilterAwareNoiseVarianceAdjustingKalmanEstimator = new LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_MMSEdetector,_alphabet->variance());
 	
 // 	_kalmanFilterAwareMMSEDetector = new KalmanFilterAwareMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator);
-	_kalmanFilterAwareMMSEDetector = new KalmanFilterAwareMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator);
+	_kalmanFilterAwareMMSEDetector = new KalmanFilterAwareMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients);
 	
 	_knownChannelChannelMatrixEstimator = NULL;
 }

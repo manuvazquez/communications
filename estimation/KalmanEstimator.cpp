@@ -55,10 +55,10 @@ KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixX
 
 #ifdef PRINT_INFO
     cout << "KalmanEstimator::KalmanEstimator: constructed a Kalman Filter with parameters:" << endl;
-    cout << "state transition matrix:" << endl << stateTransitionMatrix;
-    cout << "state equation covariance:" << endl << stateEquationCovariance;
-    cout << "initial mean" << endl << initialMeanVector;
-    cout << "initial covariance" << endl << initialCovariance;
+    cout << "state transition matrix:" << endl << stateTransitionMatrix << endl;
+    cout << "state equation covariance:" << endl << stateEquationCovariance << endl;
+    cout << "initial mean" << endl << initialMeanVector << endl;
+    cout << "initial covariance" << endl << initialCovariance << endl;
 #endif
 
     _kalmanFilter = new KalmanFilter(stateTransitionMatrix,stateEquationCovariance,initialMeanVector,initialCovariance);    

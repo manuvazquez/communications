@@ -60,6 +60,11 @@ public:
     
     virtual bool computesVariances() const { return true; }
     
+    /**
+	 * @brief It returns a matrix the same size as the channel with each coefficient representing the variance of the corresponding estimated mean (thus it does NOT return covariances)
+	 *
+	 * @return MatrixXd
+	 **/
 	virtual MatrixXd getVariances() const 
 	{
 		return Util::toMatrix(_kalmanFilter->filteredCovariance().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);

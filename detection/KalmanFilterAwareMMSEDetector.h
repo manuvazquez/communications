@@ -27,14 +27,13 @@ class KalmanFilterAwareMMSEDetector : public MMSEDetector
 {
 protected:
 	KalmanEstimator const *_kalmanEstimator;
+	const std::vector<double> _ARcoefficients;
 public:
-    KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator);
+    KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
 	
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
 	
     virtual KalmanFilterAwareMMSEDetector* clone();
-	
-	MatrixXd covarianceMatrixForCol(uint iCol) const;
 	
 	void setKalmanEstimator(KalmanEstimator * kalmanEstimator) { _kalmanEstimator = kalmanEstimator; }
 };
