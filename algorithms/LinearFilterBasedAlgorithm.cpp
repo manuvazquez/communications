@@ -20,6 +20,7 @@
 #include "LinearFilterBasedAlgorithm.h"
 
 // #define DEBUG
+// #define DEBUG2
 
 // #include <MIMOChannel.h>
 
@@ -128,6 +129,13 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 #ifdef DEBUG
 				cout << "(*iterARcoeffs)*(*iterMatrices) = " << endl << (*iterARcoeffs)*(*iterMatrices) << endl;
 #endif
+				
+#ifdef DEBUG2
+				cout << "--------stacking: " << endl << matricesToStack[iSmoothing] << endl;
+				cout << "predictive matrix in the Kalman Filter" << endl;
+				cout << dynamic_cast<KalmanEstimator *>(_channelEstimator)->predictedMatrix() << endl;
+// 				cout << "it has been used the matrix:" << endl << (*iterMatrices) << endl;
+#endif
 			}
 			
 			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
@@ -186,6 +194,11 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 		// ...and updated with the last estimated channel matrix
 		ARmatricesBuffer.erase(ARmatricesBuffer.begin());
 		ARmatricesBuffer.push_back(_estimatedChannelMatrices[iObservationToBeProcessed]);
+
+#ifdef DEBUG2
+		cout << "stackedChannelMatrix: " << endl << stackedChannelMatrix << endl;
+		getchar();
+#endif
 
     } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }

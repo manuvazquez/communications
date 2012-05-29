@@ -23,6 +23,7 @@
 // #define DEBUG
 // #define DEBUG2
 // #define DEBUG3
+// #define DEBUG4
 
 KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients)
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients)
@@ -60,16 +61,28 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 	predictedMatrices[0] = _kalmanEstimator->predictedMatrix();
 	predictedCovariances[0] = _kalmanEstimator->getPredictiveCovariance();
 	
+#ifdef DEBUG4
+	cout << "KalmanFilterAwareMMSEDetector: stacking" << endl << predictedMatrices[0] << endl;
+#endif
+	
 	KalmanEstimator *kalmanEstimatorClone = _kalmanEstimator->clone();
 	
 	for(uint i=1;i<=d;i++)
 	{
+#ifdef DEBUG4
+		cout << "passing zeros..." << endl;
+#endif
 		// one PREDICTIVE step is advanced on the cloned Kalman filter: observations vector and symbols matrix are zero so that the filtered mean and covariance be equal to the predictive ones.
 		// Regarding the noise variance, a value different from 0 (any one should do) must be passed or otherwise, the matrix inversion within the KF will give rise to NaN's
-		kalmanEstimatorClone->nextMatrix(VectorXd::Zero(L),MatrixXd::Zero(N,m),1.0);
+		MatrixXd foo = kalmanEstimatorClone->nextMatrix(VectorXd::Zero(L),MatrixXd::Zero(N,m),1.0);
 		
 		predictedMatrices[i] = kalmanEstimatorClone->predictedMatrix();
 		predictedCovariances[i] = kalmanEstimatorClone->getPredictiveCovariance();
+		
+#ifdef DEBUG4
+		cout << "KalmanFilterAwareMMSEDetector: foo is" << endl << foo << endl;
+		cout << "KalmanFilterAwareMMSEDetector: predictedMatrices[1]" << endl << predictedMatrices[i] << endl;
+#endif
 
 #ifdef DEBUG
 		cout << "predicted for i = " << i << endl << predictedMatrices[i] << endl;
@@ -81,7 +94,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 	
 	MatrixXd predictedStackedChannelMatrix = TransmissionUtil::channelMatrices2stackedChannelMatrix(predictedMatrices,m);
 	
-#ifdef DEBUG
+#ifdef DEBUG4
 	cout << "predictedStackedChannelMatrix:" << endl << predictedStackedChannelMatrix << endl;
 #endif
 	
@@ -133,7 +146,8 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 				else
 				{
 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn])
-												*pow(_ARcoefficients[0],double(j-i));
+// 												*pow(_ARcoefficients[0],double(j-i));
+												*pow(_ARcoefficients[0],double(i+j));
 					thisColumnCovariance.block(i*L,j*L,L,L) = subCovariance;
 					thisColumnCovariance.block(j*L,i*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
 				}

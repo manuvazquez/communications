@@ -21,6 +21,7 @@
 #include <BaseSystem.h>
 
 #include <KalmanEstimator.h>
+#include <KnownSymbolsKalmanEstimator.h>
 #include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator.h>
 
 #include <KalmanFilterAwareMMSEDetector.h>
@@ -42,7 +43,7 @@ class PlainSystem : public BaseSystem
 
 protected:
 	KalmanEstimator *_kalmanEstimator;
-	LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator *_linearFilterAwareNoiseVarianceAdjustingKalmanEstimator;
+	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
 	
 	MMSEDetector *_MMSEdetector;
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;

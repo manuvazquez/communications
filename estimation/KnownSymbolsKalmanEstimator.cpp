@@ -28,7 +28,15 @@ KnownSymbolsKalmanEstimator::KnownSymbolsKalmanEstimator(const MatrixXd& initial
 MatrixXd KnownSymbolsKalmanEstimator::nextMatrix(const VectorXd &observations, const MatrixXd &symbolsMatrix, double noiseVariance)
 {
     _presentTime++;
-    return KalmanEstimator::nextMatrix(observations, _symbols.block(0,_presentTime-_channelOrder,_nInputs,_channelOrder), noiseVariance);
+	
+// 	cout << "symbolsMatrix" << endl << symbolsMatrix << endl;
+// 	cout << "is 0: " << symbolsMatrix.isConstant(0.0) << endl;
+	
+	// if an all-zeros symbols matrix is passed (allegedly intentionally) that is fed into the Kalman Filter (rather than the true transmitted symbols)
+	if(symbolsMatrix.isConstant(0.0))
+		return KalmanEstimator::nextMatrix(observations, symbolsMatrix, noiseVariance);
+	else
+		return KalmanEstimator::nextMatrix(observations, _symbols.block(0,_presentTime-_channelOrder,_nInputs,_channelOrder), noiseVariance);
 }
 
 KnownSymbolsKalmanEstimator* KnownSymbolsKalmanEstimator::clone() const
