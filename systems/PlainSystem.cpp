@@ -20,10 +20,14 @@
 PlainSystem::PlainSystem()
 	: BaseSystem()
 {
-// 	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
+// 	double yuleWalkerARvariance;
+// 	std::vector<double> yuleWalkerARcoefficients = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,yuleWalkerARvariance);
+// 
+// 	std::cout << "AR coefficients computed from Yule-Walker equations:" << std::endl << yuleWalkerARcoefficients << std::endl;
+// 	std::cout << "Variance = " << yuleWalkerARvariance << std::endl;
 // 	
-// 	std::cout << "AR coefficients computed from Yule-Walker equations:" << std::endl << _ARcoefficients << std::endl;
-// 	std::cout << "Variance = " << _ARvariance << std::endl;
+// 	_ARcoefficients = yuleWalkerARcoefficients;
+// 	_ARvariance = yuleWalkerARvariance;
 	
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
@@ -56,14 +60,15 @@ void PlainSystem::addAlgorithms()
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("KF-aware MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
 	
-    delete _knownChannelChannelMatrixEstimator;
-    _knownChannelChannelMatrixEstimator = new KnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N);
-	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE with Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
-	
 	delete _knownSymbolsKalmanEstimator;
 	_knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_preambleLength);
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Known Symbols Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("KF-aware MMSE + Known Symbols Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
+	
+    delete _knownChannelChannelMatrixEstimator;
+    _knownChannelChannelMatrixEstimator = new KnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N);
+	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE with Known Channel at Detection Time",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
+	_algorithms.push_back(new LinearFilterBasedAlgorithmWithKnownChannel("MMSE with Known Channel at Every Time Instant",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	
 // 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
 }

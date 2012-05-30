@@ -33,6 +33,7 @@
 #include <FlatPowerProfile.h>
 
 #include <LinearFilterBasedAlgorithm.h>
+#include <LinearFilterBasedAlgorithmWithKnownChannel.h>
 #include <LinkedKalmanFilterAndLinearFilterBasedAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <KalmanFilterAwareMMSEBasedAlgorithm.h>

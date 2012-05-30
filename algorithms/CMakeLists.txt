@@ -25,6 +25,7 @@ ADD_LIBRARY (algorithms STATIC
 			KnownSymbolsCMEapplyingAlgorithm
 			KnownSymbolsKalmanBasedChannelEstimatorAlgorithm
 			LinearFilterBasedAlgorithm
+			LinearFilterBasedAlgorithmWithKnownChannel
 			KalmanFilterAwareMMSEBasedAlgorithm
 			LinearFilterBasedCMEapplyingAlgorithm
 			LinearFilterBasedMKFAlgorithm

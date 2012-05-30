@@ -40,9 +40,17 @@ protected:
 
     const bool _substractContributionFromKnownSymbols;
 	
-	virtual MatrixXd obtainChannelMatrixEstimatorFeed(const MatrixXd &softEstimates,const MatrixXd &decisions) const { return decisions; }
+	MatrixXd obtainChannelMatrixEstimatorFeed(const MatrixXd &softEstimates,const MatrixXd &decisions) const { return decisions; }
 	
 	virtual void process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence);
+	
+	/**
+	 * @brief From a buffer that contains the previous estimated channel matrices, it returns the matrices that need to be stacked in order to detect the transmitted symbols performing smoothing
+	 *
+	 * @param ARmatricesBuffer a buffer containing the previous estimated channel matrices
+	 * @return :vector< MatrixXd, std::allocator< MatrixXd > >
+	 **/
+	virtual std::vector<MatrixXd> getChannelMatricesToStackForSmoothing(std::vector<MatrixXd> ARmatricesBuffer) const;
 
 public:
     LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols = false);

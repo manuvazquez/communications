@@ -20,11 +20,7 @@
 #include "LinearFilterBasedAlgorithm.h"
 
 // #define DEBUG
-// #define DEBUG2
-
-// #include <MIMOChannel.h>
-
-#include <realData.h>
+// #include <realData.h>
 
 #include <KnownSymbolsKalmanEstimator.h>
 
@@ -77,11 +73,6 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 
 void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<double> noiseVariances, MatrixXd trainingSequence)
 {
-#ifdef DEBUG
-// 	cout << "---------------------------------------------------------" << endl;
-	cout << " ================= algorithm: " << _name << "================" << endl;
-#endif
-	
 	assert(observations.rows()==_nOutputs); 
 	
     uint nObservations = observations.cols();
@@ -94,15 +85,15 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 		// the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector
 		assert(_linearDetector->channelMatrixcols()==_nInputs*(_d+1));
 
-    vector<MatrixXd> matricesToStack(_d+1);
+//     vector<MatrixXd> matricesToStack(_d+1);
     uint iSmoothing,iRow;
     MatrixXd stackedNoiseCovariance = MatrixXd::Zero(_nOutputs*(_d+1),_nOutputs*(_d+1));
 	
-	std::vector<double>::const_iterator iterARcoeffs;
+// 	std::vector<double>::const_iterator iterARcoeffs;
 	std::vector<MatrixXd>::reverse_iterator iterMatrices;
 	
 	std::vector<MatrixXd> ARmatricesBuffer(_ARcoefficients.size(),_channelEstimator->lastEstimatedChannelMatrix());
-	std::vector<MatrixXd> auxARmatricesBuffer;
+// 	std::vector<MatrixXd> auxARmatricesBuffer;
 
 	// the channel matrices estimated during the training sequence are copied into ARmatricesBuffer (last matrix in the vector is the more recent)
 	iterMatrices = ARmatricesBuffer.rbegin();
@@ -111,36 +102,22 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 	
     for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
     {
-#ifdef DEBUG
-		cout << "------ " << iObservationToBeProcessed << " -------" << endl;
-		cout << "buffer: " << endl << ARmatricesBuffer << endl;
-#endif
-		// a copy of the buffer of matrices needed for the AR process is kept
-		auxARmatricesBuffer = ARmatricesBuffer;
-		
-        for(iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
-        {
-			// new matrix to be stacked is initialized to zero
-			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
-			
-			for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
-			{
-				matricesToStack[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
-#ifdef DEBUG
-				cout << "(*iterARcoeffs)*(*iterMatrices) = " << endl << (*iterARcoeffs)*(*iterMatrices) << endl;
-#endif
-				
-#ifdef DEBUG2
-				cout << "--------stacking: " << endl << matricesToStack[iSmoothing] << endl;
-				cout << "predictive matrix in the Kalman Filter" << endl;
-				cout << dynamic_cast<KalmanEstimator *>(_channelEstimator)->predictedMatrix() << endl;
-// 				cout << "it has been used the matrix:" << endl << (*iterMatrices) << endl;
-#endif
-			}
-			
-			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
-			ARmatricesBuffer.push_back(matricesToStack[iSmoothing]);
-        }
+// 		// a copy of the buffer of matrices needed for the AR process is kept
+// 		auxARmatricesBuffer = ARmatricesBuffer;
+// 		
+//         for(iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
+//         {
+// 			// new matrix to be stacked is initialized to zero
+// 			matricesToStack[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
+// 			
+// 			for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
+// 				matricesToStack[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
+// 			
+// 			ARmatricesBuffer.erase(ARmatricesBuffer.begin());
+// 			ARmatricesBuffer.push_back(matricesToStack[iSmoothing]);
+//         }
+
+		vector<MatrixXd> matricesToStack = getChannelMatricesToStackForSmoothing(ARmatricesBuffer);
         
         MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
 
@@ -167,47 +144,46 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         for(iRow=0;iRow<_nInputs;iRow++)
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
-#ifdef DEBUG
-			cout << "stackedChannelMatrix" << endl << stackedChannelMatrix << endl;
-			cout << "realChannel->at(iObservationToBeProcessed)" << endl << realChannel->at(iObservationToBeProcessed) << endl;
-// 			cout << "MSE commited = " << Util::squareErrorPaddingWithZeros(realChannel->at(iObservationToBeProcessed),stackedChannelMatrix)/realChannel->at(iObservationToBeProcessed).squaredNorm() << endl;
-			cout << "softEstimations = " << endl << softEstimations << endl;
-			cout << "detected vector: " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
-			cout << "true vector: " << endl << realSymbols->col(iObservationToBeProcessed) << endl;
-// 			cout << "properly detected? " << (_detectedSymbolVectors.col(iObservationToBeProcessed)==realSymbols->col(iObservationToBeProcessed)) << endl;
-			if(!(_detectedSymbolVectors.col(iObservationToBeProcessed)==realSymbols->col(iObservationToBeProcessed)))
-			{
-				cout << "detection ERROR!!" << endl;
-				getchar();
-			}
-#endif
-
 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
 																							 obtainChannelMatrixEstimatorFeed(softEstimations,_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder)),
 																							 noiseVariances[iObservationToBeProcessed]);
 			
 // 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
 		
-		// the buffer of matrices for the AR process at the beginning of the iteration is restored...
-		ARmatricesBuffer = auxARmatricesBuffer;
+// 		// the buffer of matrices for the AR process at the beginning of the iteration is restored...
+// 		ARmatricesBuffer = auxARmatricesBuffer;
 		
 		// ...and updated with the last estimated channel matrix
 		ARmatricesBuffer.erase(ARmatricesBuffer.begin());
 		ARmatricesBuffer.push_back(_estimatedChannelMatrices[iObservationToBeProcessed]);
 
-#ifdef DEBUG2
-		cout << "stackedChannelMatrix: " << endl << stackedChannelMatrix << endl;
-		getchar();
-#endif
-
     } // for(uint iObservationToBeProcessed=_startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
+}
+
+std::vector<MatrixXd> LinearFilterBasedAlgorithm::getChannelMatricesToStackForSmoothing(std::vector<MatrixXd> ARmatricesBuffer) const
+{
+	std::vector<double>::const_iterator iterARcoeffs;
+	std::vector<MatrixXd>::reverse_iterator iterMatrices;
+	
+	std::vector<MatrixXd> res(_d+1);
+	
+	for(uint iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
+	{
+		// new matrix to be stacked is initialized to zero
+		res[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
+		
+		for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
+			res[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
+		
+		ARmatricesBuffer.erase(ARmatricesBuffer.begin());
+		ARmatricesBuffer.push_back(res[iSmoothing]);
+	}
+	
+	return res;
 }
 
 MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
-#ifdef DEBUG
-	cout << "returning:" << endl << _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols()) << endl;
-#endif
     return _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
 
