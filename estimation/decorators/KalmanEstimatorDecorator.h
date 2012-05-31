@@ -27,13 +27,13 @@ protected:
 	KalmanEstimator *_decorated;
 	
 public:
-    KalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator);
-    KalmanEstimatorDecorator(const KalmanEstimatorDecorator& other);
-    virtual ~KalmanEstimatorDecorator();
+    KalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator):_decorated(kalmanEstimator->clone()) {}
+    KalmanEstimatorDecorator(const KalmanEstimatorDecorator& other):_decorated(new KalmanEstimator(*(other._decorated))) {}
+    virtual ~KalmanEstimatorDecorator() { delete _decorated;}
 	
     virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance) { return _decorated->nextMatrix(observations, symbolsMatrix, noiseVariance);}
     virtual double likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance) { return _decorated->likelihood(observations, symbolsMatrix, noiseVariance);}
-    virtual KalmanEstimatorDecorator* clone() const;
+    virtual KalmanEstimatorDecorator* clone() const { return new KalmanEstimatorDecorator(*this);}
     virtual MatrixXd samplePredicted() const { return _decorated->samplePredicted();}
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd& matrix) { _decorated->setFirstEstimatedChannelMatrix(matrix);}
     virtual MatrixXd getFilteredCovariance() const { return _decorated->getFilteredCovariance();}
@@ -48,8 +48,18 @@ public:
 	virtual uint rows() const { return _decorated->rows();}
 	virtual uint nInputs() const { return _decorated->nInputs();}
 	virtual uint memory() const {return _decorated->memory();}
-	virtual vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo);
-	virtual std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances);
+	
+	virtual vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo)
+	{
+		// since _decorated is a KF (and NOT a "decorated" KF), this will actually call KalmanEstimator's "nextMatrix" method...which is the desired action
+		return _decorated->nextMatricesFromObservationsSequence(observations,noiseVariances,symbolVectors,iFrom,iTo);
+	}
+	
+	virtual std::vector<MatrixXd> nextMatricesFromObservationsSequence(const MatrixXd &observations,std::vector<double> &noiseVariances,const MatrixXd &symbolVectors,uint iFrom,uint iTo,std::vector<MatrixXd> &channelEstimatesVariances)
+	{
+		// since _decorated is a KF (and NOT a "decorated" KF), this will actually call KalmanEstimator's "nextMatrix" method...which is the desired action
+		return _decorated->nextMatricesFromObservationsSequence(observations,noiseVariances,symbolVectors,iFrom,iTo,channelEstimatesVariances);
+	}
 	
 	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const { return _decorated->colIndexToIndexesWithinKFstateVector(iCol);}
 };

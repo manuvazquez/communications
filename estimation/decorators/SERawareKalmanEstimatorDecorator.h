@@ -25,11 +25,13 @@
 class SERawareKalmanEstimatorDecorator : public KalmanEstimatorDecorator
 {
 protected:
-	double _symbolsVariance;
+	const std::vector<double> _noiseVariances;
+	const std::vector<double> _SERs;
+	const std::vector<tSymbol> _possibleErrors;
 	
 	double computeExtraVariance(double noiseVariance);
 public:
-	SERawareKalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator, double symbolsVariance);
+	SERawareKalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator,const std::vector<double> &noiseVariances,const std::vector<double> &SERs,const std::vector<double> &possibleErrors);
 	
     virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance);
     virtual double likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance);

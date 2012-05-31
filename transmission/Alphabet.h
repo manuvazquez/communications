@@ -9,12 +9,14 @@
 class Alphabet
 {
     private:
-        std::vector<tSymbol> _symbols;
-        std::vector<std::vector<tBit> > _bitsSequences;
-        uint _nBitsPerSymbol,_length;
+        const std::vector<tSymbol> _symbols;
+        const std::vector<std::vector<tBit> > _bitsSequences;
+        const uint _nBitsPerSymbol,_length;
         double _mean,_variance;
+		
+		std::vector<tSymbol> _differencesBetweenSymbols;
         
-        void computeMeanAndVariance();
+        void constructor();
     public:
         Alphabet(std::vector<std::vector<tBit> > secuenciasBits,std::vector<tSymbol> simbolos);
         Alphabet(std::vector<tSymbol> simbolos);        
@@ -38,6 +40,13 @@ class Alphabet
 		  \return a new \ref Alphabet object
 		*/
 		Alphabet buildNewAlphabetByAddingSymbol(tSymbol symbol) const;
+		
+		/**
+		 * @brief It returns all the differences between pairs of symbols, i.e., all the possible errors. The first one is always 0
+		 *
+		 * @return :vector< tSymbol, std::allocator< tSymbol > >
+		 **/
+		std::vector<tSymbol> differencesBetweenSymbols() const { return _differencesBetweenSymbols;}
 };
 #endif
 

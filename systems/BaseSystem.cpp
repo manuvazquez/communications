@@ -44,6 +44,7 @@ extern bool __nFramesHasBeenPassed;
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
+# define PRINT_NOISE_VARIANCE
 
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
@@ -396,6 +397,12 @@ if(__nFramesHasBeenPassed)
             // here the number of algoriths is known. So, the first iteration:
             if(_iFrame==0 && _iSNR==0)
                 onlyOnce();
+			
+
+#ifdef PRINT_NOISE_VARIANCE
+// 			cout << COLOR_INFO << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << " -> " << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[_frameLength/2] << endl;
+			cout << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[_frameLength/2] << endl;
+#endif
 
             // algorithms are executed
             for(_iAlgorithm=0;_iAlgorithm<_algorithms.size();_iAlgorithm++)

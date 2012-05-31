@@ -10,23 +10,22 @@ using std::vector;
 
 Alphabet::Alphabet(vector<vector<tBit> > bitsSequences,vector<tSymbol> symbols):_symbols(symbols),_bitsSequences(bitsSequences),_nBitsPerSymbol(bitsSequences[0].size()),_length(bitsSequences.size())
 {
-    // if the number of bits sequences and that of the symbols don't match...
-    if(bitsSequences.size()!=symbols.size())
-	  throw RuntimeException("Alphabet::Alphabet: number of bit sequences is different from that of symbols.");
+    // the number of bits sequences and that of the symbols don't match...
+	assert(bitsSequences.size()==symbols.size());
 
-    computeMeanAndVariance();
+    constructor();
 }
 
 Alphabet::Alphabet(vector<tSymbol> symbols):_symbols(symbols),_bitsSequences(symbols.size(),vector<tBit>(0)),_nBitsPerSymbol(0),_length(symbols.size())
 {
-    computeMeanAndVariance();
+    constructor();
 }
 
-void Alphabet::computeMeanAndVariance()
+void Alphabet::constructor()
 {
     _mean = 0.0;
     double squaredSymbolsMean = 0.0;
-    vector<tSymbol>::iterator iterator;
+    vector<tSymbol>::const_iterator iterator;
     for(iterator=_symbols.begin();iterator !=_symbols.end();iterator++)
     {
         _mean += (double) *iterator;
@@ -35,6 +34,16 @@ void Alphabet::computeMeanAndVariance()
     _mean /= _length;
     squaredSymbolsMean /= _length;
     _variance = squaredSymbolsMean - (_mean*_mean);
+	
+	// differences between pairs of symbols
+	_differencesBetweenSymbols.push_back(0.0);
+	for(uint i=0;i<_symbols.size();i++)
+		for(uint j=i+1;j<_symbols.size();j++)
+			if(find(_differencesBetweenSymbols.begin(),_differencesBetweenSymbols.end(),_symbols[i]-_symbols[j])==_differencesBetweenSymbols.end())
+			{
+				_differencesBetweenSymbols.push_back(_symbols[i]-_symbols[j]);
+				_differencesBetweenSymbols.push_back(_symbols[j]-_symbols[i]);
+			}
 }
 
 tSymbol Alphabet::operator [ ](vector<tBit> searchedBitsSequence) const
