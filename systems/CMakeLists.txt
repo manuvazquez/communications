@@ -12,6 +12,7 @@ include_directories(.
 		    ${PROJECT_SOURCE_DIR}/transmission/channel/delayPowerProfile
 		    ${PROJECT_SOURCE_DIR}/algorithms
 		    ${PROJECT_SOURCE_DIR}/algorithms/USIS2SIS
+		    ${PROJECT_SOURCE_DIR}/estimation/decorators
 		    ${PROJECT_SOURCE_DIR}/estimation)
 ADD_LIBRARY (systems STATIC
 		    BaseSystem
@@ -41,6 +42,7 @@ TARGET_LINK_LIBRARIES (systems
 		      channel
 		      delayPowerProfile
 		      detection
+		      estimation_decorators
 		      smc
 		      resampling
 		      filters

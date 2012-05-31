@@ -19,6 +19,10 @@
  ***************************************************************************/
 #include "ChannelMatrixEstimator.h"
 
+ChannelMatrixEstimator::ChannelMatrixEstimator():_nOutputs(0),_channelOrder(0),_nChannelMatrixRows(0),_nInputsXchannelOrder(0),_nInputs(0),_nChannelCoeffs(0),_lastEstimatedChannelCoefficientsMatrix(MatrixXd::Zero(0,0))
+{
+}
+
 ChannelMatrixEstimator::ChannelMatrixEstimator(MatrixXd initialEstimation,uint N):_nOutputs(initialEstimation.rows()),_nChannelMatrixRows(initialEstimation.rows()),_nInputsXchannelOrder(initialEstimation.cols()),_nInputs(N),_nChannelCoeffs(initialEstimation.rows()*initialEstimation.cols()),_lastEstimatedChannelCoefficientsMatrix(initialEstimation)
 {
 	// number of columns of "initialEstimation" is less than N

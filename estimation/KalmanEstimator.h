@@ -41,6 +41,13 @@ protected:
     
     virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
 public:
+	
+	/**
+	 * @brief An empty constructor needed to implement the decorator pattern
+	 *
+	 **/
+	KalmanEstimator();
+	
     KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
@@ -78,7 +85,7 @@ public:
 	 * @param iCol the index of the column
 	 * @return a vector of indexes
 	 **/
-	std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const;
+	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const;
 };
 
 #endif

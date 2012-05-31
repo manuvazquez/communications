@@ -20,3 +20,4 @@ ADD_LIBRARY (estimation STATIC
 			LMSEstimator
 			NLMSEstimator
 			RLSEstimator)
+add_subdirectory(decorators)

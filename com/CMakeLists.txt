@@ -13,6 +13,7 @@ include_directories(.
 		    ${PROJECT_SOURCE_DIR}/algorithms
 		    ${PROJECT_SOURCE_DIR}/algorithms/USIS2SIS
 		    ${PROJECT_SOURCE_DIR}/systems
+		    ${PROJECT_SOURCE_DIR}/estimation/decorators
 		    ${PROJECT_SOURCE_DIR}/estimation)
 ADD_EXECUTABLE (com com)
 TARGET_LINK_LIBRARIES (com

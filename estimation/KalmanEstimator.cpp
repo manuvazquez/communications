@@ -21,6 +21,10 @@
 
 // #define PRINT_INFO
 
+KalmanEstimator::KalmanEstimator():_kalmanFilter(NULL),_nExtStateVectorCoeffs(0)
+{
+}
+
 KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
 {
     // stateTransitionMatrix is a blockwise matrix that represents the state transition matrix

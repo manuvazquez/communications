@@ -39,6 +39,13 @@ protected:
     MatrixXd _lastEstimatedChannelCoefficientsMatrix;
 
 public:
+	
+	/**
+	 * @brief An empty constructor needed to implement the decorator pattern in subclasses (e.g., "KalmanEstimator")
+	 *
+	 **/
+	ChannelMatrixEstimator();
+	
 	/*!
 	  It builds a \ref ChannelMatrixEstimator object
 	  \param initialEstimation a matrix representing the initial estimation. It's what \ref lastEstimatedChannelMatrix returns when \ref nextMatrix hasn't been called yet
@@ -78,9 +85,9 @@ public:
         throw RuntimeException("ChannelMatrixEstimator::likelihood: not implemented yet.");
     }
     
-    uint cols() const { return _nInputsXchannelOrder;}
-    uint rows() const { return _nOutputs;}
-    uint nInputs() const { return _nInputs;}
+    virtual uint cols() const { return _nInputsXchannelOrder;}
+    virtual uint rows() const { return _nOutputs;}
+    virtual uint nInputs() const { return _nInputs;}
     virtual uint memory() const;
 
 	/*!
