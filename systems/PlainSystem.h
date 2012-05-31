@@ -22,7 +22,6 @@
 
 #include <KalmanEstimator.h>
 #include <KnownSymbolsKalmanEstimator.h>
-#include <LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator.h>
 
 #include <KalmanFilterAwareMMSEDetector.h>
 
