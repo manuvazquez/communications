@@ -74,6 +74,7 @@ PlainSystem::~PlainSystem()
 void PlainSystem::addAlgorithms()
 {
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
+	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Known SER Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_SERawareKalmanEstimatorDecorator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("KF-aware MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
 	
 	delete _knownSymbolsKalmanEstimator;

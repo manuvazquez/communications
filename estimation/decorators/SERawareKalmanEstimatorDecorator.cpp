@@ -17,7 +17,7 @@
 
 #include "SERawareKalmanEstimatorDecorator.h"
 
-#define DEBUG
+// #define DEBUG
 
 #include <math.h>
 
@@ -30,20 +30,21 @@ KalmanEstimatorDecorator(kalmanEstimator),_noiseVariances(noiseVariances),_SERs(
 	assert(possibleErrors.size()==3);
 	
 #ifdef DEBUG
-	computeExtraVariance(0.01);
-	computeExtraVariance(0.5);
-	computeExtraVariance(0.0007);
+	computeExtraObservationEquationCovariance(0.01);
+	computeExtraObservationEquationCovariance(0.5);
+	computeExtraObservationEquationCovariance(0.0007);
 #endif
 }
 
 MatrixXd SERawareKalmanEstimatorDecorator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
 {
-	return KalmanEstimatorDecorator::nextMatrix(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
+	return _decorated->nextMatrix(observations, symbolsMatrix, noiseVariance*MatrixXd::Identity(rows(),rows()) + computeExtraObservationEquationCovariance(noiseVariance));
 }
 
 double SERawareKalmanEstimatorDecorator::likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance)
 {
-	return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance + computeExtraVariance(noiseVariance));
+// 	return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance*MatrixXd::Identity(rows(),rows()) + computeExtraObservationEquationCovariance(noiseVariance));
+	throw RuntimeException("SERawareKalmanEstimatorDecorator::likelihood: not implemented!!");
 }
 
 SERawareKalmanEstimatorDecorator* SERawareKalmanEstimatorDecorator::clone() const
@@ -51,7 +52,7 @@ SERawareKalmanEstimatorDecorator* SERawareKalmanEstimatorDecorator::clone() cons
 	return new SERawareKalmanEstimatorDecorator(*this);
 }
 
-double SERawareKalmanEstimatorDecorator::computeExtraVariance(double noiseVariance)
+MatrixXd SERawareKalmanEstimatorDecorator::computeExtraObservationEquationCovariance(double noiseVariance)
 {
 	// we find out which variance from "_noiseVariances" is closer to this one
 	uint iMin = 0;
@@ -79,8 +80,32 @@ double SERawareKalmanEstimatorDecorator::computeExtraVariance(double noiseVarian
 	cout << "errorsAutocorrelation = " << errorsAutocorrelation << endl;
 #endif
 	
+	VectorXd predictiveMean = _decorated->getPredictiveMean();
+	MatrixXd predictiveCovariance = _decorated->getPredictiveCovariance();
 	
-	return 0.0;
+#ifdef DEBUG
+// 	cout << "predictiveMean:" << endl << predictiveMean << endl;
+// 	cout << "predictiveCovariance:" << endl << predictiveCovariance << endl;
+	cout << "rows = " << rows() << endl;
+	cout << "inputs = " << nInputs() << endl;
+	cout << "cols = " << cols() << endl;
+#endif
+	
+	MatrixXd observationsNoiseCovariance = MatrixXd::Zero(rows(),rows());
+	
+	for(uint i=0;i<predictiveMean.size();i++)
+	{
+#ifdef DEBUG
+// 		cout << "i = " << i << " i/cols() = " << i/cols() << endl;
+#endif
+		observationsNoiseCovariance(i/cols(),i/cols()) += pow(predictiveMean(i),2.0) + predictiveCovariance(i,i)*errorsAutocorrelation;
+	}
+	
+#ifdef DEBUG
+	cout << "observationsNoiseCovariance:" << endl << observationsNoiseCovariance << endl;
+#endif
+	
+	return observationsNoiseCovariance;
 }
 
 

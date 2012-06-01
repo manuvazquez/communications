@@ -29,7 +29,7 @@ protected:
 	const std::vector<double> _SERs;
 	const std::vector<tSymbol> _possibleErrors;
 	
-	double computeExtraVariance(double noiseVariance);
+	MatrixXd computeExtraObservationEquationCovariance(double noiseVariance);
 public:
 	SERawareKalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator,const std::vector<double> &noiseVariances,const std::vector<double> &SERs,const std::vector<double> &possibleErrors);
 	

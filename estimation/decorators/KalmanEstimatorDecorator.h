@@ -30,7 +30,7 @@ public:
     KalmanEstimatorDecorator(KalmanEstimator *kalmanEstimator):_decorated(kalmanEstimator->clone()) {}
     KalmanEstimatorDecorator(const KalmanEstimatorDecorator& other):_decorated(new KalmanEstimator(*(other._decorated))) {}
     virtual ~KalmanEstimatorDecorator() { delete _decorated;}
-	
+    
     virtual MatrixXd nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance) { return _decorated->nextMatrix(observations, symbolsMatrix, noiseVariance);}
     virtual double likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance) { return _decorated->likelihood(observations, symbolsMatrix, noiseVariance);}
     virtual KalmanEstimatorDecorator* clone() const { return new KalmanEstimatorDecorator(*this);}
@@ -38,6 +38,7 @@ public:
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd& matrix) { _decorated->setFirstEstimatedChannelMatrix(matrix);}
     virtual MatrixXd getFilteredCovariance() const { return _decorated->getFilteredCovariance();}
 	virtual MatrixXd getPredictiveCovariance() const {return _decorated->getPredictiveCovariance();}
+	virtual VectorXd getPredictiveMean() const {return _decorated->getPredictiveMean();}
     virtual bool computesVariances() const { return _decorated->computesVariances();}
     virtual MatrixXd getVariances() const { return _decorated->getVariances();}
     virtual MatrixXd predictedMatrix() const { return _decorated->predictedMatrix();}

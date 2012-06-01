@@ -54,6 +54,7 @@ public:
 	
     virtual KalmanEstimator *clone() const;
     
+	MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,const MatrixXd &observationEquationCovariance);
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
 	
@@ -64,6 +65,7 @@ public:
 	//! they return the corresponding covariance AS STORED by the internal Kalman Filter
     virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance();}
     virtual MatrixXd getPredictiveCovariance() const {return _kalmanFilter->predictiveCovariance();}
+    virtual VectorXd getPredictiveMean() const {return _kalmanFilter->predictiveMean();}
     
     virtual bool computesVariances() const { return true; }
     

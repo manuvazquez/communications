@@ -79,15 +79,34 @@ KalmanEstimator::~KalmanEstimator()
 
 MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance)
 {
-    if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
-	{
-	  cout << "observations.size() = " << observations.size() << " _nOutputs = " << _nOutputs << endl;
-	  cout << " symbolsMatrix.size() = " << symbolsMatrix.size() << " _nInputsXchannelOrder = " << _nInputsXchannelOrder << endl;
-	  throw RuntimeException("KalmanEstimator::NextMatrix: observations vector length or symbols matrix length are wrong.");
-	}
+// // 	cout << "observations.size() = " << observations.size() << " _nOutputs = " << _nOutputs << endl;
+// // 	cout << " symbolsMatrix.size() = " << symbolsMatrix.size() << " _nInputsXchannelOrder = " << _nInputsXchannelOrder << endl;
+// 	assert(observations.size()==_nOutputs);
+// 	assert(symbolsMatrix.size()==_nInputsXchannelOrder);
+// 
+//     MatrixXd observationEquationCovariance = noiseVariance*MatrixXd::Identity(_nOutputs,_nOutputs);
+//     
+//     // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
+//     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
+//     
+//     extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));    
+//     
+//     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
+//     
+//     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
+//     _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
+// 	
+//     return _lastEstimatedChannelCoefficientsMatrix;
+	return nextMatrix(observations,symbolsMatrix,noiseVariance*MatrixXd::Identity(_nOutputs,_nOutputs));
+}
 
-    MatrixXd observationEquationCovariance = noiseVariance*MatrixXd::Identity(_nOutputs,_nOutputs);
-    
+MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,const MatrixXd &observationEquationCovariance)
+{
+// 	cout << "observations.size() = " << observations.size() << " _nOutputs = " << _nOutputs << endl;
+// 	cout << " symbolsMatrix.size() = " << symbolsMatrix.size() << " _nInputsXchannelOrder = " << _nInputsXchannelOrder << endl;
+	assert(observations.size()==_nOutputs);
+	assert(symbolsMatrix.size()==_nInputsXchannelOrder);
+
     // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
     
@@ -118,8 +137,9 @@ MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)
 
 double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance)
 {
-    if(observations.size()!=_nOutputs || symbolsMatrix.size()!=_nInputsXchannelOrder)
-        throw RuntimeException("KalmanEstimator::likelihood: observations vector length or symbols matrix length are wrong.");
+	// observations vector length or symbols matrix length are wrong
+	assert(observations.size()==_nOutputs);
+	assert(symbolsMatrix.size()==_nInputsXchannelOrder);
         
     Eigen::LDLT<MatrixXd> ldltOfPredictiveCovariance(_kalmanFilter->predictiveCovariance());
 
