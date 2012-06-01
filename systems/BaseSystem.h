@@ -62,6 +62,8 @@
 
 #define SAVE_ALL_SEEDS
 
+#define SAVE_NOISE_VARIANCES
+
 extern bool __done;
 
 using namespace rapidxml;
@@ -175,8 +177,7 @@ protected:
     // matrices for results
     std::vector<MatrixXd> _peMatrices, _MSEMatrices;
 
-    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms...
-    // ...so that they can be printed when the program finishes (they are not saved)
+    // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms so that they can be printed when the program finishes (they are not saved)
     MatrixXd _overallPeMatrix,_overallMseMatrix;
     
     // matrices for accumulating the probabiliy of error (MSE) for all SNR's and all algorithms in order to save them
@@ -188,6 +189,11 @@ protected:
 
     // seeds
 	std::vector<Random> _mainRandoms,_statUtilRandoms;
+	
+#ifdef SAVE_NOISE_VARIANCES
+	std::vector<double> _presentFrameNoiseVariances;
+	std::vector<std::vector<double> > _noiseVariances;
+#endif
 
 #ifdef SAVE_ALL_SEEDS
 	std::vector<std::vector<std::vector<Random> > > _perAlgorithmAndSNRstatUtilRandoms;
@@ -223,7 +229,6 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	bool _saveAtEveryFrame;
 
     virtual void addAlgorithms() = 0;
-//     virtual void buildSystemSpecificVariables() = 0;
 	virtual void buildSystemSpecificVariables() {}
 	virtual void storeFrameResults();
 	virtual void saveFrameResults();
@@ -249,8 +254,6 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	
 	double computeSymbolVectorErrorRate(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
 	
-// 	virtual double computeBER(const Bits &sourceBits,const Bits &detectedBits,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
-
 	//! It computes de Mean Square Error
 	/*!
 	  \param realChannelMatrices the sequence of actual channel matrices used during the transmission

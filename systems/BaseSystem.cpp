@@ -44,7 +44,6 @@ extern bool __nFramesHasBeenPassed;
 // #define PRINT_PARAMETERS
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION
 // #define PRINT_SYMBOLS_ACCOUNTED_FOR_DETECTION_PER_FRAME
-# define PRINT_NOISE_VARIANCE
 
 // #define STOP_AFTER_EACH_FRAME
 // #define STOP_AFTER_EACH_SNR
@@ -131,33 +130,6 @@ BaseSystem::BaseSystem()
 	
 	// the training sequence is included in the frame
 	assert(_frameLength>_trainSeqLength);
-
-// ------------------------ iswcs 2010 ----------------------
-
-// 	_nFrames = 20;
-// 	_L=3,_N=3,_frameLength=300;
-// 	_m = 4;
-// 	_d = _m - 1;
-// 
-// 	_trainSeqLength = 15;
-// 
-// 	_preambleLength = 10;
-// 
-// 	// the algorithms with the higher smoothing lag require
-// 	_nSmoothingSymbolsVectors = 10;
-
-// ---------------------------- tesis ------------------------
-
-//     _nFrames = 1000;
-//     _L=3,_N=2,_frameLength=300;
-//     _m = 3;
-//     _d = _m - 1;
-//     _trainSeqLength = 10;
-//     _preambleLength = 10;
-// 
-//     // the algorithms with the higher smoothing lag require
-//     _nSmoothingSymbolsVectors = 10;
-
 
 	// ==================================== derived parameters ====================================
 
@@ -275,6 +247,11 @@ BaseSystem::BaseSystem()
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 		_channelEstimatesVariances.reserve(_nFrames);
+#endif
+		
+#ifdef SAVE_NOISE_VARIANCES
+	_presentFrameNoiseVariances = std::vector<double>(_SNRs.size());
+	_noiseVariances.reserve(_nFrames);
 #endif
 
     _channel = NULL;
@@ -399,9 +376,10 @@ if(__nFramesHasBeenPassed)
                 onlyOnce();
 			
 
-#ifdef PRINT_NOISE_VARIANCE
-// 			cout << COLOR_INFO << "SNR = " << COLOR_NORMAL << _SNRs[_iSNR] << " -> " << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[_frameLength/2] << endl;
-			cout << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[_frameLength/2] << endl;
+#ifdef SAVE_NOISE_VARIANCES
+			uint iNoiseVariance = _frameLength/2;
+			_presentFrameNoiseVariances[_iSNR] = _noise->variances()[iNoiseVariance];
+			cout << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[iNoiseVariance] << endl;
 #endif
 
             // algorithms are executed
@@ -437,9 +415,6 @@ if(__nFramesHasBeenPassed)
 						_pe = computeSERwithoutSolvingAmbiguity(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection);
 // 						std::cout << "no need to solve ambiguity..." << std::endl;
 					}
-#ifdef DEBUG
-					cout << "comparing returned with" << endl << _symbols.block(0,_preambleLength,_N,_frameLength) << "...gives pe = " << _pe << endl;
-#endif
 				}
 				// if the algorithm doesn't perform symbols detection...
 				else
@@ -800,6 +775,10 @@ void BaseSystem::storeFrameResults()
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
     _channelEstimatesVariances.push_back(_presentFrameChannelEstimatesVariances);
 #endif
+	
+#ifdef SAVE_NOISE_VARIANCES
+	_noiseVariances.push_back(_presentFrameNoiseVariances);
+#endif
 }
 
 void BaseSystem::saveFrameResults()
@@ -868,6 +847,10 @@ void BaseSystem::saveFrameResults()
 
 	Octave::toOctaveFileStream(_ARcoefficients,"ARcoefficients",_f);
 	Octave::toOctaveFileStream(_ARvariance,"ARvariance",_f);
+	
+#ifdef SAVE_NOISE_VARIANCES
+	Octave::toOctaveFileStream(_noiseVariances,"noiseVariances",_f);
+#endif
 }
 
 xml_node<>* BaseSystem::get_child(xml_node<> *inputNode, std::string sNodeFilter)

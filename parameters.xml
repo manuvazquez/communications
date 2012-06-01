@@ -106,6 +106,26 @@
 		<!-- number of extra symbol vectors needed at the end of the frame for smoothing -->
 		<nSmoothingSymbolsVectors> 10 </nSmoothingSymbolsVectors>
 		
-	</ISWCS10System>	
+	</ISWCS10System>
+
+	<!-- ************************************ PlainSystem ********************************** -->
+	
+	<PlainSystem>
+		
+		<noiseVariances>
+			<value> 3.00712 </value> <value> 1.50713 </value> <value> 0.755355 </value> <value> 0.378574 </value>
+			<value> 0.189737 </value> <value> 0.0950936 </value> <value> 0.0476597 </value> <value> 0.0238864 </value>
+			<value> 0.0119716 </value> <value> 0.006 </value> <value> 0.00300712 </value> <value> 0.00150713 </value>
+			<value> 0.000755355 </value>
+		</noiseVariances>
+		
+		<SERs>
+			<value> 0.0982456 </value> <value> 0.0596491 </value> <value> 0.0362573 </value> <value> 0.0245614 </value>
+			<value> 0.0175439 </value> <value> 0.0140351 </value> <value> 0.0116959 </value> <value> 0.00584795 </value>
+			<value> 0.00350877 </value> <value> 0.00233918 </value> <value> 0.00233918 </value> <value> 0.00233918 </value>
+			<value> 0.00233918 </value>
+		</SERs>
+		
+	</PlainSystem>
 
 </parameters>
