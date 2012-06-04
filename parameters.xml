@@ -52,6 +52,9 @@
 			<variance> 0.0001 </variance>
 		</ARprocess>
 		
+		<!-- if set to 1, the AR process parameters are overwritten with those computed from the "velocity", "carrierFrequency" and "symbolRate" using Yule-Walker equations -->
+		<overrideGivenARparametersWithYuleWalkerComputedOnes> 0 </overrideGivenARparametersWithYuleWalkerComputedOnes>
+		
 		<!-- options are: NullNoise, ChannelDependentNoise, PowerProfileDependentNoise, SingleUserPowerProfileDependentNoise, SingleUserChannelDependentNoise -->
 		<noiseClassToBeInstantiated> SingleUserPowerProfileDependentNoise </noiseClassToBeInstantiated>
 		

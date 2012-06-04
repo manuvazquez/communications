@@ -35,12 +35,12 @@ PlainSystem::PlainSystem()
 	
 	// --------------------------------
 	
-	double yuleWalkerARvariance;
-	std::vector<double> yuleWalkerARcoefficients = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,yuleWalkerARvariance);
-
-	std::cout << "AR coefficients computed from Yule-Walker equations:" << std::endl << yuleWalkerARcoefficients << std::endl;
-	std::cout << "Variance = " << yuleWalkerARvariance << std::endl;
-	
+// 	double yuleWalkerARvariance;
+// 	std::vector<double> yuleWalkerARcoefficients = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,yuleWalkerARvariance);
+// 
+// 	std::cout << "AR coefficients computed from Yule-Walker equations:" << std::endl << yuleWalkerARcoefficients << std::endl;
+// 	std::cout << "Variance = " << yuleWalkerARvariance << std::endl;
+// 	
 // 	_ARcoefficients = yuleWalkerARcoefficients;
 // 	_ARvariance = yuleWalkerARvariance;
 	

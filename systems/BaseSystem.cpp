@@ -30,8 +30,6 @@
 #include <TimeInvariantChannel.h>
 #include <BesselChannel.h>
 
-// #define DEBUG
-
 extern uint32_t __mainSeedPassed;
 extern uint32_t __statUtilSeedPassed;
 extern uint __nFramesPassed;
@@ -125,6 +123,9 @@ BaseSystem::BaseSystem()
 	readMultiValuedParameterFromXML(ARprocessNode,"coefficients",_ARcoefficients);
 	readParameterFromXML(ARprocessNode,"variance",_ARvariance);
 	
+	bool overrideGivenARparametersWithYuleWalkerComputedOnes;
+	readParameterFromXML(thisSystemParameters,"overrideGivenARparametersWithYuleWalkerComputedOnes",overrideGivenARparametersWithYuleWalkerComputedOnes);
+	
 	readParameterFromXML(thisSystemParameters,"noiseClassToBeInstantiated",_noiseClassToBeInstantiated);
 	readParameterFromXML(thisSystemParameters,"channelClassToBeInstantiated",_channelClassToBeInstantiated);
 	
@@ -148,6 +149,16 @@ BaseSystem::BaseSystem()
 	
 	_T = 1.0/_symbolRate;
 
+	// ---------------------------------------------------------------------------------------------
+	
+	if(overrideGivenARparametersWithYuleWalkerComputedOnes)
+	{
+		// the AR process parameters are overwritten with those computed from the "velocity", "carrierFrequency" and "symbolRate" using Yule-Walker equations
+		_ARcoefficients = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,_ARvariance);
+		std::cout << COLOR_ALERT << "setting AR coefficients" << COLOR_NORMAL << " (" << _ARcoefficients << ") " << COLOR_ALERT << 
+									"and variance" << COLOR_NORMAL << " (" << _ARvariance << COLOR_NORMAL << ") " << COLOR_ALERT << "computed from Yule-Walker equations:" << COLOR_NORMAL << std::endl;
+	}
+	
 	if(!_randomSeeds)
 	{
 		StatUtil::getRandomGenerator().setSeed(4135925433);
@@ -155,16 +166,14 @@ BaseSystem::BaseSystem()
 		_randomGenerator.setSeed(3763650855);
 	}
 
-	// ---------------------------------------------------------------------------------------------
-
 #ifdef EXPORT_REAL_CHANNEL_ORDER
 	realChannelOrder = _m;
 #endif
 
     // alphabet is defined
-    vector<vector<tBit> > alphabetBitSequences(2,vector<tBit>(1));
+    std::vector<std::vector<tBit> > alphabetBitSequences(2,std::vector<tBit>(1));
     alphabetBitSequences[0][0] = 0; alphabetBitSequences[1][0] = 1;
-    vector<tSymbol> alphabetSymbols(2);
+    std::vector<tSymbol> alphabetSymbols(2);
     alphabetSymbols[0] = -1; alphabetSymbols[1] = 1;
     _alphabet = new Alphabet(alphabetBitSequences,alphabetSymbols);
 
@@ -241,9 +250,6 @@ BaseSystem::BaseSystem()
 #ifdef KEEP_ALL_CHANNEL_MATRICES
 	_channelMatrices.reserve(_nFrames);
 #endif
-
-	if(_keepAllChannelEstimates)
-		_channelEstimations.reserve(_nFrames);
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 		_channelEstimatesVariances.reserve(_nFrames);
@@ -253,6 +259,9 @@ BaseSystem::BaseSystem()
 	_presentFrameNoiseVariances = std::vector<double>(_SNRs.size());
 	_noiseVariances.reserve(_nFrames);
 #endif
+	
+	if(_keepAllChannelEstimates)
+		_channelEstimations.reserve(_nFrames);
 
     _channel = NULL;
     _powerProfile = NULL;

@@ -98,7 +98,7 @@ MatrixXd SERawareKalmanEstimatorDecorator::computeExtraObservationEquationCovari
 #ifdef DEBUG
 // 		cout << "i = " << i << " i/cols() = " << i/cols() << endl;
 #endif
-		observationsNoiseCovariance(i/cols(),i/cols()) += pow(predictiveMean(i),2.0) + predictiveCovariance(i,i)*errorsAutocorrelation;
+		observationsNoiseCovariance(i/cols(),i/cols()) += (pow(predictiveMean(i),2.0) + predictiveCovariance(i,i))*errorsAutocorrelation;
 	}
 	
 #ifdef DEBUG
