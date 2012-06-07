@@ -35,15 +35,6 @@ PlainSystem::PlainSystem()
 	
 	// --------------------------------
 	
-// 	double yuleWalkerARvariance;
-// 	std::vector<double> yuleWalkerARcoefficients = ARprocess::parametersFromYuleWalker(_ARcoefficients.size(),_velocity,_carrierFrequency,_T,yuleWalkerARvariance);
-// 
-// 	std::cout << "AR coefficients computed from Yule-Walker equations:" << std::endl << yuleWalkerARcoefficients << std::endl;
-// 	std::cout << "Variance = " << yuleWalkerARvariance << std::endl;
-// 	
-// 	_ARcoefficients = yuleWalkerARcoefficients;
-// 	_ARvariance = yuleWalkerARvariance;
-	
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
 	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1));

@@ -28,12 +28,6 @@ KalmanEstimatorDecorator(kalmanEstimator),_noiseVariances(noiseVariances),_SERs(
 	
 	// just checking BPSK is in use
 	assert(possibleErrors.size()==3);
-	
-#ifdef DEBUG
-	computeExtraObservationEquationCovariance(0.01);
-	computeExtraObservationEquationCovariance(0.5);
-	computeExtraObservationEquationCovariance(0.0007);
-#endif
 }
 
 MatrixXd SERawareKalmanEstimatorDecorator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, double noiseVariance)
@@ -43,7 +37,6 @@ MatrixXd SERawareKalmanEstimatorDecorator::nextMatrix(const VectorXd& observatio
 
 double SERawareKalmanEstimatorDecorator::likelihood(const VectorXd& observations, const MatrixXd symbolsMatrix, double noiseVariance)
 {
-// 	return KalmanEstimatorDecorator::likelihood(observations, symbolsMatrix, noiseVariance*MatrixXd::Identity(rows(),rows()) + computeExtraObservationEquationCovariance(noiseVariance));
 	throw RuntimeException("SERawareKalmanEstimatorDecorator::likelihood: not implemented!!");
 }
 
@@ -75,35 +68,13 @@ MatrixXd SERawareKalmanEstimatorDecorator::computeExtraObservationEquationCovari
 		// NOTE: this is ultimately assuming BPSK
 		errorsAutocorrelation += pow(_possibleErrors[i],2.0)*_SERs[iMin]/(_possibleErrors.size()-1);
 	
-#ifdef DEBUG
-	cout << "noiseVariance = " << noiseVariance << " chosen noise variance: " << _noiseVariances[iMin] << " => SER = " << _SERs[iMin] << endl;
-	cout << "errorsAutocorrelation = " << errorsAutocorrelation << endl;
-#endif
-	
 	VectorXd predictiveMean = _decorated->getPredictiveMean();
 	MatrixXd predictiveCovariance = _decorated->getPredictiveCovariance();
-	
-#ifdef DEBUG
-// 	cout << "predictiveMean:" << endl << predictiveMean << endl;
-// 	cout << "predictiveCovariance:" << endl << predictiveCovariance << endl;
-	cout << "rows = " << rows() << endl;
-	cout << "inputs = " << nInputs() << endl;
-	cout << "cols = " << cols() << endl;
-#endif
 	
 	MatrixXd observationsNoiseCovariance = MatrixXd::Zero(rows(),rows());
 	
 	for(uint i=0;i<predictiveMean.size();i++)
-	{
-#ifdef DEBUG
-// 		cout << "i = " << i << " i/cols() = " << i/cols() << endl;
-#endif
 		observationsNoiseCovariance(i/cols(),i/cols()) += (pow(predictiveMean(i),2.0) + predictiveCovariance(i,i))*errorsAutocorrelation;
-	}
-	
-#ifdef DEBUG
-	cout << "observationsNoiseCovariance:" << endl << observationsNoiseCovariance << endl;
-#endif
 	
 	return observationsNoiseCovariance;
 }

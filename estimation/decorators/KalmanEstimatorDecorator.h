@@ -62,7 +62,7 @@ public:
 		return _decorated->nextMatricesFromObservationsSequence(observations,noiseVariances,symbolVectors,iFrom,iTo,channelEstimatesVariances);
 	}
 	
-	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const { return _decorated->colIndexToIndexesWithinKFstateVector(iCol);}
+	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol,uint nChannelMatricesSkipped=0) const { return _decorated->colIndexToIndexesWithinKFstateVector(iCol,nChannelMatricesSkipped);}
 };
 
 #endif // KALMANESTIMATORDECORATOR_H

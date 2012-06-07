@@ -85,9 +85,10 @@ public:
 	 * @brief It returns the indexes of the elements within the internal Kalman Filter state vector that are associated with a certain column
 	 *
 	 * @param iCol the index of the column
+	 * @param nChannelMatricesSkipped this parameter is useful to specify a channel matrix when the AR process considered has order greater than 1
 	 * @return a vector of indexes
 	 **/
-	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol) const;
+	virtual std::vector<uint> colIndexToIndexesWithinKFstateVector(uint iCol,uint nChannelMatricesSkipped=0) const;
 };
 
 #endif

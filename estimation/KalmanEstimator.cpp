@@ -92,7 +92,7 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
     
-    extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));    
+    extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
     
     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     
@@ -188,12 +188,12 @@ void KalmanEstimator::setFirstEstimatedChannelMatrix(const MatrixXd &matrix)
     _kalmanFilter->setFilteredMean(extState);
 }
 
-std::vector<uint> KalmanEstimator::colIndexToIndexesWithinKFstateVector(uint iCol) const
+std::vector<uint> KalmanEstimator::colIndexToIndexesWithinKFstateVector(uint iCol,uint nChannelMatricesSkipped) const
 {
 	std::vector<uint> res(_nOutputs);
 	
 	for(uint i=0;i<_nOutputs;i++)
-		res[i] = i*_nInputsXchannelOrder+iCol;
+		res[i] = (nChannelMatricesSkipped*_nChannelCoeffs) + i*_nInputsXchannelOrder+iCol;
 	
 	return res;
 }

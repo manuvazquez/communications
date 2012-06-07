@@ -75,12 +75,12 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 	{
 		MatrixXd thisColumnCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
 		
-		for(uint i=0;i<(d+1);i++)
+		for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
 		{
-			int upperSubcolumnOriginalColumn = iCol - (i*N);
-			for(uint j=i;j<(d+1);j++)
+			int upperSubcolumnOriginalColumn = iCol - (iUpperSubcolumn*N);
+			for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
 			{
-				int lowerSubcolumnOriginalColumn = iCol - (j*N);
+				int lowerSubcolumnOriginalColumn = iCol - (iLowerSubcolumn*N);
 				
 				if(upperSubcolumnOriginalColumn>=Nm || upperSubcolumnOriginalColumn<0)
 					continue;
@@ -88,15 +88,14 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd c
 				if(lowerSubcolumnOriginalColumn>=Nm || lowerSubcolumnOriginalColumn<0)
 					continue;
 				
-				if(i == j) // => upperSubcolumnOriginalColumn == lowerSubcolumnOriginalColumn
-					thisColumnCovariance.block(i*L,j*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[j],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
+				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnOriginalColumn == lowerSubcolumnOriginalColumn
+					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
 				else
 				{
 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn])
-// 												*pow(_ARcoefficients[0],double(j-i));
-												*pow(_ARcoefficients[0],double(i+j));
-					thisColumnCovariance.block(i*L,j*L,L,L) = subCovariance;
-					thisColumnCovariance.block(j*L,i*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
+												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
+					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
+					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
 				}
 			} // for(uint j=i;j<(d+1);j++)
 		}
