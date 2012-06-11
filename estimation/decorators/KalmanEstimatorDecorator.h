@@ -36,11 +36,12 @@ public:
     virtual KalmanEstimatorDecorator* clone() const { return new KalmanEstimatorDecorator(*this);}
     virtual MatrixXd samplePredicted() const { return _decorated->samplePredicted();}
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd& matrix) { _decorated->setFirstEstimatedChannelMatrix(matrix);}
-    virtual MatrixXd getFilteredCovariance() const { return _decorated->getFilteredCovariance();}
-	virtual MatrixXd getPredictiveCovariance() const {return _decorated->getPredictiveCovariance();}
-	virtual VectorXd getPredictiveMean() const {return _decorated->getPredictiveMean();}
+    virtual MatrixXd getInternalFilteredCovariance() const { return _decorated->getInternalFilteredCovariance();}
+	virtual MatrixXd getInternalPredictiveCovariance() const {return _decorated->getInternalPredictiveCovariance();}
+	virtual VectorXd getInternalPredictiveMean() const {return _decorated->getInternalPredictiveMean();}
     virtual bool computesVariances() const { return _decorated->computesVariances();}
     virtual MatrixXd getVariances() const { return _decorated->getVariances();}
+    virtual MatrixXd getPredictiveVariances() const { return _decorated->getPredictiveVariances();}
     virtual MatrixXd predictedMatrix() const { return _decorated->predictedMatrix();}
     virtual MatrixXd lastEstimatedChannelMatrix() const { return _decorated->lastEstimatedChannelMatrix();}
     virtual MatrixXd lastEstimatedChannelCoefficientsMatrix() const { return _decorated->lastEstimatedChannelCoefficientsMatrix();}

@@ -31,13 +31,14 @@ class LinearDetector{
 protected:
     const uint _channelMatrixRows, _channelMatrixCols;
     const double _alphabetVariance;
+	MatrixXd _filter;
 public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
     virtual ~LinearDetector() {}
     
     virtual void stateStep(VectorXd observations) = 0;
     virtual VectorXd detect(VectorXd observations,MatrixXd channelMatrix,const MatrixXd &noiseCovariance) = 0;
-    virtual MatrixXd computedFilter() const = 0;
+	virtual MatrixXd computedFilter() const { return _filter;}
 
     /**
      *    Computes the variance related to the soft estimation provided for the n-th symbol. It must NEVER be called before a call to "detect"

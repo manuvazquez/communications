@@ -68,14 +68,21 @@ MatrixXd SERawareKalmanEstimatorDecorator::computeExtraObservationEquationCovari
 		// NOTE: this is ultimately assuming BPSK
 		errorsAutocorrelation += pow(_possibleErrors[i],2.0)*_SERs[iMin]/(_possibleErrors.size()-1);
 	
-	VectorXd predictiveMean = _decorated->getPredictiveMean();
-	MatrixXd predictiveCovariance = _decorated->getPredictiveCovariance();
+// 	VectorXd predictiveMean = _decorated->getInternalPredictiveMean();
+// 	MatrixXd predictiveCovariance = _decorated->getInternalPredictiveCovariance();
+		
+	MatrixXd predictiveMean = _decorated->predictedMatrix();
+	MatrixXd predictiveCovariance = _decorated->getPredictiveVariances();
 	
 	MatrixXd observationsNoiseCovariance = MatrixXd::Zero(rows(),rows());
 	
-	for(uint i=0;i<predictiveMean.size();i++)
-		observationsNoiseCovariance(i/cols(),i/cols()) += (pow(predictiveMean(i),2.0) + predictiveCovariance(i,i))*errorsAutocorrelation;
+// 	for(uint i=0;i<predictiveMean.size();i++)
+// 		observationsNoiseCovariance(i/cols(),i/cols()) += (pow(predictiveMean(i),2.0) + predictiveCovariance(i,i))*errorsAutocorrelation;
 	
+	for(uint i=0;i<predictiveMean.rows();i++)
+		for(uint j=0;j<predictiveMean.cols();j++)
+			observationsNoiseCovariance(i,i) += (pow(predictiveMean(i,j),2.0) + predictiveCovariance(i,j))*errorsAutocorrelation;
+		
 	return observationsNoiseCovariance;
 }
 

@@ -20,7 +20,7 @@
 
 #include <MMSEDetector.h>
 
-
+#include<iostream>
 #include <KalmanEstimator.h>
 
 class KalmanFilterAwareMMSEDetector : public MMSEDetector
@@ -28,10 +28,42 @@ class KalmanFilterAwareMMSEDetector : public MMSEDetector
 protected:
 	KalmanEstimator const *_kalmanEstimator;
 	const std::vector<double> _ARcoefficients;
+	
+	class CovarianceId
+	{
+	public:
+		int _t1,_t2;
+		uint _c1,_c2;
+		
+	public:
+		
+		CovarianceId(int t1,int t2,uint c1,uint c2):_t1(t1),_t2(t2),_c1(c1),_c2(c2)
+		{
+		}
+		
+		bool operator<(const CovarianceId &id) const
+		{	
+			if(_t1==id._t1)
+				if(_t2==id._t2)
+					if(_c1==id._c1)
+						if(_c2==id._c2)
+							return false; // they are equal
+						else return (_c2<id._c2);
+					else return (_c1<id._c1);
+				else
+					return (_t2<id._t2);
+			else 
+				return (_t1<id._t1);
+		}
+	};
+	
+// 	MatrixXd subCovar(const MatrixXd &covariance,int t1,int t2,uint i,uint j) const;
+	
 public:
     KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
 	
     virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+	virtual VectorXd detect2(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
 	
     virtual KalmanFilterAwareMMSEDetector* clone();
 	

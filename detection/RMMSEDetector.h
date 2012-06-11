@@ -38,7 +38,7 @@ protected:
     double _alphaPower,_alphaPowerSumFactor;
 
     VectorXd _g;
-    MatrixXd _invRtilde,_filter;
+    MatrixXd _invRtilde;
 
     MatrixXd _E;
 
@@ -53,8 +53,6 @@ public:
     void stateStep(VectorXd observations);
 
     double nthSymbolVariance(uint n,double noiseVariance);
-    MatrixXd computedFilter() const { return _filter;}
-
 };
 
 #endif

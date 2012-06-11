@@ -63,9 +63,9 @@ public:
     virtual void setFirstEstimatedChannelMatrix(const MatrixXd &matrix);
 	
 	//! they return the corresponding covariance AS STORED by the internal Kalman Filter
-    virtual MatrixXd getFilteredCovariance() const {return _kalmanFilter->filteredCovariance();}
-    virtual MatrixXd getPredictiveCovariance() const {return _kalmanFilter->predictiveCovariance();}
-    virtual VectorXd getPredictiveMean() const {return _kalmanFilter->predictiveMean();}
+    virtual MatrixXd getInternalFilteredCovariance() const {return _kalmanFilter->filteredCovariance();}
+    virtual MatrixXd getInternalPredictiveCovariance() const {return _kalmanFilter->predictiveCovariance();}
+    virtual VectorXd getInternalPredictiveMean() const {return _kalmanFilter->predictiveMean();}
     
     virtual bool computesVariances() const { return true; }
     
@@ -77,6 +77,11 @@ public:
 	virtual MatrixXd getVariances() const 
 	{
 		return Util::toMatrix(_kalmanFilter->filteredCovariance().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
+	}
+	
+	virtual MatrixXd getPredictiveVariances() const 
+	{
+		return Util::toMatrix(_kalmanFilter->predictiveCovariance().bottomRightCorner(_nChannelCoeffs,_nChannelCoeffs).diagonal(),rowwise,_nChannelMatrixRows);
 	}
 	
 	virtual MatrixXd predictedMatrix() const { return Util::toMatrix(_kalmanFilter->predictiveMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows); }
