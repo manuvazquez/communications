@@ -388,7 +388,7 @@ if(__nFramesHasBeenPassed)
 #ifdef SAVE_NOISE_VARIANCES
 			uint iNoiseVariance = _frameLength/2;
 			_presentFrameNoiseVariances[_iSNR] = _noise->variances()[iNoiseVariance];
-			cout << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[iNoiseVariance] << endl;
+// 			cout << COLOR_INFO << "noise variance at time " << COLOR_NORMAL << _frameLength/2 << ": " << _noise->variances()[iNoiseVariance] << endl;
 #endif
 
             // algorithms are executed

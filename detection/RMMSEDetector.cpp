@@ -24,7 +24,7 @@ RMMSEDetector::RMMSEDetector(uint rows, uint cols,double alphabetVariance,double
     _E.block(_channelMatrixCols-_nSymbolsToBeDetected,0,_nSymbolsToBeDetected,_nSymbolsToBeDetected) = MatrixXd::Identity(_nSymbolsToBeDetected,_nSymbolsToBeDetected);
 }
 
-void RMMSEDetector::stateStep(VectorXd observations)
+void RMMSEDetector::stateStep(const VectorXd &observations)
 {
     if(observations.size()!= _channelMatrixRows)
     {
@@ -43,7 +43,7 @@ void RMMSEDetector::stateStep(VectorXd observations)
     _alphaPowerSumNow = _alphaPowerSumPrevious + _alphaPower;
 }
 
-VectorXd RMMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix,const MatrixXd &noiseCovariance)
+VectorXd RMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix,const MatrixXd &noiseCovariance)
 {
     if(observations.size()!= _channelMatrixRows || channelMatrix.cols()!=_channelMatrixCols || channelMatrix.rows()!=_channelMatrixRows)
     {
@@ -69,7 +69,7 @@ RMMSEDetector *RMMSEDetector::clone()
 	return new RMMSEDetector(*this);
 }
 
-double RMMSEDetector::nthSymbolVariance(uint n,double noiseVariance)
+double RMMSEDetector::nthSymbolVariance(uint n,double noiseVariance) const
 {
     return _alphabetVariance*(1.0 - 2.0*_filter.col(n).dot(_channelMatrix.col(_channelMatrixCols-_nSymbolsToBeDetected+n))) + _filter.col(n).dot(_alphabetVarianceChannelMatrixChannelMatrixTransPlusNoiseCovariance*_filter.col(n));
 }

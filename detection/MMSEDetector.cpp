@@ -44,7 +44,7 @@ MatrixXd MMSEDetector::computedFilter() const
     return _filter.block(0,_detectionStart,_channelMatrixRows,_nSymbolsToBeDetected);
 }
 
-VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
+VectorXd MMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
 {
     MatrixXd _Rx = noiseCovariance + _alphabetVariance*channelMatrix*channelMatrix.transpose();
 
@@ -58,7 +58,7 @@ VectorXd MMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, con
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-double MMSEDetector::nthSymbolVariance(uint n,double noiseVariance)
+double MMSEDetector::nthSymbolVariance(uint n,double noiseVariance) const
 {
     return nthSymbolGain(n)*(1.0-nthSymbolGain(n));
 }

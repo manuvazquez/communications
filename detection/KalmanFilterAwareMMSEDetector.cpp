@@ -27,12 +27,12 @@ KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint col
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients)
 {
 	// this implementation is only meaningful for channels that evolve according with a first order AR process
-	assert(ARcoefficients.size()==1);
+// 	assert(ARcoefficients.size()==1);
 }
 
-VectorXd KalmanFilterAwareMMSEDetector::detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
+VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
 {
-// 	return detect2(observations,channelMatrix,noiseCovariance);
+	return detect2(observations,channelMatrix,noiseCovariance);
 	
 	uint nRows = channelMatrix.rows();
 	
@@ -157,95 +157,53 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2(VectorXd observations, MatrixXd 
 
 	MatrixXd columnsAutoCorrelationSum = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
 
-	// for every possible column index, the indexes within the KF state vector that give that column are obtained
+	// for every possible column index, the indexes within the KF state vector that give that column (for the current time instant) are obtained
 	std::vector<std::vector<uint> > iCol2indexesWithinKFstateVector(Nm);
-	
 	for(uint iCol=0;iCol<Nm;iCol++)
 		iCol2indexesWithinKFstateVector[iCol] = _kalmanEstimator->colIndexToIndexesWithinKFstateVector(iCol,_ARcoefficients.size()-1);
 	
-	// ------------------------
-	
+	// a map where all the "subcovariances" that will be needed later are stored
 	std::map<CovarianceId,MatrixXd> covariancesMap;
-	
-#ifdef DEBUG
-	cout << "predictedCovariances[0]: " << endl << predictedCovariances[0] << endl;
-#endif
 
-
+	// all the "subcovariances" that are contained in the covariance computed by the KF for the present time, t, are obtained
 	for(int t1=0;uint(t1)<_ARcoefficients.size();t1++)
 		for(int t2=0;uint(t2)<_ARcoefficients.size();t2++)
 			for(uint i=0;i<Nm;i++)
 				for(uint j=0;j<i;j++)
-// 				for(uint j=i+1;j<Nm;j++)
-				{
 					covariancesMap[CovarianceId(-t1,-t2,i,j)]= Util::subMatrixFromVectorIndexes(predictedCovariances[0],
 													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1-t1),
 													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1-t2));
-#ifdef DEBUG
-					cout << "adding covariance for t1 = " << -t1 << ",t2 = " << -t2 << ",i = " << i << ",j = " << j << endl;
-					cout << covariancesMap[CovarianceId(-t1,-t2,i,j)] << endl;
-#endif
-				}
-				
-#ifdef DEBUG
-	cout << "second step ========================= " << endl;
-#endif
 	
+					
+	// all the "subcovariances" the values of the time instant corresponding to the upper "subcolumn", t1, up to 0 and every possible value of the time instant for the lower "subcolumn", t2
 	for(int t1 = -(_ARcoefficients.size()-1);t1<=0;t1++)
 		for(int t2=1;t2<=int(d);t2++)
 			for(uint i=0;i<Nm;i++)
 				for(uint j=0;j<i;j++)
-// 				for(uint j=i+1;j<Nm;j++)
-				{
-					MatrixXd covariance = MatrixXd::Zero(L,L);
-					for(int r=1;r<=int(_ARcoefficients.size());r++)
-					{
-						assert(covariancesMap.find(CovarianceId(t1,t2-r,i,j))!=covariancesMap.end());
-						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1,t2-r,i,j)];
-#ifdef DEBUG
-						cout << "adding covariance for t1 = " << t1 << ",t2 = " << t2 << ",i = " << i << ",j = " << j << endl;
-						cout << "multiplying " << _ARcoefficients[r-1] << " times " << endl << covariancesMap[CovarianceId(t1,t2-r,i,j)] << endl << "gives" << endl << covariance << endl;
-#endif
-					}
-					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
-				}
-
-#ifdef DEBUG
-	cout << "3rd step ========================= " << endl;
-#endif
-	
-	for(int t1=1;t1<=int(d);t1++)
-		for(int t2=t1+1;t2<=int(d);t2++)
-			for(uint i=0;i<Nm;i++)
-				for(uint j=0;j<i;j++)
-// 				for(uint j=i+1;j<Nm;j++)
 				{
 					MatrixXd covariance = MatrixXd::Zero(L,L);
 					for(uint r=1;r<=_ARcoefficients.size();r++)
 					{
-						assert(covariancesMap.find(CovarianceId(t1-int(r),t2,i,j))!=covariancesMap.end());
-						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1-r,t2,i,j)];
-#ifdef DEBUG
-						cout << "adding covariance for t1 = " << t1 << ",t2 = " << t2 << ",i = " << i << ",j = " << j << endl;
-						cout << "multiplying " << _ARcoefficients[r-1] << " times " << endl << covariancesMap[CovarianceId(t1-r,t2,i,j)] << endl << "gives" << endl << covariance << endl;
-#endif
+						assert(covariancesMap.find(CovarianceId(t1,t2-r,i,j))!=covariancesMap.end());
+						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1,t2-r,i,j)];
 					}
 					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
 				}
 
-#ifdef DEBUG
-// 	cout << "printing everything================" << endl;
-// 	for ( std::map<CovarianceId,MatrixXd>::const_iterator iter = covariancesMap.begin();
-// 	iter != covariancesMap.end(); ++iter )
-// 	{
-// 		cout << iter->first._t1 << " " << iter->first._t2 << " " << iter->first._c1 << " " << iter->first._c2 << endl << iter->second << '\n';
-// 	}
-// 	cout << endl << "================" << endl;
-	
-	cout << "size of the map is: " << covariancesMap.size() << endl;
-	
-	getchar();
-#endif
+	// all the "subcovariances" such that the value of the time instant corresponding to the upper "subcolumn", t1, is lower than that of the time instant corresponding to the lower "subcolumn", t2
+	for(int t1=1;t1<=int(d);t1++)
+		for(int t2=t1+1;t2<=int(d);t2++)
+			for(uint i=0;i<Nm;i++)
+				for(uint j=0;j<i;j++)
+				{
+					MatrixXd covariance = MatrixXd::Zero(L,L);
+					for(uint r=1;r<=_ARcoefficients.size();r++)
+					{
+						assert(covariancesMap.find(CovarianceId(t1-r,t2,i,j))!=covariancesMap.end());
+						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1-r,t2,i,j)];
+					}
+					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
+				}
 	
 	// -------------
 	
@@ -270,17 +228,9 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2(VectorXd observations, MatrixXd 
 					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
 				else
 				{
-// 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn])
-// 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[lowerSubcolumnOriginalColumn])
-// 												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
 					MatrixXd subCovariance = covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnOriginalColumn,lowerSubcolumnOriginalColumn)];
 					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
 					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
-#ifdef DEBUG
-					cout << "iUpperSubcolumn = " << iUpperSubcolumn << " iLowerSubcolumn = " << iLowerSubcolumn << " upperSubcolumnOriginalColumn = " << upperSubcolumnOriginalColumn << " lowerSubcolumnOriginalColumn " << lowerSubcolumnOriginalColumn << endl;
-					cout << "traditional" << endl << subCovariance << endl;
-					cout << "new" << endl << covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnOriginalColumn,lowerSubcolumnOriginalColumn)] << endl;
-#endif
 				}
 			} // for(uint j=i;j<(d+1);j++)
 		}
@@ -306,17 +256,3 @@ KalmanFilterAwareMMSEDetector* KalmanFilterAwareMMSEDetector::clone()
 {
 	return new KalmanFilterAwareMMSEDetector(*this);
 }
-
-// MatrixXd KalmanFilterAwareMMSEDetector::subCovar(const MatrixXd &covariance,int t1,int t2,uint i,uint j) const
-// {
-// 	assert(t1>-int(_ARcoefficients.size()));
-// 	assert(t2>-int(_ARcoefficients.size()));
-// 	
-// 	if(t1<=0 && t2<=0)
-// 		return Util::subMatrixFromVectorIndexes(covariance,
-// 										 _kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1+t1),
-// 										 _kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1+t2));
-// 	else
-// 	{
-// 	}
-// }

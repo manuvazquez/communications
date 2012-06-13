@@ -31,7 +31,7 @@ protected:
 	
 	class CovarianceId
 	{
-	public:
+	protected:
 		int _t1,_t2;
 		uint _c1,_c2;
 		
@@ -57,12 +57,10 @@ protected:
 		}
 	};
 	
-// 	MatrixXd subCovar(const MatrixXd &covariance,int t1,int t2,uint i,uint j) const;
-	
 public:
     KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
 	
-    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+    virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	virtual VectorXd detect2(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
 	
     virtual KalmanFilterAwareMMSEDetector* clone();

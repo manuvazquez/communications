@@ -36,8 +36,8 @@ public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
     virtual ~LinearDetector() {}
     
-    virtual void stateStep(VectorXd observations) = 0;
-    virtual VectorXd detect(VectorXd observations,MatrixXd channelMatrix,const MatrixXd &noiseCovariance) = 0;
+    virtual void stateStep(const VectorXd &observations) = 0;
+    virtual VectorXd detect(const VectorXd &observations,const MatrixXd &channelMatrix,const MatrixXd &noiseCovariance) = 0;
 	virtual MatrixXd computedFilter() const { return _filter;}
 
     /**
@@ -45,13 +45,14 @@ public:
      * @param n
      * @return
      */
-    virtual double nthSymbolVariance(uint n,double noiseVariance) = 0;
+    virtual double nthSymbolVariance(uint n,double noiseVariance) const = 0;
 
     virtual double nthSymbolGain(uint n) const { return 1.0;}
-    uint channelMatrixcols() { return _channelMatrixCols;}
+    uint channelMatrixcols() const { return _channelMatrixCols;}
     virtual LinearDetector *clone() = 0;
     
     void stateStepsFromObservationsSequence(const MatrixXd &observations,uint smoothingLag,uint iFrom,uint iTo);
 };
 
 #endif
+

@@ -47,12 +47,12 @@ protected:
 public:
     RMMSEDetector(uint rows, uint cols,double alphabetVariance,double forgettingFactor,uint nSymbolsToBeDetected);
 
-    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+    virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 
     RMMSEDetector *clone();
-    void stateStep(VectorXd observations);
+    void stateStep(const VectorXd &observations);
 
-    double nthSymbolVariance(uint n,double noiseVariance);
+    double nthSymbolVariance(uint n,double noiseVariance) const;
 };
 
 #endif

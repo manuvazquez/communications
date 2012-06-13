@@ -33,10 +33,10 @@ class DecorrelatorDetector : public LinearDetector
 public:
     DecorrelatorDetector(uint rows, uint cols, double alphabetVariance);
 
-    virtual double nthSymbolVariance(uint n,double noiseVariance);
+    virtual double nthSymbolVariance(uint n,double noiseVariance) const;
     virtual LinearDetector* clone();
-    virtual VectorXd detect(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
-    virtual void stateStep(VectorXd observations) {}
+    virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
+    virtual void stateStep(const VectorXd &observations) {}
 
 };
 
