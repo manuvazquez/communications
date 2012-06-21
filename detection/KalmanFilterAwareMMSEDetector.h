@@ -61,7 +61,7 @@ public:
     KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
 	
     virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
-	virtual VectorXd detect2(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance);
+	virtual VectorXd detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	
     virtual KalmanFilterAwareMMSEDetector* clone();
 	

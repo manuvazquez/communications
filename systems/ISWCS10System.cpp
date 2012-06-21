@@ -39,8 +39,6 @@ ISWCS10System::ISWCS10System()
 	if(!thisSystemParameters)
 		throw RuntimeException("ISWCS10System::ISWCS10System: cannot find parameters for this system.");
 	
-	readParameterFromXML(thisSystemParameters,"nSmoothingSymbolsVectors",_nSmoothingSymbolsVectors);
-	
 	nSurvivors = 2;
 
 	_nParticles = 128;

@@ -55,6 +55,9 @@ ChannelOrderEstimationSystem::ChannelOrderEstimationSystem()
 
 	// channel order APP evolution
     _channelOrderAPPsAlongTime.reserve(_nFrames);
+	
+	// the number of smoothing symbols needed after the end of the frame to perform smoothing is inferred from the maximum channel order
+	_nSmoothingSymbolsVectors = std::max(_candidateChannelOrders[_iMaxChannelOrder]-1,_d);
 }
 
 void ChannelOrderEstimationSystem::onlyOnce()

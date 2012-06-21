@@ -26,13 +26,12 @@
 KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients)
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients)
 {
-	// this implementation is only meaningful for channels that evolve according with a first order AR process
-// 	assert(ARcoefficients.size()==1);
 }
 
 VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
 {
-	return detect2(observations,channelMatrix,noiseCovariance);
+	if(_ARcoefficients.size()>1)
+		return detect2orderAndAboveARprocess(observations,channelMatrix,noiseCovariance);
 	
 	uint nRows = channelMatrix.rows();
 	
@@ -95,7 +94,6 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
 					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
 				else
 				{
-// 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn])
 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[lowerSubcolumnOriginalColumn])
 												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
 					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
@@ -121,8 +119,8 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-VectorXd KalmanFilterAwareMMSEDetector::detect2(VectorXd observations, MatrixXd channelMatrix, const MatrixXd& noiseCovariance)
-{	
+VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
+{
 	uint nRows = channelMatrix.rows();
 	
 	uint N = _kalmanEstimator->nInputs();

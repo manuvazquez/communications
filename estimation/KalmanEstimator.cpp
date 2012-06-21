@@ -33,10 +33,12 @@ KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixX
     uint i,j,iBlockCol,iBlockRow;
     
     // state equation matrix is set
-    for(iBlockRow=0;iBlockRow<ARcoefficients.size()-1;iBlockRow++)
-        for(iBlockCol=iBlockRow+1;iBlockCol<ARcoefficients.size();iBlockCol++)
-            for(j=iBlockCol*_nChannelCoeffs,i=0;i<_nChannelCoeffs;j++,i++)
-                stateTransitionMatrix(iBlockRow*_nChannelCoeffs+i,j) = 1.0;
+	for(iBlockRow=0;iBlockRow<ARcoefficients.size()-1;iBlockRow++)
+	{
+		iBlockCol = iBlockRow + 1;
+		for(j=iBlockCol*_nChannelCoeffs,i=0;i<_nChannelCoeffs;j++,i++)
+			stateTransitionMatrix(iBlockRow*_nChannelCoeffs+i,j) = 1.0;
+	}
     
     for(iBlockCol=0;iBlockCol<ARcoefficients.size();iBlockCol++)
         for(j=iBlockCol*_nChannelCoeffs,i=0;i<_nChannelCoeffs;j++,i++)
@@ -58,11 +60,11 @@ KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixX
         }
 
 #ifdef PRINT_INFO
-    cout << "KalmanEstimator::KalmanEstimator: constructed a Kalman Filter with parameters:" << endl;
-    cout << "state transition matrix:" << endl << stateTransitionMatrix << endl;
-    cout << "state equation covariance:" << endl << stateEquationCovariance << endl;
-    cout << "initial mean" << endl << initialMeanVector << endl;
-    cout << "initial covariance" << endl << initialCovariance << endl;
+    std::cout << "KalmanEstimator::KalmanEstimator: constructed a Kalman Filter with parameters:" << std::endl;
+    std::cout << "state transition matrix:" << std::endl << stateTransitionMatrix << std::endl;
+    std::cout << "state equation covariance:" << std::endl << stateEquationCovariance << std::endl;
+    std::cout << "initial mean" << std::endl << initialMeanVector << std::endl;
+    std::cout << "initial covariance" << std::endl << initialCovariance << std::endl;
 #endif
 
     _kalmanFilter = new KalmanFilter(stateTransitionMatrix,stateEquationCovariance,initialMeanVector,initialCovariance);    
@@ -93,6 +95,11 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
     
     extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
+	
+#ifdef PRINT_INFO
+	std::cout << "KalmanEstimator::nextMatrix: " << std::endl << extStateMeasurementMatrix << std::endl;
+	getchar();
+#endif
     
     _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
     

@@ -27,8 +27,6 @@ TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem()
 	if(!thisSystemParameters)
 		throw RuntimeException("TesisOrdenCanalDesconocidoSystem::TesisOrdenCanalDesconocidoSystem: cannot find parameters for this system.");
 	
-	readParameterFromXML(thisSystemParameters,"nSmoothingSymbolsVectors",_nSmoothingSymbolsVectors);
-	
     nSurvivors = 12;
 //     nSurvivors = 1;    
     
