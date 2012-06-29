@@ -25,7 +25,7 @@ KalmanEstimator::KalmanEstimator():_kalmanFilter(NULL),_nExtStateVectorCoeffs(0)
 {
 }
 
-KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
+KalmanEstimator::KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,std::vector<double> ARcoefficients,double ARvariance): ChannelMatrixEstimator(initialEstimation,N),_nExtStateVectorCoeffs(_nChannelCoeffs*ARcoefficients.size())
 {
     // stateTransitionMatrix is a blockwise matrix that represents the state transition matrix
     MatrixXd stateTransitionMatrix = MatrixXd::Zero(_nExtStateVectorCoeffs,_nExtStateVectorCoeffs);    
@@ -86,22 +86,20 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
 
 MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,const MatrixXd &observationEquationCovariance)
 {
-// 	cout << "observations.size() = " << observations.size() << " _nOutputs = " << _nOutputs << endl;
-// 	cout << " symbolsMatrix.size() = " << symbolsMatrix.size() << " _nInputsXchannelOrder = " << _nInputsXchannelOrder << endl;
 	assert(observations.size()==_nOutputs);
 	assert(symbolsMatrix.size()==_nInputsXchannelOrder);
 
     // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
-    MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
+    MatrixXd extendedObservationMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);    
     
-    extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
+    extendedObservationMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildObservationMatrix(Util::toVector(symbolsMatrix,columnwise));
 	
 #ifdef PRINT_INFO
 	std::cout << "KalmanEstimator::nextMatrix: " << std::endl << extStateMeasurementMatrix << std::endl;
 	getchar();
 #endif
     
-    _kalmanFilter->step(extStateMeasurementMatrix,observations,observationEquationCovariance);
+    _kalmanFilter->step(extendedObservationMatrix,observations,observationEquationCovariance);
     
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
     _lastEstimatedChannelCoefficientsMatrix = Util::toMatrix(_kalmanFilter->filteredMean().tail(_nChannelCoeffs),rowwise,_nChannelMatrixRows);
@@ -109,13 +107,15 @@ MatrixXd KalmanEstimator::nextMatrix(const VectorXd &observations,const MatrixXd
     return _lastEstimatedChannelCoefficientsMatrix;
 }
 
-MatrixXd KalmanEstimator::buildMeasurementMatrix(const VectorXd &symbolsVector)
+MatrixXd KalmanEstimator::buildObservationMatrix(const VectorXd &symbolsVector)
 {
     uint i,j;
     MatrixXd res = MatrixXd::Zero(_nOutputs,_nChannelCoeffs);
 
-    if(symbolsVector.size()!=_nInputsXchannelOrder)
-        throw RuntimeException("KalmanEstimator::buildMeasurementMatrix: the number of elements of the received symbols vector is wrong.");
+	// the number of elements of the received symbols vector is wrong
+	assert(symbolsVector.size()==_nInputsXchannelOrder);
+//     if(symbolsVector.size()!=_nInputsXchannelOrder)
+//         throw RuntimeException("KalmanEstimator::buildMeasurementMatrix: the number of elements of the received symbols vector is wrong.");
 
     // stacks the symbols inside symbolsMatrix to construct F
     for(i=0;i<_nOutputs;i++)
@@ -141,14 +141,14 @@ double KalmanEstimator::likelihood(const VectorXd &observations,const MatrixXd s
         invPredictiveCovarianceDeterminant *= ldltOfPredictiveCovariance.vectorD().coeff(i);        
         
         
-    MatrixXd extStateMeasurementMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);
-	extStateMeasurementMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildMeasurementMatrix(Util::toVector(symbolsMatrix,columnwise));
+    MatrixXd extendedObservationMatrix = MatrixXd::Zero(_nOutputs,_nExtStateVectorCoeffs);
+	extendedObservationMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildObservationMatrix(Util::toVector(symbolsMatrix,columnwise));
     
     
-	MatrixXd invNoiseVariance_extStateMeasurementMatrixT = 1.0/noiseVariance*extStateMeasurementMatrix.transpose();
+	MatrixXd invNoiseVariance_extStateMeasurementMatrixT = 1.0/noiseVariance*extendedObservationMatrix.transpose();
 
 	// the LU decomposition is computed...
-	PartialPivLU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extStateMeasurementMatrix);
+	PartialPivLU<MatrixXd> luforB(invPredictiveCovariance + invNoiseVariance_extStateMeasurementMatrixT*extendedObservationMatrix);
 
 	//...to invert the matrix
 	// TODO: is this better than just calling .inv()?

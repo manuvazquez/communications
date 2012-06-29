@@ -39,7 +39,7 @@ protected:
     KalmanFilter *_kalmanFilter;
     const uint _nExtStateVectorCoeffs;
     
-    virtual MatrixXd buildMeasurementMatrix(const VectorXd &symbolsVector);
+    virtual MatrixXd buildObservationMatrix(const VectorXd &symbolsVector);
 public:
 	
 	/**
@@ -48,13 +48,13 @@ public:
 	 **/
 	KalmanEstimator();
 	
-    KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,vector<double> ARcoefficients,double ARvariance);
+    KalmanEstimator(const MatrixXd &initialEstimation,const MatrixXd &variances,uint N,std::vector<double> ARcoefficients,double ARvariance);
     KalmanEstimator(const KalmanEstimator &kalmanEstimator);
     ~KalmanEstimator();
 	
     virtual KalmanEstimator *clone() const;
     
-	MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,const MatrixXd &observationEquationCovariance);
+	virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,const MatrixXd &observationEquationCovariance);
     virtual MatrixXd nextMatrix(const VectorXd &observations,const MatrixXd &symbolsMatrix,double noiseVariance);
     double likelihood(const VectorXd &observations,const MatrixXd symbolsMatrix,double noiseVariance);
 	

@@ -23,6 +23,7 @@
 #include <KalmanEstimator.h>
 #include <KnownSymbolsKalmanEstimator.h>
 #include <SERawareKalmanEstimatorDecorator.h>
+#include <AugmentedObservationsKalmanEstimator.h>
 
 #include <KalmanFilterAwareMMSEDetector.h>
 
@@ -46,6 +47,7 @@ protected:
 	KalmanEstimator *_kalmanEstimator;
 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
 	SERawareKalmanEstimatorDecorator *_SERawareKalmanEstimatorDecorator;
+	AugmentedObservationsKalmanEstimator * _augmentedObservationsKalmanEstimator;
 	
 	MMSEDetector *_MMSEdetector;
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;

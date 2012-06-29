@@ -39,7 +39,7 @@ CDMAKalmanEstimator* CDMAKalmanEstimator::clone() const
     return new CDMAKalmanEstimator(*this);
 }
 
-MatrixXd CDMAKalmanEstimator::buildMeasurementMatrix(const VectorXd& symbolsVector)
+MatrixXd CDMAKalmanEstimator::buildObservationMatrix(const VectorXd& symbolsVector)
 {
     if(symbolsVector.size()!=_nInputs)
         throw RuntimeException("CDMAKalmanEstimator::buildMeasurementMatrix: symbols vector length is wrong.");

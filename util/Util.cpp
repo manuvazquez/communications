@@ -578,3 +578,23 @@ MatrixXd Util::subMatrixFromVectorIndexes(const MatrixXd &matrix,const std::vect
 		
 	return res;
 }
+
+MatrixXd Util::diag(std::vector<MatrixXd> matrices)
+{
+	uint n = matrices.size();
+	
+	uint rows = matrices[0].rows();
+	uint cols = matrices[0].cols();
+	
+	MatrixXd res = MatrixXd::Zero(rows*n,cols*n);
+	
+	for(uint i=0;i<n;i++)
+	{
+		assert(matrices[i].rows()==rows);
+		assert(matrices[i].cols()==cols);
+		
+		res.block(i*rows,i*cols,rows,cols) = matrices[i];
+	}
+	
+	return res;
+}

@@ -43,6 +43,8 @@ PlainSystem::PlainSystem()
 	
 	_SERawareKalmanEstimatorDecorator = new SERawareKalmanEstimatorDecorator(_kalmanEstimator,noiseVariances,SERs,_alphabet->differencesBetweenSymbols());
 	
+	_augmentedObservationsKalmanEstimator = new AugmentedObservationsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
+	
 	_kalmanFilterAwareMMSEDetector = new KalmanFilterAwareMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients);
 	
 	_knownChannelChannelMatrixEstimator = NULL;
@@ -55,6 +57,7 @@ PlainSystem::~PlainSystem()
 	delete _kalmanEstimator;
 	delete _knownSymbolsKalmanEstimator;
 	delete _SERawareKalmanEstimatorDecorator;
+	delete _augmentedObservationsKalmanEstimator;
 	
 	delete _MMSEdetector;
 	delete _knownChannelChannelMatrixEstimator;
@@ -67,6 +70,7 @@ PlainSystem::~PlainSystem()
 void PlainSystem::addAlgorithms()
 {
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
+	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Augmented Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_augmentedObservationsKalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Known SER Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_SERawareKalmanEstimatorDecorator,_preamble,_d,_MMSEdetector,_ARcoefficients));
 	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("KF-aware MMSE + Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
 	_algorithms.push_back(new KalmanFilterAwareMMSEBasedAlgorithm("KF-aware MMSE + Known SER Kalman Filter",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_SERawareKalmanEstimatorDecorator,_preamble,_d,_kalmanFilterAwareMMSEDetector,_ARcoefficients));
