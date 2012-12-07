@@ -32,8 +32,6 @@ protected:
 	VectorXd _previousObservations;
 	std::vector<MatrixXd> _observationEquationCovariances;
 	
-//     virtual MatrixXd buildObservationMatrix(const VectorXd& symbolsVector);
-
 public:
     AugmentedObservationsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, std::vector<double> ARcoefficients, double ARvariance);
     virtual AugmentedObservationsKalmanEstimator* clone() const;

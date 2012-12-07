@@ -20,15 +20,9 @@
 
 #include "AugmentedObservationsKalmanEstimator.h"
 
-// MatrixXd AugmentedObservationsKalmanEstimator::buildObservationMatrix(const VectorXd& symbolsVector)
-// {
-//     return KalmanEstimator::buildObservationMatrix(symbolsVector);
-// }
-
 AugmentedObservationsKalmanEstimator::AugmentedObservationsKalmanEstimator(const MatrixXd& initialEstimation, const MatrixXd& variances, uint N, std::vector<double> ARcoefficients, double ARvariance):
 KalmanEstimator(initialEstimation,variances,N,ARcoefficients,ARvariance),_nARcoeffs(ARcoefficients.size())
-// ,_previousSymbolVectors(MatrixXd::Zero(_nInputs,ARcoefficients.size()-1)),_previousObservations(MatrixXd::Zero(_nOutputs,ARcoefficients.size()-1))
-// ,_observationEquationCovariances(ARcoefficients.size()-1,MatrixXd::Zero(_nOutputs,_nOutputs))
+// ,_previousSymbolVectors(MatrixXd::Zero(_nInputs,ARcoefficients.size()-1)),_previousObservations(MatrixXd::Zero(_nOutputs,ARcoefficients.size()-1)),_observationEquationCovariances(ARcoefficients.size()-1,MatrixXd::Zero(_nOutputs,_nOutputs))
 {
 	if(ARcoefficients.size()>1)
 	{
@@ -45,43 +39,41 @@ AugmentedObservationsKalmanEstimator* AugmentedObservationsKalmanEstimator::clon
 
 MatrixXd AugmentedObservationsKalmanEstimator::nextMatrix(const VectorXd& observations, const MatrixXd& symbolsMatrix, const MatrixXd &observationEquationCovariance)
 {
+	// if there is only one AR coefficient, we can fall back to the super class implementation
 	if(_nARcoeffs==1)
 		return KalmanEstimator::nextMatrix(observations,symbolsMatrix,observationEquationCovariance);
 	
 	assert(observations.size()==_nOutputs);
 	assert(symbolsMatrix.size()==_nInputsXchannelOrder);
 
-    // extStateMeasurementMatrix is a matrix of zeros whose right side is the common observation matrix (it is meant to take into account when there is more than one AR coefficient)
+    // a matrix of zeros from which the observation matrix will be built
     MatrixXd extendedObservationMatrix = MatrixXd::Zero(_nOutputs*_nARcoeffs,_nExtStateVectorCoeffs);
 	
+	// the new observation is stored BELOW the previous ones in a new vector
 	VectorXd concatObservations(_previousObservations.rows()+observations.rows(),_previousObservations.cols());
 	concatObservations << _previousObservations,observations;
 	
+	// the symbols vectors are stored TO THE RIGHT of the previous ones in a new matrix
 	MatrixXd concatSymbols(_previousSymbolVectors.rows(),_previousSymbolVectors.cols()+symbolsMatrix.cols());
 	concatSymbols << _previousSymbolVectors,symbolsMatrix;
 	
+	// the new observation equation covariance is added to the (c++) vector of previous ones
 	_observationEquationCovariances.push_back(observationEquationCovariance);
 	
-// 	VectorXd concatObservations(_nOutputs*_nARcoeffs);
-// 	for(uint iAR=0;iAR<_nARcoeffs;iAR++)
-// 		concatObservations.segment(iAR*_nOutputs,_nOutputs) = 
-	
+	// the observations matrix is built from the symbol vectors
 	for(uint iAR=0;iAR<_nARcoeffs;iAR++)
 		extendedObservationMatrix.block(0+iAR*_nOutputs,_nExtStateVectorCoeffs-_nChannelCoeffs*(_nARcoeffs-iAR),_nOutputs,_nChannelCoeffs) = buildObservationMatrix(Util::toVector(concatSymbols.block(0,iAR,_nInputs,symbolsMatrix.cols()),columnwise));
 	
-//     extendedObservationMatrix.block(0,_nExtStateVectorCoeffs-_nChannelCoeffs,_nOutputs,_nChannelCoeffs) = buildObservationMatrix(Util::toVector(symbolsMatrix,columnwise));
-    
-//     _kalmanFilter->step(extendedObservationMatrix,observations,observationEquationCovariance);
-		
-// 	cout << "extendedObservationMatrix:" << endl << extendedObservationMatrix << endl;
-// 	cout << "concatObservations" << endl << concatObservations << endl;
-// 	getchar();
-	
+	// a KF step is taken using the previously built stuff
 	_kalmanFilter->step(extendedObservationMatrix,concatObservations,Util::diag(_observationEquationCovariances));
 	
-	
+	// the newest observations vectors,...
 	_previousObservations = concatObservations.tail((_nARcoeffs-1)*_nOutputs);
+	
+	// ...symbol vectors...
 	_previousSymbolVectors = concatSymbols.block(0,1,_nInputs,_nARcoeffs-1);
+	
+	// ...and covariance matrices are kept
 	_observationEquationCovariances.erase(_observationEquationCovariances.begin());
 	
     // notice that only the last coefficients (those representing the channel matrix at current time) are picked up to build the estimated channel matrix
