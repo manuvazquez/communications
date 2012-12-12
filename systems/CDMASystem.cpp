@@ -28,6 +28,7 @@
 #include <MultiuserCDMAchannel.h>
 #include <ViterbiAlgorithmWithAprioriProbabilities.h>
 #include <PSPAlgorithmWithAprioriProbabilities.h>
+#include <FRSsBasedUserActivityDetectionAlgorithm.h>
 
 #include <math.h>
 #include <algorithm>
@@ -114,6 +115,8 @@ CDMASystem::~CDMASystem()
 
 void CDMASystem::addAlgorithms()
 {
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,-2.0,2.0,10,_usersActivityPdfs));
+	
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
 	_cdmaKalmanEstimator = new CDMAKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_ARcoefficients,_ARvariance,_spreadingCodes);

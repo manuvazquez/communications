@@ -41,7 +41,7 @@ public:
 
 protected:
     LinearDetector *_linearDetector;
-    const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity    
+    const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity
 
     virtual void initializeParticles();
     virtual void process(const MatrixXd& observations, vector< double > noiseVariances);

@@ -46,7 +46,7 @@ public:
 
     MatrixXd channelMatrices2stackedChannelMatrix(vector<MatrixXd> matrices) { return TransmissionUtil::channelMatrices2stackedChannelMatrix(matrices,_channelOrder);}
     
-    virtual bool computesChannelEstimatesVariances() const { return _channelEstimator->computesVariances(); }
+    virtual bool computesChannelEstimatesVariances() const { if(_channelEstimator==NULL) return false; else return _channelEstimator->computesVariances(); }
 };
 
 #endif

@@ -125,12 +125,12 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         for(iRow=0;iRow<_nInputs;iRow++)
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
 
-		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
-																							 obtainChannelMatrixEstimatorFeed(softEstimations,_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder)),
-																							 noiseVariances[iObservationToBeProcessed]);
-// 																							 noiseVariances[iObservationToBeProcessed]+0.0001);
+// 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
+// 																							 obtainChannelMatrixEstimatorFeed(softEstimations,_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder)),
+// 																							 noiseVariances[iObservationToBeProcessed]);
+// // 																							 noiseVariances[iObservationToBeProcessed]+0.0001);
 			
-// 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
+		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
 		
 		// ...and updated with the last estimated channel matrix
 		ARmatricesBuffer.erase(ARmatricesBuffer.begin());

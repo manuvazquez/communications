@@ -47,6 +47,7 @@ ADD_LIBRARY (algorithms STATIC
 			USIS
 			ViterbiAlgorithm
 			ViterbiAlgorithmWithAprioriProbabilities
-			OneChannelOrderPerOutputSMCAlgorithm)
+			OneChannelOrderPerOutputSMCAlgorithm
+			FRSsBasedUserActivityDetectionAlgorithm)
 TARGET_LINK_LIBRARIES (algorithms transmission smc trellis)
 add_subdirectory(USIS2SIS)

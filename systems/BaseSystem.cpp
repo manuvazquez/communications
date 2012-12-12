@@ -337,9 +337,10 @@ if(__nFramesHasBeenPassed)
         // all the above symbols must be processed except those generated due to the smoothing
         _iLastSymbolVectorToBeDetected = _symbols.cols() - _nSmoothingSymbolsVectors;
 
-		// this method should build the channel
+		// this method was introduced to initialize some variables that may be required in the build of the channel...
         buildSystemSpecificVariables();
-		
+
+		// ...carried out by this other method
 		_channel =  buildChannel();
 
 #ifdef PRINT_PARAMETERS
