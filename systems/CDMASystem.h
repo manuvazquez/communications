@@ -28,11 +28,19 @@
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UsersActivityDistribution.h>
 
+// #define ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+
 /**
 	@author Manu <manu@rustneversleeps>
 */
 class CDMASystem : public SMCSystem
 {
+	
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+private:
+	uint channelCoeffToCell(double coeff) const;
+#endif
+	
 protected:
     MatrixXd _spreadingCodes;
     
@@ -92,8 +100,12 @@ protected:
 	
 	double _forgettingFactor;
 	
-	double _firstCell,_lastCell;
-	uint _nCells;
+	std::vector<double> _grid;
+	double _gridStep;
+	
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	MatrixXd _estimatedChannelTransitionProbabilities;
+#endif
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
@@ -109,7 +121,10 @@ protected:
 	 **/
 	void resetFramePieces();
 	
-	virtual MIMOChannel *instantiateChannelClass();
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	void accountForEstimatedChannelTransitionProbabilities(const MIMOChannel * const channel);
+#endif
+	
 public:
     CDMASystem();
 

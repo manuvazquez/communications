@@ -48,6 +48,10 @@ using namespace std;
 
 CDMASystem::CDMASystem(): SMCSystem()
 {
+	// parameters for the grid needed by the Finite Random Sets based algorithm ("FRSsBasedUserActivityDetectionAlgorithm")
+	double firstCell,lastCell;
+	uint nCells;
+	
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
 	
@@ -72,9 +76,9 @@ CDMASystem::CDMASystem(): SMCSystem()
 	readParameterFromXML(thisSystemParameters,"forgettingFactor",_forgettingFactor);
 	
 	xml_node<> *FRSsBasedAlgorithmNode = get_child(thisSystemParameters,"FRSsBasedUserActivityDetectionAlgorithm");
-	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",_firstCell);
-	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",_lastCell);
-	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",_nCells);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",firstCell);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",lastCell);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",nCells);
 
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
@@ -87,9 +91,6 @@ CDMASystem::CDMASystem(): SMCSystem()
 // 	FlatPowerProfile::setCoefficientsMean(5.0);
     _powerProfile = new FlatPowerProfile(1,_N,_m,1.0);
 
-    // the parameters obtained from the Yule-Walker equations are used for the channel estimator
-// 	_ARcoefficients = ARprocess::parametersFromYuleWalker(2,_velocity,_carrierFrequency,_T,_ARvariance);
-    
 	_cdmaKalmanEstimator = NULL;
 	_cdmaKnownChannelChannelMatrixEstimator = NULL;
 	_cdmaRLSEstimator = NULL;
@@ -106,6 +107,24 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_everyFrameUsersActivity.reserve(_nFrames);
 	_everyFrameSpreadingCodes.reserve(_nFrames);
 	_peActivityDetectionFrames.reserve(_nFrames);
+	
+	// the grid for the channel coefficients needed by the "FRSsBasedUserActivityDetectionAlgorithm" algorithm is built
+	_grid = std::vector<double>(nCells);
+	_gridStep = (lastCell-firstCell)/(nCells-1);
+	
+	_grid[0] = firstCell;
+	for(uint i=1;i<(nCells-1);i++)
+		_grid[i] = _grid[i-1] + _gridStep;
+	_grid[nCells-1] = lastCell;
+	
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	_estimatedChannelTransitionProbabilities = MatrixXd::Zero(_grid.size(),_grid.size());
+#endif
+	
+#ifdef DEBUG
+	cout << "grid step = " << _gridStep << endl;
+	cout << "grid:" << endl << _grid << endl;
+#endif
 }
 
 
@@ -119,8 +138,8 @@ CDMASystem::~CDMASystem()
 }
 
 void CDMASystem::addAlgorithms()
-{
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_firstCell,_lastCell,_nCells,_usersActivityPdfs));
+{	
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs));
 	
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
@@ -185,13 +204,6 @@ void CDMASystem::buildSystemSpecificVariables()
 		// spreading codes for the users are generated randomly
 		_spreadingCodes = Util::sign(StatUtil::randnMatrix(_L,_N,0.0,1.0));
 
-// 		// the spreading codes are normalized
-// 		_spreadingCodes /= sqrt(_L);
-
-// 		MatrixXd kasamiCodes (_L,_N);
-// 		kasamiCodes <<	1,  -1,  -1, -1,   1,   1, 1,   1,   1, -1,  -1,   1, 1,   1,  -1, 1,  -1,   1, -1,  -1,  -1, -1,   1,  -1;
-// 		_spreadingCodes = kasamiCodes;
-
 #ifdef PRINT_CODES_INFO
 		std::cout << "generated spreadingCodes..." << std::endl << _spreadingCodes << std::endl;
 		std::cout << "are codes are orthogonal? " << Util::areColsOrthogonal(_spreadingCodes) << std::endl;
@@ -199,23 +211,6 @@ void CDMASystem::buildSystemSpecificVariables()
 #endif
 // 	} while(false);
 	} while(!Util::areColsDifferentAndNotOpposite(_spreadingCodes));
-	
-// 	double thisChannelMinimumSIR;
-// 	
-// 	do
-// 	{
-// 		delete _channel;
-// 		
-// 		_channel = buildChannel();
-// 		
-// 		// Signal to Interference Ratio's
-// 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (_channel)->signalToInterferenceRatio(_iUserOfInterest);
-// 		
-// 		// the minimum is obtained
-// 		thisChannelMinimumSIR = 10*log10(SIRs[std::min_element(SIRs.begin(),SIRs.end())-SIRs.begin()]);
-// 		std::cout << "minimum SIR = " << thisChannelMinimumSIR << std::endl;
-// 
-// 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);	
 }
 
 double CDMASystem::computeActivityDetectionErrorRate(MatrixXd sourceSymbols, MatrixXd detectedSymbols) const
@@ -474,6 +469,11 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
+	Octave::toOctaveFileStream(_grid,"grid",_f);
+	Octave::toOctaveFileStream(_gridStep,"gridStep",_f);
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities,"estimatedChannelTransitionProbabilities",_f);
+#endif
 }
 
 Noise *CDMASystem::buildNoise() const
@@ -495,8 +495,20 @@ MIMOChannel *CDMASystem::buildChannel()
 	do
 	{
 		delete channel;
+
+		// ------------------------------------------------------------------------------------------
 		
-		channel = instantiateChannelClass();
+		// the appropriate class to be instantiated is selected here
+		if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + ARchannel::getXMLname()))
+			channel =  new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance)),_spreadingCodes);
+		else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + TimeInvariantChannel::getXMLname()))
+			channel = new MultiuserCDMAchannel(new TimeInvariantChannel(_powerProfile->nInputs(),_powerProfile->nOutputs(),_m,_symbols.cols(),MatrixXd::Ones(_powerProfile->nOutputs(),_powerProfile->nInputs())),_spreadingCodes);
+		else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + BesselChannel::getXMLname()))
+			channel = new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
+		else
+			throw RuntimeException(std::string("CDMASystem::buildChannel: MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" is not supported within a multiuser CDMA system."));
+		
+		// ------------------------------------------------------------------------------------------
 		
 		// Signal to Interference Ratio's
 		std::vector<double> SIRs = dynamic_cast<MultiuserCDMAchannel *> (channel)->signalToInterferenceRatio(_iUserOfInterest);
@@ -507,18 +519,47 @@ MIMOChannel *CDMASystem::buildChannel()
 
 	} while(thisChannelMinimumSIR<_minSignalToInterferenceRatio);
 	
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	accountForEstimatedChannelTransitionProbabilities(channel);
+	
+// 	cout << _estimatedChannelTransitionProbabilities << endl;
+// 	getchar();
+#endif
+	
 	return channel;
 }
 
-MIMOChannel *CDMASystem::instantiateChannelClass()
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+
+void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOChannel * const channel)
 {
-	if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + ARchannel::getXMLname()))
-		return new MultiuserCDMAchannel(new ARchannel(_N,1,_m,_symbols.cols(),ARprocess(_powerProfile->generateChannelMatrix(_randomGenerator),_ARcoefficients,_ARvariance)),_spreadingCodes);
-	else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + TimeInvariantChannel::getXMLname()))
-		return new MultiuserCDMAchannel(new TimeInvariantChannel(_powerProfile->nInputs(),_powerProfile->nOutputs(),_m,_symbols.cols(),MatrixXd::Ones(_powerProfile->nOutputs(),_powerProfile->nInputs())),_spreadingCodes);
-	else if(!_channelClassToBeInstantiated.compare(MultiuserCDMAchannel::getXMLname() + "_" + BesselChannel::getXMLname()))
-		return new MultiuserCDMAchannel(new BesselChannel(_N,1,_m,_symbols.cols(),_velocity,_carrierFrequency,_T,*_powerProfile),_spreadingCodes);
-	else
-// 		return SMCSystem::buildChannel();
-		throw RuntimeException(std::string("CDMASystem::instantiateChannelClass: MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" is not supported within a multiuser CDMA system."));
+	uint nRows = channel->channelCoefficientsMatrixRows();
+	uint nCols = channel->channelCoefficientsMatrixCols();
+	
+// 	cout << "grid" << endl << _grid << endl;
+		
+	for(uint i=_preambleLength+1;i<_iLastSymbolVectorToBeDetected;i++)
+	{
+// 		cout << "channel->at(i)" << endl << channel->at(i) << endl;
+		for(uint iRow=0;iRow<nRows;iRow++)
+			for(uint iCol=0;iCol<nCols;iCol++)
+			{
+// 				cout << "channel->at(i)(iRow,iCol) = " << channel->at(i)(iRow,iCol) << endl;
+// 				cout << "channelCoeffToCell(channel->at(i)(iRow,iCol)) = " << channelCoeffToCell(channel->at(i)(iRow,iCol)) << endl;
+// 				getchar();
+				_estimatedChannelTransitionProbabilities(channelCoeffToCell(channel->at(i-1)(iRow,iCol)),channelCoeffToCell(channel->at(i)(iRow,iCol)))++;
+			}
+	}
 }
+
+uint CDMASystem::channelCoeffToCell(double coeff) const
+{
+	if(coeff<_grid[0])
+		return 0;
+	else if(coeff>_grid[_grid.size()-1])
+		return _grid[_grid.size()-1];
+	
+	return round((coeff-_grid[0])/_gridStep);
+}
+
+#endif

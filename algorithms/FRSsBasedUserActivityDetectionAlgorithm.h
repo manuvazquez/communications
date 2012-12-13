@@ -35,8 +35,7 @@ protected:
 	const MatrixXd _spreadingCodes;
 	MatrixXd _Qtrans,_R;
 	
-	std::vector<double> _grid;
-	double _gridStep;
+	const std::vector<double> _grid;
 	
 	uint _iFirstSymbolVectorToBeDetected;
 	
@@ -57,7 +56,7 @@ protected:
 	double channelCoeffAprioriProb(double channelCoeff) { return 1.0; }
 	double channelCoeffConditionalProb(double currentChannelCoeff, double previousChannelCoeff) { return 1.0; }
 public:
-    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, double firstCell, double lastCell, uint nCells, const std::vector<UsersActivityDistribution> usersActivityPdfs);
+    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs);
     virtual std::vector< MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);

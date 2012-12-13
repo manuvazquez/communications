@@ -25,7 +25,7 @@
 
 // #define DEBUG
 
-FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, double firstCell, double lastCell, uint nCells, const std::vector<UsersActivityDistribution> usersActivityPdfs): KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),
+FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs): KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),_grid(grid),
 _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_usersActivityPdfs(usersActivityPdfs)
 {
 	// QR decomposition of the spreading codes matrix
@@ -42,19 +42,6 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 #endif
 	
 	_iFirstSymbolVectorToBeDetected = _preamble.cols();
-	
-	_grid = std::vector<double>(nCells);
-	_gridStep = (lastCell-firstCell)/(nCells-1);
-	
-	_grid[0] = firstCell;
-	for(uint i=1;i<(nCells-1);i++)
-		_grid[i] = _grid[i-1] + _gridStep;
-	_grid[nCells-1] = lastCell;
-	
-#ifdef DEBUG
-	cout << "grid step = " << _gridStep << endl;
-	cout << "grid:" << endl << _grid << endl;
-#endif
 }
 
 std::vector< MatrixXd> FRSsBasedUserActivityDetectionAlgorithm::getEstimatedChannelMatrices()
