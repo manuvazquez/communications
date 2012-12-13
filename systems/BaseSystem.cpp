@@ -36,7 +36,7 @@ extern uint __nFramesPassed;
 extern bool __randomSeedHasBeenPassed;
 extern bool __nFramesHasBeenPassed;
 
-#define EXPORT_REAL_DATA
+// #define EXPORT_REAL_DATA
 // #define EXPORT_REAL_CHANNEL_ORDER
 
 // #define PRINT_PARAMETERS
@@ -506,7 +506,7 @@ void BaseSystem::onlyOnce()
 #endif
 
 	if(_keepAllChannelEstimates)
-		// channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iSNR,iAlgorithm)
+		// channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iAlgorithmm,iSNR)
 		_presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES

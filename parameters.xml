@@ -90,6 +90,13 @@
 		<maskUsedToComputeTheSER> all </maskUsedToComputeTheSER>
 		
 		<forgettingFactor> 0.95 </forgettingFactor>
+		
+		<!-- algorithm specific parameters -->
+		<FRSsBasedUserActivityDetectionAlgorithm>
+			<firstCell> -2.0 </firstCell>
+			<lastCell> 2.0 </lastCell>
+			<nCells> 10 </nCells>
+		</FRSsBasedUserActivityDetectionAlgorithm>
 
 	</CDMASystem>
 

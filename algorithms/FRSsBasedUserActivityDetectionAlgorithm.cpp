@@ -182,7 +182,6 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
             iCurrentNode = iBestLeaf(nodes);
         }
         
-//         for(i=0;i<_nInputs;i++)
 		_detectedSymbolVectors.col(iObservationToBeProcessed) = nodes[iCurrentNode].symbolsVector;
 		_estimatedChannelMatrices[iObservationToBeProcessed] = nodes[iCurrentNode].channelMatrix;
         
@@ -226,9 +225,4 @@ uint FRSsBasedUserActivityDetectionAlgorithm::iBestLeaf(const vector<tTreeNode> 
         
     return iBest;
 }
-
-// FRSsBasedUserActivityDetectionAlgorithm::~FRSsBasedUserActivityDetectionAlgorithm()
-// {
-// 
-// }
 

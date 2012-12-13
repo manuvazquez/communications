@@ -92,6 +92,9 @@ protected:
 	
 	double _forgettingFactor;
 	
+	double _firstCell,_lastCell;
+	uint _nCells;
+	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
 	virtual void storeFrameResults();

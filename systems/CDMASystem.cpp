@@ -70,7 +70,12 @@ CDMASystem::CDMASystem(): SMCSystem()
 	readParameterFromXML(thisSystemParameters,"maskUsedToComputeTheSER",_maskUsedToComputeTheSER);
 	
 	readParameterFromXML(thisSystemParameters,"forgettingFactor",_forgettingFactor);
-			
+	
+	xml_node<> *FRSsBasedAlgorithmNode = get_child(thisSystemParameters,"FRSsBasedUserActivityDetectionAlgorithm");
+	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",_firstCell);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",_lastCell);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",_nCells);
+
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
 	// first user starts transmitting something
@@ -115,7 +120,7 @@ CDMASystem::~CDMASystem()
 
 void CDMASystem::addAlgorithms()
 {
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,-2.0,2.0,10,_usersActivityPdfs));
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_firstCell,_lastCell,_nCells,_usersActivityPdfs));
 	
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;

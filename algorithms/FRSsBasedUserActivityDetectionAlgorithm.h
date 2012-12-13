@@ -42,7 +42,6 @@ protected:
 	
     MatrixXd _detectedSymbolVectors;
 	std::vector<MatrixXd> _estimatedChannelMatrices;
-//     MatrixXd _estimatedChannelMatrices;
 	
 	const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity
 	
@@ -51,7 +50,6 @@ protected:
         std::vector<uint> children;
         uint height,id;
         VectorXd symbolsVector;
-// 		VectorXd channelCoeffs;
 		MatrixXd channelMatrix;
     } tTreeNode;
 	
@@ -64,7 +62,6 @@ public:
     virtual MatrixXd getDetectedSymbolVectors();
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances);
-//     virtual ~FRSsBasedUserActivityDetectionAlgorithm();
 };
 
 #endif // FRSSBASEDUSERACTIVITYDETECTIONALGORITHM_H
