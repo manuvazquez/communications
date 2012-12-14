@@ -159,4 +159,7 @@ public:
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<std::vector<T> > &matrix);
 
+std::ofstream& operator<<(std::ofstream& out, const MatrixXd& matrix);
+std::ifstream& operator>>(std::ifstream& in, MatrixXd& matrix);
+
 #endif

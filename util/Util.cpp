@@ -598,3 +598,34 @@ MatrixXd Util::diag(std::vector<MatrixXd> matrices)
 	
 	return res;
 }
+
+std::ofstream& operator<<(std::ofstream& out, const MatrixXd& matrix)
+{
+	uint nRows = matrix.rows();
+	uint nCols = matrix.cols();
+	
+	out.write((char *) &nRows,sizeof(nRows));
+	out.write((char *) &nCols,sizeof(nCols));
+	
+	for(uint iRow=0;iRow<nRows;iRow++)
+		for(uint iCol=0;iCol<nCols;iCol++)
+			out.write((char *) &matrix(iRow,iCol),sizeof(matrix(iRow,iCol)));
+		
+	return out;
+}
+
+std::ifstream& operator>>(std::ifstream& in, MatrixXd& matrix)
+{
+	uint nRows,nCols;
+	
+	in.read((char *) &nRows,sizeof(nRows));
+	in.read((char *) &nCols,sizeof(nCols));
+	
+	matrix.resize(nRows,nCols);
+	
+	for(uint iRow=0;iRow<nRows;iRow++)
+		for(uint iCol=0;iCol<nCols;iCol++)
+			in.read((char *) &matrix(iRow,iCol),sizeof(matrix(iRow,iCol)));
+	
+	return in;
+}

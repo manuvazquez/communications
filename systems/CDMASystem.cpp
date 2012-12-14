@@ -78,7 +78,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	xml_node<> *FRSsBasedAlgorithmNode = get_child(thisSystemParameters,"FRSsBasedUserActivityDetectionAlgorithm");
 	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",firstCell);
 	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",lastCell);
-	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",nCells);
+	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",nCells);	
+	readParameterFromXML(FRSsBasedAlgorithmNode,"channelTransitionProbabilitiesFileName",_channelTransitionProbabilitiesFileName);
 
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
@@ -104,8 +105,14 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 	resetFramePieces();
 		
+#ifdef KEEP_EVERY_FRAME_USER_ACTIVITY
 	_everyFrameUsersActivity.reserve(_nFrames);
+#endif
+	
+#ifdef KEEP_EVERY_FRAME_SPREADING_CODES
 	_everyFrameSpreadingCodes.reserve(_nFrames);
+#endif
+
 	_peActivityDetectionFrames.reserve(_nFrames);
 	
 	// the grid for the channel coefficients needed by the "FRSsBasedUserActivityDetectionAlgorithm" algorithm is built
@@ -450,8 +457,15 @@ void CDMASystem::storeFrameResults()
     SMCSystem::storeFrameResults();
 
     _peActivityDetectionFrames.push_back(_presentFramePeActivityDetection);
+	
+#ifdef KEEP_EVERY_FRAME_USER_ACTIVITY
 	_everyFrameUsersActivity.push_back(_usersActivity);
+#endif
+	
+#ifdef KEEP_EVERY_FRAME_SPREADING_CODES
 	_everyFrameSpreadingCodes.push_back(_spreadingCodes);
+#endif
+
 	_everyFrameNumberSignChanges.push_back(_thisFrameNumberSignChanges);
 }
 
@@ -464,15 +478,33 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
 	Octave::toOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
 	Octave::toOctaveFileStream(_userPriorProb,"userPriorProb",_f);
+	
+#ifdef KEEP_EVERY_FRAME_USER_ACTIVITY
 	Octave::toOctaveFileStream(_everyFrameUsersActivity,"usersActivity",_f);
+#else
+	Octave::toOctaveFileStream(_usersActivity,"usersActivity",_f);
+#endif
+	
 	Octave::toOctaveFileStream(_signChanges,"signChanges",_f);
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
+	
+#ifdef KEEP_EVERY_FRAME_SPREADING_CODES
 	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
+#else
+	Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
+#endif
+	
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
 	Octave::toOctaveFileStream(_grid,"grid",_f);
 	Octave::toOctaveFileStream(_gridStep,"gridStep",_f);
+	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities,"estimatedChannelTransitionProbabilities",_f);
+	
+	std::ofstream f;
+	f.open(_channelTransitionProbabilitiesFileName.c_str(),std::ofstream::trunc | std::ofstream::binary);
+	f << _estimatedChannelTransitionProbabilities;
+	f.close();
 #endif
 }
 
@@ -540,6 +572,7 @@ void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOCha
 		
 	for(uint i=_preambleLength+1;i<_iLastSymbolVectorToBeDetected;i++)
 	{
+// 		cout << "channel->at(i-1)" << endl << channel->at(i-1) << endl;
 // 		cout << "channel->at(i)" << endl << channel->at(i) << endl;
 		for(uint iRow=0;iRow<nRows;iRow++)
 			for(uint iCol=0;iCol<nCols;iCol++)
@@ -547,7 +580,17 @@ void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOCha
 // 				cout << "channel->at(i)(iRow,iCol) = " << channel->at(i)(iRow,iCol) << endl;
 // 				cout << "channelCoeffToCell(channel->at(i)(iRow,iCol)) = " << channelCoeffToCell(channel->at(i)(iRow,iCol)) << endl;
 // 				getchar();
-				_estimatedChannelTransitionProbabilities(channelCoeffToCell(channel->at(i-1)(iRow,iCol)),channelCoeffToCell(channel->at(i)(iRow,iCol)))++;
+
+				uint previousCoeffCell = channelCoeffToCell(channel->at(i-1)(iRow,iCol));
+				uint currentCoeffCell = channelCoeffToCell(channel->at(i)(iRow,iCol));
+				
+// 				if(abs(int(previousCoeffCell)-int(currentCoeffCell))>1)
+// 				{
+// 					cout << "channel->at(i-1)(iRow,iCol) = " << channel->at(i-1)(iRow,iCol) << " -> " << previousCoeffCell << endl;
+// 					cout << "channel->at(i)(iRow,iCol) = " << channel->at(i)(iRow,iCol) << " -> " << currentCoeffCell<< endl;
+// 					getchar();
+// 				}
+				_estimatedChannelTransitionProbabilities(previousCoeffCell,currentCoeffCell)++;
 			}
 	}
 }
@@ -557,8 +600,9 @@ uint CDMASystem::channelCoeffToCell(double coeff) const
 	if(coeff<_grid[0])
 		return 0;
 	else if(coeff>_grid[_grid.size()-1])
-		return _grid[_grid.size()-1];
+		return (_grid.size()-1);
 	
+// 	cout << "for " << coeff << ": (coeff-_grid[0])/_gridStep " << (coeff-_grid[0])/_gridStep << endl;
 	return round((coeff-_grid[0])/_gridStep);
 }
 

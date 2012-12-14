@@ -28,7 +28,11 @@
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UsersActivityDistribution.h>
 
-// #define ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+#define ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+
+// when dealing with a high number of frames, the users' activiy and spreading codes for every frame may amount to a lot of space in memory/disk
+// #define KEEP_EVERY_FRAME_USER_ACTIVITY
+// #define KEEP_EVERY_FRAME_SPREADING_CODES
 
 /**
 	@author Manu <manu@rustneversleeps>
@@ -46,7 +50,10 @@ protected:
     
     // _usersActivity(i,j) = 1.0 if the i-th user is active at time j
     vector<vector<bool> > _usersActivity;
+	
+#ifdef KEEP_EVERY_FRAME_USER_ACTIVITY
 	std::vector<std::vector<std::vector<bool> > > _everyFrameUsersActivity;
+#endif
     
     double _userPersistenceProb,_newActiveUserProb,_userPriorProb;
 	
@@ -87,7 +94,9 @@ protected:
 	 **/
 	int _minSignalToInterferenceRatio;
 	
+#ifdef KEEP_EVERY_FRAME_SPREADING_CODES
 	std::vector<MatrixXd> _everyFrameSpreadingCodes;
+#endif
 	
 	/**
 	 * @brief number of sign changes that occur in the channel estimate of all the algorithms for every SNR and every frame
@@ -102,6 +111,7 @@ protected:
 	
 	std::vector<double> _grid;
 	double _gridStep;
+	std::string _channelTransitionProbabilitiesFileName;
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	MatrixXd _estimatedChannelTransitionProbabilities;

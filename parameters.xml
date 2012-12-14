@@ -96,6 +96,7 @@
 			<firstCell> -2.0 </firstCell>
 			<lastCell> 2.0 </lastCell>
 			<nCells> 10 </nCells>
+			<channelTransitionProbabilitiesFileName> channelTransitionProbabilities.bin </channelTransitionProbabilitiesFileName>
 		</FRSsBasedUserActivityDetectionAlgorithm>
 
 	</CDMASystem>

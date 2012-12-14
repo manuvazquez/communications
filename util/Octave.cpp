@@ -74,7 +74,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<s
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
     {
-        std::cout << "Octave::matricesVectorsVectorsVectoresVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << std::endl;
+        std::cout << "Octave::matricesVectorsVectorsVectoresVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
     }
 
@@ -94,7 +94,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::
 {
     if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
     {
-        std::cout << "Octave::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << std::endl;
+        std::cout << "Octave::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
     }
 
@@ -111,7 +111,7 @@ void Octave::stringsVectorToOctaveFileStream(const std::vector<std::string> &str
 {
     if(strings.size()==0)
 	{
-		std::cout << "Octave::stringsVectorToOctaveFileStream: the vector is empty, nothing is written." << std::endl;
+		std::cout << "Octave::stringsVectorToOctaveFileStream: " << COLOR_PINK << "vector " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
 	}
 
@@ -184,7 +184,7 @@ template<class T> void Octave::toOctaveFileStream(const std::vector<std::vector<
 {
     if(matrix.size()==0 || matrix[0].size()==0 || matrix[0][0].size()==0)
     {
-        std::cout << "Octave::scalarsVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << name << " would be an empty matrix." << COLOR_NORMAL << std::endl;
+        std::cout << "Octave::scalarsVectorsVectorsVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
     }
 
