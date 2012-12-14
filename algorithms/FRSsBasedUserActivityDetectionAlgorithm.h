@@ -25,6 +25,8 @@
 
 #include <vector>
 #include <math.h>
+#include <iostream>
+#include <fstream>
 
 #include <UsersActivityDistribution.h>
 
@@ -41,8 +43,11 @@ protected:
 	
     MatrixXd _detectedSymbolVectors;
 	std::vector<MatrixXd> _estimatedChannelMatrices;
+	std::vector<std::vector<uint> > _estimatedChannelMatricesCells;
 	
 	const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity
+	
+	MatrixXd _estimatedChannelTransitionProbabilities;
 	
     typedef struct{
         double cost;
@@ -50,13 +55,17 @@ protected:
         uint height,id;
         VectorXd symbolsVector;
 		MatrixXd channelMatrix;
+		std::vector<uint> channelMatrixCells;
     } tTreeNode;
 	
 	uint iBestLeaf(const std::vector< FRSsBasedUserActivityDetectionAlgorithm::tTreeNode >& nodes);
-	double channelCoeffAprioriProb(double channelCoeff) { return 1.0; }
-	double channelCoeffConditionalProb(double currentChannelCoeff, double previousChannelCoeff) { return 1.0; }
+	
+// 	double channelCoeffAprioriProb(double channelCoeff) { return 1.0; }
+// 	double channelCoeffConditionalProb(double currentChannelCoeff, double previousChannelCoeff) { return 1.0; }
+	double channelCoeffAprioriProb(double channelCoeff);
+	double channelCoeffConditionalProb(uint currentChannelCoeffCell, uint previousChannelCoeffCell);
 public:
-    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs);
+    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, std::string channelTransitionProbabilitiesFileName);
     virtual std::vector< MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);

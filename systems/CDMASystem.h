@@ -28,7 +28,7 @@
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <UsersActivityDistribution.h>
 
-#define ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+// #define ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 
 // when dealing with a high number of frames, the users' activiy and spreading codes for every frame may amount to a lot of space in memory/disk
 // #define KEEP_EVERY_FRAME_USER_ACTIVITY

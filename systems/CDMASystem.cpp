@@ -126,6 +126,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	_estimatedChannelTransitionProbabilities = MatrixXd::Zero(_grid.size(),_grid.size());
+	std::cout << COLOR_WHITE << "estimated channel transition probabilities will be written to " << COLOR_NORMAL << _channelTransitionProbabilitiesFileName << COLOR_WHITE << "..." << COLOR_NORMAL << endl;
 #endif
 	
 #ifdef DEBUG
@@ -146,7 +147,7 @@ CDMASystem::~CDMASystem()
 
 void CDMASystem::addAlgorithms()
 {	
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs));
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
 	
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
@@ -553,9 +554,6 @@ MIMOChannel *CDMASystem::buildChannel()
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	accountForEstimatedChannelTransitionProbabilities(channel);
-	
-// 	cout << _estimatedChannelTransitionProbabilities << endl;
-// 	getchar();
 #endif
 	
 	return channel;
@@ -568,28 +566,14 @@ void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOCha
 	uint nRows = channel->channelCoefficientsMatrixRows();
 	uint nCols = channel->channelCoefficientsMatrixCols();
 	
-// 	cout << "grid" << endl << _grid << endl;
-		
 	for(uint i=_preambleLength+1;i<_iLastSymbolVectorToBeDetected;i++)
 	{
-// 		cout << "channel->at(i-1)" << endl << channel->at(i-1) << endl;
-// 		cout << "channel->at(i)" << endl << channel->at(i) << endl;
 		for(uint iRow=0;iRow<nRows;iRow++)
 			for(uint iCol=0;iCol<nCols;iCol++)
 			{
-// 				cout << "channel->at(i)(iRow,iCol) = " << channel->at(i)(iRow,iCol) << endl;
-// 				cout << "channelCoeffToCell(channel->at(i)(iRow,iCol)) = " << channelCoeffToCell(channel->at(i)(iRow,iCol)) << endl;
-// 				getchar();
-
 				uint previousCoeffCell = channelCoeffToCell(channel->at(i-1)(iRow,iCol));
 				uint currentCoeffCell = channelCoeffToCell(channel->at(i)(iRow,iCol));
 				
-// 				if(abs(int(previousCoeffCell)-int(currentCoeffCell))>1)
-// 				{
-// 					cout << "channel->at(i-1)(iRow,iCol) = " << channel->at(i-1)(iRow,iCol) << " -> " << previousCoeffCell << endl;
-// 					cout << "channel->at(i)(iRow,iCol) = " << channel->at(i)(iRow,iCol) << " -> " << currentCoeffCell<< endl;
-// 					getchar();
-// 				}
 				_estimatedChannelTransitionProbabilities(previousCoeffCell,currentCoeffCell)++;
 			}
 	}
@@ -602,7 +586,6 @@ uint CDMASystem::channelCoeffToCell(double coeff) const
 	else if(coeff>_grid[_grid.size()-1])
 		return (_grid.size()-1);
 	
-// 	cout << "for " << coeff << ": (coeff-_grid[0])/_gridStep " << (coeff-_grid[0])/_gridStep << endl;
 	return round((coeff-_grid[0])/_gridStep);
 }
 
