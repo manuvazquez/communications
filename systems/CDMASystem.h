@@ -109,7 +109,7 @@ protected:
 	
 	double _forgettingFactor;
 	
-	std::vector<double> _grid;
+	std::vector<double> _grid,_grid20,_grid30;
 	double _gridStep;
 	std::string _channelTransitionProbabilitiesFileName;
 	

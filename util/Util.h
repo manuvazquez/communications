@@ -154,6 +154,8 @@ public:
 	static MatrixXd subMatrixFromVectorIndexes(const MatrixXd &matrix,const std::vector<uint> &rows, const std::vector<uint> &cols);
 	
 	static MatrixXd diag(std::vector<MatrixXd> matrices);
+	
+	static std::vector<double> linspace(double start, double end, uint n);
 };
 
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);

@@ -629,3 +629,17 @@ std::ifstream& operator>>(std::ifstream& in, MatrixXd& matrix)
 	
 	return in;
 }
+
+std::vector<double> Util::linspace(double start, double end, uint n)
+{
+	std::vector<double> res(n);
+	
+	double step = (end-start)/(n-1);
+	
+	res[0] = start;
+	for(uint i=1;i<(n-1);i++)
+		res[i] = res[i-1] + step;
+	res[n-1] = end;
+	
+	return res;
+}
