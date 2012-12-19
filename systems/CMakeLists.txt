@@ -1,5 +1,6 @@
 include_directories(.
 		    ${PROJECT_SOURCE_DIR}/util
+		    ${PROJECT_SOURCE_DIR}/util/tree
 		    ${PROJECT_SOURCE_DIR}/random
 		    ${PROJECT_SOURCE_DIR}/statistics
 		    ${PROJECT_SOURCE_DIR}/filters

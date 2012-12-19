@@ -120,8 +120,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_gridStep = (lastCell-firstCell)/(nCells-1);
 #endif
 
-// 	_grid = Util::linspace(firstCell,lastCell,nCells);
-	_grid20 = Util::linspace(firstCell,lastCell,20);
+	_grid = Util::linspace(firstCell,lastCell,nCells);
+// 	_grid20 = Util::linspace(firstCell,lastCell,20);
 // 	_grid30 = Util::linspace(firstCell,lastCell,30);
 
 // 	_grid = std::vector<double>(nCells);
@@ -156,9 +156,9 @@ void CDMASystem::addAlgorithms()
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	return;
 #endif
-// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
 	
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,"20cells_channelTransitionProbabilities.bin"));
+// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,"20cells_channelTransitionProbabilities.bin"));
 
 // 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 30 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid30,_usersActivityPdfs,"30cells_channelTransitionProbabilities.bin"));
 

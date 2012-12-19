@@ -3,8 +3,8 @@ BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x
 
 [CMake]
 Build Directory Count=2
-CMakeDir=/usr/share/cmake/Modules
-Current Build Directory Index=0
+CMakeDir=file:///usr/share/cmake/Modules
+Current Build Directory Index=1
 ProjectRootRelative=./
 
 [CMake][CMake Build Directory 0]
