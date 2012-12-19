@@ -115,12 +115,14 @@ CDMASystem::CDMASystem(): SMCSystem()
 
 	_peActivityDetectionFrames.reserve(_nFrames);
 	
-	// the grid for the channel coefficients needed by the "FRSsBasedUserActivityDetectionAlgorithm" algorithm is built
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+	// this variable is only used by method "channelCoeffToCell"...which in turn is only needed when estimating the channel transition probabilities
 	_gridStep = (lastCell-firstCell)/(nCells-1);
-	_grid = Util::linspace(firstCell,lastCell,nCells);
-	
+#endif
+
+// 	_grid = Util::linspace(firstCell,lastCell,nCells);
 	_grid20 = Util::linspace(firstCell,lastCell,20);
-	_grid30 = Util::linspace(firstCell,lastCell,30);
+// 	_grid30 = Util::linspace(firstCell,lastCell,30);
 
 // 	_grid = std::vector<double>(nCells);
 // 	_grid[0] = firstCell;
@@ -154,11 +156,11 @@ void CDMASystem::addAlgorithms()
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	return;
 #endif
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
+// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
 	
 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,"20cells_channelTransitionProbabilities.bin"));
 
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 30 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid30,_usersActivityPdfs,"30cells_channelTransitionProbabilities.bin"));
+// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 30 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid30,_usersActivityPdfs,"30cells_channelTransitionProbabilities.bin"));
 
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
@@ -508,7 +510,6 @@ void CDMASystem::saveFrameResults()
 	
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
 	Octave::toOctaveFileStream(_grid,"grid",_f);
-	Octave::toOctaveFileStream(_gridStep,"gridStep",_f);
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities,"estimatedChannelTransitionProbabilities",_f);

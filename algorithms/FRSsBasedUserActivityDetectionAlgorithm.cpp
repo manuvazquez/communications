@@ -162,7 +162,6 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 						else
 						{
 							// ...and the probability of the channel coefficient at the current time instant is conditional on the value it had before
-// 							child.cost += -No*log(channelCoeffConditionalProb(child.channelMatrix(iCurrentUser),_estimatedChannelMatrices[iObservationToBeProcessed-1](iCurrentUser)));
 							child.cost += -No*log(channelCoeffConditionalProb(child.channelMatrixCells[iCurrentUser],_estimatedChannelMatricesCells[iObservationToBeProcessed-1][iCurrentUser]));
 						}
 					}

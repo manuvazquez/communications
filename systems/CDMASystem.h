@@ -110,7 +110,11 @@ protected:
 	double _forgettingFactor;
 	
 	std::vector<double> _grid,_grid20,_grid30;
+	
+#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	double _gridStep;
+#endif
+	
 	std::string _channelTransitionProbabilitiesFileName;
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
