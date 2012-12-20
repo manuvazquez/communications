@@ -21,6 +21,8 @@
 
 #include <bashcolors.h>
 
+#include <sstream>
+
 void Octave::eigenToOctaveFileStream(const MatrixXd &A,std::string name,std::ofstream &f)
 {
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# rows: " << A.rows() << std::endl << "# columns: " << A.cols() << std::endl;
@@ -198,3 +200,43 @@ template<class T> void Octave::toOctaveFileStream(const std::vector<std::vector<
 }
 template void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,std::string name,std::ofstream &f);
 template void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector <bool> > >&matrix,std::string name,std::ofstream &f);
+
+MatrixXd Octave::eigenFromOctaveFileStream(std::ifstream &f)
+{
+	std::vector<uint> nRowsCols(2);	
+	std::string read,buf;
+	
+// 	// skip # Created by...
+// 	getline(f,read);
+	
+	// skip name...
+	getline(f,read);
+	
+	// skip type...
+	getline(f,read);
+	
+	// number of rows and columns
+	for(uint i=0;i<2;i++)
+	{
+		getline(f,read);
+		std::stringstream ss(read);
+		
+		// skip # rows/columns:
+		ss >> buf; ss >> buf;
+		
+		ss >> nRowsCols[i];
+	}
+	
+	MatrixXd res(nRowsCols[0],nRowsCols[1]);
+	
+	for(uint iRow=0;iRow<nRowsCols[0];iRow++)
+	{
+		getline(f,read);
+		std::stringstream ss(read);
+		
+		for(uint iCol=0;iCol<nRowsCols[1];iCol++)
+			ss >> res(iRow,iCol);
+	}
+		
+	return res;
+}

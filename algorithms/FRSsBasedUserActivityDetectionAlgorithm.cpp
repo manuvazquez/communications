@@ -22,6 +22,7 @@
 
 
 #include <Eigen/QR>
+#include <Octave.h>
 
 // #define DEBUG
 
@@ -46,10 +47,10 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 	
 	// the estimated channel transition probabilities are read from the received file name
 	std::ifstream f;
-	f.open(channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in | std::ifstream::binary);
+	f.open(channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
 	if(f.fail())
 		throw RuntimeException("FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm: error reading file \"" + channelTransitionProbabilitiesFileName + "\"");
-	f >> _estimatedChannelTransitionProbabilities;
+	_estimatedChannelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
 	f.close();
 	
 	VectorXd sums = _estimatedChannelTransitionProbabilities.rowwise().sum();
@@ -63,10 +64,6 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 
 std::vector< MatrixXd> FRSsBasedUserActivityDetectionAlgorithm::getEstimatedChannelMatrices()
 {
-// 	cout << "_estimatedChannelMatrices" << endl;
-// 	for(uint i=0;i<_estimatedChannelMatrices.size();i++)
-// 		cout << _estimatedChannelMatrices[i] << endl;
-// 	cout << "cells" << endl << _estimatedChannelMatricesCells << endl;
 	return _estimatedChannelMatrices;
 }
 
@@ -121,16 +118,20 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 				// ...also for the sake of clarity
 				double currentSymbol = extendedAlphabet[iAlphabet];
 				
+				// the symbols vector for the children of the current node is obtained from the latter...
+				newSymbolsVector = currentNode->getSymbolsVector();
+
+				// ...and updated with the symbol being tested
+				newSymbolsVector(iCurrentUser) = currentSymbol;
+				
 				for(iCell=0;iCell<_grid.size();iCell++)
 				{	
-					// the symbols vector, channel matrix and cost from the current node are obtained...
-					newSymbolsVector = currentNode->getSymbolsVector();
+					// the channel matrix coefficients (and their associated cells) of the children are obtained from those of the parent node (the current node)...
 					newChannelMatrix = currentNode->getChannelMatrix();
 					newChannelMatrixCells = currentNode->getChannelMatrixCells();
-					newCost = currentNode->getCost();
 					
 					
-					newSymbolsVector(iCurrentUser) = currentSymbol;
+					// ...and updated
 					newChannelMatrix(iCurrentUser) = _grid[iCell];
 					newChannelMatrixCells[iCurrentUser] = iCell;
 					
@@ -138,6 +139,8 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 					for(i=0;i<childrenHeight;i++)
 						RxD += _R(iCurrentUser,_nInputs-1-i)*newSymbolsVector(_nInputs-1-i)*newChannelMatrix(_nInputs-1-i);
 				
+					// the new cost is also initialized to that of the parent
+					newCost = currentNode->getCost();
 						
 					newCost += (transformedObs(iCurrentUser)-RxD)*(transformedObs(iCurrentUser)-RxD);
 					
@@ -183,7 +186,7 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 			cout << "best node has symbols:" << endl << nodes[iCurrentNode].symbolsVector << endl << " and channel coeffs: " << endl << nodes[iCurrentNode].channelMatrix << endl;
 			getchar();
 #endif
-        } // while(nodes[iCurrentNode].height<_nInputs)
+        } // while(currentNode->getHeight()<_nInputs)
 
 		_detectedSymbolVectors.col(iObservationToBeProcessed) = currentNode->getSymbolsVector();
 		_estimatedChannelMatrices[iObservationToBeProcessed] = currentNode->getChannelMatrix();

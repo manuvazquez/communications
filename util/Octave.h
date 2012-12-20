@@ -46,6 +46,8 @@ public:
     template<class T> static void toOctaveFileStream(const std::vector<T> &vector,std::string name,std::ofstream &f);
 	template<class T> static void toOctaveFileStream(const std::vector<std::vector <T> > &matrix,std::string name,std::ofstream &f);
 	template<class T> static void toOctaveFileStream(const std::vector<std::vector<std::vector <T> > >&matrix,std::string name,std::ofstream &f);
+	
+	static MatrixXd eigenFromOctaveFileStream(std::ifstream &f);
 };
 
 #endif
