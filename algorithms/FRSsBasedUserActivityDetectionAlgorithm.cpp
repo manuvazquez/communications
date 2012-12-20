@@ -26,8 +26,8 @@
 
 // #define DEBUG
 
-FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, std::string channelTransitionProbabilitiesFileName): KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),_grid(grid),
-_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_estimatedChannelMatricesCells(iLastSymbolVectorToBeDetected,std::vector<uint>(N)),_usersActivityPdfs(usersActivityPdfs)
+FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, MatrixXd estimatedChannelTransitionProbabilities): KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),_grid(grid),
+_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_estimatedChannelMatricesCells(iLastSymbolVectorToBeDetected,std::vector<uint>(N)),_usersActivityPdfs(usersActivityPdfs),_estimatedChannelTransitionProbabilities(estimatedChannelTransitionProbabilities)
 {
 	// QR decomposition of the spreading codes matrix
 	HouseholderQR<MatrixXd> qr(_spreadingCodes);
@@ -46,12 +46,12 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 	_iFirstSymbolVectorToBeDetected = _preamble.cols();
 	
 	// the estimated channel transition probabilities are read from the received file name
-	std::ifstream f;
-	f.open(channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
-	if(f.fail())
-		throw RuntimeException("FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm: error reading file \"" + channelTransitionProbabilitiesFileName + "\"");
-	_estimatedChannelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
-	f.close();
+// 	std::ifstream f;
+// 	f.open(channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
+// 	if(f.fail())
+// 		throw RuntimeException("FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm: error reading file \"" + channelTransitionProbabilitiesFileName + "\"");
+// 	_estimatedChannelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
+// 	f.close();
 	
 	VectorXd sums = _estimatedChannelTransitionProbabilities.rowwise().sum();
 	

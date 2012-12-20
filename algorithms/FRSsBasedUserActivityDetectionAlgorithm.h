@@ -57,7 +57,7 @@ protected:
 	double channelCoeffAprioriProb(double channelCoeff);
 	double channelCoeffConditionalProb(uint currentChannelCoeffCell, uint previousChannelCoeffCell);
 public:
-    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, std::string channelTransitionProbabilitiesFileName);
+    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, MatrixXd estimatedChannelTransitionProbabilities);
     virtual std::vector< MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);

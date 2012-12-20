@@ -126,6 +126,31 @@ CDMASystem::CDMASystem(): SMCSystem()
 	_grid20 = Util::linspace(firstCell,lastCell,20);
 // 	_grid30 = Util::linspace(firstCell,lastCell,30);
 	_grid50 = Util::linspace(firstCell,lastCell,50);
+	
+	// ---------------- reading of the estimated channel transition probabilities
+	
+	std::ifstream f;
+	f.open(_channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
+	if(f.fail())
+		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"" + _channelTransitionProbabilitiesFileName + "\"");
+	_channelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
+	f.close();
+	f.clear();
+	
+	f.open("20cells_channelTransitionProbabilities",std::ifstream::in);
+	if(f.fail())
+		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"20cells_channelTransitionProbabilities\"");
+	_channelTransitionProbabilities20 = Octave::eigenFromOctaveFileStream(f);
+	f.close();
+	f.clear();
+	
+	f.open("50cells_channelTransitionProbabilities",std::ifstream::in);
+	if(f.fail())
+		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"25cells_channelTransitionProbabilities\"");
+	_channelTransitionProbabilities50 = Octave::eigenFromOctaveFileStream(f);
+	f.close();
+	f.clear();
+	// ----------------
 
 // 	_grid = std::vector<double>(nCells);
 // 	_grid[0] = firstCell;
@@ -159,13 +184,13 @@ void CDMASystem::addAlgorithms()
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	return;
 #endif
-// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilitiesFileName));
+	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilities));
 	
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,"20cells_channelTransitionProbabilities"));
+// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,_channelTransitionProbabilities20));
 
 // 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 30 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid30,_usersActivityPdfs,"30cells_channelTransitionProbabilities.bin"));
 	
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 50 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid50,_usersActivityPdfs,"50cells_channelTransitionProbabilities"));
+// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 50 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid50,_usersActivityPdfs,_channelTransitionProbabilities50));
 	
 
 	// ...the same for an estimator that knows the codes if these also change across frames
