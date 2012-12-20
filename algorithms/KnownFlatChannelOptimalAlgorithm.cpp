@@ -40,20 +40,23 @@ KnownFlatChannelOptimalAlgorithm::~KnownFlatChannelOptimalAlgorithm()
 
 void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double > noiseVariances)
 {
-    uint iAlphabet,i;
+    uint iAlphabet,iCurrentNode,i;
 	uint childrenHeight;
-    double UxS,newCost;
+    double UxS;
         
+    vector<tTreeNode> nodes;
+    
     for(uint iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
     {
-		// a new tree must be built for detecting the symbols transmitted at this time instant
-		Tree tree;
-		
-		// the root node is initialized...
-		KnownFlatChannelOptimalAlgorithmNode* currentNode = new KnownFlatChannelOptimalAlgorithmNode(_nInputs);
-		
-		// ...and added to the tree
-		tree.setRoot(currentNode);
+        // root node is initialized
+        tTreeNode rootNode;
+        rootNode.cost = 0.0;
+        rootNode.height = 0;
+        rootNode.id = 0;
+        rootNode.symbolsVector = VectorXd(_nInputs);
+        
+        // root node is added to the list of nodes
+        nodes.push_back(rootNode);
         
         // the corresponding channel matrix is kept in a variable (for the sake of clarity)
         MatrixXd H = _channel.getTransmissionMatrix(iProcessedObservation);
@@ -65,42 +68,82 @@ void KnownFlatChannelOptimalAlgorithm::run(MatrixXd observations, vector< double
         
 		MatrixXd U = lltOfHTH.matrixL().transpose();
         
-        while(currentNode->getHeight()<_nInputs)
+        // we start by the root node
+        iCurrentNode = 0;    
+        
+        while(nodes[iCurrentNode].height<_nInputs)
         {
-			// all the children will have this height
-			childrenHeight = currentNode->getHeight() + 1;
-			
+            childrenHeight = nodes[iCurrentNode].height+1;
             for(iAlphabet=0;iAlphabet<getAlphabetAt(iProcessedObservation,childrenHeight)->length();iAlphabet++)
             {
-				// the symbols vector from the current node is obtained...
-				VectorXd newSymbolsVector = currentNode->getSymbolsVector();
-				
-				// ...and a new symbols is added to the end of it
-				newSymbolsVector(_nInputs-childrenHeight) = getAlphabetAt(iProcessedObservation,childrenHeight)->operator[](iAlphabet);
+                // the parent node is replicated
+                tTreeNode child = nodes[iCurrentNode];
+                
+                child.height = childrenHeight;
+                child.symbolsVector(_nInputs-child.height) = getAlphabetAt(iProcessedObservation,childrenHeight)->operator[](iAlphabet);
                 
                 UxS = 0.0;
-                for(i=0;i<childrenHeight;i++)
-                    UxS += U(_nInputs-childrenHeight,_nInputs-1-i)*newSymbolsVector(_nInputs-1-i);
-				
-				// the cost of the corresponding child node is computed
-				newCost = currentNode->getCost()+(transformedObs(_nInputs-childrenHeight)-UxS)*(transformedObs(_nInputs-childrenHeight)-UxS);
+            
+                for(i=0;i<child.height;i++)
+                    UxS += U(_nInputs-child.height,_nInputs-1-i)*child.symbolsVector(_nInputs-1-i);
                                     
-				// a child node is built with the updated symbols vector and cost
-				KnownFlatChannelOptimalAlgorithmNode *child = new KnownFlatChannelOptimalAlgorithmNode(newCost,newSymbolsVector);
+                child.cost = child.cost + (transformedObs(_nInputs-child.height)-UxS)*(transformedObs(_nInputs-child.height)-UxS);
                 
-				// the child is added to the tree
-				tree.addNode(child,currentNode);
+                // the children vector of this node is cleared (the one inherited from the father because of the copy may not be empty if this is not the the first child
+                child.children.clear();
+                
+                // child will be in this position of the vector
+                child.id = nodes.size();
+                
+                // parent node is updated
+                nodes[iCurrentNode].children.push_back(child.id);
+                
+                // node is added to the list
+                nodes.push_back(child);
             }
             
-				// the best leaf node is chosen to continue
-				currentNode = dynamic_cast<KnownFlatChannelOptimalAlgorithmNode *> (tree.bestLeaf());
+            // best node is chosen
+            iCurrentNode = iBestLeaf(nodes);
         }
         
-        VectorXd bestSymbolsVector = currentNode->getSymbolsVector();
-		
-		_detectedSymbols.col(iProcessedObservation) = bestSymbolsVector;
+        for(i=0;i<_nInputs;i++)
+            _detectedSymbols(i,iProcessedObservation-_preambleLength) = nodes[iCurrentNode].symbolsVector(i);
+        
+        // for the next iteration
+        nodes.clear();
         
     } //for(uint iProcessedObservation=_preambleLength;iProcessedObservation<_iLastSymbolVectorToBeDetected;iProcessedObservation++)
+}
+
+uint KnownFlatChannelOptimalAlgorithm::iBestLeaf(const vector<tTreeNode> &nodes)
+{
+	assert(nodes.size()>0);
+    uint iBest;
+    double bestCost = 0.0;
+
+	uint i=0;
+	
+	// the first leaf node is searched for
+	while(i<nodes.size() && nodes[i].children.size()!=0)
+		i++;
+	
+	iBest = i;
+	bestCost = nodes[i].cost;
+	
+    for(i=i+1;i<nodes.size();i++)
+    {
+        // if it isn't a leaf node...
+        if(nodes[i].children.size()!=0)
+            continue;
+
+        if(nodes[i].cost < bestCost)
+        {
+            iBest = i;
+            bestCost = nodes[i].cost;
+        }
+    }
+        
+    return iBest;
 }
 
 MatrixXd KnownFlatChannelOptimalAlgorithm::getDetectedSymbolVectors()

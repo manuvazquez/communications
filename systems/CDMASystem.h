@@ -120,6 +120,7 @@ protected:
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	MatrixXd _estimatedChannelTransitionProbabilities;
+	VectorXd _estimatedChannelMarginalProbabilities;
 #endif
 	
     virtual void addAlgorithms();

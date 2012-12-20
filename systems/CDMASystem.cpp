@@ -160,6 +160,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	_estimatedChannelTransitionProbabilities = MatrixXd::Zero(_grid.size(),_grid.size());
+	_estimatedChannelMarginalProbabilities = VectorXd::Zero(_grid.size());
 	std::cout << COLOR_WHITE << "estimated channel transition probabilities will be written to " << COLOR_NORMAL << _channelTransitionProbabilitiesFileName << COLOR_WHITE << "..." << COLOR_NORMAL << endl;
 #endif
 	
@@ -618,6 +619,7 @@ void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOCha
 				uint currentCoeffCell = channelCoeffToCell(channel->at(i)(iRow,iCol));
 				
 				_estimatedChannelTransitionProbabilities(previousCoeffCell,currentCoeffCell)++;
+				_estimatedChannelMarginalProbabilities(currentCoeffCell)++;
 			}
 	}
 }

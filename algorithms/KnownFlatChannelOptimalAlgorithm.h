@@ -31,12 +31,17 @@ It implements the optimal algorithm to detect in a flat channel by means of a tr
 #include <Eigen/LU> 
 #include <Eigen/Cholesky>
 
-#include <Tree.h>
-#include <BasicTreeNode.h>
-#include <KnownFlatChannelOptimalAlgorithmNode.h>
-
 class KnownFlatChannelOptimalAlgorithm : public KnownChannelAlgorithm
 {
+private:
+    typedef struct{
+        double cost;
+        std::vector<uint> children;
+        uint height,id;
+        VectorXd symbolsVector;
+    } tTreeNode;
+    
+    uint iBestLeaf(const std::vector< KnownFlatChannelOptimalAlgorithm::tTreeNode >& nodes);
 protected:
     const uint _preambleLength;
     MatrixXd _detectedSymbols;

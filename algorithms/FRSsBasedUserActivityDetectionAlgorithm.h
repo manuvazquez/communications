@@ -28,9 +28,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <Tree.h>
-#include <BasicTreeNode.h>
-#include <FRSsBasedUserActivityDetectionAlgorithmNode.h>
 #include <UsersActivityDistribution.h>
 
 
@@ -52,9 +49,20 @@ protected:
 	
 	MatrixXd _estimatedChannelTransitionProbabilities;
 	
+    typedef struct{
+        double cost;
+        std::vector<uint> children;
+        uint height,id;
+        VectorXd symbolsVector;
+		MatrixXd channelMatrix;
+		std::vector<uint> channelMatrixCells;
+    } tTreeNode;
+	
+	uint iBestLeaf(const std::vector< FRSsBasedUserActivityDetectionAlgorithm::tTreeNode >& nodes);
+	
 // 	double channelCoeffAprioriProb(double channelCoeff) { return 1.0; }
-// 	double channelCoeffConditionalProb(uint currentChannelCoeff, uint previousChannelCoeff) { return 1.0; }
-	double channelCoeffAprioriProb(double channelCoeff);
+// 	double channelCoeffConditionalProb(double currentChannelCoeff, double previousChannelCoeff) { return 1.0; }
+	double channelCoeffAprioriProb(uint channelCoeff);
 	double channelCoeffConditionalProb(uint currentChannelCoeffCell, uint previousChannelCoeffCell);
 public:
     FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, MatrixXd estimatedChannelTransitionProbabilities);
