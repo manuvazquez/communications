@@ -27,8 +27,9 @@
 
 // #define DEBUG
 
-FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector< double > grid, const vector< UsersActivityDistribution > usersActivityPdfs, MatrixXd estimatedChannelTransitionProbabilities): KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),_grid(grid),
-_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_estimatedChannelMatricesCells(iLastSymbolVectorToBeDetected,std::vector<uint>(N)),_usersActivityPdfs(usersActivityPdfs),_estimatedChannelTransitionProbabilities(estimatedChannelTransitionProbabilities)
+FRSsBasedUserActivityDetectionAlgorithm::FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector< double > grid, const vector< UsersActivityDistribution > usersActivityPdfs, const MatrixXd &estimatedChannelTransitionProbabilities, const VectorXd &estimatedChannelMarginalProbabilities): 
+KnownChannelOrderAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected,m,preamble),_spreadingCodes(spreadingCodes),_grid(grid),
+_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_estimatedChannelMatricesCells(iLastSymbolVectorToBeDetected,std::vector<uint>(N)),_usersActivityPdfs(usersActivityPdfs),_estimatedChannelTransitionProbabilities(estimatedChannelTransitionProbabilities),_estimatedChannelMarginalProbabilities(estimatedChannelMarginalProbabilities)
 {
 	// QR decomposition of the spreading codes matrix
 	HouseholderQR<MatrixXd> qr(_spreadingCodes);
@@ -46,21 +47,17 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 	
 	_iFirstSymbolVectorToBeDetected = _preamble.cols();
 	
-	VectorXd sums = _estimatedChannelTransitionProbabilities.rowwise().sum();
-	
-	for(uint i=0;i<_estimatedChannelTransitionProbabilities.rows();i++)
-		for(uint j=0;j<_estimatedChannelTransitionProbabilities.cols();j++)
-			_estimatedChannelTransitionProbabilities(i,j) /= sums(i);
+// 	VectorXd sums = _estimatedChannelTransitionProbabilities.rowwise().sum();
+// 	
+// 	for(uint i=0;i<_estimatedChannelTransitionProbabilities.rows();i++)
+// 		for(uint j=0;j<_estimatedChannelTransitionProbabilities.cols();j++)
+// 			_estimatedChannelTransitionProbabilities(i,j) /= sums(i);
 	
 // 	cout << "estimatedChannelTransitionProbabilities" << endl << _estimatedChannelTransitionProbabilities << endl;
 }
 
 std::vector< MatrixXd> FRSsBasedUserActivityDetectionAlgorithm::getEstimatedChannelMatrices()
 {
-// 	cout << "_estimatedChannelMatrices" << endl;
-// 	for(uint i=0;i<_estimatedChannelMatrices.size();i++)
-// 		cout << _estimatedChannelMatrices[i] << endl;
-// 	cout << "cells" << endl << _estimatedChannelMatricesCells << endl;
 	return _estimatedChannelMatrices;
 }
 
@@ -249,7 +246,9 @@ uint FRSsBasedUserActivityDetectionAlgorithm::iBestLeaf(const vector<tTreeNode> 
 
 double FRSsBasedUserActivityDetectionAlgorithm::channelCoeffAprioriProb(uint channelCoeff)
 {
-	return 1.0/double(_grid.size());
+// 	cout << _estimatedChannelMarginalProbabilities << endl;
+// 	return 1.0/double(_grid.size());
+	return _estimatedChannelMarginalProbabilities(channelCoeff);
 }
 
 double FRSsBasedUserActivityDetectionAlgorithm::channelCoeffConditionalProb(uint currentChannelCoeffCell, uint previousChannelCoeffCell)

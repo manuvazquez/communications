@@ -48,6 +48,7 @@ protected:
 	const std::vector<UsersActivityDistribution> _usersActivityPdfs; /// objects describing the pdf of the users activity
 	
 	MatrixXd _estimatedChannelTransitionProbabilities;
+	VectorXd _estimatedChannelMarginalProbabilities;
 	
     typedef struct{
         double cost;
@@ -60,12 +61,10 @@ protected:
 	
 	uint iBestLeaf(const std::vector< FRSsBasedUserActivityDetectionAlgorithm::tTreeNode >& nodes);
 	
-// 	double channelCoeffAprioriProb(double channelCoeff) { return 1.0; }
-// 	double channelCoeffConditionalProb(double currentChannelCoeff, double previousChannelCoeff) { return 1.0; }
 	double channelCoeffAprioriProb(uint channelCoeff);
 	double channelCoeffConditionalProb(uint currentChannelCoeffCell, uint previousChannelCoeffCell);
 public:
-    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, MatrixXd estimatedChannelTransitionProbabilities);
+    FRSsBasedUserActivityDetectionAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, MatrixXd preamble, MatrixXd spreadingCodes, const std::vector<double> grid, const std::vector<UsersActivityDistribution> usersActivityPdfs, const MatrixXd &estimatedChannelTransitionProbabilities, const VectorXd &estimatedChannelMarginalProbabilities);
     virtual std::vector< MatrixXd> getEstimatedChannelMatrices();
     virtual MatrixXd getDetectedSymbolVectors();
     virtual void run(MatrixXd observations, std::vector< double> noiseVariances, MatrixXd trainingSequence);

@@ -109,26 +109,15 @@ protected:
 	
 	double _forgettingFactor;
 	
-// 	std::vector<double> _grid,_grid20,_grid30,_grid50;
-// 	MatrixXd _channelTransitionProbabilities,_channelTransitionProbabilities20,_channelTransitionProbabilities30,_channelTransitionProbabilities50;
-	
 	std::vector<std::vector<double> > _grids;
-	std::vector<std::string> _channelTransitionProbabilitiesFileNames;
-	std::vector<std::string> _channelMarginalProbabilitiesFileNames;
+	std::vector<std::string> _channelProbabilitiesFileNames;
 	std::vector<uint> _nCells;
 	std::vector<MatrixXd> _estimatedChannelTransitionProbabilities;
-	std::vector<MatrixXd> _estimatedChannelMarginalProbabilities;
+	std::vector<VectorXd> _estimatedChannelMarginalProbabilities;
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	std::vector<double> _gridSteps;
 #endif
-	
-// 	std::string _channelTransitionProbabilitiesFileName;
-	
-// #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
-// 	MatrixXd _estimatedChannelTransitionProbabilities;
-// 	VectorXd _estimatedChannelMarginalProbabilities;
-// #endif
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();

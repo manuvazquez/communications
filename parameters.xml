@@ -98,8 +98,7 @@
 			<channelCoefficientsGrids>
 				<grid>
 					<nCells> 10 </nCells>
-					<channelTransitionProbabilitiesFileName> channelTransitionProbabilities </channelTransitionProbabilitiesFileName>
-					<channelMarginalProbabilitiesFileName> channelMarginalProbabilities </channelMarginalProbabilitiesFileName>
+					<channelProbabilitiesFileName> channelTransitionProbabilities </channelProbabilitiesFileName>
 				</grid>
 			</channelCoefficientsGrids>
 		</FRSsBasedUserActivityDetectionAlgorithm>

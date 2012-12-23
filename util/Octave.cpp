@@ -213,17 +213,6 @@ MatrixXd Octave::eigenFromOctaveFileStream(std::ifstream &f)
 	std::vector<uint> nRowsCols(2);	
 	std::string read,buf;
 	
-// // 	// skip # Created by...
-// // 	getline(f,read);
-// 	
-// 	// skip name...
-// 	getline(f,read);
-// 	
-// 	// skip type...
-// 	getline(f,read);
-// 	
-// 	std::cout << read.substr(0,6).compare("# type") << std::endl;
-	
 	do
 		getline(f,read);
 	while(read.substr(0,6).compare("# type")); // ...while the first 6 characters of the line read are not equal to "# type"
