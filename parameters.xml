@@ -95,8 +95,13 @@
 		<FRSsBasedUserActivityDetectionAlgorithm>
 			<firstCell> -2.0 </firstCell>
 			<lastCell> 2.0 </lastCell>
-			<nCells> 10 </nCells>
-			<channelTransitionProbabilitiesFileName> channelTransitionProbabilities </channelTransitionProbabilitiesFileName>
+			<channelCoefficientsGrids>
+				<grid>
+					<nCells> 10 </nCells>
+					<channelTransitionProbabilitiesFileName> channelTransitionProbabilities </channelTransitionProbabilitiesFileName>
+					<channelMarginalProbabilitiesFileName> channelMarginalProbabilities </channelMarginalProbabilitiesFileName>
+				</grid>
+			</channelCoefficientsGrids>
 		</FRSsBasedUserActivityDetectionAlgorithm>
 
 	</CDMASystem>

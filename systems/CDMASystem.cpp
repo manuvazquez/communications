@@ -50,7 +50,7 @@ CDMASystem::CDMASystem(): SMCSystem()
 {
 	// parameters for the grid needed by the Finite Random Sets based algorithm ("FRSsBasedUserActivityDetectionAlgorithm")
 	double firstCell,lastCell;
-	uint nCells;
+// 	uint nCells;
 	
     if (_m!=1)
         throw RuntimeException("CDMASystem::CDMASystem: channel is not flat.");
@@ -78,8 +78,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 	xml_node<> *FRSsBasedAlgorithmNode = get_child(thisSystemParameters,"FRSsBasedUserActivityDetectionAlgorithm");
 	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",firstCell);
 	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",lastCell);
-	readParameterFromXML(FRSsBasedAlgorithmNode,"nCells",nCells);	
-	readParameterFromXML(FRSsBasedAlgorithmNode,"channelTransitionProbabilitiesFileName",_channelTransitionProbabilitiesFileName);
+	
+	readChannelCoefficientsGridsParametersFromXML(FRSsBasedAlgorithmNode,"channelCoefficientsGrids");
 
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
@@ -117,52 +117,76 @@ CDMASystem::CDMASystem(): SMCSystem()
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	// this variable is only used by method "channelCoeffToCell"...which in turn is only needed when estimating the channel transition probabilities
-	_gridStep = (lastCell-firstCell)/(nCells-1);
+// 	_gridStep = (lastCell-firstCell)/(nCells-1);
+	
+	for(uint i=0;i<_nCells.size();i++)
+	{
+		_gridSteps.push_back((lastCell-firstCell)/(_nCells[i]-1));
+		_estimatedChannelTransitionProbabilities.push_back(MatrixXd::Zero(_nCells[i],_nCells[i]));
+		_estimatedChannelMarginalProbabilities.push_back(VectorXd::Zero(_nCells[i]));
+	}
 #endif
 
-	// _grid is ALWAYS built just in case we are estimating the channel transition probabilities
-	_grid = Util::linspace(firstCell,lastCell,nCells);
+		
+	for(uint i=0;i<_nCells.size();i++)
+		_grids.push_back(Util::linspace(firstCell,lastCell,_nCells[i]));
 
-	_grid20 = Util::linspace(firstCell,lastCell,20);
-// 	_grid30 = Util::linspace(firstCell,lastCell,30);
-	_grid50 = Util::linspace(firstCell,lastCell,50);
+// 	// _grid is ALWAYS built just in case we are estimating the channel transition probabilities
+// 	_grid = Util::linspace(firstCell,lastCell,nCells);
+// 
+// 	_grid20 = Util::linspace(firstCell,lastCell,20);
+// // 	_grid30 = Util::linspace(firstCell,lastCell,30);
+// 	_grid50 = Util::linspace(firstCell,lastCell,50);
 	
 	// ---------------- reading of the estimated channel transition probabilities
-	
+		
+#ifndef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	std::ifstream f;
-	f.open(_channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
-	if(f.fail())
-		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"" + _channelTransitionProbabilitiesFileName + "\"");
-	_channelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
-	f.close();
-	f.clear();
 	
-	f.open("20cells_channelTransitionProbabilities",std::ifstream::in);
-	if(f.fail())
-		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"20cells_channelTransitionProbabilities\"");
-	_channelTransitionProbabilities20 = Octave::eigenFromOctaveFileStream(f);
-	f.close();
-	f.clear();
-	
-	f.open("50cells_channelTransitionProbabilities",std::ifstream::in);
-	if(f.fail())
-		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"25cells_channelTransitionProbabilities\"");
-	_channelTransitionProbabilities50 = Octave::eigenFromOctaveFileStream(f);
-	f.close();
-	f.clear();
-	// ----------------
-
-// 	_grid = std::vector<double>(nCells);
-// 	_grid[0] = firstCell;
-// 	for(uint i=1;i<(nCells-1);i++)
-// 		_grid[i] = _grid[i-1] + _gridStep;
-// 	_grid[nCells-1] = lastCell;
-	
-#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
-	_estimatedChannelTransitionProbabilities = MatrixXd::Zero(_grid.size(),_grid.size());
-	_estimatedChannelMarginalProbabilities = VectorXd::Zero(_grid.size());
-	std::cout << COLOR_WHITE << "estimated channel transition probabilities will be written to " << COLOR_NORMAL << _channelTransitionProbabilitiesFileName << COLOR_WHITE << "..." << COLOR_NORMAL << endl;
+	for(uint i=0;i<_nCells.size();i++)
+	{
+		f.open(_channelTransitionProbabilitiesFileNames[i].c_str(),std::ifstream::in);
+		if(f.fail())
+			throw RuntimeException("CDMASystem::CDMASystem: error reading file \"" + _channelTransitionProbabilitiesFileNames[i] + "\"");
+		_estimatedChannelTransitionProbabilities.push_back(Octave::eigenFromOctaveFileStream(f));
+		_estimatedChannelMarginalProbabilities.push_back(Octave::eigenFromOctaveFileStream(f));
+		f.close();
+		f.clear();
+	}
 #endif
+	
+// 	std::ifstream f;
+// 	f.open(_channelTransitionProbabilitiesFileName.c_str(),std::ifstream::in);
+// 	if(f.fail())
+// 		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"" + _channelTransitionProbabilitiesFileName + "\"");
+// 	_channelTransitionProbabilities = Octave::eigenFromOctaveFileStream(f);
+// 	f.close();
+// 	f.clear();
+// 	
+// 	f.open("20cells_channelTransitionProbabilities",std::ifstream::in);
+// 	if(f.fail())
+// 		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"20cells_channelTransitionProbabilities\"");
+// 	_channelTransitionProbabilities20 = Octave::eigenFromOctaveFileStream(f);
+// 	f.close();
+// 	f.clear();
+// 	
+// 	f.open("50cells_channelTransitionProbabilities",std::ifstream::in);
+// 	if(f.fail())
+// 		throw RuntimeException("CDMASystem::CDMASystem: error reading file \"25cells_channelTransitionProbabilities\"");
+// 	_channelTransitionProbabilities50 = Octave::eigenFromOctaveFileStream(f);
+// 	f.close();
+// 	f.clear();
+	// ----------------
+	
+	// all the required gris are built
+	for(uint i=0;i<_grids.size();i++)
+		_grids[i] = Util::linspace(firstCell,lastCell,_nCells[i]);
+	
+// #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+// 	_estimatedChannelTransitionProbabilities = MatrixXd::Zero(_grid.size(),_grid.size());
+// 	_estimatedChannelMarginalProbabilities = VectorXd::Zero(_grid.size());
+// 	std::cout << COLOR_WHITE << "estimated channel transition probabilities will be written to " << COLOR_NORMAL << _channelTransitionProbabilitiesFileName << COLOR_WHITE << "..." << COLOR_NORMAL << endl;
+// #endif
 	
 #ifdef DEBUG
 	cout << "grid step = " << _gridStep << endl;
@@ -185,14 +209,13 @@ void CDMASystem::addAlgorithms()
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	return;
 #endif
-	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 10 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid,_usersActivityPdfs,_channelTransitionProbabilities));
 	
-// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 20 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid20,_usersActivityPdfs,_channelTransitionProbabilities20));
-
-// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 30 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid30,_usersActivityPdfs,"30cells_channelTransitionProbabilities.bin"));
-	
-// 	_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm("Finite Random Sets with 50 cells",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grid50,_usersActivityPdfs,_channelTransitionProbabilities50));
-	
+	for(uint iGrid=0;iGrid<_grids.size();iGrid++)
+	{
+		std::stringstream name;
+		name << "Finite Random Sets with " << _nCells[iGrid] << " cells";
+		_algorithms.push_back(new FRSsBasedUserActivityDetectionAlgorithm(name.str(),*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_preamble,_spreadingCodes,_grids[iGrid],_usersActivityPdfs,_estimatedChannelTransitionProbabilities[iGrid]));
+	}
 
 	// ...the same for an estimator that knows the codes if these also change across frames
 	delete _cdmaKalmanEstimator;
@@ -541,15 +564,18 @@ void CDMASystem::saveFrameResults()
 #endif
 	
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
-	Octave::toOctaveFileStream(_grid,"grid",_f);
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
-	Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities,"estimatedChannelTransitionProbabilities",_f);
-	
 	std::ofstream f;
-	f.open(_channelTransitionProbabilitiesFileName.c_str(),std::ofstream::trunc);
-	Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities,"estimatedChannelTransitionProbabilities",f);
-	f.close();
+	
+	for(uint iGrid=0;iGrid<_grids.size();iGrid++)
+	{
+		f.open(_channelTransitionProbabilitiesFileNames[iGrid].c_str(),std::ofstream::trunc);
+		Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities[iGrid],"estimatedChannelTransitionProbabilities",f);
+		Octave::eigenToOctaveFileStream(_estimatedChannelMarginalProbabilities[iGrid],"estimatedChannelMarginalProbabilities",f);
+		f.close();
+		f.clear();
+	}
 #endif
 }
 
@@ -609,29 +635,63 @@ void CDMASystem::accountForEstimatedChannelTransitionProbabilities(const MIMOCha
 {
 	uint nRows = channel->channelCoefficientsMatrixRows();
 	uint nCols = channel->channelCoefficientsMatrixCols();
-	
-	for(uint i=_preambleLength+1;i<_iLastSymbolVectorToBeDetected;i++)
-	{
-		for(uint iRow=0;iRow<nRows;iRow++)
-			for(uint iCol=0;iCol<nCols;iCol++)
-			{
-				uint previousCoeffCell = channelCoeffToCell(channel->at(i-1)(iRow,iCol));
-				uint currentCoeffCell = channelCoeffToCell(channel->at(i)(iRow,iCol));
-				
-				_estimatedChannelTransitionProbabilities(previousCoeffCell,currentCoeffCell)++;
-				_estimatedChannelMarginalProbabilities(currentCoeffCell)++;
-			}
+
+	for(uint iGrid=0;iGrid<_grids.size();iGrid++)	
+	{		
+		for(uint i=_preambleLength+1;i<_iLastSymbolVectorToBeDetected;i++)
+		{
+			for(uint iRow=0;iRow<nRows;iRow++)
+				for(uint iCol=0;iCol<nCols;iCol++)
+				{
+					uint previousCoeffCell = channelCoeffToCell(channel->at(i-1)(iRow,iCol),_grids[iGrid],_gridSteps[iGrid]);
+					uint currentCoeffCell = channelCoeffToCell(channel->at(i)(iRow,iCol),_grids[iGrid],_gridSteps[iGrid]);
+					
+					_estimatedChannelTransitionProbabilities[iGrid](previousCoeffCell,currentCoeffCell)++;
+					_estimatedChannelMarginalProbabilities[iGrid](currentCoeffCell)++;
+				}
+		}
 	}
 }
 
-uint CDMASystem::channelCoeffToCell(double coeff) const
+uint CDMASystem::channelCoeffToCell(double coeff, const std::vector< double > &grid, double gridStep) const
 {
-	if(coeff<_grid[0])
+	if(coeff<grid[0])
 		return 0;
-	else if(coeff>_grid[_grid.size()-1])
-		return (_grid.size()-1);
+	else if(coeff>grid[grid.size()-1])
+		return (grid.size()-1);
 	
-	return round((coeff-_grid[0])/_gridStep);
+	return round((coeff-grid[0])/gridStep);
 }
 
 #endif
+
+void CDMASystem::readChannelCoefficientsGridsParametersFromXML(xml_node< char >* parentNode, string xmlName)
+{
+	xml_node<> *parameterNode = get_child(parentNode,xmlName);
+	if(!parameterNode)
+		throw RuntimeException(std::string("CDMASystem::readChannelCoefficientsGrids: cannot find parameter \"")+xmlName+"\"");
+	
+	uint nCells;
+	std::string channelTransitionProbabilitiesFileName,channelMarginalProbabilitiesFileName;
+	
+	for (xml_node<> *nodeChild = parameterNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
+	{
+		readParameterFromXML(nodeChild,"nCells",nCells);	
+		readParameterFromXML(nodeChild,"channelTransitionProbabilitiesFileName",channelTransitionProbabilitiesFileName);
+		readParameterFromXML(nodeChild,"channelMarginalProbabilitiesFileName",channelMarginalProbabilitiesFileName);
+		
+		_nCells.push_back(nCells);
+		_channelTransitionProbabilitiesFileNames.push_back(channelTransitionProbabilitiesFileName);
+		_channelMarginalProbabilitiesFileNames.push_back(channelMarginalProbabilitiesFileName);
+	}
+	
+// 	cout << _nCells << endl;
+// 	
+// 	for(uint i=0;i<_channelTransitionProbabilitiesFileNames.size();i++)
+// 		cout << _channelTransitionProbabilitiesFileNames[i] << endl;
+// 	
+// 	for(uint i=0;i<_channelMarginalProbabilitiesFileNames.size();i++)
+// 		cout << _channelMarginalProbabilitiesFileNames[i] << endl;
+// 
+// 	getchar();
+}

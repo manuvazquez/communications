@@ -42,7 +42,7 @@ class CDMASystem : public SMCSystem
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 private:
-	uint channelCoeffToCell(double coeff) const;
+	uint channelCoeffToCell(double coeff, const std::vector<double> &grid, double gridStep) const;
 #endif
 	
 protected:
@@ -109,19 +109,26 @@ protected:
 	
 	double _forgettingFactor;
 	
-	std::vector<double> _grid,_grid20,_grid30,_grid50;
-	MatrixXd _channelTransitionProbabilities,_channelTransitionProbabilities20,_channelTransitionProbabilities30,_channelTransitionProbabilities50;
+// 	std::vector<double> _grid,_grid20,_grid30,_grid50;
+// 	MatrixXd _channelTransitionProbabilities,_channelTransitionProbabilities20,_channelTransitionProbabilities30,_channelTransitionProbabilities50;
+	
+	std::vector<std::vector<double> > _grids;
+	std::vector<std::string> _channelTransitionProbabilitiesFileNames;
+	std::vector<std::string> _channelMarginalProbabilitiesFileNames;
+	std::vector<uint> _nCells;
+	std::vector<MatrixXd> _estimatedChannelTransitionProbabilities;
+	std::vector<MatrixXd> _estimatedChannelMarginalProbabilities;
 	
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
-	double _gridStep;
+	std::vector<double> _gridSteps;
 #endif
 	
-	std::string _channelTransitionProbabilitiesFileName;
+// 	std::string _channelTransitionProbabilitiesFileName;
 	
-#ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
-	MatrixXd _estimatedChannelTransitionProbabilities;
-	VectorXd _estimatedChannelMarginalProbabilities;
-#endif
+// #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
+// 	MatrixXd _estimatedChannelTransitionProbabilities;
+// 	VectorXd _estimatedChannelMarginalProbabilities;
+// #endif
 	
     virtual void addAlgorithms();
 	virtual void beforeEndingAlgorithm();
@@ -140,6 +147,8 @@ protected:
 #ifdef ESTIMATE_CHANNEL_TRANSITION_PROBABILITIES
 	void accountForEstimatedChannelTransitionProbabilities(const MIMOChannel * const channel);
 #endif
+	
+	void readChannelCoefficientsGridsParametersFromXML(xml_node<> *parentNode,std::string xmlName);
 	
 public:
     CDMASystem();

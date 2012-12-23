@@ -94,7 +94,10 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<s
 
 void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::string name,std::ofstream &f)
 {
-    if(matrices.size()==0 || matrices[0].rows()==0 || matrices[0].cols()==0)
+    uint nRows = matrices[0].rows();
+	uint nCols = matrices[0].cols();
+	
+    if(matrices.size()==0 || nRows==0 || nCols==0)
     {
         std::cout << "Octave::matricesVectorToOctaveFileStream: " << COLOR_PINK << "matrix " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
@@ -104,9 +107,13 @@ void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::
 
     uint i,j,iMatrix;
     for(iMatrix=0;iMatrix<matrices.size();iMatrix++)
+	{
+		if(matrices[iMatrix].rows()!=nRows || matrices[iMatrix].cols()!=nCols)
+			throw RuntimeException("Octave::eigenToOctaveFileStream: matrices have different sizes.");
         for(j=0;j<(matrices.at(iMatrix)).cols();j++)
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << std::endl;
+	}
 }
 
 void Octave::stringsVectorToOctaveFileStream(const std::vector<std::string> &strings,std::string name,std::ofstream &f)
@@ -206,14 +213,20 @@ MatrixXd Octave::eigenFromOctaveFileStream(std::ifstream &f)
 	std::vector<uint> nRowsCols(2);	
 	std::string read,buf;
 	
-// 	// skip # Created by...
+// // 	// skip # Created by...
+// // 	getline(f,read);
+// 	
+// 	// skip name...
 // 	getline(f,read);
+// 	
+// 	// skip type...
+// 	getline(f,read);
+// 	
+// 	std::cout << read.substr(0,6).compare("# type") << std::endl;
 	
-	// skip name...
-	getline(f,read);
-	
-	// skip type...
-	getline(f,read);
+	do
+		getline(f,read);
+	while(read.substr(0,6).compare("# type")); // ...while the first 6 characters of the line read are not equal to "# type"
 	
 	// number of rows and columns
 	for(uint i=0;i<2;i++)
