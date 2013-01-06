@@ -78,8 +78,23 @@ CDMASystem::CDMASystem(): SMCSystem()
 	xml_node<> *FRSsBasedAlgorithmNode = get_child(thisSystemParameters,"FRSsBasedUserActivityDetectionAlgorithm");
 	readParameterFromXML(FRSsBasedAlgorithmNode,"firstCell",firstCell);
 	readParameterFromXML(FRSsBasedAlgorithmNode,"lastCell",lastCell);
+		
+	xml_node<> *parameterNode = get_child(FRSsBasedAlgorithmNode,"channelCoefficientsGrids");
+	if(!parameterNode)
+		throw RuntimeException("CDMASystem::readChannelCoefficientsGrids: cannot find parameter \"FRSsBasedUserActivityDetectionAlgorithm\"");
 	
-	readChannelCoefficientsGridsParametersFromXML(FRSsBasedAlgorithmNode,"channelCoefficientsGrids");
+	uint nCells;
+	std::string channelProbabilitiesFileName;
+	
+	// all the grids' parameters are read
+	for (xml_node<> *nodeChild = parameterNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
+	{
+		readParameterFromXML(nodeChild,"nCells",nCells);	
+		readParameterFromXML(nodeChild,"channelProbabilitiesFileName",channelProbabilitiesFileName);
+		
+		_nCells.push_back(nCells);
+		_channelProbabilitiesFileNames.push_back(channelProbabilitiesFileName);
+	}
 
 	_usersActivityPdfs = std::vector<UsersActivityDistribution>(_N,UsersActivityDistribution(_userPersistenceProb,_newActiveUserProb,_userPriorProb));
 
@@ -206,12 +221,8 @@ void CDMASystem::addAlgorithms()
      
     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-// //     _algorithms.push_back(new CDMAunknownActiveUsersSISopt ("CDMA SIS-opt (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKnownChannelChannelMatrixEstimator,_preamble,_d,nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
-
 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_mmseDetector,_preamble,_d,_nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
 	
-// // 	_algorithms.push_back(new UnknownActiveUsersLinearFilterBasedSMCAlgorithm ("CDMA SIS Linear Filters",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaRLSEstimator,_mmseDetector,_preamble,_d,nParticles,_resamplingAlgorithm,_powerProfile->means(),_powerProfile->variances(),_usersActivityPdfs));
-
 	_algorithms.push_back(new ViterbiAlgorithmWithAprioriProbabilities("Viterbi with a priori probabilities (known channel)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,*(dynamic_cast<StillMemoryMIMOChannel *> (_channel)),_preamble,_d,_usersActivityPdfs));
 	
 	_algorithms.push_back(new PSPAlgorithmWithAprioriProbabilities("PSP",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_cdmaKalmanEstimator,_preamble,_d,_iLastSymbolVectorToBeDetected+_d,_nSurvivors,_usersActivityPdfs));
@@ -637,22 +648,3 @@ uint CDMASystem::channelCoeffToCell(double coeff, const std::vector< double > &g
 }
 
 #endif
-
-void CDMASystem::readChannelCoefficientsGridsParametersFromXML(xml_node< char >* parentNode, string xmlName)
-{
-	xml_node<> *parameterNode = get_child(parentNode,xmlName);
-	if(!parameterNode)
-		throw RuntimeException(std::string("CDMASystem::readChannelCoefficientsGrids: cannot find parameter \"")+xmlName+"\"");
-	
-	uint nCells;
-	std::string channelProbabilitiesFileName,channelMarginalProbabilitiesFileName;
-	
-	for (xml_node<> *nodeChild = parameterNode->first_node(); nodeChild; nodeChild = nodeChild->next_sibling())
-	{
-		readParameterFromXML(nodeChild,"nCells",nCells);	
-		readParameterFromXML(nodeChild,"channelProbabilitiesFileName",channelProbabilitiesFileName);
-		
-		_nCells.push_back(nCells);
-		_channelProbabilitiesFileNames.push_back(channelProbabilitiesFileName);
-	}
-}

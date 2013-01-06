@@ -35,25 +35,11 @@ _detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrice
 	HouseholderQR<MatrixXd> qr(_spreadingCodes);
 	_Qtrans = (qr.householderQ()).transpose();
 	_R = qr.matrixQR().triangularView<Upper>();
+	
+	// check that the QR decomposition is correct...
 	assert(_spreadingCodes.isApprox(_Qtrans.transpose()*_R));
 	
-#ifdef DEBUG
-	cout << "spreading codes is" << endl << _spreadingCodes << endl;
-	cout << "Q:" << endl << _Qtrans.transpose() << endl << "R:" << endl << _R << endl;
-	cout << "Q' x Q:" << endl << _Qtrans*_Qtrans.transpose() << endl;
-	cout << "the result of Q x R" << endl << _Qtrans.transpose()*_R << endl;
-	getchar();
-#endif
-	
 	_iFirstSymbolVectorToBeDetected = _preamble.cols();
-	
-// 	VectorXd sums = _estimatedChannelTransitionProbabilities.rowwise().sum();
-// 	
-// 	for(uint i=0;i<_estimatedChannelTransitionProbabilities.rows();i++)
-// 		for(uint j=0;j<_estimatedChannelTransitionProbabilities.cols();j++)
-// 			_estimatedChannelTransitionProbabilities(i,j) /= sums(i);
-	
-// 	cout << "estimatedChannelTransitionProbabilities" << endl << _estimatedChannelTransitionProbabilities << endl;
 }
 
 std::vector< MatrixXd> FRSsBasedUserActivityDetectionAlgorithm::getEstimatedChannelMatrices()
@@ -80,9 +66,6 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 	
 	for(uint iObservationToBeProcessed=_iFirstSymbolVectorToBeDetected;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 	{
-#ifdef DEBUG
-		cout << "iObservationToBeProcessed = " << iObservationToBeProcessed << endl;
-#endif
 		No = noiseVariances[iObservationToBeProcessed]*2;
 		
 		// the "transformed" observation is first computed using the QR decomposition
@@ -135,9 +118,12 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 										
 					child.cost += (transformedObs(iCurrentUser)-RxD)*(transformedObs(iCurrentUser)-RxD);
 					
+					// if this is the first observation...
 					if(iObservationToBeProcessed==_iFirstSymbolVectorToBeDetected)
+						// ...the a priori probability for the activity of the user is employed
 						userActivityProb = _usersActivityPdfs[iCurrentUser].probApriori(Util::isUserActive(currentSymbol));
 					else
+						// ...otherise, we have to take into account the activity at the previous time instant	
 						userActivityProb = _usersActivityPdfs[iCurrentUser].probXgivenY(Util::isUserActive(currentSymbol),Util::isUserActive(_detectedSymbolVectors(iCurrentUser,iObservationToBeProcessed-1)));
 					
 					if(userActivityProb<EPSILON)
@@ -164,11 +150,6 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
 						else
 							child.cost += -No*log(channelCoeffProb);
 					}
-					
-#ifdef DEBUG
-					cout << "----------------- " << "iCurrentUser = " << iCurrentUser << " (child height = " << childrenHeight << ") [symbol = " << child.symbolsVector(iCurrentUser) << ", channel coeff. = " << child.channelMatrix(iCurrentUser) << "]" << endl;
-					cout << "transformedObs(iCurrentUser) = " << transformedObs(iCurrentUser) << ", RxD = " << RxD << ", child.cost = " << child.cost << endl;
-#endif
 
 					// the children vector of this node is cleared (the one inherited from the father because of the copy may not be empty if this is not the the first child
 					child.children.clear();
@@ -186,12 +167,7 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
             
             // best node is chosen
             iCurrentNode = iBestLeaf(nodes);
-			
-#ifdef DEBUG
-			cout << "======= iCurrentUser = " << iCurrentUser << " ==========" << endl;
-			cout << "best node has symbols:" << endl << nodes[iCurrentNode].symbolsVector << endl << " and channel coeffs: " << endl << nodes[iCurrentNode].channelMatrix << endl;
-			getchar();
-#endif
+
         } // while(nodes[iCurrentNode].height<_nInputs)
         
 		_detectedSymbolVectors.col(iObservationToBeProcessed) = nodes[iCurrentNode].symbolsVector;
@@ -200,15 +176,6 @@ void FRSsBasedUserActivityDetectionAlgorithm::run(MatrixXd observations, std::ve
         
         // for the next iteration
         nodes.clear();
-		
-#ifdef DEBUG
-		cout << "transformed observations:" << endl << transformedObs << endl;
-		cout << "detected symbols: " << endl << _detectedSymbolVectors.col(iObservationToBeProcessed) << endl;
-		cout << "detected channel matrix: " << endl << _estimatedChannelMatrices[iObservationToBeProcessed] << endl;
-		cout << "-------------------------- iObservationToBeProcessed = " << iObservationToBeProcessed << " ----------------------------- " << endl;
-		getchar();
-		
-#endif
 
 	} // for(uint iObservationToBeProcessed=_iFirstSymbolVectorToBeDetected;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
 }
@@ -246,8 +213,6 @@ uint FRSsBasedUserActivityDetectionAlgorithm::iBestLeaf(const vector<tTreeNode> 
 
 double FRSsBasedUserActivityDetectionAlgorithm::channelCoeffAprioriProb(uint channelCoeff)
 {
-// 	cout << _estimatedChannelMarginalProbabilities << endl;
-// 	return 1.0/double(_grid.size());
 	return _estimatedChannelMarginalProbabilities(channelCoeff);
 }
 
