@@ -25,7 +25,7 @@
 #include <KnownSymbolsKalmanEstimator.h>
 
 LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols): 
-KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficients(ARcoefficients),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficients(ARcoefficients),_subtractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -81,7 +81,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 
 	assert(nObservations>=startDetectionTime+1+_d);
 
-    if(_substractContributionFromKnownSymbols)
+    if(_subtractContributionFromKnownSymbols)
 		// the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector
 		assert(_linearDetector->channelMatrixcols()==_nInputs*(_d+1));
 
@@ -111,7 +111,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 
         VectorXd softEstimations;
 
-        if(_substractContributionFromKnownSymbols)
+        if(_subtractContributionFromKnownSymbols)
         {
             softEstimations =  _linearDetector->detect(
                 // the last range chooses all the already detected symbol vectors

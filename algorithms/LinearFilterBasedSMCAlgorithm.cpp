@@ -27,12 +27,12 @@
 // #include <realData.h>
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,  ChannelMatrixEstimator *channelEstimator,LinearDetector *linearDetector,MatrixXd preamble, uint SMCsmoothingLag, uint nParticles,ResamplingAlgorithm *resamplingAlgorithm,const MatrixXd &channelMatrixMean, const MatrixXd &channelMatrixVariances,double ARcoefficient,double samplingVariance,double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, channelEstimator, preamble, SMCsmoothingLag, nParticles, resamplingAlgorithm, channelMatrixMean, channelMatrixVariances)
-,_linearDetector(linearDetector->clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+,_linearDetector(linearDetector->clone()),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_subtractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
 LinearFilterBasedSMCAlgorithm::LinearFilterBasedSMCAlgorithm(std::string name, Alphabet alphabet,uint L,uint Nr,uint N, uint iLastSymbolVectorToBeDetected,uint m,MatrixXd preamble, uint SMCsmoothingLag, ParticleFilter *particleFilter, ResamplingAlgorithm *resamplingAlgorithm,double ARcoefficient,double samplingVariance, double ARprocessVariance, bool substractContributionFromKnownSymbols): SMCAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected,m, preamble, SMCsmoothingLag, particleFilter, resamplingAlgorithm)
-,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_substractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+,_linearDetector(NULL),_ARcoefficient(ARcoefficient),_samplingVariance(samplingVariance),_ARprocessVariance(ARprocessVariance),_subtractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -69,7 +69,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
     MatrixXd forWeightUpdateNeededSymbols(_nInputs,_channelOrder+_d);
     VectorXd predictedNoiselessObservation(_nOutputs);
 
-    if(_substractContributionFromKnownSymbols)
+    if(_subtractContributionFromKnownSymbols)
 		// the algorithm is supposed to operate substracting the contribution of the known symbols but this is not compatible with the current linear detector
 		assert(_linearDetector->channelMatrixcols() == _nInputs*(_d+1));
 
@@ -110,7 +110,7 @@ void LinearFilterBasedSMCAlgorithm::process(const MatrixXd &observations, vector
             VectorXd softEstimations;
 
             // the estimated stacked channel matrix is used to obtain soft estimations of the transmitted symbols
-            if(_substractContributionFromKnownSymbols)
+            if(_subtractContributionFromKnownSymbols)
             {
                 // transformed observations
                 softEstimations =  dynamic_cast <WithLinearDetectionParticleAddon *> (_particleFilter->getParticle(iParticle))->getLinearDetector(_estimatorIndex)->

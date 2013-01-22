@@ -128,14 +128,12 @@ void Octave::stringsVectorToOctaveFileStream(const std::vector<std::string> &str
 
     f << "# name: "<< name << std::endl <<"# type: string" << std::endl << "# elements: " << strings.size() << std::endl;
 
-    uint iMax = 0;
+	// the maximum length of all the strings is found out
     uint max = strings[0].length();
     for(uint i=0;i<strings.size();i++)
         if(strings[i].length()>max)
-        {
-            iMax = i;
             max = strings[i].length();
-        }
+
     for(uint i=0;i<strings.size();i++)
     {
         f << "# length: " << max << std::endl;

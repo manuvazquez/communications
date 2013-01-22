@@ -128,9 +128,9 @@ int main(int argc,char* argv[])
 
 // 	ARparametersComparisonCDMASystem system;
 
-	CDMASystem system; // Transactions on Vehicular Technology (2012??)
+// 	CDMASystem system; // Transactions on Vehicular Technology (2013??)
 
-// 	PlainSystem system; // Second-Order statistics MMSE
+	PlainSystem system; // Second-Order statistics MMSE
 
 	system.simulate();
 }

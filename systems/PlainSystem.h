@@ -46,8 +46,8 @@ class PlainSystem : public BaseSystem
 protected:
 	KalmanEstimator *_kalmanEstimator;
 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
-	SERawareKalmanEstimatorDecorator *_SERawareKalmanEstimatorDecorator;
-	AugmentedObservationsKalmanEstimator * _augmentedObservationsKalmanEstimator;
+// 	SERawareKalmanEstimatorDecorator *_SERawareKalmanEstimatorDecorator;
+// 	AugmentedObservationsKalmanEstimator * _augmentedObservationsKalmanEstimator;
 	
 	MMSEDetector *_MMSEdetector;
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;

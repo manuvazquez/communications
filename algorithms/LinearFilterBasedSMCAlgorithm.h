@@ -63,7 +63,7 @@ protected:
     void initializeParticles();
     void process(const MatrixXd &observations, vector<double> noiseVariances);
 
-    bool _substractContributionFromKnownSymbols;
+    bool _subtractContributionFromKnownSymbols;
 
     virtual void fillFirstEstimatedChannelMatrix(uint iParticle,MatrixXd &firstEstimatedChannelMatrix) const
     {

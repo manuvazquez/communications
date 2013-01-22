@@ -38,7 +38,7 @@ protected:
     std::vector<MatrixXd> _estimatedChannelMatrices;
 	const std::vector<double> _ARcoefficients;
 
-    const bool _substractContributionFromKnownSymbols;
+    const bool _subtractContributionFromKnownSymbols;
 	
 // 	MatrixXd obtainChannelMatrixEstimatorFeed(const MatrixXd &softEstimates,const MatrixXd &decisions) const { return decisions; }
 	
