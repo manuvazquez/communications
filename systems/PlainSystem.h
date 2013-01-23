@@ -50,6 +50,12 @@ protected:
 // 	AugmentedObservationsKalmanEstimator * _augmentedObservationsKalmanEstimator;
 	
 	MMSEDetector *_MMSEdetector;
+	
+	/**
+	 * @brief interference-cancelating MMSE detector
+	 **/
+	MMSEDetector *_ICMMSEdetector;
+	
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;
 	
 	KalmanFilterAwareMMSEDetector *_kalmanFilterAwareMMSEDetector;

@@ -130,7 +130,8 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 // 																							 noiseVariances[iObservationToBeProcessed]);
 // // 																							 noiseVariances[iObservationToBeProcessed]+0.0001);
 			
-		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),softEstimations,noiseVariances[iObservationToBeProcessed]);
+		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
+																							 _detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);
 		
 		// ...and updated with the last estimated channel matrix
 		ARmatricesBuffer.erase(ARmatricesBuffer.begin());
