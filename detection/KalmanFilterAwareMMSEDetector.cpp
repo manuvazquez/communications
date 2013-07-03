@@ -23,13 +23,13 @@
 
 // #define DEBUG
 
-KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients)
-:MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients)
+KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation)
+:MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients),_interferenceCancellation(interferenceCancellation)
 {
 }
 
 VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
-{
+{	
 	if(_ARcoefficients.size()>1)
 		return detect2orderAndAboveARprocess(observations,channelMatrix,noiseCovariance);
 	
@@ -39,6 +39,14 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
 	int Nm = _kalmanEstimator->cols();
 	uint m = uint(Nm)/N;
 	uint L = _kalmanEstimator->rows();
+	
+	// index of the first stacked channel matrix column to be accounted for when computing the channel matrix covariance
+	uint iFirstColumn;
+	
+	if(_interferenceCancellation)
+		iFirstColumn = N*(m-1);
+	else
+		iFirstColumn = 0;
 	
 	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter
 	uint d = nRows/_kalmanEstimator->rows() -1;
@@ -54,8 +62,8 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
 	for(uint i=1;i<=d;i++)
 	{
 		// one PREDICTIVE step is advanced on the cloned Kalman filter: observations vector and symbols matrix are zero so that the filtered mean and covariance be equal to the predictive ones.
-		// Regarding the noise variance, a value different from 0 (any one should do) must be passed or otherwise, the matrix inversion within the KF will give rise to NaN's
-		MatrixXd foo = kalmanEstimatorClone->nextMatrix(VectorXd::Zero(L),MatrixXd::Zero(N,m),1.0);
+		// As for the noise variance, a value different from 0 (any should do) must be passed or otherwise, the matrix inversion within the KF will give rise to NaN's
+		kalmanEstimatorClone->nextMatrix(VectorXd::Zero(L),MatrixXd::Zero(N,m),1.0);
 		
 		predictedMatrices[i] = kalmanEstimatorClone->predictedMatrix();
 		predictedCovariances[i] = kalmanEstimatorClone->getInternalPredictiveCovariance();
@@ -73,28 +81,30 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
 	for(int iCol=0;iCol<Nm;iCol++)
 		iCol2indexesWithinKFstateVector[iCol] = _kalmanEstimator->colIndexToIndexesWithinKFstateVector(iCol);
 	
-	for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
+	for(uint iCol=iFirstColumn;iCol<predictedStackedChannelMatrix.cols();iCol++)
 	{
 		MatrixXd thisColumnCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
 		
 		for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
 		{
-			int upperSubcolumnOriginalColumn = iCol - (iUpperSubcolumn*N);
+			int upperSubcolumnIndexWithinItsMatrix = iCol - (iUpperSubcolumn*N);
 			for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
 			{
-				int lowerSubcolumnOriginalColumn = iCol - (iLowerSubcolumn*N);
+				int lowerSubcolumnIndexWithinItsMatrix = iCol - (iLowerSubcolumn*N);
 				
-				if(upperSubcolumnOriginalColumn>=Nm || upperSubcolumnOriginalColumn<0)
+				// correlation with a vector of zeros is zero
+				if(upperSubcolumnIndexWithinItsMatrix>=Nm || upperSubcolumnIndexWithinItsMatrix<0)
 					continue;
 				
-				if(lowerSubcolumnOriginalColumn>=Nm || lowerSubcolumnOriginalColumn<0)
+				if(lowerSubcolumnIndexWithinItsMatrix>=Nm || lowerSubcolumnIndexWithinItsMatrix<0)
 					continue;
 				
-				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnOriginalColumn == lowerSubcolumnOriginalColumn
-					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
+				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnIndexWithinItsMatrix == lowerSubcolumnIndexWithinItsMatrix
+					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix]);
 				else
 				{
-					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[lowerSubcolumnOriginalColumn])
+					// only "predictedCovariances[0]" is needed because the difference between a column in a given time instant and the same column a number of time steps later is given by a factor (which is the power below)
+					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
 												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
 					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
 					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
@@ -128,6 +138,14 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	uint m = uint(Nm)/N;
 	uint L = _kalmanEstimator->rows();
 	
+	// index of the first stacked channel matrix column to be accounted for when computing the channel matrix covariance
+	uint iFirstColumn;
+	
+	if(_interferenceCancellation)
+		iFirstColumn = N*(m-1);
+	else
+		iFirstColumn = 0;
+	
 	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter
 	uint d = nRows/_kalmanEstimator->rows() -1;
 	
@@ -142,7 +160,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	for(uint i=1;i<=d;i++)
 	{
 		// one PREDICTIVE step is advanced on the cloned Kalman filter: observations vector and symbols matrix are zero so that the filtered mean and covariance be equal to the predictive ones.
-		// Regarding the noise variance, a value different from 0 (any one should do) must be passed or otherwise, the matrix inversion within the KF will give rise to NaN's
+		// As for the noise variance, a value different from 0 (any one should do) must be passed or otherwise, the matrix inversion within the KF will give rise to NaN's
 		kalmanEstimatorClone->nextMatrix(VectorXd::Zero(L),MatrixXd::Zero(N,m),1.0);
 		
 		predictedMatrices[i] = kalmanEstimatorClone->predictedMatrix();
@@ -163,17 +181,19 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	// a map where all the "subcovariances" that will be needed later are stored
 	std::map<CovarianceId,MatrixXd> covariancesMap;
 
-	// all the "subcovariances" that are contained in the covariance computed by the KF for the present time, t, are obtained
-	for(int t1=0;uint(t1)<_ARcoefficients.size();t1++)
-		for(int t2=0;uint(t2)<_ARcoefficients.size();t2++)
+	// all the "subcovariances" that are contained in the covariance computed by the KF for the present time, t, are obtained ("t1" and "t2" give the time shifts with respect to t, which is represented by time shift of zero)
+// 	for(int t1=0;uint(t1)<_ARcoefficients.size();t1++)
+	for(int t1=0;t1>-int(_ARcoefficients.size());t1--)
+// 		for(int t2=0;uint(t2)<_ARcoefficients.size();t2++)
+		for(int t2=0;t2>-int(_ARcoefficients.size());t2--)
 			for(uint i=0;i<Nm;i++)
 				for(uint j=0;j<i;j++)
-					covariancesMap[CovarianceId(-t1,-t2,i,j)]= Util::subMatrixFromVectorIndexes(predictedCovariances[0],
-													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1-t1),
-													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1-t2));
+					covariancesMap[CovarianceId(t1,t2,i,j)]= Util::subMatrixFromVectorIndexes(predictedCovariances[0],
+													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1+t1),
+													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1+t2));
 	
 					
-	// all the "subcovariances" the values of the time instant corresponding to the upper "subcolumn", t1, up to 0 and every possible value of the time instant for the lower "subcolumn", t2
+	// all the "subcovariances" for every combination of "t1" (value of the time instant corresponding to the upper "subcolumn)  belonging to [-R+1,0] and "t2" (value of the time instant for the lower "subcolumn") belonging to [0,d]
 	for(int t1 = -(_ARcoefficients.size()-1);t1<=0;t1++)
 		for(int t2=1;t2<=int(d);t2++)
 			for(uint i=0;i<Nm;i++)
@@ -188,7 +208,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
 				}
 
-	// all the "subcovariances" such that the value of the time instant corresponding to the upper "subcolumn", t1, is lower than that of the time instant corresponding to the lower "subcolumn", t2
+	// all the "subcovariances" for every combination of "t1" belonging to [1,d] and "t2" belonging to [t1+1,d]
 	for(int t1=1;t1<=int(d);t1++)
 		for(int t2=t1+1;t2<=int(d);t2++)
 			for(uint i=0;i<Nm;i++)
@@ -205,28 +225,29 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	
 	// -------------
 	
-	for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
+	for(uint iCol=iFirstColumn;iCol<predictedStackedChannelMatrix.cols();iCol++)
 	{
 		MatrixXd thisColumnCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
 		
 		for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
 		{
-			int upperSubcolumnOriginalColumn = iCol - (iUpperSubcolumn*N);
+			int upperSubcolumnIndexWithinItsMatrix = iCol - (iUpperSubcolumn*N);
 			for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
 			{
-				int lowerSubcolumnOriginalColumn = iCol - (iLowerSubcolumn*N);
+				int lowerSubcolumnIndexWithinItsMatrix = iCol - (iLowerSubcolumn*N);
 				
-				if(upperSubcolumnOriginalColumn>=int(Nm) || upperSubcolumnOriginalColumn<0)
+				// correlation with a vector of zeros is zero
+				if(upperSubcolumnIndexWithinItsMatrix>=int(Nm) || upperSubcolumnIndexWithinItsMatrix<0)
 					continue;
 				
-				if(lowerSubcolumnOriginalColumn>=int(Nm) || lowerSubcolumnOriginalColumn<0)
+				if(lowerSubcolumnIndexWithinItsMatrix>=int(Nm) || lowerSubcolumnIndexWithinItsMatrix<0)
 					continue;
 				
-				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnOriginalColumn == lowerSubcolumnOriginalColumn
-					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn],iCol2indexesWithinKFstateVector[upperSubcolumnOriginalColumn]);
+				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnIndexWithinItsMatrix == lowerSubcolumnIndexWithinItsMatrix
+					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix]);
 				else
 				{
-					MatrixXd subCovariance = covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnOriginalColumn,lowerSubcolumnOriginalColumn)];
+					MatrixXd subCovariance = covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix)];
 					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
 					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
 				}
@@ -237,6 +258,57 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 // 		columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 
 	} // for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
+	
+// 	for(uint iCol1=0;iCol1<N*(m-1);iCol1++)
+// 		for(uint iCol2=iCol1;iCol2<N*(m-1);iCol2++)
+// 		{
+// 			if(iCol1==iCol2)
+// 				continue;
+// 			
+// 			MatrixXd thisColumnsCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
+// 			
+// 			for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
+// 			{
+// 				int upperSubcolumnIndexWithinItsMatrix = iCol1 - (iUpperSubcolumn*N);
+// 				for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
+// 				{
+// 					int lowerSubcolumnIndexWithinItsMatrix = iCol2 - (iLowerSubcolumn*N);
+// 					
+// 					// correlation with a vector of zeros is zero
+// 					if(upperSubcolumnIndexWithinItsMatrix>=int(Nm) || upperSubcolumnIndexWithinItsMatrix<0)
+// 						continue;
+// 					
+// 					if(lowerSubcolumnIndexWithinItsMatrix>=int(Nm) || lowerSubcolumnIndexWithinItsMatrix<0)
+// 						continue;
+// 					
+// #ifdef DEBUG
+// 					std::cout << "iUpperSubcolumn = " << iUpperSubcolumn << " iLowerSubcolumn = " << iLowerSubcolumn << " upperSubcolumnIndexWithinItsMatrix = " << upperSubcolumnIndexWithinItsMatrix << " lowerSubcolumnIndexWithinItsMatrix = " << lowerSubcolumnIndexWithinItsMatrix << std::endl;
+// 					
+// 					std::cout << "covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end() = " << bool(covariancesMap.find(CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix))!=covariancesMap.end()) << std::endl;
+// 					
+// 					std::cout << "covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end() = " << bool(covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end()) << std::endl;
+// #endif
+// 					
+// 					MatrixXd subCovariance;
+// 					
+// 					// if the index of the second (sub)column is greater than that of the first, we search for the covariance of the switched columns (equivalent)
+// 					if(lowerSubcolumnIndexWithinItsMatrix>upperSubcolumnIndexWithinItsMatrix)
+// 					{
+// 						assert(covariancesMap.find(CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix))!=covariancesMap.end());
+// 						subCovariance = covariancesMap[CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix)];
+// 					} else
+// 					{
+// 						assert(covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end());
+// 						subCovariance = covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix)];
+// 					}
+// 					thisColumnsCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
+// 					thisColumnsCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
+// 				} // for(uint j=i;j<(d+1);j++)
+// 			}
+// 			
+// 			columnsAutoCorrelationSum += thisColumnsCovariance + predictedStackedChannelMatrix.col(iCol1)*predictedStackedChannelMatrix.col(iCol2).transpose();
+// 
+// 		} // for(uint iCol1=0;iCol1<predictedStackedChannelMatrix.cols();iCol1++)
 
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*columnsAutoCorrelationSum;
 

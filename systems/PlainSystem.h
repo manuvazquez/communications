@@ -60,6 +60,8 @@ protected:
 	
 	KalmanFilterAwareMMSEDetector *_kalmanFilterAwareMMSEDetector;
 	
+	// an MMSE detector taking advantage of second-order statistics (Kalman Filter-aware) meant to be used after interference cancellation
+	KalmanFilterAwareMMSEDetector *_ICKFAwareMMSEDetector;
 	
     virtual void addAlgorithms();
 

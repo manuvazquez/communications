@@ -29,6 +29,8 @@ protected:
 	KalmanEstimator const *_kalmanEstimator;
 	const std::vector<double> _ARcoefficients;
 	
+	const bool _interferenceCancellation;
+	
 	class CovarianceId
 	{
 	protected:
@@ -58,7 +60,7 @@ protected:
 	};
 	
 public:
-    KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
+    KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation=false);
 	
     virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	virtual VectorXd detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);

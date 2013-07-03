@@ -114,8 +114,6 @@ int main(int argc,char* argv[])
 // 	Rev2TVT2007System system;
 
 // 	WSA08System system;
-// 	ISWCS10System system;
-// 	ISWCS10numberOfSurvivorsImpactSystem system;
 
 // 	PSPvsPSPBasedSMCSystem system;
 // 
@@ -128,7 +126,10 @@ int main(int argc,char* argv[])
 
 // 	ARparametersComparisonCDMASystem system;
 
-// 	CDMASystem system; // Transactions on Vehicular Technology (2013??)
+// 	ISWCS10System system; // // Transactions on Vehicular Technology 2011
+// 	ISWCS10numberOfSurvivorsImpactSystem system;
+
+// 	CDMASystem system; // Transactions on Vehicular Technology 2013
 
 	PlainSystem system; // Second-Order statistics MMSE
 
