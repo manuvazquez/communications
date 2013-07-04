@@ -17,7 +17,7 @@
 
 #include "KalmanFilterAwareMMSEBasedAlgorithm.h"
 
-KalmanFilterAwareMMSEBasedAlgorithm::KalmanFilterAwareMMSEBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, KalmanFilterAwareMMSEDetector* linearDetector, std::vector< double, std::allocator< double > > ARcoefficients, bool substractContributionFromKnownSymbols): LinearFilterBasedAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, linearDetector, ARcoefficients, substractContributionFromKnownSymbols)
+KalmanFilterAwareMMSEBasedAlgorithm::KalmanFilterAwareMMSEBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, KalmanFilterAwareMMSEDetector* linearDetector, std::vector< double, std::allocator< double > > ARcoefficients, bool substractContributionFromKnownSymbols): LinearFilterKFBasedAlgorithm(name, alphabet, L, Nr, N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble, smoothingLag, linearDetector, ARcoefficients, substractContributionFromKnownSymbols)
 {
 	(dynamic_cast<KalmanFilterAwareMMSEDetector *> (_linearDetector))->setKalmanEstimator(dynamic_cast<KalmanEstimator *>(_channelEstimator));
 }

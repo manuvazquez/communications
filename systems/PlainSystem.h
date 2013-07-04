@@ -33,9 +33,7 @@
 
 #include <FlatPowerProfile.h>
 
-#include <LinearFilterBasedAlgorithm.h>
-#include <LinearFilterBasedAlgorithmWithKnownChannel.h>
-#include <LinkedKalmanFilterAndLinearFilterBasedAlgorithm.h>
+#include <LinearFilterKFBasedAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <KalmanFilterAwareMMSEBasedAlgorithm.h>
 
@@ -46,8 +44,6 @@ class PlainSystem : public BaseSystem
 protected:
 	KalmanEstimator *_kalmanEstimator;
 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
-// 	SERawareKalmanEstimatorDecorator *_SERawareKalmanEstimatorDecorator;
-// 	AugmentedObservationsKalmanEstimator * _augmentedObservationsKalmanEstimator;
 	
 	MMSEDetector *_MMSEdetector;
 	

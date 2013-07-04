@@ -149,6 +149,8 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter
 	uint d = nRows/_kalmanEstimator->rows() -1;
 	
+	// TODO: if care is taken, there is no need to compute "predictedStackedChannelMatrix" because "channelMatrix" should contain all the relevant information
+	
 	std::vector<MatrixXd> predictedMatrices(d+1);
 	std::vector<MatrixXd> predictedCovariances(d+1);
 	
@@ -182,9 +184,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 	std::map<CovarianceId,MatrixXd> covariancesMap;
 
 	// all the "subcovariances" that are contained in the covariance computed by the KF for the present time, t, are obtained ("t1" and "t2" give the time shifts with respect to t, which is represented by time shift of zero)
-// 	for(int t1=0;uint(t1)<_ARcoefficients.size();t1++)
 	for(int t1=0;t1>-int(_ARcoefficients.size());t1--)
-// 		for(int t2=0;uint(t2)<_ARcoefficients.size();t2++)
 		for(int t2=0;t2>-int(_ARcoefficients.size());t2--)
 			for(uint i=0;i<Nm;i++)
 				for(uint j=0;j<i;j++)
@@ -255,69 +255,17 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 		}
 		
 		columnsAutoCorrelationSum += thisColumnCovariance + predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
-// 		columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 
 	} // for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
-	
-// 	for(uint iCol1=0;iCol1<N*(m-1);iCol1++)
-// 		for(uint iCol2=iCol1;iCol2<N*(m-1);iCol2++)
-// 		{
-// 			if(iCol1==iCol2)
-// 				continue;
-// 			
-// 			MatrixXd thisColumnsCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
-// 			
-// 			for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
-// 			{
-// 				int upperSubcolumnIndexWithinItsMatrix = iCol1 - (iUpperSubcolumn*N);
-// 				for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
-// 				{
-// 					int lowerSubcolumnIndexWithinItsMatrix = iCol2 - (iLowerSubcolumn*N);
-// 					
-// 					// correlation with a vector of zeros is zero
-// 					if(upperSubcolumnIndexWithinItsMatrix>=int(Nm) || upperSubcolumnIndexWithinItsMatrix<0)
-// 						continue;
-// 					
-// 					if(lowerSubcolumnIndexWithinItsMatrix>=int(Nm) || lowerSubcolumnIndexWithinItsMatrix<0)
-// 						continue;
-// 					
-// #ifdef DEBUG
-// 					std::cout << "iUpperSubcolumn = " << iUpperSubcolumn << " iLowerSubcolumn = " << iLowerSubcolumn << " upperSubcolumnIndexWithinItsMatrix = " << upperSubcolumnIndexWithinItsMatrix << " lowerSubcolumnIndexWithinItsMatrix = " << lowerSubcolumnIndexWithinItsMatrix << std::endl;
-// 					
-// 					std::cout << "covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end() = " << bool(covariancesMap.find(CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix))!=covariancesMap.end()) << std::endl;
-// 					
-// 					std::cout << "covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end() = " << bool(covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end()) << std::endl;
-// #endif
-// 					
-// 					MatrixXd subCovariance;
-// 					
-// 					// if the index of the second (sub)column is greater than that of the first, we search for the covariance of the switched columns (equivalent)
-// 					if(lowerSubcolumnIndexWithinItsMatrix>upperSubcolumnIndexWithinItsMatrix)
-// 					{
-// 						assert(covariancesMap.find(CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix))!=covariancesMap.end());
-// 						subCovariance = covariancesMap[CovarianceId(iLowerSubcolumn,iUpperSubcolumn,lowerSubcolumnIndexWithinItsMatrix,upperSubcolumnIndexWithinItsMatrix)];
-// 					} else
-// 					{
-// 						assert(covariancesMap.find(CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix))!=covariancesMap.end());
-// 						subCovariance = covariancesMap[CovarianceId(iUpperSubcolumn,iLowerSubcolumn,upperSubcolumnIndexWithinItsMatrix,lowerSubcolumnIndexWithinItsMatrix)];
-// 					}
-// 					thisColumnsCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
-// 					thisColumnsCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
-// 				} // for(uint j=i;j<(d+1);j++)
-// 			}
-// 			
-// 			columnsAutoCorrelationSum += thisColumnsCovariance + predictedStackedChannelMatrix.col(iCol1)*predictedStackedChannelMatrix.col(iCol2).transpose();
-// 
-// 		} // for(uint iCol1=0;iCol1<predictedStackedChannelMatrix.cols();iCol1++)
 
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*columnsAutoCorrelationSum;
 
-    _filter = _Rx.inverse()*channelMatrix*_alphabetVariance;
+    _filter = _Rx.inverse()*predictedStackedChannelMatrix*_alphabetVariance;
 
     VectorXd softEstimations = _filter.transpose()*observations;
 
     // required for nthSymbolVariance computing
-    _channelMatrix = channelMatrix;
+    _channelMatrix = predictedStackedChannelMatrix;
 
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
