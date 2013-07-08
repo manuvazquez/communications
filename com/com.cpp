@@ -50,13 +50,13 @@ uint32_t __statUtilSeedPassed;
 
 void setDoneTrue(int signal)
 {
-	std::cout << "Ctl+C read. Finishing frame..." << std::endl;
+	std::cout << std::endl << COLOR_WHITE << "Ctl+C read. Finishing frame..." << COLOR_NORMAL << std::endl << std::endl;
 	__done  = true;
 }
 
 int main(int argc,char* argv[])
 {
-// 	signal(SIGINT,&setDoneTrue);
+	signal(SIGINT,&setDoneTrue);
 
 	std::cout << COLOR_WHITE << "received " << COLOR_NORMAL << argc-1 << COLOR_WHITE << " argument(s)" << COLOR_NORMAL << endl;
 

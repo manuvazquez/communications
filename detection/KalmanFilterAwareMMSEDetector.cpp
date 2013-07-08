@@ -260,12 +260,12 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
 
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*columnsAutoCorrelationSum;
 
-    _filter = _Rx.inverse()*predictedStackedChannelMatrix*_alphabetVariance;
+    _filter = _Rx.inverse()*channelMatrix*_alphabetVariance;
 
     VectorXd softEstimations = _filter.transpose()*observations;
 
     // required for nthSymbolVariance computing
-    _channelMatrix = predictedStackedChannelMatrix;
+    _channelMatrix = channelMatrix;
 
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }

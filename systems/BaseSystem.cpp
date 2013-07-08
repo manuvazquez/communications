@@ -444,7 +444,7 @@ if(__nFramesHasBeenPassed)
         } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 		
 		storeFrameResults();
-		if(_saveAtEveryFrame || _iFrame==_nFrames-1)
+		if(_saveAtEveryFrame || _iFrame==_nFrames-1 || __done)
 		{
 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
 			saveFrameResults();
