@@ -104,6 +104,14 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"saveAtEveryFrame",_saveAtEveryFrame);
 	readParameterFromXML(thisSystemParameters,"keepAllChannelEstimates",_keepAllChannelEstimates);
 	
+	try {
+		readParameterFromXML(thisSystemParameters,"keepAllDetectedSymbols",_keepAllDetectedSymbols);
+	} catch (RuntimeException)
+	{
+		// if this parameter has not been defined, a default value is set
+		_keepAllDetectedSymbols = false;
+	}
+	
 	readParameterFromXML(thisSystemParameters,"nFrames",_nFrames);
 	readParameterFromXML(thisSystemParameters,"L",_L);
 	readParameterFromXML(thisSystemParameters,"N",_N);
@@ -261,7 +269,10 @@ BaseSystem::BaseSystem()
 #endif
 	
 	if(_keepAllChannelEstimates)
-		_channelEstimations.reserve(_nFrames);
+		_channelEstimates.reserve(_nFrames);
+
+	if(_keepAllDetectedSymbols)
+		_allDetectedSymbols.reserve(_nFrames);
 
     _channel = NULL;
     _powerProfile = NULL;
@@ -417,6 +428,9 @@ if(__nFramesHasBeenPassed)
 				{
 					_detectedSymbols = _algorithms[_iAlgorithm]->getDetectedSymbolVectors();
 					
+					if(_keepAllDetectedSymbols)
+						_presentFrameAllDetectedSymbols[_iSNR][_iAlgorithm] = _detectedSymbols;
+					
 					// if there is no training sequence
 					if(_trainSeqLength==0)
 						_pe = computeSER(_symbols.block(0,_preambleLength,_N,_frameLength),_detectedSymbols,_isSymbolAccountedForDetection,_iBestPermutation,_bestPermutationSigns);
@@ -428,8 +442,13 @@ if(__nFramesHasBeenPassed)
 				}
 				// if the algorithm doesn't perform symbols detection...
 				else
+				{
 					// we assign a meaningless (flag) value to the probability of error
 					_pe = FUNNY_VALUE;
+					
+					if(_keepAllDetectedSymbols)
+						_presentFrameAllDetectedSymbols[_iSNR][_iAlgorithm] = MatrixXd::Constant(_N,_frameLength,FUNNY_VALUE);
+				}
 
                 beforeEndingAlgorithm();
 
@@ -507,7 +526,10 @@ void BaseSystem::onlyOnce()
 
 	if(_keepAllChannelEstimates)
 		// channel estimations (iChannelMatrixRow,iChannelMatrixCol,iTimeInstant,iAlgorithmm,iSNR)
-		_presentFrameChannelMatrixEstimations = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
+		_presentFrameChannelMatrixEstimates = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
+	
+	if(_keepAllDetectedSymbols)
+		_presentFrameAllDetectedSymbols = std::vector<std::vector<MatrixXd> >(_SNRs.size(),std::vector<MatrixXd>(_algorithms.size()));
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 		_presentFrameChannelEstimatesVariances = std::vector<std::vector<std::vector<MatrixXd> > >(_SNRs.size(),std::vector<std::vector<MatrixXd> >(_algorithms.size()));
@@ -540,7 +562,7 @@ void BaseSystem::beforeEndingAlgorithm()
 			// we generate a sequence of matrices initialized to a "funny" value
 			thisAlgorithmEstimatedChannelMatrices = vector<MatrixXd>(_iLastSymbolVectorToBeDetected-_preambleLength,MatrixXd::Constant(_channel->channelCoefficientsMatrixRows(),_channel->channelCoefficientsMatrixCols(),FUNNY_VALUE));
 
-		_presentFrameChannelMatrixEstimations[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
+		_presentFrameChannelMatrixEstimates[_iSNR][_iAlgorithm] = thisAlgorithmEstimatedChannelMatrices;
 	}
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
@@ -780,7 +802,10 @@ void BaseSystem::storeFrameResults()
 #endif
 
     if (_keepAllChannelEstimates)
-        _channelEstimations.push_back(_presentFrameChannelMatrixEstimations);
+        _channelEstimates.push_back(_presentFrameChannelMatrixEstimates);
+	
+	if(_keepAllDetectedSymbols)
+		_allDetectedSymbols.push_back(_presentFrameAllDetectedSymbols);
 
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
     _channelEstimatesVariances.push_back(_presentFrameChannelEstimatesVariances);
@@ -844,7 +869,10 @@ void BaseSystem::saveFrameResults()
     }
     
 	if(_keepAllChannelEstimates)
-		Octave::eigenToOctaveFileStream(_channelEstimations,"channelEstimations",_f);
+		Octave::eigenToOctaveFileStream(_channelEstimates,"channelEstimations",_f);
+	
+	if(_keepAllDetectedSymbols)
+		Octave::eigenToOctaveFileStream(_allDetectedSymbols,"allDetectedSymbols",_f);
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 		Octave::eigenToOctaveFileStream(_channelEstimatesVariances,"channelEstimatesVariances",_f);

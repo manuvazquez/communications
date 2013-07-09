@@ -82,7 +82,7 @@ protected:
 	
 	uint32_t _perAlgorithmAndSNRstatUtilSeedToBeLoaded;
 	
-	bool _keepAllChannelEstimates;
+	bool _keepAllChannelEstimates,_keepAllDetectedSymbols;
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
 	bool _saveChannelEstimatesVariances;
@@ -200,8 +200,11 @@ protected:
 	std::vector<std::vector<Random> > _thisFramePerAlgorithmAndSNRstatUtilRandoms;
 #endif
 
-std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimations;
-std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimations;
+std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimates;
+std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelMatrixEstimates;
+
+std::vector<std::vector<std::vector<MatrixXd> > > _allDetectedSymbols;
+std::vector<std::vector<MatrixXd> > _presentFrameAllDetectedSymbols;
 
 std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > _channelEstimatesVariances;
 std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimatesVariances;

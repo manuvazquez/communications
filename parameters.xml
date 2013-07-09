@@ -24,6 +24,8 @@
 		
 		<keepAllChannelEstimates> 0 </keepAllChannelEstimates>
 		
+		<keepAllDetectedSymbols> 0 </keepAllDetectedSymbols>
+		
 		<nFrames> 1000 </nFrames>
 		<L> 8 </L>
 		<N> 3 </N>
