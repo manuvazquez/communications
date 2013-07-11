@@ -32,7 +32,6 @@ ADD_LIBRARY (algorithms STATIC
 			LinearFilterBasedCMEapplyingAlgorithm
 			LinearFilterBasedMKFAlgorithm
 			LinearFilterBasedSMCAlgorithm
-			LinkedKalmanFilterAndLinearFilterBasedAlgorithm
 			MLSDmAlgorithm
 			MLSDmFeedBackAlgorithm
 			MultipleChannelEstimatorsPerParticleSMCAlgorithm

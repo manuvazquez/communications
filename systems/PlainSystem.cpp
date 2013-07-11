@@ -19,22 +19,7 @@
 
 PlainSystem::PlainSystem()
 	: BaseSystem()
-{
-	std::vector<double> noiseVariances;
-	std::vector<double> SERs;
-	
-	// -------------------------------- parameters
-	
-	xml_node<> *thisSystemParameters = get_child(_doc.first_node(),"PlainSystem");
-	
-	if(!thisSystemParameters)
-		throw RuntimeException("PlainSystem::PlainSystem: cannot find parameters for this system.");
-	
-	readMultiValuedParameterFromXML(thisSystemParameters,"noiseVariances",noiseVariances);
-	readMultiValuedParameterFromXML(thisSystemParameters,"SERs",SERs);
-	
-	// --------------------------------
-	
+{	
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
 	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1));

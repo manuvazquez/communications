@@ -22,8 +22,6 @@
 
 #include <KalmanEstimator.h>
 #include <KnownSymbolsKalmanEstimator.h>
-#include <SERawareKalmanEstimatorDecorator.h>
-#include <AugmentedObservationsKalmanEstimator.h>
 
 #include <KalmanFilterAwareMMSEDetector.h>
 

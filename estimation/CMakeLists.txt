@@ -14,11 +14,8 @@ ADD_LIBRARY (estimation STATIC
 			ChannelMatrixEstimator
 			ChannelOrderEstimator
 			KalmanEstimator
-			AugmentedObservationsKalmanEstimator
-			LinearFilterAwareNoiseVarianceAdjustingKalmanEstimator
 			KnownChannelChannelMatrixEstimator
 			KnownSymbolsKalmanEstimator
 			LMSEstimator
 			NLMSEstimator
 			RLSEstimator)
-add_subdirectory(decorators)

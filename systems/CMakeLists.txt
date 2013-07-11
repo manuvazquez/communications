@@ -43,7 +43,6 @@ TARGET_LINK_LIBRARIES (systems
 		      channel
 		      delayPowerProfile
 		      detection
-		      estimation_decorators
 		      smc
 		      resampling
 		      filters
