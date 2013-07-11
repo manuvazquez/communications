@@ -869,7 +869,7 @@ void BaseSystem::saveFrameResults()
     }
     
 	if(_keepAllChannelEstimates)
-		Octave::eigenToOctaveFileStream(_channelEstimates,"channelEstimations",_f);
+		Octave::eigenToOctaveFileStream(_channelEstimates,"channelEstimates",_f);
 	
 	if(_keepAllDetectedSymbols)
 		Octave::eigenToOctaveFileStream(_allDetectedSymbols,"allDetectedSymbols",_f);

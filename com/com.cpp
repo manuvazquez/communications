@@ -50,6 +50,9 @@ uint32_t __statUtilSeedPassed;
 
 void setDoneTrue(int signal)
 {
+	if(__done)
+		exit(0);
+	
 	std::cout << std::endl << COLOR_WHITE << "Ctl+C read. Finishing frame..." << COLOR_NORMAL << std::endl << std::endl;
 	__done  = true;
 }
