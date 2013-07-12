@@ -115,7 +115,6 @@ public:
 	
 	virtual bool computesVariances() const { return false; }
 	
-// 	virtual MatrixXd getVariances() const {return MatrixXd::Constant(_nOutputs,_nInputsXchannelOrder,FUNNY_VALUE); }
 	virtual MatrixXd getVariances() const { throw RuntimeException("ChannelMatrixEstimator::getVariances: not implemented for this estimator."); }
 };
 
