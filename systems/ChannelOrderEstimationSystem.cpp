@@ -125,6 +125,6 @@ void ChannelOrderEstimationSystem::saveFrameResults()
 	Octave::toOctaveFileStream(_candidateChannelOrders,"candidateOrders",_f);
 	Octave::toOctaveFileStream(_iAlgorithmsPerformingChannelOrderAPPestimation,"iAlgorithmsPerformingChannelOrderAPPestimation",_f);
 	Octave::toOctaveFileStream(_iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation,"iAlgorithmsPerformingOneChannelOrderPerOutputAPPestimation",_f);
-	Octave::eigenToOctaveFileStream(_channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);	
-	Octave::eigenToOctaveFileStream(_oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
+	Octave::toOctaveFileStream(_channelOrderAPPsAlongTime,"channelOrderAPPsAlongTime",_f);	
+	Octave::toOctaveFileStream(_oneChannelOrderPerOutputAPPsAlongTime,"oneChannelOrderPerOutputAPPsAlongTime",_f);
 }

@@ -23,7 +23,7 @@
 
 #include <sstream>
 
-void Octave::eigenToOctaveFileStream(const MatrixXd &A,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const MatrixXd &A,std::string name,std::ofstream &f)
 {
     f << "# name: "<< name << std::endl <<"# type: matrix" << std::endl << "# rows: " << A.rows() << std::endl << "# columns: " << A.cols() << std::endl;
 
@@ -35,7 +35,7 @@ void Octave::eigenToOctaveFileStream(const MatrixXd &A,std::string name,std::ofs
     }
 }
 
-void Octave::eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const std::vector<std::vector<MatrixXd> > &matrices,std::string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].rows()==0 || matrices[0][0].cols()==0)
     {
@@ -53,7 +53,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<MatrixXd> > &
                     f << " " << matrices[l][k](i,j) << std::endl;
 }
 
-void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector<MatrixXd> > > &matrices,std::string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].rows()==0 || matrices[0][0][0].cols()==0)
     {
@@ -72,7 +72,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<M
                         f << " " << matrices[m][l][k](i,j) << std::endl;
 }
 
-void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector<std::vector<MatrixXd> > > > &matrices,std::string name,std::ofstream &f)
 {
     if(matrices.size()==0 || matrices[0].size()==0 || matrices[0][0].size()==0 || matrices[0][0][0].size()==0 || matrices[0][0][0][0].rows()==0 || matrices[0][0][0][0].cols()==0)
     {
@@ -92,7 +92,7 @@ void Octave::eigenToOctaveFileStream(const std::vector<std::vector<std::vector<s
 							f << " " << matrices[n][m][l][k](i,j) << std::endl;
 }
 
-void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const std::vector<MatrixXd> &matrices,std::string name,std::ofstream &f)
 {
     uint nRows = matrices[0].rows();
 	uint nCols = matrices[0].cols();
@@ -109,38 +109,38 @@ void Octave::eigenToOctaveFileStream(const std::vector<MatrixXd> &matrices,std::
     for(iMatrix=0;iMatrix<matrices.size();iMatrix++)
 	{
 		if(matrices[iMatrix].rows()!=nRows || matrices[iMatrix].cols()!=nCols)
-			throw RuntimeException("Octave::eigenToOctaveFileStream: matrices have different sizes.");
+			throw RuntimeException("Octave::toOctaveFileStream: matrices have different sizes.");
         for(j=0;j<(matrices.at(iMatrix)).cols();j++)
             for(i=0;i<(matrices.at(iMatrix)).rows();i++)
                 f << " " << (matrices.at(iMatrix))(i,j) << std::endl;
 	}
 }
 
-void Octave::stringsVectorToOctaveFileStream(const std::vector<std::string> &strings,std::string name,std::ofstream &f)
+void Octave::toOctaveFileStream(const std::vector<std::string> &vector,std::string name,std::ofstream &f)
 {
-    if(strings.size()==0)
+    if(vector.size()==0)
 	{
-		std::cout << "Octave::stringsVectorToOctaveFileStream: " << COLOR_PINK << "vector " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
+		std::cout << "Octave::toOctaveFileStream: " << COLOR_PINK << "vector " << COLOR_NORMAL << name << COLOR_PINK << " would be empty: nothing is written." << COLOR_NORMAL << std::endl;
         return;
 	}
 
     int j;
 
-    f << "# name: "<< name << std::endl <<"# type: string" << std::endl << "# elements: " << strings.size() << std::endl;
+    f << "# name: "<< name << std::endl <<"# type: string" << std::endl << "# elements: " << vector.size() << std::endl;
 
-	// the maximum length of all the strings is found out
-    uint max = strings[0].length();
-    for(uint i=0;i<strings.size();i++)
-        if(strings[i].length()>max)
-            max = strings[i].length();
+	// the maximum length of all the vector is found out
+    uint max = vector[0].length();
+    for(uint i=0;i<vector.size();i++)
+        if(vector[i].length()>max)
+            max = vector[i].length();
 
-    for(uint i=0;i<strings.size();i++)
+    for(uint i=0;i<vector.size();i++)
     {
         f << "# length: " << max << std::endl;
-        f << strings[i];
+        f << vector[i];
 
         // padding with spaces
-        for(j=max-strings[i].length();j>0;j--)
+        for(j=max-vector[i].length();j>0;j--)
             f << " ";
         f << std::endl;
     }
@@ -206,7 +206,7 @@ template<class T> void Octave::toOctaveFileStream(const std::vector<std::vector<
 template void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector <uint32_t> > >&matrix,std::string name,std::ofstream &f);
 template void Octave::toOctaveFileStream(const std::vector<std::vector<std::vector <bool> > >&matrix,std::string name,std::ofstream &f);
 
-MatrixXd Octave::eigenFromOctaveFileStream(std::ifstream &f)
+MatrixXd Octave::fromOctaveFileStream(std::ifstream &f)
 {
 	std::vector<uint> nRowsCols(2);	
 	std::string read,buf;

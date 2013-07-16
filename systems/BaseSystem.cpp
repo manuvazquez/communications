@@ -819,13 +819,13 @@ void BaseSystem::storeFrameResults()
 void BaseSystem::saveFrameResults()
 {
     // pe
-    Octave::eigenToOctaveFileStream(_peMatrices,"pe",_f);
+    Octave::toOctaveFileStream(_peMatrices,"pe",_f);
 
     // MSE
-    Octave::eigenToOctaveFileStream(_MSEMatrices,"mse",_f);
+    Octave::toOctaveFileStream(_MSEMatrices,"mse",_f);
 
     Octave::toOctaveFileStream(_iFrame+1,"nFrames",_f);
-    Octave::stringsVectorToOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
+    Octave::toOctaveFileStream(_algorithmsNames,"algorithmsNames",_f);
     Octave::toOctaveFileStream(_L,"L",_f);
     Octave::toOctaveFileStream(_N,"N",_f);
     Octave::toOctaveFileStream(_m,"m",_f);
@@ -835,7 +835,7 @@ void BaseSystem::saveFrameResults()
     Octave::toOctaveFileStream(_symbolsDetectionWindowStart,"symbolsDetectionWindowStart",_f);
     Octave::toOctaveFileStream(_MSEwindowStart,"MSEwindowStart",_f);
     Octave::toOctaveFileStream(_SNRs,"SNRs",_f);
-    Octave::eigenToOctaveFileStream(_preamble,"preamble",_f);
+    Octave::toOctaveFileStream(_preamble,"preamble",_f);
     Octave::toOctaveFileStream(_nSmoothingSymbolsVectors,"nSmoothingSymbolsVectors",_f);    
     Octave::toOctaveFileStream(_preambleLength,"preambleLength",_f);
 	
@@ -847,35 +847,37 @@ void BaseSystem::saveFrameResults()
 #endif
 	
 	// NOTE: this is only saved for the last frame!!
-	Octave::eigenToOctaveFileStream(_observations,"observations",_f);
-	Octave::eigenToOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
-	Octave::eigenToOctaveFileStream(_symbols.block(0,_preambleLength,_N,_frameLength),"symbols",_f);
+	Octave::toOctaveFileStream(_observations,"observations",_f);
+	Octave::toOctaveFileStream(_noise->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"noise",_f);
+
+	// static_cast is needed so that the method can recognize the value returned by the "block" method as a MatrixXd
+	Octave::toOctaveFileStream(static_cast<MatrixXd> (_symbols.block(0,_preambleLength,_N,_frameLength)),"symbols",_f);
 	
 #ifdef KEEP_ALL_CHANNEL_MATRICES
-	Octave::eigenToOctaveFileStream(_channelMatrices,"channels",_f);
+	Octave::toOctaveFileStream(_channelMatrices,"channels",_f);
 #else
 	// only last channel is saved
-    Octave::eigenToOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"channel",_f);
+    Octave::toOctaveFileStream(_channel->range(_preambleLength,_iLastSymbolVectorToBeDetected-1),"channel",_f);
 #endif
 
-	Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,_channel->name()),"channelClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*_noise).name())),"noiseClass",_f);
-    Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*this).name())),"systemClass",_f);
+	Octave::toOctaveFileStream(vector<std::string>(1,_channel->name()),"channelClass",_f);
+    Octave::toOctaveFileStream(vector<std::string>(1,std::string(typeid(*_noise).name())),"noiseClass",_f);
+    Octave::toOctaveFileStream(vector<std::string>(1,std::string(typeid(*this).name())),"systemClass",_f);
 
     if(_powerProfile!=NULL)
     {
         Octave::toOctaveFileStream(_powerProfile->tapsPowers(),"powerProfileVariances",_f);
-        Octave::stringsVectorToOctaveFileStream(vector<std::string>(1,std::string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
+        Octave::toOctaveFileStream(vector<std::string>(1,std::string(typeid(*_powerProfile).name())),"powerProfileClass",_f);
     }
     
 	if(_keepAllChannelEstimates)
-		Octave::eigenToOctaveFileStream(_channelEstimates,"channelEstimates",_f);
+		Octave::toOctaveFileStream(_channelEstimates,"channelEstimates",_f);
 	
 	if(_keepAllDetectedSymbols)
-		Octave::eigenToOctaveFileStream(_allDetectedSymbols,"allDetectedSymbols",_f);
+		Octave::toOctaveFileStream(_allDetectedSymbols,"allDetectedSymbols",_f);
 	
 #ifdef SAVE_CHANNEL_ESTIMATES_VARIANCES
-		Octave::eigenToOctaveFileStream(_channelEstimatesVariances,"channelEstimatesVariances",_f);
+		Octave::toOctaveFileStream(_channelEstimatesVariances,"channelEstimatesVariances",_f);
 #endif
 
 	Octave::toOctaveFileStream(_velocity,"velocity",_f);

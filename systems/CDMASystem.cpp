@@ -158,8 +158,8 @@ CDMASystem::CDMASystem(): SMCSystem()
 		if(f.fail())
 			throw RuntimeException("CDMASystem::CDMASystem: error reading file \"" + _channelProbabilitiesFileNames[i] + "\"");
 
-		_estimatedChannelTransitionProbabilities[i] = Octave::eigenFromOctaveFileStream(f);
-		_estimatedChannelMarginalProbabilities[i] = Octave::eigenFromOctaveFileStream(f);
+		_estimatedChannelTransitionProbabilities[i] = Octave::fromOctaveFileStream(f);
+		_estimatedChannelMarginalProbabilities[i] = Octave::fromOctaveFileStream(f);
 		f.close();
 		f.clear();
 		
@@ -525,8 +525,8 @@ void CDMASystem::storeFrameResults()
 void CDMASystem::saveFrameResults()
 {
     SMCSystem::saveFrameResults();
-    Octave::eigenToOctaveFileStream(_peActivityDetectionFrames,"activityDetectionErrorRate",_f);
-    Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
+    Octave::toOctaveFileStream(_peActivityDetectionFrames,"activityDetectionErrorRate",_f);
+    Octave::toOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
 	Octave::toOctaveFileStream(_nSurvivors,"nSurvivors",_f);
 	Octave::toOctaveFileStream(_userPersistenceProb,"userPersistenceProb",_f);
 	Octave::toOctaveFileStream(_newActiveUserProb,"newActiveUserProb",_f);
@@ -542,9 +542,9 @@ void CDMASystem::saveFrameResults()
 	Octave::toOctaveFileStream(_minSignalToInterferenceRatio,"minSignalToInterferenceRatio",_f);
 	
 #ifdef KEEP_EVERY_FRAME_SPREADING_CODES
-	Octave::eigenToOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
+	Octave::toOctaveFileStream(_everyFrameSpreadingCodes,"everyFrameSpreadingCodes",_f);
 #else
-	Octave::eigenToOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
+	Octave::toOctaveFileStream(_spreadingCodes,"spreadingCodes",_f);
 #endif
 	
 	Octave::toOctaveFileStream(_everyFrameNumberSignChanges,"everyFrameNumberSignChanges",_f);
@@ -555,8 +555,8 @@ void CDMASystem::saveFrameResults()
 	for(uint iGrid=0;iGrid<_grids.size();iGrid++)
 	{
 		f.open(_channelProbabilitiesFileNames[iGrid].c_str(),std::ofstream::trunc);
-		Octave::eigenToOctaveFileStream(_estimatedChannelTransitionProbabilities[iGrid],"estimatedChannelTransitionProbabilities",f);
-		Octave::eigenToOctaveFileStream(_estimatedChannelMarginalProbabilities[iGrid],"estimatedChannelMarginalProbabilities",f);
+		Octave::toOctaveFileStream(_estimatedChannelTransitionProbabilities[iGrid],"estimatedChannelTransitionProbabilities",f);
+		Octave::toOctaveFileStream(_estimatedChannelMarginalProbabilities[iGrid],"estimatedChannelMarginalProbabilities",f);
 		f.close();
 		f.clear();
 	}
