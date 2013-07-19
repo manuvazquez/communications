@@ -15,18 +15,18 @@
 */
 
 
-#ifndef KALMANFILTERAWAREMMSEBASEDALGORITHM_H
-#define KALMANFILTERAWAREMMSEBASEDALGORITHM_H
+#ifndef SOSMMSEBASEDALGORITHM_H
+#define SOSMMSEBASEDALGORITHM_H
 
 #include <LinearFilterKFBasedAlgorithm.h>
 
-#include <KalmanFilterAwareMMSEDetector.h>
+#include <SOSMMSEDetector.h>
 
-class KalmanFilterAwareMMSEBasedAlgorithm : public LinearFilterKFBasedAlgorithm
+class SOSMMSEBasedAlgorithm : public LinearFilterKFBasedAlgorithm
 {
 
 public:
-    KalmanFilterAwareMMSEBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, KalmanFilterAwareMMSEDetector* linearDetector, std::vector< double, std::allocator< double > > ARcoefficients, bool substractContributionFromKnownSymbols = false);
+    SOSMMSEBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr, uint N, uint iLastSymbolVectorToBeDetected, uint m, KalmanEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, SOSMMSEDetector* linearDetector, std::vector< double, std::allocator< double > > ARcoefficients, bool substractContributionFromKnownSymbols = false);
 };
 
 #endif // KALMANFILTERAWAREMMSEBASEDALGORITHM_H

@@ -9,6 +9,6 @@ ADD_LIBRARY (detection STATIC
 		      DecorrelatorDetector
 		      LinearDetector
 		      MMSEDetector
-		      KalmanFilterAwareMMSEDetector
+		      SOSMMSEDetector
 		      RMMSEDetector)
 add_subdirectory(trellis)

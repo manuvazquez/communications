@@ -15,7 +15,7 @@
 */
 
 
-#include "KalmanFilterAwareMMSEDetector.h"
+#include "SOSMMSEDetector.h"
 
 #include <math.h>
 #include <map>
@@ -23,12 +23,12 @@
 
 // #define DEBUG
 
-KalmanFilterAwareMMSEDetector::KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation)
+SOSMMSEDetector::SOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation)
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients),_interferenceCancellation(interferenceCancellation)
 {
 }
 
-VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
+VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
 {	
 	if(_ARcoefficients.size()>1)
 		return detect2orderAndAboveARprocess(observations,channelMatrix,noiseCovariance);
@@ -129,7 +129,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect(const VectorXd &observations, con
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
+VectorXd SOSMMSEDetector::detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance)
 {
 	uint nRows = channelMatrix.rows();
 	
@@ -270,7 +270,7 @@ VectorXd KalmanFilterAwareMMSEDetector::detect2orderAndAboveARprocess(const Vect
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
-KalmanFilterAwareMMSEDetector* KalmanFilterAwareMMSEDetector::clone()
+SOSMMSEDetector* SOSMMSEDetector::clone()
 {
-	return new KalmanFilterAwareMMSEDetector(*this);
+	return new SOSMMSEDetector(*this);
 }

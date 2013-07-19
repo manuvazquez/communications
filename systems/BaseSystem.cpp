@@ -201,10 +201,6 @@ BaseSystem::BaseSystem()
 	// the name of the results file is built
 	_resultsFile = std::string("res_") + std::string(hostname) + std::string("_") + std::string(presentTimeString);
 	
-	// a symbolic link pointing to the results file is created
-	std::string lnCommand = std::string(LN_COMMAND) + std::string(" -sf ") + _resultsFile + std::string(" ") + std::string(SYMBOLIC_LINK_NAME);
-	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _resultsFile << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
-	
 	// the name for the temporal file is obtained from the final one	
 	_tmpResultsFile = std::string("tmp_") + _resultsFile;
 
@@ -489,6 +485,10 @@ if(__nFramesHasBeenPassed)
 		getchar();
 #endif
     } // while((iFrame<nFrames) && (!done))
+    
+    // a symbolic link pointing to the results file is created
+	std::string lnCommand = std::string(LN_COMMAND) + std::string(" -sf ") + _resultsFile + std::string(" ") + std::string(SYMBOLIC_LINK_NAME);
+	std::cout << COLOR_INFO << "created symbolic link: " << COLOR_NORMAL << "res_last" << " -> " << _resultsFile << COLOR_INFO << " (" << system(lnCommand.c_str()) << ") " << COLOR_NORMAL << std::endl;
 
     _overallPeMatrix *= 1.0/_iFrame;
     _overallMseMatrix *= 1.0/_iFrame;

@@ -28,7 +28,7 @@ ADD_LIBRARY (algorithms STATIC
 			LinearFilterBasedAlgorithm
 			LinearFilterKFBasedAlgorithm
 			LinearFilterBasedAlgorithmWithKnownChannel
-			KalmanFilterAwareMMSEBasedAlgorithm
+			SOSMMSEBasedAlgorithm
 			LinearFilterBasedCMEapplyingAlgorithm
 			LinearFilterBasedMKFAlgorithm
 			LinearFilterBasedSMCAlgorithm

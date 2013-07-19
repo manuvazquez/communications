@@ -23,7 +23,7 @@
 #include <KalmanEstimator.h>
 #include <KnownSymbolsKalmanEstimator.h>
 
-#include <KalmanFilterAwareMMSEDetector.h>
+#include <SOSMMSEDetector.h>
 
 #include <KnownChannelChannelMatrixEstimator.h>
 
@@ -33,7 +33,7 @@
 
 #include <LinearFilterKFBasedAlgorithm.h>
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
-#include <KalmanFilterAwareMMSEBasedAlgorithm.h>
+#include <SOSMMSEBasedAlgorithm.h>
 
 
 class PlainSystem : public BaseSystem
@@ -43,8 +43,6 @@ protected:
 	KalmanEstimator *_kalmanEstimator;
 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
 	
-	MMSEDetector *_MMSEdetector;
-	
 	/**
 	 * @brief interference-cancelating MMSE detector
 	 **/
@@ -52,10 +50,15 @@ protected:
 	
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;
 	
-	KalmanFilterAwareMMSEDetector *_kalmanFilterAwareMMSEDetector;
+	/**
+	 * @brief SOS-MMSE detector
+	 **/
+	SOSMMSEDetector *_SOSMMSEDetector;
 	
-	// an MMSE detector taking advantage of second-order statistics (Kalman Filter-aware) meant to be used after interference cancellation
-	KalmanFilterAwareMMSEDetector *_ICKFAwareMMSEDetector;
+	/**
+	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
+	 **/
+	SOSMMSEDetector *_ICSOSMMSEDetector;
 	
     virtual void addAlgorithms();
 

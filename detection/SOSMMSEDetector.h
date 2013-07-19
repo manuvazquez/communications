@@ -15,15 +15,15 @@
 */
 
 
-#ifndef KALMANFILTERAWAREMMSEDETECTOR_H
-#define KALMANFILTERAWAREMMSEDETECTOR_H
+#ifndef SOSMMSEDETECTOR_H
+#define SOSMMSEDETECTOR_H
 
 #include <MMSEDetector.h>
 
 #include<iostream>
 #include <KalmanEstimator.h>
 
-class KalmanFilterAwareMMSEDetector : public MMSEDetector
+class SOSMMSEDetector : public MMSEDetector
 {
 protected:
 	KalmanEstimator const *_kalmanEstimator;
@@ -60,12 +60,12 @@ protected:
 	};
 	
 public:
-    KalmanFilterAwareMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation=false);
+    SOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation=false);
 	
     virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	virtual VectorXd detect2orderAndAboveARprocess(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	
-    virtual KalmanFilterAwareMMSEDetector* clone();
+    virtual SOSMMSEDetector* clone();
 	
 	void setKalmanEstimator(KalmanEstimator * kalmanEstimator) { _kalmanEstimator = kalmanEstimator; }
 };
