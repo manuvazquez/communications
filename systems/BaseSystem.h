@@ -60,9 +60,9 @@
 // to save all the generated channels (each one being a collection of channel matrices)
 // #define KEEP_ALL_CHANNEL_MATRICES
 
-#define SAVE_ALL_SEEDS
+// #define SAVE_ALL_SEEDS
 
-#define SAVE_NOISE_VARIANCES
+// #define SAVE_NOISE_VARIANCES
 
 extern bool __done;
 
