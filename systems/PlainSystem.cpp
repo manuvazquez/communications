@@ -33,6 +33,8 @@ PlainSystem::PlainSystem()
 	_knownChannelChannelMatrixEstimator = NULL;
 	
 	_knownSymbolsKalmanEstimator = NULL;
+	
+	_symbolsMSEmatrices.reserve(_nFrames);
 }
 
 PlainSystem::~PlainSystem()
@@ -70,4 +72,47 @@ void PlainSystem::addAlgorithms()
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE with IC + Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
 	
 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
+}
+
+void PlainSystem::beforeEndingAlgorithm()
+{
+	BaseSystem::beforeEndingAlgorithm();
+	
+	if(_algorithms[_iAlgorithm]->performsSymbolsEstimation())
+	{
+		MatrixXd estimatedSymbols = _algorithms[_iAlgorithm]->getEstimatedSymbolVectors();
+		
+// 		std::cout << estimatedSymbols << std::endl;
+// 		std::cout << "============" << std::endl;
+// 		std::cout << _algorithms[_iAlgorithm]->getDetectedSymbolVectors() << std::endl;
+// 		std::cout << "----------" << std::endl;
+// 		std::cout << _symbols.block(0,_preambleLength,_N,_frameLength) << std::endl;
+// 		std::cout << "*********" << std::endl;
+// 		std::cout << _isSymbolAccountedForDetection << std::endl;
+		
+		_presentFrameSymbolsMSE(_iSNR,_iAlgorithm) = computeSymbolsMSEwithoutSolvingAmbiguity(_symbols.block(0,_preambleLength,_N,_frameLength),estimatedSymbols,_isSymbolAccountedForDetection);
+		
+// 		std::cout << "_presentFrameSymbolsMSE(_iSNR,_iAlgorithm) = " << _presentFrameSymbolsMSE(_iSNR,_iAlgorithm) << std::endl;
+// 		getchar();
+	}
+}
+
+void PlainSystem::onlyOnce()
+{
+	BaseSystem::onlyOnce();
+	_presentFrameSymbolsMSE = MatrixXd::Zero(_SNRs.size(),_algorithms.size());
+}
+
+void PlainSystem::storeFrameResults()
+{
+	BaseSystem::storeFrameResults();
+	
+	_symbolsMSEmatrices.push_back(_presentFrameSymbolsMSE);
+}
+
+void PlainSystem::saveFrameResults()
+{
+	BaseSystem::saveFrameResults();
+	
+	Octave::toOctaveFileStream(_symbolsMSEmatrices,"symbolsMSE",_f);
 }

@@ -52,7 +52,7 @@ public:
 
     /*!
     * It also returns the symbol vectors corresponding to the training sequence (if it exists)
-    * \return a matrix whose columns are the symbol vectors detected. It might be zero (an algorithm that knows the transmitted symbols).
+    * \return a matrix whose columns are the detected symbol vectors. It might be zero (an algorithm that knows the transmitted symbols).
     */    
     virtual MatrixXd getDetectedSymbolVectors() = 0;
     
@@ -66,6 +66,12 @@ public:
 	virtual std::vector<MatrixXd> getChannelEstimatesVariances() const { throw RuntimeException("Algorithm::getChannelEstimatesVariances: not implemented for this algorithm."); }
 #endif
 
+    /*!
+    * It also returns the symbol vectors corresponding to the training sequence (if it exists)
+    * \return a matrix whose columns are the estimated symbol vectors. It might be zero (an algorithm that knows the transmitted symbols).
+    */    
+    virtual MatrixXd getEstimatedSymbolVectors() { throw RuntimeException("Algorithm::getEstimatedSymbolVectors: not implemented for this algorithm."); }
+
 
     virtual bool estimatesOneSingleChannelOrder() const { return false;}
     virtual bool performsSymbolsDetection() const { return true; }
@@ -74,6 +80,8 @@ public:
     virtual bool computesChannelEstimatesVariances() const { return false; }
     
     virtual bool estimatesOneChannelOrderPerOutput() const { return false;}
+    
+    virtual bool performsSymbolsEstimation() const { return false; }
 
     VectorXd substractKnownSymbolsContribution(const std::vector<MatrixXd> &matrices,uint m,uint d,const VectorXd &observations,const MatrixXd &symbolVectors);
 };

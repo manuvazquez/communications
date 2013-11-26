@@ -60,7 +60,17 @@ protected:
 	 **/
 	SOSMMSEDetector *_ICSOSMMSEDetector;
 	
+	std::vector<MatrixXd> _symbolsMSEmatrices;
+	MatrixXd _presentFrameSymbolsMSE;
+	
     virtual void addAlgorithms();
+	
+	virtual void beforeEndingAlgorithm();
+	
+	virtual void onlyOnce();
+	
+	virtual void storeFrameResults();
+	virtual void saveFrameResults();
 
 public:
     PlainSystem();

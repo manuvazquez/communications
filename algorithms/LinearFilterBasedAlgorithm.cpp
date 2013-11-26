@@ -25,7 +25,7 @@
 #include <KnownSymbolsKalmanEstimator.h>
 
 LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols): 
-KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficients(ARcoefficients),_subtractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
+KnownChannelOrderAlgorithm(name, alphabet, L, Nr,N, iLastSymbolVectorToBeDetected, m, channelEstimator, preamble),_d(smoothingLag),_linearDetector(linearDetector->clone()),_detectedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedSymbolVectors(N,iLastSymbolVectorToBeDetected),_estimatedChannelMatrices(iLastSymbolVectorToBeDetected),_ARcoefficients(ARcoefficients),_subtractContributionFromKnownSymbols(substractContributionFromKnownSymbols)
 {
 }
 
@@ -61,8 +61,11 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 	// if there is a training sequence
     for(uint j=_preamble.cols();j<startDetectionTime;j++)
     {
-		// the known symbols are stored as detected symbols
+		// the known symbols are stored as detected symbols...
         _detectedSymbolVectors.col(j) = trainingSequence.col(j-_preamble.cols());
+		
+		//...and also "estimated" symbols
+		_estimatedSymbolVectors.col(j) = trainingSequence.col(j-_preamble.cols());
 		
 		// the channel estimates obtained during the training sequence (if present) are stored
         _estimatedChannelMatrices[j] = trainingSequenceChannelMatrices[j-_preamble.cols()];
@@ -123,7 +126,10 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
             softEstimations =  _linearDetector->detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
 
         for(iRow=0;iRow<_nInputs;iRow++)
+		{
             _detectedSymbolVectors(iRow,iObservationToBeProcessed) = _alphabet.hardDecision(softEstimations(iRow));
+			_estimatedSymbolVectors(iRow,iObservationToBeProcessed) = softEstimations(iRow);
+		}
 
 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
 																							 _detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);
@@ -161,6 +167,12 @@ MatrixXd LinearFilterBasedAlgorithm::getDetectedSymbolVectors()
 {
     return _detectedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
 }
+
+MatrixXd LinearFilterBasedAlgorithm::getEstimatedSymbolVectors()
+{
+    return _estimatedSymbolVectors.block(0,_preamble.cols(),_nInputs,_iLastSymbolVectorToBeDetected-_preamble.cols());
+}
+
 
 vector<MatrixXd> LinearFilterBasedAlgorithm::getEstimatedChannelMatrices()
 {

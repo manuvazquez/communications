@@ -970,3 +970,36 @@ MIMOChannel *BaseSystem::buildChannel()
 	else
 		throw RuntimeException(std::string("BaseSystem::buildChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
 }
+
+double BaseSystem::computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& estimatedSymbols, const vector< vector< bool > >& mask) const
+{ 
+	assert( (sourceSymbols.rows() == estimatedSymbols.rows()) && (static_cast<uint>(estimatedSymbols.rows())== mask.size()) );
+	assert( (sourceSymbols.cols()== estimatedSymbols.cols()) && (static_cast<uint>(estimatedSymbols.cols())== mask[0].size()) );
+
+	uint nSymbolsRows = estimatedSymbols.rows();
+
+	double squareError = 0.0;
+
+	uint nAccountedSymbols = 0;
+
+	for(uint iStream=0;iStream<nSymbolsRows;iStream++)
+	{
+		for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+		{
+			// if this symbol is not accounted for
+			if(!mask[iStream][iTime])
+				continue;
+
+			// if the symbols differ, an error happened...
+			squareError += (sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime))*(sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime));
+			
+			nAccountedSymbols++;
+		}              
+	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+
+	// if all the symbols were masked
+	if(nAccountedSymbols==0)
+		return 0.0;
+	else
+		return squareError/(double)(nAccountedSymbols);
+}

@@ -253,6 +253,8 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	*/
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	
+	double computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &estimatedSymbols,const vector<vector<bool> > &mask) const;
+	
 	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
 	
 	double computeSymbolVectorErrorRate(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
