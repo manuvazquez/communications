@@ -721,39 +721,39 @@ double BaseSystem::computeMSE(const vector<MatrixXd> &realchannelMatrices,const 
 	return BaseSystem::computeMSE(permutedRealChannelMatrices,estimatedChannelMatrices,mask);
 }
 
-double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
-{ 
-	assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
-	assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
-
-	uint nSymbolsRows = detectedSymbols.rows();
-
-  // maximum number of errors
-  uint errors = 0;
-
-  uint nAccountedSymbols = 0;
-
-  for(uint iStream=0;iStream<nSymbolsRows;iStream++)
-  {
-	  for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
-	  {
-		  // if this symbol is not accounted for
-		  if(!mask[iStream][iTime])
-			  continue;
-
-		  // if the symbols differ, an error happened...
-		  errors += (sourceSymbols(iStream,iTime) != detectedSymbols(iStream,iTime));
-		  
-		  nAccountedSymbols++;
-	  }              
-  } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-
-  // if all the symbols were masked
-  if(nAccountedSymbols==0)
-	return 0.0;
-  else
-	return (double)errors/(double)(nAccountedSymbols);
-}
+// double BaseSystem::computeSERwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
+// { 
+// 	assert( (sourceSymbols.rows() == detectedSymbols.rows()) && (static_cast<uint>(detectedSymbols.rows())== mask.size()) );
+// 	assert( (sourceSymbols.cols()== detectedSymbols.cols()) && (static_cast<uint>(detectedSymbols.cols())== mask[0].size()) );
+// 
+// 	uint nSymbolsRows = detectedSymbols.rows();
+// 
+//   // maximum number of errors
+//   uint errors = 0;
+// 
+//   uint nAccountedSymbols = 0;
+// 
+//   for(uint iStream=0;iStream<nSymbolsRows;iStream++)
+//   {
+// 	  for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+// 	  {
+// 		  // if this symbol is not accounted for
+// 		  if(!mask[iStream][iTime])
+// 			  continue;
+// 
+// 		  // if the symbols differ, an error happened...
+// 		  errors += (sourceSymbols(iStream,iTime) != detectedSymbols(iStream,iTime));
+// 		  
+// 		  nAccountedSymbols++;
+// 	  }              
+//   } // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+// 
+//   // if all the symbols were masked
+//   if(nAccountedSymbols==0)
+// 	return 0.0;
+//   else
+// 	return (double)errors/(double)(nAccountedSymbols);
+// }
 
 double BaseSystem::computeSymbolVectorErrorRate(const MatrixXd& sourceSymbols, const MatrixXd& detectedSymbols, const std::vector< std::vector< bool > >& mask) const
 { 
@@ -971,35 +971,70 @@ MIMOChannel *BaseSystem::buildChannel()
 		throw RuntimeException(std::string("BaseSystem::buildChannel: unknown MIMOChannel class \"") + _channelClassToBeInstantiated + std::string("\" cannot be instantiated."));
 }
 
-double BaseSystem::computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& estimatedSymbols, const vector< vector< bool > >& mask) const
-{ 
-	assert( (sourceSymbols.rows() == estimatedSymbols.rows()) && (static_cast<uint>(estimatedSymbols.rows())== mask.size()) );
-	assert( (sourceSymbols.cols()== estimatedSymbols.cols()) && (static_cast<uint>(estimatedSymbols.cols())== mask[0].size()) );
+// template<typename Func> double BaseSystem::computeXXXwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &obtainedSymbols,const vector<vector<bool> > &mask, Func func) const
+// {
+// 	assert( (sourceSymbols.rows() == obtainedSymbols.rows()) && (static_cast<uint>(obtainedSymbols.rows())== mask.size()) );
+// 	assert( (sourceSymbols.cols()== obtainedSymbols.cols()) && (static_cast<uint>(obtainedSymbols.cols())== mask[0].size()) );
+// 
+// 	uint nSymbolsRows = obtainedSymbols.rows();
+// 
+// 	double error = 0.0;
+// 
+// 	uint nAccountedSymbols = 0;
+// 
+// 	for(uint iStream=0;iStream<nSymbolsRows;iStream++)
+// 	{
+// 		for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+// 		{
+// 			// if this symbol is not accounted for
+// 			if(!mask[iStream][iTime])
+// 				continue;
+// 
+// 			// if the symbols differ, an error happened...
+// 			error += func(sourceSymbols(iStream,iTime),obtainedSymbols(iStream,iTime));
+// 			
+// 			nAccountedSymbols++;
+// 		}              
+// 	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+// 
+// 	// if all the symbols were masked
+// 	if(nAccountedSymbols==0)
+// 		return 0.0;
+// 	else
+// 		return error/(double)(nAccountedSymbols);
+// }
 
-	uint nSymbolsRows = estimatedSymbols.rows();
-
-	double squareError = 0.0;
-
-	uint nAccountedSymbols = 0;
-
-	for(uint iStream=0;iStream<nSymbolsRows;iStream++)
-	{
-		for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
-		{
-			// if this symbol is not accounted for
-			if(!mask[iStream][iTime])
-				continue;
-
-			// if the symbols differ, an error happened...
-			squareError += (sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime))*(sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime));
-			
-			nAccountedSymbols++;
-		}              
-	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
-
-	// if all the symbols were masked
-	if(nAccountedSymbols==0)
-		return 0.0;
-	else
-		return squareError/(double)(nAccountedSymbols);
-}
+// double BaseSystem::computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& estimatedSymbols, const vector< vector< bool > >& mask) const
+// { 
+// 	auto fun = [] (const double a, const double b) {return (a-b)*(a-b); };
+// 	
+// 	assert( (sourceSymbols.rows() == estimatedSymbols.rows()) && (static_cast<uint>(estimatedSymbols.rows())== mask.size()) );
+// 	assert( (sourceSymbols.cols()== estimatedSymbols.cols()) && (static_cast<uint>(estimatedSymbols.cols())== mask[0].size()) );
+// 
+// 	uint nSymbolsRows = estimatedSymbols.rows();
+// 
+// 	double squareError = 0.0;
+// 
+// 	uint nAccountedSymbols = 0;
+// 
+// 	for(uint iStream=0;iStream<nSymbolsRows;iStream++)
+// 	{
+// 		for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+// 		{
+// 			// if this symbol is not accounted for
+// 			if(!mask[iStream][iTime])
+// 				continue;
+// 
+// 			// if the symbols differ, an error happened...
+// 			squareError += (sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime))*(sourceSymbols(iStream,iTime) - estimatedSymbols(iStream,iTime));
+// 			
+// 			nAccountedSymbols++;
+// 		}              
+// 	} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+// 
+// 	// if all the symbols were masked
+// 	if(nAccountedSymbols==0)
+// 		return 0.0;
+// 	else
+// 		return squareError/(double)(nAccountedSymbols);
+// }

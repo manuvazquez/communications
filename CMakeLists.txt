@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(COMMUNICATIONS,CXX)
 
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -std=gnu++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3")
 set(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0")
 #SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -g0  -DNDEBUG") # in order to take out the assertions in eigen

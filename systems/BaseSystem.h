@@ -253,10 +253,6 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	*/
 	virtual double computeSER(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask,uint &iBestPermutation,vector<int> &bestPermutationSigns);
 	
-	double computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &estimatedSymbols,const vector<vector<bool> > &mask) const;
-	
-	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
-	
 	double computeSymbolVectorErrorRate(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
 	
 	//! It computes de Mean Square Error
@@ -289,7 +285,56 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	 * @return MIMOChannel*
 	 **/
 	virtual MIMOChannel *buildChannel();
+
+// 	template<typename Func> double computeXXXwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& obtainedSymbols, const vector< vector< bool > >& mask, Func func) const;
 	
+	template<typename Func> double computeXXXwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &obtainedSymbols,const vector<vector<bool> > &mask, Func func) const
+	{
+		assert( (sourceSymbols.rows() == obtainedSymbols.rows()) && (static_cast<uint>(obtainedSymbols.rows())== mask.size()) );
+		assert( (sourceSymbols.cols()== obtainedSymbols.cols()) && (static_cast<uint>(obtainedSymbols.cols())== mask[0].size()) );
+
+		uint nSymbolsRows = obtainedSymbols.rows();
+
+		double error = 0.0;
+
+		uint nAccountedSymbols = 0;
+
+		for(uint iStream=0;iStream<nSymbolsRows;iStream++)
+		{
+			for(uint iTime=0;iTime<sourceSymbols.cols();iTime++)
+			{
+				// if this symbol is not accounted for
+				if(!mask[iStream][iTime])
+					continue;
+
+				// if the symbols differ, an error happened...
+				error += func(sourceSymbols(iStream,iTime),obtainedSymbols(iStream,iTime));
+				
+				nAccountedSymbols++;
+			}              
+		} // for(uint iStream=0;iStream<permutations[iPermut].size();iStream++)
+
+		// if all the symbols were masked
+		if(nAccountedSymbols==0)
+			return 0.0;
+		else
+			return error/(double)(nAccountedSymbols);
+	}
+	
+	double computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &estimatedSymbols,const vector<vector<bool> > &mask) const
+	{
+		return computeXXXwithoutSolvingAmbiguity(sourceSymbols,estimatedSymbols,mask,[] (const double a, const double b) {return (a-b)*(a-b);});
+	}
+	
+	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const
+	{
+		return computeXXXwithoutSolvingAmbiguity(sourceSymbols,detectedSymbols,mask,[] (const double a, const double b) {return (a==b)?0.0:1.0; });
+	}
+	
+// 	double computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &estimatedSymbols,const vector<vector<bool> > &mask) const;
+	
+// 	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
+
 public:
     BaseSystem();
     virtual ~BaseSystem();
