@@ -35,6 +35,8 @@
 #include <KnownSymbolsKalmanBasedChannelEstimatorAlgorithm.h>
 #include <SOSMMSEBasedAlgorithm.h>
 
+#include <LinearFilterNoErrorPropagationKFBasedAlgorithm.h>
+#include <SOSMMSEBasedNoErrorPropagationAlgorithm.h>
 
 class PlainSystem : public BaseSystem
 {

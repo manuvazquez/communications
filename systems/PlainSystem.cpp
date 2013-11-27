@@ -72,6 +72,12 @@ void PlainSystem::addAlgorithms()
 	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE with IC + Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
 	
 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
+	
+	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with IC and No Error Propagation + Known Symbols KF",
+																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
+	
+	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with IC and No Error Propagation + Known Symbols KF",
+																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols));
 }
 
 void PlainSystem::beforeEndingAlgorithm()
@@ -82,18 +88,7 @@ void PlainSystem::beforeEndingAlgorithm()
 	{
 		MatrixXd estimatedSymbols = _algorithms[_iAlgorithm]->getEstimatedSymbolVectors();
 		
-// 		std::cout << estimatedSymbols << std::endl;
-// 		std::cout << "============" << std::endl;
-// 		std::cout << _algorithms[_iAlgorithm]->getDetectedSymbolVectors() << std::endl;
-// 		std::cout << "----------" << std::endl;
-// 		std::cout << _symbols.block(0,_preambleLength,_N,_frameLength) << std::endl;
-// 		std::cout << "*********" << std::endl;
-// 		std::cout << _isSymbolAccountedForDetection << std::endl;
-		
 		_presentFrameSymbolsMSE(_iSNR,_iAlgorithm) = computeSymbolsMSEwithoutSolvingAmbiguity(_symbols.block(0,_preambleLength,_N,_frameLength),estimatedSymbols,_isSymbolAccountedForDetection);
-		
-// 		std::cout << "_presentFrameSymbolsMSE(_iSNR,_iAlgorithm) = " << _presentFrameSymbolsMSE(_iSNR,_iAlgorithm) << std::endl;
-// 		getchar();
 	}
 }
 

@@ -49,6 +49,8 @@ protected:
 	 * @return :vector< MatrixXd, std::allocator< MatrixXd > >
 	 **/
 	virtual std::vector<MatrixXd> getChannelMatricesToStackForSmoothing(std::vector<MatrixXd> ARmatricesBuffer) const;
+	
+	virtual MatrixXd getPreviousInterferingSymbols(uint iCurrentObservation) {return _detectedSymbolVectors.block(0,iCurrentObservation-_channelOrder+1,_nInputs,_channelOrder-1);}
 
 public:
     LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector, std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols = false);

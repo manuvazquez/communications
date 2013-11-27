@@ -118,7 +118,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         {
             softEstimations =  _linearDetector->detect(
                 // the last range chooses all the already detected symbol vectors
-                substractKnownSymbolsContribution(matricesToStack,_channelOrder,_d,stackedObservations,_detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder-1)),
+                substractKnownSymbolsContribution(matricesToStack,_channelOrder,_d,stackedObservations,getPreviousInterferingSymbols(iObservationToBeProcessed)),
                 // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
                 stackedChannelMatrix.block(0,(_channelOrder-1)*_nInputs,_nOutputs*(_d+1),stackedChannelMatrix.cols()-(_channelOrder-1)*_nInputs),
                 stackedNoiseCovariance);                
