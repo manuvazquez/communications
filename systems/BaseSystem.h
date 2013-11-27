@@ -286,8 +286,6 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 	 **/
 	virtual MIMOChannel *buildChannel();
 
-// 	template<typename Func> double computeXXXwithoutSolvingAmbiguity(const MatrixXd& sourceSymbols, const MatrixXd& obtainedSymbols, const vector< vector< bool > >& mask, Func func) const;
-	
 	template<typename Func> double computeXXXwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &obtainedSymbols,const vector<vector<bool> > &mask, Func func) const
 	{
 		assert( (sourceSymbols.rows() == obtainedSymbols.rows()) && (static_cast<uint>(obtainedSymbols.rows())== mask.size()) );
@@ -331,10 +329,6 @@ std::vector<std::vector<std::vector<MatrixXd> > >  _presentFrameChannelEstimates
 		return computeXXXwithoutSolvingAmbiguity(sourceSymbols,detectedSymbols,mask,[] (const double a, const double b) {return (a==b)?0.0:1.0; });
 	}
 	
-// 	double computeSymbolsMSEwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &estimatedSymbols,const vector<vector<bool> > &mask) const;
-	
-// 	double computeSERwithoutSolvingAmbiguity(const MatrixXd &sourceSymbols,const MatrixXd &detectedSymbols,const vector<vector<bool> > &mask) const;
-
 public:
     BaseSystem();
     virtual ~BaseSystem();
