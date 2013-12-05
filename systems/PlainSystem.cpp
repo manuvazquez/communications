@@ -69,7 +69,7 @@ void PlainSystem::addAlgorithms()
 	delete _ICSOSMMSEDetectorWithKnownSymbolsKF;
 	_ICSOSMMSEDetectorWithKnownSymbolsKF = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_knownSymbolsKalmanEstimator,_ARcoefficients,true);
 	
-	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE with IC + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetectorWithKnownSymbolsKF,_ARcoefficients,true));
+	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE with IC + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE with IC + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetectorWithKnownSymbolsKF,_ARcoefficients,true));
 	
     delete _knownChannelChannelMatrixEstimator;
@@ -83,7 +83,7 @@ void PlainSystem::addAlgorithms()
 	// -----------------------------
 	
 	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with IC and No Error Propagation + Known Symbols KF",
-																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetectorWithKnownSymbolsKF,_ARcoefficients,_symbols));
+																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
 	
 	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with IC and No Error Propagation + Known Symbols KF",
 																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetectorWithKnownSymbolsKF,_ARcoefficients,_symbols));
