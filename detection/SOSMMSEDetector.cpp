@@ -81,31 +81,47 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 	for(int iCol=0;iCol<Nm;iCol++)
 		iCol2indexesWithinKFstateVector[iCol] = _kalmanEstimator->colIndexToIndexesWithinKFstateVector(iCol);
 	
+#ifdef DEBUG
+	std::cout << "iFirstColumn = " << iFirstColumn << std::endl;
+// 	std::cout << "predictedCovariances[0] (" << predictedCovariances[0].rows() << " x " << predictedCovariances[0].cols() << ")" << std::endl << predictedCovariances[0] << std::endl;
+#endif
+	
 	for(uint iCol=iFirstColumn;iCol<predictedStackedChannelMatrix.cols();iCol++)
 	{
 		MatrixXd thisColumnCovariance = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
 		
-		for(uint iUpperSubcolumn=0;iUpperSubcolumn<(d+1);iUpperSubcolumn++)
+		for(uint iUpperSubcolumn=0;iUpperSubcolumn<=d;iUpperSubcolumn++)
 		{
 			int upperSubcolumnIndexWithinItsMatrix = iCol - (iUpperSubcolumn*N);
-			for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<(d+1);iLowerSubcolumn++)
+			for(uint iLowerSubcolumn=iUpperSubcolumn;iLowerSubcolumn<=d;iLowerSubcolumn++)
 			{
 				int lowerSubcolumnIndexWithinItsMatrix = iCol - (iLowerSubcolumn*N);
 				
-				// correlation with a vector of zeros is zero
-				if(upperSubcolumnIndexWithinItsMatrix>=Nm || upperSubcolumnIndexWithinItsMatrix<0)
-					continue;
+#ifdef DEBUG
+				std::cout << "upperSubcolumnIndexWithinItsMatrix = " << upperSubcolumnIndexWithinItsMatrix << ", lowerSubcolumnIndexWithinItsMatrix = " << lowerSubcolumnIndexWithinItsMatrix << std::endl;
+				std::cout << "iUpperSubcolumn = " << iUpperSubcolumn << ", iLowerSubcolumn = " << iLowerSubcolumn << std::endl;
+				std::cout << "iUpperSubcolumn-iLowerSubcolumn = " << iUpperSubcolumn-iLowerSubcolumn << std::endl;
+#endif
 				
-				if(lowerSubcolumnIndexWithinItsMatrix>=Nm || lowerSubcolumnIndexWithinItsMatrix<0)
+				// correlation with a vector of zeros is zero
+				if(upperSubcolumnIndexWithinItsMatrix>=Nm || upperSubcolumnIndexWithinItsMatrix<0 || lowerSubcolumnIndexWithinItsMatrix>=Nm  || lowerSubcolumnIndexWithinItsMatrix<0)
+				{
+#ifdef DEBUG
+					std::cout << "zero!!" << std::endl;
+#endif
 					continue;
+				}
 				
 				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnIndexWithinItsMatrix == lowerSubcolumnIndexWithinItsMatrix
 					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix]);
 				else
 				{
 					// only "predictedCovariances[0]" is needed because the difference between a column in a given time instant and the same column a number of time steps later is given by a factor (which is the power below)
-					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
-												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
+					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],
+												iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
+												*pow(_ARcoefficients[0],double(iLowerSubcolumn-iUpperSubcolumn));
+// // 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
+// 												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
 					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
 					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
 				}
@@ -114,6 +130,11 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 		
 		columnsAutoCorrelationSum += thisColumnCovariance + predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 // 		columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
+		
+#ifdef DEBUG
+		std::cout << "==================== end of column iCol = " << iCol << " ==============" << std::endl;
+		getchar();
+#endif
 
 	} // for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
 
@@ -126,6 +147,10 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
     // required for nthSymbolVariance computing
     _channelMatrix = channelMatrix;
 
+#ifdef DEBUG
+	getchar();
+#endif
+	
     return softEstimations.segment(_detectionStart,_nSymbolsToBeDetected);
 }
 
@@ -180,24 +205,35 @@ VectorXd SOSMMSEDetector::detect2orderAndAboveARprocess(const VectorXd &observat
 	for(uint iCol=0;iCol<Nm;iCol++)
 		iCol2indexesWithinKFstateVector[iCol] = _kalmanEstimator->colIndexToIndexesWithinKFstateVector(iCol,_ARcoefficients.size()-1);
 	
-	// a map where all the "subcovariances" that will be needed later are stored
+	// a map where all the cross-covariances that will be needed later are stored
 	std::map<CovarianceId,MatrixXd> covariancesMap;
 
-	// all the "subcovariances" that are contained in the covariance computed by the KF for the present time, t, are obtained ("t1" and "t2" give the time shifts with respect to t, which is represented by time shift of zero)
+	// all the cross-covariances that are contained in the covariance computed by the KF for the present time, t, are obtained ("t1" and "t2" give the time shifts with respect to t, which is represented by a time shift of zero)
 	for(int t1=0;t1>-int(_ARcoefficients.size());t1--)
 		for(int t2=0;t2>-int(_ARcoefficients.size());t2--)
 			for(uint i=0;i<Nm;i++)
-				for(uint j=0;j<i;j++)
+				for(uint j=0;j<Nm;j++)
+// 				for(uint j=0;j<i;j++)
 					covariancesMap[CovarianceId(t1,t2,i,j)]= Util::subMatrixFromVectorIndexes(predictedCovariances[0],
 													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1+t1),
 													_kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1+t2));
 	
-					
-	// all the "subcovariances" for every combination of "t1" (value of the time instant corresponding to the upper "subcolumn)  belonging to [-R+1,0] and "t2" (value of the time instant for the lower "subcolumn") belonging to [0,d]
+	// all the cross-covariances when both time instants are equal (t1=t2)
+	for(uint t1=1;t1<=d;t1++)
+		for(uint i=0;i<Nm;i++)
+			for(uint j=0;j<Nm;j++)
+// 			for(uint j=0;j<i;j++)
+				covariancesMap[CovarianceId(t1,t1,i,j)]= Util::subMatrixFromVectorIndexes(predictedCovariances[t1],
+												_kalmanEstimator->colIndexToIndexesWithinKFstateVector(i,_ARcoefficients.size()-1),
+												_kalmanEstimator->colIndexToIndexesWithinKFstateVector(j,_ARcoefficients.size()-1));
+		
+
+	// all the cross-covariances for every combination of "t1" (value of the time instant corresponding to the upper "subcolumn)  belonging to [-R+1,0] and "t2" (value of the time instant for the lower "subcolumn") belonging to [0,d]
 	for(int t1 = -(_ARcoefficients.size()-1);t1<=0;t1++)
 		for(int t2=1;t2<=int(d);t2++)
 			for(uint i=0;i<Nm;i++)
-				for(uint j=0;j<i;j++)
+				for(uint j=0;j<Nm;j++)
+// 				for(uint j=0;j<i;j++)
 				{
 					MatrixXd covariance = MatrixXd::Zero(L,L);
 					for(uint r=1;r<=_ARcoefficients.size();r++)
@@ -208,17 +244,28 @@ VectorXd SOSMMSEDetector::detect2orderAndAboveARprocess(const VectorXd &observat
 					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
 				}
 
-	// all the "subcovariances" for every combination of "t1" belonging to [1,d] and "t2" belonging to [t1+1,d]
+	// all the cross-covariances for every combination of "t1" belonging to [1,d] and "t2" belonging to [t1+1,d]
 	for(int t1=1;t1<=int(d);t1++)
 		for(int t2=t1+1;t2<=int(d);t2++)
 			for(uint i=0;i<Nm;i++)
-				for(uint j=0;j<i;j++)
+				for(uint j=0;j<Nm;j++)
+// 				for(uint j=0;j<i;j++)
 				{
 					MatrixXd covariance = MatrixXd::Zero(L,L);
 					for(uint r=1;r<=_ARcoefficients.size();r++)
 					{
-						assert(covariancesMap.find(CovarianceId(t1-r,t2,i,j))!=covariancesMap.end());
-						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1-r,t2,i,j)];
+#ifdef DEBUG
+						std::cout << "t1 = " << t1 << ", t2-r = " << (t2-r) << ", i = " << i << ", j = " << j <<  std::endl;
+						std::cout << "does it exist the transpose?" << (covariancesMap.find(CovarianceId(t2-r,t1,j,i))!=covariancesMap.end()) << endl;
+#endif
+						if(covariancesMap.find(CovarianceId(t1,t2-r,i,j))!=covariancesMap.end())
+							covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1,t2-r,i,j)];
+						else if(covariancesMap.find(CovarianceId(t2-r,t1,j,i))!=covariancesMap.end())
+							covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t2-r,t1,j,i)].transpose();
+						else
+							throw RuntimeException("wap");
+// 						assert(covariancesMap.find(CovarianceId(t1,t2-r,i,j))!=covariancesMap.end());
+// 						covariance += _ARcoefficients[r-1]*covariancesMap[CovarianceId(t1,t2-r,i,j)];
 					}
 					covariancesMap[CovarianceId(t1,t2,i,j)] = covariance;
 				}

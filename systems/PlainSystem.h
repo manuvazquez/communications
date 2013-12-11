@@ -60,7 +60,7 @@ protected:
 	/**
 	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
 	 **/
-	SOSMMSEDetector *_ICSOSMMSEDetector,*_ICSOSMMSEDetectorWithKnownSymbolsKF;
+	SOSMMSEDetector *_ICSOSMMSEDetector;
 	
 	std::vector<MatrixXd> _symbolsMSEmatrices;
 	MatrixXd _presentFrameSymbolsMSE;

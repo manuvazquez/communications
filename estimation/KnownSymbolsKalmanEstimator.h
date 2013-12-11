@@ -35,7 +35,7 @@ public:
 
     KnownSymbolsKalmanEstimator* clone() const;
 
-    virtual MatrixXd nextMatrix(const VectorXd &observations, const MatrixXd &symbolsMatrix, double noiseVariance); // eigen
+    virtual MatrixXd nextMatrix(const VectorXd &observations, const MatrixXd &symbolsMatrix, double noiseVariance);
 
 
 };
