@@ -44,7 +44,7 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 {
 	// if there is an actual training sequence...
 	if(trainingSequence.rows()!=0)
-		// we make sure it has the proper number of rows
+		// ...we make sure it has the proper number of rows
 		assert(trainingSequence.rows()==_nInputs);
 
 	uint startDetectionTime = _preamble.cols() + trainingSequence.cols();
@@ -53,7 +53,7 @@ void LinearFilterBasedAlgorithm::run(MatrixXd observations,vector<double> noiseV
 	preambleTrainingSequence << _preamble,trainingSequence;
 
 	// several channel estimation steps are taken in a row
-    vector<MatrixXd> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),startDetectionTime);
+    std::vector<MatrixXd> trainingSequenceChannelMatrices = _channelEstimator->nextMatricesFromObservationsSequence(observations,noiseVariances,preambleTrainingSequence,_preamble.cols(),startDetectionTime);
 
 	// the linear detector is updated accordingly using the same observations
     _linearDetector->stateStepsFromObservationsSequence(observations,_d,_preamble.cols(),startDetectionTime);

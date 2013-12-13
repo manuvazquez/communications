@@ -200,7 +200,7 @@ std::vector<uint> KalmanEstimator::colIndexToIndexesWithinKFstateVector(uint iCo
 	std::vector<uint> res(_nOutputs);
 	
 	for(uint i=0;i<_nOutputs;i++)
-		res[i] = (nChannelMatricesSkipped*_nChannelCoeffs) + i*_nInputsXchannelOrder+iCol;
+		res[i] = (nChannelMatricesSkipped*_nChannelCoeffs) + i*_nInputsXchannelOrder + iCol;
 	
 	return res;
 }

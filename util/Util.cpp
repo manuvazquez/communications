@@ -643,3 +643,10 @@ std::vector<double> Util::linspace(double start, double end, uint n)
 	
 	return res;
 }
+
+double Util::cond(MatrixXd matrix)
+{
+	JacobiSVD<MatrixXd> svd(matrix, ComputeThinU | ComputeThinV);
+	
+	return svd.singularValues().maxCoeff()/svd.singularValues().minCoeff();
+}

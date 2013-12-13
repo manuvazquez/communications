@@ -35,6 +35,9 @@
 #include <exceptions.h>
 #include "utilExceptions.h"
 
+
+#include <Eigen/SVD>
+
 enum tOrder {rowwise,columnwise};
 
 using std::vector;
@@ -156,6 +159,8 @@ public:
 	static MatrixXd diag(std::vector<MatrixXd> matrices);
 	
 	static std::vector<double> linspace(double start, double end, uint n);
+	
+	static double cond(MatrixXd matrix);
 };
 
 template<class T> std::ostream& operator<<(std::ostream &out,const std::vector<T> &vector);
