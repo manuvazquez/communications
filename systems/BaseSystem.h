@@ -64,7 +64,7 @@
 
 // #define SAVE_NOISE_VARIANCES
 
-extern bool __done;
+extern bool __done,__saveData;
 
 using namespace rapidxml;
 

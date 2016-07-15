@@ -459,7 +459,7 @@ if(__nFramesHasBeenPassed)
         } // for(uint iSNR=0;iSNR<SNRs.size();iSNR++)
 		
 		storeFrameResults();
-		if(_saveAtEveryFrame || _iFrame==_nFrames-1 || __done)
+		if(_saveAtEveryFrame || _iFrame==_nFrames-1 || __done || __saveData)
 		{
 			_f.open(_tmpResultsFile.c_str(),ofstream::trunc);
 			saveFrameResults();
@@ -469,6 +469,9 @@ if(__nFramesHasBeenPassed)
 			std::string mvCommand = std::string(MV_COMMAND) + std::string(" ") + _tmpResultsFile + std::string(" ") + _resultsFile;
 			int systemCommandReturn = system(mvCommand.c_str());
 			cout << COLOR_INFO << "moving operation returned " << COLOR_NORMAL << systemCommandReturn << endl;
+			
+			// the flag variable is reset in case the corresponding signal is sent again
+			__saveData = false;
 		}
 
         // ---------------------------------------------------------

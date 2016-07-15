@@ -41,6 +41,7 @@
 #include <signal.h>
 
 bool __done = false;
+bool __saveData = false;
 bool __randomSeedHasBeenPassed = false;
 bool __nFramesHasBeenPassed = false;
 
@@ -57,9 +58,16 @@ void setDoneTrue(int signal)
 	__done  = true;
 }
 
+void setSaveDataTrue(int signal)
+{
+	std::cout << std::endl << COLOR_WHITE << "received SIGUSR1...saving data and continuing" << COLOR_NORMAL << std::endl << std::endl;
+	__saveData  = true;
+}
+
 int main(int argc,char* argv[])
 {
 	signal(SIGINT,&setDoneTrue);
+	signal(SIGUSR1,&setSaveDataTrue);
 
 	std::cout << COLOR_WHITE << "received " << COLOR_NORMAL << argc-1 << COLOR_WHITE << " argument(s)" << COLOR_NORMAL << endl;
 
