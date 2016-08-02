@@ -26,8 +26,6 @@ PlainSystem::PlainSystem()
 
 	_kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 	
-	_SOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients);
-	
 	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
 	
 	_knownChannelChannelMatrixEstimator = NULL;
@@ -43,8 +41,6 @@ PlainSystem::~PlainSystem()
 	delete _knownSymbolsKalmanEstimator;
 	
 	delete _knownChannelChannelMatrixEstimator;
-	
-	delete _SOSMMSEDetector;
 	
 	delete _ICMMSEdetector;
 	delete _ICSOSMMSEDetector;

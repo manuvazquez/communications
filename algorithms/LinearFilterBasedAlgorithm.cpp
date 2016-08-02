@@ -151,7 +151,7 @@ std::vector<MatrixXd> LinearFilterBasedAlgorithm::getChannelMatricesToStackForSm
 	for(uint iSmoothing=0;iSmoothing<(_d+1);iSmoothing++)
 	{
 		// new matrix to be stacked is initialized to zero
-		res[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*(_d+1));
+		res[iSmoothing] = MatrixXd::Zero(_nOutputs,_nInputs*_channelOrder);
 		
 		for(iterARcoeffs = _ARcoefficients.begin(),iterMatrices = ARmatricesBuffer.rbegin();iterARcoeffs!=_ARcoefficients.end();iterARcoeffs++,iterMatrices++)
 			res[iSmoothing] +=  (*iterARcoeffs)*(*iterMatrices);
