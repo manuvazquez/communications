@@ -66,14 +66,14 @@ void PlainSystem::addAlgorithms()
 	
 	// -----------------------------
 
-// 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
-// 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
-// 	
-// 	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with IC and No Error Propagation + KF",
-// 																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
-// 	
-// 	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with IC and No Error Propagation + KF",
-// 																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols));
+	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
+	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
+	
+	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with No Error Propagation + KF",
+																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
+	
+	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with No Error Propagation + KF",
+																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols));
 	
 	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with No Error Propagation + Known Symbols KF",
 																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));

@@ -117,6 +117,16 @@ BaseSystem::BaseSystem()
 	readParameterFromXML(thisSystemParameters,"N",_N);
 	readParameterFromXML(thisSystemParameters,"frameLength",_frameLength);
 	readParameterFromXML(thisSystemParameters,"m",_m);
+	
+	try {
+		readParameterFromXML(thisSystemParameters,"d",_d);
+	} catch (RuntimeException)
+	{
+		std::cout << COLOR_WHITE << "assuming the smoothing lag is <channel order> - 1" << COLOR_NORMAL << std::endl;
+		// smoothing factor
+		_d = _m - 1;
+	}
+	
 	readParameterFromXML(thisSystemParameters,"trainSeqLength",_trainSeqLength);
 	readParameterFromXML(thisSystemParameters,"preambleLength",_preambleLength);
 	readMultiValuedParameterFromXML(thisSystemParameters,"SNRs",_SNRs);
@@ -142,8 +152,6 @@ BaseSystem::BaseSystem()
 
 	// ==================================== derived parameters ====================================
 
-	// smoothing factor
-	_d = _m - 1;
 	
 	// "in principle" the algorithms require as many smoothing symbol vectors as "d" (though it's not always like that, .e.g,  when estimating the channel order)
 	_nSmoothingSymbolsVectors = _d;

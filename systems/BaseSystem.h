@@ -49,6 +49,8 @@
 #include <NullNoise.h>
 #include <Algorithm.h>
 
+#include <bashcolors.h>
+
 #include <rapidxml.hpp>
 
 #define HOSTNAME_LENGTH 50

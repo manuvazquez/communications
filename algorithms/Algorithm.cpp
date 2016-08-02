@@ -36,7 +36,7 @@ VectorXd Algorithm::substractKnownSymbolsContribution(const std::vector<MatrixXd
     uint i;
     MatrixXd substractingChannelMatrix = MatrixXd::Zero(_nOutputs*(d+1),_nInputs*(m-1));
 
-    for(i=0;i<m-1;i++)
+    for(i=0;i<=d;i++)
         substractingChannelMatrix.block(i*_nOutputs,_nInputs*i,_nOutputs,(m-1-i)*_nInputs) = matrices[i].block(0,0,_nOutputs,(m-1-i)*_nInputs);
 
     return observations - substractingChannelMatrix*Util::toVector(involvedSymbolVectors,columnwise);
