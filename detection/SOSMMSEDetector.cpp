@@ -112,19 +112,14 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 					continue;
 				}
 				
-				if(iUpperSubcolumn == iLowerSubcolumn) // => upperSubcolumnIndexWithinItsMatrix == lowerSubcolumnIndexWithinItsMatrix
-					thisColumnCovariance.block(iUpperSubcolumn*L,iUpperSubcolumn*L,L,L) = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix]);
-				else
-				{
-					// only "predictedCovariances[0]" is needed because the difference between a column in a given time instant and the same column a number of time steps later is given by a factor (which is the power below)
-					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],
-												iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
-												*pow(_ARcoefficients[0],double(iLowerSubcolumn-iUpperSubcolumn));
-// // 					MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[0],iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
-// 												*pow(_ARcoefficients[0],double(iUpperSubcolumn+iLowerSubcolumn));
-					thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
-					thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
-				}
+				// only "predictedCovariances[0]" is needed because the difference between a column in a given time instant and the same column a number of time steps later is given by a factor (which is the power below)
+				MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],
+											iCol2indexesWithinKFstateVector[upperSubcolumnIndexWithinItsMatrix],iCol2indexesWithinKFstateVector[lowerSubcolumnIndexWithinItsMatrix])
+											*pow(_ARcoefficients[0],double(iLowerSubcolumn-iUpperSubcolumn));
+				
+				thisColumnCovariance.block(iUpperSubcolumn*L,iLowerSubcolumn*L,L,L) = subCovariance;
+				thisColumnCovariance.block(iLowerSubcolumn*L,iUpperSubcolumn*L,L,L) = subCovariance.transpose(); // ...due to the symmetry of the covariance matrix
+
 			} // for(uint j=i;j<(d+1);j++)
 		}
 		
