@@ -110,7 +110,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         // stacked noise covariance needs to be constructed
         for(iSmoothing=0;iSmoothing<=_d;iSmoothing++)
             for(iRow=0;iRow<_nOutputs;iRow++)
-                stackedNoiseCovariance((iSmoothing)*_nOutputs+iRow,(iSmoothing)*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
+                stackedNoiseCovariance(iSmoothing*_nOutputs+iRow,iSmoothing*_nOutputs+iRow) = noiseVariances[iObservationToBeProcessed+iSmoothing];
 
         VectorXd softEstimations;
 

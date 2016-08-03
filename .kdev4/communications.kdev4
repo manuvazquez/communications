@@ -21,13 +21,18 @@ CMake Binary=file:///usr/bin/cmake
 Environment Profile=
 Install Directory=file:///usr/local
 
+[Defines And Includes][Compiler]
+Name=GCC
+Path=gcc
+Type=GCC
+
 [Launch]
-Launch Configurations=Launch Configuration 0
+Launch Configurations=Launch Configuration 0,Launch Configuration 1
 
 [Launch][Launch Configuration 0]
 Configured Launch Modes=execute
 Configured Launchers=nativeAppLauncher
-Name=Nueva configuración Aplicación nativa
+Name=normal
 Type=Native Application
 
 [Launch][Launch Configuration 0][Data]
@@ -38,7 +43,7 @@ Dependency Action=Nothing
 Display Demangle Names=true
 Display Static Members=false
 EnvironmentGroup=default
-Executable=
+Executable=file:///usr/local/.home/manu/communications/
 External Terminal=konsole --noclose --workdir %workdir -e %exe
 GDB Path=gdb
 Project Target=communications,com,com
@@ -47,6 +52,24 @@ Remote GDB Run Script=
 Remote GDB Shell Script=
 Use External Terminal=false
 Working Directory=
+isExecutable=false
+
+[Launch][Launch Configuration 1]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=depurar  prueba SOS
+Type=Native Application
+
+[Launch][Launch Configuration 1][Data]
+Arguments=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=
+Executable=file:///usr/local/.home/manu/communications/
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=communications,com,com
+Use External Terminal=false
+Working Directory=file:///home/manu/simulations/prueba_sos
 isExecutable=false
 
 [MakeBuilder]

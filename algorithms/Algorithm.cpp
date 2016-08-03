@@ -29,6 +29,11 @@ VectorXd Algorithm::substractKnownSymbolsContribution(const std::vector<MatrixXd
 	assert(matrices.size()==d+1);
 	assert(observations.size()==(_nOutputs*(d+1)));
 	assert(m>0);
+	
+	// if there is no memory in the channel...
+	if(m==1)
+		// ...then there is only contribution from curren symbols
+		return observations;
 
 	// wrong number of symbol vectors
 	assert(involvedSymbolVectors.cols()==m-1);

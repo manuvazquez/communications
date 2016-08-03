@@ -49,7 +49,7 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 		iFirstColumn = 0;
 	
 	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter
-	uint d = nRows/_kalmanEstimator->rows() -1;
+	uint d = nRows/L -1;
 	
 	std::vector<MatrixXd> predictedMatrices(d+1);
 	std::vector<MatrixXd> predictedCovariances(d+1);
