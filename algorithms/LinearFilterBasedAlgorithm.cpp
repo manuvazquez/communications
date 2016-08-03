@@ -22,6 +22,8 @@
 // #define DEBUG
 // #include <realData.h>
 
+// #define DEBUG_2
+
 #include <KnownSymbolsKalmanEstimator.h>
 
 LinearFilterBasedAlgorithm::LinearFilterBasedAlgorithm(std::string name, Alphabet alphabet, uint L, uint Nr,uint N, uint iLastSymbolVectorToBeDetected, uint m, ChannelMatrixEstimator* channelEstimator, MatrixXd preamble, uint smoothingLag, LinearDetector *linearDetector,  std::vector<double> ARcoefficients, bool substractContributionFromKnownSymbols): 
@@ -133,6 +135,12 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 
 		_estimatedChannelMatrices[iObservationToBeProcessed] = _channelEstimator->nextMatrix(observations.col(iObservationToBeProcessed),
 																							 _detectedSymbolVectors.block(0,iObservationToBeProcessed-_channelOrder+1,_nInputs,_channelOrder),noiseVariances[iObservationToBeProcessed]);
+		
+		
+#ifdef DEBUG_2
+		std::cout << "observations.col(iObservationToBeProcessed)" << std::endl << observations.col(iObservationToBeProcessed) << std::endl;
+		getchar();
+#endif
 		
 		// ...and updated with the last estimated channel matrix
 		ARmatricesBuffer.erase(ARmatricesBuffer.begin());

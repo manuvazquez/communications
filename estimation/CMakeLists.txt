@@ -17,6 +17,7 @@ ADD_LIBRARY (estimation STATIC
 			MultipleKFsEstimator
 			KnownChannelChannelMatrixEstimator
 			KnownSymbolsKalmanEstimator
+			KnownSymbolsNObservationsKalmanEstimator
 			LMSEstimator
 			NLMSEstimator
 			RLSEstimator)

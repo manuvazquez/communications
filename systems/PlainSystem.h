@@ -21,7 +21,8 @@
 #include <BaseSystem.h>
 
 #include <KalmanEstimator.h>
-#include <KnownSymbolsKalmanEstimator.h>
+// #include <KnownSymbolsKalmanEstimator.h>
+#include <KnownSymbolsNObservationsKalmanEstimator.h>
 
 #include <SOSMMSEDetector.h>
 
@@ -43,7 +44,8 @@ class PlainSystem : public BaseSystem
 
 protected:
 	KalmanEstimator *_kalmanEstimator;
-	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
+// 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
+	KnownSymbolsNObservationsKalmanEstimator *_knownSymbolsKalmanEstimator;
 	
 	/**
 	 * @brief interference-cancelating MMSE detector

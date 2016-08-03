@@ -22,6 +22,8 @@
 #include <TransmissionUtil.h>
 
 // #define DEBUG
+// #define DEBUG_2
+// #define DEBUG_3
 
 SOSMMSEDetector::SOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients,bool interferenceCancellation)
 :MMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected),_kalmanEstimator(kalmanEstimator),_ARcoefficients(ARcoefficients),_interferenceCancellation(interferenceCancellation)
@@ -48,7 +50,7 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 	else
 		iFirstColumn = 0;
 	
-	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter
+	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter (whose number of rows is L(d+1))
 	uint d = nRows/L -1;
 	
 	std::vector<MatrixXd> predictedMatrices(d+1);
@@ -56,6 +58,10 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 	
 	predictedMatrices[0] = _kalmanEstimator->predictedMatrix();
 	predictedCovariances[0] = _kalmanEstimator->getInternalPredictiveCovariance();
+	
+#ifdef DEBUG_2
+	std::cout << "predictedCovariances[0]" << std::endl << predictedCovariances[0] << std::endl;
+#endif
 
 	KalmanEstimator *kalmanEstimatorClone = _kalmanEstimator->clone();
 	
@@ -67,6 +73,10 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 		
 		predictedMatrices[i] = kalmanEstimatorClone->predictedMatrix();
 		predictedCovariances[i] = kalmanEstimatorClone->getInternalPredictiveCovariance();
+		
+#ifdef DEBUG_2
+		std::cout << "predictedCovariances[i]" << std::endl << predictedCovariances[i] << std::endl;
+#endif
 	}
 	
 	delete kalmanEstimatorClone;
@@ -74,6 +84,9 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 	MatrixXd predictedStackedChannelMatrix = TransmissionUtil::channelMatrices2stackedChannelMatrix(predictedMatrices,m);
 
 	MatrixXd columnsAutoCorrelationSum = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
+#ifdef DEBUG_3
+	MatrixXd columnsCovarianceSum = MatrixXd::Zero(predictedStackedChannelMatrix.rows(),predictedStackedChannelMatrix.rows());
+#endif
 
 	// for every possible column index, the indexes within the KF state vector that give that column are obtained
 	std::vector<std::vector<uint> > iCol2indexesWithinKFstateVector(Nm);
@@ -84,6 +97,9 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 #ifdef DEBUG
 	std::cout << "iFirstColumn = " << iFirstColumn << std::endl;
 // 	std::cout << "predictedCovariances[0] (" << predictedCovariances[0].rows() << " x " << predictedCovariances[0].cols() << ")" << std::endl << predictedCovariances[0] << std::endl;
+	std::cout << "predictedStackedChannelMatrix:" << std::endl << predictedStackedChannelMatrix << std::endl;
+	std::cout << "predictedStackedChannelMatrix.cols() = " << predictedStackedChannelMatrix.cols() << std::endl;
+	getchar();
 #endif
 	
 	for(uint iCol=iFirstColumn;iCol<predictedStackedChannelMatrix.cols();iCol++)
@@ -97,12 +113,6 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 			{
 				int lowerSubcolumnIndexWithinItsMatrix = iCol - (iLowerSubcolumn*N);
 				
-#ifdef DEBUG
-				std::cout << "upperSubcolumnIndexWithinItsMatrix = " << upperSubcolumnIndexWithinItsMatrix << ", lowerSubcolumnIndexWithinItsMatrix = " << lowerSubcolumnIndexWithinItsMatrix << std::endl;
-				std::cout << "iUpperSubcolumn = " << iUpperSubcolumn << ", iLowerSubcolumn = " << iLowerSubcolumn << std::endl;
-				std::cout << "iUpperSubcolumn-iLowerSubcolumn = " << iUpperSubcolumn-iLowerSubcolumn << std::endl;
-#endif
-				
 				// correlation with a vector of zeros is zero
 				if(upperSubcolumnIndexWithinItsMatrix>=Nm || upperSubcolumnIndexWithinItsMatrix<0 || lowerSubcolumnIndexWithinItsMatrix>=Nm  || lowerSubcolumnIndexWithinItsMatrix<0)
 				{
@@ -111,6 +121,12 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 #endif
 					continue;
 				}
+				
+#ifdef DEBUG
+				std::cout << "iUpperSubcolumn = " << iUpperSubcolumn << ", iLowerSubcolumn = " << iLowerSubcolumn << std::endl;
+				std::cout << "upperSubcolumnIndexWithinItsMatrix = " << upperSubcolumnIndexWithinItsMatrix << ", lowerSubcolumnIndexWithinItsMatrix = " << lowerSubcolumnIndexWithinItsMatrix << std::endl;
+// 				std::cout << "iUpperSubcolumn-iLowerSubcolumn = " << iUpperSubcolumn-iLowerSubcolumn << std::endl;
+#endif
 				
 				// only "predictedCovariances[0]" is needed because the difference between a column in a given time instant and the same column a number of time steps later is given by a factor (which is the power below)
 				MatrixXd subCovariance = Util::subMatrixFromVectorIndexes(predictedCovariances[iUpperSubcolumn],
@@ -126,12 +142,24 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
 		columnsAutoCorrelationSum += thisColumnCovariance + predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 // 		columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 		
+#ifdef DEBUG_3
+		columnsCovarianceSum += thisColumnCovariance;
+#endif
+		
 #ifdef DEBUG
+		std::cout << "thisColumnCovariance:" << std::endl << thisColumnCovariance << std::endl;
+		std::cout << "predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose():" << std::endl << predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose() << std::endl;
+// 		std::cout << "predictedStackedChannelMatrix.col(iCol)" << std::endl << predictedStackedChannelMatrix.col(iCol) << std::endl;
 		std::cout << "==================== end of column iCol = " << iCol << " ==============" << std::endl;
 		getchar();
 #endif
 
 	} // for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
+	
+#ifdef DEBUG_3
+	std::cout << "columnsCovarianceSum:" << std::endl << columnsCovarianceSum.block(0,0,5,5) << std::endl;
+	getchar();
+#endif
 
 	MatrixXd _Rx = noiseCovariance + _alphabetVariance*columnsAutoCorrelationSum;
 
@@ -142,7 +170,7 @@ VectorXd SOSMMSEDetector::detect(const VectorXd &observations, const MatrixXd &c
     // required for nthSymbolVariance computing
     _channelMatrix = channelMatrix;
 
-#ifdef DEBUG
+#ifdef DEBUG_1
 	getchar();
 #endif
 	

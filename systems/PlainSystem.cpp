@@ -53,33 +53,55 @@ void PlainSystem::addAlgorithms()
 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
 	
+	// ------------- estimators are set
+	
 	delete _knownSymbolsKalmanEstimator;
-	_knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_preambleLength);
+// 	_knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_preambleLength);
+	_knownSymbolsKalmanEstimator = new KnownSymbolsNObservationsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_observations,_preambleLength);
 	
     delete _knownChannelChannelMatrixEstimator;
     _knownChannelChannelMatrixEstimator = new KnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N);
 	
+	// ------------- for comparison purposes: actual channel for estimation / actual symbols for channel estimation
+	
 	// the channel is only known at detection time (channel matrices corresponding to the subsequent time instants, needed to perform smoothing, are obtained from channel model)
-	_algorithms.push_back(new LinearFilterBasedAlgorithm("MMSE + Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
+	_algorithms.push_back(new LinearFilterBasedAlgorithm(
+		"MMSE + Known Channel",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownChannelChannelMatrixEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true
+	));
 	
-	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm("Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols));
+	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(
+		"Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols
+	));
 	
-	// -----------------------------
+	// ------------- Genie-Aided KF
 
-	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
-	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
+	_algorithms.push_back(new LinearFilterKFBasedAlgorithm(
+		"MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true
+	));
+	_algorithms.push_back(new SOSMMSEBasedAlgorithm(
+		"SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true
+	));
 	
-	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with No Error Propagation + KF",
-																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
+	// ------------- Perfect interference cancellation
 	
-	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with No Error Propagation + KF",
-																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols));
+	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm(
+		"MMSE with No Error Propagation + KF", *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols
+	));
 	
-	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm("MMSE with No Error Propagation + Known Symbols KF",
-																			 *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols));
+	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm(
+		"SOS-MMSE with No Error Propagation + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols
+	));
 	
-	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm("SOS-MMSE with No Error Propagation + Known Symbols KF",
-																	  *_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,_symbols));
+	// ------------- Perfect interference cancellation + Genie-Aided KF
+	
+	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm(
+		"MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols
+	));
+	
+	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm(
+		"SOS-MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,
+		_ICSOSMMSEDetector,_ARcoefficients,_symbols
+	));
 }
 
 void PlainSystem::beforeEndingAlgorithm()
