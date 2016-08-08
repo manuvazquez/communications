@@ -50,6 +50,16 @@ protected:
 	 **/
 	virtual std::vector<MatrixXd> getChannelMatricesToStackForSmoothing(std::vector<MatrixXd> ARmatricesBuffer) const;
 	
+	/**
+	 * @brief From a buffer that contains channel matrices (*true* or estimated), it returns the matrices that need to be stacked in order to perform interference cancellation
+	 *
+	 *  Default implementation is using the method above.
+	 * 
+	 * @param ARmatricesBuffer a buffer containing the previous estimated channel matrices
+	 * @return :vector< MatrixXd, std::allocator< MatrixXd > >
+	 **/
+	virtual std::vector<MatrixXd> getChannelMatricesForInterferenceCancellation(std::vector<MatrixXd> ARmatricesBuffer, uint iObservation) const { return getChannelMatricesToStackForSmoothing(ARmatricesBuffer);}
+	
 	virtual MatrixXd getPreviousInterferingSymbols(uint iCurrentObservation) {return _detectedSymbolVectors.block(0,iCurrentObservation-_channelOrder+1,_nInputs,_channelOrder-1);}
 
 public:

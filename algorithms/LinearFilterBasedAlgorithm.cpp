@@ -102,11 +102,9 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 		*iterMatrices = _estimatedChannelMatrices[startDetectionTime-1-iTrainingSeq];
 	
     for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
-    {
-		vector<MatrixXd> matricesToStack = getChannelMatricesToStackForSmoothing(ARmatricesBuffer);
-        
-        MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(matricesToStack);
-
+    {   
+        MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(getChannelMatricesToStackForSmoothing(ARmatricesBuffer));
+		
         VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed,_nOutputs,_d+1),columnwise);
 
         // stacked noise covariance needs to be constructed
@@ -120,7 +118,7 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
         {
             softEstimations =  _linearDetector->detect(
                 // the last range chooses all the already detected symbol vectors
-                substractKnownSymbolsContribution(matricesToStack,_channelOrder,_d,stackedObservations,getPreviousInterferingSymbols(iObservationToBeProcessed)),
+                substractKnownSymbolsContribution(getChannelMatricesForInterferenceCancellation(ARmatricesBuffer, iObservationToBeProcessed),_channelOrder,_d,stackedObservations,getPreviousInterferingSymbols(iObservationToBeProcessed)),
                 // only a part of the channel matrix is needed. The first range chooses all the stacked observation rows
                 stackedChannelMatrix.block(0,(_channelOrder-1)*_nInputs,_nOutputs*(_d+1),stackedChannelMatrix.cols()-(_channelOrder-1)*_nInputs),
                 stackedNoiseCovariance);                
