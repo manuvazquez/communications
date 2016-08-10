@@ -25,6 +25,7 @@
 #include <KnownSymbolsNObservationsKalmanEstimator.h>
 
 #include <SOSMMSEDetector.h>
+#include <EmbeddedICSOSMMSEDetector.h>
 
 #include <KnownChannelChannelMatrixEstimator.h>
 
@@ -63,6 +64,8 @@ protected:
 	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
 	 **/
 	SOSMMSEDetector *_ICSOSMMSEDetector;
+	
+	EmbeddedICSOSMMSEDetector *_embeddedICSOSMMSEDetector;
 	
 	std::vector<MatrixXd> _symbolsMSEmatrices;
 	MatrixXd _presentFrameSymbolsMSE;

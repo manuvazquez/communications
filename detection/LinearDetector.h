@@ -32,6 +32,7 @@ protected:
     const uint _channelMatrixRows, _channelMatrixCols;
     const double _alphabetVariance;
 	MatrixXd _filter;
+	MatrixXd _pastInterferingSymbols;
 public:
     LinearDetector(uint rows,uint cols,double alphabetVariance);
     virtual ~LinearDetector() {}
@@ -52,6 +53,8 @@ public:
     virtual LinearDetector *clone() = 0;
     
     void stateStepsFromObservationsSequence(const MatrixXd &observations,uint smoothingLag,uint iFrom,uint iTo);
+	
+	void setPastInterferingSymbols(const MatrixXd &symbols) { _pastInterferingSymbols = symbols;}
 };
 
 #endif

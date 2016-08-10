@@ -10,5 +10,6 @@ ADD_LIBRARY (detection STATIC
 		      LinearDetector
 		      MMSEDetector
 		      SOSMMSEDetector
+		      EmbeddedICSOSMMSEDetector
 		      RMMSEDetector)
 add_subdirectory(trellis)

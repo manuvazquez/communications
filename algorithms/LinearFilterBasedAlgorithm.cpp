@@ -102,7 +102,10 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
 		*iterMatrices = _estimatedChannelMatrices[startDetectionTime-1-iTrainingSeq];
 	
     for(uint iObservationToBeProcessed=startDetectionTime;iObservationToBeProcessed<_iLastSymbolVectorToBeDetected;iObservationToBeProcessed++)
-    {   
+    {
+		// FIXME: this is a quite cheap way to pass information to the detector
+		_linearDetector->setPastInterferingSymbols(getPreviousInterferingSymbols(iObservationToBeProcessed));
+		
         MatrixXd stackedChannelMatrix = channelMatrices2stackedChannelMatrix(getChannelMatricesToStackForSmoothing(ARmatricesBuffer));
 		
         VectorXd stackedObservations = Util::toVector(observations.block(0,iObservationToBeProcessed,_nOutputs,_d+1),columnwise);
@@ -123,7 +126,10 @@ void LinearFilterBasedAlgorithm::process(const MatrixXd &observations,vector<dou
                 stackedChannelMatrix.block(0,(_channelOrder-1)*_nInputs,_nOutputs*(_d+1),stackedChannelMatrix.cols()-(_channelOrder-1)*_nInputs),
                 stackedNoiseCovariance);                
         } else
+		{
+// 			std::cout << "no interference cancellation" << std::endl;
             softEstimations =  _linearDetector->detect(stackedObservations,stackedChannelMatrix,stackedNoiseCovariance);
+		}
 
         for(iRow=0;iRow<_nInputs;iRow++)
 		{
