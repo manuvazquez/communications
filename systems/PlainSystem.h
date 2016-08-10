@@ -53,6 +53,8 @@ protected:
 	 **/
 	MMSEDetector *_ICMMSEdetector;
 	
+	MMSEDetector *_MMSEdetector;
+	
 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;
 	
 	/**

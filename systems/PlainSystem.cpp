@@ -22,9 +22,13 @@ PlainSystem::PlainSystem()
 {	
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
+	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1));
+	
     _ICMMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1));
 
 	_kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
+	
+	_SOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,false);
 	
 	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
 	
@@ -44,6 +48,9 @@ PlainSystem::~PlainSystem()
 	
 	delete _knownChannelChannelMatrixEstimator;
 	
+	delete _MMSEdetector;
+	delete _SOSMMSEDetector;
+	
 	delete _ICMMSEdetector;
 	delete _ICSOSMMSEDetector;
 	delete _embeddedICSOSMMSEDetector;
@@ -54,7 +61,9 @@ PlainSystem::~PlainSystem()
 void PlainSystem::addAlgorithms()
 {
 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
+	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("NoIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients,false));
 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
+	_algorithms.push_back(new SOSMMSEBasedAlgorithm("NoIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_SOSMMSEDetector,_ARcoefficients,false));
 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("EIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_embeddedICSOSMMSEDetector,_ARcoefficients,false));
 	
 	// ------------- estimators are set
