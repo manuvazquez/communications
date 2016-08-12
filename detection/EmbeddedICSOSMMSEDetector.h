@@ -25,9 +25,13 @@
 
 class EmbeddedICSOSMMSEDetector : public SOSMMSEDetector
 {
+
+protected:
+	
+	bool _sos;
 	
 public:
-    EmbeddedICSOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients);
+    EmbeddedICSOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients, bool sos);
 	
     virtual VectorXd detect(const VectorXd &observations, const MatrixXd &channelMatrix, const MatrixXd& noiseCovariance);
 	

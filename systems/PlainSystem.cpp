@@ -22,21 +22,30 @@ PlainSystem::PlainSystem()
 {	
 	_powerProfile = new FlatPowerProfile(_L,_N,_m,1.0);
 	
-	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1));
+// 	// standard MMSE detector with NO interference cancellation
+// 	_MMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1));
 	
+	// standard MMSE detector *with* interference cancellation
     _ICMMSEdetector = new MMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1));
 
+	// Kalman filter-based channel estimator
 	_kalmanEstimator = new KalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance);
 	
-	_SOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,false);
+// 	// original SOS-MMSE with NO interference cancellation
+// 	_SOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,false);
 	
-	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
+// 	// original SOS-MMSE *with* interference cancellation
+// 	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
 	
-	_embeddedICSOSMMSEDetector = new EmbeddedICSOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients);
+	// new SOS-MMSE with (embedded) interference cancellation
+	_embeddedICSOSMMSEDetector = new EmbeddedICSOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
 	
-	_knownChannelChannelMatrixEstimator = NULL;
+// 	// new SOS-MMSE with (embedded) interference cancellation assuming all the covariances of the channel are zero (no uncertainty associated with the channel)
+// 	_embeddedICMMSEDetector = new EmbeddedICSOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,false);
 	
-	_knownSymbolsKalmanEstimator = NULL;
+// 	_knownChannelChannelMatrixEstimator = NULL;
+	
+// 	_knownSymbolsNObservationsKalmanEstimator = NULL;
 	
 	_symbolsMSEmatrices.reserve(_nFrames);
 }
@@ -44,16 +53,20 @@ PlainSystem::PlainSystem()
 PlainSystem::~PlainSystem()
 {
 	delete _kalmanEstimator;
-	delete _knownSymbolsKalmanEstimator;
 	
-	delete _knownChannelChannelMatrixEstimator;
+// 	delete _knownSymbolsNObservationsKalmanEstimator;
+// // 	delete __knownSymbolsKalmanEstimator;
 	
-	delete _MMSEdetector;
-	delete _SOSMMSEDetector;
+// 	delete _knownChannelChannelMatrixEstimator;
+	
+// 	delete _MMSEdetector;
+// 	delete _SOSMMSEDetector;
 	
 	delete _ICMMSEdetector;
-	delete _ICSOSMMSEDetector;
+// 	delete _ICSOSMMSEDetector;
+	
 	delete _embeddedICSOSMMSEDetector;
+// 	delete _embeddedICMMSEDetector;
 	
 	delete _powerProfile;
 }
@@ -61,17 +74,23 @@ PlainSystem::~PlainSystem()
 void PlainSystem::addAlgorithms()
 {
 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
-	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("NoIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients,false));
-	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
-	_algorithms.push_back(new SOSMMSEBasedAlgorithm("NoIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_SOSMMSEDetector,_ARcoefficients,false));
+// 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("NoIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients,false));
+	
+// 	// old SOS
+// 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
+// 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("NoIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_SOSMMSEDetector,_ARcoefficients,false));
+	
+// 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("EIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_embeddedICMMSEDetector,_ARcoefficients,false));
 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("EIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_embeddedICSOSMMSEDetector,_ARcoefficients,false));
 	
 	// ------------- estimators are set
 	
-	delete _knownSymbolsKalmanEstimator;
-// 	_knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_preambleLength);
-	_knownSymbolsKalmanEstimator = new KnownSymbolsNObservationsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_observations,_preambleLength);
-	
+// // 	delete __knownSymbolsKalmanEstimator;
+// // 	_knownSymbolsKalmanEstimator = new KnownSymbolsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_preambleLength);
+// 	
+// 	delete _knownSymbolsNObservationsKalmanEstimator;
+// 	_knownSymbolsNObservationsKalmanEstimator = new KnownSymbolsNObservationsKalmanEstimator(_powerProfile->means(),_powerProfile->variances(),_N,_ARcoefficients,_ARvariance,_symbols,_observations,_preambleLength);
+// 	
 //     delete _knownChannelChannelMatrixEstimator;
 //     _knownChannelChannelMatrixEstimator = new KnownChannelChannelMatrixEstimator(_channel,_preambleLength,_N);
 	
@@ -85,14 +104,14 @@ void PlainSystem::addAlgorithms()
 // 	_algorithms.push_back(new KnownSymbolsKalmanBasedChannelEstimatorAlgorithm(
 // 		"Kalman Filter (Known Symbols)",*_alphabet,_L,1,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_symbols
 // 	));
-	
+// 	
 // 	// ------------- Genie-Aided KF
 // 
 // 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm(
-// 		"MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true
+// 		"MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsNObservationsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true
 // 	));
 // 	_algorithms.push_back(new SOSMMSEBasedAlgorithm(
-// 		"SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true
+// 		"SOS-MMSE + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsNObservationsKalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true
 // 	));
 // 	
 // 	// ------------- Perfect interference cancellation
@@ -108,11 +127,11 @@ void PlainSystem::addAlgorithms()
 // 	// ------------- Perfect interference cancellation + Genie-Aided KF
 // 	
 // 	_algorithms.push_back(new LinearFilterNoErrorPropagationKFBasedAlgorithm(
-// 		"MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols,_channel
+// 		"MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsNObservationsKalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,_symbols,_channel
 // 	));
 // 	
 // 	_algorithms.push_back(new SOSMMSEBasedNoErrorPropagationAlgorithm(
-// 		"SOS-MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsKalmanEstimator,_preamble,_d,
+// 		"SOS-MMSE with No Error Propagation + Known Symbols KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_knownSymbolsNObservationsKalmanEstimator,_preamble,_d,
 // 		_ICSOSMMSEDetector,_ARcoefficients,_symbols,_channel
 // 	));
 }

@@ -22,8 +22,8 @@
 
 // #define DEBUG
 
-EmbeddedICSOSMMSEDetector::EmbeddedICSOSMMSEDetector(uint rows, uint cols, double alphabetVariance,uint nSymbolsToBeDetected,KalmanEstimator *kalmanEstimator,std::vector<double> ARcoefficients)
-:SOSMMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected,kalmanEstimator,ARcoefficients,false)
+EmbeddedICSOSMMSEDetector::EmbeddedICSOSMMSEDetector(uint rows, uint cols, double alphabetVariance, uint nSymbolsToBeDetected, KalmanEstimator* kalmanEstimator, vector< double > ARcoefficients, bool sos)
+:SOSMMSEDetector(rows,cols,alphabetVariance,nSymbolsToBeDetected,kalmanEstimator,ARcoefficients,false), _sos(sos)
 {
 }
 
@@ -122,7 +122,10 @@ VectorXd EmbeddedICSOSMMSEDetector::detect(const VectorXd &observations, const M
 				}
 			}
 			
-			autoCorrelationSum += (thisColumnsCovariance + predictedStackedChannelMatrix.col(iCol1)*predictedStackedChannelMatrix.col(iCol2).transpose())*previousSymbols(iCol1)*previousSymbols(iCol2);
+			if(_sos)
+				autoCorrelationSum += (thisColumnsCovariance + predictedStackedChannelMatrix.col(iCol1)*predictedStackedChannelMatrix.col(iCol2).transpose())*previousSymbols(iCol1)*previousSymbols(iCol2);
+			else
+				autoCorrelationSum += (predictedStackedChannelMatrix.col(iCol1)*predictedStackedChannelMatrix.col(iCol2).transpose())*previousSymbols(iCol1)*previousSymbols(iCol2);
 		}
 	}
 	
@@ -154,8 +157,11 @@ VectorXd EmbeddedICSOSMMSEDetector::detect(const VectorXd &observations, const M
 			} // for(uint j=i;j<(d+1);j++)
 		}
 		
-		columnsAutoCorrelationSum += thisColumnCovariance + predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
-// 		columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
+		
+		if(_sos)
+			columnsAutoCorrelationSum += thisColumnCovariance + predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
+		else
+			columnsAutoCorrelationSum += predictedStackedChannelMatrix.col(iCol)*predictedStackedChannelMatrix.col(iCol).transpose();
 		
 	} // for(uint iCol=0;iCol<predictedStackedChannelMatrix.cols();iCol++)
 	

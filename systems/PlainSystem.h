@@ -45,32 +45,35 @@ class PlainSystem : public BaseSystem
 
 protected:
 	KalmanEstimator *_kalmanEstimator;
-// 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
-	KnownSymbolsNObservationsKalmanEstimator *_knownSymbolsKalmanEstimator;
+	
+// // 	KnownSymbolsKalmanEstimator *_knownSymbolsKalmanEstimator;
+// 	KnownSymbolsNObservationsKalmanEstimator *_knownSymbolsNObservationsKalmanEstimator;
 	
 	/**
 	 * @brief interference-cancelating MMSE detector
 	 **/
 	MMSEDetector *_ICMMSEdetector;
 	
-	MMSEDetector *_MMSEdetector;
+// 	MMSEDetector *_MMSEdetector;
 	
-	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;
+// 	KnownChannelChannelMatrixEstimator *_knownChannelChannelMatrixEstimator;
 	
-	/**
-	 * @brief SOS-MMSE detector
-	 **/
-	SOSMMSEDetector *_SOSMMSEDetector;
+// 	/**
+// 	 * @brief SOS-MMSE detector
+// 	 **/
+// 	SOSMMSEDetector *_SOSMMSEDetector;
 	
-	/**
-	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
-	 **/
-	SOSMMSEDetector *_ICSOSMMSEDetector;
+// 	/**
+// 	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
+// 	 **/
+// 	SOSMMSEDetector *_ICSOSMMSEDetector;
 	
 	EmbeddedICSOSMMSEDetector *_embeddedICSOSMMSEDetector;
 	
 	std::vector<MatrixXd> _symbolsMSEmatrices;
 	MatrixXd _presentFrameSymbolsMSE;
+	
+// 	EmbeddedICSOSMMSEDetector* _embeddedICMMSEDetector;
 	
     virtual void addAlgorithms();
 	
