@@ -63,10 +63,10 @@ protected:
 // 	 **/
 // 	SOSMMSEDetector *_SOSMMSEDetector;
 	
-// 	/**
-// 	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
-// 	 **/
-// 	SOSMMSEDetector *_ICSOSMMSEDetector;
+	/**
+	 * @brief interference-cancelating SOS-MMSE detector (an MMSE detector taking advantage of second-order statistics meant to be used after interference cancellation)
+	 **/
+	SOSMMSEDetector *_ICSOSMMSEDetector;
 	
 	EmbeddedICSOSMMSEDetector *_embeddedICSOSMMSEDetector;
 	

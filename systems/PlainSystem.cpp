@@ -34,8 +34,8 @@ PlainSystem::PlainSystem()
 // 	// original SOS-MMSE with NO interference cancellation
 // 	_SOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_m+_d),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,false);
 	
-// 	// original SOS-MMSE *with* interference cancellation
-// 	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
+	// original SOS-MMSE *with* interference cancellation
+	_ICSOSMMSEDetector = new SOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
 	
 	// new SOS-MMSE with (embedded) interference cancellation
 	_embeddedICSOSMMSEDetector = new EmbeddedICSOSMMSEDetector(_L*(_d+1),_N*(_d+1),_alphabet->variance(),_N*(_d+1),_kalmanEstimator,_ARcoefficients,true);
@@ -63,7 +63,7 @@ PlainSystem::~PlainSystem()
 // 	delete _SOSMMSEDetector;
 	
 	delete _ICMMSEdetector;
-// 	delete _ICSOSMMSEDetector;
+	delete _ICSOSMMSEDetector;
 	
 	delete _embeddedICSOSMMSEDetector;
 // 	delete _embeddedICMMSEDetector;
@@ -76,8 +76,8 @@ void PlainSystem::addAlgorithms()
 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICMMSEdetector,_ARcoefficients,true));
 // 	_algorithms.push_back(new LinearFilterKFBasedAlgorithm("NoIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_MMSEdetector,_ARcoefficients,false));
 	
-// 	// old SOS
-// 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
+	// old SOS
+	_algorithms.push_back(new SOSMMSEBasedAlgorithm("SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_ICSOSMMSEDetector,_ARcoefficients,true));
 // 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("NoIC SOS-MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_SOSMMSEDetector,_ARcoefficients,false));
 	
 // 	_algorithms.push_back(new SOSMMSEBasedAlgorithm("EIC MMSE + KF",*_alphabet,_L,_L,_N,_iLastSymbolVectorToBeDetected,_m,_kalmanEstimator,_preamble,_d,_embeddedICMMSEDetector,_ARcoefficients,false));

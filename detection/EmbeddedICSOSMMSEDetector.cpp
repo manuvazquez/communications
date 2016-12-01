@@ -39,9 +39,7 @@ VectorXd EmbeddedICSOSMMSEDetector::detect(const VectorXd &observations, const M
 	uint L = _kalmanEstimator->rows();
 	
 	// index of the first stacked channel matrix column to be accounted for when computing the channel matrix covariance
-	uint iFirstColumn;
-	
-	iFirstColumn = N*(m-1);
+	uint iFirstColumn  = N*(m-1);
 	
 	// smoothing lag "d" is inferred from the received channel matrix and the internal Kalman filter (whose number of rows is L(d+1))
 	uint d = nRows/L -1;
