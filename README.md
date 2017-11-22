@@ -4,5 +4,5 @@ Source code for different communications-related simulations
 Requirements
 ============
 
-- eigen (http://eigen.tuxfamily.org/index.php?title=Main_Page)
+- eigen (http://eigen.tuxfamily.org/)
 - rapidxml (http://rapidxml.sourceforge.net/)
